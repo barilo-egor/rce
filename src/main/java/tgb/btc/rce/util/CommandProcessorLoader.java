@@ -5,6 +5,7 @@ import org.reflections.scanners.Scanners;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.exception.BaseException;
+import tgb.btc.rce.service.Processor;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -23,7 +24,7 @@ public final class CommandProcessorLoader {
         Reflections reflections = new Reflections(PROCESSORS_PACKAGE, Scanners.TypesAnnotated);
         commandProcessors = reflections.getTypesAnnotatedWith(CommandProcessor.class);
         commandProcessors.stream()
-                .filter(processor -> !hasRunnable(processor))
+                .filter(processor -> !hasProcessorInterface(processor))
                 .findFirst()
                 .ifPresent(processor -> {
                     throw new BaseException("Процессор " + processor.getSimpleName()
@@ -31,9 +32,9 @@ public final class CommandProcessorLoader {
                 });
     }
 
-    private static boolean hasRunnable(Class<?> clazz) {
+    private static boolean hasProcessorInterface(Class<?> clazz) {
         return Arrays.stream(clazz.getInterfaces())
-                .anyMatch(i -> i.isAssignableFrom(Runnable.class));
+                .anyMatch(i -> i.isAssignableFrom(Processor.class));
     }
 
     public static Class<?> getByCommand(Command command) {
