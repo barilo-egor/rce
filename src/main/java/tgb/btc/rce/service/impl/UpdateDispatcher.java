@@ -4,19 +4,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import tgb.btc.rce.constants.BotNumberConstants;
+import tgb.btc.rce.bean.User;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.IUpdateDispatcher;
+import tgb.btc.rce.service.IUserService;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.util.CommandProcessorLoader;
 import tgb.btc.rce.util.UpdateUtil;
+
+import java.util.Objects;
 
 @Service
 public class UpdateDispatcher implements IUpdateDispatcher {
 
     public static ApplicationContext applicationContext;
 
-    private final UserService userService;
+    private final IUserService userService;
 
     @Autowired
     public UpdateDispatcher(UserService userService) {
@@ -30,7 +33,12 @@ public class UpdateDispatcher implements IUpdateDispatcher {
 
     private Command getCommand(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
-        return userService.getStepByChatId(chatId) == BotNumberConstants.DEFAULT_STEP ? Command.fromUpdate(update)
+        Integer step = userService.getStepByChatId(chatId);
+        if (Objects.isNull(step)) {
+            userService.register(update);
+            return Command.fromUpdate(update);
+        }
+        return userService.getStepByChatId(chatId) == User.DEFAULT_STEP ? Command.fromUpdate(update)
                 : userService.getCommandByChatId(chatId);
     }
 }
