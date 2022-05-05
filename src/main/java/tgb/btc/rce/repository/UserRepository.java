@@ -25,4 +25,6 @@ public interface UserRepository extends BaseRepository<User> {
 
     @Query("select command from User where chatId=:chatId")
     Command getCommandByChatId(@Param("chatId") Long chatId);
+
+    boolean existsByChatId(Long chatId);
 }

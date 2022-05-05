@@ -36,3 +36,6 @@ build/
 /mvnw.cmd
 /.mvn/wrapper/maven-wrapper.jar
 /.mvn/wrapper/maven-wrapper.properties
+
+application.properties
+bot.properties
