@@ -5,7 +5,6 @@ public final class BotConfig {
     }
 
     public static void init() {
-        BotPropertiesUtil.loadProperties();
         CommandProcessorLoader.scan();
     }
 }
