@@ -11,4 +11,6 @@ public interface IUserService {
     Command getCommandByChatId(Long chatId);
 
     User register(Update update);
+
+    boolean existByChatId(Long chatId);
 }

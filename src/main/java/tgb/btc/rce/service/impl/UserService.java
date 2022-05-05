@@ -31,4 +31,9 @@ public class UserService implements IUserService {
         User user = new User(update);
         return userRepository.save(user);
     }
+
+    @Override
+    public boolean existByChatId(Long chatId) {
+        return userRepository.existsByChatId(chatId);
+    }
 }

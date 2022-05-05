@@ -27,18 +27,13 @@ public class UpdateDispatcher implements IUpdateDispatcher {
     }
 
     public void dispatch(Update update) {
-        Command command = getCommand(update);
-        ((Processor) applicationContext.getBean(CommandProcessorLoader.getByCommand(command))).run(update);
+        if (!userService.existByChatId(UpdateUtil.getChatId(update))) userService.register(update);
+        ((Processor) applicationContext.getBean(CommandProcessorLoader.getByCommand(getCommand(update)))).run(update);
     }
 
     private Command getCommand(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
-        Integer step = userService.getStepByChatId(chatId);
-        if (Objects.isNull(step)) {
-            userService.register(update);
-            return Command.fromUpdate(update);
-        }
-        return userService.getStepByChatId(chatId) == User.DEFAULT_STEP ? Command.fromUpdate(update)
+        return userService.getStepByChatId(chatId).equals(User.DEFAULT_STEP) ? Command.fromUpdate(update)
                 : userService.getCommandByChatId(chatId);
     }
 }
