@@ -21,7 +21,7 @@ public interface UserRepository extends BaseRepository<User> {
     void updateStepByChatId(@Param("step") int step,@Param("chatId") Long chatId);
 
     @Query("select step from User where chatId=:chatId")
-    int getStepByChatId(@Param("chatId") Long chatId);
+    Integer getStepByChatId(@Param("chatId") Long chatId);
 
     @Query("select command from User where chatId=:chatId")
     Command getCommandByChatId(@Param("chatId") Long chatId);
