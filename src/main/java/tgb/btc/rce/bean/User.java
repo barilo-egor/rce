@@ -28,10 +28,14 @@ public class User extends BasePersist {
     @Column(name = "REGISTRATION_DATE", nullable = false)
     private LocalDateTime registrationDate;
 
+    @Column(name = "IS_ADMIN", nullable = false)
+    private boolean isAdmin;
+
     public User() {
         this.step = BotNumberConstants.DEFAULT_STEP;
         this.command = Command.START;
         this.registrationDate = LocalDateTime.now();
+        this.isAdmin = false;
     }
 
     public Long getChatId() {
