@@ -26,7 +26,7 @@ public final class BotPropertiesUtil {
         try {
             botProperties.load(new FileInputStream(BOT_PROPERTIES_FILE_PATH));
         } catch (IOException e) {
-            log.error("Ошибка загрузки bot properties: ", e);
+            log.error("Ошибка загрузки bot properties по пути " + BOT_PROPERTIES_FILE_PATH + " : ", e);
         }
     }
 
