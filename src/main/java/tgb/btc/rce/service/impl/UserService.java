@@ -28,7 +28,7 @@ public class UserService implements IUserService {
 
     @Override
     public User register(Update update) {
-        User user = new User(update);
+        User user = User.buildFromUpdate(update);
         return userRepository.save(user);
     }
 
