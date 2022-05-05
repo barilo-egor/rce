@@ -12,8 +12,6 @@ import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.util.CommandProcessorLoader;
 import tgb.btc.rce.util.UpdateUtil;
 
-import java.util.Objects;
-
 @Service
 public class UpdateDispatcher implements IUpdateDispatcher {
 
