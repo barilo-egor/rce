@@ -13,4 +13,8 @@ public interface IUserService {
     User register(Update update);
 
     boolean existByChatId(Long chatId);
+
+    void setDefaultValues(Long chatId);
+
+    boolean isAdminByChatId(Long chatId);
 }

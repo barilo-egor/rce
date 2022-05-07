@@ -8,7 +8,23 @@ import java.util.Arrays;
 
 @Slf4j
 public enum Command {
-    START("/start");
+    /*
+     * CallbackQuery
+     */
+
+    START("/start"),
+
+    /*
+      Reply
+     */
+
+    /** MAIN */
+    BUY_BITCOIN("\uD83D\uDCB0 Купить"),
+    SELL_BITCOIN("\uD83D\uDCC8 Продать"),
+    CONTACTS("\uD83D\uDEC3 Контакты"),
+    LOTTERY("\uD83C\uDFB0 Лотерея"),
+    RULES("\uD83D\uDDD2 Правила"),
+    ADMIN_PANEL("Админ панель");
 
     final String text;
 

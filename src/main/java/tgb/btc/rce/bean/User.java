@@ -57,6 +57,11 @@ public class User extends BasePersist {
         return user;
     }
 
+    private void setDefaultValues() {
+        this.step = DEFAULT_STEP;
+        this.command = Command.START;
+    }
+
     public Long getChatId() {
         return chatId;
     }

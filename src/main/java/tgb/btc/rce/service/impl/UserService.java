@@ -36,4 +36,14 @@ public class UserService implements IUserService {
     public boolean existByChatId(Long chatId) {
         return userRepository.existsByChatId(chatId);
     }
+
+    @Override
+    public void setDefaultValues(Long chatId) {
+        userRepository.setDefaultValues(chatId);
+    }
+
+    @Override
+    public boolean isAdminByChatId(Long chatId) {
+        return userRepository.isAdminByChatId(chatId);
+    }
 }
