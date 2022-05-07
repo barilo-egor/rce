@@ -10,6 +10,7 @@ import tgb.btc.rce.service.IUpdateDispatcher;
 import tgb.btc.rce.service.IUserService;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.util.CommandProcessorLoader;
+import tgb.btc.rce.util.CommandUtil;
 import tgb.btc.rce.util.UpdateUtil;
 
 @Service
@@ -31,7 +32,9 @@ public class UpdateDispatcher implements IUpdateDispatcher {
 
     private Command getCommand(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
-        return userService.getStepByChatId(chatId).equals(User.DEFAULT_STEP) ? Command.fromUpdate(update)
-                : userService.getCommandByChatId(chatId);
+        return userService.getStepByChatId(chatId).equals(User.DEFAULT_STEP) || CommandUtil.isStartCommand(update) ?
+                Command.fromUpdate(update) : userService.getCommandByChatId(chatId);
     }
+
+
 }
