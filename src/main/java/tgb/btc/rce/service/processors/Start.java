@@ -4,8 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import tgb.btc.rce.annotation.CommandProcessor;
+import tgb.btc.rce.enums.BotMessageType;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.Menu;
+import tgb.btc.rce.service.IBotMessageService;
 import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.IUserService;
 import tgb.btc.rce.service.Processor;
@@ -16,17 +18,22 @@ import tgb.btc.rce.util.UpdateUtil;
 public class Start extends Processor {
 
     private final IUserService userService;
+    private final IBotMessageService botMessageService;
 
     @Autowired
-    public Start(IResponseSender responseSender, IUserService userService) {
+    public Start(IResponseSender responseSender, IUserService userService, IBotMessageService botMessageService) {
         super(responseSender);
         this.userService = userService;
+        this.botMessageService = botMessageService;
     }
 
     @Override
     public void run(Update update) {
-        userService.setDefaultValues(UpdateUtil.getChatId(update));
-        responseSender.sendMessage(UpdateUtil.getChatId(update), "Hello.", getMenuKeyboard(update));
+        Long chatId = UpdateUtil.getChatId(update);
+        userService.setDefaultValues(chatId);
+        responseSender.sendBotMessage(botMessageService.findByType(BotMessageType.START),
+                chatId,
+                getMenuKeyboard(update));
     }
 
     private ReplyKeyboard getMenuKeyboard(Update update) {
