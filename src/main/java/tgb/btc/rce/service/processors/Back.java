@@ -14,14 +14,14 @@ import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.util.MenuFactory;
 import tgb.btc.rce.util.UpdateUtil;
 
-@CommandProcessor(command = Command.START)
-public class Start extends Processor {
+@CommandProcessor(command = Command.BACK)
+public class Back extends Processor {
 
     private final IUserService userService;
     private final IBotMessageService botMessageService;
 
     @Autowired
-    public Start(IResponseSender responseSender, IUserService userService, IBotMessageService botMessageService) {
+    public Back(IResponseSender responseSender, IUserService userService, IBotMessageService botMessageService) {
         super(responseSender);
         this.userService = userService;
         this.botMessageService = botMessageService;
@@ -30,7 +30,6 @@ public class Start extends Processor {
     @Override
     public void run(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
-        userService.setDefaultValues(chatId);
         responseSender.sendBotMessage(botMessageService.findByType(BotMessageType.START),
                 chatId,
                 getMenuKeyboard(chatId));

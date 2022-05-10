@@ -18,13 +18,19 @@ public enum Command {
       Reply
      */
 
+    /** UTIL */
+    BACK("◀️ Назад"),
+
     /** MAIN */
     BUY_BITCOIN("\uD83D\uDCB0 Купить"),
     SELL_BITCOIN("\uD83D\uDCC8 Продать"),
     CONTACTS("\uD83D\uDEC3 Контакты"),
+    DRAWS("\uD83C\uDFB0 Розыгрыши"),
+    ADMIN_PANEL("Админ панель"),
+
+    /** DRAWS */
     LOTTERY("\uD83C\uDFB0 Лотерея"),
-    RULES("\uD83D\uDDD2 Правила"),
-    ADMIN_PANEL("Админ панель");
+    ROULETTE("\uD83C\uDFB0 Рулетка"); // TODO поменять смайл
 
     final String text;
 

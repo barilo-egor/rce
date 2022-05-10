@@ -19,6 +19,8 @@ public final class MenuFactory {
         switch (menu) {
             case MAIN:
                 return KeyboardUtil.buildReply(2, main(isAdmin), false);
+            case DRAWS:
+                return KeyboardUtil.buildReply(2, fillReply(Menu.DRAWS.getCommands()), false);
         }
         throw new BaseException("Тип меню " + menu.name() + " не найден.");
     }
