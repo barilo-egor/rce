@@ -1,6 +1,7 @@
 package tgb.btc.rce.util;
 
 import lombok.extern.slf4j.Slf4j;
+import tgb.btc.rce.constants.FilePaths;
 import tgb.btc.rce.exception.BaseException;
 
 import java.io.FileInputStream;
@@ -13,20 +14,19 @@ public final class BotPropertiesUtil {
     private BotPropertiesUtil() {
     }
 
-    private static final String BOT_PROPERTIES_FILE_PATH = "config/bot/bot.properties";
 
-    private static Properties botProperties;
+
+    private final static Properties botProperties = new Properties();
 
     private static String BOT_TOKEN;
 
     private static String BOT_USERNAME;
 
     public static void loadProperties() {
-        botProperties = new Properties();
         try {
-            botProperties.load(new FileInputStream(BOT_PROPERTIES_FILE_PATH));
+            botProperties.load(new FileInputStream(FilePaths.BOT_PROPERTIES));
         } catch (IOException e) {
-            log.error("Ошибка загрузки bot properties по пути " + BOT_PROPERTIES_FILE_PATH + " : ", e);
+            log.error("Ошибка загрузки bot properties по пути " + FilePaths.BOT_PROPERTIES + " : ", e);
         }
     }
 
