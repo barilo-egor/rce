@@ -8,10 +8,9 @@ import tgb.btc.rce.enums.BotVariableType;
 import tgb.btc.rce.exception.BaseException;
 import tgb.btc.rce.repository.BaseRepository;
 import tgb.btc.rce.repository.BotVariableRepository;
-import tgb.btc.rce.service.IBotVariableService;
 
 @Service
-public class BotVariableService extends BasePersistService<BotVariable> implements IBotVariableService {
+public class BotVariableService extends BasePersistService<BotVariable> {
     private final BotVariableRepository botVariableRepository;
 
     @Autowired

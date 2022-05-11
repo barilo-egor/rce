@@ -7,10 +7,10 @@ import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.BotMessageType;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.InlineType;
-import tgb.btc.rce.service.IBotMessageService;
-import tgb.btc.rce.service.IContactService;
 import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
+import tgb.btc.rce.service.impl.BotMessageService;
+import tgb.btc.rce.service.impl.ContactService;
 import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.InlineButton;
@@ -19,12 +19,12 @@ import java.util.stream.Collectors;
 
 @CommandProcessor(command = Command.CONTACTS)
 public class Contacts extends Processor {
-    private final IBotMessageService botMessageService;
-    private final IContactService contactService;
+    private final BotMessageService botMessageService;
+    private final ContactService contactService;
 
     @Autowired
-    public Contacts(IResponseSender responseSender, IBotMessageService botMessageService,
-                    IContactService contactService) {
+    public Contacts(IResponseSender responseSender, BotMessageService botMessageService,
+                    ContactService contactService) {
         super(responseSender);
         this.botMessageService = botMessageService;
         this.contactService = contactService;

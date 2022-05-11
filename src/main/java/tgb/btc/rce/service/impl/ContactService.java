@@ -5,12 +5,11 @@ import org.springframework.stereotype.Service;
 import tgb.btc.rce.bean.Contact;
 import tgb.btc.rce.repository.BaseRepository;
 import tgb.btc.rce.repository.ContactsRepository;
-import tgb.btc.rce.service.IContactService;
 
 import java.util.List;
 
 @Service
-public class ContactService extends BasePersistService<Contact> implements IContactService {
+public class ContactService extends BasePersistService<Contact> {
     private final ContactsRepository contactsRepository;
 
     @Autowired

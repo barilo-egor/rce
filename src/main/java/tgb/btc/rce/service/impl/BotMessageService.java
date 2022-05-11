@@ -9,10 +9,9 @@ import tgb.btc.rce.enums.MessageType;
 import tgb.btc.rce.exception.BaseException;
 import tgb.btc.rce.repository.BaseRepository;
 import tgb.btc.rce.repository.BotMessageRepository;
-import tgb.btc.rce.service.IBotMessageService;
 
 @Service
-public class BotMessageService extends BasePersistService<BotMessage> implements IBotMessageService {
+public class BotMessageService extends BasePersistService<BotMessage> {
     private final BotMessageRepository botMessageRepository;
 
     @Autowired
