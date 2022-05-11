@@ -5,7 +5,7 @@ import tgb.btc.rce.exception.BaseException;
 import java.util.Arrays;
 
 public enum BotMessageType {
-    START("Кн.Стартовое"),
+    START("Стартовое"),
     DRAWS("Кн.Розыгрыши"),
     CONTACTS("Кн.Контакты"),
     SELL_BITCOIN("Кн.Продать"),
