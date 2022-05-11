@@ -27,11 +27,4 @@ public interface UserRepository extends BaseRepository<User> {
     Command getCommandByChatId(@Param("chatId") Long chatId);
 
     boolean existsByChatId(Long chatId);
-
-    @Modifying
-    @Query("update User set step=" + User.DEFAULT_STEP + ", command = 'START' where chatId=:chatId")
-    void setDefaultValues(@Param("chatId") Long chatId);
-
-    @Query("select isAdmin from User where chatId=:chatId")
-    boolean isAdminByChatId(@Param("chatId") Long chatId);
 }

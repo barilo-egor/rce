@@ -5,18 +5,16 @@ import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.bean.User;
 import tgb.btc.rce.enums.Command;
-import tgb.btc.rce.repository.BaseRepository;
 import tgb.btc.rce.repository.UserRepository;
-import tgb.btc.rce.util.UpdateUtil;
+import tgb.btc.rce.service.IUserService;
 
 @Service
-public class UserService extends BasePersistService<User> {
+public class UserService implements IUserService {
 
     private final UserRepository userRepository;
 
     @Autowired
-    public UserService(BaseRepository<User> baseRepository, UserRepository userRepository) {
-        super(baseRepository);
+    public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
@@ -28,24 +26,14 @@ public class UserService extends BasePersistService<User> {
         return userRepository.getCommandByChatId(chatId);
     }
 
+    @Override
     public User register(Update update) {
         User user = User.buildFromUpdate(update);
         return userRepository.save(user);
     }
 
+    @Override
     public boolean existByChatId(Long chatId) {
         return userRepository.existsByChatId(chatId);
-    }
-
-    public void setDefaultValues(Long chatId) {
-        userRepository.setDefaultValues(chatId);
-    }
-
-    public boolean isAdminByChatId(Long chatId) {
-        return userRepository.isAdminByChatId(chatId);
-    }
-
-    public User findByChatId(Update update) {
-        return userRepository.findByChatId(UpdateUtil.getChatId(update));
     }
 }

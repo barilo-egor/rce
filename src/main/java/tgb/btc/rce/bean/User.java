@@ -34,20 +34,17 @@ public class User extends BasePersist {
     @Column(name = "IS_ADMIN", nullable = false)
     private boolean isAdmin;
 
-    @Column(name = "LOTTERY_COUNT")
-    private Integer lotteryCount;
-
     public User() {
     }
 
-    public User(Long chatId, String username, Integer step, Command command, LocalDateTime registrationDate, boolean isAdmin, Integer lotteryCount) {
+    public User(Long chatId, String username, Integer step, Command command, LocalDateTime registrationDate,
+                boolean isAdmin) {
         this.chatId = chatId;
         this.username = username;
         this.step = step;
         this.command = command;
         this.registrationDate = registrationDate;
         this.isAdmin = isAdmin;
-        this.lotteryCount = lotteryCount;
     }
 
     public static User buildFromUpdate(Update update) {
@@ -57,14 +54,7 @@ public class User extends BasePersist {
         user.setCommand(Command.START);
         user.setRegistrationDate(LocalDateTime.now());
         user.setStep(DEFAULT_STEP);
-        user.setAdmin(false);
-        user.setLotteryCount(0);
         return user;
-    }
-
-    private void setDefaultValues() {
-        this.step = DEFAULT_STEP;
-        this.command = Command.START;
     }
 
     public Long getChatId() {
@@ -105,21 +95,5 @@ public class User extends BasePersist {
 
     public void setRegistrationDate(LocalDateTime dateTime) {
         this.registrationDate = dateTime;
-    }
-
-    public boolean isAdmin() {
-        return isAdmin;
-    }
-
-    public void setAdmin(boolean admin) {
-        isAdmin = admin;
-    }
-
-    public Integer getLotteryCount() {
-        return lotteryCount;
-    }
-
-    public void setLotteryCount(Integer lotteryCount) {
-        this.lotteryCount = lotteryCount;
     }
 }
