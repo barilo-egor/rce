@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.bean.User;
+import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.BotMessageType;
 import tgb.btc.rce.enums.BotVariableType;
 import tgb.btc.rce.enums.Command;
@@ -23,8 +24,6 @@ import java.util.Objects;
 @CommandProcessor(command = Command.LOTTERY)
 @Slf4j
 public class Lottery extends Processor {
-
-    private static final String WRITE_TO_OPERATOR_BUTTON_LABEL = "Написать оператору";
 
     private final BotMessageService botMessageService;
     private final UserService userService;
@@ -53,7 +52,7 @@ public class Lottery extends Processor {
     private void processLottery(Update update, User user) {
         if (getRandomBoolean(Float.parseFloat(botVariableService.findByType(BotVariableType.PROBABILITY).getValue()))) {
             responseSender.sendBotMessage(botMessageService.findByType(BotMessageType.WON_LOTTERY), user.getChatId(),
-                    MenuFactory.getLink(WRITE_TO_OPERATOR_BUTTON_LABEL,
+                    MenuFactory.getLink(BotStringConstants.WRITE_TO_OPERATOR_BUTTON_LABEL,
                             botVariableService.findByType(BotVariableType.OPERATOR_LINK).getValue()));
             log.debug("Пользователь " + UpdateUtil.getChatId(update) + " выиграл лотерею.");
         }

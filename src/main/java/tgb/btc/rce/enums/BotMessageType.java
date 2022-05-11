@@ -8,6 +8,7 @@ public enum BotMessageType {
     START("Кн.Стартовое"),
     DRAWS("Кн.Розыгрыши"),
     CONTACTS("Кн.Контакты"),
+    SELL_BITCOIN("Кн.Продать"),
     WON_LOTTERY("Выигр.лотереи"),
     LOSE_LOTTERY("Проигр.лотереи");
 
