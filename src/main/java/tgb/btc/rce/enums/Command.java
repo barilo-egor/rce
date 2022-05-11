@@ -8,7 +8,29 @@ import java.util.Arrays;
 
 @Slf4j
 public enum Command {
-    START("/start");
+    /*
+     * CallbackQuery
+     */
+
+    START("/start"),
+
+    /*
+      Reply
+     */
+
+    /** UTIL */
+    BACK("◀️ Назад"),
+
+    /** MAIN */
+    BUY_BITCOIN("\uD83D\uDCB0 Купить"),
+    SELL_BITCOIN("\uD83D\uDCC8 Продать"),
+    CONTACTS("\uD83D\uDEC3 Контакты"),
+    DRAWS("\uD83C\uDFB0 Розыгрыши"),
+    ADMIN_PANEL("Админ панель"),
+
+    /** DRAWS */
+    LOTTERY("\uD83C\uDFB0 Лотерея"),
+    ROULETTE("\uD83C\uDFB0 Рулетка"); // TODO поменять смайл
 
     final String text;
 

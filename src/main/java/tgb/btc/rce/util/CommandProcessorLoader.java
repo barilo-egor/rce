@@ -39,6 +39,6 @@ public final class CommandProcessorLoader {
         return commandProcessors.stream()
                 .filter(processor -> processor.getAnnotation(CommandProcessor.class).command().equals(command))
                 .findFirst()
-                .orElseThrow(() -> new BaseException("Не найден процессор для команты " + command.name()));
+                .orElseThrow(() -> new BaseException("Не найден процессор для команды " + command.name()));
     }
 }
