@@ -9,6 +9,9 @@ public enum BotMessageType {
     DRAWS("Кн.Розыгрыши"),
     CONTACTS("Кн.Контакты"),
     SELL_BITCOIN("Кн.Продать"),
+
+    ROULETTE("Кн.рулетка"),
+
     WON_LOTTERY("Выигр.лотереи"),
     LOSE_LOTTERY("Проигр.лотереи");
 
