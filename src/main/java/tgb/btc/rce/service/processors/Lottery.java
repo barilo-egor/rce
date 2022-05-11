@@ -8,12 +8,14 @@ import tgb.btc.rce.bean.User;
 import tgb.btc.rce.enums.BotMessageType;
 import tgb.btc.rce.enums.BotVariableType;
 import tgb.btc.rce.enums.Command;
+import tgb.btc.rce.enums.PropertiesMessage;
 import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.impl.BotMessageService;
 import tgb.btc.rce.service.impl.BotVariableService;
 import tgb.btc.rce.service.impl.UserService;
 import tgb.btc.rce.util.MenuFactory;
+import tgb.btc.rce.util.MessagePropertiesUtil;
 import tgb.btc.rce.util.UpdateUtil;
 
 import java.util.Objects;
@@ -41,8 +43,8 @@ public class Lottery extends Processor {
     public void run(Update update) {
         User user = userService.findByChatId(update);
         if(Objects.isNull(user.getLotteryCount()) || user.getLotteryCount() == 0) {
-            responseSender.sendMessage(user.getChatId(), "У тебя нету попыток на игру в лотерею." +
-                    "Чтобы получить попытку соверши сделку\uD83D\uDC47");
+            responseSender.sendMessage(user.getChatId(),
+                    MessagePropertiesUtil.getMessage(PropertiesMessage.NO_LOTTERY_ATTEMPTS));
             return;
         }
         processLottery(update, user);
