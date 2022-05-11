@@ -7,7 +7,9 @@ import java.util.Arrays;
 public enum BotMessageType {
     START("Кн.Стартовое"),
     DRAWS("Кн.Розыгрыши"),
-    CONTACTS("Кн.Контакты");
+    CONTACTS("Кн.Контакты"),
+    WON_LOTTERY("Выигр.лотереи"),
+    LOSE_LOTTERY("Проигр.лотереи");
 
     final String displayName;
 

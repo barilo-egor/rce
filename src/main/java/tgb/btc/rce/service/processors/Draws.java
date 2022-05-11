@@ -9,19 +9,19 @@ import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.Menu;
 import tgb.btc.rce.service.IBotMessageService;
 import tgb.btc.rce.service.IResponseSender;
-import tgb.btc.rce.service.IUserService;
 import tgb.btc.rce.service.Processor;
+import tgb.btc.rce.service.impl.UserService;
 import tgb.btc.rce.util.MenuFactory;
 import tgb.btc.rce.util.UpdateUtil;
 
 @CommandProcessor(command = Command.DRAWS)
 public class Draws extends Processor {
 
-    private final IUserService userService;
+    private final UserService userService;
     private final IBotMessageService botMessageService;
 
     @Autowired
-    public Draws(IResponseSender responseSender, IUserService userService, IBotMessageService botMessageService) {
+    public Draws(IResponseSender responseSender, UserService userService, IBotMessageService botMessageService) {
         super(responseSender);
         this.userService = userService;
         this.botMessageService = botMessageService;
