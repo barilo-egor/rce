@@ -55,7 +55,7 @@ public enum Command {
 
     public static Command findByText(String value) {
         return Arrays.stream(Command.values())
-                .filter(command -> command.getText().equals(value))
+                .filter(command -> value.startsWith(command.getText()))
                 .findFirst()
                 .orElseThrow(() -> new BaseException("Команда для \"" + value + "\" не найдена."));
     }

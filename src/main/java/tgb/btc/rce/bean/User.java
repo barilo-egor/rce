@@ -3,6 +3,7 @@ package tgb.btc.rce.bean;
 import lombok.Builder;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.enums.Command;
+import tgb.btc.rce.util.CommandUtil;
 import tgb.btc.rce.util.UpdateUtil;
 
 import javax.persistence.*;
@@ -37,10 +38,14 @@ public class User extends BasePersist {
     @Column(name = "LOTTERY_COUNT")
     private Integer lotteryCount;
 
+    @Column(name = "FROM_CHAT_ID")
+    private Long fromChatId;
+
     public User() {
     }
 
-    public User(Long chatId, String username, Integer step, Command command, LocalDateTime registrationDate, boolean isAdmin, Integer lotteryCount) {
+    public User(Long chatId, String username, Integer step, Command command, LocalDateTime registrationDate,
+                boolean isAdmin, Integer lotteryCount, Long fromChatId) {
         this.chatId = chatId;
         this.username = username;
         this.step = step;
@@ -48,6 +53,7 @@ public class User extends BasePersist {
         this.registrationDate = registrationDate;
         this.isAdmin = isAdmin;
         this.lotteryCount = lotteryCount;
+        this.fromChatId = fromChatId;
     }
 
     public static User buildFromUpdate(Update update) {
@@ -59,6 +65,13 @@ public class User extends BasePersist {
         user.setStep(DEFAULT_STEP);
         user.setAdmin(false);
         user.setLotteryCount(0);
+        if (CommandUtil.isStartCommand(update)) {
+            try {
+                user.setFromChatId(Long.parseLong(
+                        update.getMessage().getText().replaceAll(Command.START.getText(), "")));
+            } catch (NumberFormatException ignored) {
+            }
+        }
         return user;
     }
 
@@ -121,5 +134,13 @@ public class User extends BasePersist {
 
     public void setLotteryCount(Integer lotteryCount) {
         this.lotteryCount = lotteryCount;
+    }
+
+    public Long getFromChatId() {
+        return fromChatId;
+    }
+
+    public void setFromChatId(Long fromChatId) {
+        this.fromChatId = fromChatId;
     }
 }
