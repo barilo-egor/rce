@@ -1,0 +1,55 @@
+package tgb.btc.rce.service.processors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.telegram.telegrambots.meta.api.objects.Update;
+import tgb.btc.rce.annotation.CommandProcessor;
+import tgb.btc.rce.bean.ReferralUser;
+import tgb.btc.rce.enums.Command;
+import tgb.btc.rce.enums.InlineType;
+import tgb.btc.rce.enums.PropertiesMessage;
+import tgb.btc.rce.service.IResponseSender;
+import tgb.btc.rce.service.Processor;
+import tgb.btc.rce.service.impl.UserService;
+import tgb.btc.rce.util.BotPropertiesUtil;
+import tgb.btc.rce.util.KeyboardUtil;
+import tgb.btc.rce.util.MessagePropertiesUtil;
+import tgb.btc.rce.util.UpdateUtil;
+import tgb.btc.rce.vo.InlineButton;
+
+import java.util.List;
+
+@CommandProcessor(command = Command.REFERRAL)
+public class Referral extends Processor {
+
+    private static final String BOT_LINK = "";
+
+    private final UserService userService;
+
+    @Autowired
+    public Referral(IResponseSender responseSender, UserService userService) {
+        super(responseSender);
+        this.userService = userService;
+    }
+
+    @Override
+    public void run(Update update) {
+        Long chatId = UpdateUtil.getChatId(update);
+        String startParameter = "?start=" + chatId;
+        String refLink = BotPropertiesUtil.getProperty("bot.link").concat(startParameter);
+        String currentBalance = userService.getReferralBalanceByChatId(chatId).toString();
+        List<ReferralUser> referralUsers = userService.getUserReferralsByChatId(chatId);
+        String numberOfReferrals = String.valueOf(referralUsers.size());
+        String sumFromReferrals = String.valueOf((Integer) referralUsers.stream()
+                .map(ReferralUser::getSum)
+                .mapToInt(Integer::intValue).sum());
+        String resultMessage = String.format(MessagePropertiesUtil.getMessage(PropertiesMessage.REFERRAL_MAIN),
+                refLink, currentBalance, numberOfReferrals, sumFromReferrals);
+        responseSender.sendMessage(chatId,
+                resultMessage,
+                KeyboardUtil.buildInline(List.of(InlineButton.builder()
+                                .text("Пригласить друга")
+                                .data("?start=" + chatId)
+                                .build()),
+                        InlineType.SWITCH_INLINE_QUERY));
+    }
+}

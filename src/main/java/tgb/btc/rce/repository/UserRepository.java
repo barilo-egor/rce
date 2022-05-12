@@ -5,8 +5,11 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+import tgb.btc.rce.bean.ReferralUser;
 import tgb.btc.rce.bean.User;
 import tgb.btc.rce.enums.Command;
+
+import java.util.List;
 
 @Repository
 @Transactional
@@ -34,4 +37,12 @@ public interface UserRepository extends BaseRepository<User> {
 
     @Query("select isAdmin from User where chatId=:chatId")
     boolean isAdminByChatId(@Param("chatId") Long chatId);
+
+    @Query("select referralBalance from User where chatId=:chatId")
+    Integer getReferralBalanceByChatId(@Param("chatId") Long chatId);
+
+    @Query("select referralUsers from User where chatId=:chatId")
+    List<ReferralUser> getUserReferralsByChatId(@Param("chatId") Long chatId);
+
+
 }

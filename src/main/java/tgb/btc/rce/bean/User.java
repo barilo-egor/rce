@@ -8,6 +8,7 @@ import tgb.btc.rce.util.UpdateUtil;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "USER")
@@ -41,11 +42,18 @@ public class User extends BasePersist {
     @Column(name = "FROM_CHAT_ID")
     private Long fromChatId;
 
+    @Column(name = "REFERRAL_BALANCE")
+    private Integer referralBalance;
+
+    @OneToMany
+    private List<ReferralUser> referralUsers;
+
     public User() {
     }
 
     public User(Long chatId, String username, Integer step, Command command, LocalDateTime registrationDate,
-                boolean isAdmin, Integer lotteryCount, Long fromChatId) {
+                boolean isAdmin, Integer lotteryCount, Long fromChatId, Integer referralBalance,
+                List<ReferralUser> referralUsers) {
         this.chatId = chatId;
         this.username = username;
         this.step = step;
@@ -54,6 +62,8 @@ public class User extends BasePersist {
         this.isAdmin = isAdmin;
         this.lotteryCount = lotteryCount;
         this.fromChatId = fromChatId;
+        this.referralBalance = referralBalance;
+        this.referralUsers = referralUsers;
     }
 
     public static User buildFromUpdate(Update update) {
@@ -142,5 +152,21 @@ public class User extends BasePersist {
 
     public void setFromChatId(Long fromChatId) {
         this.fromChatId = fromChatId;
+    }
+
+    public Integer getReferralBalance() {
+        return referralBalance;
+    }
+
+    public void setReferralBalance(Integer referralBalance) {
+        this.referralBalance = referralBalance;
+    }
+
+    public List<ReferralUser> getReferralUsers() {
+        return referralUsers;
+    }
+
+    public void setReferralUsers(List<ReferralUser> referralUsers) {
+        this.referralUsers = referralUsers;
     }
 }

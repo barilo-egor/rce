@@ -32,7 +32,7 @@ public final class BotPropertiesUtil {
 
     public static String getToken() {
         if (Objects.isNull(BOT_TOKEN)) {
-            BOT_TOKEN = botProperties.getProperty("bot.token");
+            BOT_TOKEN = getProperty("bot.token");
             if (Objects.isNull(BOT_TOKEN)) throw new BaseException("Токен бота не найден.");
         }
         return BOT_TOKEN;
@@ -40,9 +40,13 @@ public final class BotPropertiesUtil {
 
     public static String getUsername() {
         if (Objects.isNull(BOT_USERNAME)) {
-            BOT_USERNAME = botProperties.getProperty("bot.username");
+            BOT_USERNAME = getProperty("bot.username");
             if (Objects.isNull(BOT_TOKEN)) throw new BaseException("Юзернейм бота не найден.");
         }
         return BOT_USERNAME;
+    }
+
+    public static String getProperty(String key) {
+        return botProperties.getProperty(key);
     }
 }

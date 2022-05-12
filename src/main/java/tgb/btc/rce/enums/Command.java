@@ -26,6 +26,7 @@ public enum Command {
     SELL_BITCOIN("\uD83D\uDCC8 Продать"),
     CONTACTS("\uD83D\uDEC3 Контакты"),
     DRAWS("\uD83C\uDFB0 Розыгрыши"),
+    REFERRAL("\uD83E\uDD1D Реферальная программа"),
     ADMIN_PANEL("Админ панель"),
 
     /** DRAWS */

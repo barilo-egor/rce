@@ -1,7 +1,8 @@
 package tgb.btc.rce.enums;
 
 public enum PropertiesMessage {
-    NO_LOTTERY_ATTEMPTS("lottery.no_attempts");
+    NO_LOTTERY_ATTEMPTS("lottery.no_attempts"),
+    REFERRAL_MAIN("referral.main");
 
     final String key;
 
