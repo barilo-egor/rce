@@ -27,7 +27,7 @@ public final class CommandProcessorLoader {
                 .findFirst()
                 .ifPresent(processor -> {
                     throw new BaseException("Процессор " + processor.getSimpleName()
-                            + " не реализует интерфейс Runnable");
+                            + " не наследует асбтрактный класс Processor");
                 });
     }
 
