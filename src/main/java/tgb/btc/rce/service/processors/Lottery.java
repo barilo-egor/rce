@@ -55,7 +55,7 @@ public class Lottery extends Processor {
         }
         else {
             responseSender.sendBotMessage(botMessageService.findByType(BotMessageType.LOSE_LOTTERY), user.getChatId());
-            log.debug("Пользователь " + UpdateUtil.getChatId(update) + " проиграл лотерею.");
+            log.trace("Пользователь " + UpdateUtil.getChatId(update) + " проиграл лотерею.");
         }
         user.setLotteryCount(user.getLotteryCount() - 1);
         userService.save(user);
