@@ -47,11 +47,12 @@ public class Lottery extends Processor {
     }
 
     private void processLottery(Update update, User user) {
-        if (getRandomBoolean(BotVariablePropertiesUtil.getFloat(BotVariableType.PROBABILITY))) {
+        float probability = BotVariablePropertiesUtil.getFloat(BotVariableType.PROBABILITY);
+        if (getRandomBoolean(probability)) {
             responseSender.sendBotMessage(botMessageService.findByType(BotMessageType.WON_LOTTERY), user.getChatId(),
                     MenuFactory.getLink(BotStringConstants.WRITE_TO_OPERATOR_BUTTON_LABEL,
                             BotVariablePropertiesUtil.getVariable(BotVariableType.OPERATOR_LINK)));
-            log.debug("Пользователь " + UpdateUtil.getChatId(update) + " выиграл лотерею.");
+            log.debug("Пользователь " + UpdateUtil.getChatId(update) + " выиграл лотерею. Probability=" + probability);
         }
         else {
             responseSender.sendBotMessage(botMessageService.findByType(BotMessageType.LOSE_LOTTERY), user.getChatId());
