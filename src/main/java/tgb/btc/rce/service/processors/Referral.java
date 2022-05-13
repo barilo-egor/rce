@@ -39,9 +39,7 @@ public class Referral extends Processor {
         String currentBalance = userService.getReferralBalanceByChatId(chatId).toString();
         List<ReferralUser> referralUsers = userService.getUserReferralsByChatId(chatId);
         String numberOfReferrals = String.valueOf(referralUsers.size());
-        String sumFromReferrals = String.valueOf((Integer) referralUsers.stream()
-                .map(ReferralUser::getSum)
-                .mapToInt(Integer::intValue).sum());
+        String sumFromReferrals = getSumOfReferrals(referralUsers);
         String resultMessage = String.format(MessagePropertiesUtil.getMessage(PropertiesMessage.REFERRAL_MAIN),
                 refLink, currentBalance, numberOfReferrals, sumFromReferrals);
         responseSender.sendMessage(chatId,
@@ -51,5 +49,15 @@ public class Referral extends Processor {
                                 .data("?start=" + chatId)
                                 .build()),
                         InlineType.SWITCH_INLINE_QUERY));
+    }
+
+    private String getSumOfReferrals(List<ReferralUser> referralUsers) {
+        /* TODO Егор
+            У класса ReferralUser есть поле sum. Надо посчитать сумму всех юзеров и вернуть результат в виде строки.
+            List - почти тоже самое, что и массив, позже пройдем.
+            Если бы referralUsers был бы массивом, то чтобы получить элемент по индексу 1 ты бы использовал referralUsers[1],
+            а здесь используй referralUsers.get(1)
+         */
+        return null;
     }
 }
