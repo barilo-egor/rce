@@ -14,6 +14,7 @@ import tgb.btc.rce.util.CommandUtil;
 import tgb.btc.rce.util.UpdateUtil;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class UserService extends BasePersistService<User> {
@@ -35,17 +36,24 @@ public class UserService extends BasePersistService<User> {
     }
 
     public User register(Update update) {
-        User user = User.buildFromUpdate(update);
+        User newUser = User.buildFromUpdate(update);
+        User inviter = null;
         if (CommandUtil.isStartCommand(update)) {
             try {
                 Long chatIdFrom = Long.parseLong(update.getMessage().getText()
                         .replaceAll(Command.START.getText(), ""));
                 if (!existByChatId(chatIdFrom)) throw new BaseException();
-                user.setFromChatId(chatIdFrom);
+                inviter = userRepository.getByChatId(chatIdFrom);
+                newUser.setFromChatId(chatIdFrom);
             } catch (NumberFormatException | BaseException ignored) {
             }
         }
-        return userRepository.save(user);
+        User savedNewUser = userRepository.save(newUser);
+        if (Objects.nonNull(inviter)) {
+            inviter.getReferralUsers().add(ReferralUser.buildDefault(newUser.getChatId()));
+            userRepository.save(inviter);
+        }
+        return savedNewUser;
     }
 
     public boolean existByChatId(Long chatId) {

@@ -24,6 +24,13 @@ public class ReferralUser extends BasePersist{
         this.sum = sum;
     }
 
+    public static ReferralUser buildDefault(Long chatId) {
+        ReferralUser referralUser = new ReferralUser();
+        referralUser.setChatId(chatId);
+        referralUser.setSum(0);
+        return referralUser;
+    }
+
     public Long getChatId() {
         return chatId;
     }
