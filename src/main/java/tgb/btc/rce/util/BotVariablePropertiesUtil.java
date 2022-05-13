@@ -13,7 +13,6 @@ import java.util.Properties;
 @Slf4j
 public class BotVariablePropertiesUtil {
 
-    private final static String errorMessage = "Не найдена переменная по ключу %s";
     private final static String wrongFormat = "Неверный формат переменной по ключу %s";
 
     private final static Properties botVariableProperties = new Properties();
