@@ -5,23 +5,29 @@ import tgb.btc.rce.exception.BaseException;
 import java.util.Arrays;
 
 public enum BotVariableType {
-    USD_COURSE("Курс доллара"),
-    FIX_RU("Фикс рублей"),
-    FIX_COMMISSION("Фикс комиссия РФ"),
-    COMMISSION("Комиссия"),
-    OPERATOR_LINK("Ссылка на оператора"),
-    PROBABILITY("Шанс лотереи"),
-    MIN_SUM("Мин.сумма"),
-    TRANSACTION_COMMISSION("Транз.комиссия");
+    USD_COURSE("Курс доллара", "course.usd"),
+    FIX_RU("Фикс рублей", "fix.rub"),
+    FIX_COMMISSION("Фикс комиссия", "commission.fix"),
+    COMMISSION("Комиссия", "commission.main"),
+    OPERATOR_LINK("Ссылка на оператора", "operator.link"),
+    PROBABILITY("Шанс лотереи", "lottery.chance"),
+    MIN_SUM("Мин.сумма", "deal.sum.min"),
+    TRANSACTION_COMMISSION("Транз.комиссия", "transaction.commission");
 
     final String displayName;
+    final String key;
 
-    BotVariableType(String displayName) {
+    BotVariableType(String displayName, String key) {
         this.displayName = displayName;
+        this.key = key;
     }
 
     public String getDisplayName() {
         return displayName;
+    }
+
+    public String getKey() {
+        return key;
     }
 
     public static BotVariableType getByDisplayName(String name) {

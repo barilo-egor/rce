@@ -13,8 +13,8 @@ import tgb.btc.rce.enums.PropertiesMessage;
 import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.impl.BotMessageService;
-import tgb.btc.rce.service.impl.BotVariableService;
 import tgb.btc.rce.service.impl.UserService;
+import tgb.btc.rce.util.BotVariablePropertiesUtil;
 import tgb.btc.rce.util.MenuFactory;
 import tgb.btc.rce.util.MessagePropertiesUtil;
 import tgb.btc.rce.util.UpdateUtil;
@@ -27,15 +27,12 @@ public class Lottery extends Processor {
 
     private final BotMessageService botMessageService;
     private final UserService userService;
-    private final BotVariableService botVariableService;
 
     @Autowired
-    public Lottery(IResponseSender responseSender, BotMessageService botMessageService, UserService userService,
-                   BotVariableService botVariableService) {
+    public Lottery(IResponseSender responseSender, BotMessageService botMessageService, UserService userService) {
         super(responseSender);
         this.botMessageService = botMessageService;
         this.userService = userService;
-        this.botVariableService = botVariableService;
     }
 
     @Override
@@ -50,10 +47,10 @@ public class Lottery extends Processor {
     }
 
     private void processLottery(Update update, User user) {
-        if (getRandomBoolean(Float.parseFloat(botVariableService.findByType(BotVariableType.PROBABILITY).getValue()))) {
+        if (getRandomBoolean(BotVariablePropertiesUtil.getFloat(BotVariableType.PROBABILITY))) {
             responseSender.sendBotMessage(botMessageService.findByType(BotMessageType.WON_LOTTERY), user.getChatId(),
                     MenuFactory.getLink(BotStringConstants.WRITE_TO_OPERATOR_BUTTON_LABEL,
-                            botVariableService.findByType(BotVariableType.OPERATOR_LINK).getValue()));
+                            BotVariablePropertiesUtil.getVariable(BotVariableType.OPERATOR_LINK)));
             log.debug("Пользователь " + UpdateUtil.getChatId(update) + " выиграл лотерею.");
         }
         else {
