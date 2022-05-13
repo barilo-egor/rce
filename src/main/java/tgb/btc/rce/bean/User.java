@@ -3,6 +3,7 @@ package tgb.btc.rce.bean;
 import lombok.Builder;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.enums.Command;
+import tgb.btc.rce.exception.BaseException;
 import tgb.btc.rce.util.CommandUtil;
 import tgb.btc.rce.util.UpdateUtil;
 
@@ -75,13 +76,6 @@ public class User extends BasePersist {
         user.setStep(DEFAULT_STEP);
         user.setAdmin(false);
         user.setLotteryCount(0);
-        if (CommandUtil.isStartCommand(update)) {
-            try {
-                user.setFromChatId(Long.parseLong(
-                        update.getMessage().getText().replaceAll(Command.START.getText(), "")));
-            } catch (NumberFormatException ignored) {
-            }
-        }
         return user;
     }
 

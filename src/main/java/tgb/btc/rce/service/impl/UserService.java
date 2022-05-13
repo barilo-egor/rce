@@ -7,8 +7,10 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.bean.ReferralUser;
 import tgb.btc.rce.bean.User;
 import tgb.btc.rce.enums.Command;
+import tgb.btc.rce.exception.BaseException;
 import tgb.btc.rce.repository.BaseRepository;
 import tgb.btc.rce.repository.UserRepository;
+import tgb.btc.rce.util.CommandUtil;
 import tgb.btc.rce.util.UpdateUtil;
 
 import java.util.List;
@@ -34,6 +36,15 @@ public class UserService extends BasePersistService<User> {
 
     public User register(Update update) {
         User user = User.buildFromUpdate(update);
+        if (CommandUtil.isStartCommand(update)) {
+            try {
+                Long chatIdFrom = Long.parseLong(update.getMessage().getText()
+                        .replaceAll(Command.START.getText(), ""));
+                if (!existByChatId(chatIdFrom)) throw new BaseException();
+                user.setFromChatId(chatIdFrom);
+            } catch (NumberFormatException | BaseException ignored) {
+            }
+        }
         return userRepository.save(user);
     }
 
