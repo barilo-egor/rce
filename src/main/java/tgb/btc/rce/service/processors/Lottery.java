@@ -53,8 +53,7 @@ public class Lottery extends Processor {
                     MenuFactory.getLink(BotStringConstants.WRITE_TO_OPERATOR_BUTTON_LABEL,
                             BotVariablePropertiesUtil.getVariable(BotVariableType.OPERATOR_LINK)));
             log.debug("Пользователь " + UpdateUtil.getChatId(update) + " выиграл лотерею. Probability=" + probability);
-        }
-        else {
+        } else {
             responseSender.sendBotMessage(botMessageService.findByType(BotMessageType.LOSE_LOTTERY), user.getChatId());
             log.trace("Пользователь " + UpdateUtil.getChatId(update) + " проиграл лотерею.");
         }
