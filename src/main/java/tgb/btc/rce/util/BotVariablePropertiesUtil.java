@@ -14,6 +14,7 @@ import java.util.Properties;
 public class BotVariablePropertiesUtil {
 
     private final static String errorMessage = "Не найдена переменная по ключу %s";
+    private final static String wrongFormat = "Неверный формат переменной по ключу %s";
 
     private final static Properties botVariableProperties = new Properties();
 
@@ -41,7 +42,15 @@ public class BotVariablePropertiesUtil {
         try {
             return Float.parseFloat(getVariable(botVariableType));
         } catch (NumberFormatException e) {
-            throw new BaseException("Неверный формат переменной по ключу " + botVariableType.getKey());
+            throw new BaseException(String.format(wrongFormat, botVariableType.getKey()));
+        }
+    }
+
+    public static Integer getInt(BotVariableType botVariableType) {
+        try {
+            return Integer.parseInt(getVariable(botVariableType));
+        } catch (NumberFormatException e) {
+            throw new BaseException(String.format(wrongFormat, botVariableType.getKey()));
         }
     }
 }

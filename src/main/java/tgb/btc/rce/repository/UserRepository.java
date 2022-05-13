@@ -45,4 +45,6 @@ public interface UserRepository extends BaseRepository<User> {
     List<ReferralUser> getUserReferralsByChatId(@Param("chatId") Long chatId);
 
     User getByChatId(Long chatId);
+
+
 }

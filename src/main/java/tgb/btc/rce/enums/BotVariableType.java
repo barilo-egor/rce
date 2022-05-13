@@ -12,7 +12,8 @@ public enum BotVariableType {
     OPERATOR_LINK("Ссылка на оператора", "operator.link"),
     PROBABILITY("Шанс лотереи", "lottery.chance"),
     MIN_SUM("Мин.сумма", "deal.sum.min"),
-    TRANSACTION_COMMISSION("Транз.комиссия", "transaction.commission");
+    TRANSACTION_COMMISSION("Транз.комиссия", "transaction.commission"),
+    MIN_WITHDRAWAL_OF_FUNDS_SUM("Мин.сумма вывода средств", "withdrawal.sum.min");
 
     final String displayName;
     final String key;
