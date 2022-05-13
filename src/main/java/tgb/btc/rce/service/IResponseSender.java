@@ -22,4 +22,6 @@ public interface IResponseSender {
     Optional<Message> sendBotMessage(BotMessage botMessage, Long chatId, ReplyKeyboard replyKeyboard);
 
     Optional<Message> sendBotMessage(BotMessage botMessage, Long chatId);
+
+    void deleteMessage(Long chatId, Integer messageId);
 }

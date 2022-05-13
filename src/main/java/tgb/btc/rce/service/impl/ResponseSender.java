@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendAnimation;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
@@ -99,6 +100,18 @@ public class ResponseSender implements IResponseSender {
             log.debug("Не получилось отправить анимацию: chatId=" + chatId + ", caption="
                     + caption + ", animation=" + animation, e);
             return Optional.empty();
+        }
+    }
+
+    public void deleteMessage(Long chatId, Integer messageId) {
+        try {
+            bot.execute(DeleteMessage.builder()
+                    .chatId(chatId.toString())
+                    .messageId(messageId)
+                    .build());
+        } catch (TelegramApiException e) {
+            log.debug("Не получилось отправить измененное сообщение : chatId=" + chatId
+                    + ", messageId=" + messageId, e);
         }
     }
 }

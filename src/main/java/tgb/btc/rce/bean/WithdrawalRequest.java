@@ -27,6 +27,14 @@ public class WithdrawalRequest extends BasePersist {
         this.status = status;
     }
 
+    public static WithdrawalRequest buildFromUpdate(User user, Integer inputSum) {
+        WithdrawalRequest withdrawalRequest = new WithdrawalRequest();
+        withdrawalRequest.setUser(user);
+        withdrawalRequest.setStatus(WithdrawalRequestStatus.CREATED);
+        withdrawalRequest.setSum(inputSum);
+        return withdrawalRequest;
+    }
+
     public User getUser() {
         return user;
     }

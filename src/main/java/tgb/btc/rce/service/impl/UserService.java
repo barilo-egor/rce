@@ -79,4 +79,12 @@ public class UserService extends BasePersistService<User> {
     public List<ReferralUser> getUserReferralsByChatId(@Param("chatId") Long chatId) {
         return userRepository.getUserReferralsByChatId(chatId);
     }
+
+    public void nextStep(Long chatId) {
+        userRepository.nextStep(chatId);
+    }
+
+    public List<Long> getAdminsChatIds() {
+        return userRepository.getAdminsChatIds();
+    }
 }

@@ -117,6 +117,10 @@ public final class KeyboardUtil {
         return buildReply(numberOfColumns, oneTime, true, buttons);
     }
 
+    public static ReplyKeyboardMarkup buildReply(List<ReplyButton> buttons, boolean oneTime) {
+        return buildReply(1, oneTime, true, buttons);
+    }
+
     public static ReplyKeyboardMarkup buildReply(int numberOfColumns, boolean oneTime, boolean resize, List<ReplyButton> buttons) {
         List<KeyboardRow> rows = new ArrayList<>();
         KeyboardRow row = new KeyboardRow();

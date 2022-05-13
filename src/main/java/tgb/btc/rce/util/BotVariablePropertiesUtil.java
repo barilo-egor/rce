@@ -52,4 +52,8 @@ public class BotVariablePropertiesUtil {
             throw new BaseException(String.format(wrongFormat, botVariableType.getKey()));
         }
     }
+
+    public static Integer getMinSumForWithdrawal() {
+        return getInt(BotVariableType.MIN_WITHDRAWAL_OF_FUNDS_SUM);
+    }
 }
