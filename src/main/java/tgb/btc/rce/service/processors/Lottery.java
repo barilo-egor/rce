@@ -26,13 +26,11 @@ import java.util.Objects;
 public class Lottery extends Processor {
 
     private final BotMessageService botMessageService;
-    private final UserService userService;
 
     @Autowired
-    public Lottery(IResponseSender responseSender, BotMessageService botMessageService, UserService userService) {
-        super(responseSender);
+    public Lottery(IResponseSender responseSender, UserService userService, BotMessageService botMessageService) {
+        super(responseSender, userService);
         this.botMessageService = botMessageService;
-        this.userService = userService;
     }
 
     @Override

@@ -1,15 +1,18 @@
 package tgb.btc.rce.service.processors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.bean.ReferralUser;
+import tgb.btc.rce.bean.WithdrawalRequest;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.InlineType;
 import tgb.btc.rce.enums.PropertiesMessage;
 import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.impl.UserService;
+import tgb.btc.rce.service.impl.WithdrawalRequestService;
 import tgb.btc.rce.util.BotPropertiesUtil;
 import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.MessagePropertiesUtil;
@@ -21,12 +24,13 @@ import java.util.List;
 @CommandProcessor(command = Command.REFERRAL)
 public class Referral extends Processor {
 
-    private final UserService userService;
+    private final WithdrawalRequestService withdrawalRequestService;
 
     @Autowired
-    public Referral(IResponseSender responseSender, UserService userService) {
-        super(responseSender);
-        this.userService = userService;
+    public Referral(IResponseSender responseSender, UserService userService,
+                    WithdrawalRequestService withdrawalRequestService) {
+        super(responseSender, userService);
+        this.withdrawalRequestService = withdrawalRequestService;
     }
 
     @Override
@@ -38,6 +42,9 @@ public class Referral extends Processor {
         List<ReferralUser> referralUsers = userService.getUserReferralsByChatId(chatId);
         String numberOfReferrals = String.valueOf(referralUsers.size());
         String sumFromReferrals = getSumOfReferrals(referralUsers);
+        Integer reserve = withdrawalRequestService.getCreatedTotalSumByChatId(chatId);
+        if (StringUtils.hasLength(sumFromReferrals) && reserve > 0)
+            sumFromReferrals = sumFromReferrals.concat("(в резерве " + reserve);
 
         String resultMessage = String.format(MessagePropertiesUtil.getMessage(PropertiesMessage.REFERRAL_MAIN),
                 refLink, currentBalance, numberOfReferrals, sumFromReferrals);

@@ -12,8 +12,8 @@ public class WithdrawalRequest extends BasePersist {
     @ManyToOne(fetch = FetchType.EAGER)
     private User user;
 
-    @Column(name = "SUM")
-    private Integer sum;
+    @Column(name = "REQUESTED_SUM")
+    private Integer requestedSum;
 
     @Column(name = "STATUS")
     private WithdrawalRequestStatus status;
@@ -21,9 +21,9 @@ public class WithdrawalRequest extends BasePersist {
     public WithdrawalRequest() {
     }
 
-    public WithdrawalRequest(User user, Integer sum, WithdrawalRequestStatus status) {
+    public WithdrawalRequest(User user, Integer requestedSum, WithdrawalRequestStatus status) {
         this.user = user;
-        this.sum = sum;
+        this.requestedSum = requestedSum;
         this.status = status;
     }
 
@@ -31,7 +31,7 @@ public class WithdrawalRequest extends BasePersist {
         WithdrawalRequest withdrawalRequest = new WithdrawalRequest();
         withdrawalRequest.setUser(user);
         withdrawalRequest.setStatus(WithdrawalRequestStatus.CREATED);
-        withdrawalRequest.setSum(inputSum);
+        withdrawalRequest.setRequestedSum(inputSum);
         return withdrawalRequest;
     }
 
@@ -43,12 +43,12 @@ public class WithdrawalRequest extends BasePersist {
         this.user = user;
     }
 
-    public Integer getSum() {
-        return sum;
+    public Integer getRequestedSum() {
+        return requestedSum;
     }
 
-    public void setSum(Integer sum) {
-        this.sum = sum;
+    public void setRequestedSum(Integer sum) {
+        this.requestedSum = sum;
     }
 
     public WithdrawalRequestStatus getStatus() {

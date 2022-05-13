@@ -16,8 +16,9 @@ public abstract class Processor {
     protected IResponseSender responseSender;
     protected UserService userService;
 
-    public Processor(IResponseSender responseSender) {
+    public Processor(IResponseSender responseSender, UserService userService) {
         this.responseSender = responseSender;
+        this.userService = userService;
     }
 
     public abstract void run(Update update);

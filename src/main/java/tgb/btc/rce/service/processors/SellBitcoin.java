@@ -10,6 +10,7 @@ import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.impl.BotMessageService;
+import tgb.btc.rce.service.impl.UserService;
 import tgb.btc.rce.util.BotVariablePropertiesUtil;
 import tgb.btc.rce.util.MenuFactory;
 import tgb.btc.rce.util.UpdateUtil;
@@ -19,8 +20,8 @@ public class SellBitcoin extends Processor {
     private final BotMessageService botMessageService;
 
     @Autowired
-    public SellBitcoin(IResponseSender responseSender, BotMessageService botMessageService) {
-        super(responseSender);
+    public SellBitcoin(IResponseSender responseSender, UserService userService, BotMessageService botMessageService) {
+        super(responseSender, userService);
         this.botMessageService = botMessageService;
     }
 

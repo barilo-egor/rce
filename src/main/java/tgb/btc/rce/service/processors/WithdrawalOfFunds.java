@@ -13,13 +13,12 @@ import tgb.btc.rce.util.UpdateUtil;
 @CommandProcessor(command = Command.WITHDRAWAL_OF_FUNDS)
 public class WithdrawalOfFunds extends Processor {
     private final WithdrawalOfFundsService withdrawalOfFundsService;
-    private final UserService userService;
 
     @Autowired
-    public WithdrawalOfFunds(IResponseSender responseSender, WithdrawalOfFundsService withdrawalOfFundsService, UserService userService) {
-        super(responseSender);
+    public WithdrawalOfFunds(IResponseSender responseSender, UserService userService,
+                             WithdrawalOfFundsService withdrawalOfFundsService) {
+        super(responseSender, userService);
         this.withdrawalOfFundsService = withdrawalOfFundsService;
-        this.userService = userService;
     }
 
     @Override
