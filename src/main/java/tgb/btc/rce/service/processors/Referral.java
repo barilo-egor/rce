@@ -21,8 +21,6 @@ import java.util.List;
 @CommandProcessor(command = Command.REFERRAL)
 public class Referral extends Processor {
 
-    private static final String BOT_LINK = "";
-
     private final UserService userService;
 
     @Autowired
@@ -40,15 +38,24 @@ public class Referral extends Processor {
         List<ReferralUser> referralUsers = userService.getUserReferralsByChatId(chatId);
         String numberOfReferrals = String.valueOf(referralUsers.size());
         String sumFromReferrals = getSumOfReferrals(referralUsers);
+
         String resultMessage = String.format(MessagePropertiesUtil.getMessage(PropertiesMessage.REFERRAL_MAIN),
                 refLink, currentBalance, numberOfReferrals, sumFromReferrals);
-        responseSender.sendMessage(chatId,
-                resultMessage,
-                KeyboardUtil.buildInline(List.of(InlineButton.builder()
-                                .text("Пригласить друга")
-                                .data("?start=" + chatId)
-                                .build()),
-                        InlineType.SWITCH_INLINE_QUERY));
+
+        responseSender.sendMessage(chatId, resultMessage, KeyboardUtil.buildInlineDiff(getButtons(chatId)));
+    }
+
+    private List<InlineButton> getButtons(Long chatId) {
+        return List.of(InlineButton.builder()
+                        .text("Пригласить друга")
+                        .data("?start=" + chatId)
+                        .inlineType(InlineType.SWITCH_INLINE_QUERY)
+                        .build(),
+                InlineButton.builder()
+                        .text("Вывод средств")
+                        .data(Command.WITHDRAWAL_OF_FUNDS.getText())
+                        .inlineType(InlineType.CALLBACK_DATA)
+                        .build());
     }
 
     private String getSumOfReferrals(List<ReferralUser> referralUsers) {

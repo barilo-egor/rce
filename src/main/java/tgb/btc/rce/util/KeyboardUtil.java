@@ -65,6 +65,46 @@ public final class KeyboardUtil {
                 .build();
     }
 
+    public static InlineKeyboardMarkup buildInlineDiff(List<InlineButton> buttons) {
+        return buildInlineDiff(buttons, 1);
+    }
+
+    public static InlineKeyboardMarkup buildInlineDiff(List<InlineButton> buttons, int numberOfColumns) {
+        List<List<InlineKeyboardButton>> rows = new ArrayList<>();
+        List<InlineKeyboardButton> row = new ArrayList<>();
+        int j = 0;
+
+        for (int i = 0; i < buttons.size(); i++) {
+            InlineKeyboardButton inlineKeyboardButton = new InlineKeyboardButton();
+            inlineKeyboardButton.setText(buttons.get(i).getText());
+            String data = buttons.get(i).getData();
+            switch (buttons.get(i).getInlineType()) {
+                case URL:
+                    inlineKeyboardButton.setUrl(data);
+                    break;
+                case CALLBACK_DATA:
+                    inlineKeyboardButton.setCallbackData(data);
+                    break;
+                case SWITCH_INLINE_QUERY:
+                    inlineKeyboardButton.setSwitchInlineQuery(data);
+                    break;
+                case SWITCH_INLINE_QUERY_CURRENT_CHAT:
+                    inlineKeyboardButton.setSwitchInlineQueryCurrentChat(data);
+                    break;
+            }
+            row.add(inlineKeyboardButton);
+            j++;
+            if (j == numberOfColumns || i == (buttons.size() - 1)) {
+                rows.add(row);
+                row = new ArrayList<>();
+                j = 0;
+            }
+        }
+        return InlineKeyboardMarkup.builder()
+                .keyboard(rows)
+                .build();
+    }
+
     public static ReplyKeyboardMarkup buildReply(List<ReplyButton> buttons) {
         return buildReply(1, false, true, buttons);
     }

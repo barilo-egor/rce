@@ -31,7 +31,10 @@ public enum Command {
 
     /** DRAWS */
     LOTTERY("\uD83C\uDFB0 Лотерея"),
-    ROULETTE("\uD83C\uDFB0 Рулетка"); // TODO поменять смайл
+    ROULETTE("\uD83C\uDFB0 Рулетка"), // TODO поменять смайл
+
+    /** REFERRAL */
+    WITHDRAWAL_OF_FUNDS("withdrawal");
 
     final String text;
 
