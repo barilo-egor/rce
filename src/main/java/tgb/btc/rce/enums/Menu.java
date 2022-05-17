@@ -4,7 +4,8 @@ import java.util.List;
 
 public enum Menu {
     MAIN(List.of(Command.BUY_BITCOIN, Command.SELL_BITCOIN, Command.CONTACTS, Command.DRAWS)),
-    DRAWS(List.of(Command.LOTTERY, Command.ROULETTE, Command.BACK));
+    DRAWS(List.of(Command.LOTTERY, Command.ROULETTE, Command.BACK)),
+    ASK_CONTACT(List.of(Command.SHARE_CONTACT, Command.BACK));
 
     final List<Command> commands;
 

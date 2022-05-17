@@ -31,7 +31,7 @@ public class WithdrawalOfFunds extends Processor {
                     withdrawalOfFundsService.sendMinSumMessage(chatId);
                     return;
                 }
-                withdrawalOfFundsService.askForSum(UpdateUtil.getMessageId(update), chatId);
+                withdrawalOfFundsService.askForContact(chatId, UpdateUtil.getMessageId(update));
                 break;
             case 1:
                 if (withdrawalOfFundsService.createRequest(update)) processToMainMenu(chatId);

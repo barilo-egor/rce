@@ -1,6 +1,7 @@
 package tgb.btc.rce.bean;
 
 import lombok.Builder;
+import org.springframework.beans.factory.annotation.Autowired;
 import tgb.btc.rce.enums.WithdrawalRequestStatus;
 
 import javax.persistence.*;
@@ -12,8 +13,11 @@ public class WithdrawalRequest extends BasePersist {
     @ManyToOne(fetch = FetchType.EAGER)
     private User user;
 
-    @Column(name = "REQUESTED_SUM")
-    private Integer requestedSum;
+    @Column(name = "USERNAME")
+    private String username;
+
+    @Column(name = "PHONE_NUMBER")
+    private String phoneNumber;
 
     @Column(name = "STATUS")
     private WithdrawalRequestStatus status;
@@ -21,17 +25,17 @@ public class WithdrawalRequest extends BasePersist {
     public WithdrawalRequest() {
     }
 
-    public WithdrawalRequest(User user, Integer requestedSum, WithdrawalRequestStatus status) {
+    public WithdrawalRequest(User user, String username, String phoneNumber, WithdrawalRequestStatus status) {
         this.user = user;
-        this.requestedSum = requestedSum;
+        this.username = username;
+        this.phoneNumber = phoneNumber;
         this.status = status;
     }
 
-    public static WithdrawalRequest buildFromUpdate(User user, Integer inputSum) {
+    public static WithdrawalRequest buildFromUpdate(User user) {
         WithdrawalRequest withdrawalRequest = new WithdrawalRequest();
         withdrawalRequest.setUser(user);
         withdrawalRequest.setStatus(WithdrawalRequestStatus.CREATED);
-        withdrawalRequest.setRequestedSum(inputSum);
         return withdrawalRequest;
     }
 
@@ -43,19 +47,27 @@ public class WithdrawalRequest extends BasePersist {
         this.user = user;
     }
 
-    public Integer getRequestedSum() {
-        return requestedSum;
-    }
-
-    public void setRequestedSum(Integer sum) {
-        this.requestedSum = sum;
-    }
-
     public WithdrawalRequestStatus getStatus() {
         return status;
     }
 
     public void setStatus(WithdrawalRequestStatus status) {
         this.status = status;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 }

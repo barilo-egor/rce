@@ -21,6 +21,7 @@ public enum Command {
     /** UTIL */
     BACK("◀️ Назад"),
     CANCEL("Отмена"),
+    SHARE_CONTACT("Поделиться контактом"),
 
     /** MAIN */
     BUY_BITCOIN("\uD83D\uDCB0 Купить"),
