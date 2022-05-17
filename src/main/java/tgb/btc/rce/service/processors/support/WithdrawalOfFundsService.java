@@ -1,13 +1,14 @@
 package tgb.btc.rce.service.processors.support;
 
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.bean.WithdrawalRequest;
+import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.BotVariableType;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.PropertiesMessage;
-import tgb.btc.rce.enums.WithdrawalRequestStatus;
 import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.impl.AdminService;
 import tgb.btc.rce.service.impl.UserService;
@@ -55,16 +56,28 @@ public class WithdrawalOfFundsService {
                 false));
     }
 
-    public void createRequest(Update update) {
+    public boolean createRequest(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
         Integer inputSum = NumberUtil.getInputInt(UpdateUtil.getMessageText(update));
         if (inputSum < BotVariablePropertiesUtil.getMinSumForWithdrawal()) {
             responseSender.sendMessage(chatId, MessagePropertiesUtil.getMessage(PropertiesMessage.WITHDRAWAL_MIN_SUM));
-            return;
+            return false;
         }
-        withdrawalRequestService.save(WithdrawalRequest.buildFromUpdate(userService.findByChatId(update), inputSum));
-        adminService.notify(MessagePropertiesUtil.getMessage(PropertiesMessage.ADMIN_NOTIFY_WITHDRAWAL_NEW));
+        int reserve = withdrawalRequestService.getCreatedTotalSumByChatId(chatId);
+        int balanceWithoutReserve = userService.getReferralBalanceByChatId(chatId) - reserve;
+        if (balanceWithoutReserve < BotVariablePropertiesUtil.getMinSumForWithdrawal()) {
+            String reserveText = reserve > 0 ? "В резерве " + reserve + " руб." : Strings.EMPTY;
+            responseSender.sendMessage(chatId,
+                    String.format(MessagePropertiesUtil.getMessage(PropertiesMessage.INSUFFICIENT_FUNDS), reserveText));
+            return false;
+        }
+        WithdrawalRequest request = withdrawalRequestService.save(
+                WithdrawalRequest.buildFromUpdate(userService.findByChatId(update), inputSum));
+        adminService.notify(MessagePropertiesUtil.getMessage(PropertiesMessage.ADMIN_NOTIFY_WITHDRAWAL_NEW),
+                Command.SHOW_WITHDRAWAL_REQUEST.getText() + BotStringConstants.CALLBACK_DATA_SPLITTER +
+                        request.getPid());
         responseSender.sendMessage(chatId,
                 MessagePropertiesUtil.getMessage(PropertiesMessage.USER_RESPONSE_WITHDRAWAL_REQUEST_CREATED));
+        return true;
     }
 }

@@ -87,4 +87,11 @@ public class UserService extends BasePersistService<User> {
     public List<Long> getAdminsChatIds() {
         return userRepository.getAdminsChatIds();
     }
+
+    @Override
+    public User save(User user) {
+        if (user.getReferralBalance() < 0)
+            throw new BaseException("Сохранения пользователя невозможно, т.к. реферальный баланс отрицателен. " + user);
+        return userRepository.save(user);
+    }
 }

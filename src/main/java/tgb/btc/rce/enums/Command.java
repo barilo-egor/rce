@@ -35,7 +35,8 @@ public enum Command {
     ROULETTE("\uD83C\uDFB0 Рулетка"), // TODO поменять смайл
 
     /** REFERRAL */
-    WITHDRAWAL_OF_FUNDS("withdrawal");
+    WITHDRAWAL_OF_FUNDS("withdrawal"),
+    SHOW_WITHDRAWAL_REQUEST("show_withdrawal");
 
     final String text;
 

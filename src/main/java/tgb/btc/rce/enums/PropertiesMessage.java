@@ -7,7 +7,9 @@ public enum PropertiesMessage {
     WITHDRAWAL_ASK_SUM("withdrawal.ask.sum"),
     MENU_MAIN("menu.main"),
     ADMIN_NOTIFY_WITHDRAWAL_NEW("admin.notify.withdrawal.new"),
-    USER_RESPONSE_WITHDRAWAL_REQUEST_CREATED("user.response.withdrawal.created");
+    USER_RESPONSE_WITHDRAWAL_REQUEST_CREATED("user.response.withdrawal.created"),
+
+    INSUFFICIENT_FUNDS("withdrawal.insufficient.funds");
 
     final String key;
 
