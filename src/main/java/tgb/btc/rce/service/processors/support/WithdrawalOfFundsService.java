@@ -1,6 +1,5 @@
 package tgb.btc.rce.service.processors.support;
 
-import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -8,15 +7,16 @@ import tgb.btc.rce.bean.WithdrawalRequest;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.BotVariableType;
 import tgb.btc.rce.enums.Command;
+import tgb.btc.rce.enums.Menu;
 import tgb.btc.rce.enums.PropertiesMessage;
 import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.impl.AdminService;
 import tgb.btc.rce.service.impl.UserService;
 import tgb.btc.rce.service.impl.WithdrawalRequestService;
-import tgb.btc.rce.util.*;
-import tgb.btc.rce.vo.ReplyButton;
-
-import java.util.List;
+import tgb.btc.rce.util.BotVariablePropertiesUtil;
+import tgb.btc.rce.util.MenuFactory;
+import tgb.btc.rce.util.MessagePropertiesUtil;
+import tgb.btc.rce.util.UpdateUtil;
 
 @Service
 public class WithdrawalOfFundsService {
@@ -77,15 +77,6 @@ public class WithdrawalOfFundsService {
         responseSender.deleteMessage(chatId, messageId);
         userService.nextStep(chatId);
         responseSender.sendMessage(chatId, MessagePropertiesUtil.getMessage(PropertiesMessage.WITHDRAWAL_ASK_CONTACT),
-                KeyboardUtil.buildReply(List.of(
-                                ReplyButton.builder()
-                                        .text(Command.SHARE_CONTACT.getText())
-                                        .isRequestContact(true)
-                                        .build(),
-                                ReplyButton.builder()
-                                        .text(Command.CANCEL.getText())
-                                        .isRequestContact(true)
-                                        .build()),
-                        false));
+                MenuFactory.build(Menu.ASK_CONTACT, userService.isAdminByChatId(chatId)));
     }
 }
