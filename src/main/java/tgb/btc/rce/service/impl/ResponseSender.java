@@ -7,8 +7,10 @@ import org.telegram.telegrambots.meta.api.methods.send.SendAnimation;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Message;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import tgb.btc.rce.bean.BotMessage;
@@ -112,6 +114,19 @@ public class ResponseSender implements IResponseSender {
         } catch (TelegramApiException e) {
             log.debug("Не получилось отправить измененное сообщение : chatId=" + chatId
                     + ", messageId=" + messageId, e);
+        }
+    }
+
+    public void sendEditedMessageText(Long chatId, Integer messageId, String text, InlineKeyboardMarkup keyboard) {
+        try {
+            bot.execute(EditMessageText.builder()
+                    .chatId(chatId.toString())
+                    .messageId(messageId)
+                    .text(text)
+                    .replyMarkup(keyboard)
+                    .build());
+        } catch (TelegramApiException e) {
+            log.debug("Не получилось отправить измененное сообщение: chatId" + chatId + ", text=" + text, e);
         }
     }
 }

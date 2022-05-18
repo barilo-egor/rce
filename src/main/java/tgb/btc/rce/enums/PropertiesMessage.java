@@ -11,7 +11,8 @@ public enum PropertiesMessage {
     WITHDRAWAL_ERROR_CONTACT("withdrawal.error.contact"),
     WITHDRAWAL_TO_STRING("withdrawal.to.string"),
     CONTACT_ASK_INPUT("contact.ask.input"),
-    MENU_MAIN_ADMIN("menu.main.admin");
+    MENU_MAIN_ADMIN("menu.main.admin"),
+    CONTACT_ASK_DELETE("contact.ask.delete");
 
     final String key;
 
