@@ -12,41 +12,47 @@ public enum Command {
      * CallbackQuery
      */
 
-    START("/start"),
+    START("/start", false),
 
     /*
       Reply
      */
 
     /** UTIL */
-    BACK("◀️ Назад"),
-    CANCEL("Отмена"),
-    SHARE_CONTACT("Поделиться контактом"),
+    BACK("◀️ Назад", false),
+    CANCEL("Отмена", false),
+    SHARE_CONTACT("Поделиться контактом", false),
 
     /** MAIN */
-    BUY_BITCOIN("\uD83D\uDCB0 Купить"),
-    SELL_BITCOIN("\uD83D\uDCC8 Продать"),
-    CONTACTS("\uD83D\uDEC3 Контакты"),
-    DRAWS("\uD83C\uDFB0 Розыгрыши"),
-    REFERRAL("\uD83E\uDD1D Реферальная программа"),
-    ADMIN_PANEL("Админ панель"),
+    BUY_BITCOIN("\uD83D\uDCB0 Купить", false),
+    SELL_BITCOIN("\uD83D\uDCC8 Продать", false),
+    CONTACTS("\uD83D\uDEC3 Контакты", false),
+    DRAWS("\uD83C\uDFB0 Розыгрыши", false),
+    REFERRAL("\uD83E\uDD1D Реферальная программа", false),
+    ADMIN_PANEL("Админ панель", true),
 
     /** DRAWS */
-    LOTTERY("\uD83C\uDFB0 Лотерея"),
-    ROULETTE("\uD83C\uDFB0 Рулетка"), // TODO поменять смайл
+    LOTTERY("\uD83C\uDFB0 Лотерея", false),
+    ROULETTE("\uD83C\uDFB0 Рулетка", false), // TODO поменять смайл
 
     /** REFERRAL */
-    WITHDRAWAL_OF_FUNDS("withdrawal"),
-    SHOW_WITHDRAWAL_REQUEST("show_withdrawal");
+    WITHDRAWAL_OF_FUNDS("withdrawal", false),
+    SHOW_WITHDRAWAL_REQUEST("show_withdrawal", false);
 
     final String text;
+    final boolean isAdmin;
 
-    Command(String text) {
+    Command(String text, boolean isAdmin) {
         this.text = text;
+        this.isAdmin = isAdmin;
     }
 
     public String getText() {
         return text;
+    }
+
+    public boolean isAdmin() {
+        return isAdmin;
     }
 
     public static Command fromUpdate(Update update) {

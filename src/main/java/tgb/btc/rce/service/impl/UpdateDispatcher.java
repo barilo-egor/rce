@@ -31,8 +31,18 @@ public class UpdateDispatcher implements IUpdateDispatcher {
 
     private Command getCommand(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
-        return userService.getStepByChatId(chatId).equals(User.DEFAULT_STEP) || CommandUtil.isStartCommand(update) ?
+        Command command = userService.getStepByChatId(chatId).equals(User.DEFAULT_STEP) || CommandUtil.isStartCommand(update) ?
                 Command.fromUpdate(update) : userService.getCommandByChatId(chatId);
+        if (!hasAccess(command, chatId)) return Command.START;
+        else return command;
+    }
+
+    private boolean hasAccess(Command command, Long chatId) {
+        /* TODO Егор: Если команда является админ командой, а юзер не админ, то доступа нет. Во всех остальных случаях доступ есть.
+            Здесь тебе чисто потренировать чтение чужого кода. Всё что нужно для этого метода уже есть в этом классе.
+            Если долго не будет получаться, то я тебе дам подсказки.
+         */
+        return true;
     }
 
 
