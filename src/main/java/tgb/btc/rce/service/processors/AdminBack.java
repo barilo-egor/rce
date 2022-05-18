@@ -9,17 +9,16 @@ import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.impl.UserService;
 import tgb.btc.rce.util.UpdateUtil;
 
-@CommandProcessor(command = Command.SHOW_WITHDRAWAL_REQUEST)
-public class ShowWithdrawalRequest extends Processor {
+@CommandProcessor(command = Command.ADMIN_BACK)
+public class AdminBack extends Processor {
 
     @Autowired
-    public ShowWithdrawalRequest(IResponseSender responseSender, UserService userService) {
+    public AdminBack(IResponseSender responseSender, UserService userService) {
         super(responseSender, userService);
     }
 
     @Override
     public void run(Update update) {
-        responseSender.deleteMessage(UpdateUtil.getChatId(update), UpdateUtil.getMessageId(update));
-        // TODO
+        processToAdminMainPanel(UpdateUtil.getChatId(update));
     }
 }

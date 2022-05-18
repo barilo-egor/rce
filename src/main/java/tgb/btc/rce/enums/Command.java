@@ -20,6 +20,7 @@ public enum Command {
 
     /** UTIL */
     BACK("◀️ Назад", false),
+    ADMIN_BACK("Назад", true),
     CANCEL("Отмена", false),
     SHARE_CONTACT("Поделиться контактом", false),
 
@@ -46,7 +47,11 @@ public enum Command {
     BOT_SETTINGS("Настройки бота", true),
     REPORTS("Отчеты", true),
     EDIT_CONTACTS("Редактирование контактов", true),
-    QUIT_ADMIN_PANEL("Выйти", true);
+    QUIT_ADMIN_PANEL("Выйти", true),
+
+    /** EDIT CONTACTS */
+    ADD_CONTACT("Добавить контакт", true),
+    DELETE_CONTACT("Удалить контакт", true);
 
     final String text;
     final boolean isAdmin;

@@ -9,7 +9,9 @@ public enum PropertiesMessage {
     ADMIN_NOTIFY_WITHDRAWAL_NEW("admin.notify.withdrawal.new"),
     USER_RESPONSE_WITHDRAWAL_REQUEST_CREATED("user.response.withdrawal.created"),
     WITHDRAWAL_ERROR_CONTACT("withdrawal.error.contact"),
-    WITHDRAWAL_TO_STRING("withdrawal.to.string");
+    WITHDRAWAL_TO_STRING("withdrawal.to.string"),
+    CONTACT_ASK_INPUT("contact.ask.input"),
+    MENU_MAIN_ADMIN("menu.main.admin");
 
     final String key;
 
