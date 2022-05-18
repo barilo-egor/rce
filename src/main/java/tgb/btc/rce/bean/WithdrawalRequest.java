@@ -1,7 +1,7 @@
 package tgb.btc.rce.bean;
 
 import lombok.Builder;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.enums.WithdrawalRequestStatus;
 
 import javax.persistence.*;
@@ -13,9 +13,6 @@ public class WithdrawalRequest extends BasePersist {
     @ManyToOne(fetch = FetchType.EAGER)
     private User user;
 
-    @Column(name = "USERNAME")
-    private String username;
-
     @Column(name = "PHONE_NUMBER")
     private String phoneNumber;
 
@@ -25,17 +22,17 @@ public class WithdrawalRequest extends BasePersist {
     public WithdrawalRequest() {
     }
 
-    public WithdrawalRequest(User user, String username, String phoneNumber, WithdrawalRequestStatus status) {
+    public WithdrawalRequest(User user, String phoneNumber, WithdrawalRequestStatus status) {
         this.user = user;
-        this.username = username;
         this.phoneNumber = phoneNumber;
         this.status = status;
     }
 
-    public static WithdrawalRequest buildFromUpdate(User user) {
+    public static WithdrawalRequest buildFromUpdate(User user, Update update) {
         WithdrawalRequest withdrawalRequest = new WithdrawalRequest();
         withdrawalRequest.setUser(user);
         withdrawalRequest.setStatus(WithdrawalRequestStatus.CREATED);
+        withdrawalRequest.setPhoneNumber(update.getMessage().getContact().getPhoneNumber());
         return withdrawalRequest;
     }
 
@@ -53,14 +50,6 @@ public class WithdrawalRequest extends BasePersist {
 
     public void setStatus(WithdrawalRequestStatus status) {
         this.status = status;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
     }
 
     public String getPhoneNumber() {

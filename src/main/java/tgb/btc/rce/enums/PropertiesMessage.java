@@ -8,8 +8,8 @@ public enum PropertiesMessage {
     MENU_MAIN("menu.main"),
     ADMIN_NOTIFY_WITHDRAWAL_NEW("admin.notify.withdrawal.new"),
     USER_RESPONSE_WITHDRAWAL_REQUEST_CREATED("user.response.withdrawal.created"),
-
-    INSUFFICIENT_FUNDS("withdrawal.insufficient.funds");
+    WITHDRAWAL_ERROR_CONTACT("withdrawal.error.contact"),
+    WITHDRAWAL_TO_STRING("withdrawal.to.string");
 
     final String key;
 

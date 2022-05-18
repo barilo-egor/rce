@@ -41,17 +41,20 @@ public class WithdrawalOfFundsService {
     }
 
     public void sendMinSumMessage(Long chatId) {
-        responseSender.sendMessage(chatId, MessagePropertiesUtil.getMessage(PropertiesMessage.WITHDRAWAL_MIN_SUM));
+        responseSender.sendMessage(chatId,
+                String.format(MessagePropertiesUtil.getMessage(PropertiesMessage.WITHDRAWAL_MIN_SUM),
+                BotVariablePropertiesUtil.getMinSumForWithdrawal()));
     }
 
     public boolean createRequest(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
         if (!update.getMessage().hasContact()) {
-
+            responseSender.sendMessage(chatId,
+                    MessagePropertiesUtil.getMessage(PropertiesMessage.WITHDRAWAL_ERROR_CONTACT));
+            return false;
         }
-
         WithdrawalRequest request = withdrawalRequestService.save(
-                WithdrawalRequest.buildFromUpdate(userService.findByChatId(update)));
+                WithdrawalRequest.buildFromUpdate(userService.findByChatId(update), update));
         adminService.notify(MessagePropertiesUtil.getMessage(PropertiesMessage.ADMIN_NOTIFY_WITHDRAWAL_NEW),
                 Command.SHOW_WITHDRAWAL_REQUEST.getText() + BotStringConstants.CALLBACK_DATA_SPLITTER +
                         request.getPid());
@@ -61,7 +64,8 @@ public class WithdrawalOfFundsService {
     }
 
     public String toString(WithdrawalRequest withdrawalRequest) {
-
+        return String.format(MessagePropertiesUtil.getMessage(PropertiesMessage.WITHDRAWAL_TO_STRING),
+                withdrawalRequest.getPid(), withdrawalRequest.getPhoneNumber(), withdrawalRequest.getUser().getChatId());
     }
 
     private int getReferralSumWithoutReserve(Long chatId) {
