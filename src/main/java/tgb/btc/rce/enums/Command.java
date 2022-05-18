@@ -37,7 +37,16 @@ public enum Command {
 
     /** REFERRAL */
     WITHDRAWAL_OF_FUNDS("withdrawal", false),
-    SHOW_WITHDRAWAL_REQUEST("show_withdrawal", false);
+    SHOW_WITHDRAWAL_REQUEST("show_withdrawal", false),
+
+    /** ADMIN PANEL */
+    REQUESTS("Заявки", true),
+    SEND_MESSAGES("Отправка сообщений", true),
+    BAN_UNBAN("Бан/разбан", true),
+    BOT_SETTINGS("Настройки бота", true),
+    REPORTS("Отчеты", true),
+    EDIT_CONTACTS("Редактирование контактов", true),
+    QUIT_ADMIN_PANEL("Выйти", true);
 
     final String text;
     final boolean isAdmin;
