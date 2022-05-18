@@ -51,7 +51,11 @@ public enum Command {
 
     /** EDIT CONTACTS */
     ADD_CONTACT("Добавить контакт", true),
-    DELETE_CONTACT("Удалить контакт", true);
+    DELETE_CONTACT("Удалить контакт", true),
+
+    /** SEND MESSAGES */
+    MAILING_LIST("Рассылка", true),
+    SEND_MESSAGE_TO_USER("Сообщение пользователю", true);
 
     final String text;
     final boolean isAdmin;

@@ -16,7 +16,13 @@ public final class MenuFactory {
     private MenuFactory() {
     }
 
-
+// TODO Егор
+//  Этот метод сейчас принимает булеан примитив. Сейчас эта переменная используется только в одном кейсе,
+//  а во всех местах, где вызывается этот метод, делается запрос в базу чтобы уточнить, является ли админом юзер.
+//  Нужно изменить этот параметр на обертку, чтобы была возможность передать в этот метод null, а во всех местах,
+//  где вызывается этот метод, и где эта переменная не будет нужна в этом методе, заменить вызов метода по уточнению
+//  является ли юзер админом на null.
+//
     public static ReplyKeyboard build(Menu menu, boolean isAdmin) {
         switch (menu) {
             case MAIN:
@@ -29,6 +35,10 @@ public final class MenuFactory {
                 return KeyboardUtil.buildReply(1, fillReply(Menu.ASK_CONTACT.getCommands()), false);
             case ADMIN_BACK:
                 return KeyboardUtil.buildReply(1, fillReply(Menu.ADMIN_BACK.getCommands()), true);
+            case SEND_MESSAGES:
+                return KeyboardUtil.buildReply(2, fillReply(Menu.SEND_MESSAGES.getCommands()), true);
+            case EDIT_CONTACTS:
+                // TODO
         }
         throw new BaseException("Тип меню " + menu.name() + " не найден.");
     }

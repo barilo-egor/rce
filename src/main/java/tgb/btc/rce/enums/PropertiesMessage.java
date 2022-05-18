@@ -12,7 +12,9 @@ public enum PropertiesMessage {
     WITHDRAWAL_TO_STRING("withdrawal.to.string"),
     CONTACT_ASK_INPUT("contact.ask.input"),
     MENU_MAIN_ADMIN("menu.main.admin"),
-    CONTACT_ASK_DELETE("contact.ask.delete");
+    CONTACT_ASK_DELETE("contact.ask.delete"),
+
+    SEND_MESSAGES_MENU("send.messages.menu");
 
     final String key;
 
