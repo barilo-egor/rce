@@ -27,10 +27,16 @@ public class SendMessageToUser extends Processor {
         checkForCancel(update);
         switch (userService.getStepByChatId(chatId)) {
             case 0:
-                messagesService.askForMessageText(update);
+                messagesService.askForChatId(update);
                 break;
             case 1:
-
+                messagesService.isUserExist(update);
+                messagesService.askForMessageText(update);
+                break;
+            case 2:
+                messagesService.sendMessageToUser(update);
+                processToAdminMainPanel(UpdateUtil.getChatId(update));
+                break;
         }
     }
 }

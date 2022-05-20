@@ -13,4 +13,12 @@ public final class NumberUtil {
             throw new BaseException("Неверный формат.");
         }
     }
+
+    public static Long getInputLong(String input) {
+        try {
+            return Long.parseLong(input);
+        } catch (NumberFormatException e) {
+            throw new BaseException("Неверный формат.");
+        }
+    }
 }

@@ -39,4 +39,8 @@ public class UpdateUtil {
             throw new BaseException("Невозможно получить message id, т.к. message==null.");
         return update.getMessage().getText();
     }
+
+    public static Long getLongFromText(Update update) {
+        return NumberUtil.getInputLong(getMessageText(update));
+    }
 }

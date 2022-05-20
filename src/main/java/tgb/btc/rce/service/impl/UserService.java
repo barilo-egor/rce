@@ -72,6 +72,10 @@ public class UserService extends BasePersistService<User> {
         return userRepository.findByChatId(UpdateUtil.getChatId(update));
     }
 
+    public User findByChatId(Long chatId) {
+        return userRepository.findByChatId(chatId);
+    }
+
     public Integer getReferralBalanceByChatId(Long chatId) {
         return userRepository.getReferralBalanceByChatId(chatId);
     }
@@ -93,5 +97,13 @@ public class UserService extends BasePersistService<User> {
         if (user.getReferralBalance() < 0)
             throw new BaseException("Сохранения пользователя невозможно, т.к. реферальный баланс отрицателен. " + user);
         return userRepository.save(user);
+    }
+
+    public void updateBufferVariable(Long chatId, String bufferVariable) {
+        userRepository.updateBufferVariable(chatId, bufferVariable);
+    }
+
+    public String getBufferVariable(Long chatId) {
+        return userRepository.getBufferVariable(chatId);
     }
 }

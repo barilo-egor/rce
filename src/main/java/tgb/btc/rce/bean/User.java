@@ -46,6 +46,9 @@ public class User extends BasePersist {
     @Column(name = "REFERRAL_BALANCE")
     private Integer referralBalance;
 
+    @Column(name = "BUFFER_VARIABLE")
+    private String bufferVariable;
+
     @OneToMany
     private List<ReferralUser> referralUsers;
 
@@ -53,7 +56,7 @@ public class User extends BasePersist {
     }
 
     public User(Long chatId, String username, Integer step, Command command, LocalDateTime registrationDate,
-                boolean isAdmin, Integer lotteryCount, Long fromChatId, Integer referralBalance,
+                boolean isAdmin, Integer lotteryCount, Long fromChatId, Integer referralBalance, String bufferVariable,
                 List<ReferralUser> referralUsers) {
         this.chatId = chatId;
         this.username = username;
@@ -64,6 +67,7 @@ public class User extends BasePersist {
         this.lotteryCount = lotteryCount;
         this.fromChatId = fromChatId;
         this.referralBalance = referralBalance;
+        this.bufferVariable = bufferVariable;
         this.referralUsers = referralUsers;
     }
 
@@ -162,5 +166,13 @@ public class User extends BasePersist {
 
     public void setReferralUsers(List<ReferralUser> referralUsers) {
         this.referralUsers = referralUsers;
+    }
+
+    public String getBufferVariable() {
+        return bufferVariable;
+    }
+
+    public void setBufferVariable(String bufferVariable) {
+        this.bufferVariable = bufferVariable;
     }
 }

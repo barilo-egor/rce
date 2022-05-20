@@ -52,4 +52,11 @@ public interface UserRepository extends BaseRepository<User> {
 
     @Query("select chatId from User where isAdmin=true")
     List<Long> getAdminsChatIds();
+
+    @Modifying
+    @Query("update User set bufferVariable=:bufferVariable where chatId=:chatId")
+    void updateBufferVariable(@Param("chatId") Long chatId, @Param("bufferVariable") String bufferVariable);
+
+    @Query("select bufferVariable from User where chatId=:chatId")
+    String getBufferVariable(@Param("chatId") Long chatId);
 }
