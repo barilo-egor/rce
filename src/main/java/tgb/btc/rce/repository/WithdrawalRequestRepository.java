@@ -7,7 +7,4 @@ import tgb.btc.rce.bean.WithdrawalRequest;
 
 @Repository
 public interface WithdrawalRequestRepository extends BaseRepository<WithdrawalRequest>{
-
-    @Query("select sum(requestedSum) from WithdrawalRequest where user.chatId=:chatId and status='CREATED'")
-    Integer getCreatedTotalSumByChatId(@Param("chatId") Long chatId);
 }

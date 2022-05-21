@@ -27,10 +27,6 @@ public class WithdrawalOfFunds extends Processor {
         checkForCancel(update);
         switch (userService.getStepByChatId(chatId)) {
             case 0:
-                if (withdrawalOfFundsService.isBalanceLessThanMinSum(chatId)) {
-                    withdrawalOfFundsService.sendMinSumMessage(chatId);
-                    return;
-                }
                 withdrawalOfFundsService.askForContact(chatId, UpdateUtil.getMessageId(update));
                 break;
             case 1:

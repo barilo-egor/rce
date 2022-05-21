@@ -9,7 +9,7 @@ import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.impl.UserService;
 import tgb.btc.rce.util.UpdateUtil;
 
-@CommandProcessor(command = Command.ADMIN_PANEL)
+@CommandProcessor(command = Command.QUIT_ADMIN_PANEL)
 public class QuitAdminPanel extends Processor {
 
     @Autowired

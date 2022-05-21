@@ -35,17 +35,6 @@ public class WithdrawalOfFundsService {
         this.adminService = adminService;
     }
 
-    public boolean isBalanceLessThanMinSum(Long chatId) {
-        return getReferralSumWithoutReserve(chatId) <
-                BotVariablePropertiesUtil.getInt(BotVariableType.MIN_WITHDRAWAL_OF_FUNDS_SUM);
-    }
-
-    public void sendMinSumMessage(Long chatId) {
-        responseSender.sendMessage(chatId,
-                String.format(MessagePropertiesUtil.getMessage(PropertiesMessage.WITHDRAWAL_MIN_SUM),
-                BotVariablePropertiesUtil.getMinSumForWithdrawal()));
-    }
-
     public boolean createRequest(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
         if (!update.getMessage().hasContact()) {
@@ -66,11 +55,6 @@ public class WithdrawalOfFundsService {
     public String toString(WithdrawalRequest withdrawalRequest) {
         return String.format(MessagePropertiesUtil.getMessage(PropertiesMessage.WITHDRAWAL_TO_STRING),
                 withdrawalRequest.getPid(), withdrawalRequest.getPhoneNumber(), withdrawalRequest.getUser().getChatId());
-    }
-
-    private int getReferralSumWithoutReserve(Long chatId) {
-        return userService.getReferralBalanceByChatId(chatId) -
-                withdrawalRequestService.getCreatedTotalSumByChatId(chatId);
     }
 
     public void askForContact(Long chatId, Integer messageId) {

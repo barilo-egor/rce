@@ -10,7 +10,7 @@ public enum Menu {
             Command.REPORTS, Command.EDIT_CONTACTS, Command.QUIT_ADMIN_PANEL)),
     EDIT_CONTACTS(List.of(Command.ADD_CONTACT, Command.DELETE_CONTACT, Command.ADMIN_BACK)),
     ADMIN_BACK(List.of(Command.ADMIN_BACK)),
-    SEND_MESSAGES(List.of(Command.MAILING_LIST, Command.SEND_MESSAGE_TO_USER));
+    SEND_MESSAGES(List.of(Command.MAILING_LIST, Command.SEND_MESSAGE_TO_USER, Command.ADMIN_BACK));
 
     final List<Command> commands;
 

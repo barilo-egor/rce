@@ -23,8 +23,4 @@ public class WithdrawalRequestService extends BasePersistService<WithdrawalReque
     public List<WithdrawalRequest> findAll() {
         return withdrawalRequestRepository.findAll();
     }
-
-    public Integer getCreatedTotalSumByChatId(Long chatId) {
-        return withdrawalRequestRepository.getCreatedTotalSumByChatId(chatId);
-    }
 }

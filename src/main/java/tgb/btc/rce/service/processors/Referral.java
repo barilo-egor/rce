@@ -24,13 +24,9 @@ import java.util.List;
 @CommandProcessor(command = Command.REFERRAL)
 public class Referral extends Processor {
 
-    private final WithdrawalRequestService withdrawalRequestService;
-
     @Autowired
-    public Referral(IResponseSender responseSender, UserService userService,
-                    WithdrawalRequestService withdrawalRequestService) {
+    public Referral(IResponseSender responseSender, UserService userService) {
         super(responseSender, userService);
-        this.withdrawalRequestService = withdrawalRequestService;
     }
 
     @Override
@@ -41,13 +37,9 @@ public class Referral extends Processor {
         String currentBalance = userService.getReferralBalanceByChatId(chatId).toString();
         List<ReferralUser> referralUsers = userService.getUserReferralsByChatId(chatId);
         String numberOfReferrals = String.valueOf(referralUsers.size());
-        String sumFromReferrals = getSumOfReferrals(referralUsers);
-        Integer reserve = withdrawalRequestService.getCreatedTotalSumByChatId(chatId);
-        if (StringUtils.hasLength(sumFromReferrals) && reserve > 0)
-            sumFromReferrals = sumFromReferrals.concat("(в резерве " + reserve);
 
         String resultMessage = String.format(MessagePropertiesUtil.getMessage(PropertiesMessage.REFERRAL_MAIN),
-                refLink, currentBalance, numberOfReferrals, sumFromReferrals);
+                refLink, currentBalance, numberOfReferrals, getSumOfReferrals(referralUsers));
 
         responseSender.sendMessage(chatId, resultMessage, KeyboardUtil.buildInlineDiff(getButtons(chatId)));
     }
