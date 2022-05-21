@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.bean.User;
+import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.Menu;
 import tgb.btc.rce.exception.BaseException;
 import tgb.btc.rce.service.impl.ResponseSender;
@@ -29,7 +30,7 @@ public class MessagesService {
 
     public void askForChatId(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
-        userService.nextStep(chatId);
+        userService.nextStep(chatId, Command.SEND_MESSAGE_TO_USER);
         responseSender.sendMessage(chatId, "Введите ID пользователя.",
                 MenuFactory.build(Menu.ADMIN_BACK, userService.isAdminByChatId(chatId)));
     }
@@ -43,7 +44,7 @@ public class MessagesService {
 
     public void askForMessageText(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
-        userService.nextStep(chatId);
+        userService.nextStep(chatId, Command.SEND_MESSAGE_TO_USER);
         responseSender.sendMessage(chatId, "Введите текст сообщения.",
                 MenuFactory.build(Menu.ADMIN_BACK, userService.isAdminByChatId(chatId)));
     }

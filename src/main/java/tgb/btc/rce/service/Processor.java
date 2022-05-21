@@ -8,6 +8,7 @@ import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.Menu;
 import tgb.btc.rce.enums.PropertiesMessage;
 import tgb.btc.rce.enums.UpdateType;
+import tgb.btc.rce.exception.BaseException;
 import tgb.btc.rce.service.impl.UserService;
 import tgb.btc.rce.util.MenuFactory;
 import tgb.btc.rce.util.MessagePropertiesUtil;
@@ -27,11 +28,21 @@ public abstract class Processor {
     public void checkForCancel(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
         if (this.getClass().getAnnotation(CommandProcessor.class).command().isAdmin() &&
-                Command.ADMIN_BACK.equals(Command.fromUpdate(update))) processToAdminMainPanel(chatId);
+                isCommand(update, Command.ADMIN_BACK)) processToAdminMainPanel(chatId);
         else if (User.DEFAULT_STEP != userService.getStepByChatId(chatId)
                 && UpdateType.MESSAGE.equals(UpdateType.fromUpdate(update))
-                && Command.CANCEL.equals(Command.fromUpdate(update)))
+                && isCommand(update, Command.CANCEL))
             processToMainMenu(chatId);
+    }
+
+    private boolean isCommand(Update update, Command command) {
+        Command enteredCommand;
+        try {
+            enteredCommand = Command.fromUpdate(update);
+        } catch (BaseException e) {
+            return false;
+        }
+        return command.equals(enteredCommand);
     }
 
     public void processToMainMenu(Long chatId) {

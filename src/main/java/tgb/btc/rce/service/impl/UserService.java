@@ -84,8 +84,8 @@ public class UserService extends BasePersistService<User> {
         return userRepository.getUserReferralsByChatId(chatId);
     }
 
-    public void nextStep(Long chatId) {
-        userRepository.nextStep(chatId);
+    public void nextStep(Long chatId, Command command) {
+        userRepository.nextStep(chatId, command);
     }
 
     public List<Long> getAdminsChatIds() {

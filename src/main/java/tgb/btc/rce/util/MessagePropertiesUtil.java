@@ -26,7 +26,7 @@ public class MessagePropertiesUtil {
     public static String getMessage(PropertiesMessage message) {
         String text;
         try {
-            text = messageProperties.getProperty(message.getKey());
+            text = messageProperties.getProperty(message.getKey()).replaceAll("<ln>", "\n");
         } catch (Exception e) {
             text = getErrorText(message.getKey());
         }

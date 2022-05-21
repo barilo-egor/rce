@@ -59,7 +59,7 @@ public class WithdrawalOfFundsService {
 
     public void askForContact(Long chatId, Integer messageId) {
         responseSender.deleteMessage(chatId, messageId);
-        userService.nextStep(chatId);
+        userService.nextStep(chatId, Command.WITHDRAWAL_OF_FUNDS);
         responseSender.sendMessage(chatId, MessagePropertiesUtil.getMessage(PropertiesMessage.WITHDRAWAL_ASK_CONTACT),
                 MenuFactory.build(Menu.ASK_CONTACT, userService.isAdminByChatId(chatId)));
     }

@@ -38,7 +38,7 @@ public final class MenuFactory {
             case SEND_MESSAGES:
                 return KeyboardUtil.buildReply(2, fillReply(Menu.SEND_MESSAGES.getCommands()), true);
             case EDIT_CONTACTS:
-                // TODO
+                return KeyboardUtil.buildReply(2, fillReply(Menu.EDIT_CONTACTS.getCommands()), true);
         }
         throw new BaseException("Тип меню " + menu.name() + " не найден.");
     }

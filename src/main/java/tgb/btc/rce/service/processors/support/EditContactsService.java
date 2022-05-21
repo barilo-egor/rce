@@ -43,6 +43,7 @@ public class EditContactsService {
     }
 
     public void askInput(Long chatId) {
+        userService.nextStep(chatId, Command.ADD_CONTACT);
         responseSender.sendMessage(chatId, MessagePropertiesUtil.getMessage(PropertiesMessage.CONTACT_ASK_INPUT),
                 MenuFactory.build(Menu.ADMIN_BACK, userService.isAdminByChatId(chatId)));
     }
