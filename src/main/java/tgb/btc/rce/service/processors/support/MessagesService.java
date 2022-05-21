@@ -39,6 +39,7 @@ public class MessagesService {
         Long recipientChatId = UpdateUtil.getLongFromText(update);
         if (!userService.existByChatId(recipientChatId))
             throw new BaseException("Пользователь с таким чат айди не найден");
+        userService.updateBufferVariable(UpdateUtil.getChatId(update), recipientChatId.toString());
         return true;
     }
 
