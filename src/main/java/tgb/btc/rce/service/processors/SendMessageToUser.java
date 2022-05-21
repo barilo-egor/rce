@@ -30,8 +30,8 @@ public class SendMessageToUser extends Processor {
                 messagesService.askForChatId(update);
                 break;
             case 1:
-                messagesService.isUserExist(update);
-                messagesService.askForMessageText(update);
+                if (messagesService.isUserExist(update))
+                    messagesService.askForMessageText(update);
                 break;
             case 2:
                 messagesService.sendMessageToUser(update);
