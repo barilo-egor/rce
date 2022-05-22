@@ -160,18 +160,11 @@ public class Deal extends BasePersist {
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         Deal deal = (Deal) o;
-        return Objects.equals(user, deal.user) && Objects.equals(dateTime, deal.dateTime)
-                && paymentType == deal.paymentType && Objects.equals(btcAmount, deal.btcAmount)
-                && Objects.equals(amount, deal.amount) && Objects.equals(wallet, deal.wallet)
-                && Objects.equals(verificationPhoto, deal.verificationPhoto)
-                && Objects.equals(userCheck, deal.userCheck) && Objects.equals(isActive, deal.isActive)
-                && Objects.equals(isPassed, deal.isPassed) && Objects.equals(isCurrent, deal.isCurrent)
-                && country == deal.country && deliveryType == deal.deliveryType;
+        return Objects.equals(user, deal.user) && Objects.equals(dateTime, deal.dateTime) && paymentType == deal.paymentType && Objects.equals(btcAmount, deal.btcAmount) && Objects.equals(amount, deal.amount) && Objects.equals(wallet, deal.wallet) && Objects.equals(verificationPhoto, deal.verificationPhoto) && Objects.equals(userCheck, deal.userCheck) && Objects.equals(isActive, deal.isActive) && Objects.equals(isPassed, deal.isPassed) && Objects.equals(isCurrent, deal.isCurrent);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), user, dateTime, paymentType, btcAmount, amount, wallet, verificationPhoto,
-                userCheck, isActive, isPassed, isCurrent, country, deliveryType);
+        return Objects.hash(super.hashCode(), user, dateTime, paymentType, btcAmount, amount, wallet, verificationPhoto, userCheck, isActive, isPassed, isCurrent);
     }
 }
