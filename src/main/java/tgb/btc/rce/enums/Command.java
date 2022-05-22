@@ -55,7 +55,14 @@ public enum Command {
 
     /** SEND MESSAGES */
     MAILING_LIST("Рассылка", true),
-    SEND_MESSAGE_TO_USER("Сообщение пользователю", true);
+    SEND_MESSAGE_TO_USER("Сообщение пользователю", true),
+
+    /** BOT SETTINGS */
+    CURRENT_DATA("Текущие данные", true),
+    ON_BOT("Вкл.бота", true),
+    OFF_BOT("Выкл.бота", true),
+    BOT_MESSAGES("Сообщения бота", true),
+    SYSTEM_MESSAGES("Сис.сообщения", true);
 
     final String text;
     final boolean isAdmin;

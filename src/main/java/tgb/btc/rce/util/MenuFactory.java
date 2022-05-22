@@ -5,6 +5,7 @@ import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.InlineType;
 import tgb.btc.rce.enums.Menu;
 import tgb.btc.rce.exception.BaseException;
+import tgb.btc.rce.service.impl.UpdateDispatcher;
 import tgb.btc.rce.vo.InlineButton;
 import tgb.btc.rce.vo.ReplyButton;
 
@@ -39,8 +40,17 @@ public final class MenuFactory {
                 return KeyboardUtil.buildReply(2, fillReply(Menu.SEND_MESSAGES.getCommands()), true);
             case EDIT_CONTACTS:
                 return KeyboardUtil.buildReply(2, fillReply(Menu.EDIT_CONTACTS.getCommands()), true);
+            case BOT_SETTINGS:
+                return botSettings();
         }
         throw new BaseException("Тип меню " + menu.name() + " не найден.");
+    }
+
+    private static ReplyKeyboard botSettings() {
+        List<Command> commands = new ArrayList<>(Menu.BOT_SETTINGS.getCommands());
+        commands.removeIf(command -> (UpdateDispatcher.isOn() && Command.ON_BOT.equals(command)
+                || (!UpdateDispatcher.isOn() && Command.OFF_BOT.equals(command))));
+        return KeyboardUtil.buildReply(2, fillReply(commands), true);
     }
 
     private static List<ReplyButton> main(boolean isAdmin) {

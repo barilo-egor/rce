@@ -16,6 +16,7 @@ import tgb.btc.rce.util.UpdateUtil;
 public class UpdateDispatcher implements IUpdateDispatcher {
 
     public static ApplicationContext applicationContext;
+    private static boolean IS_ON;
 
     private final UserService userService;
 
@@ -48,5 +49,11 @@ public class UpdateDispatcher implements IUpdateDispatcher {
         return true;
     }
 
+    public static boolean isOn() {
+        return IS_ON;
+    }
 
+    public static void setIsOn(boolean isOn) {
+        IS_ON = isOn;
+    }
 }
