@@ -114,4 +114,8 @@ public class UserService extends BasePersistService<User> {
     public void updateIsActiveByChatId(boolean isActive, Long chatId) {
         userRepository.updateIsActiveByChatId(isActive, chatId);
     }
+
+    public Boolean getIsBannedByChatId(Long chatId) {
+        return userRepository.getIsBannedByChatId(chatId);
+    }
 }

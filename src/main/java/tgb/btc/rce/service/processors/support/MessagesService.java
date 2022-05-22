@@ -29,9 +29,9 @@ public class MessagesService {
         this.userService = userService;
     }
 
-    public void askForChatId(Update update) {
+    public void askForChatId(Update update, Command command) {
         Long chatId = UpdateUtil.getChatId(update);
-        userService.nextStep(chatId, Command.SEND_MESSAGE_TO_USER);
+        userService.nextStep(chatId, command);
         responseSender.sendMessage(chatId, "Введите ID пользователя.",
                 MenuFactory.build(Menu.ADMIN_BACK, userService.isAdminByChatId(chatId)));
     }

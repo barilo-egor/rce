@@ -27,7 +27,7 @@ public class SendMessageToUser extends Processor {
         checkForCancel(update);
         switch (userService.getStepByChatId(chatId)) {
             case 0:
-                messagesService.askForChatId(update);
+                messagesService.askForChatId(update, Command.SEND_MESSAGE_TO_USER);
                 break;
             case 1:
                 if (messagesService.isUserExist(update))

@@ -35,7 +35,7 @@ public class User extends BasePersist {
     private LocalDateTime registrationDate;
 
     @Column(name = "IS_ADMIN", nullable = false)
-    private boolean isAdmin;
+    private Boolean isAdmin;
 
     @Column(name = "LOTTERY_COUNT")
     private Integer lotteryCount;
@@ -50,7 +50,10 @@ public class User extends BasePersist {
     private String bufferVariable;
 
     @Column(name = "IS_ACTIVE")
-    private boolean isActive;
+    private Boolean isActive;
+
+    @Column(name = "IS_BANNED")
+    private Boolean isBanned;
 
     @OneToMany
     private List<ReferralUser> referralUsers;
@@ -60,7 +63,7 @@ public class User extends BasePersist {
 
     public User(Long chatId, String username, Integer step, Command command, LocalDateTime registrationDate,
                 boolean isAdmin, Integer lotteryCount, Long fromChatId, Integer referralBalance, String bufferVariable,
-                boolean isActive, List<ReferralUser> referralUsers) {
+                boolean isActive, boolean isBanned, List<ReferralUser> referralUsers) {
         this.chatId = chatId;
         this.username = username;
         this.step = step;
@@ -72,6 +75,7 @@ public class User extends BasePersist {
         this.referralBalance = referralBalance;
         this.bufferVariable = bufferVariable;
         this.isActive = isActive;
+        this.isBanned = isBanned;
         this.referralUsers = referralUsers;
     }
 
@@ -132,11 +136,11 @@ public class User extends BasePersist {
         this.registrationDate = dateTime;
     }
 
-    public boolean isAdmin() {
+    public Boolean getAdmin() {
         return isAdmin;
     }
 
-    public void setAdmin(boolean admin) {
+    public void setAdmin(Boolean admin) {
         isAdmin = admin;
     }
 
@@ -180,11 +184,20 @@ public class User extends BasePersist {
         this.bufferVariable = bufferVariable;
     }
 
-    public boolean isActive() {
+
+    public Boolean getActive() {
         return isActive;
     }
 
-    public void setActive(boolean active) {
+    public void setActive(Boolean active) {
         isActive = active;
+    }
+
+    public Boolean getBanned() {
+        return isBanned;
+    }
+
+    public void setBanned(Boolean banned) {
+        isBanned = banned;
     }
 }

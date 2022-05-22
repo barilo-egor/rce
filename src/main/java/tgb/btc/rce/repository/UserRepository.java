@@ -66,4 +66,8 @@ public interface UserRepository extends BaseRepository<User> {
     @Modifying
     @Query("update User set isActive=:isActive where chatId=:chatId")
     void updateIsActiveByChatId(@Param("isActive") boolean isActive, @Param("chatId") Long chatId);
+
+    @Modifying
+    @Query("select isBanned from User where chatId=:chatId")
+    Boolean getIsBannedByChatId(@Param("chatId") Long chatId);
 }
