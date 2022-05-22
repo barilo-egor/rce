@@ -27,8 +27,8 @@ public class UpdateDispatcher implements IUpdateDispatcher {
 
     public void dispatch(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
-        if (userService.getIsBannedByChatId(chatId)) return;
         if (!userService.existByChatId(chatId)) userService.register(update);
+        if (userService.getIsBannedByChatId(chatId)) return;
         ((Processor) applicationContext.getBean(CommandProcessorLoader.getByCommand(getCommand(update)))).run(update);
     }
 

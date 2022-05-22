@@ -49,10 +49,10 @@ public class User extends BasePersist {
     @Column(name = "BUFFER_VARIABLE")
     private String bufferVariable;
 
-    @Column(name = "IS_ACTIVE")
+    @Column(name = "IS_ACTIVE", nullable = false)
     private Boolean isActive;
 
-    @Column(name = "IS_BANNED")
+    @Column(name = "IS_BANNED", nullable = false)
     private Boolean isBanned;
 
     @OneToMany
@@ -62,8 +62,8 @@ public class User extends BasePersist {
     }
 
     public User(Long chatId, String username, Integer step, Command command, LocalDateTime registrationDate,
-                boolean isAdmin, Integer lotteryCount, Long fromChatId, Integer referralBalance, String bufferVariable,
-                boolean isActive, boolean isBanned, List<ReferralUser> referralUsers) {
+                Boolean isAdmin, Integer lotteryCount, Long fromChatId, Integer referralBalance, String bufferVariable,
+                Boolean isActive, Boolean isBanned, List<ReferralUser> referralUsers) {
         this.chatId = chatId;
         this.username = username;
         this.step = step;
@@ -88,6 +88,9 @@ public class User extends BasePersist {
         user.setStep(DEFAULT_STEP);
         user.setAdmin(false);
         user.setLotteryCount(0);
+        user.setReferralBalance(0);
+        user.setActive(true);
+        user.setBanned(false);
         return user;
     }
 
