@@ -3,6 +3,7 @@ package tgb.btc.rce.service.processors.support;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import tgb.btc.rce.bean.User;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.Menu;
@@ -34,7 +35,7 @@ public class MessagesService {
         responseSender.sendMessage(chatId, "Введите ID пользователя.",
                 MenuFactory.build(Menu.ADMIN_BACK, userService.isAdminByChatId(chatId)));
     }
-    
+
     public boolean isUserExist(Update update) {
         Long recipientChatId = UpdateUtil.getLongFromText(update);
         if (!userService.existByChatId(recipientChatId))
@@ -43,9 +44,9 @@ public class MessagesService {
         return true;
     }
 
-    public void askForMessageText(Update update) {
+    public void askForMessageText(Update update, Command command) {
         Long chatId = UpdateUtil.getChatId(update);
-        userService.nextStep(chatId, Command.SEND_MESSAGE_TO_USER);
+        userService.nextStep(chatId, command);
         responseSender.sendMessage(chatId, "Введите текст сообщения.",
                 MenuFactory.build(Menu.ADMIN_BACK, userService.isAdminByChatId(chatId)));
     }
@@ -59,5 +60,18 @@ public class MessagesService {
         } catch (Exception e) {
             responseSender.sendMessage(chatId, "Ошибка при отправке сообщения: " + e.getMessage());
         }
+    }
+
+    public void sendMessageToUsers(Update update) {
+        Long chatId = UpdateUtil.getChatId(update);
+        userService.getChatIdsNotAdmins()
+                .forEach(userChatId -> {
+                    try {
+                        responseSender.sendMessage(userChatId, UpdateUtil.getMessageText(update));
+                    } catch (BaseException e) {
+                        userService.updateIsActiveByChatId(false, userChatId);
+                    }
+                });
+        responseSender.sendMessage(chatId, "Рассылка произведена.");
     }
 }

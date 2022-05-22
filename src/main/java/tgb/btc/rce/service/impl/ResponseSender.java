@@ -38,6 +38,14 @@ public class ResponseSender implements IResponseSender {
                 .build()));
     }
 
+
+    public Optional<Message> sendMessageThrows(Long chatId, String text) {
+        return Optional.of(executeSendMessage(SendMessage.builder()
+                .chatId(chatId.toString())
+                .text(text)
+                .build()));
+    }
+
     public Optional<Message> sendMessage(Long chatId, String text, ReplyKeyboard replyKeyboard) {
         return Optional.of(executeSendMessage(SendMessage.builder()
                 .chatId(chatId.toString())

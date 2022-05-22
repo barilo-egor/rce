@@ -10,13 +10,13 @@ import tgb.btc.rce.service.impl.UserService;
 import tgb.btc.rce.service.processors.support.MessagesService;
 import tgb.btc.rce.util.UpdateUtil;
 
-@CommandProcessor(command = Command.SEND_MESSAGE_TO_USER)
-public class SendMessageToUser extends Processor {
+@CommandProcessor(command = Command.MAILING_LIST)
+public class MailingList extends Processor {
 
     private final MessagesService messagesService;
 
     @Autowired
-    public SendMessageToUser(IResponseSender responseSender, UserService userService, MessagesService messagesService) {
+    public MailingList(IResponseSender responseSender, UserService userService, MessagesService messagesService) {
         super(responseSender, userService);
         this.messagesService = messagesService;
     }
@@ -27,14 +27,10 @@ public class SendMessageToUser extends Processor {
         checkForCancel(update);
         switch (userService.getStepByChatId(chatId)) {
             case 0:
-                messagesService.askForChatId(update);
+                messagesService.askForMessageText(update, Command.MAILING_LIST);
                 break;
             case 1:
-                if (messagesService.isUserExist(update))
-                    messagesService.askForMessageText(update, Command.SEND_MESSAGE_TO_USER);
-                break;
-            case 2:
-                messagesService.sendMessageToUser(update);
+                messagesService.sendMessageToUsers(update);
                 processToAdminMainPanel(UpdateUtil.getChatId(update));
                 break;
         }

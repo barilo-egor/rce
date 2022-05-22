@@ -59,4 +59,11 @@ public interface UserRepository extends BaseRepository<User> {
 
     @Query("select bufferVariable from User where chatId=:chatId")
     String getBufferVariable(@Param("chatId") Long chatId);
+
+    @Query("select chatId from User where isAdmin=false")
+    List<Long> getChatIdsNotAdmins();
+
+    @Modifying
+    @Query("update User set isActive=:isActive where chatId=:chatId")
+    void updateIsActiveByChatId(@Param("isActive") boolean isActive, @Param("chatId") Long chatId);
 }

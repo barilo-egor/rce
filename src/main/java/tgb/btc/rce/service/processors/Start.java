@@ -24,6 +24,7 @@ public class Start extends Processor {
     @Override
     public void run(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
+        userService.updateIsActiveByChatId(true, chatId);
         responseSender.sendBotMessage(botMessageService.findByType(BotMessageType.START), chatId);
         processToMainMenu(chatId);
     }
