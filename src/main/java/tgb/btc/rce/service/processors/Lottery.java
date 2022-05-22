@@ -59,10 +59,10 @@ public class Lottery extends Processor {
         userService.save(user);
     }
 
-    private boolean getRandomBoolean(float probability) { //0.0 to 99.9
-        /* TODO Егор:
-            Нужно выдать случайный результат, исходя из пришедшего шанса для true 0.0 to 99.9
-         */
-        return false;
+    public boolean getRandomBoolean(float probability) { //0.0 to 99.9
+        float min = 0;
+        float max = 100;
+        float randomNumber = (float) Math.random() * (max - min) + min;
+        return randomNumber <= probability;
     }
 }
