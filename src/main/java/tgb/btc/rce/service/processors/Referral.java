@@ -58,12 +58,10 @@ public class Referral extends Processor {
     }
 
     private String getSumOfReferrals(List<ReferralUser> referralUsers) {
-        /* TODO Егор
-            У класса ReferralUser есть поле sum. Надо посчитать сумму всех юзеров и вернуть результат в виде строки.
-            List - почти тоже самое, что и массив, позже пройдем.
-            Если бы referralUsers был бы массивом, то чтобы получить элемент по индексу 1 ты бы использовал referralUsers[1],
-            а здесь используй referralUsers.get(1)
-         */
-        return null;
+        Integer sumOfReferrals = 0;
+        for (ReferralUser referralUser : referralUsers) {
+            sumOfReferrals += referralUser.getSum();
+        }
+        return sumOfReferrals.toString();
     }
 }
