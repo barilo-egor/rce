@@ -50,6 +50,10 @@ public interface UserRepository extends BaseRepository<User> {
     @Query("update User set step=step + 1, command=:command where chatId=:chatId")
     void nextStep(@Param("chatId") Long chatId, @Param("command") Command command);
 
+    @Modifying
+    @Query("update User set step=step + 1 where chatId=:chatId")
+    void nextStep(@Param("chatId") Long chatId);
+
     @Query("select chatId from User where isAdmin=true")
     List<Long> getAdminsChatIds();
 

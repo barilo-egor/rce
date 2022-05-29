@@ -29,4 +29,9 @@ public enum BotMessageType {
         return Arrays.stream(BotMessageType.values()).filter(t -> t.getDisplayName().equals(name)).findFirst()
                 .orElseThrow(() -> new BaseException("Не найдено сообщение бота: " + name));
     }
+
+    public static BotMessageType getByName(String name) {
+        return Arrays.stream(BotMessageType.values()).filter(t -> t.name().equals(name)).findFirst()
+                .orElseThrow(() -> new BaseException("Не найдено сообщение бота: " + name));
+    }
 }

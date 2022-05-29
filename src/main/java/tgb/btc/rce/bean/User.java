@@ -46,7 +46,7 @@ public class User extends BasePersist {
     @Column(name = "REFERRAL_BALANCE")
     private Integer referralBalance;
 
-    @Column(name = "BUFFER_VARIABLE")
+    @Column(name = "BUFFER_VARIABLE", length = 3000)
     private String bufferVariable;
 
     @Column(name = "IS_ACTIVE", nullable = false)
