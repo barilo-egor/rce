@@ -27,6 +27,7 @@ public abstract class Processor {
 
     public boolean checkForCancel(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
+        if (User.DEFAULT_STEP == userService.getStepByChatId(chatId)) return false;
         if (this.getClass().getAnnotation(CommandProcessor.class).command().isAdmin() &&
                 isCommand(update, Command.ADMIN_BACK)) {
             processToAdminMainPanel(chatId);

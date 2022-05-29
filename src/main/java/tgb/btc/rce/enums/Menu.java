@@ -12,7 +12,7 @@ public enum Menu {
     ADMIN_BACK(List.of(Command.ADMIN_BACK)),
     SEND_MESSAGES(List.of(Command.MAILING_LIST, Command.SEND_MESSAGE_TO_USER, Command.ADMIN_BACK)),
     BOT_SETTINGS(List.of(Command.CURRENT_DATA, Command.ON_BOT, Command.OFF_BOT, Command.BOT_MESSAGES,
-            Command.SYSTEM_MESSAGES, Command.ADMIN_BACK));
+            Command.BOT_VARIABLES, Command.SYSTEM_MESSAGES, Command.ADMIN_BACK));
 
     final List<Command> commands;
 

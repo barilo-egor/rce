@@ -62,6 +62,7 @@ public enum Command {
     ON_BOT("Вкл.бота", true),
     OFF_BOT("Выкл.бота", true),
     BOT_MESSAGES("Сообщения бота", true),
+    BOT_VARIABLES("Переменные бота", true),
     SYSTEM_MESSAGES("Сис.сообщения", true);
 
     final String text;

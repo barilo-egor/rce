@@ -1,13 +1,18 @@
 package tgb.btc.rce.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
+import org.telegram.telegrambots.meta.api.methods.GetFile;
 import org.telegram.telegrambots.meta.api.methods.send.SendAnimation;
+import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
+import org.telegram.telegrambots.meta.api.objects.Document;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
@@ -18,6 +23,11 @@ import tgb.btc.rce.bot.RceBot;
 import tgb.btc.rce.exception.BaseException;
 import tgb.btc.rce.service.IResponseSender;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Serializable;
+import java.net.URL;
 import java.util.Optional;
 
 @Service
@@ -136,5 +146,39 @@ public class ResponseSender implements IResponseSender {
         } catch (TelegramApiException e) {
             log.debug("Не получилось отправить измененное сообщение: chatId" + chatId + ", text=" + text, e);
         }
+    }
+
+    public void sendFile(Long chatId, File file) {
+        try {
+            bot.execute(SendDocument.builder()
+                    .chatId(chatId.toString())
+                    .document(new InputFile(file))
+                    .build());
+        } catch (TelegramApiException e) {
+            log.debug("Не получилось отправить файл: chatId=" + chatId + ", fileName=" + file.getName());
+        }
+    }
+
+    public Optional<org.telegram.telegrambots.meta.api.objects.File> execute(GetFile getFile) {
+        try {
+            return Optional.of(bot.execute(getFile));
+        } catch (TelegramApiException e) {
+            log.debug("Не получилось скачать файл:" + getFile.toString());
+            return Optional.empty();
+        }
+    }
+
+    public void downloadFile(Document document, String localFilePath) throws IOException, TelegramApiException {
+        org.telegram.telegrambots.meta.api.objects.File file = getFilePath(document);
+
+        java.io.File localFile = new java.io.File(localFilePath);
+        InputStream is = new URL(file.getFileUrl(bot.getBotToken())).openStream();
+        FileUtils.copyInputStreamToFile(is, localFile);
+    }
+
+    private org.telegram.telegrambots.meta.api.objects.File getFilePath(Document document) throws TelegramApiException {
+        GetFile getFile = new GetFile();
+        getFile.setFileId(document.getFileId());
+        return execute(getFile).get();
     }
 }
