@@ -24,7 +24,7 @@ public class SendMessageToUser extends Processor {
     @Override
     public void run(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
-        checkForCancel(update);
+        if (checkForCancel(update)) return;
         switch (userService.getStepByChatId(chatId)) {
             case 0:
                 messagesService.askForChatId(update, Command.SEND_MESSAGE_TO_USER);

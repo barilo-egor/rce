@@ -24,7 +24,7 @@ public class AddContact extends Processor {
     @Override
     public void run(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
-        checkForCancel(update);
+        if (checkForCancel(update)) return;
         switch (userService.getStepByChatId(chatId)) {
             case 0:
                 editContactsService.askInput(chatId);

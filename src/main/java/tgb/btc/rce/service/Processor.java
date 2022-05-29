@@ -25,14 +25,18 @@ public abstract class Processor {
 
     public abstract void run(Update update);
 
-    public void checkForCancel(Update update) {
+    public boolean checkForCancel(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
         if (this.getClass().getAnnotation(CommandProcessor.class).command().isAdmin() &&
-                isCommand(update, Command.ADMIN_BACK)) processToAdminMainPanel(chatId);
-        else if (User.DEFAULT_STEP != userService.getStepByChatId(chatId)
+                isCommand(update, Command.ADMIN_BACK)) {
+            processToAdminMainPanel(chatId);
+            return true;
+        } else if (User.DEFAULT_STEP != userService.getStepByChatId(chatId)
                 && UpdateType.MESSAGE.equals(UpdateType.fromUpdate(update))
-                && isCommand(update, Command.CANCEL))
+                && isCommand(update, Command.CANCEL)) {
             processToMainMenu(chatId);
+            return true;
+        } else return false;
     }
 
     private boolean isCommand(Update update, Command command) {

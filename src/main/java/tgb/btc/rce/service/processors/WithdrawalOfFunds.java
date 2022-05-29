@@ -24,7 +24,7 @@ public class WithdrawalOfFunds extends Processor {
     @Override
     public void run(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
-        checkForCancel(update);
+        if (checkForCancel(update)) return;
         switch (userService.getStepByChatId(chatId)) {
             case 0:
                 withdrawalOfFundsService.askForContact(chatId, UpdateUtil.getMessageId(update));

@@ -30,7 +30,7 @@ public class BanUnban extends Processor {
     @Override
     public void run(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
-        checkForCancel(update);
+        if (checkForCancel(update)) return;
         switch (userService.getStepByChatId(chatId)) {
             case 0:
                 messagesService.askForChatId(update, Command.BAN_UNBAN);
