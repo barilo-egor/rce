@@ -13,17 +13,18 @@ import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.impl.UserService;
 import tgb.btc.rce.util.BotVariablePropertiesUtil;
+import tgb.btc.rce.util.MessagePropertiesUtil;
 import tgb.btc.rce.util.UpdateUtil;
 
 import java.io.File;
 import java.io.IOException;
 
+@CommandProcessor(command = Command.SYSTEM_MESSAGES)
 @Slf4j
-@CommandProcessor(command = Command.BOT_VARIABLES)
-public class BotVariables extends Processor {
+public class SystemMessages extends Processor {
 
     @Autowired
-    public BotVariables(IResponseSender responseSender, UserService userService) {
+    public SystemMessages(IResponseSender responseSender, UserService userService) {
         super(responseSender, userService);
     }
 
@@ -33,10 +34,10 @@ public class BotVariables extends Processor {
         if (checkForCancel(update)) return;
         switch (userService.getStepByChatId(chatId)) {
             case 0:
-                responseSender.sendMessage(chatId, "Измените нужные значения и отправьте исправленный файл. " +
+                responseSender.sendMessage(chatId, "Измените нужные сообщения и отправьте исправленный файл. " +
                         "Обязательно закройте файл, перед тем как отправлять.");
-                responseSender.sendFile(chatId, new File(FilePaths.BOT_VARIABLE_PROPERTIES));
-                userService.nextStep(chatId, Command.BOT_VARIABLES);
+                responseSender.sendFile(chatId, new File(FilePaths.MESSAGE_PROPERTIES));
+                userService.nextStep(chatId, Command.SYSTEM_MESSAGES);
                 break;
             case 1:
                 if (!update.hasMessage() || !update.getMessage().hasDocument()) {
@@ -52,38 +53,38 @@ public class BotVariables extends Processor {
     private void updateProperties(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
         try {
-            responseSender.downloadFile(update.getMessage().getDocument(), FilePaths.BOT_VARIABLE_BUFFER_PROPERTIES);
+            responseSender.downloadFile(update.getMessage().getDocument(), FilePaths.MESSAGE_BUFFER_PROPERTIES);
         } catch (IOException | TelegramApiException e) {
-            log.error("Ошибка при скачивании новых переменных: ", e);
-            responseSender.sendMessage(chatId, "Ошибка при скачивании новых переменных: " + e.getMessage());
+            log.error("Ошибка при скачивании новых сообщений: ", e);
+            responseSender.sendMessage(chatId, "Ошибка при скачивании новых сообщений: " + e.getMessage());
             return;
         }
-        File newProperties = new File(FilePaths.BOT_VARIABLE_BUFFER_PROPERTIES);
+        File newProperties = new File(FilePaths.MESSAGE_BUFFER_PROPERTIES);
         try {
-            BotVariablePropertiesUtil.validate(newProperties);
+            MessagePropertiesUtil.validate(newProperties);
         } catch (BaseException e) {
             log.error("Ошибка при чтении файла: ", e);
             responseSender.sendMessage(chatId, "Ошибка при чтении файла: " + e.getMessage());
             return;
         }
         try {
-            FileUtils.delete(new File(FilePaths.BOT_VARIABLE_PROPERTIES));
+            FileUtils.delete(new File(FilePaths.MESSAGE_PROPERTIES));
         } catch (IOException e) {
-            log.error("Ошибки при удалении " + FilePaths.BOT_VARIABLE_PROPERTIES, e);
-            responseSender.sendMessage(chatId, "Ошибки при удалении " + FilePaths.BOT_VARIABLE_PROPERTIES + ":"
+            log.error("Ошибки при удалении " + FilePaths.MESSAGE_PROPERTIES, e);
+            responseSender.sendMessage(chatId, "Ошибки при удалении " + FilePaths.MESSAGE_PROPERTIES + ":"
                     + e.getMessage());
             return;
         }
         try {
-            FileUtils.moveFile(newProperties, new File(FilePaths.BOT_VARIABLE_PROPERTIES));
+            FileUtils.moveFile(newProperties, new File(FilePaths.MESSAGE_PROPERTIES));
         } catch (IOException e) {
-            log.error("Ошибки при перемещении файла + " + FilePaths.BOT_VARIABLE_BUFFER_PROPERTIES
-                    + " в " + FilePaths.BOT_VARIABLE_PROPERTIES, e);
+            log.error("Ошибки при перемещении файла + " + FilePaths.MESSAGE_BUFFER_PROPERTIES
+                    + " в " + FilePaths.MESSAGE_PROPERTIES, e);
             responseSender.sendMessage(chatId, "Ошибки при перемещении файла + "
-                    + FilePaths.BOT_VARIABLE_BUFFER_PROPERTIES + " в " + FilePaths.BOT_VARIABLE_PROPERTIES);
+                    + FilePaths.MESSAGE_BUFFER_PROPERTIES + " в " + FilePaths.MESSAGE_PROPERTIES);
             return;
         }
-        BotVariablePropertiesUtil.loadProperties();
+        MessagePropertiesUtil.loadProperties();
         responseSender.sendMessage(chatId, "Переменные обновлены.");
     }
 }

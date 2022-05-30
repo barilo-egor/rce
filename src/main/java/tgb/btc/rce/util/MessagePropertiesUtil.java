@@ -3,7 +3,9 @@ package tgb.btc.rce.util;
 import lombok.extern.slf4j.Slf4j;
 import tgb.btc.rce.constants.FilePaths;
 import tgb.btc.rce.enums.PropertiesMessage;
+import tgb.btc.rce.exception.BaseException;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Objects;
@@ -16,8 +18,8 @@ public class MessagePropertiesUtil {
     private final static Properties messageProperties = new Properties();
 
     public static void loadProperties() {
-        try {
-            messageProperties.load(new FileInputStream(FilePaths.MESSAGE_PROPERTIES));
+        try (FileInputStream inputStream = new FileInputStream(FilePaths.MESSAGE_PROPERTIES)){
+            messageProperties.load(inputStream);
         } catch (IOException e) {
             log.error("Ошибка загрузки bot properties по пути " + FilePaths.MESSAGE_PROPERTIES + " : ", e);
         }
@@ -36,5 +38,9 @@ public class MessagePropertiesUtil {
 
     private static String getErrorText(String key) {
         return String.format(errorMessage, key);
+    }
+
+    public static void validate(File file) throws BaseException {
+
     }
 }
