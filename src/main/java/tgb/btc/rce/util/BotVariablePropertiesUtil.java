@@ -5,6 +5,7 @@ import tgb.btc.rce.constants.FilePaths;
 import tgb.btc.rce.enums.BotVariableType;
 import tgb.btc.rce.exception.BaseException;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Objects;
@@ -18,8 +19,8 @@ public class BotVariablePropertiesUtil {
     private final static Properties botVariableProperties = new Properties();
 
     public static void loadProperties() {
-        try {
-            botVariableProperties.load(new FileInputStream(FilePaths.BOT_VARIABLE_PROPERTIES));
+        try (FileInputStream inputStream = new FileInputStream(FilePaths.BOT_VARIABLE_PROPERTIES)) {
+            botVariableProperties.load(inputStream);
         } catch (IOException e) {
             log.error("Ошибка загрузки bot variable properties по пути " + FilePaths.BOT_VARIABLE_PROPERTIES + " : ", e);
         }
@@ -57,7 +58,7 @@ public class BotVariablePropertiesUtil {
         return getInt(BotVariableType.MIN_WITHDRAWAL_OF_FUNDS_SUM);
     }
 
-    public static void validate() throws BaseException {
+    public static void validate(File file) throws BaseException {
         // TODO
     }
 }
