@@ -43,4 +43,8 @@ public class UpdateUtil {
     public static Long getLongFromText(Update update) {
         return NumberUtil.getInputLong(getMessageText(update));
     }
+
+    public static Integer getIntFromText(Update update) {
+        return NumberUtil.getInputInt(getMessageText(update));
+    }
 }

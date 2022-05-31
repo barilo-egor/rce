@@ -55,6 +55,9 @@ public class User extends BasePersist {
     @Column(name = "IS_BANNED", nullable = false)
     private Boolean isBanned;
 
+    @Column(name = "CURRENT_DEAL", nullable = false)
+    private Long currentDeal;
+
     @OneToMany
     private List<ReferralUser> referralUsers;
 
@@ -63,7 +66,7 @@ public class User extends BasePersist {
 
     public User(Long chatId, String username, Integer step, Command command, LocalDateTime registrationDate,
                 Boolean isAdmin, Integer lotteryCount, Long fromChatId, Integer referralBalance, String bufferVariable,
-                Boolean isActive, Boolean isBanned, List<ReferralUser> referralUsers) {
+                Boolean isActive, Boolean isBanned, Long currentDeal, List<ReferralUser> referralUsers) {
         this.chatId = chatId;
         this.username = username;
         this.step = step;
@@ -76,6 +79,7 @@ public class User extends BasePersist {
         this.bufferVariable = bufferVariable;
         this.isActive = isActive;
         this.isBanned = isBanned;
+        this.currentDeal = currentDeal;
         this.referralUsers = referralUsers;
     }
 
@@ -202,5 +206,13 @@ public class User extends BasePersist {
 
     public void setBanned(Boolean banned) {
         isBanned = banned;
+    }
+
+    public Long getCurrentDeal() {
+        return currentDeal;
+    }
+
+    public void setCurrentDeal(Long currentDeal) {
+        this.currentDeal = currentDeal;
     }
 }

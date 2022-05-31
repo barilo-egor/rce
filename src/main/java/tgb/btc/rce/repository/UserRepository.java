@@ -73,4 +73,11 @@ public interface UserRepository extends BaseRepository<User> {
 
     @Query("select isBanned from User where chatId=:chatId")
     Boolean getIsBannedByChatId(@Param("chatId") Long chatId);
+
+    @Modifying
+    @Query("update User set currentDeal=:currentDeal where chatId=:chatId")
+    void updateCurrentDealByChatId(@Param("currentDeal") Long dealPid, @Param("chatId") Long chatId);
+
+    @Query("select currentDeal from User where chatId=:chatId")
+    Long getCurrentDealByChatId(@Param("chatId") Long chatId);
 }

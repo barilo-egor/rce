@@ -1,6 +1,7 @@
 package tgb.btc.rce.bean;
 
 import lombok.Builder;
+import tgb.btc.rce.enums.CryptoCurrency;
 import tgb.btc.rce.enums.PaymentType;
 
 import javax.persistence.*;
@@ -46,12 +47,16 @@ public class Deal extends BasePersist {
     @Column(name = "IS_CURRENT")
     private Boolean isCurrent;
 
+    @Column(name = "CRYPTO_CURRENCY")
+    @Enumerated(value = EnumType.STRING)
+    private CryptoCurrency cryptoCurrency;
+
     public Deal() {
     }
 
     public Deal(User user, LocalDateTime dateTime, PaymentType paymentType, BigDecimal btcAmount, BigDecimal amount,
                 String wallet, String verificationPhoto, String userCheck, Boolean isActive, Boolean isPassed,
-                Boolean isCurrent) {
+                Boolean isCurrent, CryptoCurrency cryptoCurrency) {
         this.user = user;
         this.dateTime = dateTime;
         this.paymentType = paymentType;
@@ -63,6 +68,7 @@ public class Deal extends BasePersist {
         this.isActive = isActive;
         this.isPassed = isPassed;
         this.isCurrent = isCurrent;
+        this.cryptoCurrency = cryptoCurrency;
     }
 
     public String getUserCheck() {
@@ -153,6 +159,13 @@ public class Deal extends BasePersist {
         this.verificationPhoto = verificationPhoto;
     }
 
+    public CryptoCurrency getCryptoCurrency() {
+        return cryptoCurrency;
+    }
+
+    public void setCryptoCurrency(CryptoCurrency cryptoCurrency) {
+        this.cryptoCurrency = cryptoCurrency;
+    }
 
     @Override
     public boolean equals(Object o) {

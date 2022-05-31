@@ -15,7 +15,9 @@ public enum PropertiesMessage {
     CONTACT_ASK_DELETE("contact.ask.delete"),
     SEND_MESSAGES_MENU("send.messages.menu"),
     EDIT_CONTACTS_MENU("edit.contacts.menu"),
-    BOT_SETTINGS_MENU("bot.settings.menu");
+    BOT_SETTINGS_MENU("bot.settings.menu"),
+    CHOOSE_CURRENCY("choose.currency"),
+    DEAL_INPUT_SUM("deal.input.sum");
 
     final String key;
 
