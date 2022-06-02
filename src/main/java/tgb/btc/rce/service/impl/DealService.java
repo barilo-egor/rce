@@ -9,6 +9,8 @@ import tgb.btc.rce.enums.CryptoCurrency;
 import tgb.btc.rce.repository.BaseRepository;
 import tgb.btc.rce.repository.DealRepository;
 
+import java.math.BigDecimal;
+
 @Service
 public class DealService extends BasePersistService<Deal> {
 
@@ -30,5 +32,13 @@ public class DealService extends BasePersistService<Deal> {
 
     public boolean existByPid(Long pid) {
         return dealRepository.existsById(pid);
+    }
+
+    public void updateCryptoAmountByPid(BigDecimal cryptoAmount, Long pid) {
+        dealRepository.updateCryptoAmountByPid(cryptoAmount, pid);
+    }
+
+    public void updateAmountByPid(BigDecimal amount, Long pid) {
+        dealRepository.updateAmountByPid(amount, pid);
     }
 }

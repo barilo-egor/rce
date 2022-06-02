@@ -6,6 +6,7 @@ import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.bean.Deal;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.CryptoCurrency;
+import tgb.btc.rce.enums.UpdateType;
 import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.impl.DealService;
@@ -46,11 +47,16 @@ public class BuyBitcoin extends Processor {
                     processToMainMenu(chatId);
                     return;
                 }
-                dealService.updateCryptoCurrencyByPid(userService.getCurrentDealByChatId(chatId),
-                        CryptoCurrency.valueOf(update.getCallbackQuery().getData()));
-                exchangeService.askForSum(chatId);
+                CryptoCurrency currency = CryptoCurrency.valueOf(update.getCallbackQuery().getData());
+                dealService.updateCryptoCurrencyByPid(userService.getCurrentDealByChatId(chatId), currency);
+                exchangeService.askForSum(chatId, currency);
                 break;
             case 2:
+                if(UpdateType.INLINE_QUERY.equals(UpdateType.fromUpdate(update))) {
+                    exchangeService.convertToRub(update,
+                            userService.getCurrentDealByChatId(UpdateUtil.getChatId(update)));
+                    return;
+                }
                 exchangeService.validateSum(update);
                 break;
         }

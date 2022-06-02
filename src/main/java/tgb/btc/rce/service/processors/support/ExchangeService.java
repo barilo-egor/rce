@@ -2,26 +2,30 @@ package tgb.btc.rce.service.processors.support;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
+import org.telegram.telegrambots.meta.api.methods.AnswerInlineQuery;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.inlinequery.inputmessagecontent.InputTextMessageContent;
+import org.telegram.telegrambots.meta.api.objects.inlinequery.result.InlineQueryResultArticle;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import tgb.btc.rce.bean.Deal;
-import tgb.btc.rce.enums.Command;
-import tgb.btc.rce.enums.CryptoCurrency;
-import tgb.btc.rce.enums.InlineType;
-import tgb.btc.rce.enums.PropertiesMessage;
+import tgb.btc.rce.constants.BotStringConstants;
+import tgb.btc.rce.enums.*;
 import tgb.btc.rce.exception.BaseException;
+import tgb.btc.rce.exception.EnumTypeNotFoundException;
+import tgb.btc.rce.exception.NumberParseException;
 import tgb.btc.rce.service.impl.DealService;
 import tgb.btc.rce.service.impl.ResponseSender;
 import tgb.btc.rce.service.impl.UserService;
-import tgb.btc.rce.util.KeyboardUtil;
-import tgb.btc.rce.util.MessagePropertiesUtil;
-import tgb.btc.rce.util.UpdateUtil;
+import tgb.btc.rce.util.*;
 import tgb.btc.rce.vo.InlineButton;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.math.BigDecimal;
+import java.util.*;
 
 @Service
 public class ExchangeService {
@@ -67,18 +71,83 @@ public class ExchangeService {
     }
 
 
-    public void askForSum(Long chatId) {
-        Optional<Message> optionalMessage = responseSender.sendMessage(chatId, String.format(MessagePropertiesUtil.getMessage(PropertiesMessage.DEAL_INPUT_SUM),
-                dealService.getCryptoCurrencyByPid(userService.getCurrentDealByChatId(chatId))));
+    public void askForSum(Long chatId, CryptoCurrency currency) {
+        Optional<Message> optionalMessage = responseSender.sendMessage(chatId,
+                String.format(MessagePropertiesUtil.getMessage(PropertiesMessage.DEAL_INPUT_SUM),
+                        dealService.getCryptoCurrencyByPid(
+                                userService.getCurrentDealByChatId(chatId))), getCalculatorKeyboard(currency));
         userService.nextStep(chatId);
         optionalMessage.ifPresent(message ->
                 userService.updateBufferVariable(chatId, message.getMessageId().toString()));
     }
 
-    public void validateSum(Update update) {
-        if (!update.hasMessage() || !update.getMessage().hasText())
-            throw new BaseException("Не введена сумма.");
-        Integer sum = UpdateUtil.getIntFromText(update);
+    private ReplyKeyboard getCalculatorKeyboard(CryptoCurrency currency) {
+        return KeyboardUtil.buildInline(List.of(
+                        InlineButton.builder()
+                                .inlineType(InlineType.SWITCH_INLINE_QUERY_CURRENT_CHAT)
+                                .text("Калькулятор")
+                                .data(currency.getShortName() + " ")
+                                .build()),
+                1, InlineType.SWITCH_INLINE_QUERY_CURRENT_CHAT);
+    }
 
+    public void validateSum(Update update) {
+        Long chatId = UpdateUtil.getChatId(update);
+        Long currentDealPid = userService.getCurrentDealByChatId(chatId);
+        Double sum = UpdateUtil.getDoubleFromText(update);
+    }
+
+    public void convertToRub(Update update, Long currentDealPid) {
+        System.out.println();
+        String query = update.getInlineQuery().getQuery();
+        Double sum;
+        CryptoCurrency currency = null;
+
+        if (!hasInputSum(query)) {
+            askForCryptoSum(update);
+            return;
+        }
+
+        try {
+            currency = CryptoCurrency.fromShortName(query.substring(0, query.indexOf(" ")));
+            sum = NumberUtil.getInputDouble(query.substring(query.indexOf(" ") + 1));
+        } catch (EnumTypeNotFoundException e) {
+            askForCryptoSum(update);
+            return;
+        } catch (NumberParseException e) {
+            if (hasInputSum(currency, query)) sendInlineAnswer(update, e.getMessage());
+            else askForCryptoSum(update);
+            return;
+        }
+
+        sendInlineAnswer(update, sum + " " + currency.getDisplayName() + " ~ " +
+                ConverterUtil.convertBitcoinToRub(currency, sum));
+    }
+
+    private boolean hasInputSum(CryptoCurrency currency, String query) {
+        return currency != null && query.length() > currency.getShortName().length() + 1;
+    }
+
+    private boolean hasInputSum(String query) {
+        return query.contains(" ");
+    }
+
+    private void askForCryptoSum(Update update) {
+        sendInlineAnswer(update, BotStringConstants.ENTER_CRYPTO_SUM);
+    }
+
+    private void sendInlineAnswer(Update update, String answer) {
+        String text = update.getInlineQuery().getQuery().contains(" ") ?
+                update.getInlineQuery().getQuery().substring(update.getInlineQuery().getQuery().indexOf(" ")) : "Ошибка";
+        responseSender.execute(AnswerInlineQuery.builder().inlineQueryId(update.getInlineQuery().getId())
+                .result(InlineQueryResultArticle.builder()
+                        .id(update.getInlineQuery().getId())
+                        .title("\uD83C\uDDF7\uD83C\uDDFARUB24BTCbot\uD83E\uDD16✅")
+                        .inputMessageContent(InputTextMessageContent.builder()
+                                .messageText(text)
+                                .build())
+                        .description(answer)
+                        .build())
+                .build());
     }
 }

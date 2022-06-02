@@ -26,6 +26,9 @@ public class Deal extends BasePersist {
     @Column(name = "BTC_AMOUNT", precision = 15, scale = 8)
     private BigDecimal btcAmount;
 
+    @Column(name = "CRYPTO_AMOUNT", precision = 15, scale = 8)
+    private BigDecimal cryptoAmount;
+
     @Column(name = "AMOUNT")
     private BigDecimal amount;
 
@@ -54,13 +57,14 @@ public class Deal extends BasePersist {
     public Deal() {
     }
 
-    public Deal(User user, LocalDateTime dateTime, PaymentType paymentType, BigDecimal btcAmount, BigDecimal amount,
-                String wallet, String verificationPhoto, String userCheck, Boolean isActive, Boolean isPassed,
-                Boolean isCurrent, CryptoCurrency cryptoCurrency) {
+    public Deal(User user, LocalDateTime dateTime, PaymentType paymentType, BigDecimal btcAmount, BigDecimal cryptoAmount,
+                BigDecimal amount, String wallet, String verificationPhoto, String userCheck, Boolean isActive,
+                Boolean isPassed, Boolean isCurrent, CryptoCurrency cryptoCurrency) {
         this.user = user;
         this.dateTime = dateTime;
         this.paymentType = paymentType;
         this.btcAmount = btcAmount;
+        this.cryptoAmount = cryptoAmount;
         this.amount = amount;
         this.wallet = wallet;
         this.verificationPhoto = verificationPhoto;
@@ -167,17 +171,13 @@ public class Deal extends BasePersist {
         this.cryptoCurrency = cryptoCurrency;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
-        Deal deal = (Deal) o;
-        return Objects.equals(user, deal.user) && Objects.equals(dateTime, deal.dateTime) && paymentType == deal.paymentType && Objects.equals(btcAmount, deal.btcAmount) && Objects.equals(amount, deal.amount) && Objects.equals(wallet, deal.wallet) && Objects.equals(verificationPhoto, deal.verificationPhoto) && Objects.equals(userCheck, deal.userCheck) && Objects.equals(isActive, deal.isActive) && Objects.equals(isPassed, deal.isPassed) && Objects.equals(isCurrent, deal.isCurrent);
+    public BigDecimal getCryptoAmount() {
+        return cryptoAmount;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(super.hashCode(), user, dateTime, paymentType, btcAmount, amount, wallet, verificationPhoto, userCheck, isActive, isPassed, isCurrent);
+    public void setCryptoAmount(BigDecimal cryptoAmount) {
+        this.cryptoAmount = cryptoAmount;
     }
+
+    // TODO
 }

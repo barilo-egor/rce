@@ -23,6 +23,8 @@ public class UpdateUtil {
                 return update.getMessage().getFrom();
             case CALLBACK_QUERY:
                 return update.getCallbackQuery().getFrom();
+            case INLINE_QUERY:
+                return update.getInlineQuery().getFrom();
             default:
                 throw new BaseException("Тип апдейта не найден: " + update);
         }
@@ -46,5 +48,9 @@ public class UpdateUtil {
 
     public static Integer getIntFromText(Update update) {
         return NumberUtil.getInputInt(getMessageText(update));
+    }
+
+    public static Double getDoubleFromText(Update update) {
+        return NumberUtil.getInputDouble(getMessageText(update));
     }
 }

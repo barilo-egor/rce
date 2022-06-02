@@ -6,4 +6,6 @@ public interface BotStringConstants {
     String CALLBACK_DATA_SPLITTER = ":";
 
     String SHOW_BUTTON = "Показать";
+
+    String ENTER_CRYPTO_SUM = "Введите сумму в криптовалюте.";
 }

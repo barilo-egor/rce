@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.telegram.telegrambots.meta.api.methods.AnswerInlineQuery;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.GetFile;
 import org.telegram.telegrambots.meta.api.methods.send.SendAnimation;
@@ -179,6 +180,15 @@ public class ResponseSender implements IResponseSender {
     private org.telegram.telegrambots.meta.api.objects.File getFilePath(Document document) throws TelegramApiException {
         GetFile getFile = new GetFile();
         getFile.setFileId(document.getFileId());
+        // TODO проверить optional
         return execute(getFile).get();
+    }
+
+    public void execute(AnswerInlineQuery answerInlineQuery) {
+        try {
+            bot.execute(answerInlineQuery);
+        } catch (TelegramApiException e) {
+            log.debug("Не получилось отправить answerInlineQuery: " + answerInlineQuery.toString(), e);
+        }
     }
 }
