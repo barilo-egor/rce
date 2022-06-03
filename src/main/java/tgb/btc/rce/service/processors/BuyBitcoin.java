@@ -35,6 +35,13 @@ public class BuyBitcoin extends Processor {
             userService.updateCurrentDealByChatId(null, chatId);
             return;
         }
+        if(update.hasCallbackQuery() && Command.CANCEL.getText().equals(update.getCallbackQuery().getData())) {
+            responseSender.deleteMessage(chatId, update.getCallbackQuery().getMessage().getMessageId());
+            if (userService.getStepByChatId(chatId) == 0) processToMainMenu(chatId);
+            else previousStep(update);
+            return;
+        }
+
         switch (userService.getStepByChatId(chatId)) {
             case 0:
                 exchangeService.createDeal(chatId);
@@ -57,6 +64,31 @@ public class BuyBitcoin extends Processor {
                     return;
                 }
                 exchangeService.saveSum(update);
+                if (dealService.getDealsCountByUserChatId(chatId) > 0) exchangeService.askForWallet(chatId);
+                else exchangeService.askForUserPromoCode(chatId);
+                break;
+            case 3:
+                break;
+            case 4:
+                break;
+        }
+    }
+
+    private void previousStep(Update update) {
+        Long chatId = UpdateUtil.getChatId(update);
+        userService.previousStep(chatId);
+
+        switch (userService.getStepByChatId(chatId)) {
+            case 0:
+                exchangeService.askForCurrency(chatId);
+                break;
+            case 1:
+                exchangeService.askForSum(chatId,
+                        dealService.getCryptoCurrencyByPid(userService.getCurrentDealByChatId(chatId)));
+                break;
+            case 2:
+                if (dealService.getDealsCountByUserChatId(chatId) > 0) exchangeService.askForWallet(chatId);
+                else exchangeService.askForUserPromoCode(chatId);
                 break;
         }
     }

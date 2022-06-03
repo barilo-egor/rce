@@ -28,4 +28,9 @@ public interface DealRepository extends BaseRepository<Deal> {
     @Modifying
     @Query("update Deal set amount=:amount where pid=:pid")
     void updateAmountByPid(@Param("amount") BigDecimal amount, @Param("pid") Long pid);
+
+    @Query("select count(d) from Deal d where d.user.chatId=:chatId")
+    Long getDealsCountByUserChatId(@Param("chatId") Long chatId);
+
+    Deal findByPid(Long pid);
 }

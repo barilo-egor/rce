@@ -5,6 +5,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMar
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
+import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.InlineType;
 import tgb.btc.rce.vo.InlineButton;
 import tgb.btc.rce.vo.ReplyButton;
@@ -15,6 +16,11 @@ import java.util.List;
 public final class KeyboardUtil {
     private KeyboardUtil() {
     }
+
+    public static InlineButton INLINE_CANCEL_BUTTON = InlineButton.builder().text("Отмена")
+            .inlineType(InlineType.CALLBACK_DATA)
+            .data(Command.CANCEL.getText())
+            .build();
 
     public static InlineKeyboardMarkup buildInline(List<InlineButton> buttons) {
         return buildInline(buttons, 1, InlineType.CALLBACK_DATA);

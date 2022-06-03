@@ -10,6 +10,7 @@ import tgb.btc.rce.repository.BaseRepository;
 import tgb.btc.rce.repository.DealRepository;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Service
 public class DealService extends BasePersistService<Deal> {
@@ -40,5 +41,13 @@ public class DealService extends BasePersistService<Deal> {
 
     public void updateAmountByPid(BigDecimal amount, Long pid) {
         dealRepository.updateAmountByPid(amount, pid);
+    }
+
+    public Long getDealsCountByUserChatId(Long chatId) {
+        return dealRepository.getDealsCountByUserChatId(chatId);
+    }
+
+    public Deal getByPid(Long pid) {
+        return dealRepository.findByPid(pid);
     }
 }

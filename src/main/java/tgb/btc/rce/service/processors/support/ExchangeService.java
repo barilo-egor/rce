@@ -3,6 +3,7 @@ package tgb.btc.rce.service.processors.support;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.AnswerInlineQuery;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.inlinequery.inputmessagecontent.InputTextMessageContent;
@@ -11,7 +12,6 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import tgb.btc.rce.bean.Deal;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.*;
-import tgb.btc.rce.exception.BaseException;
 import tgb.btc.rce.exception.EnumTypeNotFoundException;
 import tgb.btc.rce.exception.NumberParseException;
 import tgb.btc.rce.service.impl.DealService;
@@ -27,6 +27,9 @@ import java.util.*;
 public class ExchangeService {
 
     private static final List<InlineButton> currencies = new ArrayList<>();
+
+    public static final String USE_PROMO = "use_promo";
+    public static final String DONT_USE_PROMO = "dont_use_promo";
 
     private final ResponseSender responseSender;
     private final UserService userService;
@@ -46,6 +49,7 @@ public class ExchangeService {
                         .data(currency.name())
                         .inlineType(InlineType.CALLBACK_DATA)
                         .build()));
+        currencies.add(KeyboardUtil.INLINE_CANCEL_BUTTON);
     }
 
     public void createDeal(Long chatId) {
@@ -83,7 +87,8 @@ public class ExchangeService {
                                 .inlineType(InlineType.SWITCH_INLINE_QUERY_CURRENT_CHAT)
                                 .text("Калькулятор")
                                 .data(currency.getShortName() + " ")
-                                .build()),
+                                .build(),
+                        KeyboardUtil.INLINE_CANCEL_BUTTON),
                 1, InlineType.SWITCH_INLINE_QUERY_CURRENT_CHAT);
     }
 
@@ -165,5 +170,47 @@ public class ExchangeService {
                         .description(answer)
                         .build())
                 .build());
+    }
+
+    public void askForUserPromoCode(Long chatId) {
+        Deal deal = dealService.findById(userService.getCurrentDealByChatId(chatId));
+        BigDecimal discount = BigDecimal.valueOf(
+                BotVariablePropertiesUtil.getDouble(BotVariableType.PROMO_CODE_DISCOUNT));
+        BigDecimal sumWithDiscount = BigDecimalUtil.multiplyHalfUp(deal.getAmount(),
+                ConverterUtil.getPercentsFactor(
+                        discount));
+        String message = "<b>Покупка " + deal.getCryptoCurrency().getDisplayName() + "</b>: " + deal.getCryptoAmount()
+                + "\n\n"
+                + "<b>Сумма перевода</b>: <s>" + deal.getAmount() + "</s> " + sumWithDiscount
+                + "\n\n"
+                + "У вас есть промокод: <b>" + BotVariablePropertiesUtil.getVariable(BotVariableType.PROMO_CODE_NAME)
+                + "</b>, который даёт скидку в размере " + discount + "% от комиссии"
+                + "\n\n"
+                + "<b>Использовать промокод</b> как скидку?";
+        ReplyKeyboard keyboard = KeyboardUtil.buildInline(List.of(
+                InlineButton.builder()
+                        .text("Использовать, " + sumWithDiscount)
+                        .data(USE_PROMO)
+                        .build(),
+                InlineButton.builder()
+                        .text("Без промокода, " + deal.getAmount())
+                        .data(DONT_USE_PROMO)
+                        .build(),
+                KeyboardUtil.INLINE_CANCEL_BUTTON
+        ));
+
+        responseSender.sendMessage(chatId, message, keyboard);
+        userService.nextStep(chatId);
+    }
+
+    public void askForWallet(Long chatId) {
+        Deal deal = dealService.findById(userService.getCurrentDealByChatId(chatId));
+        String message = "Введите " + deal.getCryptoCurrency().getDisplayName() + "-адрес кошелька, куда вы "
+                + "хотите отправить " + deal.getCryptoAmount() + " " + deal.getCryptoCurrency().getShortName();
+
+        responseSender.sendMessage(chatId, message,
+                KeyboardUtil.buildInline(List.of(KeyboardUtil.INLINE_CANCEL_BUTTON)));
+        userService.nextStep(chatId);
+        userService.nextStep(chatId);
     }
 }

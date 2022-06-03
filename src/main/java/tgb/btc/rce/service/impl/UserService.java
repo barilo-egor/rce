@@ -92,6 +92,10 @@ public class UserService extends BasePersistService<User> {
         userRepository.nextStep(chatId);
     }
 
+    public void previousStep(Long chatId) {
+        userRepository.previousStep(chatId);
+    }
+
     public List<Long> getAdminsChatIds() {
         return userRepository.getAdminsChatIds();
     }

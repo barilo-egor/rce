@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+import tgb.btc.rce.bean.Deal;
 import tgb.btc.rce.bean.ReferralUser;
 import tgb.btc.rce.bean.User;
 import tgb.btc.rce.enums.Command;
@@ -53,6 +54,10 @@ public interface UserRepository extends BaseRepository<User> {
     @Modifying
     @Query("update User set step=step + 1 where chatId=:chatId")
     void nextStep(@Param("chatId") Long chatId);
+
+    @Modifying
+    @Query("update User set step=step - 1 where chatId=:chatId")
+    void previousStep(@Param("chatId") Long chatId);
 
     @Query("select chatId from User where isAdmin=true")
     List<Long> getAdminsChatIds();

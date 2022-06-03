@@ -66,7 +66,7 @@ public final class ConverterUtil {
         return rub.compareTo(fix) < 0 ? BigDecimalUtil.addHalfUp(rub, fixCommission) : total;
     }
 
-    private static BigDecimal getPercentsFactor(BigDecimal percents) {
+    public static BigDecimal getPercentsFactor(BigDecimal percents) {
         return BigDecimalUtil.divideHalfUp(percents, BigDecimal.valueOf(100));
     }
 
