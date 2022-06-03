@@ -4,7 +4,6 @@ import lombok.SneakyThrows;
 import org.json.JSONObject;
 import tgb.btc.rce.enums.BotVariableType;
 import tgb.btc.rce.enums.CryptoCurrency;
-import tgb.btc.rce.enums.DeliveryType;
 import tgb.btc.rce.exception.BaseException;
 
 import java.io.*;
@@ -45,7 +44,7 @@ public final class ConverterUtil {
             case LITECOIN:
                 currency = getLtcCurrency();
                 break;
-            case TETHER:
+            case USDT:
                 currency = getUsdtCurrency();
                 break;
             default:
@@ -75,7 +74,7 @@ public final class ConverterUtil {
     public static BigDecimal getUsdtCurrency() {
         JSONObject currency = readJsonFromUrl(ConverterUtil.USDT_USD_RATE);
         Object obj = currency.get("last");
-        return parse(obj, CryptoCurrency.TETHER);
+        return parse(obj, CryptoCurrency.USDT);
     }
 
 

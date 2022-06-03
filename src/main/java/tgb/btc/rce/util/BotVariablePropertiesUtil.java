@@ -3,6 +3,7 @@ package tgb.btc.rce.util;
 import lombok.extern.slf4j.Slf4j;
 import tgb.btc.rce.constants.FilePaths;
 import tgb.btc.rce.enums.BotVariableType;
+import tgb.btc.rce.enums.CryptoCurrency;
 import tgb.btc.rce.exception.BaseException;
 
 import java.io.File;
@@ -59,6 +60,19 @@ public class BotVariablePropertiesUtil {
             return Integer.parseInt(getVariable(botVariableType));
         } catch (NumberFormatException e) {
             throw new BaseException(String.format(wrongFormat, botVariableType.getKey()));
+        }
+    }
+
+    public static Double getMinSum(CryptoCurrency cryptoCurrency) {
+        switch (cryptoCurrency) {
+            case BITCOIN:
+                return BotVariablePropertiesUtil.getDouble(BotVariableType.MIN_SUM_BUY_BTC);
+            case LITECOIN:
+                return BotVariablePropertiesUtil.getDouble(BotVariableType.MIN_SUM_BUY_LTC);
+            case USDT:
+                return BotVariablePropertiesUtil.getDouble(BotVariableType.MIN_SUM_BUY_USDT);
+            default:
+                throw new BaseException("Не определена крипто валюта.");
         }
     }
 

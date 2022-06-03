@@ -11,6 +11,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import tgb.btc.rce.bean.Deal;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.*;
+import tgb.btc.rce.exception.BaseException;
 import tgb.btc.rce.exception.EnumTypeNotFoundException;
 import tgb.btc.rce.exception.NumberParseException;
 import tgb.btc.rce.service.impl.DealService;
@@ -89,11 +90,15 @@ public class ExchangeService {
         Long chatId = UpdateUtil.getChatId(update);
         Long currentDealPid = userService.getCurrentDealByChatId(chatId);
         Double sum = UpdateUtil.getDoubleFromText(update);
-        Double minSum = BotVariablePropertiesUtil.getDouble(BotVariableType.MIN_SUM_BUY);
+        CryptoCurrency cryptoCurrency = dealService.getCryptoCurrencyByPid(currentDealPid);
+        Double minSum = BotVariablePropertiesUtil.getMinSum(cryptoCurrency);
+
         if (sum < minSum) {
-            responseSender.sendMessage(chatId, "Минимальная сумма покупки " + minSum + ".");
+            responseSender.sendMessage(chatId, "Минимальная сумма покупки " + cryptoCurrency.getDisplayName()
+                    + " = " + minSum + ".");
             return;
         }
+
     }
 
     public void convertToRub(Update update, Long currentDealPid) {
@@ -119,6 +124,14 @@ public class ExchangeService {
             return;
         }
 
+        CryptoCurrency cryptoCurrency = dealService.getCryptoCurrencyByPid(currentDealPid);
+        Double minSum = BotVariablePropertiesUtil.getMinSum(cryptoCurrency);
+
+        if (sum < minSum) {
+            sendInlineAnswer(update, "Минимальная сумма покупки " + cryptoCurrency.getDisplayName()
+                    + " = " + minSum + ".");
+            return;
+        }
         sendInlineAnswer(update, sum + " " + currency.getDisplayName() + " ~ " +
                 ConverterUtil.convertCryptoToRub(currency, sum));
     }

@@ -11,7 +11,11 @@ public enum BotVariableType {
     COMMISSION("Комиссия", "commission.main"),
     OPERATOR_LINK("Ссылка на оператора", "operator.link"),
     PROBABILITY("Шанс лотереи", "lottery.chance"),
-    MIN_SUM_BUY("Мин.сумма", "deal.buy.sum.min"),
+    MIN_SUM_BUY_BTC("Мин.сумма BTC", "deal.buy.sum.min.btc"),
+
+    MIN_SUM_BUY_LTC("Мин.сумма", "deal.buy.sum.min.ltc"),
+
+    MIN_SUM_BUY_USDT("Мин.сумма", "deal.buy.sum.min.usdt"),
     TRANSACTION_COMMISSION("Транз.комиссия", "transaction.commission");
 
     final String displayName;

@@ -7,7 +7,7 @@ import java.util.Arrays;
 public enum CryptoCurrency {
     BITCOIN("Bitcoin", "btc"),
     LITECOIN("Litecoin", "ltc"),
-    TETHER("Tether", "usdt");
+    USDT("Tether", "usdt");
 
     final String displayName;
     final String shortName;
