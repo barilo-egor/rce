@@ -2,20 +2,15 @@ package tgb.btc.rce.service.processors.support;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.AnswerInlineQuery;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.inlinequery.inputmessagecontent.InputTextMessageContent;
 import org.telegram.telegrambots.meta.api.objects.inlinequery.result.InlineQueryResultArticle;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
-import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import tgb.btc.rce.bean.Deal;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.*;
-import tgb.btc.rce.exception.BaseException;
 import tgb.btc.rce.exception.EnumTypeNotFoundException;
 import tgb.btc.rce.exception.NumberParseException;
 import tgb.btc.rce.service.impl.DealService;
@@ -24,7 +19,6 @@ import tgb.btc.rce.service.impl.UserService;
 import tgb.btc.rce.util.*;
 import tgb.btc.rce.vo.InlineButton;
 
-import java.math.BigDecimal;
 import java.util.*;
 
 @Service
@@ -91,10 +85,15 @@ public class ExchangeService {
                 1, InlineType.SWITCH_INLINE_QUERY_CURRENT_CHAT);
     }
 
-    public void validateSum(Update update) {
+    public void saveSum(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
         Long currentDealPid = userService.getCurrentDealByChatId(chatId);
         Double sum = UpdateUtil.getDoubleFromText(update);
+        Double minSum = BotVariablePropertiesUtil.getDouble(BotVariableType.MIN_SUM);
+        if (sum < minSum) {
+            responseSender.sendMessage(chatId, "Минимальная сумма покупки " + minSum + ".");
+            return;
+        }
     }
 
     public void convertToRub(Update update, Long currentDealPid) {
@@ -121,7 +120,7 @@ public class ExchangeService {
         }
 
         sendInlineAnswer(update, sum + " " + currency.getDisplayName() + " ~ " +
-                ConverterUtil.convertBitcoinToRub(currency, sum));
+                ConverterUtil.convertCryptoToRub(currency, sum));
     }
 
     private boolean hasInputSum(CryptoCurrency currency, String query) {

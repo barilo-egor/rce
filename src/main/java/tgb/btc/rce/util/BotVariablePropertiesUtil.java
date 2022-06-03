@@ -46,6 +46,14 @@ public class BotVariablePropertiesUtil {
         }
     }
 
+    public static Double getDouble(BotVariableType botVariableType) {
+        try {
+            return Double.parseDouble(getVariable(botVariableType));
+        } catch (NumberFormatException e) {
+            throw new BaseException(String.format(wrongFormat, botVariableType.getKey()));
+        }
+    }
+
     public static Integer getInt(BotVariableType botVariableType) {
         try {
             return Integer.parseInt(getVariable(botVariableType));

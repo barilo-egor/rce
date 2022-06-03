@@ -6,7 +6,7 @@ import java.util.Arrays;
 
 public enum BotVariableType {
     USD_COURSE("Курс доллара", "course.usd"),
-    FIX_RU("Фикс рублей", "fix.rub"),
+    FIX("Фикс рублей", "fix.rub"),
     FIX_COMMISSION("Фикс комиссия", "commission.fix"),
     COMMISSION("Комиссия", "commission.main"),
     OPERATOR_LINK("Ссылка на оператора", "operator.link"),
