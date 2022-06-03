@@ -89,7 +89,7 @@ public class ExchangeService {
         Long chatId = UpdateUtil.getChatId(update);
         Long currentDealPid = userService.getCurrentDealByChatId(chatId);
         Double sum = UpdateUtil.getDoubleFromText(update);
-        Double minSum = BotVariablePropertiesUtil.getDouble(BotVariableType.MIN_SUM);
+        Double minSum = BotVariablePropertiesUtil.getDouble(BotVariableType.MIN_SUM_BUY);
         if (sum < minSum) {
             responseSender.sendMessage(chatId, "Минимальная сумма покупки " + minSum + ".");
             return;

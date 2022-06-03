@@ -62,10 +62,6 @@ public class BotVariablePropertiesUtil {
         }
     }
 
-    public static Integer getMinSumForWithdrawal() {
-        return getInt(BotVariableType.MIN_WITHDRAWAL_OF_FUNDS_SUM);
-    }
-
     public static void validate(File file) throws BaseException {
         // TODO
     }
