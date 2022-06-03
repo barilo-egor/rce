@@ -20,6 +20,7 @@ import tgb.btc.rce.service.impl.UserService;
 import tgb.btc.rce.util.*;
 import tgb.btc.rce.vo.InlineButton;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 @Service
@@ -99,6 +100,8 @@ public class ExchangeService {
             return;
         }
 
+        dealService.updateCryptoAmountByPid(BigDecimal.valueOf(sum), currentDealPid);
+        dealService.updateCryptoAmountByPid(ConverterUtil.convertCryptoToRub(cryptoCurrency, sum), currentDealPid);
     }
 
     public void convertToRub(Update update, Long currentDealPid) {
@@ -119,7 +122,7 @@ public class ExchangeService {
             askForCryptoSum(update);
             return;
         } catch (NumberParseException e) {
-            if (hasInputSum(currency, query)) sendInlineAnswer(update, e.getMessage());
+            if (hasInputSum(currency, query)) sendInlineAnswer(update, e.getMessage(), false);
             else askForCryptoSum(update);
             return;
         }
@@ -129,11 +132,11 @@ public class ExchangeService {
 
         if (sum < minSum) {
             sendInlineAnswer(update, "Минимальная сумма покупки " + cryptoCurrency.getDisplayName()
-                    + " = " + minSum + ".");
+                    + " = " + minSum + ".", false);
             return;
         }
         sendInlineAnswer(update, sum + " " + currency.getDisplayName() + " ~ " +
-                ConverterUtil.convertCryptoToRub(currency, sum));
+                ConverterUtil.convertCryptoToRub(currency, sum), true);
     }
 
     private boolean hasInputSum(CryptoCurrency currency, String query) {
@@ -145,16 +148,17 @@ public class ExchangeService {
     }
 
     private void askForCryptoSum(Update update) {
-        sendInlineAnswer(update, BotStringConstants.ENTER_CRYPTO_SUM);
+        sendInlineAnswer(update, BotStringConstants.ENTER_CRYPTO_SUM, false);
     }
 
-    private void sendInlineAnswer(Update update, String answer) {
-        String text = update.getInlineQuery().getQuery().contains(" ") ?
+    private void sendInlineAnswer(Update update, String answer, boolean textPushButton) {
+        String text = textPushButton ? "Нажмите сюда, чтобы отправить сумму" : "Введите сумму в криптовалюте.";
+        String title = update.getInlineQuery().getQuery().contains(" ") ?
                 update.getInlineQuery().getQuery().substring(update.getInlineQuery().getQuery().indexOf(" ")) : "Ошибка";
         responseSender.execute(AnswerInlineQuery.builder().inlineQueryId(update.getInlineQuery().getId())
                 .result(InlineQueryResultArticle.builder()
                         .id(update.getInlineQuery().getId())
-                        .title("\uD83C\uDDF7\uD83C\uDDFARUB24BTCbot\uD83E\uDD16✅")
+                        .title(title)
                         .inputMessageContent(InputTextMessageContent.builder()
                                 .messageText(text)
                                 .build())
