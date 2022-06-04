@@ -1,5 +1,6 @@
 package tgb.btc.rce.util;
 
+import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
 import tgb.btc.rce.enums.UpdateType;
@@ -52,5 +53,16 @@ public class UpdateUtil {
 
     public static Double getDoubleFromText(Update update) {
         return NumberUtil.getInputDouble(getMessageText(update));
+    }
+
+    public static Message getMessage(Update update) {
+        switch (UpdateType.fromUpdate(update)) {
+            case MESSAGE:
+                return update.getMessage();
+            case CALLBACK_QUERY:
+                return update.getCallbackQuery().getMessage();
+            default:
+                throw new BaseException("Не найден тип апдейта для получения месседжа.");
+        }
     }
 }

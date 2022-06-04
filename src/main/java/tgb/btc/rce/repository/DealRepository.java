@@ -49,4 +49,14 @@ public interface DealRepository extends BaseRepository<Deal> {
     @Modifying
     @Query("update Deal set isUsedPromo=:isUsedPromo where pid=:pid")
     void updateIsUsedPromoByPid(@Param("isUsedPromo") Boolean isUsedPromo, @Param("pid") Long pid);
+
+    @Modifying
+    @Query("update Deal set isActive=:isActive where pid=:pid")
+    void updateIsActiveByPid(@Param("isActive") Boolean isActive, @Param("pid") Long pid);
+
+    @Query("select count(d) from Deal d where d.user.chatId=:chatId and d.isActive=true")
+    Long getActiveDealsCountByUserChatId(@Param("chatId") Long chatId);
+
+    @Query("select d.pid from Deal d where d.user.chatId=:chatId and d.isActive=true")
+    Long getPidActiveDealByChatId(@Param("chatId") Long chatId);
 }

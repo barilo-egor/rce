@@ -17,7 +17,8 @@ public enum PropertiesMessage {
     EDIT_CONTACTS_MENU("edit.contacts.menu"),
     BOT_SETTINGS_MENU("bot.settings.menu"),
     CHOOSE_CURRENCY("choose.currency"),
-    DEAL_INPUT_SUM("deal.input.sum");
+    DEAL_INPUT_SUM("deal.input.sum"),
+    DEAL_CONFIRMED("deal.confirmed");
 
     final String key;
 

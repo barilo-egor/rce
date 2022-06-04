@@ -55,7 +55,7 @@ public class User extends BasePersist {
     @Column(name = "IS_BANNED", nullable = false)
     private Boolean isBanned;
 
-    @Column(name = "CURRENT_DEAL", nullable = false)
+    @Column(name = "CURRENT_DEAL")
     private Long currentDeal;
 
     @OneToMany

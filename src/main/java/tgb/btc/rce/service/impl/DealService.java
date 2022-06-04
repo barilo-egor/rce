@@ -72,4 +72,20 @@ public class DealService extends BasePersistService<Deal> {
     public void updateIsUsedPromoByPid(Boolean isUsedPromo, Long pid) {
         dealRepository.updateIsUsedPromoByPid(isUsedPromo, pid);
     }
+
+    public void updateIsActivePromoByPid(Boolean isActive, Long pid) {
+        dealRepository.updateIsUsedPromoByPid(isActive, pid);
+    }
+
+    public Long getActiveDealsCountByUserChatId(Long chatId) {
+        return dealRepository.getActiveDealsCountByUserChatId(chatId);
+    }
+
+    public Long getPidActiveDealByChatId(Long chatId) {
+        return dealRepository.getPidActiveDealByChatId(chatId);
+    }
+
+    public void updateIsActiveByPid(Boolean isActive, Long pid) {
+        dealRepository.updateIsActiveByPid(isActive, pid);
+    }
 }
