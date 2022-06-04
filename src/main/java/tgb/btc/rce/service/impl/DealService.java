@@ -6,10 +6,12 @@ import org.springframework.stereotype.Service;
 import tgb.btc.rce.bean.Contact;
 import tgb.btc.rce.bean.Deal;
 import tgb.btc.rce.enums.CryptoCurrency;
+import tgb.btc.rce.enums.PaymentType;
 import tgb.btc.rce.repository.BaseRepository;
 import tgb.btc.rce.repository.DealRepository;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 
 @Service
@@ -49,5 +51,25 @@ public class DealService extends BasePersistService<Deal> {
 
     public Deal getByPid(Long pid) {
         return dealRepository.findByPid(pid);
+    }
+
+    public BigDecimal getAmountByPid(Long pid) {
+        return dealRepository.getAmountByPid(pid);
+    }
+
+    public BigDecimal getRoundedAmountByPid(Long pid) {
+        return dealRepository.getAmountByPid(pid).setScale(0, RoundingMode.HALF_UP).stripTrailingZeros();
+    }
+
+    public void updateWalletByPid(String wallet, Long pid) {
+        dealRepository.updateWalletByPid(wallet, pid);
+    }
+
+    public void updatePaymentTypeByPid(PaymentType paymentType, Long pid) {
+        dealRepository.updatePaymentTypeByPid(paymentType, pid);
+    }
+
+    public void updateIsUsedPromoByPid(Boolean isUsedPromo, Long pid) {
+        dealRepository.updateIsUsedPromoByPid(isUsedPromo, pid);
     }
 }

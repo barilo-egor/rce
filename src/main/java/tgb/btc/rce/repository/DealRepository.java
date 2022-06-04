@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import tgb.btc.rce.bean.Deal;
 import tgb.btc.rce.enums.CryptoCurrency;
+import tgb.btc.rce.enums.PaymentType;
 
 import java.math.BigDecimal;
 
@@ -33,4 +34,19 @@ public interface DealRepository extends BaseRepository<Deal> {
     Long getDealsCountByUserChatId(@Param("chatId") Long chatId);
 
     Deal findByPid(Long pid);
+
+    @Query("select amount from Deal where pid=:pid")
+    BigDecimal getAmountByPid(@Param("pid") Long pid);
+
+    @Modifying
+    @Query("update Deal set wallet=:wallet where pid=:pid")
+    void updateWalletByPid(@Param("wallet") String wallet, @Param("pid") Long pid);
+
+    @Modifying
+    @Query("update Deal set paymentType=:paymentType where pid=:pid")
+    void updatePaymentTypeByPid(@Param("paymentType") PaymentType paymentType, @Param("pid") Long pid);
+
+    @Modifying
+    @Query("update Deal set isUsedPromo=:isUsedPromo where pid=:pid")
+    void updateIsUsedPromoByPid(@Param("isUsedPromo") Boolean isUsedPromo, @Param("pid") Long pid);
 }

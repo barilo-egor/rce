@@ -17,9 +17,9 @@ public final class KeyboardUtil {
     private KeyboardUtil() {
     }
 
-    public static InlineButton INLINE_CANCEL_BUTTON = InlineButton.builder().text("Отмена")
+    public static InlineButton INLINE_BACK_BUTTON = InlineButton.builder().text("Назад")
             .inlineType(InlineType.CALLBACK_DATA)
-            .data(Command.CANCEL.getText())
+            .data(Command.BACK.getText())
             .build();
 
     public static InlineKeyboardMarkup buildInline(List<InlineButton> buttons) {

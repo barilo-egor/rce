@@ -3,9 +3,7 @@ package tgb.btc.rce.enums;
 public enum PaymentType {
     RF_CARD("Карта РФ"),
     QIWI("QIWI"),
-
-    BY_CARD("Карта РБ"),
-    UAH_CARD("Карта Украина");
+    TINKOFF("Tinkoff");
 
     final String displayName;
 

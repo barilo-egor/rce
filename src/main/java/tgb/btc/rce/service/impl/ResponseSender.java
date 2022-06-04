@@ -2,6 +2,7 @@ package tgb.btc.rce.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.AnswerInlineQuery;
@@ -58,11 +59,17 @@ public class ResponseSender implements IResponseSender {
     }
 
     public Optional<Message> sendMessage(Long chatId, String text, ReplyKeyboard replyKeyboard) {
-        return Optional.of(executeSendMessage(SendMessage.builder()
+        return sendMessage(chatId, text, replyKeyboard, null);
+    }
+
+    public Optional<Message> sendMessage(Long chatId, String text, ReplyKeyboard replyKeyboard, String parseMode) {
+        SendMessage sendMessage = SendMessage.builder()
                 .chatId(chatId.toString())
                 .text(text)
                 .replyMarkup(replyKeyboard)
-                .build()));
+                .build();
+        if (Strings.isNotEmpty(parseMode)) sendMessage.setParseMode(parseMode);
+        return Optional.of(executeSendMessage(sendMessage));
     }
 
     @Override
@@ -177,7 +184,7 @@ public class ResponseSender implements IResponseSender {
         FileUtils.copyInputStreamToFile(is, localFile);
     }
 
-    private org.telegram.telegrambots.meta.api.objects.File getFilePath(Document document) throws TelegramApiException {
+    private org.telegram.telegrambots.meta.api.objects.File getFilePath(Document document) {
         GetFile getFile = new GetFile();
         getFile.setFileId(document.getFileId());
         // TODO проверить optional

@@ -24,4 +24,12 @@ public final class BigDecimalUtil {
     public static BigDecimal subtractHalfUp(BigDecimal a, BigDecimal b) {
         return a.setScale(scale, RoundingMode.HALF_UP).subtract(b);
     }
+
+    public static BigDecimal round(BigDecimal num, int scale) {
+        return num.setScale(scale, RoundingMode.HALF_UP).stripTrailingZeros();
+    }
+
+    public static BigDecimal round(Double num, int scale) {
+        return BigDecimal.valueOf(num).setScale(scale, RoundingMode.HALF_UP).stripTrailingZeros();
+    }
 }

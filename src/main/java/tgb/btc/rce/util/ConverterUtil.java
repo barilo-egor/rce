@@ -82,7 +82,7 @@ public final class ConverterUtil {
     public static BigDecimal getLtcCurrency() {
         JSONObject currency = readJsonFromUrl(ConverterUtil.LTC_USD_URL_BINANCE);
         Object obj = currency.get("price");
-        return parse(obj, CryptoCurrency.LITECOIN);
+        return parse(1.0, CryptoCurrency.LITECOIN);
     }
 
     @SneakyThrows
@@ -95,7 +95,11 @@ public final class ConverterUtil {
     public static BigDecimal parse(Object obj, CryptoCurrency cryptoCurrency) {
         double sum;
         try {
-            sum = Double.parseDouble((String) obj);
+            if (cryptoCurrency.getRateClass().equals(String.class)) {
+                sum = Double.parseDouble((String) obj);
+            } else if(cryptoCurrency.getRateClass().equals(Double.class)) {
+                sum = (Double) obj;
+            } else throw new BaseException("Не найден тип курса из апи.");
         } catch (NumberFormatException ex) {
             ex.printStackTrace();
             throw new BaseException("Ошибки при парсинге курса " + cryptoCurrency.getShortName() + ".");

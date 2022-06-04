@@ -35,9 +35,13 @@ public class BuyBitcoin extends Processor {
             userService.updateCurrentDealByChatId(null, chatId);
             return;
         }
-        if(update.hasCallbackQuery() && Command.CANCEL.getText().equals(update.getCallbackQuery().getData())) {
+        if(update.hasCallbackQuery() && Command.BACK.getText().equals(update.getCallbackQuery().getData())) {
             responseSender.deleteMessage(chatId, update.getCallbackQuery().getMessage().getMessageId());
-            if (userService.getStepByChatId(chatId) == 0) processToMainMenu(chatId);
+            if (userService.getStepByChatId(chatId) == 1) {
+                dealService.delete(dealService.findById(userService.getCurrentDealByChatId(chatId)));
+                userService.updateCurrentDealByChatId(null, chatId);
+                processToMainMenu(chatId);
+            }
             else previousStep(update);
             return;
         }
@@ -64,12 +68,19 @@ public class BuyBitcoin extends Processor {
                     return;
                 }
                 exchangeService.saveSum(update);
-                if (dealService.getDealsCountByUserChatId(chatId) > 0) exchangeService.askForWallet(chatId);
+                if (dealService.getDealsCountByUserChatId(chatId) > 1) exchangeService.askForWallet(chatId);
                 else exchangeService.askForUserPromoCode(chatId);
                 break;
             case 3:
+                exchangeService.processPromoCode(update);
+                exchangeService.askForWallet(chatId);
                 break;
             case 4:
+                exchangeService.saveWallet(update);
+                exchangeService.askForPaymentType(update);
+                break;
+            case 5:
+                exchangeService.savePaymentType(update);
                 break;
         }
     }
@@ -79,17 +90,21 @@ public class BuyBitcoin extends Processor {
         userService.previousStep(chatId);
 
         switch (userService.getStepByChatId(chatId)) {
-            case 0:
+            case 1:
                 exchangeService.askForCurrency(chatId);
                 break;
-            case 1:
+            case 2:
                 exchangeService.askForSum(chatId,
                         dealService.getCryptoCurrencyByPid(userService.getCurrentDealByChatId(chatId)));
                 break;
-            case 2:
+            case 3:
                 if (dealService.getDealsCountByUserChatId(chatId) > 0) exchangeService.askForWallet(chatId);
                 else exchangeService.askForUserPromoCode(chatId);
                 break;
+            case 4:
+                if (dealService.getDealsCountByUserChatId(chatId) > 1) exchangeService.askForWallet(chatId);
+                else exchangeService.askForUserPromoCode(chatId);
         }
+        userService.previousStep(chatId);
     }
 }

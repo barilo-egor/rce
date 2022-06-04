@@ -18,7 +18,8 @@ public enum BotVariableType {
     MIN_SUM_BUY_USDT("Мин.сумма", "deal.buy.sum.min.usdt"),
     TRANSACTION_COMMISSION("Транз.комиссия", "transaction.commission"),
     PROMO_CODE_DISCOUNT("Скидка от промокода", "promo.code.discount"),
-    PROMO_CODE_NAME("Название промокода", "promo.code.name");
+    PROMO_CODE_NAME("Название промокода", "promo.code.name"),
+    DEAL_ACTIVE_TIME("Время активности заявки", "deal.active.time");
 
     final String displayName;
     final String key;

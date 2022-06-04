@@ -63,7 +63,11 @@ public enum Command {
     OFF_BOT("Выкл.бота", true),
     BOT_MESSAGES("Сообщения бота", true),
     BOT_VARIABLES("Переменные бота", true),
-    SYSTEM_MESSAGES("Сис.сообщения", true);
+    SYSTEM_MESSAGES("Сис.сообщения", true),
+
+    /** DEAL */
+    PAID("Я оплатил(а)", false),
+    CANCEL_DEAL("Отменить заявку", false);
 
     final String text;
     final boolean isAdmin;
