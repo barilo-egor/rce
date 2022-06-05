@@ -24,6 +24,7 @@ import tgb.btc.rce.vo.InlineButton;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -31,7 +32,6 @@ import java.util.stream.Collectors;
 public class ExchangeService {
 
     private static final List<InlineButton> CURRENCIES = new ArrayList<>();
-    private static final List<InlineButton> PAYMENT_TYPES = new ArrayList<>();
 
     public static final String USE_PROMO = "use_promo";
     public static final String DONT_USE_PROMO = "dont_use_promo";
@@ -64,6 +64,7 @@ public class ExchangeService {
         Deal deal = new Deal();
         deal.setActive(false);
         deal.setPassed(false);
+        deal.setDateTime(LocalDateTime.now());
         deal.setDealType(DealType.BUY);
         deal.setUser(userService.findByChatId(chatId));
         Deal savedDeal = dealService.save(deal);
@@ -351,6 +352,13 @@ public class ExchangeService {
         userService.setDefaultValues(chatId);
         responseSender.sendMessage(chatId, MessagePropertiesUtil.getMessage(PropertiesMessage.DEAL_CONFIRMED));
         userService.getAdminsChatIds().forEach(adminChatId ->
-                responseSender.sendMessage(adminChatId, "Поступила новая заявка на покупку."));
+                responseSender.sendMessage(adminChatId, "Поступила новая заявка на покупку.",
+                KeyboardUtil.buildInline(List.of(
+                        InlineButton.builder()
+                                .text(Command.SHOW_DEAL.getText())
+                                .data(Command.SHOW_DEAL.getText() + BotStringConstants.CALLBACK_DATA_SPLITTER
+                                        + userService.getCurrentDealByChatId(chatId))
+                                .build()
+                ))));
     }
 }

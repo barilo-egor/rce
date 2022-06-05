@@ -88,4 +88,12 @@ public class DealService extends BasePersistService<Deal> {
     public void updateIsActiveByPid(Boolean isActive, Long pid) {
         dealRepository.updateIsActiveByPid(isActive, pid);
     }
+
+    public Long getCountPassedByUserChatId(Long chatId) {
+        return dealRepository.getCountPassedByUserChatId(chatId);
+    }
+
+    public List<Long> getActiveDealPids() {
+        return dealRepository.getActiveDealPids();
+    }
 }

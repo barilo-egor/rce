@@ -24,6 +24,7 @@ import tgb.btc.rce.vo.InlineButton;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -64,6 +65,7 @@ public class SellService {
         Deal deal = new Deal();
         deal.setActive(false);
         deal.setPassed(false);
+        deal.setDateTime(LocalDateTime.now());
         deal.setDealType(DealType.SELL);
         deal.setUser(userService.findByChatId(chatId));
         Deal savedDeal = dealService.save(deal);
@@ -244,7 +246,8 @@ public class SellService {
         Deal deal = dealService.getByPid(userService.getCurrentDealByChatId(chatId));
         CryptoCurrency currency = deal.getCryptoCurrency();
         PaymentConfig paymentConfig = paymentConfigService.getByPaymentType(deal.getPaymentType());
-        if (paymentConfig == null) throw new BaseException("Не установлены реквизиты для " + deal.getPaymentType().getDisplayName() + ".");
+        if (paymentConfig == null)
+            throw new BaseException("Не установлены реквизиты для " + deal.getPaymentType().getDisplayName() + ".");
         String promoCodeText = Boolean.TRUE.equals(deal.getUsedPromo()) ?
                 "\n\n<b> Использован скидочный промокод</b>: "
                         + BotVariablePropertiesUtil.getVariable(BotVariableType.PROMO_CODE_NAME) + "\n\n"
@@ -302,6 +305,13 @@ public class SellService {
         userService.setDefaultValues(chatId);
         responseSender.sendMessage(chatId, MessagePropertiesUtil.getMessage(PropertiesMessage.DEAL_CONFIRMED));
         userService.getAdminsChatIds().forEach(adminChatId ->
-                responseSender.sendMessage(adminChatId, "Поступила новая заявка на продажу."));
+                responseSender.sendMessage(adminChatId, "Поступила новая заявка на продажу.",
+                        KeyboardUtil.buildInline(List.of(
+                                InlineButton.builder()
+                                        .text(Command.SHOW_DEAL.getText())
+                                        .data(Command.SHOW_DEAL.getText() + BotStringConstants.CALLBACK_DATA_SPLITTER
+                                                + userService.getCurrentDealByChatId(chatId))
+                                        .build()
+                        ))));
     }
 }

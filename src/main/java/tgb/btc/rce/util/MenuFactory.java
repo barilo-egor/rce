@@ -35,13 +35,15 @@ public final class MenuFactory {
             case ASK_CONTACT:
                 return KeyboardUtil.buildReply(1, fillReply(Menu.ASK_CONTACT.getCommands()), false);
             case ADMIN_BACK:
-                return KeyboardUtil.buildReply(1, fillReply(Menu.ADMIN_BACK.getCommands()), true);
+                return KeyboardUtil.buildReply(1, fillReply(Menu.ADMIN_BACK.getCommands()), false);
             case SEND_MESSAGES:
-                return KeyboardUtil.buildReply(2, fillReply(Menu.SEND_MESSAGES.getCommands()), true);
+                return KeyboardUtil.buildReply(2, fillReply(Menu.SEND_MESSAGES.getCommands()), false);
             case EDIT_CONTACTS:
-                return KeyboardUtil.buildReply(2, fillReply(Menu.EDIT_CONTACTS.getCommands()), true);
+                return KeyboardUtil.buildReply(2, fillReply(Menu.EDIT_CONTACTS.getCommands()), false);
             case BOT_SETTINGS:
                 return botSettings();
+            case REQUESTS:
+                return KeyboardUtil.buildReply(2, fillReply(Menu.REQUESTS.getCommands()), false);
         }
         throw new BaseException("Тип меню " + menu.name() + " не найден.");
     }

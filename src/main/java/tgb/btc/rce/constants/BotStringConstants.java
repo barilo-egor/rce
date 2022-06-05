@@ -8,4 +8,9 @@ public interface BotStringConstants {
     String SHOW_BUTTON = "Показать";
 
     String ENTER_CRYPTO_SUM = "Введите сумму в криптовалюте.";
+
+    String DEAL_INFO = "Заявка на %s №%s\n" + "Дата,время: %s\n" + "Тип оплаты: %s\n" + "Кошелек: %s\n" + "Контакт: %s\n"
+            + "Количество сделок: %s\n" + "ID: %s\n" + "Сумма %s: %s\n" + "Сумма: %s ₽";
+
+    String ABSENT = "Отсутствует";
 }

@@ -23,7 +23,14 @@ public class PaymentConfigService extends BasePersistService<PaymentConfig> {
 
     public PaymentConfig getByPaymentType(PaymentType paymentType) {
         try {
-            return paymentConfigRepository.getByPaymentType(paymentType);
+            PaymentConfig paymentConfig = paymentConfigRepository.getByPaymentType(paymentType);
+            if (paymentConfig == null)
+                paymentConfig = paymentConfigRepository.save(PaymentConfig.builder()
+                        .isOn(true)
+                        .paymentType(paymentType)
+                        .requisites("Отсутствуют")
+                        .build());
+            return paymentConfig;
         } catch (Exception e) {
             log.error("Ошибка при поиске payment config.", e);
             return null;

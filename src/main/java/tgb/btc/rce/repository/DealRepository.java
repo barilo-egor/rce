@@ -10,6 +10,7 @@ import tgb.btc.rce.enums.CryptoCurrency;
 import tgb.btc.rce.enums.PaymentType;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Repository
 @Transactional
@@ -59,4 +60,10 @@ public interface DealRepository extends BaseRepository<Deal> {
 
     @Query("select d.pid from Deal d where d.user.chatId=:chatId and d.isActive=true")
     Long getPidActiveDealByChatId(@Param("chatId") Long chatId);
+
+    @Query("select count(d) from Deal d where d.isPassed=true and d.user.chatId=:chatId")
+    Long getCountPassedByUserChatId(@Param("chatId") Long chatId);
+
+    @Query("select pid from Deal where isActive=true")
+    List<Long> getActiveDealPids();
 }

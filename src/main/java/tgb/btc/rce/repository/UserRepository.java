@@ -85,4 +85,7 @@ public interface UserRepository extends BaseRepository<User> {
 
     @Query("select currentDeal from User where chatId=:chatId")
     Long getCurrentDealByChatId(@Param("chatId") Long chatId);
+
+    @Query("select username from User where chatId=:chatId")
+    String getUsernameByChatId(@Param("chatId") Long chatId);
 }

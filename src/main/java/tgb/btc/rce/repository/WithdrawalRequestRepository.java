@@ -7,6 +7,8 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import tgb.btc.rce.bean.WithdrawalRequest;
 
+import java.util.List;
+
 @Repository
 @Transactional
 public interface WithdrawalRequestRepository extends BaseRepository<WithdrawalRequest>{
@@ -14,4 +16,7 @@ public interface WithdrawalRequestRepository extends BaseRepository<WithdrawalRe
     @Modifying
     @Query("update WithdrawalRequest set isActive=:isActive where pid=:pid")
     void updateIsActiveByPid(@Param("isActive") Boolean isActive, @Param("pid") Long pid);
+
+    @Query("from WithdrawalRequest where isActive=true")
+    List<WithdrawalRequest> getAllActive();
 }

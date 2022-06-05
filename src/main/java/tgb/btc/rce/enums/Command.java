@@ -70,7 +70,15 @@ public enum Command {
     /** DEAL */
     PAID("Я оплатил(а)", false),
     CANCEL_DEAL("Отменить заявку", false),
-    DELETE_DEAL("Удалить заявку", false);
+    DELETE_DEAL("Удалить заявку", false),
+    SHOW_DEAL("Показать", true),
+    DELETE_USER_DEAL("delete_deal", true),
+    CONFIRM_USER_DEAL("confirm_deal", true),
+    ADDITIONAL_VERIFICATION("add_verification", true),
+
+    /** REQUESTS */
+    NEW_DEALS("Новые заявки", true),
+    NEW_WITHDRAWALS("Вывод средств", true);
 
     final String text;
     final boolean isAdmin;

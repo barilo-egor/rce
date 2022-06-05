@@ -27,4 +27,8 @@ public class WithdrawalRequestService extends BasePersistService<WithdrawalReque
     public void updateIsActiveByPid(Boolean isActive, Long pid) {
         withdrawalRequestRepository.updateIsActiveByPid(isActive, pid);
     }
+
+    public List<WithdrawalRequest> getAllActive() {
+        return withdrawalRequestRepository.getAllActive();
+    }
 }

@@ -134,4 +134,8 @@ public class UserService extends BasePersistService<User> {
     public Long getCurrentDealByChatId(Long chatId) {
         return userRepository.getCurrentDealByChatId(chatId);
     }
+
+    public String getUsernameByChatId(Long chatId) {
+        return userRepository.getUsernameByChatId(chatId);
+    }
 }
