@@ -79,7 +79,11 @@ public enum Command {
 
     /** REQUESTS */
     NEW_DEALS("Новые заявки", true),
-    NEW_WITHDRAWALS("Вывод средств", true);
+    NEW_WITHDRAWALS("Вывод средств", true),
+
+    /** REPORTS */
+    USERS_REPORT("Отчет по пользователям", true),
+    DEAL_REPORTS("Отчет по сделкам", true);
 
     final String text;
     final boolean isAdmin;

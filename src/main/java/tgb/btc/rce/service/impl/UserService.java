@@ -142,4 +142,8 @@ public class UserService extends BasePersistService<User> {
     public void updateCommandByChatId(Command command, Long chatId) {
         userRepository.updateCommandByChatId(command, chatId);
     }
+
+    public List<User> findAll() {
+        return userRepository.findAll();
+    }
 }
