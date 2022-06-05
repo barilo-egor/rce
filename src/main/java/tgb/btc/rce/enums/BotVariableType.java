@@ -21,7 +21,8 @@ public enum BotVariableType {
     PROMO_CODE_NAME("Название промокода", "promo.code.name"),
     DEAL_ACTIVE_TIME("Время активности заявки", "deal.active.time"),
     WALLET_BTC("Кошелек BTC", "wallet.btc"),
-    WALLET_LTC("Кошелек LTC", "wallet.ltc");
+    WALLET_LTC("Кошелек LTC", "wallet.ltc"),
+    REFERRAL_PERCENT("Процент рефералов", "referral.percent");
 
     final String displayName;
     final String key;

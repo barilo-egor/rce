@@ -146,4 +146,8 @@ public class UserService extends BasePersistService<User> {
     public List<User> findAll() {
         return userRepository.findAll();
     }
+
+    public void updateReferralBalanceByChatId(Integer referralBalance, Long chatId) {
+        userRepository.updateReferralBalanceByChatId(referralBalance, chatId);
+    }
 }

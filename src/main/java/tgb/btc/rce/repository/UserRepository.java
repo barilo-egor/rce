@@ -92,4 +92,8 @@ public interface UserRepository extends BaseRepository<User> {
     @Modifying
     @Query("update User set command=:command where chatId=:chatId")
     void updateCommandByChatId(@Param("command") Command command, @Param("chatId") Long chatId);
+
+    @Modifying
+    @Query("update User set referralBalance=:referralBalance where chatId=:chatId")
+    void updateReferralBalanceByChatId(@Param("referralBalance") Integer referralBalance, @Param("chatId") Long chatId);
 }

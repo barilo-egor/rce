@@ -6,13 +6,18 @@ import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.bean.Deal;
 import tgb.btc.rce.bean.User;
 import tgb.btc.rce.constants.BotStringConstants;
+import tgb.btc.rce.enums.BotVariableType;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.impl.DealService;
 import tgb.btc.rce.service.impl.UserService;
+import tgb.btc.rce.util.BigDecimalUtil;
+import tgb.btc.rce.util.BotVariablePropertiesUtil;
+import tgb.btc.rce.util.ConverterUtil;
 import tgb.btc.rce.util.UpdateUtil;
 
+import java.math.BigDecimal;
 import java.util.Objects;
 
 @CommandProcessor(command = Command.CONFIRM_USER_DEAL)
@@ -41,7 +46,12 @@ public class ConfirmUserDeal extends Processor {
         else user.setLotteryCount(1);
         userService.save(user);
         responseSender.deleteMessage(UpdateUtil.getChatId(update), UpdateUtil.getMessage(update).getMessageId());
-        // TODO добавить процент к рефералу
+        if (user.getFromChatId() != null) {
+            BigDecimal sumToAdd = BigDecimalUtil.multiplyHalfUp(BigDecimal.valueOf(user.getReferralBalance()),
+                    ConverterUtil.getPercentsFactor(
+                            BigDecimal.valueOf(BotVariablePropertiesUtil.getDouble(BotVariableType.REFERRAL_PERCENT))));
+            userService.updateReferralBalanceByChatId(user.getReferralBalance() + sumToAdd.intValue(), user.getChatId());
+        }
         switch (deal.getCryptoCurrency()) {
             case BITCOIN:
                 responseSender.sendMessage(deal.getUser().getChatId(),
