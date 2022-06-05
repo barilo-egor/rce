@@ -5,6 +5,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 import tgb.btc.rce.bean.Contact;
 import tgb.btc.rce.bean.Deal;
+import tgb.btc.rce.bean.User;
 import tgb.btc.rce.enums.CryptoCurrency;
 import tgb.btc.rce.enums.PaymentType;
 import tgb.btc.rce.repository.BaseRepository;
@@ -95,5 +96,9 @@ public class DealService extends BasePersistService<Deal> {
 
     public List<Long> getActiveDealPids() {
         return dealRepository.getActiveDealPids();
+    }
+
+    public Long getUserByDealPid(Long pid) {
+        return dealRepository.getUserChatIdByDealPid(pid);
     }
 }

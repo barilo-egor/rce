@@ -75,6 +75,7 @@ public enum Command {
     DELETE_USER_DEAL("delete_deal", true),
     CONFIRM_USER_DEAL("confirm_deal", true),
     ADDITIONAL_VERIFICATION("add_verification", true),
+    USER_ADDITIONAL_VERIFICATION("user_verification", true),
 
     /** REQUESTS */
     NEW_DEALS("Новые заявки", true),

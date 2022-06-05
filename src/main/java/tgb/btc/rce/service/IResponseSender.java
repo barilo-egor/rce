@@ -23,6 +23,8 @@ public interface IResponseSender {
 
     Optional<Message> sendMessage(SendMessage sendMessage);
 
+    Optional<Message> sendPhoto(Long chatId, String caption, String photo);
+
     Optional<Message> sendPhoto(Long chatId, String caption, String photo, ReplyKeyboard replyKeyboard);
 
     Optional<Message> sendAnimation(Long chatId, String caption, String animation, ReplyKeyboard replyKeyboard);

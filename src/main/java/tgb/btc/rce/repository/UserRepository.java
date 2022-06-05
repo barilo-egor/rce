@@ -88,4 +88,8 @@ public interface UserRepository extends BaseRepository<User> {
 
     @Query("select username from User where chatId=:chatId")
     String getUsernameByChatId(@Param("chatId") Long chatId);
+
+    @Modifying
+    @Query("update User set command=:command where chatId=:chatId")
+    void updateCommandByChatId(@Param("command") Command command, @Param("chatId") Long chatId);
 }

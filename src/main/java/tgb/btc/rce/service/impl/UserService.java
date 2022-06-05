@@ -138,4 +138,8 @@ public class UserService extends BasePersistService<User> {
     public String getUsernameByChatId(Long chatId) {
         return userRepository.getUsernameByChatId(chatId);
     }
+
+    public void updateCommandByChatId(Command command, Long chatId) {
+        userRepository.updateCommandByChatId(command, chatId);
+    }
 }

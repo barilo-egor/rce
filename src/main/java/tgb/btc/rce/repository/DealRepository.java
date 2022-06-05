@@ -66,4 +66,7 @@ public interface DealRepository extends BaseRepository<Deal> {
 
     @Query("select pid from Deal where isActive=true")
     List<Long> getActiveDealPids();
+
+    @Query("select d.user.chatId from Deal d where d.pid=:pid")
+    Long getUserChatIdByDealPid(@Param("pid") Long pid);
 }

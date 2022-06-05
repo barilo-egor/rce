@@ -102,6 +102,10 @@ public class ResponseSender implements IResponseSender {
         return Optional.empty();
     }
 
+    public Optional<Message> sendPhoto(Long chatId, String caption, String photo) {
+        return sendPhoto(chatId, caption, photo, null);
+    }
+
     public Optional<Message> sendPhoto(Long chatId, String caption, String photo, ReplyKeyboard replyKeyboard) {
         try {
             return Optional.of(bot.execute(SendPhoto.builder()
