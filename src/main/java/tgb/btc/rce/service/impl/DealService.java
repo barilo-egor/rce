@@ -13,6 +13,8 @@ import tgb.btc.rce.repository.DealRepository;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -100,5 +102,13 @@ public class DealService extends BasePersistService<Deal> {
 
     public Long getUserByDealPid(Long pid) {
         return dealRepository.getUserChatIdByDealPid(pid);
+    }
+
+    public List<Deal> getByDateBetween(LocalDate startDate, LocalDate endDate) {
+        return dealRepository.getByDateBetween(startDate, endDate);
+    }
+
+    public List<Deal> getByDate(LocalDate dateTime) {
+        return dealRepository.getByDate(dateTime);
     }
 }

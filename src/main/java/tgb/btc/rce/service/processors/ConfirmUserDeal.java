@@ -41,6 +41,7 @@ public class ConfirmUserDeal extends Processor {
         else user.setLotteryCount(1);
         userService.save(user);
         responseSender.deleteMessage(UpdateUtil.getChatId(update), UpdateUtil.getMessage(update).getMessageId());
+        // TODO добавить процент к рефералу
         switch (deal.getCryptoCurrency()) {
             case BITCOIN:
                 responseSender.sendMessage(deal.getUser().getChatId(),

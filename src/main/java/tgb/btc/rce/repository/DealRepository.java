@@ -10,6 +10,8 @@ import tgb.btc.rce.enums.CryptoCurrency;
 import tgb.btc.rce.enums.PaymentType;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -69,4 +71,10 @@ public interface DealRepository extends BaseRepository<Deal> {
 
     @Query("select d.user.chatId from Deal d where d.pid=:pid")
     Long getUserChatIdByDealPid(@Param("pid") Long pid);
+
+    @Query("from Deal d where (d.date BETWEEN :startDate AND :endDate) and d.isPassed=true")
+    List<Deal> getByDateBetween(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
+
+    @Query("from Deal d where d.date=:date and d.isPassed=true")
+    List<Deal> getByDate(@Param("date") LocalDate dateTime);
 }

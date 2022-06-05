@@ -7,6 +7,7 @@ import tgb.btc.rce.enums.PaymentType;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -20,12 +21,12 @@ public class Deal extends BasePersist {
     @Column(name = "DATE_TIME")
     private LocalDateTime dateTime;
 
+    @Column(name = "DATE")
+    private LocalDate date;
+
     @Column(name = "PAYMENT_TYPE")
     @Enumerated(value = EnumType.STRING)
     private PaymentType paymentType;
-
-    @Column(name = "BTC_AMOUNT", precision = 15, scale = 8)
-    private BigDecimal btcAmount;
 
     @Column(name = "CRYPTO_AMOUNT", precision = 15, scale = 8)
     private BigDecimal cryptoAmount;
@@ -65,14 +66,14 @@ public class Deal extends BasePersist {
     public Deal() {
     }
 
-    public Deal(User user, LocalDateTime dateTime, PaymentType paymentType, BigDecimal btcAmount,
+    public Deal(User user, LocalDateTime dateTime, LocalDate date, PaymentType paymentType,
                 BigDecimal cryptoAmount, BigDecimal amount, String wallet, String verificationPhoto, String userCheck,
-                Boolean isActive, Boolean isPassed, Boolean isCurrent, Boolean isUsedPromo,
-                CryptoCurrency cryptoCurrency, DealType dealType) {
+                Boolean isActive, Boolean isPassed, Boolean isCurrent, Boolean isUsedPromo, CryptoCurrency cryptoCurrency,
+                DealType dealType) {
         this.user = user;
         this.dateTime = dateTime;
+        this.date = date;
         this.paymentType = paymentType;
-        this.btcAmount = btcAmount;
         this.cryptoAmount = cryptoAmount;
         this.amount = amount;
         this.wallet = wallet;
@@ -142,14 +143,6 @@ public class Deal extends BasePersist {
         this.paymentType = paymentType;
     }
 
-    public BigDecimal getBtcAmount() {
-        return btcAmount;
-    }
-
-    public void setBtcAmount(BigDecimal btcAmount) {
-        this.btcAmount = btcAmount;
-    }
-
     public BigDecimal getAmount() {
         return amount;
     }
@@ -206,5 +199,13 @@ public class Deal extends BasePersist {
         this.dealType = dealType;
     }
 
-    // TODO
+    public LocalDate getDate() {
+        return date;
+    }
+
+    public void setDate(LocalDate date) {
+        this.date = date;
+    }
+
+// TODO
 }

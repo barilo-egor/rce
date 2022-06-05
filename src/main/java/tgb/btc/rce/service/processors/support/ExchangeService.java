@@ -24,6 +24,7 @@ import tgb.btc.rce.vo.InlineButton;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -65,6 +66,7 @@ public class ExchangeService {
         deal.setActive(false);
         deal.setPassed(false);
         deal.setDateTime(LocalDateTime.now());
+        deal.setDate(LocalDate.now());
         deal.setDealType(DealType.BUY);
         deal.setUser(userService.findByChatId(chatId));
         Deal savedDeal = dealService.save(deal);

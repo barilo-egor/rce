@@ -53,7 +53,7 @@ public class UsersReport extends Processor {
                 cell2.setCellValue(StringUtils.defaultIfEmpty(user.getUsername(), "скрыт"));
                 i++;
             }
-            String fileName = LocalDateTime.now() + ".xlsx";
+            String fileName = "users.xlsx";
             FileOutputStream outputStream = new FileOutputStream(fileName);
             book.write(outputStream);
             book.close();
