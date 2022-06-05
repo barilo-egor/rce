@@ -4,6 +4,7 @@ import lombok.SneakyThrows;
 import org.json.JSONObject;
 import tgb.btc.rce.enums.BotVariableType;
 import tgb.btc.rce.enums.CryptoCurrency;
+import tgb.btc.rce.enums.DealType;
 import tgb.btc.rce.exception.BaseException;
 
 import java.io.*;
@@ -28,7 +29,7 @@ public final class ConverterUtil {
 
     public static final int MAX_BTC_AMOUNT = 1;
 
-    public static BigDecimal convertCryptoToRub(CryptoCurrency cryptoCurrency, Double sum) {
+    public static BigDecimal convertCryptoToRub(CryptoCurrency cryptoCurrency, Double sum, DealType dealType) {
         BigDecimal fix = BigDecimal.valueOf(BotVariablePropertiesUtil.getDouble(BotVariableType.FIX));
         BigDecimal usdCourse = BigDecimal.valueOf(BotVariablePropertiesUtil.getDouble(BotVariableType.USD_COURSE));
         BigDecimal commission = BigDecimal.valueOf(BotVariablePropertiesUtil.getDouble(BotVariableType.COMMISSION));
@@ -50,8 +51,28 @@ public final class ConverterUtil {
             default:
                 throw new BaseException("Не определена крипто валюта.");
         }
-        return getAmount(BigDecimal.valueOf(sum), usdCourse, fix, commission, fixCommission, transactionalCommission,
-                currency);
+        switch (dealType) {
+            case BUY:
+                return getAmount(BigDecimal.valueOf(sum), usdCourse, fix, commission, fixCommission, transactionalCommission,
+                        currency);
+            case SELL:
+                return getAmountForSell(BigDecimal.valueOf(sum), usdCourse, fix, commission, fixCommission, transactionalCommission,
+                        currency);
+            default:
+                throw new BaseException("Не найден тип сделки для расчета суммы.");
+        }
+    }
+
+    private static BigDecimal getAmountForSell(BigDecimal amount, BigDecimal course, BigDecimal fix,
+                                        BigDecimal percentCommission, BigDecimal fixCommission,
+                                        BigDecimal transactionCommission, BigDecimal cryptoCurrency) {
+        BigDecimal usd = BigDecimalUtil.multiplyHalfUp(amount, cryptoCurrency);
+        BigDecimal rub = BigDecimalUtil.multiplyHalfUp(usd, course);
+        if (Objects.nonNull(transactionCommission)) rub = BigDecimalUtil.subtractHalfUp(rub,
+                BigDecimalUtil.multiplyHalfUp(transactionCommission, course));
+        BigDecimal commission = BigDecimalUtil.multiplyHalfUp(rub, getPercentsFactor(percentCommission));
+        BigDecimal total = BigDecimalUtil.subtractHalfUp(rub, commission);
+        return rub.compareTo(fix) < 0 ? BigDecimalUtil.subtractHalfUp(rub, fixCommission) : total;
     }
 
     private static BigDecimal getAmount(BigDecimal amount, BigDecimal course, BigDecimal fix,

@@ -2,6 +2,7 @@ package tgb.btc.rce.bean;
 
 import lombok.Builder;
 import tgb.btc.rce.enums.CryptoCurrency;
+import tgb.btc.rce.enums.DealType;
 import tgb.btc.rce.enums.PaymentType;
 
 import javax.persistence.*;
@@ -57,13 +58,17 @@ public class Deal extends BasePersist {
     @Enumerated(value = EnumType.STRING)
     private CryptoCurrency cryptoCurrency;
 
+    @Column(name = "DEAL_TYPE")
+    @Enumerated(value = EnumType.STRING)
+    private DealType dealType;
+
     public Deal() {
     }
 
     public Deal(User user, LocalDateTime dateTime, PaymentType paymentType, BigDecimal btcAmount,
-                BigDecimal cryptoAmount, BigDecimal amount, String wallet, String verificationPhoto,
-                String userCheck, Boolean isActive, Boolean isPassed, Boolean isCurrent, Boolean isUsedPromo,
-                CryptoCurrency cryptoCurrency) {
+                BigDecimal cryptoAmount, BigDecimal amount, String wallet, String verificationPhoto, String userCheck,
+                Boolean isActive, Boolean isPassed, Boolean isCurrent, Boolean isUsedPromo,
+                CryptoCurrency cryptoCurrency, DealType dealType) {
         this.user = user;
         this.dateTime = dateTime;
         this.paymentType = paymentType;
@@ -78,6 +83,7 @@ public class Deal extends BasePersist {
         this.isCurrent = isCurrent;
         this.isUsedPromo = isUsedPromo;
         this.cryptoCurrency = cryptoCurrency;
+        this.dealType = dealType;
     }
 
     public String getUserCheck() {
@@ -190,6 +196,14 @@ public class Deal extends BasePersist {
 
     public void setUsedPromo(Boolean usedPromo) {
         isUsedPromo = usedPromo;
+    }
+
+    public DealType getDealType() {
+        return dealType;
+    }
+
+    public void setDealType(DealType dealType) {
+        this.dealType = dealType;
     }
 
     // TODO

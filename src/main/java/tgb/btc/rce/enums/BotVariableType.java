@@ -19,7 +19,9 @@ public enum BotVariableType {
     TRANSACTION_COMMISSION("Транз.комиссия", "transaction.commission"),
     PROMO_CODE_DISCOUNT("Скидка от промокода", "promo.code.discount"),
     PROMO_CODE_NAME("Название промокода", "promo.code.name"),
-    DEAL_ACTIVE_TIME("Время активности заявки", "deal.active.time");
+    DEAL_ACTIVE_TIME("Время активности заявки", "deal.active.time"),
+    WALLET_BTC("Кошелек BTC", "wallet.btc"),
+    WALLET_LTC("Кошелек LTC", "wallet.ltc");
 
     final String displayName;
     final String key;
