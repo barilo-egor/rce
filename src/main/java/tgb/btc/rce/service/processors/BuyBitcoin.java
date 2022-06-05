@@ -74,7 +74,7 @@ public class BuyBitcoin extends Processor {
                 CryptoCurrency currency = CryptoCurrency.valueOf(update.getCallbackQuery().getData());
                 dealService.updateCryptoCurrencyByPid(userService.getCurrentDealByChatId(chatId), currency);
                 exchangeService.askForSum(chatId, currency);
-                userService.nextStep(chatId, Command.BUY_BITCOIN);
+                userService.nextStep(chatId);
                 break;
             case 2:
                 if (UpdateType.INLINE_QUERY.equals(UpdateType.fromUpdate(update))) {
@@ -83,16 +83,15 @@ public class BuyBitcoin extends Processor {
                     return;
                 }
                 exchangeService.saveSum(update);
+                responseSender.deleteMessage(UpdateUtil.getChatId(update), Integer.parseInt(userService.getBufferVariable(chatId)));
                 if (dealService.getDealsCountByUserChatId(chatId) > 1) {
                     exchangeService.askForWallet(update);
                     userService.nextStep(chatId);
                     userService.nextStep(chatId);
-                }
-                else {
+                } else {
                     exchangeService.askForUserPromoCode(chatId);
                     userService.nextStep(chatId);
                 }
-                responseSender.deleteMessage(UpdateUtil.getChatId(update), Integer.parseInt(userService.getBufferVariable(chatId)));
                 break;
             case 3:
                 exchangeService.processPromoCode(update);
@@ -146,8 +145,7 @@ public class BuyBitcoin extends Processor {
                     exchangeService.askForSum(chatId,
                             dealService.getCryptoCurrencyByPid(userService.getCurrentDealByChatId(chatId)));
                     userService.previousStep(chatId);
-                }
-                else {
+                } else {
                     exchangeService.askForUserPromoCode(chatId);
                 }
                 break;
