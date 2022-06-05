@@ -41,13 +41,13 @@ public class Referral extends Processor {
         String resultMessage = String.format(MessagePropertiesUtil.getMessage(PropertiesMessage.REFERRAL_MAIN),
                 refLink, currentBalance, numberOfReferrals, getSumOfReferrals(referralUsers));
 
-        responseSender.sendMessage(chatId, resultMessage, KeyboardUtil.buildInlineDiff(getButtons(chatId)));
+        responseSender.sendMessage(chatId, resultMessage, KeyboardUtil.buildInlineDiff(getButtons(refLink)));
     }
 
-    private List<InlineButton> getButtons(Long chatId) {
+    private List<InlineButton> getButtons(String refLink) {
         return List.of(InlineButton.builder()
                         .text("Пригласить друга")
-                        .data("?start=" + chatId)
+                        .data(refLink)
                         .inlineType(InlineType.SWITCH_INLINE_QUERY)
                         .build(),
                 InlineButton.builder()

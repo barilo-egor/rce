@@ -1,5 +1,6 @@
 package tgb.btc.rce.service;
 
+import org.telegram.telegrambots.meta.api.methods.AnswerInlineQuery;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.GetFile;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -37,4 +38,6 @@ public interface IResponseSender {
     Optional<org.telegram.telegrambots.meta.api.objects.File> execute(GetFile getFile);
 
     void downloadFile(Document document, String localFilePath) throws IOException, TelegramApiException;
+
+    void execute(AnswerInlineQuery answerInlineQuery);
 }

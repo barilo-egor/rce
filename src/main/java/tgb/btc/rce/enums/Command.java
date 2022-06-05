@@ -39,6 +39,8 @@ public enum Command {
     /** REFERRAL */
     WITHDRAWAL_OF_FUNDS("withdrawal", false),
     SHOW_WITHDRAWAL_REQUEST("show_withdrawal", false),
+    SEND_LINK("send_link", false),
+    HIDE_WITHDRAWAL("hide_withdrawal", true),
 
     /** ADMIN PANEL */
     REQUESTS("Заявки", true),

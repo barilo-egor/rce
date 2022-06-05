@@ -133,11 +133,12 @@ public final class KeyboardUtil {
         int j = 0;
 
         for (int i = 0; i < buttons.size(); i++) {
-            row.add(KeyboardButton.builder()
+            KeyboardButton keyboardButton = KeyboardButton.builder()
                     .text(buttons.get(i).getText())
-                    .requestContact(buttons.get(i).isRequestContact())
-                    .requestLocation(buttons.get(i).isRequestContact())
-                    .build());
+                    .build();
+            if (buttons.get(i).isRequestContact()) keyboardButton.setRequestContact(true);
+            else if (buttons.get(i).isRequestLocation()) keyboardButton.setRequestLocation(true);
+            row.add(keyboardButton);
             j++;
             if (j == numberOfColumns || i == (buttons.size() - 1)) {
                 rows.add(row);

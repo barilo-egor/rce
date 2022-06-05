@@ -42,7 +42,7 @@ public interface UserRepository extends BaseRepository<User> {
     @Query("select referralBalance from User where chatId=:chatId")
     Integer getReferralBalanceByChatId(@Param("chatId") Long chatId);
 
-    @Query("select referralUsers from User where chatId=:chatId")
+    @Query("select u.referralUsers from User u where u.chatId=:chatId")
     List<ReferralUser> getUserReferralsByChatId(@Param("chatId") Long chatId);
 
     User getByChatId(Long chatId);

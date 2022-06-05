@@ -5,12 +5,11 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.bean.User;
+import tgb.btc.rce.enums.BotVariableType;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.IUpdateDispatcher;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.util.CommandProcessorLoader;
-import tgb.btc.rce.util.CommandUtil;
-import tgb.btc.rce.util.UpdateUtil;
+import tgb.btc.rce.util.*;
 
 @Service
 public class UpdateDispatcher implements IUpdateDispatcher {
@@ -27,9 +26,20 @@ public class UpdateDispatcher implements IUpdateDispatcher {
 
     public void dispatch(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
+        if (update.hasInlineQuery() && userService.getStepByChatId(chatId).equals(User.DEFAULT_STEP)) {
+            dispatchByInlineQuery(update);
+            return;
+        }
         if (!userService.existByChatId(chatId)) userService.register(update);
         if (userService.getIsBannedByChatId(chatId)) return;
         ((Processor) applicationContext.getBean(CommandProcessorLoader.getByCommand(getCommand(update)))).run(update);
+    }
+
+    public void dispatchByInlineQuery(Update update) {
+        String query = update.getInlineQuery().getQuery();
+        if (query.startsWith(BotPropertiesUtil.getProperty("bot.link"))) {
+            ((Processor) applicationContext.getBean(CommandProcessorLoader.getByCommand(Command.SEND_LINK))).run(update);
+        }
     }
 
     private Command getCommand(Update update) {

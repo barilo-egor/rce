@@ -82,7 +82,7 @@ public class ResponseSender implements IResponseSender {
             return bot.execute(sendMessage);
         } catch (TelegramApiException e) {
             log.warn("Не получилось отправить sendMessage: " + sendMessage);
-            throw new BaseException("Не получилось отправить sendMessage.");
+            throw new BaseException("Не получилось отправить sendMessage - " + e.getMessage());
         }
     }
 
@@ -176,7 +176,7 @@ public class ResponseSender implements IResponseSender {
         }
     }
 
-    public void downloadFile(Document document, String localFilePath) throws IOException, TelegramApiException {
+    public void downloadFile(Document document, String localFilePath) throws IOException{
         org.telegram.telegrambots.meta.api.objects.File file = getFilePath(document);
 
         java.io.File localFile = new java.io.File(localFilePath);
@@ -191,6 +191,7 @@ public class ResponseSender implements IResponseSender {
         return execute(getFile).get();
     }
 
+    @Override
     public void execute(AnswerInlineQuery answerInlineQuery) {
         try {
             bot.execute(answerInlineQuery);

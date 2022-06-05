@@ -19,13 +19,17 @@ public class WithdrawalRequest extends BasePersist {
     @Column(name = "STATUS")
     private WithdrawalRequestStatus status;
 
+    @Column(name = "IS_ACTIVE")
+    private Boolean isActive;
+
     public WithdrawalRequest() {
     }
 
-    public WithdrawalRequest(User user, String phoneNumber, WithdrawalRequestStatus status) {
+    public WithdrawalRequest(User user, String phoneNumber, WithdrawalRequestStatus status, Boolean isActive) {
         this.user = user;
         this.phoneNumber = phoneNumber;
         this.status = status;
+        this.isActive = isActive;
     }
 
     public static WithdrawalRequest buildFromUpdate(User user, Update update) {
@@ -33,6 +37,7 @@ public class WithdrawalRequest extends BasePersist {
         withdrawalRequest.setUser(user);
         withdrawalRequest.setStatus(WithdrawalRequestStatus.CREATED);
         withdrawalRequest.setPhoneNumber(update.getMessage().getContact().getPhoneNumber());
+        withdrawalRequest.setActive(true);
         return withdrawalRequest;
     }
 
@@ -58,5 +63,13 @@ public class WithdrawalRequest extends BasePersist {
 
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
+    }
+
+    public Boolean getActive() {
+        return isActive;
+    }
+
+    public void setActive(Boolean active) {
+        isActive = active;
     }
 }

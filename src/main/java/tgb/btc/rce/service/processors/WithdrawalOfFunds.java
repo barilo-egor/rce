@@ -27,7 +27,7 @@ public class WithdrawalOfFunds extends Processor {
         if (checkForCancel(update)) return;
         switch (userService.getStepByChatId(chatId)) {
             case 0:
-                withdrawalOfFundsService.askForContact(chatId, UpdateUtil.getMessageId(update));
+                withdrawalOfFundsService.askForContact(chatId, UpdateUtil.getMessage(update).getMessageId());
                 break;
             case 1:
                 if (withdrawalOfFundsService.createRequest(update)) processToMainMenu(chatId);
