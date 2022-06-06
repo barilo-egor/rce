@@ -1,5 +1,6 @@
 package tgb.btc.rce.service.processors.support;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.AnswerInlineQuery;
@@ -15,10 +16,7 @@ import tgb.btc.rce.enums.*;
 import tgb.btc.rce.exception.BaseException;
 import tgb.btc.rce.exception.EnumTypeNotFoundException;
 import tgb.btc.rce.exception.NumberParseException;
-import tgb.btc.rce.service.impl.DealService;
-import tgb.btc.rce.service.impl.PaymentConfigService;
-import tgb.btc.rce.service.impl.ResponseSender;
-import tgb.btc.rce.service.impl.UserService;
+import tgb.btc.rce.service.impl.*;
 import tgb.btc.rce.util.*;
 import tgb.btc.rce.vo.InlineButton;
 
@@ -43,12 +41,16 @@ public class SellService {
     private final DealService dealService;
     private final PaymentConfigService paymentConfigService;
 
+    private final BotMessageService botMessageService;
+
     @Autowired
-    public SellService(ResponseSender responseSender, UserService userService, DealService dealService, PaymentConfigService paymentConfigService) {
+    public SellService(ResponseSender responseSender, UserService userService, DealService dealService,
+                       PaymentConfigService paymentConfigService, BotMessageService botMessageService) {
         this.responseSender = responseSender;
         this.userService = userService;
         this.dealService = dealService;
         this.paymentConfigService = paymentConfigService;
+        this.botMessageService = botMessageService;
     }
 
     static {
@@ -212,11 +214,18 @@ public class SellService {
                 RoundingMode.HALF_UP).stripTrailingZeros().doubleValue();
         double dealAmount = deal.getAmount().setScale(0, RoundingMode.HALF_UP).stripTrailingZeros().doubleValue();
         String displayCurrencyName = deal.getCryptoCurrency().getDisplayName();
+        String additionalText;
+        try {
+            additionalText = botMessageService.findByTypeThrows(BotMessageType.ADDITIONAL_DEAL_TEXT).getText() + "\n\n";
+        } catch (BaseException e) {
+            additionalText = StringUtils.EMPTY;
+        }
         String message = "<b>Информация по заявке</b>\n"
                 + "<b>Продажа " + displayCurrencyName + "</b>: " + dealCryptoAmount
                 + "\n\n"
                 + "<b>Сумма перевода</b>: " + dealAmount + "₽"
                 + "\n\n"
+                + additionalText
                 + "<b>Выберите способ получения перевода:</b>";
 
         List<InlineButton> buttons = Arrays.stream(PaymentType.values()).map(paymentType -> {

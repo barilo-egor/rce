@@ -13,7 +13,8 @@ public enum BotMessageType {
     ROULETTE("Кн.рулетка"),
 
     WON_LOTTERY("Выигр.лотереи"),
-    LOSE_LOTTERY("Проигр.лотереи");
+    LOSE_LOTTERY("Проигр.лотереи"),
+    ADDITIONAL_DEAL_TEXT("Доп.текст заявки");
 
     final String displayName;
 

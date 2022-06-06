@@ -1,5 +1,6 @@
 package tgb.btc.rce.service.processors.support;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.AnswerInlineQuery;
@@ -8,6 +9,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.inlinequery.inputmessagecontent.InputTextMessageContent;
 import org.telegram.telegrambots.meta.api.objects.inlinequery.result.InlineQueryResultArticle;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
+import tgb.btc.rce.bean.BotMessage;
 import tgb.btc.rce.bean.Deal;
 import tgb.btc.rce.bean.PaymentConfig;
 import tgb.btc.rce.constants.BotStringConstants;
@@ -15,10 +17,7 @@ import tgb.btc.rce.enums.*;
 import tgb.btc.rce.exception.BaseException;
 import tgb.btc.rce.exception.EnumTypeNotFoundException;
 import tgb.btc.rce.exception.NumberParseException;
-import tgb.btc.rce.service.impl.DealService;
-import tgb.btc.rce.service.impl.PaymentConfigService;
-import tgb.btc.rce.service.impl.ResponseSender;
-import tgb.btc.rce.service.impl.UserService;
+import tgb.btc.rce.service.impl.*;
 import tgb.btc.rce.util.*;
 import tgb.btc.rce.vo.InlineButton;
 
@@ -42,13 +41,16 @@ public class ExchangeService {
     private final DealService dealService;
     private final PaymentConfigService paymentConfigService;
 
+    private final BotMessageService botMessageService;
+
     @Autowired
     public ExchangeService(ResponseSender responseSender, UserService userService, DealService dealService,
-                           PaymentConfigService paymentConfigService) {
+                           PaymentConfigService paymentConfigService, BotMessageService botMessageService) {
         this.responseSender = responseSender;
         this.userService = userService;
         this.dealService = dealService;
         this.paymentConfigService = paymentConfigService;
+        this.botMessageService = botMessageService;
     }
 
     static {
@@ -270,12 +272,19 @@ public class ExchangeService {
                 RoundingMode.HALF_UP).stripTrailingZeros();
         BigDecimal dealAmount = deal.getAmount().setScale(0, RoundingMode.HALF_UP).stripTrailingZeros();
         String displayCurrencyName = deal.getCryptoCurrency().getDisplayName();
+        String additionalText;
+        try {
+            additionalText = botMessageService.findByTypeThrows(BotMessageType.ADDITIONAL_DEAL_TEXT).getText() + "\n\n";
+        } catch (BaseException e) {
+            additionalText = StringUtils.EMPTY;
+        }
         String message = "<b>Информация по заявке</b>\n"
                 + "<b>Покупка " + displayCurrencyName + "</b>: " + dealCryptoAmount + "\n"
                 + "<b>" + displayCurrencyName + "-адрес</b>:" + "<code>" + deal.getWallet() + "</code>"
                 + "\n\n"
                 + "<b>Сумма перевода</b>: " + dealAmount + "₽"
                 + "\n\n"
+                + additionalText
                 + "<b>Выберите способ оплаты:</b>";
 
         List<InlineButton> buttons = Arrays.stream(PaymentType.values()).map(paymentType -> {
