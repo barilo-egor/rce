@@ -87,7 +87,8 @@ public enum Command {
 
     /** REPORTS */
     USERS_REPORT("Отчет по пользователям", true),
-    DEAL_REPORTS("Отчет по сделкам", true);
+    DEAL_REPORTS("Отчет по сделкам", true),
+    PARTNERS_REPORT("Отчет по партнерам", true);
 
     final String text;
     final boolean isAdmin;

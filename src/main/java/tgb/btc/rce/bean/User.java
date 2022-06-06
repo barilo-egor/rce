@@ -46,6 +46,9 @@ public class User extends BasePersist {
     @Column(name = "REFERRAL_BALANCE")
     private Integer referralBalance;
 
+    @Column(name = "CHARGES")
+    private Integer charges;
+
     @Column(name = "BUFFER_VARIABLE", length = 3000)
     private String bufferVariable;
 
@@ -65,8 +68,9 @@ public class User extends BasePersist {
     }
 
     public User(Long chatId, String username, Integer step, Command command, LocalDateTime registrationDate,
-                Boolean isAdmin, Integer lotteryCount, Long fromChatId, Integer referralBalance, String bufferVariable,
-                Boolean isActive, Boolean isBanned, Long currentDeal, List<ReferralUser> referralUsers) {
+                Boolean isAdmin, Integer lotteryCount, Long fromChatId, Integer referralBalance, Integer charges,
+                String bufferVariable, Boolean isActive, Boolean isBanned, Long currentDeal,
+                List<ReferralUser> referralUsers) {
         this.chatId = chatId;
         this.username = username;
         this.step = step;
@@ -76,6 +80,7 @@ public class User extends BasePersist {
         this.lotteryCount = lotteryCount;
         this.fromChatId = fromChatId;
         this.referralBalance = referralBalance;
+        this.charges = charges;
         this.bufferVariable = bufferVariable;
         this.isActive = isActive;
         this.isBanned = isBanned;
@@ -214,5 +219,13 @@ public class User extends BasePersist {
 
     public void setCurrentDeal(Long currentDeal) {
         this.currentDeal = currentDeal;
+    }
+
+    public Integer getCharges() {
+        return charges;
+    }
+
+    public void setCharges(Integer charges) {
+        this.charges = charges;
     }
 }

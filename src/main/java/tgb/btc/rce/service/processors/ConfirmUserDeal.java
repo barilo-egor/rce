@@ -51,6 +51,7 @@ public class ConfirmUserDeal extends Processor {
                     ConverterUtil.getPercentsFactor(
                             BigDecimal.valueOf(BotVariablePropertiesUtil.getDouble(BotVariableType.REFERRAL_PERCENT))));
             userService.updateReferralBalanceByChatId(user.getReferralBalance() + sumToAdd.intValue(), user.getChatId());
+            userService.updateChargesByChatId(user.getCharges() + sumToAdd.intValue(), user.getChatId());
         }
         switch (deal.getCryptoCurrency()) {
             case BITCOIN:

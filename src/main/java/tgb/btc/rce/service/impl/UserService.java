@@ -150,4 +150,8 @@ public class UserService extends BasePersistService<User> {
     public void updateReferralBalanceByChatId(Integer referralBalance, Long chatId) {
         userRepository.updateReferralBalanceByChatId(referralBalance, chatId);
     }
+
+    public void updateChargesByChatId(Integer charges, Long chatId) {
+        userRepository.updateChargesByChatId(charges, chatId);
+    }
 }
