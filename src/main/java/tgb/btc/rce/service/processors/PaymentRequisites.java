@@ -17,13 +17,14 @@ import tgb.btc.rce.vo.ReplyButton;
 import java.util.ArrayList;
 import java.util.List;
 
-@CommandProcessor(command = Command.PAYMENT_TYPES)
-public class PaymentTypes extends Processor {
+@CommandProcessor(command = Command.PAYMENT_REQUISITES)
+public class PaymentRequisites extends Processor {
 
     private final PaymentConfigService paymentConfigService;
 
     @Autowired
-    public PaymentTypes(IResponseSender responseSender, UserService userService, PaymentConfigService paymentConfigService) {
+    public PaymentRequisites(IResponseSender responseSender, UserService userService,
+                             PaymentConfigService paymentConfigService) {
         super(responseSender, userService);
         this.paymentConfigService = paymentConfigService;
     }
@@ -45,12 +46,11 @@ public class PaymentTypes extends Processor {
                 for (PaymentType paymentType : PaymentType.values()) {
                     if (text.startsWith(paymentType.getDisplayName())) {
                         PaymentConfig paymentConfig = paymentConfigService.getByPaymentType(paymentType);
-                        String message = paymentConfig.getOn() ? "выключен" : "включен";
-                        paymentConfig.setOn(!paymentConfig.getOn());
+                        paymentConfig.setRequisites(text);
                         paymentConfigService.save(paymentConfig);
-                        responseSender.sendMessage(chatId, "Способ оплаты " +
-                                paymentType.getDisplayName() + " " + message + ".");
-                        askForInput(chatId);
+                        responseSender.sendMessage(chatId, "Реквизиты " +
+                                paymentType.getDisplayName() + " заменены.");
+                        processToAdminMainPanel(chatId);
                         return;
                     }
                 }
@@ -61,17 +61,15 @@ public class PaymentTypes extends Processor {
     private void askForInput(Long chatId) {
         List<ReplyButton> buttons = new ArrayList<>();
         for (PaymentType paymentType : PaymentType.values()) {
-            PaymentConfig paymentConfig = paymentConfigService.getByPaymentType(paymentType);
-            String isOn = paymentConfig != null && paymentConfig.getOn() ? "выключить" : "включить";
             buttons.add(ReplyButton.builder()
-                    .text(paymentType.getDisplayName() + "(" + isOn + ")")
+                    .text(paymentType.getDisplayName())
                     .build());
         }
         buttons.add(ReplyButton.builder()
                 .text(Command.CANCEL.getText())
                 .build());
 
-        responseSender.sendMessage(chatId, "Выберите тип оплаты чтобы выключить его или включить.",
-                KeyboardUtil.buildReply(2, buttons));
+        responseSender.sendMessage(chatId, "Выберите тип оплаты для замены реквизитов.",
+                KeyboardUtil.buildReply(buttons));
     }
 }

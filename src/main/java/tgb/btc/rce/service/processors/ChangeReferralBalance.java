@@ -55,7 +55,7 @@ public class ChangeReferralBalance extends Processor {
                         userService.getReferralBalanceByChatId(userChatId)
                                 - Integer.parseInt(text.substring(1)), userChatId);
                 else
-                    userService.updateReferralBalanceByChatId(Integer.parseInt(text.substring(1)), userChatId);
+                    userService.updateReferralBalanceByChatId(Integer.parseInt(text), userChatId);
                 responseSender.sendMessage(chatId, "Баланс изменен.");
                 processToAdminMainPanel(chatId);
                 break;

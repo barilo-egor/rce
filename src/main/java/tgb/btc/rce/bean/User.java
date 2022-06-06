@@ -100,6 +100,7 @@ public class User extends BasePersist {
         user.setReferralBalance(0);
         user.setActive(true);
         user.setBanned(false);
+        user.setCharges(0);
         return user;
     }
 

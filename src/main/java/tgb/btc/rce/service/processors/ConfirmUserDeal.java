@@ -47,11 +47,12 @@ public class ConfirmUserDeal extends Processor {
         userService.save(user);
         responseSender.deleteMessage(UpdateUtil.getChatId(update), UpdateUtil.getMessage(update).getMessageId());
         if (user.getFromChatId() != null) {
-            BigDecimal sumToAdd = BigDecimalUtil.multiplyHalfUp(BigDecimal.valueOf(user.getReferralBalance()),
+            User refUser = userService.findByChatId(user.getFromChatId());
+            BigDecimal sumToAdd = BigDecimalUtil.multiplyHalfUp(deal.getAmount(),
                     ConverterUtil.getPercentsFactor(
                             BigDecimal.valueOf(BotVariablePropertiesUtil.getDouble(BotVariableType.REFERRAL_PERCENT))));
-            userService.updateReferralBalanceByChatId(user.getReferralBalance() + sumToAdd.intValue(), user.getChatId());
-            userService.updateChargesByChatId(user.getCharges() + sumToAdd.intValue(), user.getChatId());
+            userService.updateReferralBalanceByChatId(refUser.getReferralBalance() + sumToAdd.intValue(), refUser.getChatId());
+            userService.updateChargesByChatId(refUser.getCharges() + sumToAdd.intValue(), refUser.getChatId());
         }
         switch (deal.getCryptoCurrency()) {
             case BITCOIN:
