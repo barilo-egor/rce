@@ -22,7 +22,8 @@ public enum BotVariableType {
     DEAL_ACTIVE_TIME("Время активности заявки", "deal.active.time"),
     WALLET_BTC("Кошелек BTC", "wallet.btc"),
     WALLET_LTC("Кошелек LTC", "wallet.ltc"),
-    REFERRAL_PERCENT("Процент рефералов", "referral.percent");
+    REFERRAL_PERCENT("Процент рефералов", "referral.percent"),
+    REFERRAL_MIN_SUM("Мин.сумма вывода", "referral.min.sum");
 
     final String displayName;
     final String key;

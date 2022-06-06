@@ -41,6 +41,8 @@ public enum Command {
     SHOW_WITHDRAWAL_REQUEST("show_withdrawal", false),
     SEND_LINK("send_link", false),
     HIDE_WITHDRAWAL("hide_withdrawal", true),
+    CHANGE_REFERRAL_BALANCE("change_ref", true),
+    DELETE_WITHDRAWAL_REQUEST("withdrawal_delete", false),
 
     /** ADMIN PANEL */
     REQUESTS("Заявки", true),
@@ -50,6 +52,7 @@ public enum Command {
     REPORTS("Отчеты", true),
     EDIT_CONTACTS("Редактирование контактов", true),
     QUIT_ADMIN_PANEL("Выйти", true),
+    USER_REFERRAL_BALANCE("Реф.баланс юзера", true),
 
     /** EDIT CONTACTS */
     ADD_CONTACT("Добавить контакт", true),

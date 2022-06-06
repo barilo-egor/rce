@@ -31,4 +31,12 @@ public class WithdrawalRequestService extends BasePersistService<WithdrawalReque
     public List<WithdrawalRequest> getAllActive() {
         return withdrawalRequestRepository.getAllActive();
     }
+
+    public long getActiveByUserChatId(Long chatId) {
+        return withdrawalRequestRepository.getActiveByUserChatId(chatId);
+    }
+
+    public Long getPidByUserChatId(Long chatId) {
+        return withdrawalRequestRepository.getPidByUserChatId(chatId);
+    }
 }
