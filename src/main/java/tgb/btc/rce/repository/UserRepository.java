@@ -100,4 +100,7 @@ public interface UserRepository extends BaseRepository<User> {
     @Modifying
     @Query("update User set charges=:charges where chatId=:chatId")
     void updateChargesByChatId(@Param("charges") Integer charges, @Param("chatId") Long chatId);
+
+    @Query("select charges from User where chatId=:chatId")
+    Integer getChargesByChatId(@Param("chatId") Long chatId);
 }

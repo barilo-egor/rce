@@ -39,7 +39,7 @@ public class Referral extends Processor {
         String numberOfReferrals = String.valueOf(referralUsers.size());
 
         String resultMessage = String.format(MessagePropertiesUtil.getMessage(PropertiesMessage.REFERRAL_MAIN),
-                refLink, currentBalance, numberOfReferrals, getSumOfReferrals(referralUsers));
+                refLink, currentBalance, numberOfReferrals, userService.getChargesByChatId(chatId));
 
         responseSender.sendMessage(chatId, resultMessage, KeyboardUtil.buildInlineDiff(getButtons(refLink)));
     }
@@ -55,13 +55,5 @@ public class Referral extends Processor {
                         .data(Command.WITHDRAWAL_OF_FUNDS.getText())
                         .inlineType(InlineType.CALLBACK_DATA)
                         .build());
-    }
-
-    private String getSumOfReferrals(List<ReferralUser> referralUsers) {
-        Integer sumOfReferrals = 0;
-        for (ReferralUser referralUser : referralUsers) {
-            sumOfReferrals += referralUser.getSum();
-        }
-        return sumOfReferrals.toString();
     }
 }

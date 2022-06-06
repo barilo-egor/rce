@@ -154,4 +154,8 @@ public class UserService extends BasePersistService<User> {
     public void updateChargesByChatId(Integer charges, Long chatId) {
         userRepository.updateChargesByChatId(charges, chatId);
     }
+
+    public Integer getChargesByChatId(Long chatId) {
+        return userRepository.getChargesByChatId(chatId);
+    }
 }
