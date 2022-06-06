@@ -69,6 +69,7 @@ public enum Command {
     BOT_MESSAGES("Сообщения бота", true),
     BOT_VARIABLES("Переменные бота", true),
     SYSTEM_MESSAGES("Сис.сообщения", true),
+    PAYMENT_TYPES("Типы оплаты", true),
 
     /** DEAL */
     PAID("Я оплатил(а)", false),
