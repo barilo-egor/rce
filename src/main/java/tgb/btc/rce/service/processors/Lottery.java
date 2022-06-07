@@ -60,9 +60,7 @@ public class Lottery extends Processor {
     }
 
     private boolean getRandomBoolean(float probability) { //0.0 to 99.9
-        /* TODO Егор:
-            Нужно выдать случайный результат, исходя из пришедшего шанса для true 0.0 to 99.9
-         */
-        return false;
+        double randomValue = Math.random() * probability;  //0.0 to 99.9
+        return randomValue >= probability;
     }
 }
