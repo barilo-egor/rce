@@ -12,12 +12,11 @@ import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.impl.DealService;
 import tgb.btc.rce.service.impl.UserService;
-import tgb.btc.rce.util.BigDecimalUtil;
-import tgb.btc.rce.util.BotVariablePropertiesUtil;
-import tgb.btc.rce.util.ConverterUtil;
-import tgb.btc.rce.util.UpdateUtil;
+import tgb.btc.rce.util.*;
+import tgb.btc.rce.vo.InlineButton;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Objects;
 
 @CommandProcessor(command = Command.CONFIRM_USER_DEAL)
@@ -68,5 +67,14 @@ public class ConfirmUserDeal extends Processor {
                         "Валюта отправлена.");
                 break;
         }
+
+        responseSender.sendMessage(deal.getUser().getChatId(), "Хотите оставить отзыв?",
+                KeyboardUtil.buildInline(List.of(
+                        InlineButton.builder()
+                                .data(Command.SHARE_REVIEW.getText())
+                                .text("Оставить")
+                                .build()
+                        )
+                ));
     }
 }

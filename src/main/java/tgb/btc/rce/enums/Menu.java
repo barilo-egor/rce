@@ -14,7 +14,7 @@ public enum Menu {
     BOT_SETTINGS(List.of(Command.CURRENT_DATA, Command.ON_BOT, Command.OFF_BOT, Command.BOT_MESSAGES,
             Command.BOT_VARIABLES, Command.SYSTEM_MESSAGES, Command.PAYMENT_TYPES, Command.PAYMENT_REQUISITES,
             Command.ADMIN_BACK)),
-    REQUESTS(List.of(Command.NEW_DEALS, Command.NEW_WITHDRAWALS, Command.ADMIN_BACK)),
+    REQUESTS(List.of(Command.NEW_DEALS, Command.NEW_WITHDRAWALS, Command.NEW_REVIEWS, Command.ADMIN_BACK)),
     REPORTS(List.of(Command.USERS_REPORT, Command.DEAL_REPORTS, Command.PARTNERS_REPORT, Command.ADMIN_BACK));
 
     final List<Command> commands;

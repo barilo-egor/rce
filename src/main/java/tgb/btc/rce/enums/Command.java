@@ -80,11 +80,16 @@ public enum Command {
     DELETE_USER_DEAL("delete_deal", true),
     CONFIRM_USER_DEAL("confirm_deal", true),
     ADDITIONAL_VERIFICATION("add_verification", true),
-    USER_ADDITIONAL_VERIFICATION("user_verification", true),
+    USER_ADDITIONAL_VERIFICATION("user_verification", false),
+    SHARE_REVIEW("share_review", false),
 
     /** REQUESTS */
     NEW_DEALS("Новые заявки", true),
     NEW_WITHDRAWALS("Вывод средств", true),
+    NEW_REVIEWS("Новые отзывы", true),
+
+    PUBLISH_REVIEW("pub_review", true),
+    DELETE_REVIEW("del_review", true),
 
     /** REPORTS */
     USERS_REPORT("Отчет по пользователям", true),
