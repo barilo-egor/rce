@@ -12,6 +12,7 @@ import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.impl.ReviewService;
 import tgb.btc.rce.service.impl.UserService;
+import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.InlineButton;
 
@@ -48,7 +49,7 @@ public class NewReviews extends Processor {
 
             responseSender.sendMessage(chatId, review.getText()
                     + "\nUsername: " + StringUtils.defaultIfEmpty(review.getUsername(), "скрыт") + "\n"
-                    + "ID: " + review.getChatId());
+                    + "ID: " + review.getChatId(), KeyboardUtil.buildInline(buttons));
         }
     }
 }

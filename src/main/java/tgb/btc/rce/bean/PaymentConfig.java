@@ -4,6 +4,7 @@ import lombok.Builder;
 import tgb.btc.rce.enums.PaymentType;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
 @Table(name = "PAYMENT_CONFIG")
@@ -51,5 +52,28 @@ public class PaymentConfig extends BasePersist {
 
     public void setOn(Boolean on) {
         isOn = on;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        PaymentConfig that = (PaymentConfig) o;
+        return paymentType == that.paymentType && Objects.equals(isOn, that.isOn) && Objects.equals(requisites, that.requisites);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), paymentType, isOn, requisites);
+    }
+
+    @Override
+    public String toString() {
+        return "PaymentConfig{" +
+                "paymentType=" + paymentType +
+                ", isOn=" + isOn +
+                ", requisites='" + requisites + '\'' +
+                '}';
     }
 }

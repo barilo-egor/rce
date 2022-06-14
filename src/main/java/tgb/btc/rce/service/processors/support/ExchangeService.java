@@ -71,6 +71,7 @@ public class ExchangeService {
         Deal deal = new Deal();
         deal.setActive(false);
         deal.setPassed(false);
+        deal.setCurrent(true);
         deal.setDateTime(LocalDateTime.now());
         deal.setDate(LocalDate.now());
         deal.setDealType(DealType.BUY);
@@ -107,7 +108,7 @@ public class ExchangeService {
                 KeyboardUtil.INLINE_BACK_BUTTON), 1);
     }
 
-    public void saveSum(Update update) {
+    public boolean saveSum(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
         Long currentDealPid = userService.getCurrentDealByChatId(chatId);
         Double sum = UpdateUtil.getDoubleFromText(update);
@@ -117,11 +118,12 @@ public class ExchangeService {
         if (sum < minSum) {
             responseSender.sendMessage(chatId, "Минимальная сумма покупки " + cryptoCurrency.getDisplayName()
                     + " = " + minSum + ".");
-            return;
+            return false;
         }
 
         dealService.updateCryptoAmountByPid(BigDecimal.valueOf(sum), currentDealPid);
         dealService.updateAmountByPid(ConverterUtil.convertCryptoToRub(cryptoCurrency, sum, DealType.BUY), currentDealPid);
+        return true;
     }
 
     public void convertToRub(Update update, Long currentDealPid) {
@@ -235,20 +237,20 @@ public class ExchangeService {
         String message = "Введите " + deal.getCryptoCurrency().getDisplayName() + "-адрес кошелька, куда вы "
                 + "хотите отправить " + BigDecimalUtil.round(deal.getCryptoAmount(), deal.getCryptoCurrency().getScale()).doubleValue()
                 + " " + deal.getCryptoCurrency().getShortName();
+        List<InlineButton> buttons = new ArrayList<>();
 
-        if (dealService.getDealsCountByUserChatId(chatId) > 0) {
-            String wallet = dealService.getWalletFromLastNotActiveByChatId(chatId, deal.getDealType());
+        if (dealService.getNotCurrentDealsCountByUserChatId(chatId) > 0) {
+            String wallet = dealService.getWalletFromLastNotCurrentByChatId(chatId, deal.getDealType());
             message = message.concat("\n\nВы можете использовать ваш сохраненный <b>"
                     + deal.getDealType().getDisplayName() + "</b> адрес:\n" + wallet);
+            buttons.add(InlineButton.builder()
+                    .text("Использовать сохраненный адрес")
+                    .data(USE_SAVED_WALLET)
+                    .build());
         }
+        buttons.add(KeyboardUtil.INLINE_BACK_BUTTON);
 
-        Optional<Message> optionalMessage = responseSender.sendMessage(chatId, message,
-                KeyboardUtil.buildInline(List.of(
-                        InlineButton.builder()
-                                .text("Использовать сохраненный адрес")
-                                .data(USE_SAVED_WALLET)
-                                .build(),
-                        KeyboardUtil.INLINE_BACK_BUTTON)));
+        Optional<Message> optionalMessage = responseSender.sendMessage(chatId, message, KeyboardUtil.buildInline(buttons));
         optionalMessage.ifPresent(sentMessage -> userService.updateBufferVariable(chatId, sentMessage.getMessageId().toString()));
     }
 
@@ -276,7 +278,7 @@ public class ExchangeService {
             validateWallet(wallet);
             dealService.updateWalletByPid(wallet, currentDealPid);
         } else if (update.hasCallbackQuery() && update.getCallbackQuery().getData().equals(USE_SAVED_WALLET)) {
-            dealService.updateWalletByPid(dealService.getWalletFromLastNotActiveByChatId(UpdateUtil.getChatId(update),
+            dealService.updateWalletByPid(dealService.getWalletFromLastNotCurrentByChatId(UpdateUtil.getChatId(update),
                             dealService.getDealTypeByPid(currentDealPid)), currentDealPid);
         }
     }
@@ -426,19 +428,6 @@ public class ExchangeService {
 
     public void processReferralDiscount(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
-        Deal deal = dealService.findById(userService.getCurrentDealByChatId(chatId));
-        Integer referralBalance = userService.getReferralBalanceByChatId(chatId);
-
-        BigDecimal sumWithDiscount;
-        if (referralBalance <= deal.getAmount().intValue()) {
-            sumWithDiscount = deal.getAmount().subtract(BigDecimal.valueOf(referralBalance));
-            referralBalance = BigDecimal.ZERO.intValue();
-        } else {
-            sumWithDiscount = BigDecimal.ZERO;
-            referralBalance = referralBalance - deal.getAmount().intValue();
-        }
-
-        userService.updateReferralBalanceByChatId(referralBalance, chatId);
-        dealService.updateAmountByPid(sumWithDiscount, deal.getPid());
+        dealService.updateUsedReferralDiscountByPid(true, userService.getCurrentDealByChatId(chatId));
     }
 }

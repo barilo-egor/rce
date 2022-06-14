@@ -14,7 +14,8 @@ public enum BotMessageType {
 
     WON_LOTTERY("Выигр.лотереи"),
     LOSE_LOTTERY("Проигр.лотереи"),
-    ADDITIONAL_DEAL_TEXT("Доп.текст заявки");
+    ADDITIONAL_DEAL_TEXT("Доп.текст заявки"),
+    BOT_OFF("Выкл.бот");
 
     final String displayName;
 

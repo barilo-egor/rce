@@ -23,6 +23,7 @@ public enum Command {
     ADMIN_BACK("Назад", true),
     CANCEL("Отмена", false),
     SHARE_CONTACT("Поделиться контактом", false),
+    BOT_OFFED("bot_offed", false),
 
     /** MAIN */
     BUY_BITCOIN("\uD83D\uDCB0 Купить", false),
@@ -34,7 +35,7 @@ public enum Command {
 
     /** DRAWS */
     LOTTERY("\uD83C\uDFB0 Лотерея", false),
-    ROULETTE("\uD83C\uDFB0 Рулетка", false), // TODO поменять смайл
+    ROULETTE("\uD83C\uDFB0 Рулетка", false),
 
     /** REFERRAL */
     WITHDRAWAL_OF_FUNDS("withdrawal", false),

@@ -5,6 +5,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.enums.WithdrawalRequestStatus;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
 @Table(name = "WITHDRAWAL_REQUEST")
@@ -71,5 +72,29 @@ public class WithdrawalRequest extends BasePersist {
 
     public void setActive(Boolean active) {
         isActive = active;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        WithdrawalRequest that = (WithdrawalRequest) o;
+        return Objects.equals(user, that.user) && Objects.equals(phoneNumber, that.phoneNumber) && status == that.status && Objects.equals(isActive, that.isActive);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), user, phoneNumber, status, isActive);
+    }
+
+    @Override
+    public String toString() {
+        return "WithdrawalRequest{" +
+                "user=" + user +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                ", status=" + status +
+                ", isActive=" + isActive +
+                '}';
     }
 }

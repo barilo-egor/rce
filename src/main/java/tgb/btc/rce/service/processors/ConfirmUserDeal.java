@@ -1,5 +1,6 @@
 package tgb.btc.rce.service.processors;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.annotation.CommandProcessor;
@@ -35,12 +36,28 @@ public class ConfirmUserDeal extends Processor {
         if (!update.hasCallbackQuery()) return;
         Deal deal = dealService.getByPid(Long.parseLong(
                 update.getCallbackQuery().getData().split(BotStringConstants.CALLBACK_DATA_SPLITTER)[1]));
+        User user = deal.getUser();
 
         deal.setActive(false);
         deal.setPassed(true);
         deal.setCurrent(false);
+
+        if (BooleanUtils.isTrue(deal.getUsedReferralDiscount())) {
+            Integer referralBalance = userService.getReferralBalanceByChatId(UpdateUtil.getChatId(update));
+
+            BigDecimal sumWithDiscount;
+            if (referralBalance <= deal.getAmount().intValue()) {
+                sumWithDiscount = deal.getAmount().subtract(BigDecimal.valueOf(referralBalance));
+                referralBalance = BigDecimal.ZERO.intValue();
+            } else {
+                sumWithDiscount = BigDecimal.ZERO;
+                referralBalance = referralBalance - deal.getAmount().intValue();
+            }
+
+            user.setReferralBalance(referralBalance);
+            deal.setAmount(sumWithDiscount);
+        }
         dealService.save(deal);
-        User user = deal.getUser();
         if (Objects.nonNull(user.getLotteryCount())) user.setLotteryCount(user.getLotteryCount() + 1);
         else user.setLotteryCount(1);
         userService.save(user);

@@ -6,6 +6,7 @@ import lombok.Builder;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import java.util.Objects;
 
 @Entity
 @Table(name = "REVIEW")
@@ -52,5 +53,28 @@ public class Review extends BasePersist {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        Review review = (Review) o;
+        return Objects.equals(text, review.text) && Objects.equals(chatId, review.chatId) && Objects.equals(username, review.username);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), text, chatId, username);
+    }
+
+    @Override
+    public String toString() {
+        return "Review{" +
+                "text='" + text + '\'' +
+                ", chatId=" + chatId +
+                ", username='" + username + '\'' +
+                '}';
     }
 }

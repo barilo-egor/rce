@@ -7,7 +7,7 @@ import java.util.Arrays;
 public enum CryptoCurrency {
     BITCOIN("Bitcoin", "btc", Double.class, 8),
     LITECOIN("Litecoin", "ltc", Double.class, 4),
-    USDT("USDT(trc20)", "usdt", String.class, 0);
+    USDT("USDT(trc20)", "usdt", String.class, 1);
 
     final String displayName;
     final String shortName;

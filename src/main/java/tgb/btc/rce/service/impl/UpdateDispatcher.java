@@ -7,6 +7,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.bean.User;
 import tgb.btc.rce.enums.BotVariableType;
 import tgb.btc.rce.enums.Command;
+import tgb.btc.rce.exception.BaseException;
 import tgb.btc.rce.service.IUpdateDispatcher;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.util.*;
@@ -15,7 +16,7 @@ import tgb.btc.rce.util.*;
 public class UpdateDispatcher implements IUpdateDispatcher {
 
     public static ApplicationContext applicationContext;
-    private static boolean IS_ON = false;
+    private static boolean IS_ON = false; // TODO
 
     private final UserService userService;
 
@@ -32,7 +33,17 @@ public class UpdateDispatcher implements IUpdateDispatcher {
         }
         if (!userService.existByChatId(chatId)) userService.register(update);
         if (userService.getIsBannedByChatId(chatId)) return;
-        ((Processor) applicationContext.getBean(CommandProcessorLoader.getByCommand(getCommand(update)))).run(update);
+        Command command;
+        try {
+            if (!isOn() && !userService.isAdminByChatId(chatId)) {
+                command = Command.BOT_OFFED;
+            } else {
+                command = getCommand(update);
+            }
+        } catch (BaseException e) {
+            command = Command.START;
+        }
+        ((Processor) applicationContext.getBean(CommandProcessorLoader.getByCommand(command))).run(update);
     }
 
     public void dispatchByInlineQuery(Update update) {
@@ -51,12 +62,8 @@ public class UpdateDispatcher implements IUpdateDispatcher {
     }
 
     private boolean hasAccess(Command command, Long chatId) {
-        /* TODO Егор: Если команда является админ командой, а юзер по этому чат айди не админ, то доступа нет. Во всех
-            остальных случаях доступ есть.
-            Здесь тебе чисто потренировать чтение чужого кода, изучи классы которые в этом классе есть.
-            Если долго не будет получаться, то я тебе дам подсказки.
-         */
-        return true;
+        if (!command.isAdmin()) return true;
+        else return userService.isAdminByChatId(chatId);
     }
 
     public static boolean isOn() {

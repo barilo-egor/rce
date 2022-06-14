@@ -82,7 +82,7 @@ public class BuyBitcoin extends Processor {
                             userService.getCurrentDealByChatId(UpdateUtil.getChatId(update)));
                     return;
                 }
-                exchangeService.saveSum(update);
+                if (!exchangeService.saveSum(update)) return;
                 responseSender.deleteMessage(UpdateUtil.getChatId(update), Integer.parseInt(userService.getBufferVariable(chatId)));
                 if (dealService.getDealsCountByUserChatId(chatId) < 1) {
                     exchangeService.askForUserPromoCode(chatId);

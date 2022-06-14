@@ -39,21 +39,23 @@ public class PaymentRequisites extends Processor {
         switch (userService.getStepByChatId(chatId)) {
             case 0:
                 askForInput(chatId);
-                userService.nextStep(chatId, Command.PAYMENT_TYPES);
+                userService.nextStep(chatId, Command.PAYMENT_REQUISITES);
                 break;
             case 1:
+                PaymentType paymentType = PaymentType.fromDisplayName(update.getMessage().getText());
+                userService.updateBufferVariable(chatId, paymentType.name());
+                responseSender.sendMessage(chatId, "Введите новые реквизиты.");
+                userService.nextStep(chatId);
+                return;
+            case 2:
                 String text = update.getMessage().getText();
-                for (PaymentType paymentType : PaymentType.values()) {
-                    if (text.startsWith(paymentType.getDisplayName())) {
-                        PaymentConfig paymentConfig = paymentConfigService.getByPaymentType(paymentType);
-                        paymentConfig.setRequisites(text);
-                        paymentConfigService.save(paymentConfig);
-                        responseSender.sendMessage(chatId, "Реквизиты " +
-                                paymentType.getDisplayName() + " заменены.");
-                        processToAdminMainPanel(chatId);
-                        return;
-                    }
-                }
+                paymentType = PaymentType.valueOf(userService.getBufferVariable(chatId));
+                PaymentConfig paymentConfig = paymentConfigService.getByPaymentType(paymentType);
+                paymentConfig.setRequisites(text);
+                paymentConfigService.save(paymentConfig);
+                responseSender.sendMessage(chatId, "Реквизиты " +
+                        paymentType.getDisplayName() + " заменены.");
+                processToAdminMainPanel(chatId);
                 break;
         }
     }

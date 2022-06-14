@@ -3,6 +3,7 @@ package tgb.btc.rce.service.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.bean.ReferralUser;
 import tgb.btc.rce.bean.User;
@@ -17,14 +18,18 @@ import java.util.List;
 import java.util.Objects;
 
 @Service
+@Transactional
 public class UserService extends BasePersistService<User> {
 
     private final UserRepository userRepository;
+    private final ReferralUserService referralUserService;
 
     @Autowired
-    public UserService(BaseRepository<User> baseRepository, UserRepository userRepository) {
+    public UserService(BaseRepository<User> baseRepository, UserRepository userRepository,
+                       ReferralUserService referralUserService) {
         super(baseRepository);
         this.userRepository = userRepository;
+        this.referralUserService = referralUserService;
     }
 
     public Integer getStepByChatId(Long chatId) {
@@ -41,7 +46,7 @@ public class UserService extends BasePersistService<User> {
         if (CommandUtil.isStartCommand(update)) {
             try {
                 Long chatIdFrom = Long.parseLong(update.getMessage().getText()
-                        .replaceAll(Command.START.getText(), ""));
+                        .replaceAll(Command.START.getText(), "").trim());
                 if (!existByChatId(chatIdFrom)) throw new BaseException();
                 inviter = userRepository.getByChatId(chatIdFrom);
                 newUser.setFromChatId(chatIdFrom);
@@ -50,7 +55,7 @@ public class UserService extends BasePersistService<User> {
         }
         User savedNewUser = userRepository.save(newUser);
         if (Objects.nonNull(inviter)) {
-            inviter.getReferralUsers().add(ReferralUser.buildDefault(newUser.getChatId()));
+            inviter.getReferralUsers().add(referralUserService.save(ReferralUser.buildDefault(newUser.getChatId())));
             userRepository.save(inviter);
         }
         return savedNewUser;

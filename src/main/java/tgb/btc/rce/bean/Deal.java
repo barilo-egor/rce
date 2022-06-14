@@ -55,6 +55,9 @@ public class Deal extends BasePersist {
     @Column(name = "IS_USED_PROMO")
     private Boolean isUsedPromo;
 
+    @Column(name = "IS_USED_REFERRAL_DISCOUNT")
+    private Boolean isUsedReferralDiscount;
+
     @Column(name = "CRYPTO_CURRENCY")
     @Enumerated(value = EnumType.STRING)
     private CryptoCurrency cryptoCurrency;
@@ -66,10 +69,10 @@ public class Deal extends BasePersist {
     public Deal() {
     }
 
-    public Deal(User user, LocalDateTime dateTime, LocalDate date, PaymentType paymentType,
-                BigDecimal cryptoAmount, BigDecimal amount, String wallet, String verificationPhoto, String userCheck,
-                Boolean isActive, Boolean isPassed, Boolean isCurrent, Boolean isUsedPromo, CryptoCurrency cryptoCurrency,
-                DealType dealType) {
+    public Deal(User user, LocalDateTime dateTime, LocalDate date, PaymentType paymentType, BigDecimal cryptoAmount,
+                BigDecimal amount, String wallet, String verificationPhoto, String userCheck, Boolean isActive,
+                Boolean isPassed, Boolean isCurrent, Boolean isUsedPromo, Boolean isUsedReferralDiscount,
+                CryptoCurrency cryptoCurrency, DealType dealType) {
         this.user = user;
         this.dateTime = dateTime;
         this.date = date;
@@ -83,6 +86,7 @@ public class Deal extends BasePersist {
         this.isPassed = isPassed;
         this.isCurrent = isCurrent;
         this.isUsedPromo = isUsedPromo;
+        this.isUsedReferralDiscount = isUsedReferralDiscount;
         this.cryptoCurrency = cryptoCurrency;
         this.dealType = dealType;
     }
@@ -207,5 +211,47 @@ public class Deal extends BasePersist {
         this.date = date;
     }
 
-// TODO
+    public Boolean getUsedReferralDiscount() {
+        return isUsedReferralDiscount;
+    }
+
+    public void setUsedReferralDiscount(Boolean usedReferralDiscount) {
+        isUsedReferralDiscount = usedReferralDiscount;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        Deal deal = (Deal) o;
+        return Objects.equals(user, deal.user) && Objects.equals(dateTime, deal.dateTime) && Objects.equals(date, deal.date) && paymentType == deal.paymentType && Objects.equals(cryptoAmount, deal.cryptoAmount) && Objects.equals(amount, deal.amount) && Objects.equals(wallet, deal.wallet) && Objects.equals(verificationPhoto, deal.verificationPhoto) && Objects.equals(userCheck, deal.userCheck) && Objects.equals(isActive, deal.isActive) && Objects.equals(isPassed, deal.isPassed) && Objects.equals(isCurrent, deal.isCurrent) && Objects.equals(isUsedPromo, deal.isUsedPromo) && Objects.equals(isUsedReferralDiscount, deal.isUsedReferralDiscount) && cryptoCurrency == deal.cryptoCurrency && dealType == deal.dealType;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), user, dateTime, date, paymentType, cryptoAmount, amount, wallet, verificationPhoto, userCheck, isActive, isPassed, isCurrent, isUsedPromo, isUsedReferralDiscount, cryptoCurrency, dealType);
+    }
+
+    @Override
+    public String toString() {
+        return "Deal{" +
+                "user=" + user +
+                ", dateTime=" + dateTime +
+                ", date=" + date +
+                ", paymentType=" + paymentType +
+                ", cryptoAmount=" + cryptoAmount +
+                ", amount=" + amount +
+                ", wallet='" + wallet + '\'' +
+                ", verificationPhoto='" + verificationPhoto + '\'' +
+                ", userCheck='" + userCheck + '\'' +
+                ", isActive=" + isActive +
+                ", isPassed=" + isPassed +
+                ", isCurrent=" + isCurrent +
+                ", isUsedPromo=" + isUsedPromo +
+                ", isUsedReferralDiscount=" + isUsedReferralDiscount +
+                ", cryptoCurrency=" + cryptoCurrency +
+                ", dealType=" + dealType +
+                '}';
+    }
 }

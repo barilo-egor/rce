@@ -43,6 +43,7 @@ public class ShareReview extends Processor {
                 responseSender.sendMessage(chatId, "Спасибо, ваш отзыв сохранен.");
                 userService.getAdminsChatIds().forEach(adminChatId ->
                         responseSender.sendMessage(adminChatId, "Поступил новый отзыв."));
+                processToMainMenu(chatId);
                 break;
         }
     }

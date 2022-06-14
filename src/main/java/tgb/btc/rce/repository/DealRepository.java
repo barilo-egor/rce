@@ -12,7 +12,6 @@ import tgb.btc.rce.enums.PaymentType;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -34,8 +33,15 @@ public interface DealRepository extends BaseRepository<Deal> {
     @Query("update Deal set amount=:amount where pid=:pid")
     void updateAmountByPid(@Param("amount") BigDecimal amount, @Param("pid") Long pid);
 
+    @Modifying
+    @Query("update Deal set isUsedReferralDiscount=:isUsedReferralDiscount where pid=:pid")
+    void updateUsedReferralDiscountByPid(@Param("isUsedReferralDiscount") Boolean isUsedReferralDiscount, @Param("pid") Long pid);
+
     @Query("select count(d) from Deal d where d.user.chatId=:chatId")
     Long getDealsCountByUserChatId(@Param("chatId") Long chatId);
+
+    @Query("select count(d) from Deal d where d.user.chatId=:chatId and d.isCurrent=false")
+    Long getNotCurrentDealsCountByUserChatId(@Param("chatId") Long chatId);
 
     Deal findByPid(Long pid);
 
@@ -79,8 +85,8 @@ public interface DealRepository extends BaseRepository<Deal> {
     @Query("from Deal d where d.date=:date and d.isPassed=true")
     List<Deal> getByDate(@Param("date") LocalDate dateTime);
 
-    @Query("select wallet from Deal where pid=(select max(d.pid) from Deal d where d.isActive=false and d.user.chatId=:chatId and d.dealType=:dealType)")
-    String getWalletFromLastNotActiveByChatId(@Param("chatId") Long chatId, @Param("dealType") DealType dealType);
+    @Query("select wallet from Deal where pid=(select max(d.pid) from Deal d where d.isCurrent=false and d.user.chatId=:chatId and d.dealType=:dealType)")
+    String getWalletFromLastNotCurrentByChatId(@Param("chatId") Long chatId, @Param("dealType") DealType dealType);
 
     @Query("select dealType from Deal where pid=:pid")
     DealType getDealTypeByPid(@Param("pid") Long pid);
