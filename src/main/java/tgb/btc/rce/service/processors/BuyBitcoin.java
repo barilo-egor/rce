@@ -84,17 +84,23 @@ public class BuyBitcoin extends Processor {
                 }
                 exchangeService.saveSum(update);
                 responseSender.deleteMessage(UpdateUtil.getChatId(update), Integer.parseInt(userService.getBufferVariable(chatId)));
-                if (dealService.getDealsCountByUserChatId(chatId) > 1) {
+                if (dealService.getDealsCountByUserChatId(chatId) < 1) {
+                    exchangeService.askForUserPromoCode(chatId);
+                } else if (userService.getReferralBalanceByChatId(chatId) > 0) {
+                    exchangeService.askForReferralDiscount(update);
+                } else {
                     exchangeService.askForWallet(update);
                     userService.nextStep(chatId);
-                    userService.nextStep(chatId);
-                } else {
-                    exchangeService.askForUserPromoCode(chatId);
-                    userService.nextStep(chatId);
                 }
+                userService.nextStep(chatId);
                 break;
             case 3:
-                exchangeService.processPromoCode(update);
+                if (dealService.getDealsCountByUserChatId(chatId) < 1) {
+                    exchangeService.processPromoCode(update);
+                } else if (update.hasCallbackQuery()
+                        && update.getCallbackQuery().getData().equals(ExchangeService.USE_REFERRAL_DISCOUNT)){
+                    exchangeService.processReferralDiscount(update);
+                }
                 userService.nextStep(chatId);
                 exchangeService.askForWallet(update);
                 responseSender.deleteMessage(UpdateUtil.getChatId(update), UpdateUtil.getMessage(update).getMessageId());
@@ -141,12 +147,14 @@ public class BuyBitcoin extends Processor {
                         dealService.getCryptoCurrencyByPid(userService.getCurrentDealByChatId(chatId)));
                 break;
             case 3:
-                if (dealService.getDealsCountByUserChatId(chatId) > 1) {
+                if (dealService.getDealsCountByUserChatId(chatId) < 1) {
+                    exchangeService.askForUserPromoCode(chatId);
+                } else if (userService.getReferralBalanceByChatId(chatId) > 0) {
+                    exchangeService.askForReferralDiscount(update);
+                } else {
                     exchangeService.askForSum(chatId,
                             dealService.getCryptoCurrencyByPid(userService.getCurrentDealByChatId(chatId)));
                     userService.previousStep(chatId);
-                } else {
-                    exchangeService.askForUserPromoCode(chatId);
                 }
                 break;
             case 4:

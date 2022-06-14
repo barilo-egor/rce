@@ -20,6 +20,7 @@ import tgb.btc.rce.util.UpdateUtil;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -57,6 +58,8 @@ public class PartnersReport extends Processor {
             headCell.setCellValue("Начислено всего");
             headCell = headRow.createCell(4);
             headCell.setCellValue("Текущий баланс");
+
+            users.sort(Comparator.comparing(User::getCharges));
 
             int i = 2;
             for (User user : users) {

@@ -7,6 +7,7 @@ import tgb.btc.rce.bean.Contact;
 import tgb.btc.rce.bean.Deal;
 import tgb.btc.rce.bean.User;
 import tgb.btc.rce.enums.CryptoCurrency;
+import tgb.btc.rce.enums.DealType;
 import tgb.btc.rce.enums.PaymentType;
 import tgb.btc.rce.repository.BaseRepository;
 import tgb.btc.rce.repository.DealRepository;
@@ -110,5 +111,13 @@ public class DealService extends BasePersistService<Deal> {
 
     public List<Deal> getByDate(LocalDate dateTime) {
         return dealRepository.getByDate(dateTime);
+    }
+
+    public String getWalletFromLastNotActiveByChatId(Long chatId, DealType dealType) {
+        return dealRepository.getWalletFromLastNotActiveByChatId(chatId, dealType);
+    }
+
+    public DealType getDealTypeByPid(Long pid) {
+        return dealRepository.getDealTypeByPid(pid);
     }
 }

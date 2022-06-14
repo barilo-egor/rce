@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import tgb.btc.rce.bean.Deal;
 import tgb.btc.rce.enums.CryptoCurrency;
+import tgb.btc.rce.enums.DealType;
 import tgb.btc.rce.enums.PaymentType;
 
 import java.math.BigDecimal;
@@ -77,4 +78,10 @@ public interface DealRepository extends BaseRepository<Deal> {
 
     @Query("from Deal d where d.date=:date and d.isPassed=true")
     List<Deal> getByDate(@Param("date") LocalDate dateTime);
+
+    @Query("select wallet from Deal where pid=(select max(d.pid) from Deal d where d.isActive=false and d.user.chatId=:chatId and d.dealType=:dealType)")
+    String getWalletFromLastNotActiveByChatId(@Param("chatId") Long chatId, @Param("dealType") DealType dealType);
+
+    @Query("select dealType from Deal where pid=:pid")
+    DealType getDealTypeByPid(@Param("pid") Long pid);
 }

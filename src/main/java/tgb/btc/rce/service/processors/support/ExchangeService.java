@@ -9,7 +9,6 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.inlinequery.inputmessagecontent.InputTextMessageContent;
 import org.telegram.telegrambots.meta.api.objects.inlinequery.result.InlineQueryResultArticle;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
-import tgb.btc.rce.bean.BotMessage;
 import tgb.btc.rce.bean.Deal;
 import tgb.btc.rce.bean.PaymentConfig;
 import tgb.btc.rce.constants.BotStringConstants;
@@ -35,6 +34,11 @@ public class ExchangeService {
 
     public static final String USE_PROMO = "use_promo";
     public static final String DONT_USE_PROMO = "dont_use_promo";
+
+    public static final String USE_REFERRAL_DISCOUNT = "use_discount";
+    public static final String DONT_USE_REFERRAL_DISCOUNT = "dont_use_discount";
+
+    public static final String USE_SAVED_WALLET = "use_saved";
 
     private final ResponseSender responseSender;
     private final UserService userService;
@@ -232,8 +236,19 @@ public class ExchangeService {
                 + "хотите отправить " + BigDecimalUtil.round(deal.getCryptoAmount(), deal.getCryptoCurrency().getScale()).doubleValue()
                 + " " + deal.getCryptoCurrency().getShortName();
 
+        if (dealService.getDealsCountByUserChatId(chatId) > 0) {
+            String wallet = dealService.getWalletFromLastNotActiveByChatId(chatId, deal.getDealType());
+            message = message.concat("\n\nВы можете использовать ваш сохраненный <b>"
+                    + deal.getDealType().getDisplayName() + "</b> адрес:\n" + wallet);
+        }
+
         Optional<Message> optionalMessage = responseSender.sendMessage(chatId, message,
-                KeyboardUtil.buildInline(List.of(KeyboardUtil.INLINE_BACK_BUTTON)));
+                KeyboardUtil.buildInline(List.of(
+                        InlineButton.builder()
+                                .text("Использовать сохраненный адрес")
+                                .data(USE_SAVED_WALLET)
+                                .build(),
+                        KeyboardUtil.INLINE_BACK_BUTTON)));
         optionalMessage.ifPresent(sentMessage -> userService.updateBufferVariable(chatId, sentMessage.getMessageId().toString()));
     }
 
@@ -255,10 +270,15 @@ public class ExchangeService {
     }
 
     public void saveWallet(Update update) {
-        if (!update.hasMessage() || !update.getMessage().hasText()) return;
-        String wallet = UpdateUtil.getMessageText(update);
-        validateWallet(wallet);
-        dealService.updateWalletByPid(wallet, userService.getCurrentDealByChatId(UpdateUtil.getChatId(update)));
+        Long currentDealPid = userService.getCurrentDealByChatId(UpdateUtil.getChatId(update));
+        if (update.hasMessage() && update.getMessage().hasText()) {
+            String wallet = UpdateUtil.getMessageText(update);
+            validateWallet(wallet);
+            dealService.updateWalletByPid(wallet, currentDealPid);
+        } else if (update.hasCallbackQuery() && update.getCallbackQuery().getData().equals(USE_SAVED_WALLET)) {
+            dealService.updateWalletByPid(dealService.getWalletFromLastNotActiveByChatId(UpdateUtil.getChatId(update),
+                            dealService.getDealTypeByPid(currentDealPid)), currentDealPid);
+        }
     }
 
     private void validateWallet(String wallet) {
@@ -371,5 +391,54 @@ public class ExchangeService {
                                         + userService.getCurrentDealByChatId(chatId))
                                 .build()
                 ))));
+    }
+
+    public void askForReferralDiscount(Update update) {
+        Long chatId = UpdateUtil.getChatId(update);
+        Deal deal = dealService.findById(userService.getCurrentDealByChatId(chatId));
+        Integer referralBalance = userService.getReferralBalanceByChatId(chatId);
+
+        String message = "У вас есть " + referralBalance + "₽ на реферальном балансе. Использовать их в качестве скидки?";
+
+        BigDecimal sumWithDiscount;
+        if (referralBalance <= deal.getAmount().intValue()) {
+            sumWithDiscount = deal.getAmount().subtract(BigDecimal.valueOf(referralBalance));
+        } else {
+            sumWithDiscount = BigDecimal.ZERO;
+        }
+
+        ReplyKeyboard keyboard = KeyboardUtil.buildInlineDiff(List.of(
+                InlineButton.builder()
+                        .text("Со скидкой, " + sumWithDiscount.stripTrailingZeros().doubleValue())
+                        .data(USE_REFERRAL_DISCOUNT)
+                        .inlineType(InlineType.CALLBACK_DATA)
+                        .build(),
+                InlineButton.builder()
+                        .text("Без скидки, " + deal.getAmount())
+                        .data(DONT_USE_REFERRAL_DISCOUNT)
+                        .inlineType(InlineType.CALLBACK_DATA)
+                        .build(),
+                KeyboardUtil.INLINE_BACK_BUTTON
+        ));
+
+        responseSender.sendMessage(chatId, message, keyboard, "HTML");
+    }
+
+    public void processReferralDiscount(Update update) {
+        Long chatId = UpdateUtil.getChatId(update);
+        Deal deal = dealService.findById(userService.getCurrentDealByChatId(chatId));
+        Integer referralBalance = userService.getReferralBalanceByChatId(chatId);
+
+        BigDecimal sumWithDiscount;
+        if (referralBalance <= deal.getAmount().intValue()) {
+            sumWithDiscount = deal.getAmount().subtract(BigDecimal.valueOf(referralBalance));
+            referralBalance = BigDecimal.ZERO.intValue();
+        } else {
+            sumWithDiscount = BigDecimal.ZERO;
+            referralBalance = referralBalance - deal.getAmount().intValue();
+        }
+
+        userService.updateReferralBalanceByChatId(referralBalance, chatId);
+        dealService.updateAmountByPid(sumWithDiscount, deal.getPid());
     }
 }
