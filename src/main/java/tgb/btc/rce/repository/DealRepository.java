@@ -34,6 +34,13 @@ public interface DealRepository extends BaseRepository<Deal> {
     void updateAmountByPid(@Param("amount") BigDecimal amount, @Param("pid") Long pid);
 
     @Modifying
+    @Query("update Deal set commission=:commission where pid=:pid")
+    void updateCommissionByPid(@Param("commission") BigDecimal commission, @Param("pid") Long pid);
+
+    @Query("select commission from Deal where pid=:pid")
+    BigDecimal getCommissionByPid(@Param("pid") Long pid);
+
+    @Modifying
     @Query("update Deal set isUsedReferralDiscount=:isUsedReferralDiscount where pid=:pid")
     void updateUsedReferralDiscountByPid(@Param("isUsedReferralDiscount") Boolean isUsedReferralDiscount, @Param("pid") Long pid);
 

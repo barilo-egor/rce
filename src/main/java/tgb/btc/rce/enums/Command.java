@@ -95,7 +95,9 @@ public enum Command {
     /** REPORTS */
     USERS_REPORT("Отчет по пользователям", true),
     DEAL_REPORTS("Отчет по сделкам", true),
-    PARTNERS_REPORT("Отчет по партнерам", true);
+    PARTNERS_REPORT("Отчет по партнерам", true),
+
+    CHANNEL_POST("channel_post", false);
 
     final String text;
     final boolean isAdmin;

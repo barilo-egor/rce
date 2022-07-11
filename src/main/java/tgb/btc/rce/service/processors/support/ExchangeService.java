@@ -1,5 +1,6 @@
 package tgb.btc.rce.service.processors.support;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,6 +28,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 public class ExchangeService {
 
@@ -123,6 +125,7 @@ public class ExchangeService {
 
         dealService.updateCryptoAmountByPid(BigDecimal.valueOf(sum), currentDealPid);
         dealService.updateAmountByPid(ConverterUtil.convertCryptoToRub(cryptoCurrency, sum, DealType.BUY), currentDealPid);
+        dealService.updateCommissionByPid(ConverterUtil.getCommission(BigDecimal.valueOf(sum), cryptoCurrency), currentDealPid);
         return true;
     }
 
@@ -139,6 +142,7 @@ public class ExchangeService {
 
         try {
             currency = CryptoCurrency.fromShortName(query.substring(0, query.indexOf(" ")));
+            log.info("Сумма с калькулятора: \"" + query + "\"");
             sum = NumberUtil.getInputDouble(query.substring(query.indexOf(" ") + 1));
         } catch (EnumTypeNotFoundException e) {
             askForCryptoSum(update);
@@ -201,7 +205,7 @@ public class ExchangeService {
         BigDecimal discount = BigDecimal.valueOf(
                         BotVariablePropertiesUtil.getDouble(BotVariableType.PROMO_CODE_DISCOUNT))
                 .setScale(0, RoundingMode.HALF_UP);
-        BigDecimal sumWithDiscount = deal.getAmount().subtract(BigDecimalUtil.multiplyHalfUp(deal.getAmount(),
+        BigDecimal sumWithDiscount = deal.getAmount().subtract(BigDecimalUtil.multiplyHalfUp(deal.getCommission(),
                         ConverterUtil.getPercentsFactor(discount)))
                 .setScale(0, RoundingMode.HALF_UP)
                 .stripTrailingZeros();

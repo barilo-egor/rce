@@ -1,5 +1,6 @@
 package tgb.btc.rce.service.impl;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
@@ -13,6 +14,7 @@ import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.util.*;
 
 @Service
+@Slf4j
 public class UpdateDispatcher implements IUpdateDispatcher {
 
     public static ApplicationContext applicationContext;
@@ -26,6 +28,9 @@ public class UpdateDispatcher implements IUpdateDispatcher {
     }
 
     public void dispatch(Update update) {
+        if (update.hasChannelPost()) {
+            log.info("Сообщение из канала: " + update.getChannelPost().getChatId());
+        }
         Long chatId = UpdateUtil.getChatId(update);
         if (update.hasInlineQuery() && userService.getStepByChatId(chatId).equals(User.DEFAULT_STEP)) {
             dispatchByInlineQuery(update);
@@ -55,6 +60,9 @@ public class UpdateDispatcher implements IUpdateDispatcher {
 
     private Command getCommand(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
+        if (update.hasChannelPost()) {
+            return Command.CHANNEL_POST;
+        }
         Command command = userService.getStepByChatId(chatId).equals(User.DEFAULT_STEP) || CommandUtil.isStartCommand(update) ?
                 Command.fromUpdate(update) : userService.getCommandByChatId(chatId);
         if (!hasAccess(command, chatId)) return Command.START;

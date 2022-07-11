@@ -46,6 +46,14 @@ public class DealService extends BasePersistService<Deal> {
         dealRepository.updateAmountByPid(amount, pid);
     }
 
+    public void updateCommissionByPid(BigDecimal commission, Long pid) {
+        dealRepository.updateCommissionByPid(commission, pid);
+    }
+
+    public BigDecimal getCommissionByPid(Long pid) {
+        return dealRepository.getCommissionByPid(pid);
+    }
+
     public void updateUsedReferralDiscountByPid(Boolean isUsedReferralDiscount, Long pid) {
         dealRepository.updateUsedReferralDiscountByPid(isUsedReferralDiscount, pid);
     }

@@ -66,13 +66,16 @@ public class Deal extends BasePersist {
     @Enumerated(value = EnumType.STRING)
     private DealType dealType;
 
+    @Column(name = "COMMISSION")
+    private BigDecimal commission;
+
     public Deal() {
     }
 
     public Deal(User user, LocalDateTime dateTime, LocalDate date, PaymentType paymentType, BigDecimal cryptoAmount,
                 BigDecimal amount, String wallet, String verificationPhoto, String userCheck, Boolean isActive,
                 Boolean isPassed, Boolean isCurrent, Boolean isUsedPromo, Boolean isUsedReferralDiscount,
-                CryptoCurrency cryptoCurrency, DealType dealType) {
+                CryptoCurrency cryptoCurrency, DealType dealType, BigDecimal commission) {
         this.user = user;
         this.dateTime = dateTime;
         this.date = date;
@@ -89,6 +92,7 @@ public class Deal extends BasePersist {
         this.isUsedReferralDiscount = isUsedReferralDiscount;
         this.cryptoCurrency = cryptoCurrency;
         this.dealType = dealType;
+        this.commission = commission;
     }
 
     public String getUserCheck() {
@@ -215,6 +219,14 @@ public class Deal extends BasePersist {
         return isUsedReferralDiscount;
     }
 
+    public BigDecimal getCommission() {
+        return commission;
+    }
+
+    public void setCommission(BigDecimal commission) {
+        this.commission = commission;
+    }
+
     public void setUsedReferralDiscount(Boolean usedReferralDiscount) {
         isUsedReferralDiscount = usedReferralDiscount;
     }
@@ -225,12 +237,12 @@ public class Deal extends BasePersist {
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         Deal deal = (Deal) o;
-        return Objects.equals(user, deal.user) && Objects.equals(dateTime, deal.dateTime) && Objects.equals(date, deal.date) && paymentType == deal.paymentType && Objects.equals(cryptoAmount, deal.cryptoAmount) && Objects.equals(amount, deal.amount) && Objects.equals(wallet, deal.wallet) && Objects.equals(verificationPhoto, deal.verificationPhoto) && Objects.equals(userCheck, deal.userCheck) && Objects.equals(isActive, deal.isActive) && Objects.equals(isPassed, deal.isPassed) && Objects.equals(isCurrent, deal.isCurrent) && Objects.equals(isUsedPromo, deal.isUsedPromo) && Objects.equals(isUsedReferralDiscount, deal.isUsedReferralDiscount) && cryptoCurrency == deal.cryptoCurrency && dealType == deal.dealType;
+        return Objects.equals(user, deal.user) && Objects.equals(dateTime, deal.dateTime) && Objects.equals(date, deal.date) && paymentType == deal.paymentType && Objects.equals(cryptoAmount, deal.cryptoAmount) && Objects.equals(amount, deal.amount) && Objects.equals(wallet, deal.wallet) && Objects.equals(verificationPhoto, deal.verificationPhoto) && Objects.equals(userCheck, deal.userCheck) && Objects.equals(isActive, deal.isActive) && Objects.equals(isPassed, deal.isPassed) && Objects.equals(isCurrent, deal.isCurrent) && Objects.equals(isUsedPromo, deal.isUsedPromo) && Objects.equals(isUsedReferralDiscount, deal.isUsedReferralDiscount) && cryptoCurrency == deal.cryptoCurrency && dealType == deal.dealType && Objects.equals(commission, deal.commission);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), user, dateTime, date, paymentType, cryptoAmount, amount, wallet, verificationPhoto, userCheck, isActive, isPassed, isCurrent, isUsedPromo, isUsedReferralDiscount, cryptoCurrency, dealType);
+        return Objects.hash(super.hashCode(), user, dateTime, date, paymentType, cryptoAmount, amount, wallet, verificationPhoto, userCheck, isActive, isPassed, isCurrent, isUsedPromo, isUsedReferralDiscount, cryptoCurrency, dealType, commission);
     }
 
     @Override
@@ -252,6 +264,7 @@ public class Deal extends BasePersist {
                 ", isUsedReferralDiscount=" + isUsedReferralDiscount +
                 ", cryptoCurrency=" + cryptoCurrency +
                 ", dealType=" + dealType +
+                ", commission=" + commission +
                 '}';
     }
 }

@@ -56,8 +56,7 @@ public final class ConverterUtil {
                 return getAmount(BigDecimal.valueOf(sum), usdCourse, fix, commission, fixCommission, transactionalCommission,
                         currency);
             case SELL:
-                return getAmountForSell(BigDecimal.valueOf(sum), usdCourse, fix, commission, fixCommission, transactionalCommission,
-                        currency);
+                return getAmountForSell(BigDecimal.valueOf(sum), usdCourse, fix, commission, fixCommission, currency);
             default:
                 throw new BaseException("Не найден тип сделки для расчета суммы.");
         }
@@ -65,11 +64,9 @@ public final class ConverterUtil {
 
     private static BigDecimal getAmountForSell(BigDecimal amount, BigDecimal course, BigDecimal fix,
                                         BigDecimal percentCommission, BigDecimal fixCommission,
-                                        BigDecimal transactionCommission, BigDecimal cryptoCurrency) {
+                                        BigDecimal cryptoCurrency) {
         BigDecimal usd = BigDecimalUtil.multiplyHalfUp(amount, cryptoCurrency);
         BigDecimal rub = BigDecimalUtil.multiplyHalfUp(usd, course);
-        if (Objects.nonNull(transactionCommission)) rub = BigDecimalUtil.subtractHalfUp(rub,
-                BigDecimalUtil.multiplyHalfUp(transactionCommission, course));
         BigDecimal commission = BigDecimalUtil.multiplyHalfUp(rub, getPercentsFactor(percentCommission));
         BigDecimal total = BigDecimalUtil.subtractHalfUp(rub, commission);
         return rub.compareTo(fix) < 0 ? BigDecimalUtil.subtractHalfUp(rub, fixCommission) : total;
@@ -80,11 +77,40 @@ public final class ConverterUtil {
                                         BigDecimal transactionCommission, BigDecimal cryptoCurrency) {
         BigDecimal usd = BigDecimalUtil.multiplyHalfUp(amount, cryptoCurrency);
         BigDecimal rub = BigDecimalUtil.multiplyHalfUp(usd, course);
+        BigDecimal commission = getCommission(amount, cryptoCurrency, percentCommission, course);
         if (Objects.nonNull(transactionCommission)) rub = BigDecimalUtil.addHalfUp(rub,
                 BigDecimalUtil.multiplyHalfUp(transactionCommission, course));
-        BigDecimal commission = BigDecimalUtil.multiplyHalfUp(rub, getPercentsFactor(percentCommission));
         BigDecimal total = BigDecimalUtil.addHalfUp(rub, commission);
         return rub.compareTo(fix) < 0 ? BigDecimalUtil.addHalfUp(rub, fixCommission) : total;
+    }
+
+    private static BigDecimal getCommission(BigDecimal amount, BigDecimal cryptoCurrency, BigDecimal percentCommission,
+                                            BigDecimal course) {
+        BigDecimal usd = BigDecimalUtil.multiplyHalfUp(amount, cryptoCurrency);
+        BigDecimal rub = BigDecimalUtil.multiplyHalfUp(usd, course);
+        return BigDecimalUtil.multiplyHalfUp(rub, getPercentsFactor(percentCommission));
+    }
+
+    public static BigDecimal getCommission(BigDecimal amount, CryptoCurrency cryptoCurrency) {
+        BigDecimal currency;
+        switch (cryptoCurrency) {
+            case BITCOIN:
+                currency = getBtcCurrency();
+                break;
+            case LITECOIN:
+                currency = getLtcCurrency();
+                break;
+            case USDT:
+                currency = getUsdtCurrency();
+                break;
+            default:
+                throw new BaseException("Не определена крипто валюта.");
+        }
+        BigDecimal percentCommission = BigDecimal.valueOf(BotVariablePropertiesUtil.getDouble(BotVariableType.COMMISSION));
+        BigDecimal course = BigDecimal.valueOf(BotVariablePropertiesUtil.getDouble(BotVariableType.USD_COURSE));
+        BigDecimal usd = BigDecimalUtil.multiplyHalfUp(amount, currency);
+        BigDecimal rub = BigDecimalUtil.multiplyHalfUp(usd, course);
+        return BigDecimalUtil.multiplyHalfUp(rub, getPercentsFactor(percentCommission));
     }
 
     public static BigDecimal getPercentsFactor(BigDecimal percents) {
