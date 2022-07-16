@@ -22,13 +22,17 @@ public class Review extends BasePersist {
     @Column(name = "USERNAME")
     private String username;
 
+    @Column(name = "IS_PUBLISHED")
+    private Boolean isPublished;
+
     public Review() {
     }
 
-    public Review(String text, Long chatId, String username) {
+    public Review(String text, Long chatId, String username, Boolean isPublished) {
         this.text = text;
         this.chatId = chatId;
         this.username = username;
+        this.isPublished = isPublished;
     }
 
     public String getText() {
@@ -55,18 +59,26 @@ public class Review extends BasePersist {
         this.username = username;
     }
 
+    public Boolean getPublished() {
+        return isPublished;
+    }
+
+    public void setPublished(Boolean published) {
+        isPublished = published;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         Review review = (Review) o;
-        return Objects.equals(text, review.text) && Objects.equals(chatId, review.chatId) && Objects.equals(username, review.username);
+        return Objects.equals(text, review.text) && Objects.equals(chatId, review.chatId) && Objects.equals(username, review.username) && Objects.equals(isPublished, review.isPublished);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), text, chatId, username);
+        return Objects.hash(super.hashCode(), text, chatId, username, isPublished);
     }
 
     @Override
@@ -75,6 +87,7 @@ public class Review extends BasePersist {
                 "text='" + text + '\'' +
                 ", chatId=" + chatId +
                 ", username='" + username + '\'' +
+                ", isPublished=" + isPublished +
                 '}';
     }
 }

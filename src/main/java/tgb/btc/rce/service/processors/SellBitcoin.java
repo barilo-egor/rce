@@ -7,6 +7,7 @@ import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.CryptoCurrency;
 import tgb.btc.rce.enums.InlineType;
 import tgb.btc.rce.enums.UpdateType;
+import tgb.btc.rce.exception.NumberParseException;
 import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.impl.DealService;
@@ -33,6 +34,17 @@ public class SellBitcoin extends Processor {
 
     @Override
     public void run(Update update) {
+        Long chatId = UpdateUtil.getChatId(update);
+        try {
+            process(update);
+        } catch (NumberParseException e) {
+            dealService.delete(dealService.findById(userService.getCurrentDealByChatId(chatId)));
+            userService.updateCurrentDealByChatId(null, chatId);
+            processToMainMenu(chatId);
+        }
+    }
+
+    public void process(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
         if (checkForCancel(update)) {
             dealService.delete(dealService.findById(userService.getCurrentDealByChatId(chatId)));

@@ -92,6 +92,10 @@ public final class ConverterUtil {
     }
 
     public static BigDecimal getCommission(BigDecimal amount, CryptoCurrency cryptoCurrency) {
+        BigDecimal fix = BigDecimal.valueOf(BotVariablePropertiesUtil.getDouble(BotVariableType.FIX));
+        if (amount.doubleValue() <= fix.doubleValue()) {
+            return BigDecimal.valueOf(BotVariablePropertiesUtil.getDouble(BotVariableType.FIX_COMMISSION));
+        }
         BigDecimal currency;
         switch (cryptoCurrency) {
             case BITCOIN:

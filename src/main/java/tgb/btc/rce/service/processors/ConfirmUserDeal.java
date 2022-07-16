@@ -85,7 +85,7 @@ public class ConfirmUserDeal extends Processor {
                 break;
         }
 
-        responseSender.sendMessage(deal.getUser().getChatId(), "Хотите оставить отзыв?",
+        responseSender.sendMessage(deal.getUser().getChatId(), "Хотите оставить отзыв?\n",
                 KeyboardUtil.buildInline(List.of(
                         InlineButton.builder()
                                 .data(Command.SHARE_REVIEW.getText())

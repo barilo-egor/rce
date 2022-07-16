@@ -33,11 +33,13 @@ public class PublishReview extends Processor {
         Review review = reviewService.findById(Long.parseLong(
                 update.getCallbackQuery().getData().split(BotStringConstants.CALLBACK_DATA_SPLITTER)[1]));
 
-        String username = StringUtils.isEmpty(review.getUsername()) ? StringUtils.EMPTY
-                : "\nОтзыв от @" + review.getUsername();
-        responseSender.sendMessage(channelChatId, review.getText() + username);
+//        String username = StringUtils.isEmpty(review.getUsername()) ? StringUtils.EMPTY
+//                : "\nОтзыв от @" + review.getUsername();
+        responseSender.sendMessage(channelChatId, review.getText());
         Long chatId = UpdateUtil.getChatId(update);
         responseSender.deleteMessage(chatId, update.getCallbackQuery().getMessage().getMessageId());
         responseSender.sendMessage(chatId, "Отзыв опубликован.");
+        review.setPublished(true);
+        reviewService.save(review);
     }
 }

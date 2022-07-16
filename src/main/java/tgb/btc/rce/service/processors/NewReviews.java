@@ -33,7 +33,11 @@ public class NewReviews extends Processor {
     @Override
     public void run(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
-        List<Review> reviews = reviewService.findAll();
+        List<Review> reviews = reviewService.findAllByIsPublished(false);
+        if (reviews.isEmpty()) {
+            responseSender.sendMessage(chatId, "Новых отзывов нет.");
+            return;
+        }
 
         for (Review review : reviews) {
             List<InlineButton> buttons = new ArrayList<>();

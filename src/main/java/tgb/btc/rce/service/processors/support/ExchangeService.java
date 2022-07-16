@@ -165,7 +165,7 @@ public class ExchangeService {
         }
         sum = BigDecimalUtil.round(sum, cryptoCurrency.getScale()).doubleValue();
         double roundedConvertedSum = BigDecimalUtil.round(ConverterUtil.convertCryptoToRub(currency, sum, DealType.BUY), 0).doubleValue();
-        sendInlineAnswer(update, sum + " " + currency.getDisplayName() + " ~ " +
+        sendInlineAnswer(update, BigDecimal.valueOf(sum).stripTrailingZeros().toPlainString() + " " + currency.getDisplayName() + " ~ " +
                 roundedConvertedSum, true);
     }
 
@@ -211,7 +211,7 @@ public class ExchangeService {
                 .stripTrailingZeros();
         String message = "<b>Покупка " + deal.getCryptoCurrency().getDisplayName() + "</b>: " + dealCryptoAmount
                 + "\n\n"
-                + "<b>Сумма перевода</b>: <s>" + dealAmount + "</s> " + sumWithDiscount
+                + "<b>Сумма перевода</b>: <s>" + BigDecimal.valueOf(dealAmount).stripTrailingZeros().toPlainString() + "</s> " + sumWithDiscount
                 + "\n\n"
                 + "У вас есть промокод: <b>" + BotVariablePropertiesUtil.getVariable(BotVariableType.PROMO_CODE_NAME)
                 + "</b>, который даёт скидку в размере " + discount.stripTrailingZeros().doubleValue() + "% от комиссии"
@@ -239,14 +239,13 @@ public class ExchangeService {
         responseSender.deleteMessage(chatId, UpdateUtil.getMessage(update).getMessageId());
         Deal deal = dealService.findById(userService.getCurrentDealByChatId(chatId));
         String message = "Введите " + deal.getCryptoCurrency().getDisplayName() + "-адрес кошелька, куда вы "
-                + "хотите отправить " + BigDecimalUtil.round(deal.getCryptoAmount(), deal.getCryptoCurrency().getScale()).doubleValue()
+                + "хотите отправить " + BigDecimalUtil.round(deal.getCryptoAmount(), deal.getCryptoCurrency().getScale()).toPlainString()
                 + " " + deal.getCryptoCurrency().getShortName();
         List<InlineButton> buttons = new ArrayList<>();
 
         if (dealService.getNotCurrentDealsCountByUserChatId(chatId) > 0) {
             String wallet = dealService.getWalletFromLastNotCurrentByChatId(chatId, deal.getDealType());
-            message = message.concat("\n\nВы можете использовать ваш сохраненный <b>"
-                    + deal.getDealType().getDisplayName() + "</b> адрес:\n" + wallet);
+            message = message.concat("\n\nВы можете использовать ваш сохраненный адрес:\n" + wallet);
             buttons.add(InlineButton.builder()
                     .text("Использовать сохраненный адрес")
                     .data(USE_SAVED_WALLET)
@@ -254,7 +253,7 @@ public class ExchangeService {
         }
         buttons.add(KeyboardUtil.INLINE_BACK_BUTTON);
 
-        Optional<Message> optionalMessage = responseSender.sendMessage(chatId, message, KeyboardUtil.buildInline(buttons));
+        Optional<Message> optionalMessage = responseSender.sendMessage(chatId, message, KeyboardUtil.buildInline(buttons), "HTML");
         optionalMessage.ifPresent(sentMessage -> userService.updateBufferVariable(chatId, sentMessage.getMessageId().toString()));
     }
 
@@ -308,7 +307,7 @@ public class ExchangeService {
                 + "<b>Покупка " + displayCurrencyName + "</b>: " + dealCryptoAmount + "\n"
                 + "<b>" + displayCurrencyName + "-адрес</b>:" + "<code>" + deal.getWallet() + "</code>"
                 + "\n\n"
-                + "<b>Сумма перевода</b>: " + dealAmount + "₽"
+                + "<b>Сумма перевода</b>: " + dealAmount.stripTrailingZeros().toPlainString() + "₽"
                 + "\n\n"
                 + additionalText
                 + "<b>Выберите способ оплаты:</b>";

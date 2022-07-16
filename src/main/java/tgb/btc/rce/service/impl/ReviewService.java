@@ -22,4 +22,8 @@ public class ReviewService extends BasePersistService<Review> {
     public List<Review> findAll() {
         return reviewRepository.findAll();
     }
+
+    public List<Review> findAllByIsPublished(Boolean isPublished) {
+        return reviewRepository.findAllByIsPublished(isPublished);
+    }
 }

@@ -5,7 +5,8 @@ import tgb.btc.rce.exception.BaseException;
 public enum PaymentType {
     RF_CARD("Карта РФ"),
     QIWI("QIWI"),
-    TINKOFF("Tinkoff");
+    TINKOFF("Tinkoff"),
+    SBERBANK("Сбербанк");
 
     final String displayName;
 
