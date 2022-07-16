@@ -78,6 +78,7 @@ public final class CommandProcessorLoader {
         commandProcessors.add(UserReferralBalance.class);
         commandProcessors.add(UsersReport.class);
         commandProcessors.add(WithdrawalOfFunds.class);
+        commandProcessors.add(UsersDealsReport.class);
         commandProcessors.stream()
                 .filter(processor -> !extendsProcessor(processor))
                 .findFirst()

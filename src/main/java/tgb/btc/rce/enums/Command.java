@@ -94,6 +94,7 @@ public enum Command {
 
     /** REPORTS */
     USERS_REPORT("Отчет по пользователям", true),
+    USERS_DEALS_REPORT("Отчет сделки пользователей", true),
     DEAL_REPORTS("Отчет по сделкам", true),
     PARTNERS_REPORT("Отчет по партнерам", true),
 
