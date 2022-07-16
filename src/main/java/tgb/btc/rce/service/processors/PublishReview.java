@@ -41,5 +41,10 @@ public class PublishReview extends Processor {
         responseSender.sendMessage(chatId, "Отзыв опубликован.");
         review.setPublished(true);
         reviewService.save(review);
+        Integer reviewPrise = BotVariablePropertiesUtil.getInt(BotVariableType.REVIEW_PRISE);
+        userService.updateReferralBalanceByChatId(userService.getReferralBalanceByChatId(review.getChatId())
+                + reviewPrise, review.getChatId());
+        responseSender.sendMessage(review.getChatId(), "Ваш отзыв опубликован.\n\nНа ваш реферальный баланс зачислено "
+                + reviewPrise + "₽.");
     }
 }

@@ -24,7 +24,8 @@ public enum BotVariableType {
     WALLET_LTC("Кошелек LTC", "wallet.ltc"),
     REFERRAL_PERCENT("Процент рефералов", "referral.percent"),
     REFERRAL_MIN_SUM("Мин.сумма вывода", "referral.min.sum"),
-    CHANNEL_CHAT_ID("Айди канала", "channel.chat.id");
+    CHANNEL_CHAT_ID("Айди канала", "channel.chat.id"),
+    REVIEW_PRISE("Вознаграждение", "review.prise");
 
     final String displayName;
     final String key;
