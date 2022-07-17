@@ -20,6 +20,7 @@ import tgb.btc.rce.exception.NumberParseException;
 import tgb.btc.rce.service.impl.*;
 import tgb.btc.rce.util.*;
 import tgb.btc.rce.vo.InlineButton;
+import tgb.btc.rce.vo.ReplyButton;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -432,5 +433,11 @@ public class ExchangeService {
     public void processReferralDiscount(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
         dealService.updateUsedReferralDiscountByPid(true, userService.getCurrentDealByChatId(chatId));
+    }
+
+    public void askForReceipts(Update update) {
+        responseSender.sendMessage(UpdateUtil.getChatId(update), "Отправьте фото чека.",
+                 KeyboardUtil.buildReply(List.of(ReplyButton.builder().text(Command.CONTINUE.getText()).build(),
+                         ReplyButton.builder().text(Command.RECEIPTS_CANCEL_DEAL.getText()).build())));
     }
 }

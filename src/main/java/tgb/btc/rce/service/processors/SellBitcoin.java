@@ -3,16 +3,18 @@ package tgb.btc.rce.service.processors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.annotation.CommandProcessor;
-import tgb.btc.rce.enums.Command;
-import tgb.btc.rce.enums.CryptoCurrency;
-import tgb.btc.rce.enums.InlineType;
-import tgb.btc.rce.enums.UpdateType;
+import tgb.btc.rce.bean.Deal;
+import tgb.btc.rce.bean.PaymentReceipt;
+import tgb.btc.rce.enums.*;
 import tgb.btc.rce.exception.NumberParseException;
 import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.impl.DealService;
+import tgb.btc.rce.service.impl.PaymentReceiptsService;
 import tgb.btc.rce.service.impl.UserService;
+import tgb.btc.rce.service.processors.support.ExchangeService;
 import tgb.btc.rce.service.processors.support.SellService;
+import tgb.btc.rce.util.BotImageUtil;
 import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.InlineButton;
@@ -24,12 +26,17 @@ public class SellBitcoin extends Processor {
     
     private final DealService dealService;
     private final SellService sellService;
+    private final PaymentReceiptsService paymentReceiptsService;
+    private final ExchangeService exchangeService;
 
-    @Autowired
-    public SellBitcoin(IResponseSender responseSender, UserService userService, DealService dealService, SellService sellService) {
+    public SellBitcoin(IResponseSender responseSender, UserService userService, DealService dealService,
+                       SellService sellService, PaymentReceiptsService paymentReceiptsService,
+                       ExchangeService exchangeService) {
         super(responseSender, userService);
         this.dealService = dealService;
         this.sellService = sellService;
+        this.paymentReceiptsService = paymentReceiptsService;
+        this.exchangeService = exchangeService;
     }
 
     @Override
@@ -121,8 +128,44 @@ public class SellBitcoin extends Processor {
                     return;
                 } else if (update.hasCallbackQuery() && Command.PAID.name().equals(update.getCallbackQuery().getData())) {
                     responseSender.deleteMessage(chatId, update.getCallbackQuery().getMessage().getMessageId());
-                    sellService.confirmDeal(update);
+                    exchangeService.askForReceipts(update);
+                    userService.nextStep(chatId);
                     break;
+                }
+                break;
+            case 6:
+                if (update.hasMessage() && update.getMessage().hasPhoto()) {
+                    Deal deal = dealService.getByPid(userService.getCurrentDealByChatId(chatId));
+                    PaymentReceipt paymentReceipt = paymentReceiptsService.save(PaymentReceipt.builder()
+                            .receipt(BotImageUtil.getImageId(update.getMessage().getPhoto()))
+                            .receiptFormat(ReceiptFormat.PICTURE)
+                            .build());
+                    List<PaymentReceipt> paymentReceipts = dealService.getPaymentReceipts(deal.getPid());
+                    paymentReceipts.add(paymentReceipt);
+                    deal.setPaymentReceipts(paymentReceipts);
+                    dealService.save(deal);
+                    exchangeService.askForReceipts(update);
+                } else if (update.hasMessage() && update.getMessage().hasDocument()) {
+                    Deal deal = dealService.getByPid(userService.getCurrentDealByChatId(chatId));
+                    PaymentReceipt paymentReceipt = paymentReceiptsService.save(PaymentReceipt.builder()
+                            .receipt(update.getMessage().getDocument().getFileId())
+                            .receiptFormat(ReceiptFormat.PDF)
+                            .build());
+                    List<PaymentReceipt> paymentReceipts = dealService.getPaymentReceipts(deal.getPid());
+                    paymentReceipts.add(paymentReceipt);
+                    deal.setPaymentReceipts(paymentReceipts);
+                    dealService.save(deal);
+                    exchangeService.askForReceipts(update);
+                } else if (update.hasMessage() && update.getMessage().hasText()) {
+                    String text = update.getMessage().getText();
+                    if (text.equals(Command.CONTINUE.getText())) {
+                        sellService.confirmDeal(update);
+                        processToMainMenu(chatId);
+                    } else if (text.equals(Command.RECEIPTS_CANCEL_DEAL.getText())) {
+                        dealService.delete(dealService.findById(userService.getCurrentDealByChatId(chatId)));
+                        userService.updateCurrentDealByChatId(null, chatId);
+                        processToMainMenu(chatId);
+                    }
                 }
                 break;
         }

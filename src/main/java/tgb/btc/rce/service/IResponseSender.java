@@ -5,7 +5,9 @@ import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.GetFile;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Document;
+import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Message;
+import org.telegram.telegrambots.meta.api.objects.media.InputMedia;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import tgb.btc.rce.bean.BotMessage;
@@ -13,6 +15,7 @@ import tgb.btc.rce.bean.BotMessage;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.List;
 import java.util.Optional;
 
 public interface IResponseSender {
@@ -42,4 +45,8 @@ public interface IResponseSender {
     void downloadFile(Document document, String localFilePath) throws IOException, TelegramApiException;
 
     void execute(AnswerInlineQuery answerInlineQuery);
+
+    void sendMedia(Long chatId, List<InputMedia> media);
+
+    void sendInputFile(Long chatId, InputFile inputFile);
 }

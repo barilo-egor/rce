@@ -8,15 +8,13 @@ import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.AnswerInlineQuery;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.GetFile;
-import org.telegram.telegrambots.meta.api.methods.send.SendAnimation;
-import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
+import org.telegram.telegrambots.meta.api.methods.send.*;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.Document;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Message;
+import org.telegram.telegrambots.meta.api.objects.media.InputMedia;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
@@ -30,6 +28,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.net.URL;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -201,6 +200,30 @@ public class ResponseSender implements IResponseSender {
             bot.execute(answerInlineQuery);
         } catch (TelegramApiException e) {
             log.debug("Не получилось отправить answerInlineQuery: " + answerInlineQuery.toString(), e);
+        }
+    }
+
+    @Override
+    public void sendMedia(Long chatId, List<InputMedia> media) {
+        try {
+            bot.execute(SendMediaGroup.builder()
+                    .chatId(chatId.toString())
+                    .medias(media)
+                    .build());
+        } catch (TelegramApiException e) {
+            log.debug("Не получилось отправить медиа: chatId=" + chatId + ", media.size()=" + media.size());
+        }
+    }
+
+    @Override
+    public void sendInputFile(Long chatId, InputFile inputFile) {
+        try {
+            bot.execute(SendDocument.builder()
+                    .chatId(chatId.toString())
+                    .document(inputFile)
+                    .build());
+        } catch (TelegramApiException e) {
+            log.debug("Не получилось отправить input file: chatId=" + chatId);
         }
     }
 }

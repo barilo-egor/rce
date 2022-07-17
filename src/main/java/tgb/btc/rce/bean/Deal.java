@@ -1,14 +1,18 @@
 package tgb.btc.rce.bean;
 
 import lombok.Builder;
+import org.hibernate.annotations.*;
 import tgb.btc.rce.enums.CryptoCurrency;
 import tgb.btc.rce.enums.DealType;
 import tgb.btc.rce.enums.PaymentType;
 
 import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -69,13 +73,17 @@ public class Deal extends BasePersist {
     @Column(name = "COMMISSION")
     private BigDecimal commission;
 
+    @Column(name = "PAYMENT_RECEIPTS")
+    @OneToMany
+    private List<PaymentReceipt> paymentReceipts;
+
     public Deal() {
     }
 
     public Deal(User user, LocalDateTime dateTime, LocalDate date, PaymentType paymentType, BigDecimal cryptoAmount,
                 BigDecimal amount, String wallet, String verificationPhoto, String userCheck, Boolean isActive,
                 Boolean isPassed, Boolean isCurrent, Boolean isUsedPromo, Boolean isUsedReferralDiscount,
-                CryptoCurrency cryptoCurrency, DealType dealType, BigDecimal commission) {
+                CryptoCurrency cryptoCurrency, DealType dealType, BigDecimal commission, List<PaymentReceipt> paymentReceipts) {
         this.user = user;
         this.dateTime = dateTime;
         this.date = date;
@@ -93,6 +101,7 @@ public class Deal extends BasePersist {
         this.cryptoCurrency = cryptoCurrency;
         this.dealType = dealType;
         this.commission = commission;
+        this.paymentReceipts = paymentReceipts;
     }
 
     public String getUserCheck() {
@@ -231,18 +240,26 @@ public class Deal extends BasePersist {
         isUsedReferralDiscount = usedReferralDiscount;
     }
 
+    public List<PaymentReceipt> getPaymentReceipts() {
+        return paymentReceipts;
+    }
+
+    public void setPaymentReceipts(List<PaymentReceipt> paymentReceipts) {
+        this.paymentReceipts = paymentReceipts;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         Deal deal = (Deal) o;
-        return Objects.equals(user, deal.user) && Objects.equals(dateTime, deal.dateTime) && Objects.equals(date, deal.date) && paymentType == deal.paymentType && Objects.equals(cryptoAmount, deal.cryptoAmount) && Objects.equals(amount, deal.amount) && Objects.equals(wallet, deal.wallet) && Objects.equals(verificationPhoto, deal.verificationPhoto) && Objects.equals(userCheck, deal.userCheck) && Objects.equals(isActive, deal.isActive) && Objects.equals(isPassed, deal.isPassed) && Objects.equals(isCurrent, deal.isCurrent) && Objects.equals(isUsedPromo, deal.isUsedPromo) && Objects.equals(isUsedReferralDiscount, deal.isUsedReferralDiscount) && cryptoCurrency == deal.cryptoCurrency && dealType == deal.dealType && Objects.equals(commission, deal.commission);
+        return Objects.equals(user, deal.user) && Objects.equals(dateTime, deal.dateTime) && Objects.equals(date, deal.date) && paymentType == deal.paymentType && Objects.equals(cryptoAmount, deal.cryptoAmount) && Objects.equals(amount, deal.amount) && Objects.equals(wallet, deal.wallet) && Objects.equals(verificationPhoto, deal.verificationPhoto) && Objects.equals(userCheck, deal.userCheck) && Objects.equals(isActive, deal.isActive) && Objects.equals(isPassed, deal.isPassed) && Objects.equals(isCurrent, deal.isCurrent) && Objects.equals(isUsedPromo, deal.isUsedPromo) && Objects.equals(isUsedReferralDiscount, deal.isUsedReferralDiscount) && cryptoCurrency == deal.cryptoCurrency && dealType == deal.dealType && Objects.equals(commission, deal.commission) && Objects.equals(paymentReceipts, deal.paymentReceipts);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), user, dateTime, date, paymentType, cryptoAmount, amount, wallet, verificationPhoto, userCheck, isActive, isPassed, isCurrent, isUsedPromo, isUsedReferralDiscount, cryptoCurrency, dealType, commission);
+        return Objects.hash(super.hashCode(), user, dateTime, date, paymentType, cryptoAmount, amount, wallet, verificationPhoto, userCheck, isActive, isPassed, isCurrent, isUsedPromo, isUsedReferralDiscount, cryptoCurrency, dealType, commission, paymentReceipts);
     }
 
     @Override
@@ -265,6 +282,7 @@ public class Deal extends BasePersist {
                 ", cryptoCurrency=" + cryptoCurrency +
                 ", dealType=" + dealType +
                 ", commission=" + commission +
+                ", paymentReceipts=" + paymentReceipts +
                 '}';
     }
 }

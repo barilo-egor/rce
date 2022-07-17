@@ -3,7 +3,9 @@ package tgb.btc.rce.service.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import tgb.btc.rce.bean.Deal;
+import tgb.btc.rce.bean.PaymentReceipt;
 import tgb.btc.rce.enums.CryptoCurrency;
 import tgb.btc.rce.enums.DealType;
 import tgb.btc.rce.enums.PaymentType;
@@ -13,6 +15,7 @@ import tgb.btc.rce.repository.DealRepository;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -132,5 +135,11 @@ public class DealService extends BasePersistService<Deal> {
 
     public DealType getDealTypeByPid(Long pid) {
         return dealRepository.getDealTypeByPid(pid);
+    }
+
+    @Transactional(readOnly = true)
+    public List<PaymentReceipt> getPaymentReceipts(Long dealPid) {
+        Deal deal = getByPid(dealPid);
+        return new ArrayList<>(deal.getPaymentReceipts());
     }
 }

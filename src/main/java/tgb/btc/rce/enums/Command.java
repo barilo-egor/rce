@@ -98,7 +98,11 @@ public enum Command {
     DEAL_REPORTS("Отчет по сделкам", true),
     PARTNERS_REPORT("Отчет по партнерам", true),
 
-    CHANNEL_POST("channel_post", false);
+    CHANNEL_POST("channel_post", false),
+
+    /** RECEIPTS */
+    CONTINUE("Продолжить", true),
+    RECEIPTS_CANCEL_DEAL("Отмена сделки", true);
 
     final String text;
     final boolean isAdmin;

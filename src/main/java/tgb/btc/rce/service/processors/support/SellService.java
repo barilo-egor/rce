@@ -55,7 +55,6 @@ public class SellService {
 
     static {
         Arrays.stream(CryptoCurrency.values())
-                .filter(currency -> !CryptoCurrency.USDT.equals(currency))
                 .forEach(currency -> CURRENCIES.add(InlineButton.builder()
                         .text(currency.getDisplayName())
                         .data(currency.name())
