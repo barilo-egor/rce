@@ -126,7 +126,7 @@ public class ExchangeService {
 
         dealService.updateCryptoAmountByPid(BigDecimal.valueOf(sum), currentDealPid);
         dealService.updateAmountByPid(ConverterUtil.convertCryptoToRub(cryptoCurrency, sum, DealType.BUY), currentDealPid);
-        dealService.updateCommissionByPid(ConverterUtil.getCommission(BigDecimal.valueOf(sum), cryptoCurrency), currentDealPid);
+        dealService.updateCommissionByPid(ConverterUtil.getCommission(BigDecimal.valueOf(sum), cryptoCurrency, DealType.BUY), currentDealPid);
         return true;
     }
 
@@ -340,6 +340,13 @@ public class ExchangeService {
     public void buildDeal(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
         Deal deal = dealService.getByPid(userService.getCurrentDealByChatId(chatId));
+        Rank rank = Rank.getByDealsNumber(dealService.getCountPassedByUserChatId(chatId).intValue());
+        if (!Rank.FIRST.equals(rank)) {
+            BigDecimal commission = deal.getCommission();
+            BigDecimal rankDiscount = BigDecimalUtil.multiplyHalfUp(commission, ConverterUtil.getPercentsFactor(BigDecimal.valueOf(rank.getPercent())));
+            deal.setAmount(BigDecimalUtil.subtractHalfUp(deal.getAmount(), rankDiscount));
+            deal = dealService.save(deal);
+        }
         CryptoCurrency currency = deal.getCryptoCurrency();
         PaymentConfig paymentConfig = paymentConfigService.getByPaymentType(deal.getPaymentType());
         if (paymentConfig == null) throw new BaseException("Не установлены реквизиты для " + deal.getPaymentType().getDisplayName() + ".");
@@ -354,6 +361,8 @@ public class ExchangeService {
                 + BigDecimalUtil.round(deal.getCryptoAmount(), currency.getScale()).doubleValue() + " " + currency.getShortName()
                 + "\n"
                 + "<b>" + deal.getCryptoCurrency().getDisplayName() + "-адрес</b>:" + "<code>" + deal.getWallet() + "</code>"
+                + "\n\n"
+                + "Ваш ранг: " + rank.getSmile() + ", скидка " + rank.getPercent() + "%"
                 + "\n\n"
                 + "<b>Сумма к оплате</b>: <code>" + BigDecimalUtil.round(deal.getAmount(), 0).doubleValue() + "₽</code>"
                 + "\n"

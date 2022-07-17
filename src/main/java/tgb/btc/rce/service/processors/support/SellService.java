@@ -118,6 +118,7 @@ public class SellService {
 
         dealService.updateCryptoAmountByPid(BigDecimal.valueOf(sum), currentDealPid);
         dealService.updateAmountByPid(ConverterUtil.convertCryptoToRub(cryptoCurrency, sum, DealType.SELL), currentDealPid);
+        dealService.updateCommissionByPid(ConverterUtil.getCommissionForSell(BigDecimal.valueOf(sum), cryptoCurrency, dealService.getDealTypeByPid(currentDealPid)), currentDealPid);
     }
 
     public void convertToRub(Update update, Long currentDealPid) {
@@ -193,7 +194,7 @@ public class SellService {
         Deal deal = dealService.findById(userService.getCurrentDealByChatId(chatId));
         String message = "Введите " + deal.getPaymentType().getDisplayName() + " реквизиты, куда вы "
                 + "хотите получить "
-                + BigDecimalUtil.round(deal.getAmount(), deal.getCryptoCurrency().getScale()).doubleValue() + "₽";
+                + BigDecimalUtil.round(deal.getAmount(), 0).stripTrailingZeros().toPlainString() + "₽";
 
         Optional<Message> optionalMessage = responseSender.sendMessage(chatId, message,
                 KeyboardUtil.buildInline(List.of(KeyboardUtil.INLINE_BACK_BUTTON)));
@@ -274,12 +275,21 @@ public class SellService {
             default:
                 throw new BaseException("Не найдены реквизиты крипто кошелька.");
         }
+        Rank rank = Rank.getByDealsNumber(dealService.getCountPassedByUserChatId(chatId).intValue());
+        if (!Rank.FIRST.equals(rank)) {
+            BigDecimal commission = deal.getCommission();
+            BigDecimal rankDiscount = BigDecimalUtil.multiplyHalfUp(commission, ConverterUtil.getPercentsFactor(BigDecimal.valueOf(rank.getPercent())));
+            deal.setAmount(BigDecimalUtil.addHalfUp(deal.getAmount(), rankDiscount));
+            deal = dealService.save(deal);
+        }
         String message = "<b>Заявка №</b><code>" + deal.getPid() + "</code> успешно создана."
                 + "\n\n"
                 + "<b>Продаете</b>: "
                 + BigDecimalUtil.round(deal.getCryptoAmount(), currency.getScale()).doubleValue() + " " + currency.getShortName()
                 + "\n"
                 + "<b>" + deal.getPaymentType().getDisplayName() + " реквизиты</b>:" + "<code>" + deal.getWallet() + "</code>"
+                + "\n\n"
+                + "Ваш ранг: " + rank.getSmile() + ", скидка " + rank.getPercent() + "%"
                 + "\n\n"
                 + "<b>Получаете</b>: <code>" + BigDecimalUtil.round(deal.getAmount(), 0).doubleValue() + "₽</code>"
                 + "\n"

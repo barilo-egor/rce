@@ -26,9 +26,21 @@ public enum Rank {
         this.isItInTheRange = predicate;
     }
 
-    public Rank getByDealsNumber(int dealsNumber) {
+    public static Rank getByDealsNumber(int dealsNumber) {
         Rank[] ranks = Rank.values();
         Optional<Rank> rank = Arrays.stream(ranks).filter(p -> p.isItInTheRange.test(dealsNumber)).findFirst();
         return rank.orElseThrow(IllegalStateException::new);
+    }
+
+    public double getPercent() {
+        return percent;
+    }
+
+    public String getSmile() {
+        return smile;
+    }
+
+    public Predicate<Integer> getIsItInTheRange() {
+        return isItInTheRange;
     }
 }
