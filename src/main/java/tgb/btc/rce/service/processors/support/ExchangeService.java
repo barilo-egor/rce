@@ -215,10 +215,10 @@ public class ExchangeService {
                 + "\n\n"
                 + "<b>Сумма перевода</b>: <s>" + BigDecimal.valueOf(dealAmount).stripTrailingZeros().toPlainString() + "</s> " + sumWithDiscount
                 + "\n\n"
-                + "У вас есть промокод: <b>" + BotVariablePropertiesUtil.getVariable(BotVariableType.PROMO_CODE_NAME)
+                + "\uD83C\uDFAB У вас есть промокод: <b>" + BotVariablePropertiesUtil.getVariable(BotVariableType.PROMO_CODE_NAME)
                 + "</b>, который даёт скидку в размере " + discount.stripTrailingZeros().doubleValue() + "% от комиссии"
                 + "\n\n"
-                + "<b>Использовать промокод</b> как скидку?";
+                + "✅ <b>Использовать промокод</b> как скидку?";
         ReplyKeyboard keyboard = KeyboardUtil.buildInlineDiff(List.of(
                 InlineButton.builder()
                         .text("Использовать, " + sumWithDiscount.stripTrailingZeros().doubleValue())
@@ -240,7 +240,7 @@ public class ExchangeService {
         Long chatId = UpdateUtil.getChatId(update);
         responseSender.deleteMessage(chatId, UpdateUtil.getMessage(update).getMessageId());
         Deal deal = dealService.findById(userService.getCurrentDealByChatId(chatId));
-        String message = "Введите " + deal.getCryptoCurrency().getDisplayName() + "-адрес кошелька, куда вы "
+        String message = "\uD83D\uDCDDВведите " + deal.getCryptoCurrency().getDisplayName() + "-адрес кошелька, куда вы "
                 + "хотите отправить " + BigDecimalUtil.round(deal.getCryptoAmount(), deal.getCryptoCurrency().getScale()).toPlainString()
                 + " " + deal.getCryptoCurrency().getShortName();
         List<InlineButton> buttons = new ArrayList<>();
@@ -305,11 +305,13 @@ public class ExchangeService {
         } catch (BaseException e) {
             additionalText = StringUtils.EMPTY;
         }
-        String message = "<b>Информация по заявке</b>\n"
+        String message = "<b>" +
+                "" +
+                "\uD83D\uDCACИнформация по заявке</b>\n"
                 + "<b>Покупка " + displayCurrencyName + "</b>: " + dealCryptoAmount + "\n"
                 + "<b>" + displayCurrencyName + "-адрес</b>:" + "<code>" + deal.getWallet() + "</code>"
                 + "\n\n"
-                + "<b>Сумма перевода</b>: " + dealAmount.stripTrailingZeros().toPlainString() + "₽"
+                + "\uD83D\uDCB5<b>Сумма перевода</b>: " + dealAmount.stripTrailingZeros().toPlainString() + "₽"
                 + "\n\n"
                 + additionalText
                 + "<b>Выберите способ оплаты:</b>";
@@ -356,7 +358,7 @@ public class ExchangeService {
                         + BotVariablePropertiesUtil.getVariable(BotVariableType.PROMO_CODE_NAME) + "\n\n"
                 : "\n\n";
 
-        String message = "<b>Заявка №</b><code>" + deal.getPid() + "</code> успешно создана."
+        String message = "✅<b>Заявка №</b><code>" + deal.getPid() + "</code> успешно создана."
                 + "\n\n"
                 + "<b>Получаете</b>: "
                 + BigDecimalUtil.round(deal.getCryptoAmount(), currency.getScale()).doubleValue() + " " + currency.getShortName()
@@ -365,15 +367,15 @@ public class ExchangeService {
                 + "\n\n"
                 + "Ваш ранг: " + rank.getSmile() + ", скидка " + rank.getPercent() + "%"
                 + "\n\n"
-                + "<b>Сумма к оплате</b>: <code>" + BigDecimalUtil.round(deal.getAmount(), 0).doubleValue() + "₽</code>"
+                + "<b>\uD83D\uDCB5Сумма к оплате</b>: <code>" + BigDecimalUtil.round(deal.getAmount(), 0).doubleValue() + "₽</code>"
                 + "\n"
                 + "<b>Резквизиты для оплаты:</b>"
                 + "\n\n"
                 + "<code>" + paymentConfig.getRequisites() + "</code>"
                 + "\n\n"
-                + "<b>Заявка действительна</b>: " + BotVariablePropertiesUtil.getVariable(BotVariableType.DEAL_ACTIVE_TIME) + " минут"
+                + "<b>⏳Заявка действительна</b>: " + BotVariablePropertiesUtil.getVariable(BotVariableType.DEAL_ACTIVE_TIME) + " минут"
                 + "\n\n"
-                + "После успешного перевода денег по указанным реквизитам нажмите на кнопку <b>\""
+                + "☑️После успешного перевода денег по указанным реквизитам нажмите на кнопку <b>\""
                 + Command.PAID.getText() + "\"</b> или же вы можете отменить данную заявку, нажав на кнопку <b>\""
                 + Command.CANCEL_DEAL.getText() + "\"</b>."
                 + promoCodeText;
@@ -414,7 +416,7 @@ public class ExchangeService {
         Deal deal = dealService.findById(userService.getCurrentDealByChatId(chatId));
         Integer referralBalance = userService.getReferralBalanceByChatId(chatId);
 
-        String message = "У вас есть " + referralBalance + "₽ на реферальном балансе. Использовать их в качестве скидки?";
+        String message = "\uD83E\uDD11У вас есть " + referralBalance + "₽ на реферальном балансе. Использовать их в качестве скидки?";
 
         BigDecimal sumWithDiscount;
         if (referralBalance <= deal.getAmount().intValue()) {

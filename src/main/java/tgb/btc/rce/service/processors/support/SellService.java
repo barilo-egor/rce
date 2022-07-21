@@ -221,9 +221,9 @@ public class SellService {
             additionalText = StringUtils.EMPTY;
         }
         String message = "<b>Информация по заявке</b>\n"
-                + "<b>Продажа " + displayCurrencyName + "</b>: " + dealCryptoAmount
+                + "\uD83D\uDCAC<b>Продажа " + displayCurrencyName + "</b>: " + dealCryptoAmount
                 + "\n\n"
-                + "<b>Сумма перевода</b>: " + dealAmount + "₽"
+                + "\uD83D\uDCB5<b>Сумма перевода</b>: " + dealAmount + "₽"
                 + "\n\n"
                 + additionalText
                 + "<b>Выберите способ получения перевода:</b>";
@@ -285,7 +285,7 @@ public class SellService {
             deal.setAmount(BigDecimalUtil.addHalfUp(deal.getAmount(), rankDiscount));
             deal = dealService.save(deal);
         }
-        String message = "<b>Заявка №</b><code>" + deal.getPid() + "</code> успешно создана."
+        String message = "✅<b>Заявка №</b><code>" + deal.getPid() + "</code> успешно создана."
                 + "\n\n"
                 + "<b>Продаете</b>: "
                 + BigDecimalUtil.round(deal.getCryptoAmount(), currency.getScale()).doubleValue() + " " + currency.getShortName()
@@ -294,15 +294,15 @@ public class SellService {
                 + "\n\n"
                 + "Ваш ранг: " + rank.getSmile() + ", скидка " + rank.getPercent() + "%"
                 + "\n\n"
-                + "<b>Получаете</b>: <code>" + BigDecimalUtil.round(deal.getAmount(), 0).doubleValue() + "₽</code>"
+                + "\uD83D\uDCB5<b>Получаете</b>: <code>" + BigDecimalUtil.round(deal.getAmount(), 0).doubleValue() + "₽</code>"
                 + "\n"
                 + "<b>Резквизиты для перевода " + currency.getShortName() + ":</b>"
                 + "\n\n"
                 + "<code>" + walletRequisites + "</code>"
                 + "\n\n"
-                + "<b>Заявка действительна</b>: " + BotVariablePropertiesUtil.getVariable(BotVariableType.DEAL_ACTIVE_TIME) + " минут"
+                + "⏳<b>Заявка действительна</b>: " + BotVariablePropertiesUtil.getVariable(BotVariableType.DEAL_ACTIVE_TIME) + " минут"
                 + "\n\n"
-                + "После успешного перевода денег по указанному кошельку нажмите на кнопку <b>\""
+                + "☑️После успешного перевода денег по указанному кошельку нажмите на кнопку <b>\""
                 + Command.PAID.getText() + "\"</b> или же вы можете отменить данную заявку, нажав на кнопку <b>\""
                 + Command.CANCEL_DEAL.getText() + "\"</b>."
                 + promoCodeText;
