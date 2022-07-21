@@ -85,7 +85,7 @@ public class ExchangeService {
 
     public void askForCurrency(Long chatId) {
         Optional<Message> optionalMessage = responseSender.sendMessage(chatId,
-                MessagePropertiesUtil.getMessage(PropertiesMessage.CHOOSE_CURRENCY),
+                MessagePropertiesUtil.getMessage(PropertiesMessage.CHOOSE_CURRENCY_BUY),
                 KeyboardUtil.buildInline(CURRENCIES));
         optionalMessage.ifPresent(message ->
                 userService.updateBufferVariable(chatId, message.getMessageId().toString()));
@@ -166,7 +166,8 @@ public class ExchangeService {
         }
         sum = BigDecimalUtil.round(sum, cryptoCurrency.getScale()).doubleValue();
         double roundedConvertedSum = BigDecimalUtil.round(ConverterUtil.convertCryptoToRub(currency, sum, DealType.BUY), 0).doubleValue();
-        sendInlineAnswer(update, BigDecimal.valueOf(sum).stripTrailingZeros().toPlainString() + " " + currency.getDisplayName() + " ~ " +
+        String dealType = DealType.BUY.equals(dealService.getDealTypeByPid(currentDealPid)) ? "Покупка: " : "Продажа: ";
+        sendInlineAnswer(update, dealType + BigDecimal.valueOf(sum).stripTrailingZeros().toPlainString() + " " + currency.getDisplayName() + " ~ " +
                 roundedConvertedSum, true);
     }
 

@@ -77,7 +77,7 @@ public class SellService {
 
     public void askForCurrency(Long chatId) {
         Optional<Message> optionalMessage = responseSender.sendMessage(chatId,
-                MessagePropertiesUtil.getMessage(PropertiesMessage.CHOOSE_CURRENCY),
+                MessagePropertiesUtil.getMessage(PropertiesMessage.CHOOSE_CURRENCY_SELL),
                 KeyboardUtil.buildInline(CURRENCIES));
         optionalMessage.ifPresent(message ->
                 userService.updateBufferVariable(chatId, message.getMessageId().toString()));
