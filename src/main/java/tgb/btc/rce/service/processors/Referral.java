@@ -9,8 +9,10 @@ import tgb.btc.rce.bean.WithdrawalRequest;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.InlineType;
 import tgb.btc.rce.enums.PropertiesMessage;
+import tgb.btc.rce.enums.Rank;
 import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
+import tgb.btc.rce.service.impl.DealService;
 import tgb.btc.rce.service.impl.UserService;
 import tgb.btc.rce.service.impl.WithdrawalRequestService;
 import tgb.btc.rce.util.BotPropertiesUtil;
@@ -24,9 +26,12 @@ import java.util.List;
 @CommandProcessor(command = Command.REFERRAL)
 public class Referral extends Processor {
 
+    private final DealService dealService;
+
     @Autowired
-    public Referral(IResponseSender responseSender, UserService userService) {
+    public Referral(IResponseSender responseSender, UserService userService, DealService dealService) {
         super(responseSender, userService);
+        this.dealService = dealService;
     }
 
     @Override
@@ -38,8 +43,10 @@ public class Referral extends Processor {
         List<ReferralUser> referralUsers = userService.getUserReferralsByChatId(chatId);
         String numberOfReferrals = String.valueOf(referralUsers.size());
 
+        Long dealsCount = dealService.getCountPassedByUserChatId(chatId);
+        Rank rank = Rank.getByDealsNumber(dealsCount.intValue());
         String resultMessage = String.format(MessagePropertiesUtil.getMessage(PropertiesMessage.REFERRAL_MAIN),
-                refLink, currentBalance, numberOfReferrals, userService.getChargesByChatId(chatId));
+                refLink, currentBalance, numberOfReferrals, userService.getChargesByChatId(chatId), dealsCount, rank.getSmile(), rank.getPercent()).concat("%");
 
         responseSender.sendMessage(chatId, resultMessage, KeyboardUtil.buildInlineDiff(getButtons(refLink)));
     }

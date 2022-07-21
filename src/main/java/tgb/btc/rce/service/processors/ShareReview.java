@@ -62,6 +62,7 @@ public class ShareReview extends Processor {
                     reviewService.save(Review.builder()
                             .text(author + UpdateUtil.getMessageText(update))
                             .username(update.getMessage().getFrom().getUserName())
+                                    .isPublished(false)
                             .chatId(chatId)
                             .build());
                 } else if (update.hasCallbackQuery()) {
@@ -70,6 +71,7 @@ public class ShareReview extends Processor {
                     reviewService.save(Review.builder()
                             .text(author + userService.getBufferVariable(chatId))
                             .username(update.getCallbackQuery().getFrom().getUserName())
+                                    .isPublished(false)
                             .chatId(chatId)
                             .build());
                 }

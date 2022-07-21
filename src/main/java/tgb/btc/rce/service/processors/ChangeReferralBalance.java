@@ -48,12 +48,18 @@ public class ChangeReferralBalance extends Processor {
                 if (!update.hasMessage() || !update.getMessage().hasText()) throw new BaseException("Не найден текст.");
                 String text = UpdateUtil.getMessageText(update);
                 Long userChatId = Long.parseLong(userService.getBufferVariable(chatId));
-                if (text.startsWith("+")) userService.updateReferralBalanceByChatId(
-                        userService.getReferralBalanceByChatId(userChatId)
-                                + Integer.parseInt(text.substring(1)), userChatId);
-                else if (text.startsWith("-")) userService.updateReferralBalanceByChatId(
-                        userService.getReferralBalanceByChatId(userChatId)
-                                - Integer.parseInt(text.substring(1)), userChatId);
+                if (text.startsWith("+")) {
+                    userService.updateReferralBalanceByChatId(
+                            userService.getReferralBalanceByChatId(userChatId)
+                                    + Integer.parseInt(text.substring(1)), userChatId);
+                    responseSender.sendMessage(userChatId, "На ваш реферальный баланс было зачислено " + Integer.parseInt(text.substring(1)) + "₽.");
+                }
+                else if (text.startsWith("-")) {
+                    userService.updateReferralBalanceByChatId(
+                            userService.getReferralBalanceByChatId(userChatId)
+                                    - Integer.parseInt(text.substring(1)), userChatId);
+                    responseSender.sendMessage(userChatId, "С вашего реферального баланса списано " + Integer.parseInt(text.substring(1)) + "₽.");
+                }
                 else
                     userService.updateReferralBalanceByChatId(Integer.parseInt(text), userChatId);
                 responseSender.sendMessage(chatId, "Баланс изменен.");

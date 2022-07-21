@@ -87,8 +87,8 @@ public class ConfirmUserDeal extends Processor {
 
         Integer reviewPrise = BotVariablePropertiesUtil.getInt(BotVariableType.REVIEW_PRISE);
         responseSender.sendMessage(deal.getUser().getChatId(), "Хотите оставить отзыв?\n" +
-                        "За оставленный отзыв вы получите вознагрождение в размере " + reviewPrise
-                        + "₽ на реферальный баланс после публикации.",
+                        "За оставленный отзыв вы получите вознагрождение в размере до 30₽" +
+                        " на реферальный баланс после публикации.",
                 KeyboardUtil.buildInline(List.of(
                         InlineButton.builder()
                                 .data(Command.SHARE_REVIEW.getText())

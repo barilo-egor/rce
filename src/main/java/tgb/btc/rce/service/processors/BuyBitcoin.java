@@ -5,7 +5,9 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.bean.Deal;
 import tgb.btc.rce.bean.PaymentReceipt;
+import tgb.btc.rce.bean.User;
 import tgb.btc.rce.enums.*;
+import tgb.btc.rce.exception.BaseException;
 import tgb.btc.rce.exception.NumberParseException;
 import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
@@ -40,12 +42,31 @@ public class BuyBitcoin extends Processor {
     public void run(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
         try {
-            process(update);
+            if (isMainMenuCommand(update)) processCancel(chatId);
+            else process(update);
         } catch (NumberParseException e) {
-            dealService.delete(dealService.findById(userService.getCurrentDealByChatId(chatId)));
-            userService.updateCurrentDealByChatId(null, chatId);
-            processToMainMenu(chatId);
+            processCancel(chatId);
         }
+    }
+
+    private boolean isMainMenuCommand(Update update) {
+        try {
+            return userService.getStepByChatId(UpdateUtil.getChatId(update)) != User.DEFAULT_STEP && update.hasMessage() && update.getMessage().hasText()
+                    && (Command.BUY_BITCOIN.equals(Command.fromUpdate(update))
+                    || Command.SELL_BITCOIN.equals(Command.fromUpdate(update))
+                    || Command.CONTACTS.equals(Command.fromUpdate(update))
+                    || Command.DRAWS.equals(Command.fromUpdate(update))
+                    || Command.REFERRAL.equals(Command.fromUpdate(update))
+                    || Command.ADMIN_PANEL.equals(Command.fromUpdate(update)));
+        } catch (BaseException e) {
+            return false;
+        }
+    }
+
+    public void processCancel(Long chatId) {
+        dealService.delete(dealService.findById(userService.getCurrentDealByChatId(chatId)));
+        userService.updateCurrentDealByChatId(null, chatId);
+        processToMainMenu(chatId);
     }
 
     private void process(Update update) {

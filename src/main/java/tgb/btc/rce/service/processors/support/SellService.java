@@ -272,6 +272,9 @@ public class SellService {
             case LITECOIN:
                 walletRequisites = BotVariablePropertiesUtil.getVariable(BotVariableType.WALLET_LTC);
                 break;
+            case USDT:
+                walletRequisites = BotVariablePropertiesUtil.getVariable(BotVariableType.WALLET_USDT);
+                break;
             default:
                 throw new BaseException("Не найдены реквизиты крипто кошелька.");
         }

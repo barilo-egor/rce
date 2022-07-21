@@ -47,7 +47,7 @@ public class DealReports extends Processor {
     @Override
     public void run(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
-        checkForCancel(update);
+        if (checkForCancel(update)) return;
         switch (userService.getStepByChatId(chatId)) {
             case 0:
                 responseSender.sendMessage(chatId, "Выберите период.",
@@ -63,7 +63,7 @@ public class DealReports extends Processor {
                                                 .text(MONTH)
                                                 .build(),
                                         ReplyButton.builder()
-                                                .text("Назад")
+                                                .text(Command.ADMIN_BACK.getText())
                                                 .build()
                                 )));
                 userService.nextStep(chatId, Command.DEAL_REPORTS);

@@ -445,7 +445,7 @@ public class ExchangeService {
     }
 
     public void askForReceipts(Update update) {
-        responseSender.sendMessage(UpdateUtil.getChatId(update), "Отправьте фото чека.",
+        responseSender.sendMessage(UpdateUtil.getChatId(update), "Отправьте фото чека. После загрузки всех файлов нажмите \"Продолжить\"",
                  KeyboardUtil.buildReply(List.of(ReplyButton.builder().text(Command.CONTINUE.getText()).build(),
                          ReplyButton.builder().text(Command.RECEIPTS_CANCEL_DEAL.getText()).build())));
     }
