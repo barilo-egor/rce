@@ -3,10 +3,10 @@ package tgb.btc.rce.enums;
 import tgb.btc.rce.exception.BaseException;
 
 public enum PaymentType {
-    RF_CARD("Карта РФ"),
-    QIWI("QIWI"),
-    TINKOFF("Tinkoff"),
-    SBERBANK("Сбербанк");
+    RF_CARD("\uD83D\uDCB3 Карта РФ СБП"),
+    QIWI("\uD83D\uDD35 QIWI"),
+    TINKOFF("\uD83D\uDFE1 Tinkoff"),
+    SBERBANK("\uD83D\uDFE2 Сбербанк");
 
     final String displayName;
 
