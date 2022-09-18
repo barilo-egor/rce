@@ -43,7 +43,7 @@ public class ResponseSender implements IResponseSender {
     }
 
     public Optional<Message> sendMessage(Long chatId, String text) {
-        return Optional.of(executeSendMessage(SendMessage.builder()
+        return Optional.ofNullable(executeSendMessage(SendMessage.builder()
                 .chatId(chatId.toString())
                 .text(text)
                 .build()));
@@ -51,7 +51,7 @@ public class ResponseSender implements IResponseSender {
 
 
     public Optional<Message> sendMessageThrows(Long chatId, String text) {
-        return Optional.of(executeSendMessage(SendMessage.builder()
+        return Optional.ofNullable(executeSendMessage(SendMessage.builder()
                 .chatId(chatId.toString())
                 .text(text)
                 .build()));
@@ -68,12 +68,12 @@ public class ResponseSender implements IResponseSender {
                 .replyMarkup(replyKeyboard)
                 .build();
         if (Strings.isNotEmpty(parseMode)) sendMessage.setParseMode(parseMode);
-        return Optional.of(executeSendMessage(sendMessage));
+        return Optional.ofNullable(executeSendMessage(sendMessage));
     }
 
     @Override
     public Optional<Message> sendMessage(SendMessage sendMessage) {
-        return Optional.of(executeSendMessage(sendMessage));
+        return Optional.ofNullable(executeSendMessage(sendMessage));
     }
 
     private Message executeSendMessage(SendMessage sendMessage) {
@@ -81,7 +81,7 @@ public class ResponseSender implements IResponseSender {
             return bot.execute(sendMessage);
         } catch (TelegramApiException e) {
             log.warn("Не получилось отправить sendMessage: " + sendMessage);
-            throw new BaseException("Не получилось отправить sendMessage - " + e.getMessage());
+            return null;
         }
     }
 

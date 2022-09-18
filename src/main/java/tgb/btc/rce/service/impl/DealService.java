@@ -49,6 +49,10 @@ public class DealService extends BasePersistService<Deal> {
         dealRepository.updateAmountByPid(amount, pid);
     }
 
+    public void updateDiscountByPid(BigDecimal discount, Long pid) {
+        dealRepository.updateDiscountByPid(discount, pid);
+    }
+
     public void updateCommissionByPid(BigDecimal commission, Long pid) {
         dealRepository.updateCommissionByPid(commission, pid);
     }
@@ -65,8 +69,8 @@ public class DealService extends BasePersistService<Deal> {
         return dealRepository.getDealsCountByUserChatId(chatId);
     }
 
-    public Long getNotCurrentDealsCountByUserChatId(Long chatId) {
-        return dealRepository.getNotCurrentDealsCountByUserChatId(chatId);
+    public Long getNotCurrentDealsCountByUserChatId(Long chatId, DealType dealType) {
+        return dealRepository.getNotCurrentDealsCountByUserChatId(chatId, dealType);
     }
 
     public Deal getByPid(Long pid) {
@@ -75,6 +79,10 @@ public class DealService extends BasePersistService<Deal> {
 
     public BigDecimal getAmountByPid(Long pid) {
         return dealRepository.getAmountByPid(pid);
+    }
+
+    public BigDecimal getDiscountByPid(Long pid) {
+        return dealRepository.getDiscountByPid(pid);
     }
 
     public BigDecimal getRoundedAmountByPid(Long pid) {
@@ -107,6 +115,10 @@ public class DealService extends BasePersistService<Deal> {
 
     public void updateIsActiveByPid(Boolean isActive, Long pid) {
         dealRepository.updateIsActiveByPid(isActive, pid);
+    }
+
+    public void updateIsCurrentByPid(Boolean isCurrent, Long pid) {
+        dealRepository.updateIsCurrentByPid(isCurrent, pid);
     }
 
     public Long getCountPassedByUserChatId(Long chatId) {

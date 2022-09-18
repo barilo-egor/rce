@@ -119,9 +119,6 @@ public final class ConverterUtil {
 
     public static BigDecimal getCommission(BigDecimal amount, CryptoCurrency cryptoCurrency, DealType dealType) {
         BigDecimal fix = BigDecimal.valueOf(BotVariablePropertiesUtil.getDouble(BotVariableType.getFix(cryptoCurrency, dealType)));
-        if (amount.doubleValue() <= fix.doubleValue()) {
-            return BigDecimal.valueOf(BotVariablePropertiesUtil.getDouble(BotVariableType.getFixCommission(cryptoCurrency, dealType)));
-        }
         BigDecimal currency;
         switch (cryptoCurrency) {
             case BITCOIN:
@@ -140,6 +137,9 @@ public final class ConverterUtil {
         BigDecimal course = BigDecimal.valueOf(BotVariablePropertiesUtil.getDouble(BotVariableType.USD_COURSE));
         BigDecimal usd = BigDecimalUtil.multiplyHalfUp(amount, currency);
         BigDecimal rub = BigDecimalUtil.multiplyHalfUp(usd, course);
+        if (rub.doubleValue() <= fix.doubleValue()) {
+            return BigDecimal.valueOf(BotVariablePropertiesUtil.getDouble(BotVariableType.getFixCommission(cryptoCurrency, dealType)));
+        }
         return BigDecimalUtil.multiplyHalfUp(rub, getPercentsFactor(percentCommission));
     }
 

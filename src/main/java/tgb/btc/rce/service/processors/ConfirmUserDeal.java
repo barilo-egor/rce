@@ -72,17 +72,39 @@ public class ConfirmUserDeal extends Processor {
         }
         switch (deal.getCryptoCurrency()) {
             case BITCOIN:
-                responseSender.sendMessage(deal.getUser().getChatId(),
-                        "Биткоин отправлен ✅\nhttps://www.blockchain.com/btc/address/" + deal.getWallet());
+                switch (deal.getDealType()) {
+                    case BUY:
+                        responseSender.sendMessage(deal.getUser().getChatId(),
+                                "Биткоин отправлен ✅\nhttps://www.blockchain.com/btc/address/" + deal.getWallet());
+                        break;
+                    case SELL:
+                        responseSender.sendMessage(deal.getUser().getChatId(),
+                                "Заявка обработана, деньги отправлены.");
+                        break;
+                }
                 break;
             case LITECOIN:
-                responseSender.sendMessage(deal.getUser().getChatId(),
-                        "Валюта отправлена.");
-                break;
+                switch (deal.getDealType()) {
+                    case BUY:
+                        responseSender.sendMessage(deal.getUser().getChatId(),
+                                "Валюта отправлена.");
+                        break;
+                    case SELL:
+                        responseSender.sendMessage(deal.getUser().getChatId(),
+                                "Заявка обработана, деньги отправлены.");
+                        break;
+                }
             case USDT:
-                responseSender.sendMessage(deal.getUser().getChatId(),
-                        "Валюта отправлена.");
-                break;
+                switch (deal.getDealType()) {
+                    case BUY:
+                        responseSender.sendMessage(deal.getUser().getChatId(),
+                                "Валюта отправлена.");
+                        break;
+                    case SELL:
+                        responseSender.sendMessage(deal.getUser().getChatId(),
+                                "Заявка обработана, деньги отправлены.");
+                        break;
+                }
         }
 
         Integer reviewPrise = BotVariablePropertiesUtil.getInt(BotVariableType.REVIEW_PRISE);

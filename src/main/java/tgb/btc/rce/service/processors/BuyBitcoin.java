@@ -122,7 +122,7 @@ public class BuyBitcoin extends Processor {
                 if (!exchangeService.saveSum(update)) return;
                 responseSender.deleteMessage(UpdateUtil.getChatId(update), Integer.parseInt(userService.getBufferVariable(chatId)));
                 if (dealService.getDealsCountByUserChatId(chatId) < 2) {
-                    exchangeService.askForUserPromoCode(chatId);
+                    exchangeService.askForUserPromoCode(chatId, false);
                 } else if (userService.getReferralBalanceByChatId(chatId) > 0) {
                     exchangeService.askForReferralDiscount(update);
                 } else {
@@ -132,7 +132,7 @@ public class BuyBitcoin extends Processor {
                 userService.nextStep(chatId);
                 break;
             case 3:
-                if (dealService.getDealsCountByUserChatId(chatId) < 2) {
+                if (dealService.getDealsCountByUserChatId(chatId) < 1) {
                     exchangeService.processPromoCode(update);
                 } else if (update.hasCallbackQuery()
                         && update.getCallbackQuery().getData().equals(ExchangeService.USE_REFERRAL_DISCOUNT)){
@@ -212,7 +212,7 @@ public class BuyBitcoin extends Processor {
                 break;
             case 3:
                 if (dealService.getDealsCountByUserChatId(chatId) < 1) {
-                    exchangeService.askForUserPromoCode(chatId);
+                    exchangeService.askForUserPromoCode(chatId, true);
                 } else if (userService.getReferralBalanceByChatId(chatId) > 0) {
                     exchangeService.askForReferralDiscount(update);
                 } else {

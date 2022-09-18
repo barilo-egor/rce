@@ -112,7 +112,7 @@ public class SellService {
 
         if (sum < minSum) {
             responseSender.sendMessage(chatId, "Минимальная сумма покупки " + cryptoCurrency.getDisplayName()
-                    + " = " + minSum + ".");
+                    + " = " + BigDecimal.valueOf(minSum).stripTrailingZeros().toPlainString() + ".");
             return;
         }
 
@@ -124,7 +124,7 @@ public class SellService {
     public void convertToRub(Update update, Long currentDealPid) {
         System.out.println();
         String query = update.getInlineQuery().getQuery();
-        Double sum;
+        BigDecimal sum;
         CryptoCurrency currency = null;
 
         if (!hasInputSum(query)) {
@@ -134,7 +134,7 @@ public class SellService {
 
         try {
             currency = CryptoCurrency.fromShortName(query.substring(0, query.indexOf("-")));
-            sum = NumberUtil.getInputDouble(query.substring(query.indexOf(" ") + 1));
+            sum = BigDecimal.valueOf(NumberUtil.getInputDouble(query.substring(query.indexOf(" ") + 1)));
         } catch (EnumTypeNotFoundException e) {
             askForCryptoSum(update);
             return;
@@ -145,18 +145,17 @@ public class SellService {
         }
 
         CryptoCurrency cryptoCurrency = dealService.getCryptoCurrencyByPid(currentDealPid);
-        double minSum = BigDecimalUtil.round(BotVariablePropertiesUtil.getMinSum(cryptoCurrency),
-                        cryptoCurrency.getScale())
-                .doubleValue();
+        BigDecimal minSum = BigDecimalUtil.round(BotVariablePropertiesUtil.getMinSum(cryptoCurrency),
+                        cryptoCurrency.getScale());
 
-        if (sum < minSum) {
+        if (sum.doubleValue() < minSum.doubleValue()) {
             sendInlineAnswer(update, "Минимальная сумма покупки " + cryptoCurrency.getDisplayName()
-                    + " = " + minSum + ".", false);
+                    + " = " + minSum.stripTrailingZeros().toPlainString() + ".", false);
             return;
         }
-        sum = BigDecimalUtil.round(sum, cryptoCurrency.getScale()).doubleValue();
-        double roundedConvertedSum = BigDecimalUtil.round(ConverterUtil.convertCryptoToRub(currency, sum, DealType.SELL), 0).doubleValue();
-        sendInlineAnswer(update, sum + " " + currency.getDisplayName() + " ~ " +
+        sum = BigDecimal.valueOf(BigDecimalUtil.round(sum, cryptoCurrency.getScale()).doubleValue());
+        double roundedConvertedSum = BigDecimalUtil.round(ConverterUtil.convertCryptoToRub(currency, sum.doubleValue(), DealType.SELL), 0).doubleValue();
+        sendInlineAnswer(update, sum.stripTrailingZeros().toPlainString() + " " + currency.getDisplayName() + " ~ " +
                 roundedConvertedSum, true);
     }
 
@@ -210,9 +209,9 @@ public class SellService {
     public void askForPaymentType(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
         Deal deal = dealService.getByPid(userService.getCurrentDealByChatId(chatId));
-        double dealCryptoAmount = deal.getCryptoAmount().setScale(deal.getCryptoCurrency().getScale(),
-                RoundingMode.HALF_UP).stripTrailingZeros().doubleValue();
-        double dealAmount = deal.getAmount().setScale(0, RoundingMode.HALF_UP).stripTrailingZeros().doubleValue();
+        BigDecimal dealCryptoAmount = deal.getCryptoAmount().setScale(deal.getCryptoCurrency().getScale(),
+                RoundingMode.HALF_UP).stripTrailingZeros();
+        BigDecimal dealAmount = deal.getAmount().setScale(0, RoundingMode.HALF_UP).stripTrailingZeros();
         String displayCurrencyName = deal.getCryptoCurrency().getDisplayName();
         String additionalText;
         try {
@@ -221,9 +220,9 @@ public class SellService {
             additionalText = StringUtils.EMPTY;
         }
         String message = "<b>Информация по заявке</b>\n"
-                + "\uD83D\uDCAC<b>Продажа " + displayCurrencyName + "</b>: " + dealCryptoAmount
+                + "\uD83D\uDCAC<b>Продажа " + displayCurrencyName + "</b>: " + dealCryptoAmount.stripTrailingZeros().toPlainString()
                 + "\n\n"
-                + "\uD83D\uDCB5<b>Сумма перевода</b>: " + dealAmount + "₽"
+                + "\uD83D\uDCB5<b>Сумма перевода</b>: " + dealAmount.stripTrailingZeros().toPlainString() + "₽"
                 + "\n\n"
                 + additionalText
                 + "<b>Выберите способ получения перевода:</b>";
@@ -288,13 +287,13 @@ public class SellService {
         String message = "✅<b>Заявка №</b><code>" + deal.getPid() + "</code> успешно создана."
                 + "\n\n"
                 + "<b>Продаете</b>: "
-                + BigDecimalUtil.round(deal.getCryptoAmount(), currency.getScale()).doubleValue() + " " + currency.getShortName()
+                + BigDecimalUtil.round(deal.getCryptoAmount(), currency.getScale()).stripTrailingZeros().toPlainString() + " " + currency.getShortName()
                 + "\n"
                 + "<b>" + deal.getPaymentType().getDisplayName() + " реквизиты</b>:" + "<code>" + deal.getWallet() + "</code>"
                 + "\n\n"
                 + "Ваш ранг: " + rank.getSmile() + ", скидка " + rank.getPercent() + "%"
                 + "\n\n"
-                + "\uD83D\uDCB5<b>Получаете</b>: <code>" + BigDecimalUtil.round(deal.getAmount(), 0).doubleValue() + "₽</code>"
+                + "\uD83D\uDCB5<b>Получаете</b>: <code>" + BigDecimalUtil.round(deal.getAmount(), 0).stripTrailingZeros().toPlainString() + "₽</code>"
                 + "\n"
                 + "<b>Резквизиты для перевода " + currency.getShortName() + ":</b>"
                 + "\n\n"
