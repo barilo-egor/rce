@@ -133,7 +133,7 @@ public class SellService {
         }
 
         try {
-            currency = CryptoCurrency.fromShortName(query.substring(0, query.indexOf(" ")));
+            currency = CryptoCurrency.fromShortName(query.substring(0, query.indexOf("-")));
             sum = NumberUtil.getInputDouble(query.substring(query.indexOf(" ") + 1));
         } catch (EnumTypeNotFoundException e) {
             askForCryptoSum(update);

@@ -108,8 +108,9 @@ public class BuyBitcoin extends Processor {
                     return;
                 }
                 CryptoCurrency currency = CryptoCurrency.valueOf(update.getCallbackQuery().getData());
-                dealService.updateCryptoCurrencyByPid(userService.getCurrentDealByChatId(chatId), currency);
-                exchangeService.askForSum(chatId, currency);
+                Long currentDealPid = userService.getCurrentDealByChatId(chatId);
+                dealService.updateCryptoCurrencyByPid(currentDealPid, currency);
+                exchangeService.askForSum(chatId, currency, dealService.getDealTypeByPid(currentDealPid));
                 userService.nextStep(chatId);
                 break;
             case 2:
@@ -139,7 +140,6 @@ public class BuyBitcoin extends Processor {
                 }
                 userService.nextStep(chatId);
                 exchangeService.askForWallet(update);
-                responseSender.deleteMessage(UpdateUtil.getChatId(update), UpdateUtil.getMessage(update).getMessageId());
                 break;
             case 4:
                 exchangeService.saveWallet(update);
@@ -179,7 +179,6 @@ public class BuyBitcoin extends Processor {
                     paymentReceipts.add(paymentReceipt);
                     deal.setPaymentReceipts(paymentReceipts);
                     dealService.save(deal);
-                    exchangeService.askForReceipts(update);
                 } else if (update.hasMessage() && update.getMessage().hasDocument()) {
                     Deal deal = dealService.getByPid(userService.getCurrentDealByChatId(chatId));
                     PaymentReceipt paymentReceipt = paymentReceiptsService.save(PaymentReceipt.builder()
@@ -190,18 +189,9 @@ public class BuyBitcoin extends Processor {
                     paymentReceipts.add(paymentReceipt);
                     deal.setPaymentReceipts(paymentReceipts);
                     dealService.save(deal);
-                    exchangeService.askForReceipts(update);
-                } else if (update.hasMessage() && update.getMessage().hasText()) {
-                    String text = update.getMessage().getText();
-                    if (text.equals(Command.CONTINUE.getText())) {
-                        exchangeService.confirmDeal(update);
-                        processToMainMenu(chatId);
-                    } else if (text.equals(Command.RECEIPTS_CANCEL_DEAL.getText())) {
-                        dealService.delete(dealService.findById(userService.getCurrentDealByChatId(chatId)));
-                        userService.updateCurrentDealByChatId(null, chatId);
-                        processToMainMenu(chatId);
-                    }
                 }
+                exchangeService.confirmDeal(update);
+                processToMainMenu(chatId);
                 break;
         }
     }
@@ -210,13 +200,15 @@ public class BuyBitcoin extends Processor {
         Long chatId = UpdateUtil.getChatId(update);
         userService.previousStep(chatId);
 
+        Long currentDealPid;
         switch (userService.getStepByChatId(chatId)) {
             case 1:
                 exchangeService.askForCurrency(chatId);
                 break;
             case 2:
+                currentDealPid = userService.getCurrentDealByChatId(chatId);
                 exchangeService.askForSum(chatId,
-                        dealService.getCryptoCurrencyByPid(userService.getCurrentDealByChatId(chatId)));
+                        dealService.getCryptoCurrencyByPid(currentDealPid), dealService.getDealTypeByPid(currentDealPid));
                 break;
             case 3:
                 if (dealService.getDealsCountByUserChatId(chatId) < 1) {
@@ -224,8 +216,9 @@ public class BuyBitcoin extends Processor {
                 } else if (userService.getReferralBalanceByChatId(chatId) > 0) {
                     exchangeService.askForReferralDiscount(update);
                 } else {
+                    currentDealPid = userService.getCurrentDealByChatId(chatId);
                     exchangeService.askForSum(chatId,
-                            dealService.getCryptoCurrencyByPid(userService.getCurrentDealByChatId(chatId)));
+                            dealService.getCryptoCurrencyByPid(currentDealPid), dealService.getDealTypeByPid(currentDealPid));
                     userService.previousStep(chatId);
                 }
                 break;

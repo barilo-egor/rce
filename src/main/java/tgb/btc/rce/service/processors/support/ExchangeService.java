@@ -92,21 +92,22 @@ public class ExchangeService {
     }
 
 
-    public void askForSum(Long chatId, CryptoCurrency currency) {
+    public void askForSum(Long chatId, CryptoCurrency currency, DealType dealType) {
         Optional<Message> optionalMessage = responseSender.sendMessage(chatId,
                 String.format(MessagePropertiesUtil.getMessage(PropertiesMessage.DEAL_INPUT_SUM),
                         dealService.getCryptoCurrencyByPid(
-                                userService.getCurrentDealByChatId(chatId))), getCalculatorKeyboard(currency));
+                                userService.getCurrentDealByChatId(chatId))), getCalculatorKeyboard(currency, dealType));
         optionalMessage.ifPresent(message ->
                 userService.updateBufferVariable(chatId, message.getMessageId().toString()));
     }
 
-    private ReplyKeyboard getCalculatorKeyboard(CryptoCurrency currency) {
+    private ReplyKeyboard getCalculatorKeyboard(CryptoCurrency currency, DealType dealType) {
+        String operation = DealType.BUY.equals(dealType) ? "-buy" : "-sell";
         return KeyboardUtil.buildInlineDiff(List.of(
                 InlineButton.builder()
                         .inlineType(InlineType.SWITCH_INLINE_QUERY_CURRENT_CHAT)
                         .text("Калькулятор")
-                        .data(currency.getShortName() + " ")
+                        .data(currency.getShortName() + operation + " ")
                         .build(),
                 KeyboardUtil.INLINE_BACK_BUTTON), 1);
     }
@@ -142,7 +143,7 @@ public class ExchangeService {
         }
 
         try {
-            currency = CryptoCurrency.fromShortName(query.substring(0, query.indexOf(" ")));
+            currency = CryptoCurrency.fromShortName(query.substring(0, query.indexOf("-")));
             log.info("Сумма с калькулятора: \"" + query + "\"");
             sum = NumberUtil.getInputDouble(query.substring(query.indexOf(" ") + 1));
         } catch (EnumTypeNotFoundException e) {
@@ -448,8 +449,7 @@ public class ExchangeService {
     }
 
     public void askForReceipts(Update update) {
-        responseSender.sendMessage(UpdateUtil.getChatId(update), "Отправьте фото чека. После загрузки всех файлов нажмите \"Продолжить\"",
-                 KeyboardUtil.buildReply(List.of(ReplyButton.builder().text(Command.CONTINUE.getText()).build(),
-                         ReplyButton.builder().text(Command.RECEIPTS_CANCEL_DEAL.getText()).build())));
+        responseSender.sendMessage(UpdateUtil.getChatId(update), "Отправьте скрин перевода. ",
+                 KeyboardUtil.buildReply(List.of(ReplyButton.builder().text(Command.RECEIPTS_CANCEL_DEAL.getText()).build())));
     }
 }

@@ -33,8 +33,9 @@ public class AdditionalVerification extends Processor {
         userService.nextStep(userChatId, Command.USER_ADDITIONAL_VERIFICATION);
         userService.updateBufferVariable(userChatId, dealPid.toString());
         responseSender.sendMessage(userChatId,
-                "Необходимо пройти дополнительную верификацию. Предоставьте фото карты с которой была оплата, " +
-                        "либо чека на фоне переписки с ботом для завершения сделки.",
+                "⚠️Уважаемый клиент, необходимо пройти дополнительную верификацию. Предоставьте фото карты " +
+                        "с которой была оплата на фоне переписки с ботом, либо бумажного чека на фоне переписки с " +
+                        "ботом для завершения сделки. (Проверка проходится только при первом обмене)",
                 KeyboardUtil.buildReply(List.of(ReplyButton.builder().text("Отказаться от верификации").build())));
         responseSender.sendMessage(UpdateUtil.getChatId(update), "Дополнительная верификация запрошена.");
     }
