@@ -84,21 +84,22 @@ public class SellService {
     }
 
 
-    public void askForSum(Long chatId, CryptoCurrency currency) {
+    public void askForSum(Long chatId, CryptoCurrency currency, DealType dealType) {
         Optional<Message> optionalMessage = responseSender.sendMessage(chatId,
                 String.format(MessagePropertiesUtil.getMessage(PropertiesMessage.DEAL_INPUT_SUM),
                         dealService.getCryptoCurrencyByPid(
-                                userService.getCurrentDealByChatId(chatId))), getCalculatorKeyboard(currency));
+                                userService.getCurrentDealByChatId(chatId))), getCalculatorKeyboard(currency, dealType));
         optionalMessage.ifPresent(message ->
                 userService.updateBufferVariable(chatId, message.getMessageId().toString()));
     }
 
-    private ReplyKeyboard getCalculatorKeyboard(CryptoCurrency currency) {
+    private ReplyKeyboard getCalculatorKeyboard(CryptoCurrency currency, DealType dealType) {
+        String operation = DealType.BUY.equals(dealType) ? "-buy" : "-sell";
         return KeyboardUtil.buildInlineDiff(List.of(
                 InlineButton.builder()
                         .inlineType(InlineType.SWITCH_INLINE_QUERY_CURRENT_CHAT)
                         .text("Калькулятор")
-                        .data(currency.getShortName() + " ")
+                        .data(currency.getShortName() + operation + " ")
                         .build(),
                 KeyboardUtil.INLINE_BACK_BUTTON), 1);
     }

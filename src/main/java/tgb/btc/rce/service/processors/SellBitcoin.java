@@ -111,8 +111,9 @@ public class SellBitcoin extends Processor {
                     return;
                 }
                 CryptoCurrency currency = CryptoCurrency.valueOf(update.getCallbackQuery().getData());
-                dealService.updateCryptoCurrencyByPid(userService.getCurrentDealByChatId(chatId), currency);
-                sellService.askForSum(chatId, currency);
+                Long currentDealPid = userService.getCurrentDealByChatId(chatId);
+                dealService.updateCryptoCurrencyByPid(currentDealPid, currency);
+                sellService.askForSum(chatId, currency, dealService.getDealTypeByPid(currentDealPid));
                 userService.nextStep(chatId);
                 break;
             case 2:
@@ -201,8 +202,9 @@ public class SellBitcoin extends Processor {
                 sellService.askForCurrency(chatId);
                 break;
             case 2:
+                Long currentDealPid = userService.getCurrentDealByChatId(chatId);
                 sellService.askForSum(chatId,
-                        dealService.getCryptoCurrencyByPid(userService.getCurrentDealByChatId(chatId)));
+                        dealService.getCryptoCurrencyByPid(currentDealPid), dealService.getDealTypeByPid(currentDealPid));
                 break;
             case 3:
                 sellService.askForPaymentType(update);
