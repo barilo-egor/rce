@@ -87,7 +87,7 @@ public class ConfirmUserDeal extends Processor {
                 switch (deal.getDealType()) {
                     case BUY:
                         responseSender.sendMessage(deal.getUser().getChatId(),
-                                "Валюта отправлена.");
+                                "Валюта отправлена.\nhttps://blockchair.com/ru/litecoin/address/" + deal.getWallet());
                         break;
                     case SELL:
                         responseSender.sendMessage(deal.getUser().getChatId(),
@@ -98,7 +98,7 @@ public class ConfirmUserDeal extends Processor {
                 switch (deal.getDealType()) {
                     case BUY:
                         responseSender.sendMessage(deal.getUser().getChatId(),
-                                "Валюта отправлена.");
+                                "Валюта отправлена.https://tronscan.io/#/address/" + deal.getWallet());
                         break;
                     case SELL:
                         responseSender.sendMessage(deal.getUser().getChatId(),

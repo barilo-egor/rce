@@ -37,8 +37,8 @@ public class DealSupportService {
                 deal.getPaymentType().getDisplayName(),
                 deal.getWallet(), StringUtils.defaultIfEmpty(userService.getUsernameByChatId(user.getChatId()), BotStringConstants.ABSENT),
                 dealService.getCountPassedByUserChatId(user.getChatId()), user.getChatId(), deal.getCryptoCurrency().getShortName(),
-                deal.getCryptoAmount().setScale(8, RoundingMode.FLOOR).stripTrailingZeros().doubleValue(),
-                deal.getAmount().setScale(0, RoundingMode.HALF_UP).stripTrailingZeros().doubleValue());
+                deal.getCryptoAmount().setScale(8, RoundingMode.FLOOR).stripTrailingZeros().toPlainString(),
+                deal.getAmount().setScale(0, RoundingMode.HALF_UP).stripTrailingZeros().toPlainString());
     }
 
     public ReplyKeyboard dealToStringButtons(Long pid) {

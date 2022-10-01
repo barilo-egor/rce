@@ -159,7 +159,7 @@ public final class ConverterUtil {
     public static BigDecimal getLtcCurrency() {
         JSONObject currency = readJsonFromUrl(ConverterUtil.LTC_USD_URL_BINANCE);
         Object obj = currency.get("price");
-        return parse(1.0, CryptoCurrency.LITECOIN);
+        return parse(obj, CryptoCurrency.LITECOIN);
     }
 
     @SneakyThrows
