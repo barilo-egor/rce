@@ -40,7 +40,10 @@ public class ShowDeal extends Processor {
     public void run(Update update) {
         if (!update.hasCallbackQuery()) return;
         Long chatId = UpdateUtil.getChatId(update);
-        responseSender.deleteMessage(chatId, UpdateUtil.getMessage(update).getMessageId());
+        try {
+            responseSender.deleteMessage(chatId, UpdateUtil.getMessage(update).getMessageId());
+        } catch (Exception ignored) {
+        }
         Long dealPid = Long.parseLong(update.getCallbackQuery().getData().split(BotStringConstants.CALLBACK_DATA_SPLITTER)[1]);
         String dealInfo = dealSupportService.dealToString(dealPid);
         responseSender.sendMessage(chatId, dealInfo, dealSupportService.dealToStringButtons(dealPid));

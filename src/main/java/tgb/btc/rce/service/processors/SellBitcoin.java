@@ -166,7 +166,6 @@ public class SellBitcoin extends Processor {
                     paymentReceipts.add(paymentReceipt);
                     deal.setPaymentReceipts(paymentReceipts);
                     dealService.save(deal);
-                    exchangeService.askForReceipts(update);
                 } else if (update.hasMessage() && update.getMessage().hasDocument()) {
                     Deal deal = dealService.getByPid(userService.getCurrentDealByChatId(chatId));
                     PaymentReceipt paymentReceipt = paymentReceiptsService.save(PaymentReceipt.builder()
@@ -177,18 +176,9 @@ public class SellBitcoin extends Processor {
                     paymentReceipts.add(paymentReceipt);
                     deal.setPaymentReceipts(paymentReceipts);
                     dealService.save(deal);
-                    exchangeService.askForReceipts(update);
-                } else if (update.hasMessage() && update.getMessage().hasText()) {
-                    String text = update.getMessage().getText();
-                    if (text.equals(Command.CONTINUE.getText())) {
-                        sellService.confirmDeal(update);
-                        processToMainMenu(chatId);
-                    } else if (text.equals(Command.RECEIPTS_CANCEL_DEAL.getText())) {
-                        dealService.delete(dealService.findById(userService.getCurrentDealByChatId(chatId)));
-                        userService.updateCurrentDealByChatId(null, chatId);
-                        processToMainMenu(chatId);
-                    }
                 }
+                sellService.confirmDeal(update);
+                processToMainMenu(chatId);
                 break;
         }
     }
