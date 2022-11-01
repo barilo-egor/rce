@@ -126,6 +126,7 @@ public class DealReports extends Processor {
             cell.setCellValue(deal.getPaymentType().getDisplayName());
             cell = row.createCell(5);
             cell.setCellValue(deal.getUser().getChatId());
+            i++;
         }
         String fileName = LocalDate.now() + ".xlsx";
         try {

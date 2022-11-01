@@ -1,6 +1,7 @@
 package tgb.btc.rce.service.processors;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.math3.util.MathUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.annotation.CommandProcessor;
@@ -20,6 +21,7 @@ import tgb.btc.rce.util.MessagePropertiesUtil;
 import tgb.btc.rce.util.UpdateUtil;
 
 import java.util.Objects;
+import java.util.Random;
 
 @CommandProcessor(command = Command.LOTTERY)
 @Slf4j
@@ -46,7 +48,7 @@ public class Lottery extends Processor {
 
     private void processLottery(Update update, User user) {
         float probability = BotVariablePropertiesUtil.getFloat(BotVariableType.PROBABILITY);
-        if (getRandomBoolean(probability)) {
+        if (((double) new Random().nextInt(101) < ((double) probability))) {
             responseSender.sendBotMessage(botMessageService.findByType(BotMessageType.WON_LOTTERY), user.getChatId(),
                     MenuFactory.getLink(BotStringConstants.WRITE_TO_OPERATOR_BUTTON_LABEL,
                             BotVariablePropertiesUtil.getVariable(BotVariableType.OPERATOR_LINK)));
@@ -61,6 +63,6 @@ public class Lottery extends Processor {
 
     private boolean getRandomBoolean(float probability) { //0.0 to 99.9
         double randomValue = Math.random() * probability;  //0.0 to 99.9
-        return randomValue >= probability;
+        return randomValue <= probability;
     }
 }

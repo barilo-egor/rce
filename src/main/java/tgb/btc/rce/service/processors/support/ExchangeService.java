@@ -324,7 +324,7 @@ public class ExchangeService {
         } catch (BaseException e) {
             additionalText = StringUtils.EMPTY;
         }
-        if (deal.getUsedReferralDiscount()) {
+        if (BooleanUtils.isTrue(deal.getUsedReferralDiscount())) {
             Integer referralBalance = userService.getReferralBalanceByChatId(UpdateUtil.getChatId(update));
             if (referralBalance <= deal.getAmount().intValue()) {
                 dealAmount = deal.getAmount().subtract(BigDecimal.valueOf(referralBalance));

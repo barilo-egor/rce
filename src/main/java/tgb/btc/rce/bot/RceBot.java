@@ -1,6 +1,7 @@
 package tgb.btc.rce.bot;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -55,7 +56,7 @@ public class RceBot extends TelegramLongPollingBot {
             try {
                 execute(SendMessage.builder()
                         .chatId(UpdateUtil.getChatId(update).toString())
-                        .text("Что-то пошло не так: " + e.getMessage())
+                        .text("Что-то пошло не так: " + e.getMessage() + "\n" + ExceptionUtils.getFullStackTrace(e))
                         .build());
                 log.error("Ошибка", e);
             } catch (TelegramApiException ignored) {
