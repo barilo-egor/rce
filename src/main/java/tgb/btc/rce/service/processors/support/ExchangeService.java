@@ -324,6 +324,14 @@ public class ExchangeService {
         } catch (BaseException e) {
             additionalText = StringUtils.EMPTY;
         }
+        if (deal.getUsedReferralDiscount()) {
+            Integer referralBalance = userService.getReferralBalanceByChatId(UpdateUtil.getChatId(update));
+            if (referralBalance <= deal.getAmount().intValue()) {
+                dealAmount = deal.getAmount().subtract(BigDecimal.valueOf(referralBalance));
+            } else {
+                dealAmount = BigDecimal.ZERO;
+            }
+        }
         String message = "<b>" +
                 "" +
                 "\uD83D\uDCACИнформация по заявке</b>\n"
@@ -377,6 +385,17 @@ public class ExchangeService {
                         + BotVariablePropertiesUtil.getVariable(BotVariableType.PROMO_CODE_NAME) + "\n\n"
                 : "\n\n";
 
+        BigDecimal dealAmount = deal.getAmount();
+
+        if (deal.getUsedReferralDiscount()) {
+            Integer referralBalance = userService.getReferralBalanceByChatId(UpdateUtil.getChatId(update));
+            if (referralBalance <= deal.getAmount().intValue()) {
+                dealAmount = deal.getAmount().subtract(BigDecimal.valueOf(referralBalance));
+            } else {
+                dealAmount = BigDecimal.ZERO;
+            }
+        }
+
         String message = "✅<b>Заявка №</b><code>" + deal.getPid() + "</code> успешно создана."
                 + "\n\n"
                 + "<b>Получаете</b>: "
@@ -386,7 +405,7 @@ public class ExchangeService {
                 + "\n\n"
                 + "Ваш ранг: " + rank.getSmile() + ", скидка " + rank.getPercent() + "%"
                 + "\n\n"
-                + "<b>\uD83D\uDCB5Сумма к оплате</b>: <code>" + BigDecimalUtil.round(deal.getAmount(), 0).stripTrailingZeros().toPlainString() + "₽</code>"
+                + "<b>\uD83D\uDCB5Сумма к оплате</b>: <code>" + BigDecimalUtil.round(dealAmount, 0).stripTrailingZeros().toPlainString() + "₽</code>"
                 + "\n"
                 + "<b>Резквизиты для оплаты:</b>"
                 + "\n\n"
@@ -419,6 +438,16 @@ public class ExchangeService {
         Long currentDealPid = userService.getCurrentDealByChatId(chatId);
         dealService.updateIsActiveByPid(true, currentDealPid);
         dealService.updateIsCurrentByPid(false, currentDealPid);
+        Deal deal = dealService.getByPid(currentDealPid);
+        if (deal.getUsedReferralDiscount()) {
+            Integer referralBalance = userService.getReferralBalanceByChatId(UpdateUtil.getChatId(update));
+            if (referralBalance <= deal.getAmount().intValue()) {
+                deal.setAmount(deal.getAmount().subtract(BigDecimal.valueOf(referralBalance)));
+            } else {
+                deal.setAmount(BigDecimal.ZERO);
+            }
+            dealService.save(deal);
+        }
         userService.setDefaultValues(chatId);
         responseSender.sendMessage(chatId, MessagePropertiesUtil.getMessage(PropertiesMessage.DEAL_CONFIRMED));
         userService.getAdminsChatIds().forEach(adminChatId ->
