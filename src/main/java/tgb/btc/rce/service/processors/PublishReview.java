@@ -1,5 +1,6 @@
 package tgb.btc.rce.service.processors;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -15,7 +16,10 @@ import tgb.btc.rce.service.impl.UserService;
 import tgb.btc.rce.util.BotVariablePropertiesUtil;
 import tgb.btc.rce.util.UpdateUtil;
 
+import java.math.BigDecimal;
+
 @CommandProcessor(command = Command.PUBLISH_REVIEW)
+@Slf4j
 public class PublishReview extends Processor {
 
     private final ReviewService reviewService;
@@ -42,6 +46,10 @@ public class PublishReview extends Processor {
         review.setPublished(true);
         reviewService.save(review);
         Integer reviewPrise = BotVariablePropertiesUtil.getInt(BotVariableType.REVIEW_PRISE);
+        Integer referralBalance = userService.getReferralBalanceByChatId(review.getChatId());
+        int total = referralBalance + reviewPrise;
+        log.info("Обновление реф баланса за отзыв : chatId = " + review.getChatId() + "; reviewPrise = "
+                + reviewPrise + "; referralBalance = " + referralBalance + "; total = " + total);
         userService.updateReferralBalanceByChatId(userService.getReferralBalanceByChatId(review.getChatId())
                 + reviewPrise, review.getChatId());
         responseSender.sendMessage(review.getChatId(), "Ваш отзыв опубликован.\n\nНа ваш реферальный баланс зачислено "

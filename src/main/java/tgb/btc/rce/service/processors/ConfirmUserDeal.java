@@ -1,5 +1,6 @@
 package tgb.btc.rce.service.processors;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -21,6 +22,7 @@ import java.util.List;
 import java.util.Objects;
 
 @CommandProcessor(command = Command.CONFIRM_USER_DEAL)
+@Slf4j
 public class ConfirmUserDeal extends Processor {
 
     private final DealService dealService;
@@ -43,8 +45,10 @@ public class ConfirmUserDeal extends Processor {
         deal.setCurrent(false);
 
         if (BooleanUtils.isTrue(deal.getUsedReferralDiscount())) {
-            Integer referralBalance = userService.getReferralBalanceByChatId(UpdateUtil.getChatId(update));
+            Integer referralBalance = user.getReferralBalance();
 
+            log.info("Снятие с реф баланса в учет скидки. chatId = " + user.getChatId() + ", referralBalance = "
+                    + referralBalance);
             BigDecimal sumWithDiscount;
             if (referralBalance <= deal.getAmount().intValue()) {
                 sumWithDiscount = deal.getAmount().subtract(BigDecimal.valueOf(referralBalance));
@@ -53,7 +57,8 @@ public class ConfirmUserDeal extends Processor {
                 sumWithDiscount = BigDecimal.ZERO;
                 referralBalance = referralBalance - deal.getAmount().intValue();
             }
-
+            log.info("Подсчет total после использования скидки с реф баланса = " + referralBalance +
+                    ", сумма устанавливается юзеру чат айди = " + user.getChatId());
             user.setReferralBalance(referralBalance);
             deal.setAmount(sumWithDiscount);
         }
@@ -67,7 +72,12 @@ public class ConfirmUserDeal extends Processor {
             BigDecimal sumToAdd = BigDecimalUtil.multiplyHalfUp(deal.getAmount(),
                     ConverterUtil.getPercentsFactor(
                             BigDecimal.valueOf(BotVariablePropertiesUtil.getDouble(BotVariableType.REFERRAL_PERCENT))));
-            userService.updateReferralBalanceByChatId(refUser.getReferralBalance() + sumToAdd.intValue(), refUser.getChatId());
+            Integer total = refUser.getReferralBalance() + sumToAdd.intValue();
+            log.info("Подтверждение сделки, зачисление на реф баланс пользователю. Админ чат айди = "
+                    + UpdateUtil.getChatId(update) + ". refUserChatId = " + refUser.getChatId() + ", sumToAdd = "
+                    + sumToAdd.toPlainString() + ", refUser.referralBalance = " + refUser.getReferralBalance().toString()
+                    + ", total = " + total);
+            userService.updateReferralBalanceByChatId(total, refUser.getChatId());
             userService.updateChargesByChatId(refUser.getCharges() + sumToAdd.intValue(), refUser.getChatId());
         }
         switch (deal.getCryptoCurrency()) {

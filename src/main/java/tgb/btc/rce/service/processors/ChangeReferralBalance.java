@@ -1,5 +1,6 @@
 package tgb.btc.rce.service.processors;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.annotation.CommandProcessor;
@@ -16,6 +17,7 @@ import tgb.btc.rce.vo.ReplyButton;
 import java.util.List;
 
 @CommandProcessor(command = Command.CHANGE_REFERRAL_BALANCE)
+@Slf4j
 public class ChangeReferralBalance extends Processor {
 
     @Autowired
@@ -49,19 +51,29 @@ public class ChangeReferralBalance extends Processor {
                 String text = UpdateUtil.getMessageText(update);
                 Long userChatId = Long.parseLong(userService.getBufferVariable(chatId));
                 if (text.startsWith("+")) {
-                    userService.updateReferralBalanceByChatId(
-                            userService.getReferralBalanceByChatId(userChatId)
-                                    + Integer.parseInt(text.substring(1)), userChatId);
+                    Integer userReferralBalance = userService.getReferralBalanceByChatId(userChatId);
+                    Integer enteredSum = Integer.parseInt(text.substring(1));
+                    Integer total = userReferralBalance + enteredSum;
+                    log.info("Админ с чат айди " + chatId + " добавил на баланс пользователю с чат айди " + userChatId
+                            + " - " + enteredSum + " рублей. enteredSum = " + enteredSum + "; userReferralBalance = " + userReferralBalance + "; total = " + total);
+                    userService.updateReferralBalanceByChatId(total, userChatId);
                     responseSender.sendMessage(userChatId, "На ваш реферальный баланс было зачислено " + Integer.parseInt(text.substring(1)) + "₽.");
                 }
                 else if (text.startsWith("-")) {
+                    Integer userReferralBalance = userService.getReferralBalanceByChatId(userChatId);
+                    Integer enteredSum = Integer.parseInt(text.substring(1));
+                    int total = userReferralBalance - enteredSum;
+                    log.info("Админ с чат айди " + chatId + " убрал с баланса пользователю с чат айди " + userChatId
+                            + " - " + enteredSum + " рублей. enteredSum = " + enteredSum + "; userReferralBalance = " + userReferralBalance + "; total = " + total);
                     userService.updateReferralBalanceByChatId(
-                            userService.getReferralBalanceByChatId(userChatId)
-                                    - Integer.parseInt(text.substring(1)), userChatId);
+                            userReferralBalance
+                                    - enteredSum, userChatId);
                     responseSender.sendMessage(userChatId, "С вашего реферального баланса списано " + Integer.parseInt(text.substring(1)) + "₽.");
-                }
-                else
+                } else {
+                    log.info("Админ с чат айди " + chatId + " засетал баланс пользователю с чат айди " + userChatId
+                            + " - " + Integer.parseInt(text) + " рублей");
                     userService.updateReferralBalanceByChatId(Integer.parseInt(text), userChatId);
+                }
                 responseSender.sendMessage(chatId, "Баланс изменен.");
                 processToAdminMainPanel(chatId);
                 break;
