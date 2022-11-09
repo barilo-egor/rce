@@ -49,6 +49,9 @@ public class SellBitcoin extends Processor {
             else process(update);
         } catch (NumberParseException e) {
             processCancel(chatId);
+        } catch (BaseException e) {
+            responseSender.sendMessage(chatId, e.getMessage());
+            processCancel(chatId);
         }
     }
 
@@ -111,6 +114,7 @@ public class SellBitcoin extends Processor {
                     return;
                 }
                 CryptoCurrency currency = CryptoCurrency.valueOf(update.getCallbackQuery().getData());
+                if (CryptoCurrency.USDT.equals(currency)) throw new BaseException("Проблема при получении курса. Создание заявки для этой валюты пока что невозможно.");
                 Long currentDealPid = userService.getCurrentDealByChatId(chatId);
                 dealService.updateCryptoCurrencyByPid(currentDealPid, currency);
                 sellService.askForSum(chatId, currency, dealService.getDealTypeByPid(currentDealPid));

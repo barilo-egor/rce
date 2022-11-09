@@ -189,6 +189,8 @@ public final class ConverterUtil {
             BufferedReader rd = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
             String jsonText = readAll(rd);
             return new JSONObject(jsonText);
+        } catch (Exception ex) {
+            throw new BaseException("Проблема при получении курса. Создание заявки для этой валюты пока что невозможно.");
         }
     }
 
