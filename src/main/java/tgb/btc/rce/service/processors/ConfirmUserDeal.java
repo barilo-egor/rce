@@ -65,6 +65,7 @@ public class ConfirmUserDeal extends Processor {
         dealService.save(deal);
         if (Objects.nonNull(user.getLotteryCount())) user.setLotteryCount(user.getLotteryCount() + 1);
         else user.setLotteryCount(1);
+        user.setCurrentDeal(null);
         userService.save(user);
         responseSender.deleteMessage(UpdateUtil.getChatId(update), UpdateUtil.getMessage(update).getMessageId());
         if (user.getFromChatId() != null) {

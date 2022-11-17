@@ -448,6 +448,7 @@ public class ExchangeService {
             }
             dealService.save(deal);
         }
+        userService.updateCurrentDealByChatId(null, chatId);
         userService.setDefaultValues(chatId);
         responseSender.sendMessage(chatId, MessagePropertiesUtil.getMessage(PropertiesMessage.DEAL_CONFIRMED));
         userService.getAdminsChatIds().forEach(adminChatId ->

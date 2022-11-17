@@ -325,6 +325,7 @@ public class SellService {
     public void confirmDeal(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
         dealService.updateIsActiveByPid(true, userService.getCurrentDealByChatId(chatId));
+        userService.updateCurrentDealByChatId(null, chatId);
         userService.setDefaultValues(chatId);
         responseSender.sendMessage(chatId, MessagePropertiesUtil.getMessage(PropertiesMessage.DEAL_CONFIRMED));
         userService.getAdminsChatIds().forEach(adminChatId ->
