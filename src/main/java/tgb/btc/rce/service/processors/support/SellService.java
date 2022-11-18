@@ -324,8 +324,8 @@ public class SellService {
 
     public void confirmDeal(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
-        dealService.updateIsActiveByPid(true, userService.getCurrentDealByChatId(chatId));
-        userService.updateCurrentDealByChatId(null, chatId);
+        Long currentDealPid = userService.getCurrentDealByChatId(chatId);
+        dealService.updateIsActiveByPid(true, currentDealPid);
         userService.setDefaultValues(chatId);
         responseSender.sendMessage(chatId, MessagePropertiesUtil.getMessage(PropertiesMessage.DEAL_CONFIRMED));
         userService.getAdminsChatIds().forEach(adminChatId ->
@@ -334,8 +334,9 @@ public class SellService {
                                 InlineButton.builder()
                                         .text(Command.SHOW_DEAL.getText())
                                         .data(Command.SHOW_DEAL.getText() + BotStringConstants.CALLBACK_DATA_SPLITTER
-                                                + userService.getCurrentDealByChatId(chatId))
+                                                + currentDealPid)
                                         .build()
                         ))));
+        userService.updateCurrentDealByChatId(null, chatId);
     }
 }

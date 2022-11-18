@@ -448,7 +448,6 @@ public class ExchangeService {
             }
             dealService.save(deal);
         }
-        userService.updateCurrentDealByChatId(null, chatId);
         userService.setDefaultValues(chatId);
         responseSender.sendMessage(chatId, MessagePropertiesUtil.getMessage(PropertiesMessage.DEAL_CONFIRMED));
         userService.getAdminsChatIds().forEach(adminChatId ->
@@ -457,9 +456,10 @@ public class ExchangeService {
                         InlineButton.builder()
                                 .text(Command.SHOW_DEAL.getText())
                                 .data(Command.SHOW_DEAL.getText() + BotStringConstants.CALLBACK_DATA_SPLITTER
-                                        + userService.getCurrentDealByChatId(chatId))
+                                        + currentDealPid)
                                 .build()
                 ))));
+        userService.updateCurrentDealByChatId(null, chatId);
     }
 
     public void askForReferralDiscount(Update update) {
