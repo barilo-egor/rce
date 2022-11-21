@@ -42,7 +42,8 @@ public enum BotVariableType {
     REFERRAL_PERCENT("Процент рефералов", "referral.percent"),
     REFERRAL_MIN_SUM("Мин.сумма вывода", "referral.min.sum"),
     CHANNEL_CHAT_ID("Айди канала", "channel.chat.id"),
-    REVIEW_PRISE("Вознаграждение", "review.prise");
+    REVIEW_PRISE("Вознаграждение", "review.prise"),
+    USDT_COURSE("Курс USDT", "usdt.course");
 
     final String displayName;
     final String key;

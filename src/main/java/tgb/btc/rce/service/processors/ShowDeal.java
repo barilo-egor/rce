@@ -8,6 +8,7 @@ import org.telegram.telegrambots.meta.api.objects.media.InputMedia;
 import org.telegram.telegrambots.meta.api.objects.media.InputMediaDocument;
 import org.telegram.telegrambots.meta.api.objects.media.InputMediaPhoto;
 import tgb.btc.rce.annotation.CommandProcessor;
+import tgb.btc.rce.bean.Deal;
 import tgb.btc.rce.bean.PaymentReceipt;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
@@ -22,6 +23,7 @@ import tgb.btc.rce.util.UpdateUtil;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 @CommandProcessor(command = Command.SHOW_DEAL)
 public class ShowDeal extends Processor {
@@ -45,6 +47,11 @@ public class ShowDeal extends Processor {
         } catch (Exception ignored) {
         }
         Long dealPid = Long.parseLong(update.getCallbackQuery().getData().split(BotStringConstants.CALLBACK_DATA_SPLITTER)[1]);
+        Deal deal = dealService.getByPid(dealPid);
+        if (Objects.isNull(deal)) {
+            responseSender.sendMessage(chatId, "Заявка была удалена.");
+            return;
+        }
         String dealInfo = dealSupportService.dealToString(dealPid);
         responseSender.sendMessage(chatId, dealInfo, dealSupportService.dealToStringButtons(dealPid));
         List<PaymentReceipt> paymentReceipts = dealService.getPaymentReceipts(dealPid);

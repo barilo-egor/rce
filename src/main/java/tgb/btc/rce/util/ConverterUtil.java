@@ -149,9 +149,8 @@ public final class ConverterUtil {
 
     @SneakyThrows
     public static BigDecimal getUsdtCurrency() {
-        JSONObject currency = readJsonFromUrl(ConverterUtil.USDT_USD_RATE);
-        Object obj = currency.get("last");
-        return parse(obj, CryptoCurrency.USDT);
+        String currency = BotVariablePropertiesUtil.getVariable(BotVariableType.USDT_COURSE);
+        return parse(currency, CryptoCurrency.USDT);
     }
 
 
