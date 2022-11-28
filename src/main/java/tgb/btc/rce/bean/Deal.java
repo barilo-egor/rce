@@ -80,10 +80,17 @@ public class Deal extends BasePersist {
     @Column(name = "DISCOUNT")
     private BigDecimal discount;
 
+    @Column(name = "ORIGINAL_PRICE")
+    private BigDecimal originalPrice;
+
     public Deal() {
     }
 
-    public Deal(User user, LocalDateTime dateTime, LocalDate date, PaymentType paymentType, BigDecimal cryptoAmount, BigDecimal amount, String wallet, String verificationPhoto, String userCheck, Boolean isActive, Boolean isPassed, Boolean isCurrent, Boolean isUsedPromo, Boolean isUsedReferralDiscount, CryptoCurrency cryptoCurrency, DealType dealType, BigDecimal commission, List<PaymentReceipt> paymentReceipts, BigDecimal discount) {
+    public Deal(User user, LocalDateTime dateTime, LocalDate date, PaymentType paymentType, BigDecimal cryptoAmount,
+                BigDecimal amount, String wallet, String verificationPhoto, String userCheck, Boolean isActive,
+                Boolean isPassed, Boolean isCurrent, Boolean isUsedPromo, Boolean isUsedReferralDiscount,
+                CryptoCurrency cryptoCurrency, DealType dealType, BigDecimal commission,
+                List<PaymentReceipt> paymentReceipts, BigDecimal discount, BigDecimal originalPrice) {
         this.user = user;
         this.dateTime = dateTime;
         this.date = date;
@@ -103,6 +110,7 @@ public class Deal extends BasePersist {
         this.commission = commission;
         this.paymentReceipts = paymentReceipts;
         this.discount = discount;
+        this.originalPrice = originalPrice;
     }
 
     public String getUserCheck() {
@@ -257,18 +265,26 @@ public class Deal extends BasePersist {
         this.discount = discount;
     }
 
+    public BigDecimal getOriginalPrice() {
+        return originalPrice;
+    }
+
+    public void setOriginalPrice(BigDecimal originalPrice) {
+        this.originalPrice = originalPrice;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         Deal deal = (Deal) o;
-        return Objects.equals(user, deal.user) && Objects.equals(dateTime, deal.dateTime) && Objects.equals(date, deal.date) && paymentType == deal.paymentType && Objects.equals(cryptoAmount, deal.cryptoAmount) && Objects.equals(amount, deal.amount) && Objects.equals(wallet, deal.wallet) && Objects.equals(verificationPhoto, deal.verificationPhoto) && Objects.equals(userCheck, deal.userCheck) && Objects.equals(isActive, deal.isActive) && Objects.equals(isPassed, deal.isPassed) && Objects.equals(isCurrent, deal.isCurrent) && Objects.equals(isUsedPromo, deal.isUsedPromo) && Objects.equals(isUsedReferralDiscount, deal.isUsedReferralDiscount) && cryptoCurrency == deal.cryptoCurrency && dealType == deal.dealType && Objects.equals(commission, deal.commission) && Objects.equals(paymentReceipts, deal.paymentReceipts) && Objects.equals(discount, deal.discount);
+        return Objects.equals(user, deal.user) && Objects.equals(dateTime, deal.dateTime) && Objects.equals(date, deal.date) && paymentType == deal.paymentType && Objects.equals(cryptoAmount, deal.cryptoAmount) && Objects.equals(amount, deal.amount) && Objects.equals(wallet, deal.wallet) && Objects.equals(verificationPhoto, deal.verificationPhoto) && Objects.equals(userCheck, deal.userCheck) && Objects.equals(isActive, deal.isActive) && Objects.equals(isPassed, deal.isPassed) && Objects.equals(isCurrent, deal.isCurrent) && Objects.equals(isUsedPromo, deal.isUsedPromo) && Objects.equals(isUsedReferralDiscount, deal.isUsedReferralDiscount) && cryptoCurrency == deal.cryptoCurrency && dealType == deal.dealType && Objects.equals(commission, deal.commission) && Objects.equals(paymentReceipts, deal.paymentReceipts) && Objects.equals(discount, deal.discount) && Objects.equals(originalPrice, deal.originalPrice);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), user, dateTime, date, paymentType, cryptoAmount, amount, wallet, verificationPhoto, userCheck, isActive, isPassed, isCurrent, isUsedPromo, isUsedReferralDiscount, cryptoCurrency, dealType, commission, paymentReceipts, discount);
+        return Objects.hash(super.hashCode(), user, dateTime, date, paymentType, cryptoAmount, amount, wallet, verificationPhoto, userCheck, isActive, isPassed, isCurrent, isUsedPromo, isUsedReferralDiscount, cryptoCurrency, dealType, commission, paymentReceipts, discount, originalPrice);
     }
 
     @Override

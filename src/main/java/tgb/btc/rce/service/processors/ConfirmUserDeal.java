@@ -18,6 +18,7 @@ import tgb.btc.rce.util.*;
 import tgb.btc.rce.vo.InlineButton;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 import java.util.Objects;
 
@@ -50,12 +51,13 @@ public class ConfirmUserDeal extends Processor {
             log.info("Снятие с реф баланса в учет скидки. chatId = " + user.getChatId() + ", referralBalance = "
                     + referralBalance);
             BigDecimal sumWithDiscount;
+            log.info("Deal pid =" + deal.getPid() + ", amount=" + deal.getAmount().toPlainString() + ", int amount = " + deal.getAmount().intValue());
             if (referralBalance <= deal.getAmount().intValue()) {
                 sumWithDiscount = deal.getAmount().subtract(BigDecimal.valueOf(referralBalance));
                 referralBalance = BigDecimal.ZERO.intValue();
             } else {
                 sumWithDiscount = BigDecimal.ZERO;
-                referralBalance = referralBalance - deal.getAmount().intValue();
+                referralBalance = BigDecimal.valueOf(referralBalance).subtract(deal.getOriginalPrice()).setScale(0, RoundingMode.HALF_UP).intValue();
             }
             log.info("Подсчет total после использования скидки с реф баланса = " + referralBalance +
                     ", сумма устанавливается юзеру чат айди = " + user.getChatId());

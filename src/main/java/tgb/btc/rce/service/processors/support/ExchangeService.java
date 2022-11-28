@@ -326,6 +326,7 @@ public class ExchangeService {
         }
         if (BooleanUtils.isTrue(deal.getUsedReferralDiscount())) {
             Integer referralBalance = userService.getReferralBalanceByChatId(UpdateUtil.getChatId(update));
+            deal.setOriginalPrice(deal.getAmount());
             if (referralBalance <= deal.getAmount().intValue()) {
                 dealAmount = deal.getAmount().subtract(BigDecimal.valueOf(referralBalance));
             } else {
@@ -389,6 +390,7 @@ public class ExchangeService {
 
         if (BooleanUtils.isTrue(deal.getUsedReferralDiscount())) {
             Integer referralBalance = userService.getReferralBalanceByChatId(UpdateUtil.getChatId(update));
+            deal.setOriginalPrice(deal.getAmount());
             if (referralBalance <= deal.getAmount().intValue()) {
                 dealAmount = deal.getAmount().subtract(BigDecimal.valueOf(referralBalance));
             } else {
@@ -441,6 +443,7 @@ public class ExchangeService {
         Deal deal = dealService.getByPid(currentDealPid);
         if (BooleanUtils.isTrue(deal.getUsedReferralDiscount())) {
             Integer referralBalance = userService.getReferralBalanceByChatId(UpdateUtil.getChatId(update));
+            deal.setOriginalPrice(deal.getAmount());
             if (referralBalance <= deal.getAmount().intValue()) {
                 deal.setAmount(deal.getAmount().subtract(BigDecimal.valueOf(referralBalance)));
             } else {
