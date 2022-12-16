@@ -52,8 +52,8 @@ public class ConfirmUserDeal extends Processor {
                     + referralBalance);
             BigDecimal sumWithDiscount;
             log.info("Deal pid =" + deal.getPid() + ", amount=" + deal.getAmount().toPlainString() + ", int amount = " + deal.getAmount().intValue());
-            if (referralBalance <= deal.getAmount().intValue()) {
-                sumWithDiscount = deal.getAmount().subtract(BigDecimal.valueOf(referralBalance));
+            if (referralBalance <= deal.getOriginalPrice().intValue()) {
+                sumWithDiscount = deal.getOriginalPrice().subtract(BigDecimal.valueOf(referralBalance));
                 referralBalance = BigDecimal.ZERO.intValue();
             } else {
                 sumWithDiscount = BigDecimal.ZERO;
