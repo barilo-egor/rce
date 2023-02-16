@@ -88,7 +88,7 @@ public class ConfirmUserDeal extends Processor {
                 switch (deal.getDealType()) {
                     case BUY:
                         responseSender.sendMessage(deal.getUser().getChatId(),
-                                "Биткоин отправлен ✅\nhttps://www.blockchain.com/btc/address/" + deal.getWallet());
+                                "Биткоин отправлен ✅\nhttps://blockchair.com/bitcoin/address/" + deal.getWallet());
                         break;
                     case SELL:
                         responseSender.sendMessage(deal.getUser().getChatId(),
@@ -107,6 +107,7 @@ public class ConfirmUserDeal extends Processor {
                                 "Заявка обработана, деньги отправлены.");
                         break;
                 }
+                break;
             case USDT:
                 switch (deal.getDealType()) {
                     case BUY:
@@ -118,6 +119,7 @@ public class ConfirmUserDeal extends Processor {
                                 "Заявка обработана, деньги отправлены.");
                         break;
                 }
+                break;
         }
 
         Integer reviewPrise = BotVariablePropertiesUtil.getInt(BotVariableType.REVIEW_PRISE);
