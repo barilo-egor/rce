@@ -28,43 +28,20 @@ public class UpdateDispatcher implements IUpdateDispatcher {
     }
 
     public void dispatch(Update update) {
-        if (update.hasChannelPost()) {
-            log.info("Сообщение из канала: " + update.getChannelPost().getChatId());
-        }
         Long chatId = UpdateUtil.getChatId(update);
-        if (update.hasInlineQuery() && userService.getStepByChatId(chatId).equals(User.DEFAULT_STEP)) {
-            dispatchByInlineQuery(update);
-            return;
-        }
         if (!userService.existByChatId(chatId)) userService.register(update);
         if (userService.getIsBannedByChatId(chatId)) return;
-        Command command;
-        try {
-            if (!isOn() && !userService.isAdminByChatId(chatId)) {
-                command = Command.BOT_OFFED;
-            } else {
-                command = getCommand(update);
-            }
-        } catch (BaseException e) {
-            command = Command.START;
-        }
+        Command command = getCommand(update);
         ((Processor) applicationContext.getBean(CommandProcessorLoader.getByCommand(command))).run(update);
-    }
-
-    public void dispatchByInlineQuery(Update update) {
-        String query = update.getInlineQuery().getQuery();
-        if (query.startsWith(BotPropertiesUtil.getProperty("bot.link"))) {
-            ((Processor) applicationContext.getBean(CommandProcessorLoader.getByCommand(Command.SEND_LINK))).run(update);
-        }
     }
 
     private Command getCommand(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
-        if (update.hasChannelPost()) {
-            return Command.CHANNEL_POST;
-        }
-        Command command = userService.getStepByChatId(chatId).equals(User.DEFAULT_STEP) || CommandUtil.isStartCommand(update) ?
-                Command.fromUpdate(update) : userService.getCommandByChatId(chatId);
+        Command command;
+        if (!isOn() && !userService.isAdminByChatId(chatId)) return Command.BOT_OFFED;
+        if (userService.getStepByChatId(chatId).equals(User.DEFAULT_STEP) || CommandUtil.isStartCommand(update))
+            command = Command.fromUpdate(update);
+        else command = userService.getCommandByChatId(chatId);
         if (!hasAccess(command, chatId)) return Command.START;
         else return command;
     }

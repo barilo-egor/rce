@@ -11,13 +11,9 @@ public final class CommandUtil {
 
     public static boolean isStartCommand(Update update) {
         Command command;
-        try {
-            if (update.hasCallbackQuery() || (update.hasMessage() && update.getMessage().hasText()))
-                command = Command.fromUpdate(update);
-            else return false;
-        } catch (BaseException e) {
-            return false;
-        }
+        if (UpdateType.CALLBACK_QUERY.equals(UpdateType.fromUpdate(update)) || UpdateType.MESSAGE.equals(UpdateType.fromUpdate(update)))
+            command = Command.fromUpdate(update);
+        else return false;
         return UpdateType.MESSAGE.equals(UpdateType.fromUpdate(update))
                 && Command.START.equals(command);
     }

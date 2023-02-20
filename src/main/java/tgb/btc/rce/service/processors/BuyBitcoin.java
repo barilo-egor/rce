@@ -20,6 +20,7 @@ import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.InlineButton;
 
+import java.util.Arrays;
 import java.util.List;
 
 @CommandProcessor(command = Command.BUY_BITCOIN)
@@ -28,6 +29,9 @@ public class BuyBitcoin extends Processor {
     private final ExchangeService exchangeService;
     private final DealService dealService;
     private final PaymentReceiptsService paymentReceiptsService;
+
+    private static final List<Command> MAIN_MENU_COMMANDS = Arrays.asList(Command.BUY_BITCOIN, Command.SELL_BITCOIN,
+            Command.CONTACTS, Command.DRAWS, Command.REFERRAL, Command.ADMIN_PANEL);
 
     @Autowired
     public BuyBitcoin(IResponseSender responseSender, UserService userService, ExchangeService exchangeService,
@@ -54,13 +58,8 @@ public class BuyBitcoin extends Processor {
 
     private boolean isMainMenuCommand(Update update) {
         try {
-            return userService.getStepByChatId(UpdateUtil.getChatId(update)) != User.DEFAULT_STEP && update.hasMessage() && update.getMessage().hasText()
-                    && (Command.BUY_BITCOIN.equals(Command.fromUpdate(update))
-                    || Command.SELL_BITCOIN.equals(Command.fromUpdate(update))
-                    || Command.CONTACTS.equals(Command.fromUpdate(update))
-                    || Command.DRAWS.equals(Command.fromUpdate(update))
-                    || Command.REFERRAL.equals(Command.fromUpdate(update))
-                    || Command.ADMIN_PANEL.equals(Command.fromUpdate(update)));
+            return !userService.isDefaultStep(UpdateUtil.getChatId(update)) && UpdateUtil.hasMessageText(update)
+                    && MAIN_MENU_COMMANDS.stream().anyMatch(command -> command.equals(Command.fromUpdate(update)));
         } catch (BaseException e) {
             return false;
         }

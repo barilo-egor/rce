@@ -3,6 +3,7 @@ package tgb.btc.rce.enums;
 import lombok.extern.slf4j.Slf4j;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.exception.BaseException;
+import tgb.btc.rce.util.BotPropertiesUtil;
 
 import java.util.Arrays;
 
@@ -40,7 +41,7 @@ public enum Command {
     /** REFERRAL */
     WITHDRAWAL_OF_FUNDS("withdrawal", false),
     SHOW_WITHDRAWAL_REQUEST("show_withdrawal", false),
-    SEND_LINK("send_link", false),
+    SEND_LINK(BotPropertiesUtil.getProperty("bot.link"), false),
     HIDE_WITHDRAWAL("hide_withdrawal", true),
     CHANGE_REFERRAL_BALANCE("change_ref", true),
     DELETE_WITHDRAWAL_REQUEST("withdrawal_delete", false),
@@ -126,8 +127,12 @@ public enum Command {
                 return findByText(update.getMessage().getText());
             case CALLBACK_QUERY:
                 return findByText(update.getCallbackQuery().getData());
+            case INLINE_QUERY:
+                return findByText(update.getInlineQuery().getQuery());
+            case CHANNEL_POST:
+                return Command.CHANNEL_POST;
             default:
-                throw new BaseException("Тип апдейта не найден: " + update);
+                return Command.START;
         }
     }
 

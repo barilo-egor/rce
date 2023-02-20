@@ -36,6 +36,10 @@ public class UserService extends BasePersistService<User> {
         return userRepository.getStepByChatId(chatId);
     }
 
+    public boolean isDefaultStep(Long chatId) {
+        return User.DEFAULT_STEP == getStepByChatId(chatId);
+    }
+
     public Command getCommandByChatId(Long chatId) {
         return userRepository.getCommandByChatId(chatId);
     }
