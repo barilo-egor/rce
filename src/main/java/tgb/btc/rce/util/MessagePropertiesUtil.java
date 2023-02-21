@@ -36,6 +36,17 @@ public class MessagePropertiesUtil {
         return text;
     }
 
+    public static String getMessage(String key) {
+        String text;
+        try {
+            text = messageProperties.getProperty(key).replaceAll("<ln>", "\n");
+        } catch (Exception e) {
+            text = getErrorText(key);
+        }
+        if (Objects.isNull(text)) text = getErrorText(key);
+        return text;
+    }
+
     private static String getErrorText(String key) {
         return String.format(errorMessage, key);
     }

@@ -1,23 +1,19 @@
 package tgb.btc.rce.util;
 
-import org.reflections.Reflections;
-import org.reflections.scanners.Scanners;
-import org.reflections.util.ClasspathHelper;
-import org.reflections.util.ConfigurationBuilder;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.exception.BaseException;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.processors.*;
 
-import java.lang.reflect.Field;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
 
 public final class CommandProcessorLoader {
     private CommandProcessorLoader() {
     }
 
-    private static Set<Class<?>> commandProcessors = new HashSet<>();
+    private static final Set<Class<?>> commandProcessors = new HashSet<>();
 
     public static final String PROCESSORS_PACKAGE = "tgb.btc.rce.service.processors";
 
@@ -84,7 +80,7 @@ public final class CommandProcessorLoader {
                 .findFirst()
                 .ifPresent(processor -> {
                     throw new BaseException("Процессор " + processor.getSimpleName()
-                            + " не наследует асбтрактный класс Processor");
+                            + " не наследует абстрактный класс Processor");
                 });
     }
 

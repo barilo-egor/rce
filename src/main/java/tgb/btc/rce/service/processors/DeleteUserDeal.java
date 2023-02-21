@@ -9,6 +9,7 @@ import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.impl.DealService;
 import tgb.btc.rce.service.impl.UserService;
+import tgb.btc.rce.util.MessagePropertiesUtil;
 import tgb.btc.rce.util.UpdateUtil;
 
 @CommandProcessor(command = Command.DELETE_USER_DEAL)
@@ -28,7 +29,10 @@ public class DeleteUserDeal extends Processor {
         Long chatId = UpdateUtil.getChatId(update);
         Long dealPid = Long.parseLong(
                 update.getCallbackQuery().getData().split(BotStringConstants.CALLBACK_DATA_SPLITTER)[1]);
+        Long userChatId = dealService.getUserChatIdByDealPid(dealPid);
         dealService.deleteById(dealPid);
         responseSender.sendMessage(chatId, "Заявка №" + dealPid + " удалена.");
+        responseSender.deleteMessage(chatId, update.getCallbackQuery().getMessage().getMessageId());
+        responseSender.sendMessage(userChatId, MessagePropertiesUtil.getMessage("deal.deleted.by.admin"));
     }
 }

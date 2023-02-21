@@ -31,6 +31,10 @@ public class Start extends Processor {
     @Override
     public void run(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
+        run(chatId);
+    }
+
+    public void run(Long chatId) {
         userService.updateIsActiveByChatId(true, chatId);
         Long currentDealPid = userService.getCurrentDealByChatId(chatId);
         if (Objects.nonNull(currentDealPid) && dealService.existByPid(currentDealPid)) {

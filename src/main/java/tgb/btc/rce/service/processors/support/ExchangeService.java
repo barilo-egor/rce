@@ -1,6 +1,5 @@
 package tgb.btc.rce.service.processors.support;
 
-import com.google.common.primitives.Booleans;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
@@ -20,6 +19,7 @@ import tgb.btc.rce.exception.BaseException;
 import tgb.btc.rce.exception.EnumTypeNotFoundException;
 import tgb.btc.rce.exception.NumberParseException;
 import tgb.btc.rce.service.impl.*;
+import tgb.btc.rce.service.schedule.DealDeleteScheduler;
 import tgb.btc.rce.util.*;
 import tgb.btc.rce.vo.InlineButton;
 import tgb.btc.rce.vo.ReplyButton;
@@ -212,10 +212,7 @@ public class ExchangeService {
                         BotVariablePropertiesUtil.getDouble(BotVariableType.PROMO_CODE_DISCOUNT))
                 .setScale(0, RoundingMode.HALF_UP);
 
-        BigDecimal sumWithDiscount = deal.getAmount().subtract(BigDecimalUtil.multiplyHalfUp(deal.getCommission(),
-                        ConverterUtil.getPercentsFactor(discount)))
-                .setScale(0, RoundingMode.HALF_UP)
-                .stripTrailingZeros();
+        BigDecimal sumWithDiscount;
 
         if (back) {
             sumWithDiscount = deal.getAmount().setScale(0, RoundingMode.HALF_UP).stripTrailingZeros();
@@ -432,7 +429,8 @@ public class ExchangeService {
                         .inlineType(InlineType.CALLBACK_DATA)
                         .build()
         ));
-        responseSender.sendMessage(chatId, message, keyboard, "HTML");
+        Optional<Message> optionalMessage = responseSender.sendMessage(chatId, message, keyboard, "HTML");
+        DealDeleteScheduler.addNewCryptoDeal(deal.getPid(), optionalMessage.map(Message::getMessageId).orElse(null));
     }
 
     public void confirmDeal(Update update) {

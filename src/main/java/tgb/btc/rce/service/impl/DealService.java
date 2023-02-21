@@ -129,7 +129,7 @@ public class DealService extends BasePersistService<Deal> {
         return dealRepository.getActiveDealPids();
     }
 
-    public Long getUserByDealPid(Long pid) {
+    public Long getUserChatIdByDealPid(Long pid) {
         return dealRepository.getUserChatIdByDealPid(pid);
     }
 

@@ -29,7 +29,7 @@ public class AdditionalVerification extends Processor {
     @Override
     public void run(Update update) {
         Long dealPid = Long.parseLong(update.getCallbackQuery().getData().split(BotStringConstants.CALLBACK_DATA_SPLITTER)[1]);
-        Long userChatId = dealService.getUserByDealPid(dealPid);
+        Long userChatId = dealService.getUserChatIdByDealPid(dealPid);
         userService.nextStep(userChatId, Command.USER_ADDITIONAL_VERIFICATION);
         userService.updateBufferVariable(userChatId, dealPid.toString());
         responseSender.sendMessage(userChatId,

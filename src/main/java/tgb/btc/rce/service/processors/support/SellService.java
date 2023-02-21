@@ -17,6 +17,7 @@ import tgb.btc.rce.exception.BaseException;
 import tgb.btc.rce.exception.EnumTypeNotFoundException;
 import tgb.btc.rce.exception.NumberParseException;
 import tgb.btc.rce.service.impl.*;
+import tgb.btc.rce.service.schedule.DealDeleteScheduler;
 import tgb.btc.rce.util.*;
 import tgb.btc.rce.vo.InlineButton;
 
@@ -319,7 +320,8 @@ public class SellService {
                         .inlineType(InlineType.CALLBACK_DATA)
                         .build()
         ));
-        responseSender.sendMessage(chatId, message, keyboard, "HTML");
+        Optional<Message> optionalMessage = responseSender.sendMessage(chatId, message, keyboard, "HTML");
+        DealDeleteScheduler.addNewCryptoDeal(deal.getPid(), optionalMessage.map(Message::getMessageId).orElse(null));
     }
 
     public void confirmDeal(Update update) {

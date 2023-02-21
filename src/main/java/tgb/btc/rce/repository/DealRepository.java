@@ -12,6 +12,7 @@ import tgb.btc.rce.enums.PaymentType;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -108,4 +109,7 @@ public interface DealRepository extends BaseRepository<Deal> {
 
     @Query("select dealType from Deal where pid=:pid")
     DealType getDealTypeByPid(@Param("pid") Long pid);
+
+    @Query(value = "select dateTime from Deal where pid=:pid")
+    LocalDateTime getDateTimeByPid(Long pid);
 }

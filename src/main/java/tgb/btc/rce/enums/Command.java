@@ -2,7 +2,6 @@ package tgb.btc.rce.enums;
 
 import lombok.extern.slf4j.Slf4j;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import tgb.btc.rce.exception.BaseException;
 import tgb.btc.rce.util.BotPropertiesUtil;
 
 import java.util.Arrays;
@@ -140,6 +139,6 @@ public enum Command {
         return Arrays.stream(Command.values())
                 .filter(command -> value.startsWith(command.getText()))
                 .findFirst()
-                .orElseThrow(() -> new BaseException("Команда для \"" + value + "\" не найдена."));
+                .orElse(null);
     }
 }
