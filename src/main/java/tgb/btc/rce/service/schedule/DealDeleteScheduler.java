@@ -2,6 +2,7 @@ package tgb.btc.rce.service.schedule;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import tgb.btc.rce.enums.BotVariableType;
@@ -50,6 +51,7 @@ public class DealDeleteScheduler {
     }
 
     @Scheduled(fixedDelay = 10000)
+    @Async
     public void deleteOverdueDeals() {
         if (NEW_CRYPTO_DEALS_PIDS.isEmpty()) return;
         Map<Long, Integer> bufferDealsPids = new HashMap<>(NEW_CRYPTO_DEALS_PIDS);

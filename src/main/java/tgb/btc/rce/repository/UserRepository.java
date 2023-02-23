@@ -10,6 +10,7 @@ import tgb.btc.rce.bean.ReferralUser;
 import tgb.btc.rce.bean.User;
 import tgb.btc.rce.enums.Command;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -103,4 +104,11 @@ public interface UserRepository extends BaseRepository<User> {
 
     @Query("select charges from User where chatId=:chatId")
     Integer getChargesByChatId(@Param("chatId") Long chatId);
+
+    /**
+     * Reports
+     */
+
+    @Query("select count(pid) from User where registrationDate between :localDateTime1 and :localDateTime2")
+    Integer count(LocalDateTime localDateTime1, LocalDateTime localDateTime2);
 }

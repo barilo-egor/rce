@@ -24,7 +24,9 @@ public final class ConverterUtil {
 
     public static final String USDT_USD_RATE = "https://www.bitstamp.net/api/v2/ticker/usdtusd/"; // last
 
-    public static final String BTC_USD_URL_BLOCKCHAIN = "https://blockchain.info/ticker"; // last
+//    public static final String BTC_USD_URL_BLOCKCHAIN = "https://blockchain.info/ticker"; // last
+
+    public static final String BTC_USD_URL_BLOCKCHAIN = "https://api.blockchain.com/v3/exchange/tickers/BTC-USD"; // last
 
 
     public static final int MAX_BTC_AMOUNT = 1;
@@ -164,7 +166,7 @@ public final class ConverterUtil {
     @SneakyThrows
     public static BigDecimal getBtcCurrency() {
         JSONObject currency = readJsonFromUrl(ConverterUtil.BTC_USD_URL_BLOCKCHAIN);
-        Object obj = currency.getJSONObject("USD").get("last");
+        Object obj = currency.get("last_trade_price");
         return parse(obj, CryptoCurrency.BITCOIN);
     }
 

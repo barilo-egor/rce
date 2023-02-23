@@ -112,4 +112,14 @@ public interface DealRepository extends BaseRepository<Deal> {
 
     @Query(value = "select dateTime from Deal where pid=:pid")
     LocalDateTime getDateTimeByPid(Long pid);
+
+    /**
+     * Reports
+     */
+
+    @Query(value = "select sum(cryptoAmount) from Deal where isPassed=:isPassed and dealType=:dealType and date=:date and cryptoCurrency=:cryptoCurrency")
+    BigDecimal getCryptoAmountSum(boolean isPassed, DealType dealType, LocalDate date, CryptoCurrency cryptoCurrency);
+
+    @Query(value = "select sum(amount) from Deal where isPassed=:isPassed and dealType=:dealType and date=:date and cryptoCurrency=:cryptoCurrency")
+    BigDecimal getAmountSum(boolean isPassed, DealType dealType, LocalDate date, CryptoCurrency cryptoCurrency);
 }
