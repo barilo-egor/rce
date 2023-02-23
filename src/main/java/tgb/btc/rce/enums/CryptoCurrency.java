@@ -5,7 +5,7 @@ import tgb.btc.rce.exception.EnumTypeNotFoundException;
 import java.util.Arrays;
 
 public enum CryptoCurrency {
-    BITCOIN("Bitcoin", "btc", Double.class, 8),
+    BITCOIN("Bitcoin", "btc", String.class, 8),
     LITECOIN("Litecoin", "ltc", String.class, 4),
     USDT("USDT(trc20)", "usdt", String.class, 1);
 

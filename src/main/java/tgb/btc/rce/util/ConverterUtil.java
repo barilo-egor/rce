@@ -163,8 +163,8 @@ public final class ConverterUtil {
 
     @SneakyThrows
     public static BigDecimal getBtcCurrency() {
-        JSONObject currency = readJsonFromUrl(ConverterUtil.BTC_USD_URL_BLOCKCHAIN);
-        Object obj = currency.getJSONObject("USD").get("last");
+        JSONObject currency = readJsonFromUrl(ConverterUtil.BTC_USD_URL_BINANCE);
+        Object obj = currency.get("price");
         return parse(obj, CryptoCurrency.BITCOIN);
     }
 
