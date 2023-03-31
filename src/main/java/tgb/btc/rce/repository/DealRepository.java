@@ -121,5 +121,11 @@ public interface DealRepository extends BaseRepository<Deal> {
     BigDecimal getCryptoAmountSum(boolean isPassed, DealType dealType, LocalDate date, CryptoCurrency cryptoCurrency);
 
     @Query(value = "select sum(amount) from Deal where isPassed=:isPassed and dealType=:dealType and date=:date and cryptoCurrency=:cryptoCurrency")
-    BigDecimal getAmountSum(boolean isPassed, DealType dealType, LocalDate date, CryptoCurrency cryptoCurrency);
+    BigDecimal getTotalAmountSum(boolean isPassed, DealType dealType, LocalDate date, CryptoCurrency cryptoCurrency);
+
+    @Query(value = "select sum(amount) from Deal where isPassed=:isPassed and dealType=:dealType and (date between :dateFrom and :dateTo) and cryptoCurrency=:cryptoCurrency")
+    BigDecimal getTotalAmountSum(boolean isPassed, DealType dealType, LocalDate dateFrom, LocalDate dateTo, CryptoCurrency cryptoCurrency);
+
+    @Query(value = "select count(pid) from Deal where user.chatId=:chatId and isPassed=true")
+    Integer getCountPassedByChatId(Long chatId);
 }

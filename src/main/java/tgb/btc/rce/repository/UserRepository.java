@@ -5,7 +5,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import tgb.btc.rce.bean.Deal;
 import tgb.btc.rce.bean.ReferralUser;
 import tgb.btc.rce.bean.User;
 import tgb.btc.rce.enums.Command;
@@ -110,5 +109,8 @@ public interface UserRepository extends BaseRepository<User> {
      */
 
     @Query("select count(pid) from User where registrationDate between :localDateTime1 and :localDateTime2")
-    Integer count(LocalDateTime localDateTime1, LocalDateTime localDateTime2);
+    Integer countByRegistrationDate(LocalDateTime localDateTime1, LocalDateTime localDateTime2);
+
+    @Query("select chatId from User where registrationDate between :localDateTime1 and :localDateTime2 and fromChatId is not null")
+    List<Long> getChatIdsByRegistrationDateAndFromChatIdNotNull(LocalDateTime localDateTime1, LocalDateTime localDateTime2);
 }
