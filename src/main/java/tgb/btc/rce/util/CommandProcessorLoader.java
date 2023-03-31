@@ -75,6 +75,7 @@ public final class CommandProcessorLoader {
         commandProcessors.add(UsersReport.class);
         commandProcessors.add(WithdrawalOfFunds.class);
         commandProcessors.add(UsersDealsReport.class);
+        commandProcessors.add(ChecksForDate.class);
         commandProcessors.stream()
                 .filter(processor -> !extendsProcessor(processor))
                 .findFirst()
