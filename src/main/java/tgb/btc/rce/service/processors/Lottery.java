@@ -1,6 +1,7 @@
 package tgb.btc.rce.service.processors;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.math3.util.MathUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -11,6 +12,7 @@ import tgb.btc.rce.enums.BotMessageType;
 import tgb.btc.rce.enums.BotVariableType;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.PropertiesMessage;
+import tgb.btc.rce.repository.UserRepository;
 import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.impl.BotMessageService;
@@ -28,6 +30,13 @@ import java.util.Random;
 public class Lottery extends Processor {
 
     private final BotMessageService botMessageService;
+
+    private UserRepository userRepository;
+
+    @Autowired
+    public void setUserRepository(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     @Autowired
     public Lottery(IResponseSender responseSender, UserService userService, BotMessageService botMessageService) {
@@ -52,6 +61,14 @@ public class Lottery extends Processor {
             responseSender.sendBotMessage(botMessageService.findByType(BotMessageType.WON_LOTTERY), user.getChatId(),
                     MenuFactory.getLink(BotStringConstants.WRITE_TO_OPERATOR_BUTTON_LABEL,
                             BotVariablePropertiesUtil.getVariable(BotVariableType.OPERATOR_LINK)));
+            Long chatId = UpdateUtil.getChatId(update);
+            String username = userRepository.getUsernameByChatId(chatId);
+            userRepository.getAdminsChatIds()
+                    .forEach(adminChatId -> responseSender.sendMessage(
+                            adminChatId, "Пользователь id=" + UpdateUtil.getChatId(update)
+                                                 + ", username=" + (StringUtils.isNotEmpty(username) ? username : "скрыт")
+                                    + " выиграл лотерею.")
+                    );
             log.debug("Пользователь " + UpdateUtil.getChatId(update) + " выиграл лотерею. Probability=" + probability);
         } else {
             responseSender.sendBotMessage(botMessageService.findByType(BotMessageType.LOSE_LOTTERY), user.getChatId());
