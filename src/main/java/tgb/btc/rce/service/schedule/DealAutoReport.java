@@ -126,8 +126,8 @@ public class DealAutoReport {
                     + "Всего получено рублей: " + totalPurchasedRubAmount
                     + "\n"
                     + "Количество новых пользователей: " + newUsersCount
-                    + "Количество новых партнеров:" + allNewPartnersCount
-                    + "Количество активных новых партнеров:" + newActivePartnersCount;
+                    + "Количество новых партнеров: " + allNewPartnersCount
+                    + "Количество активных новых партнеров: " + newActivePartnersCount;
             userRepository.getAdminsChatIds().forEach(chatId -> responseSender.sendMessage(chatId, report));
         } catch (Exception e) {
             String message = "Ошибка при формировании периодического отчета за " + data.getPeriod()  + ":\n"
@@ -150,9 +150,6 @@ public class DealAutoReport {
                 .setScale(scale, RoundingMode.HALF_DOWN).stripTrailingZeros();
     }
 
-    private BigDecimal getSellAmount(CryptoCurrency cryptoCurrency, LocalDate dateFrom, LocalDate dateTo) {
-        return getAmount(cryptoCurrency, dateFrom, dateTo, DealType.SELL);
-    }
     private BigDecimal getBuyAmount(CryptoCurrency cryptoCurrency, LocalDate dateFrom, LocalDate dateTo) {
         return getAmount(cryptoCurrency, dateFrom, dateTo, DealType.BUY);
     }
