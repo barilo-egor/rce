@@ -135,7 +135,7 @@ public class ExchangeService {
 
     public void convertToRub(Update update, Long currentDealPid) {
         System.out.println();
-        String query = update.getInlineQuery().getQuery();
+        String query = update.getInlineQuery().getQuery().replaceAll(",", ".");
         BigDecimal sum;
         CryptoCurrency currency = null;
 
@@ -146,7 +146,6 @@ public class ExchangeService {
 
         try {
             currency = CryptoCurrency.fromShortName(query.substring(0, query.indexOf("-")));
-            log.info("Сумма с калькулятора: \"" + query + "\"");
             sum = BigDecimal.valueOf(NumberUtil.getInputDouble(query.substring(query.indexOf(" ") + 1)));
         } catch (EnumTypeNotFoundException e) {
             askForCryptoSum(update);

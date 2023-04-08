@@ -56,7 +56,7 @@ public class UpdateUtil {
     }
 
     public static Double getDoubleFromText(Update update) {
-        return NumberUtil.getInputDouble(getMessageText(update));
+        return NumberUtil.getInputDouble(getMessageText(update).replaceAll(",", "."));
     }
 
     public static Message getMessage(Update update) {

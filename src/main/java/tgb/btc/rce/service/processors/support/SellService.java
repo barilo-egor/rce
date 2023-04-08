@@ -125,7 +125,7 @@ public class SellService {
 
     public void convertToRub(Update update, Long currentDealPid) {
         System.out.println();
-        String query = update.getInlineQuery().getQuery();
+        String query = update.getInlineQuery().getQuery().replaceAll(",", ".");
         BigDecimal sum;
         CryptoCurrency currency = null;
 
