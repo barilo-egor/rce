@@ -81,6 +81,7 @@ public class ConfirmUserDeal extends Processor {
                     + sumToAdd.toPlainString() + ", refUser.referralBalance = " + refUser.getReferralBalance().toString()
                     + ", total = " + total);
             userService.updateReferralBalanceByChatId(total, refUser.getChatId());
+            responseSender.sendMessage(refUser.getChatId(), "На реферальный баланс было добавлено " + sumToAdd.intValue() + "₽ по сделке партнера.");
             userService.updateChargesByChatId(refUser.getCharges() + sumToAdd.intValue(), refUser.getChatId());
         }
         switch (deal.getCryptoCurrency()) {
