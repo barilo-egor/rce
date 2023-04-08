@@ -54,6 +54,13 @@ public class DealSupportService {
                 InlineButton.builder()
                         .text("Удалить")
                         .data(Command.DELETE_USER_DEAL.getText() + BotStringConstants.CALLBACK_DATA_SPLITTER + pid)
-                        .build()));
+                        .build(),
+                InlineButton.builder()
+                        .text("Удалить и заблокировать")
+                        .data(Command.DELETE_DEAL_AND_BLOCK_USER.getText() + BotStringConstants.CALLBACK_DATA_SPLITTER + pid)
+                        .build()
+                )
+
+        );
     }
 }

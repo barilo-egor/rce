@@ -79,6 +79,7 @@ public enum Command {
     DELETE_DEAL("Удалить заявку", false),
     SHOW_DEAL("Показать", true),
     DELETE_USER_DEAL("delete_deal", true),
+    DELETE_DEAL_AND_BLOCK_USER("delete_deal_and_block_user", true),
     CONFIRM_USER_DEAL("confirm_deal", true),
     ADDITIONAL_VERIFICATION("add_verification", true),
     USER_ADDITIONAL_VERIFICATION("user_verification", false),
