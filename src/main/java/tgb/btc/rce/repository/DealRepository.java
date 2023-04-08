@@ -128,4 +128,11 @@ public interface DealRepository extends BaseRepository<Deal> {
 
     @Query(value = "select count(pid) from Deal where user.chatId=:chatId and isPassed=true")
     Integer getCountPassedByChatId(Long chatId);
+
+    @Query(value = "select sum(cryptoAmount) from Deal where user.chatId=:chatId and isPassed=true and cryptoCurrency=:cryptoCurrency and dealType=:dealType")
+    BigDecimal getUserCryptoAmountSum(@Param("chatId") Long chatId, @Param("cryptoCurrency") CryptoCurrency cryptoCurrency,
+                                      @Param("dealType") DealType dealType);
+
+    @Query(value = "select sum(amount) from Deal where user.chatId=:chatId and isPassed=true and dealType=:dealType")
+    BigDecimal getUserAmountSum(@Param("chatId") Long chatId, @Param("dealType") DealType dealType);
 }

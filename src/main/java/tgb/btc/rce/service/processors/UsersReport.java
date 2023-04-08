@@ -11,20 +11,30 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.bean.User;
 import tgb.btc.rce.enums.Command;
+import tgb.btc.rce.enums.CryptoCurrency;
+import tgb.btc.rce.enums.DealType;
 import tgb.btc.rce.exception.BaseException;
+import tgb.btc.rce.repository.DealRepository;
 import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.impl.UserService;
+import tgb.btc.rce.util.BigDecimalUtil;
 import tgb.btc.rce.util.UpdateUtil;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.time.LocalDateTime;
 
 @CommandProcessor(command = Command.USERS_REPORT)
 @Slf4j
 public class UsersReport extends Processor {
+
+    private DealRepository dealRepository;
+
+    @Autowired
+    public void setDealRepository(DealRepository dealRepository) {
+        this.dealRepository = dealRepository;
+    }
 
     @Autowired
     public UsersReport(IResponseSender responseSender, UserService userService) {
@@ -43,6 +53,20 @@ public class UsersReport extends Processor {
             headCell.setCellValue("Chat ID");
             headCell = headRow.createCell(1);
             headCell.setCellValue("Username");
+            headCell = headRow.createCell(2);
+            headCell.setCellValue("Куплено BTC");
+            headCell = headRow.createCell(3);
+            headCell.setCellValue("Куплено LTC");
+            headCell = headRow.createCell(4);
+            headCell.setCellValue("Куплено USDT");
+            headCell = headRow.createCell(5);
+            headCell.setCellValue("Продано BTC");
+            headCell = headRow.createCell(6);
+            headCell.setCellValue("Продано LTC");
+            headCell = headRow.createCell(7);
+            headCell.setCellValue("Продано USDT");
+            headCell = headRow.createCell(8);
+            headCell.setCellValue("Потрачено рублей");
 
             int i = 2;
             for (User user : userService.findAll()) {
@@ -51,6 +75,40 @@ public class UsersReport extends Processor {
                 cell1.setCellValue(user.getChatId());
                 Cell cell2 = row.createCell(1);
                 cell2.setCellValue(StringUtils.defaultIfEmpty(user.getUsername(), "скрыт"));
+                Cell cell3 = row.createCell(2);
+                cell3.setCellValue(BigDecimalUtil.roundNullSafe(
+                        dealRepository.getUserCryptoAmountSum(user.getChatId(), CryptoCurrency.BITCOIN, DealType.BUY),
+                        CryptoCurrency.BITCOIN.getScale()).toPlainString()
+                );
+                Cell cell4 = row.createCell(3);
+                cell4.setCellValue(BigDecimalUtil.roundNullSafe(
+                        dealRepository.getUserCryptoAmountSum(user.getChatId(), CryptoCurrency.BITCOIN, DealType.BUY),
+                        CryptoCurrency.LITECOIN.getScale()).toPlainString()
+                );
+                Cell cell5 = row.createCell(4);
+                cell5.setCellValue(BigDecimalUtil.roundNullSafe(
+                        dealRepository.getUserCryptoAmountSum(user.getChatId(), CryptoCurrency.BITCOIN, DealType.BUY),
+                        CryptoCurrency.USDT.getScale()).toPlainString()
+                );
+                Cell cell6 = row.createCell(5);
+                cell6.setCellValue(BigDecimalUtil.roundNullSafe(
+                        dealRepository.getUserCryptoAmountSum(user.getChatId(), CryptoCurrency.BITCOIN, DealType.SELL),
+                        CryptoCurrency.BITCOIN.getScale()).toPlainString()
+                );
+                Cell cell7 = row.createCell(6);
+                cell7.setCellValue(BigDecimalUtil.roundNullSafe(
+                        dealRepository.getUserCryptoAmountSum(user.getChatId(), CryptoCurrency.BITCOIN, DealType.SELL),
+                        CryptoCurrency.LITECOIN.getScale()).toPlainString()
+                );
+                Cell cell8 = row.createCell(7);
+                cell8.setCellValue(BigDecimalUtil.roundNullSafe(
+                        dealRepository.getUserCryptoAmountSum(user.getChatId(), CryptoCurrency.BITCOIN, DealType.SELL),
+                        CryptoCurrency.USDT.getScale()).toPlainString()
+                );
+                Cell cell9 = row.createCell(8);
+                cell9.setCellValue(BigDecimalUtil.roundNullSafe(
+                        dealRepository.getUserAmountSum(user.getChatId(), DealType.BUY), 0).toPlainString()
+                );
                 i++;
             }
             String fileName = "users.xlsx";
