@@ -1,6 +1,7 @@
 package tgb.btc.rce.service.processors.support;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
@@ -62,6 +63,7 @@ public class MessagesService {
         }
     }
 
+    @Async
     public void sendMessageToUsers(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
         userService.getChatIdsNotAdmins()
