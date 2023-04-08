@@ -4,6 +4,8 @@ import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.exception.BaseException;
 import tgb.btc.rce.service.Processor;
+import tgb.btc.rce.service.processors.TurnOffCurrencyProcessor;
+import tgb.btc.rce.service.processors.TurningCurrencyProcessor;
 import tgb.btc.rce.service.processors.*;
 
 import java.util.HashSet;
@@ -78,6 +80,9 @@ public final class CommandProcessorLoader {
         commandProcessors.add(ChecksForDate.class);
         commandProcessors.add(DeleteDealAndBlockUserProcessor.class);
         commandProcessors.add(ChangeUsdCourseProcessor.class);
+        commandProcessors.add(TurningCurrencyProcessor.class);
+        commandProcessors.add(TurnOnCurrencyProcessor.class);
+        commandProcessors.add(TurnOffCurrencyProcessor.class);
         commandProcessors.stream()
                 .filter(processor -> !extendsProcessor(processor))
                 .findFirst()

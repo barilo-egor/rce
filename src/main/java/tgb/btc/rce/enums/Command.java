@@ -55,6 +55,11 @@ public enum Command {
     USER_REFERRAL_BALANCE("Реф.баланс юзера", true),
     CHANGE_USD_COURSE("Курс доллара", true),
     QUIT_ADMIN_PANEL("Выйти", true),
+    TURNING_CURRENCY("Включение криптовалют", true),
+
+    /** TURNING CURRENCIES */
+    TURN_ON_CURRENCY("turn_on_currency", true),
+    TURN_OFF_CURRENCY("turn_off_currency", true),
 
     /** EDIT CONTACTS */
     ADD_CONTACT("Добавить контакт", true),

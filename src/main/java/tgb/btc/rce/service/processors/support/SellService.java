@@ -16,6 +16,7 @@ import tgb.btc.rce.enums.*;
 import tgb.btc.rce.exception.BaseException;
 import tgb.btc.rce.exception.EnumTypeNotFoundException;
 import tgb.btc.rce.exception.NumberParseException;
+import tgb.btc.rce.service.processors.TurningCurrencyProcessor;
 import tgb.btc.rce.service.impl.*;
 import tgb.btc.rce.service.schedule.DealDeleteScheduler;
 import tgb.btc.rce.util.*;
@@ -30,12 +31,6 @@ import java.util.stream.Collectors;
 
 @Service
 public class SellService {
-
-    private static final List<InlineButton> CURRENCIES = new ArrayList<>();
-    private static final List<InlineButton> PAYMENT_TYPES = new ArrayList<>();
-
-    public static final String USE_PROMO = "use_promo";
-    public static final String DONT_USE_PROMO = "dont_use_promo";
 
     private final ResponseSender responseSender;
     private final UserService userService;
@@ -54,16 +49,6 @@ public class SellService {
         this.botMessageService = botMessageService;
     }
 
-    static {
-        Arrays.stream(CryptoCurrency.values())
-                .forEach(currency -> CURRENCIES.add(InlineButton.builder()
-                        .text(currency.getDisplayName())
-                        .data(currency.name())
-                        .inlineType(InlineType.CALLBACK_DATA)
-                        .build()));
-        CURRENCIES.add(KeyboardUtil.INLINE_BACK_BUTTON);
-    }
-
     public void createDeal(Long chatId) {
         Deal deal = new Deal();
         deal.setActive(false);
@@ -77,9 +62,18 @@ public class SellService {
     }
 
     public void askForCurrency(Long chatId) {
+        List<InlineButton> currencies = new ArrayList<>();
+        Arrays.stream(CryptoCurrency.values())
+                .filter(cryptoCurrency -> TurningCurrencyProcessor.SELL_TURNING.get(cryptoCurrency))
+                .forEach(currency -> currencies.add(InlineButton.builder()
+                        .text(currency.getDisplayName())
+                        .data(currency.name())
+                        .inlineType(InlineType.CALLBACK_DATA)
+                        .build()));
+        currencies.add(KeyboardUtil.INLINE_BACK_BUTTON);
         Optional<Message> optionalMessage = responseSender.sendMessage(chatId,
                 MessagePropertiesUtil.getMessage(PropertiesMessage.CHOOSE_CURRENCY_SELL),
-                KeyboardUtil.buildInline(CURRENCIES));
+                KeyboardUtil.buildInline(currencies));
         optionalMessage.ifPresent(message ->
                 userService.updateBufferVariable(chatId, message.getMessageId().toString()));
     }
