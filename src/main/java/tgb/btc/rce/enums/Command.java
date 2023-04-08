@@ -52,8 +52,9 @@ public enum Command {
     BOT_SETTINGS("Настройки бота", true),
     REPORTS("Отчеты", true),
     EDIT_CONTACTS("Редактирование контактов", true),
-    QUIT_ADMIN_PANEL("Выйти", true),
     USER_REFERRAL_BALANCE("Реф.баланс юзера", true),
+    CHANGE_USD_COURSE("Курс доллара", true),
+    QUIT_ADMIN_PANEL("Выйти", true),
 
     /** EDIT CONTACTS */
     ADD_CONTACT("Добавить контакт", true),
