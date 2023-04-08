@@ -12,6 +12,7 @@ import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.bean.User;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.exception.BaseException;
+import tgb.btc.rce.repository.DealRepository;
 import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.impl.UserService;
@@ -27,6 +28,13 @@ import java.util.stream.Collectors;
 @CommandProcessor(command = Command.PARTNERS_REPORT)
 @Slf4j
 public class PartnersReport extends Processor {
+
+    private DealRepository dealRepository;
+
+    @Autowired
+    public void setDealRepository(DealRepository dealRepository) {
+        this.dealRepository = dealRepository;
+    }
 
     @Autowired
     public PartnersReport(IResponseSender responseSender, UserService userService) {
@@ -55,8 +63,10 @@ public class PartnersReport extends Processor {
             headCell = headRow.createCell(2);
             headCell.setCellValue("Количество приглашенных");
             headCell = headRow.createCell(3);
-            headCell.setCellValue("Начислено всего");
+            headCell.setCellValue("Количество активных рефералов");
             headCell = headRow.createCell(4);
+            headCell.setCellValue("Начислено всего");
+            headCell = headRow.createCell(5);
             headCell.setCellValue("Текущий баланс");
 
             users.sort(Comparator.comparing(User::getCharges));
@@ -71,9 +81,12 @@ public class PartnersReport extends Processor {
                 Cell cell3 = row.createCell(2);
                 cell3.setCellValue(user.getReferralUsers().size());
                 Cell cell4 = row.createCell(3);
-                cell4.setCellValue(user.getCharges());
+                cell4.setCellValue((int) user.getReferralUsers().stream()
+                        .filter(usr -> dealRepository.getCountPassedByUserChatId(usr.getChatId()) > 0).count());
                 Cell cell5 = row.createCell(4);
-                cell5.setCellValue(user.getReferralBalance());
+                cell5.setCellValue(user.getCharges());
+                Cell cell6 = row.createCell(5);
+                cell6.setCellValue(user.getReferralBalance());
                 i++;
             }
             String fileName = "users_referrals.xlsx";
