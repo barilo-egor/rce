@@ -105,10 +105,12 @@ public class DealReports extends Processor {
         headCell = headRow.createCell(2);
         headCell.setCellValue("Сум.руб.");
         headCell = headRow.createCell(3);
-        headCell.setCellValue("Сум.BTC");
+        headCell.setCellValue("Валюта");
         headCell = headRow.createCell(4);
+        headCell.setCellValue("Сумма крипты");
+        headCell = headRow.createCell(5);
         headCell.setCellValue("Оплата");
-        headCell = headRow.createCell(4);
+        headCell = headRow.createCell(6);
         headCell.setCellValue("ID");
 
         int i = 2;
@@ -121,10 +123,12 @@ public class DealReports extends Processor {
             cell = row.createCell(2);
             cell.setCellValue(deal.getAmount().setScale(0, RoundingMode.FLOOR).toString());
             cell = row.createCell(3);
-            cell.setCellValue(deal.getCryptoAmount().setScale(8, RoundingMode.FLOOR).stripTrailingZeros().toString());
+            cell.setCellValue(deal.getCryptoCurrency().getDisplayName());
             cell = row.createCell(4);
-            cell.setCellValue(deal.getPaymentType().getDisplayName());
+            cell.setCellValue(deal.getCryptoAmount().setScale(8, RoundingMode.FLOOR).stripTrailingZeros().toString());
             cell = row.createCell(5);
+            cell.setCellValue(deal.getPaymentType().getDisplayName());
+            cell = row.createCell(6);
             cell.setCellValue(deal.getUser().getChatId());
             i++;
         }
