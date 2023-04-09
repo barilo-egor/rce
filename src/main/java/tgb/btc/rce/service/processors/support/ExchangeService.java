@@ -18,6 +18,7 @@ import tgb.btc.rce.enums.*;
 import tgb.btc.rce.exception.BaseException;
 import tgb.btc.rce.exception.EnumTypeNotFoundException;
 import tgb.btc.rce.exception.NumberParseException;
+import tgb.btc.rce.repository.UserRepository;
 import tgb.btc.rce.service.processors.TurningCurrencyProcessor;
 import tgb.btc.rce.service.impl.*;
 import tgb.btc.rce.service.schedule.DealDeleteScheduler;
@@ -50,6 +51,13 @@ public class ExchangeService {
     private final PaymentConfigService paymentConfigService;
 
     private final BotMessageService botMessageService;
+
+    private UserRepository userRepository;
+
+    @Autowired
+    public void setUserRepository(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     @Autowired
     public ExchangeService(ResponseSender responseSender, UserService userService, DealService dealService,
@@ -372,6 +380,15 @@ public class ExchangeService {
             deal.setAmount(BigDecimalUtil.subtractHalfUp(deal.getAmount(), rankDiscount));
             deal = dealService.save(deal);
         }
+//        BigDecimal personalFactor = userRepository.getPersonalFactorByChatId(chatId);
+//        if (!BigDecimal.ZERO.equals(personalFactor)) {
+//            BigDecimal amount;
+//            if (personalFactor.compareTo(BigDecimal.ZERO) < 0) {
+//                amount = BigDecimalUtil.multiplyHalfUp(, ConverterUtil.getPercentsFactor(personalFactor.abs()));
+//            } else {
+//
+//            }
+//        }
         CryptoCurrency currency = deal.getCryptoCurrency();
         PaymentConfig paymentConfig = paymentConfigService.getByPaymentType(deal.getPaymentType());
         if (paymentConfig == null) throw new BaseException("Не установлены реквизиты для " + deal.getPaymentType().getDisplayName() + ".");

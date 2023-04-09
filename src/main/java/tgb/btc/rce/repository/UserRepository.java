@@ -9,6 +9,7 @@ import tgb.btc.rce.bean.ReferralUser;
 import tgb.btc.rce.bean.User;
 import tgb.btc.rce.enums.Command;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -106,6 +107,9 @@ public interface UserRepository extends BaseRepository<User> {
 
     @Query("update User set isBanned=:isBanned where chatId=:chatId")
     void updateIsBannedByChatId(@Param("isBanned") Boolean isBanned, @Param("chatId") Long chatId);
+
+    @Query("select personalFactor from User where chatId=:chatId")
+    BigDecimal getPersonalFactorByChatId(@Param("chatId") Long chatId);
 
     /**
      * Reports

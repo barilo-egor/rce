@@ -8,6 +8,7 @@ import tgb.btc.rce.util.CommandUtil;
 import tgb.btc.rce.util.UpdateUtil;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -65,13 +66,16 @@ public class User extends BasePersist {
     @OneToMany(fetch = FetchType.EAGER)
     private List<ReferralUser> referralUsers;
 
+    @Column(name = "PERSONAL_FACTOR")
+    private BigDecimal personalFactor;
+
     public User() {
     }
 
     public User(Long chatId, String username, Integer step, Command command, LocalDateTime registrationDate,
                 Boolean isAdmin, Integer lotteryCount, Long fromChatId, Integer referralBalance, Integer charges,
                 String bufferVariable, Boolean isActive, Boolean isBanned, Long currentDeal,
-                List<ReferralUser> referralUsers) {
+                List<ReferralUser> referralUsers, BigDecimal personalFactor) {
         this.chatId = chatId;
         this.username = username;
         this.step = step;
@@ -87,6 +91,7 @@ public class User extends BasePersist {
         this.isBanned = isBanned;
         this.currentDeal = currentDeal;
         this.referralUsers = referralUsers;
+        this.personalFactor = personalFactor;
     }
 
     public static User buildFromUpdate(Update update) {
@@ -102,6 +107,7 @@ public class User extends BasePersist {
         user.setActive(true);
         user.setBanned(false);
         user.setCharges(0);
+        user.setPersonalFactor(BigDecimal.ZERO);
         return user;
     }
 
@@ -231,38 +237,11 @@ public class User extends BasePersist {
         this.charges = charges;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
-        User user = (User) o;
-        return Objects.equals(chatId, user.chatId) && Objects.equals(username, user.username) && Objects.equals(step, user.step) && command == user.command && Objects.equals(registrationDate, user.registrationDate) && Objects.equals(isAdmin, user.isAdmin) && Objects.equals(lotteryCount, user.lotteryCount) && Objects.equals(fromChatId, user.fromChatId) && Objects.equals(referralBalance, user.referralBalance) && Objects.equals(charges, user.charges) && Objects.equals(bufferVariable, user.bufferVariable) && Objects.equals(isActive, user.isActive) && Objects.equals(isBanned, user.isBanned) && Objects.equals(currentDeal, user.currentDeal) && Objects.equals(referralUsers, user.referralUsers);
+    public BigDecimal getPersonalFactor() {
+        return personalFactor;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(super.hashCode(), chatId, username, step, command, registrationDate, isAdmin, lotteryCount, fromChatId, referralBalance, charges, bufferVariable, isActive, isBanned, currentDeal, referralUsers);
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "chatId=" + chatId +
-                ", username='" + username + '\'' +
-                ", step=" + step +
-                ", command=" + command +
-                ", registrationDate=" + registrationDate +
-                ", isAdmin=" + isAdmin +
-                ", lotteryCount=" + lotteryCount +
-                ", fromChatId=" + fromChatId +
-                ", referralBalance=" + referralBalance +
-                ", charges=" + charges +
-                ", bufferVariable='" + bufferVariable + '\'' +
-                ", isActive=" + isActive +
-                ", isBanned=" + isBanned +
-                ", currentDeal=" + currentDeal +
-                ", referralUsers=" + referralUsers +
-                '}';
+    public void setPersonalFactor(BigDecimal personalFactor) {
+        this.personalFactor = personalFactor;
     }
 }
