@@ -46,6 +46,8 @@ public final class MenuFactory {
                 return KeyboardUtil.buildReply(2, fillReply(Menu.REQUESTS.getCommands()), false);
             case REPORTS:
                 return KeyboardUtil.buildReply(2, fillReply(Menu.REPORTS.getCommands()), false);
+            case DISCOUNTS:
+                return KeyboardUtil.buildReply(2, fillReply(Menu.DISCOUNTS.getCommands()), false);
         }
         throw new BaseException("Тип меню " + menu.name() + " не найден.");
     }

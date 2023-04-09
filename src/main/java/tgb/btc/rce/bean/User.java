@@ -69,13 +69,16 @@ public class User extends BasePersist {
     @Column(name = "PERSONAL_FACTOR")
     private BigDecimal personalFactor;
 
+    @Column(name = "IS_RANK_DISCOUNT_ON")
+    private Boolean isRankDiscountOn;
+
     public User() {
     }
 
     public User(Long chatId, String username, Integer step, Command command, LocalDateTime registrationDate,
                 Boolean isAdmin, Integer lotteryCount, Long fromChatId, Integer referralBalance, Integer charges,
                 String bufferVariable, Boolean isActive, Boolean isBanned, Long currentDeal,
-                List<ReferralUser> referralUsers, BigDecimal personalFactor) {
+                List<ReferralUser> referralUsers, BigDecimal personalFactor, Boolean isRankDiscountOn) {
         this.chatId = chatId;
         this.username = username;
         this.step = step;
@@ -92,6 +95,7 @@ public class User extends BasePersist {
         this.currentDeal = currentDeal;
         this.referralUsers = referralUsers;
         this.personalFactor = personalFactor;
+        this.isRankDiscountOn = isRankDiscountOn;
     }
 
     public static User buildFromUpdate(Update update) {
@@ -108,6 +112,7 @@ public class User extends BasePersist {
         user.setBanned(false);
         user.setCharges(0);
         user.setPersonalFactor(BigDecimal.ZERO);
+        user.setRankDiscountOn(true);
         return user;
     }
 
@@ -243,5 +248,13 @@ public class User extends BasePersist {
 
     public void setPersonalFactor(BigDecimal personalFactor) {
         this.personalFactor = personalFactor;
+    }
+
+    public Boolean getRankDiscountOn() {
+        return isRankDiscountOn;
+    }
+
+    public void setRankDiscountOn(Boolean rankDiscountOn) {
+        isRankDiscountOn = rankDiscountOn;
     }
 }

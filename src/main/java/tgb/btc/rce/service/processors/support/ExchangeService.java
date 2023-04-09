@@ -374,7 +374,8 @@ public class ExchangeService {
         Long chatId = UpdateUtil.getChatId(update);
         Deal deal = dealService.getByPid(userService.getCurrentDealByChatId(chatId));
         Rank rank = Rank.getByDealsNumber(dealService.getCountPassedByUserChatId(chatId).intValue());
-        if (!Rank.FIRST.equals(rank)) {
+        Boolean isRankDiscountOn = userRepository.getRankDiscountOnByChatId(chatId);
+        if (!Rank.FIRST.equals(rank) && isRankDiscountOn) {
             BigDecimal commission = deal.getCommission();
             BigDecimal rankDiscount = BigDecimalUtil.multiplyHalfUp(commission, ConverterUtil.getPercentsFactor(BigDecimal.valueOf(rank.getPercent())));
             deal.setAmount(BigDecimalUtil.subtractHalfUp(deal.getAmount(), rankDiscount));
@@ -416,8 +417,7 @@ public class ExchangeService {
                 + "\n"
                 + "<b>" + deal.getCryptoCurrency().getDisplayName() + "-адрес</b>:" + "<code>" + deal.getWallet() + "</code>"
                 + "\n\n"
-                + "Ваш ранг: " + rank.getSmile() + ", скидка " + rank.getPercent() + "%"
-                + "\n\n"
+                + (isRankDiscountOn ? "Ваш ранг: " + rank.getSmile() + ", скидка " + rank.getPercent() + "%" + "\n\n" : StringUtils.EMPTY)
                 + "<b>\uD83D\uDCB5Сумма к оплате</b>: <code>" + BigDecimalUtil.round(dealAmount, 0).stripTrailingZeros().toPlainString() + "₽</code>"
                 + "\n"
                 + "<b>Резквизиты для оплаты:</b>"

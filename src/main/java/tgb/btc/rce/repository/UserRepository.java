@@ -106,10 +106,18 @@ public interface UserRepository extends BaseRepository<User> {
     Integer getChargesByChatId(@Param("chatId") Long chatId);
 
     @Query("update User set isBanned=:isBanned where chatId=:chatId")
+    @Modifying
     void updateIsBannedByChatId(@Param("isBanned") Boolean isBanned, @Param("chatId") Long chatId);
 
     @Query("select personalFactor from User where chatId=:chatId")
     BigDecimal getPersonalFactorByChatId(@Param("chatId") Long chatId);
+
+    @Query("select isRankDiscountOn from User where chatId=:chatId")
+    Boolean getRankDiscountOnByChatId(@Param("chatId") Long chatId);
+
+    @Query("update User set isRankDiscountOn=:isRankDiscountOn where chatId=:chatId")
+    @Modifying
+    void updateIsRankDiscountOnByChatId(@Param("isRankDiscountOn") Boolean isRankDiscountOn, @Param("chatId") Long chatId);
 
     /**
      * Reports

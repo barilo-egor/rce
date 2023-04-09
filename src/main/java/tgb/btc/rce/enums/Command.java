@@ -54,8 +54,13 @@ public enum Command {
     EDIT_CONTACTS("Редактирование контактов", true),
     USER_REFERRAL_BALANCE("Реф.баланс юзера", true),
     CHANGE_USD_COURSE("Курс доллара", true),
-    QUIT_ADMIN_PANEL("Выйти", true),
     TURNING_CURRENCY("Включение криптовалют", true),
+    DISCOUNTS("Скидки", true),
+    QUIT_ADMIN_PANEL("Выйти", true),
+
+    /** DISCOUNTS */
+    RANK_DISCOUNT("Ранговая скидка", true),
+    CHANGE_RANK_DISCOUNT("change_rank_discount", true),
 
     /** TURNING CURRENCIES */
     TURN_ON_CURRENCY("turn_on_currency", true),
