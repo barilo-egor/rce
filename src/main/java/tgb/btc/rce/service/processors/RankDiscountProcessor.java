@@ -6,6 +6,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
+import tgb.btc.rce.repository.UserDiscountRepository;
 import tgb.btc.rce.repository.UserRepository;
 import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
@@ -20,12 +21,7 @@ import java.util.List;
 @CommandProcessor(command = Command.RANK_DISCOUNT)
 public class RankDiscountProcessor extends Processor {
 
-    private UserRepository userRepository;
-
-    @Autowired
-    public void setUserRepository(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+    private UserDiscountRepository userDiscountRepository;
 
     @Autowired
     public RankDiscountProcessor(IResponseSender responseSender, UserService userService) {
@@ -60,7 +56,7 @@ public class RankDiscountProcessor extends Processor {
             responseSender.sendMessage(chatId, "Пользователь не найден.");
             return;
         }
-        boolean isRankDiscountOn = BooleanUtils.isTrue(userRepository.getRankDiscountOnByChatId(userChatId));
+        boolean isRankDiscountOn = BooleanUtils.isTrue(userDiscountRepository.getRankDiscountByUserChatId(userChatId));
         responseSender.sendMessage(chatId, "Пользователь chat id=" + userChatId + ".",
                 KeyboardUtil.buildInline(List.of(InlineButton.builder()
                         .text(isRankDiscountOn ? "Выключить" : "Включить")

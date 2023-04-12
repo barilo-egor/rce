@@ -5,6 +5,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
+import tgb.btc.rce.repository.UserDiscountRepository;
 import tgb.btc.rce.repository.UserRepository;
 import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
@@ -14,13 +15,13 @@ import tgb.btc.rce.util.UpdateUtil;
 @CommandProcessor(command = Command.CHANGE_RANK_DISCOUNT)
 public class ChangeRankDiscountProcessor extends Processor {
 
-    private UserRepository userRepository;
-
     private RankDiscountProcessor rankDiscountProcessor;
 
+    private UserDiscountRepository userDiscountRepository;
+
     @Autowired
-    public void setUserRepository(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public void setUserDiscountRepository(UserDiscountRepository userDiscountRepository) {
+        this.userDiscountRepository = userDiscountRepository;
     }
 
     @Autowired
@@ -38,7 +39,7 @@ public class ChangeRankDiscountProcessor extends Processor {
         String[] values = update.getCallbackQuery().getData().split(BotStringConstants.CALLBACK_DATA_SPLITTER);
         Long userChatId = Long.valueOf(values[1]);
         Boolean isRankDiscountOn = Boolean.valueOf(values[2]);
-        userRepository.updateIsRankDiscountOnByChatId(isRankDiscountOn, userChatId);
+        userDiscountRepository.updateIsRankDiscountOnByChatId(isRankDiscountOn, userChatId);
         responseSender.deleteMessage(UpdateUtil.getChatId(update), update.getCallbackQuery().getMessage().getMessageId());
         rankDiscountProcessor.sendUserRankDiscount(UpdateUtil.getChatId(update), userChatId);
     }

@@ -1,6 +1,8 @@
 package tgb.btc.rce.bean;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.NoArgsConstructor;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.exception.BaseException;
@@ -16,6 +18,8 @@ import java.util.Objects;
 @Entity
 @Table(name = "USER")
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class User extends BasePersist {
 
     public static final int DEFAULT_STEP = 0;
@@ -66,38 +70,6 @@ public class User extends BasePersist {
     @OneToMany(fetch = FetchType.EAGER)
     private List<ReferralUser> referralUsers;
 
-    @Column(name = "PERSONAL_FACTOR")
-    private BigDecimal personalFactor;
-
-    @Column(name = "IS_RANK_DISCOUNT_ON")
-    private Boolean isRankDiscountOn;
-
-    public User() {
-    }
-
-    public User(Long chatId, String username, Integer step, Command command, LocalDateTime registrationDate,
-                Boolean isAdmin, Integer lotteryCount, Long fromChatId, Integer referralBalance, Integer charges,
-                String bufferVariable, Boolean isActive, Boolean isBanned, Long currentDeal,
-                List<ReferralUser> referralUsers, BigDecimal personalFactor, Boolean isRankDiscountOn) {
-        this.chatId = chatId;
-        this.username = username;
-        this.step = step;
-        this.command = command;
-        this.registrationDate = registrationDate;
-        this.isAdmin = isAdmin;
-        this.lotteryCount = lotteryCount;
-        this.fromChatId = fromChatId;
-        this.referralBalance = referralBalance;
-        this.charges = charges;
-        this.bufferVariable = bufferVariable;
-        this.isActive = isActive;
-        this.isBanned = isBanned;
-        this.currentDeal = currentDeal;
-        this.referralUsers = referralUsers;
-        this.personalFactor = personalFactor;
-        this.isRankDiscountOn = isRankDiscountOn;
-    }
-
     public static User buildFromUpdate(Update update) {
         User user = new User();
         user.setChatId(UpdateUtil.getChatId(update));
@@ -111,14 +83,7 @@ public class User extends BasePersist {
         user.setActive(true);
         user.setBanned(false);
         user.setCharges(0);
-        user.setPersonalFactor(BigDecimal.ZERO);
-        user.setRankDiscountOn(true);
         return user;
-    }
-
-    private void setDefaultValues() {
-        this.step = DEFAULT_STEP;
-        this.command = Command.START;
     }
 
     public Long getChatId() {
@@ -240,21 +205,5 @@ public class User extends BasePersist {
 
     public void setCharges(Integer charges) {
         this.charges = charges;
-    }
-
-    public BigDecimal getPersonalFactor() {
-        return personalFactor;
-    }
-
-    public void setPersonalFactor(BigDecimal personalFactor) {
-        this.personalFactor = personalFactor;
-    }
-
-    public Boolean getRankDiscountOn() {
-        return isRankDiscountOn;
-    }
-
-    public void setRankDiscountOn(Boolean rankDiscountOn) {
-        isRankDiscountOn = rankDiscountOn;
     }
 }

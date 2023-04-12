@@ -18,6 +18,7 @@ import tgb.btc.rce.enums.*;
 import tgb.btc.rce.exception.BaseException;
 import tgb.btc.rce.exception.EnumTypeNotFoundException;
 import tgb.btc.rce.exception.NumberParseException;
+import tgb.btc.rce.repository.UserDiscountRepository;
 import tgb.btc.rce.repository.UserRepository;
 import tgb.btc.rce.service.processors.TurningCurrencyProcessor;
 import tgb.btc.rce.service.impl.*;
@@ -46,17 +47,20 @@ public class ExchangeService {
     public static final String USE_SAVED_WALLET = "use_saved";
 
     private final ResponseSender responseSender;
+
     private final UserService userService;
+
     private final DealService dealService;
+
     private final PaymentConfigService paymentConfigService;
 
     private final BotMessageService botMessageService;
 
-    private UserRepository userRepository;
+    private UserDiscountRepository userDiscountRepository;
 
     @Autowired
-    public void setUserRepository(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public void setUserDiscountRepository(UserDiscountRepository userDiscountRepository) {
+        this.userDiscountRepository = userDiscountRepository;
     }
 
     @Autowired
@@ -374,22 +378,13 @@ public class ExchangeService {
         Long chatId = UpdateUtil.getChatId(update);
         Deal deal = dealService.getByPid(userService.getCurrentDealByChatId(chatId));
         Rank rank = Rank.getByDealsNumber(dealService.getCountPassedByUserChatId(chatId).intValue());
-        Boolean isRankDiscountOn = userRepository.getRankDiscountOnByChatId(chatId);
+        Boolean isRankDiscountOn = userDiscountRepository.getRankDiscountByUserChatId(chatId);
         if (!Rank.FIRST.equals(rank) && isRankDiscountOn) {
             BigDecimal commission = deal.getCommission();
             BigDecimal rankDiscount = BigDecimalUtil.multiplyHalfUp(commission, ConverterUtil.getPercentsFactor(BigDecimal.valueOf(rank.getPercent())));
             deal.setAmount(BigDecimalUtil.subtractHalfUp(deal.getAmount(), rankDiscount));
             deal = dealService.save(deal);
         }
-//        BigDecimal personalFactor = userRepository.getPersonalFactorByChatId(chatId);
-//        if (!BigDecimal.ZERO.equals(personalFactor)) {
-//            BigDecimal amount;
-//            if (personalFactor.compareTo(BigDecimal.ZERO) < 0) {
-//                amount = BigDecimalUtil.multiplyHalfUp(, ConverterUtil.getPercentsFactor(personalFactor.abs()));
-//            } else {
-//
-//            }
-//        }
         CryptoCurrency currency = deal.getCryptoCurrency();
         PaymentConfig paymentConfig = paymentConfigService.getByPaymentType(deal.getPaymentType());
         if (paymentConfig == null) throw new BaseException("Не установлены реквизиты для " + deal.getPaymentType().getDisplayName() + ".");

@@ -16,6 +16,7 @@ import tgb.btc.rce.enums.*;
 import tgb.btc.rce.exception.BaseException;
 import tgb.btc.rce.exception.EnumTypeNotFoundException;
 import tgb.btc.rce.exception.NumberParseException;
+import tgb.btc.rce.repository.UserDiscountRepository;
 import tgb.btc.rce.repository.UserRepository;
 import tgb.btc.rce.service.processors.TurningCurrencyProcessor;
 import tgb.btc.rce.service.impl.*;
@@ -37,9 +38,15 @@ public class SellService {
     private final UserService userService;
     private final DealService dealService;
     private final PaymentConfigService paymentConfigService;
-    private UserRepository userRepository;
 
     private final BotMessageService botMessageService;
+
+    private UserDiscountRepository userDiscountRepository;
+
+    @Autowired
+    public void setUserDiscountRepository(UserDiscountRepository userDiscountRepository) {
+        this.userDiscountRepository = userDiscountRepository;
+    }
 
     @Autowired
     public SellService(ResponseSender responseSender, UserService userService, DealService dealService,
@@ -276,7 +283,7 @@ public class SellService {
                 throw new BaseException("Не найдены реквизиты крипто кошелька.");
         }
         Rank rank = Rank.getByDealsNumber(dealService.getCountPassedByUserChatId(chatId).intValue());
-        Boolean isRankDiscountOn = userRepository.getRankDiscountOnByChatId(chatId);
+        Boolean isRankDiscountOn = userDiscountRepository.getRankDiscountByUserChatId(chatId);
         if (!Rank.FIRST.equals(rank) && isRankDiscountOn) {
             BigDecimal commission = deal.getCommission();
             BigDecimal rankDiscount = BigDecimalUtil.multiplyHalfUp(commission, ConverterUtil.getPercentsFactor(BigDecimal.valueOf(rank.getPercent())));
