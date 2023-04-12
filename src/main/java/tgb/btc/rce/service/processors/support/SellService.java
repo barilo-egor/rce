@@ -290,7 +290,7 @@ public class SellService {
                 + "\n"
                 + "<b>" + deal.getPaymentType().getDisplayName() + " реквизиты</b>:" + "<code>" + deal.getWallet() + "</code>"
                 + "\n\n"
-                + (isRankDiscountOn ? "Ваш ранг: " + rank.getSmile() + ", скидка " + rank.getPercent() + "%" + "\n\n" : StringUtils.EMPTY)
+                + "Ваш ранг: " + rank.getSmile() + ", скидка " + rank.getPercent() + "%" + "\n\n"
                 + "\uD83D\uDCB5<b>Получаете</b>: <code>" + BigDecimalUtil.round(deal.getAmount(), 0).stripTrailingZeros().toPlainString() + "₽</code>"
                 + "\n"
                 + "<b>Резквизиты для перевода " + currency.getShortName() + ":</b>"

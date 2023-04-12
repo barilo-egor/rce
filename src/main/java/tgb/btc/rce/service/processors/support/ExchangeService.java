@@ -417,7 +417,7 @@ public class ExchangeService {
                 + "\n"
                 + "<b>" + deal.getCryptoCurrency().getDisplayName() + "-адрес</b>:" + "<code>" + deal.getWallet() + "</code>"
                 + "\n\n"
-                + (isRankDiscountOn ? "Ваш ранг: " + rank.getSmile() + ", скидка " + rank.getPercent() + "%" + "\n\n" : StringUtils.EMPTY)
+                + "Ваш ранг: " + rank.getSmile() + ", скидка " + rank.getPercent() + "%" + "\n\n"
                 + "<b>\uD83D\uDCB5Сумма к оплате</b>: <code>" + BigDecimalUtil.round(dealAmount, 0).stripTrailingZeros().toPlainString() + "₽</code>"
                 + "\n"
                 + "<b>Резквизиты для оплаты:</b>"
