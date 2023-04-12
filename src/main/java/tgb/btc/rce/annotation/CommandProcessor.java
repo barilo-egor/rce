@@ -13,4 +13,6 @@ import java.lang.annotation.Target;
 @Service
 public @interface CommandProcessor {
     Command command();
+    boolean hasStep() default false;
+    int step() default 0;
 }

@@ -61,6 +61,8 @@ public enum Command {
     /** DISCOUNTS */
     RANK_DISCOUNT("Ранговая скидка", true),
     CHANGE_RANK_DISCOUNT("change_rank_discount", true),
+    PERSONAL_BUY_DISCOUNT("Персональная, покупка", true),
+    PERSONAL_SELL_DISCOUNT("Персональная, продажа", true),
 
     /** TURNING CURRENCIES */
     TURN_ON_CURRENCY("turn_on_currency", true),

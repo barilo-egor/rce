@@ -8,6 +8,7 @@ import tgb.btc.rce.service.processors.TurnOffCurrencyProcessor;
 import tgb.btc.rce.service.processors.TurningCurrencyProcessor;
 import tgb.btc.rce.service.processors.*;
 
+import java.lang.annotation.Annotation;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -99,9 +100,12 @@ public final class CommandProcessorLoader {
         return clazz.getSuperclass().equals(Processor.class);
     }
 
-    public static Class<?> getByCommand(Command command) {
+    public static Class<?> getByCommand(Command command, int step) {
         return commandProcessors.stream()
-                .filter(processor -> processor.getAnnotation(CommandProcessor.class).command().equals(command))
+                .filter(processor -> {
+                    CommandProcessor annotation = processor.getAnnotation(CommandProcessor.class);
+                    return annotation.command().equals(command) && annotation.step() == step;
+                })
                 .findFirst()
                 .orElseThrow(() -> new BaseException("Не найден процессор для команды " + command.name()));
     }

@@ -9,7 +9,7 @@ public enum Menu {
     ADMIN_PANEL(List.of(Command.REQUESTS, Command.SEND_MESSAGES, Command.BAN_UNBAN, Command.BOT_SETTINGS,
             Command.REPORTS, Command.EDIT_CONTACTS, Command.USER_REFERRAL_BALANCE, Command.CHANGE_USD_COURSE,
             Command.TURNING_CURRENCY, Command.DISCOUNTS, Command.QUIT_ADMIN_PANEL)),
-    DISCOUNTS(List.of(Command.RANK_DISCOUNT, Command.ADMIN_BACK)),
+    DISCOUNTS(List.of(Command.RANK_DISCOUNT, Command.PERSONAL_BUY_DISCOUNT, Command.PERSONAL_SELL_DISCOUNT, Command.ADMIN_BACK)),
     EDIT_CONTACTS(List.of(Command.ADD_CONTACT, Command.DELETE_CONTACT, Command.ADMIN_BACK)),
     ADMIN_BACK(List.of(Command.ADMIN_BACK)),
     SEND_MESSAGES(List.of(Command.MAILING_LIST, Command.SEND_MESSAGE_TO_USER, Command.ADMIN_BACK)),
