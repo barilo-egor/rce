@@ -1,4 +1,4 @@
-package tgb.btc.rce.service.processors.personaldiscounts;
+package tgb.btc.rce.service.processors.personaldiscounts.buy;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -39,8 +39,17 @@ public class AskPersonalBuyDiscountProcessor extends Processor {
     public void run(Update update) {
         Long userChatId = UpdateUtil.getLongFromText(update);
         Long chatId = UpdateUtil.getChatId(update);
-
+        if (!userRepository.existsByChatId(userChatId)) {
+            responseSender.sendMessage(chatId, "Пользователь не найден.");
+            return;
+        }
         BigDecimal personalBuy = userDiscountRepository.getPersonalBuyByChatId(userChatId);
+        userRepository.updateBufferVariable(chatId, userChatId.toString());
+
+        responseSender.sendMessage(chatId, "У пользователя " + userChatId + " текущее значение скидки на покупку = "
+                + personalBuy.stripTrailingZeros().toPlainString());
+        responseSender.sendMessage(chatId, "Введите отрицательное значение для скидки, либо положительное для надбавки.");
+        userRepository.nextStep(chatId);
     }
 
 }
