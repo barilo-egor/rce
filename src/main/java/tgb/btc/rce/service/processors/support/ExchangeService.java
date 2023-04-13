@@ -378,7 +378,7 @@ public class ExchangeService {
         Long chatId = UpdateUtil.getChatId(update);
         Deal deal = dealService.getByPid(userService.getCurrentDealByChatId(chatId));
         Rank rank = Rank.getByDealsNumber(dealService.getCountPassedByUserChatId(chatId).intValue());
-        Boolean isRankDiscountOn = userDiscountRepository.getRankDiscountByUserChatId(chatId);
+        boolean isRankDiscountOn = BooleanUtils.isNotFalse(userDiscountRepository.getRankDiscountByUserChatId(chatId));
         if (!Rank.FIRST.equals(rank) && isRankDiscountOn) {
             BigDecimal commission = deal.getCommission();
             BigDecimal rankDiscount = BigDecimalUtil.multiplyHalfUp(commission, ConverterUtil.getPercentsFactor(BigDecimal.valueOf(rank.getPercent())));

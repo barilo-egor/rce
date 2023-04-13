@@ -1,5 +1,6 @@
 package tgb.btc.rce.service.processors.support;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -283,7 +284,7 @@ public class SellService {
                 throw new BaseException("Не найдены реквизиты крипто кошелька.");
         }
         Rank rank = Rank.getByDealsNumber(dealService.getCountPassedByUserChatId(chatId).intValue());
-        Boolean isRankDiscountOn = userDiscountRepository.getRankDiscountByUserChatId(chatId);
+        boolean isRankDiscountOn = BooleanUtils.isNotFalse(userDiscountRepository.getRankDiscountByUserChatId(chatId));
         if (!Rank.FIRST.equals(rank) && isRankDiscountOn) {
             BigDecimal commission = deal.getCommission();
             BigDecimal rankDiscount = BigDecimalUtil.multiplyHalfUp(commission, ConverterUtil.getPercentsFactor(BigDecimal.valueOf(rank.getPercent())));
