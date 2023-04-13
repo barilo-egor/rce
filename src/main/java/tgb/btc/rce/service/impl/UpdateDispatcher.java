@@ -33,7 +33,7 @@ public class UpdateDispatcher implements IUpdateDispatcher {
         if (userService.getIsBannedByChatId(chatId)) return;
         Command command = getCommand(update);
         int step = userService.getStepByChatId(chatId);
-        ((Processor) applicationContext.getBean(CommandProcessorLoader.getByCommand(command, step))).run(update);
+        ((Processor) applicationContext.getBean(CommandProcessorLoader.getByCommand(command, step))).process(update);
     }
 
     private Command getCommand(Update update) {

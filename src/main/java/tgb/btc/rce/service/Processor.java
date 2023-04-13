@@ -23,6 +23,18 @@ public abstract class Processor {
         this.userService = userService;
     }
 
+    public void process(Update update) {
+        if (checkForCancel(update)) {
+            beforeCancel(update);
+            return;
+        }
+        run(update);
+    }
+
+    public void beforeCancel(Update update) {
+        userService.setDefaultValues(UpdateUtil.getChatId(update));
+    }
+
     public abstract void run(Update update);
 
     public boolean checkForCancel(Update update) {

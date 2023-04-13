@@ -1,4 +1,4 @@
-package tgb.btc.rce.service.processors.personaldiscounts.buy;
+package tgb.btc.rce.service.processors.personaldiscounts.sell;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -14,8 +14,8 @@ import tgb.btc.rce.vo.ReplyButton;
 
 import java.util.List;
 
-@CommandProcessor(command = Command.PERSONAL_BUY_DISCOUNT)
-public class ChangePersonalBuyDiscountProcessor extends Processor {
+@CommandProcessor(command = Command.PERSONAL_SELL_DISCOUNT)
+public class ChangePersonalSellDiscountProcessor extends Processor {
 
     private UserRepository userRepository;
 
@@ -25,7 +25,7 @@ public class ChangePersonalBuyDiscountProcessor extends Processor {
     }
 
     @Autowired
-    public ChangePersonalBuyDiscountProcessor(IResponseSender responseSender, UserService userService) {
+    public ChangePersonalSellDiscountProcessor(IResponseSender responseSender, UserService userService) {
         super(responseSender, userService);
     }
 
@@ -36,6 +36,6 @@ public class ChangePersonalBuyDiscountProcessor extends Processor {
                 ReplyButton.builder()
                         .text("Отмена")
                         .build())));
-        userRepository.nextStep(chatId, Command.PERSONAL_BUY_DISCOUNT);
+        userRepository.nextStep(chatId, Command.PERSONAL_SELL_DISCOUNT);
     }
 }

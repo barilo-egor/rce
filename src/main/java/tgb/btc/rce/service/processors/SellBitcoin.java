@@ -1,6 +1,5 @@
 package tgb.btc.rce.service.processors;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.bean.Deal;
@@ -46,7 +45,7 @@ public class SellBitcoin extends Processor {
         Long chatId = UpdateUtil.getChatId(update);
         try {
             if (isMainMenuCommand(update)) processCancel(chatId);
-            else process(update);
+            else processSelling(update);
         } catch (NumberParseException e) {
             processCancel(chatId);
         } catch (BaseException e) {
@@ -75,7 +74,7 @@ public class SellBitcoin extends Processor {
         }
     }
 
-    public void process(Update update) {
+    public void processSelling(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
         if (checkForCancel(update)) {
             dealService.delete(dealService.findById(userService.getCurrentDealByChatId(chatId)));

@@ -5,7 +5,6 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.bean.Deal;
 import tgb.btc.rce.bean.PaymentReceipt;
-import tgb.btc.rce.bean.User;
 import tgb.btc.rce.enums.*;
 import tgb.btc.rce.exception.BaseException;
 import tgb.btc.rce.exception.NumberParseException;
@@ -47,7 +46,7 @@ public class BuyBitcoin extends Processor {
         Long chatId = UpdateUtil.getChatId(update);
         try {
             if (isMainMenuCommand(update)) processCancel(chatId);
-            else process(update);
+            else processBuying(update);
         } catch (NumberParseException e) {
             processCancel(chatId);
         } catch (BaseException e) {
@@ -71,7 +70,7 @@ public class BuyBitcoin extends Processor {
         processToMainMenu(chatId);
     }
 
-    private void process(Update update) {
+    private void processBuying(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
         if (checkForCancel(update)) {
             dealService.delete(dealService.findById(userService.getCurrentDealByChatId(chatId)));

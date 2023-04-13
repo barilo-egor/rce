@@ -70,6 +70,10 @@ public class User extends BasePersist {
     @OneToMany(fetch = FetchType.EAGER)
     private List<ReferralUser> referralUsers;
 
+    public User(Long pid) {
+        this.setPid(pid);
+    }
+
     public static User buildFromUpdate(Update update) {
         User user = new User();
         user.setChatId(UpdateUtil.getChatId(update));

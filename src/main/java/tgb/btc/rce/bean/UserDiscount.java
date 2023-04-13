@@ -28,4 +28,37 @@ public class UserDiscount extends BasePersist {
 
     @Column(name = "PERSONAL_SELL")
     private BigDecimal personalSell;
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public Boolean getRankDiscountOn() {
+        return isRankDiscountOn;
+    }
+
+    public void setRankDiscountOn(Boolean rankDiscountOn) {
+        isRankDiscountOn = rankDiscountOn;
+    }
+
+    public BigDecimal getPersonalBuy() {
+        return personalBuy;
+    }
+
+    public void setPersonalBuy(BigDecimal personalBuy) {
+        this.personalBuy = personalBuy;
+    }
+
+    public BigDecimal getPersonalSell() {
+        return personalSell;
+    }
+
+    public void setPersonalSell(BigDecimal personalSell) {
+        this.personalSell = personalSell;
+    }
+
 }

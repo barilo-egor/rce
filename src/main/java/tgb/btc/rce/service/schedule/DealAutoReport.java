@@ -71,7 +71,7 @@ public class DealAutoReport {
                            .build());
     }
 
-    @Scheduled(cron = "0 5 0 1 * *")
+    @Scheduled(cron = "0 10 0 1 * *")
     @Async
     public void everyMonth() {
         LocalDate firstDay = LocalDate.now().minusDays(1).withDayOfMonth(1);

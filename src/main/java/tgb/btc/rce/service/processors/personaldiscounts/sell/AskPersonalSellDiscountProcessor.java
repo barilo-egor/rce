@@ -1,4 +1,4 @@
-package tgb.btc.rce.service.processors.personaldiscounts.buy;
+package tgb.btc.rce.service.processors.personaldiscounts.sell;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -14,8 +14,8 @@ import tgb.btc.rce.util.UpdateUtil;
 import java.math.BigDecimal;
 import java.util.Objects;
 
-@CommandProcessor(command = Command.PERSONAL_BUY_DISCOUNT, step = 1)
-public class AskPersonalBuyDiscountProcessor extends Processor {
+@CommandProcessor(command = Command.PERSONAL_SELL_DISCOUNT, step = 1)
+public class AskPersonalSellDiscountProcessor extends Processor {
 
     private UserRepository userRepository;
 
@@ -32,7 +32,7 @@ public class AskPersonalBuyDiscountProcessor extends Processor {
     }
 
     @Autowired
-    public AskPersonalBuyDiscountProcessor(IResponseSender responseSender, UserService userService) {
+    public AskPersonalSellDiscountProcessor(IResponseSender responseSender, UserService userService) {
         super(responseSender, userService);
     }
 
@@ -44,12 +44,12 @@ public class AskPersonalBuyDiscountProcessor extends Processor {
             responseSender.sendMessage(chatId, "Пользователь не найден.");
             return;
         }
-        BigDecimal personalBuy = userDiscountRepository.getPersonalBuyByChatId(userChatId);
+        BigDecimal personalSell = userDiscountRepository.getPersonalSellByChatId(userChatId);
         userRepository.updateBufferVariable(chatId, userChatId.toString());
-        if (Objects.isNull(personalBuy)) personalBuy = BigDecimal.ZERO;
+        if (Objects.isNull(personalSell)) personalSell = BigDecimal.ZERO;
 
-        responseSender.sendMessage(chatId, "У пользователя " + userChatId + " текущее значение скидки на покупку = "
-                + personalBuy.stripTrailingZeros().toPlainString());
+        responseSender.sendMessage(chatId, "У пользователя " + userChatId + " текущее значение скидки на продажу = "
+                + personalSell.stripTrailingZeros().toPlainString());
         responseSender.sendMessage(chatId, "Введите отрицательное значение для скидки, либо положительное для надбавки.");
         userRepository.nextStep(chatId);
     }

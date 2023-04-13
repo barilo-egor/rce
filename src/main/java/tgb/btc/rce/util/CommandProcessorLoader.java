@@ -7,6 +7,12 @@ import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.processors.TurnOffCurrencyProcessor;
 import tgb.btc.rce.service.processors.TurningCurrencyProcessor;
 import tgb.btc.rce.service.processors.*;
+import tgb.btc.rce.service.processors.personaldiscounts.buy.AskPersonalBuyDiscountProcessor;
+import tgb.btc.rce.service.processors.personaldiscounts.buy.ChangePersonalBuyDiscountProcessor;
+import tgb.btc.rce.service.processors.personaldiscounts.buy.SavePersonalBuyDiscountProcessor;
+import tgb.btc.rce.service.processors.personaldiscounts.sell.AskPersonalSellDiscountProcessor;
+import tgb.btc.rce.service.processors.personaldiscounts.sell.ChangePersonalSellDiscountProcessor;
+import tgb.btc.rce.service.processors.personaldiscounts.sell.SavePersonalSellDiscountProcessor;
 
 import java.lang.annotation.Annotation;
 import java.util.HashSet;
@@ -87,6 +93,12 @@ public final class CommandProcessorLoader {
         commandProcessors.add(DiscountsProcessor.class);
         commandProcessors.add(RankDiscountProcessor.class);
         commandProcessors.add(ChangeRankDiscountProcessor.class);
+        commandProcessors.add(SavePersonalBuyDiscountProcessor.class);
+        commandProcessors.add(AskPersonalBuyDiscountProcessor.class);
+        commandProcessors.add(ChangePersonalBuyDiscountProcessor.class);
+        commandProcessors.add(SavePersonalSellDiscountProcessor.class);
+        commandProcessors.add(AskPersonalSellDiscountProcessor.class);
+        commandProcessors.add(ChangePersonalSellDiscountProcessor.class);
         commandProcessors.stream()
                 .filter(processor -> !extendsProcessor(processor))
                 .findFirst()
@@ -104,6 +116,7 @@ public final class CommandProcessorLoader {
         return commandProcessors.stream()
                 .filter(processor -> {
                     CommandProcessor annotation = processor.getAnnotation(CommandProcessor.class);
+                    if (Command.START.equals(command) && annotation.command().equals(Command.START)) return true;
                     return annotation.command().equals(command) && annotation.step() == step;
                 })
                 .findFirst()
