@@ -403,11 +403,12 @@ public class ExchangeService {
         responseSender.sendMessage(chatId, message, keyboard, "HTML");
     }
 
-    public void savePaymentType(Update update) {
-        if (!update.hasCallbackQuery()) return;
+    public boolean savePaymentType(Update update) {
+        if (!update.hasCallbackQuery()) return false;
         responseSender.deleteMessage(UpdateUtil.getChatId(update), update.getCallbackQuery().getMessage().getMessageId());
         PaymentType paymentType = PaymentType.valueOf(update.getCallbackQuery().getData());
         dealService.updatePaymentTypeByPid(paymentType, userService.getCurrentDealByChatId(UpdateUtil.getChatId(update)));
+        return true;
     }
 
     public void buildDeal(Update update) {

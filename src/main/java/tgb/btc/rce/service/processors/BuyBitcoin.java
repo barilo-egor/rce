@@ -151,9 +151,10 @@ public class BuyBitcoin extends Processor {
                 responseSender.deleteMessage(UpdateUtil.getChatId(update), Integer.parseInt(userService.getBufferVariable(chatId)));
                 break;
             case 5:
-                exchangeService.savePaymentType(update);
-                exchangeService.buildDeal(update);
-                userService.nextStep(chatId);
+                if (exchangeService.savePaymentType(update)) {
+                    exchangeService.buildDeal(update);
+                    userService.nextStep(chatId);
+                } else responseSender.sendMessage(chatId, "Выберите способ оплаты.");
                 break;
             case 6:
                 if (update.hasCallbackQuery() && Command.CANCEL_DEAL.name().equals(update.getCallbackQuery().getData())) {
