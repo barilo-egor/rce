@@ -12,6 +12,7 @@ import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.IUserDiscountService;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.impl.UserService;
+import tgb.btc.rce.service.processors.support.ExchangeService;
 import tgb.btc.rce.util.UpdateUtil;
 
 import java.math.BigDecimal;
@@ -58,6 +59,7 @@ public class SavePersonalBuyDiscountProcessor extends Processor {
             userDiscount.setPersonalBuy(newPersonalBuy);
             userDiscountRepository.save(userDiscount);
         } else userDiscountRepository.updatePersonalBuyByUserPid(newPersonalBuy, userPid);
+        ExchangeService.putToUsersPersonalBuy(userChatId, newPersonalBuy);
         responseSender.sendMessage(chatId, "Персональная скидка на покупку обновлена.");
         processToAdminMainPanel(chatId);
     }

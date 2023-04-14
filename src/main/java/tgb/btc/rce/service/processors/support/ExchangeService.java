@@ -58,6 +58,28 @@ public class ExchangeService {
 
     private UserDiscountRepository userDiscountRepository;
 
+    private UserDiscountService userDiscountService;
+
+    private UserRepository userRepository;
+
+    private static Map<Long, BigDecimal> USERS_PERSONAL_BUY = new HashMap<>();
+
+    public static void putToUsersPersonalBuy(Long userChatId, BigDecimal personalBuy) {
+        if (Objects.isNull(personalBuy))
+            throw new BaseException("Персональная скидка на покупку не может быть null.");
+        USERS_PERSONAL_BUY.put(userChatId, personalBuy);
+    }
+
+    @Autowired
+    public void setUserDiscountService(UserDiscountService userDiscountService) {
+        this.userDiscountService = userDiscountService;
+    }
+
+    @Autowired
+    public void setUserRepository(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
     @Autowired
     public void setUserDiscountRepository(UserDiscountRepository userDiscountRepository) {
         this.userDiscountRepository = userDiscountRepository;
@@ -144,6 +166,7 @@ public class ExchangeService {
     }
 
     public void convertToRub(Update update, Long currentDealPid) {
+        Long chatId = UpdateUtil.getChatId(update);
         System.out.println();
         String query = update.getInlineQuery().getQuery().replaceAll(",", ".");
         BigDecimal sum;
@@ -178,6 +201,19 @@ public class ExchangeService {
         }
         sum = BigDecimalUtil.round(sum, cryptoCurrency.getScale());
         BigDecimal roundedConvertedSum = BigDecimalUtil.round(ConverterUtil.convertCryptoToRub(currency, sum.doubleValue(), DealType.BUY), 0);
+        BigDecimal personalBuy = USERS_PERSONAL_BUY.get(chatId);
+        if (Objects.isNull(personalBuy)) {
+            if (userDiscountService.isExistByUserPid(userRepository.getPidByChatId(chatId))) {
+                personalBuy = userDiscountRepository.getPersonalBuyByChatId(chatId);
+                USERS_PERSONAL_BUY.put(chatId, personalBuy);
+                if (Objects.nonNull()personalBuy.compareTo(BigDecimal.ZERO)) {
+
+                }
+            } else {
+
+            }
+            USERS_PERSONAL_BUY.put(chatId, BigDecimal.ZERO);
+        }
         String dealType = DealType.BUY.equals(dealService.getDealTypeByPid(currentDealPid)) ? "Покупка: " : "Продажа: ";
         sendInlineAnswer(update, dealType + sum.stripTrailingZeros().toPlainString() + " " + currency.getDisplayName() + " ~ " +
                 roundedConvertedSum.stripTrailingZeros().toPlainString(), true);

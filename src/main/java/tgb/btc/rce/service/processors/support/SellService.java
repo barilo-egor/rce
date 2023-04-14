@@ -124,7 +124,8 @@ public class SellService {
 
         dealService.updateCryptoAmountByPid(BigDecimal.valueOf(sum), currentDealPid);
         dealService.updateAmountByPid(ConverterUtil.convertCryptoToRub(cryptoCurrency, sum, DealType.SELL), currentDealPid);
-        dealService.updateCommissionByPid(ConverterUtil.getCommissionForSell(BigDecimal.valueOf(sum), cryptoCurrency, dealService.getDealTypeByPid(currentDealPid)), currentDealPid);
+        dealService.updateCommissionByPid(ConverterUtil.getCommissionForSell(BigDecimal.valueOf(sum), cryptoCurrency,
+                                                                             dealService.getDealTypeByPid(currentDealPid)), currentDealPid);
     }
 
     public void convertToRub(Update update, Long currentDealPid) {
