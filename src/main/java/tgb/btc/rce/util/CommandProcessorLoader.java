@@ -26,6 +26,12 @@ public final class CommandProcessorLoader {
 
     public static final String PROCESSORS_PACKAGE = "tgb.btc.rce.service.processors";
 
+    private static Set<Command> COMMANDS_WITH_STEP = Set.of(
+            Command.PERSONAL_BUY_DISCOUNT,
+            Command.PERSONAL_SELL_DISCOUNT,
+            Command.BULK_DISCOUNTS
+    );
+
 
     public static void scan() {
 //        Reflections reflections = new Reflections(PROCESSORS_PACKAGE, Scanners.TypesAnnotated);
@@ -117,7 +123,7 @@ public final class CommandProcessorLoader {
                 .filter(processor -> {
                     CommandProcessor annotation = processor.getAnnotation(CommandProcessor.class);
                     if (Command.START.equals(command) && annotation.command().equals(Command.START)) return true;
-                    return annotation.command().equals(command) && annotation.step() == step;
+                    return annotation.command().equals(command) && (!COMMANDS_WITH_STEP.contains(command) || annotation.step() == step);
                 })
                 .findFirst()
                 .orElseThrow(() -> new BaseException("Не найден процессор для команды " + command.name()));

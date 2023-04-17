@@ -12,4 +12,8 @@ public interface FilePaths {
     String BOT_VARIABLE_BUFFER_PROPERTIES = "config/buffer/variables.properties";
 
     String CURRENCIES_TURNING = "config/currencies_turning.properties";
+
+    String BULK_DISCOUNT_PROPERTIES = "config/bulk_discount.properties";
+
+    String BULK_DISCOUNT_BUFFER_PROPERTIES = "config/buffer/bulk_discount.properties";
 }

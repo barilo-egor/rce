@@ -8,5 +8,6 @@ public final class BotConfig {
         CommandProcessorLoader.scan();
         MessagePropertiesUtil.loadProperties();
         BotVariablePropertiesUtil.loadProperties();
+        BulkDiscountUtil.load();
     }
 }
