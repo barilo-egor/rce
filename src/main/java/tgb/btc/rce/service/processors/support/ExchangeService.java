@@ -202,17 +202,15 @@ public class ExchangeService {
         sum = BigDecimalUtil.round(sum, cryptoCurrency.getScale());
         BigDecimal roundedConvertedSum = BigDecimalUtil.round(ConverterUtil.convertCryptoToRub(currency, sum.doubleValue(), DealType.BUY), 0);
         BigDecimal personalBuy = USERS_PERSONAL_BUY.get(chatId);
-        if (Objects.isNull(personalBuy)) {
-            if (userDiscountService.isExistByUserPid(userRepository.getPidByChatId(chatId))) {
-                personalBuy = userDiscountRepository.getPersonalBuyByChatId(chatId);
-                USERS_PERSONAL_BUY.put(chatId, personalBuy);
-                if (Objects.nonNull()personalBuy.compareTo(BigDecimal.ZERO)) {
-
-                }
-            } else {
-
+        if (Objects.isNull(personalBuy) || !BigDecimal.ZERO.equals(personalBuy)) {
+            personalBuy = userDiscountRepository.getPersonalBuyByChatId(chatId);
+            if (Objects.nonNull(personalBuy) && !BigDecimal.ZERO.equals(personalBuy)) {
+                if (BigDecimal.ZERO.compareTo(personalBuy) > 0)
+                    sum = sum.subtract(ConverterUtil.getPercentsFactor(sum).multiply(personalBuy));
+                else sum = sum.add(ConverterUtil.getPercentsFactor(sum).multiply(personalBuy));
             }
-            USERS_PERSONAL_BUY.put(chatId, BigDecimal.ZERO);
+            if (Objects.nonNull(personalBuy)) putToUsersPersonalBuy(chatId, personalBuy);
+            else putToUsersPersonalBuy(chatId, BigDecimal.ZERO);
         }
         String dealType = DealType.BUY.equals(dealService.getDealTypeByPid(currentDealPid)) ? "Покупка: " : "Продажа: ";
         sendInlineAnswer(update, dealType + sum.stripTrailingZeros().toPlainString() + " " + currency.getDisplayName() + " ~ " +
@@ -345,7 +343,7 @@ public class ExchangeService {
             dealService.updateWalletByPid(wallet, currentDealPid);
         } else if (update.hasCallbackQuery() && update.getCallbackQuery().getData().equals(USE_SAVED_WALLET)) {
             dealService.updateWalletByPid(dealService.getWalletFromLastNotCurrentByChatId(UpdateUtil.getChatId(update),
-                            dealService.getDealTypeByPid(currentDealPid)), currentDealPid);
+                    dealService.getDealTypeByPid(currentDealPid)), currentDealPid);
         }
     }
 
@@ -420,11 +418,11 @@ public class ExchangeService {
             BigDecimal commission = deal.getCommission();
             BigDecimal rankDiscount = BigDecimalUtil.multiplyHalfUp(commission, ConverterUtil.getPercentsFactor(BigDecimal.valueOf(rank.getPercent())));
             deal.setAmount(BigDecimalUtil.subtractHalfUp(deal.getAmount(), rankDiscount));
-            deal = dealService.save(deal);
         }
         CryptoCurrency currency = deal.getCryptoCurrency();
         PaymentConfig paymentConfig = paymentConfigService.getByPaymentType(deal.getPaymentType());
-        if (paymentConfig == null) throw new BaseException("Не установлены реквизиты для " + deal.getPaymentType().getDisplayName() + ".");
+        if (paymentConfig == null)
+            throw new BaseException("Не установлены реквизиты для " + deal.getPaymentType().getDisplayName() + ".");
         String promoCodeText = Boolean.TRUE.equals(deal.getUsedPromo()) ?
                 "\n\n<b> Использован скидочный промокод</b>: "
                         + BotVariablePropertiesUtil.getVariable(BotVariableType.PROMO_CODE_NAME) + "\n\n"
@@ -441,6 +439,21 @@ public class ExchangeService {
                 dealAmount = BigDecimal.ZERO;
             }
         }
+        BigDecimal personalBuy = USERS_PERSONAL_BUY.get(chatId);
+        if (Objects.isNull(personalBuy) || !BigDecimal.ZERO.equals(personalBuy)) {
+            personalBuy = userDiscountRepository.getPersonalBuyByChatId(chatId);
+            if (Objects.nonNull(personalBuy) && !BigDecimal.ZERO.equals(personalBuy)) {
+                BigDecimal amount = deal.getAmount();
+                if (BigDecimal.ZERO.compareTo(personalBuy) > 0)
+                    amount = amount.subtract(ConverterUtil.getPercentsFactor(amount).multiply(personalBuy));
+                else amount = amount.add(ConverterUtil.getPercentsFactor(amount).multiply(personalBuy));
+                deal.setAmount(amount);
+                dealAmount = amount;
+            }
+            if (Objects.nonNull(personalBuy)) putToUsersPersonalBuy(chatId, personalBuy);
+            else putToUsersPersonalBuy(chatId, BigDecimal.ZERO);
+        }
+        deal = dealService.save(deal);
 
         String message = "✅<b>Заявка №</b><code>" + deal.getPid() + "</code> успешно создана."
                 + "\n\n"
@@ -499,13 +512,13 @@ public class ExchangeService {
         responseSender.sendMessage(chatId, MessagePropertiesUtil.getMessage(PropertiesMessage.DEAL_CONFIRMED));
         userService.getAdminsChatIds().forEach(adminChatId ->
                 responseSender.sendMessage(adminChatId, "Поступила новая заявка на покупку.",
-                KeyboardUtil.buildInline(List.of(
-                        InlineButton.builder()
-                                .text(Command.SHOW_DEAL.getText())
-                                .data(Command.SHOW_DEAL.getText() + BotStringConstants.CALLBACK_DATA_SPLITTER
-                                        + currentDealPid)
-                                .build()
-                ))));
+                        KeyboardUtil.buildInline(List.of(
+                                InlineButton.builder()
+                                        .text(Command.SHOW_DEAL.getText())
+                                        .data(Command.SHOW_DEAL.getText() + BotStringConstants.CALLBACK_DATA_SPLITTER
+                                                + currentDealPid)
+                                        .build()
+                        ))));
         userService.updateCurrentDealByChatId(null, chatId);
     }
 
@@ -547,6 +560,6 @@ public class ExchangeService {
 
     public void askForReceipts(Update update) {
         responseSender.sendMessage(UpdateUtil.getChatId(update), "Отправьте скрин перевода. ",
-                 KeyboardUtil.buildReply(List.of(ReplyButton.builder().text(Command.RECEIPTS_CANCEL_DEAL.getText()).build())));
+                KeyboardUtil.buildReply(List.of(ReplyButton.builder().text(Command.RECEIPTS_CANCEL_DEAL.getText()).build())));
     }
 }

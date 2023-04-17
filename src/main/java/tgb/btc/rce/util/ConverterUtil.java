@@ -145,8 +145,8 @@ public final class ConverterUtil {
         return BigDecimalUtil.multiplyHalfUp(rub, getPercentsFactor(percentCommission));
     }
 
-    public static BigDecimal getPercentsFactor(BigDecimal percents) {
-        return BigDecimalUtil.divideHalfUp(percents, BigDecimal.valueOf(100));
+    public static BigDecimal getPercentsFactor(BigDecimal sum) {
+        return BigDecimalUtil.divideHalfUp(sum, BigDecimal.valueOf(100));
     }
 
     @SneakyThrows

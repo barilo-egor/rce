@@ -12,6 +12,7 @@ import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.IUserDiscountService;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.impl.UserService;
+import tgb.btc.rce.service.processors.support.SellService;
 import tgb.btc.rce.util.UpdateUtil;
 
 import java.math.BigDecimal;
@@ -49,15 +50,16 @@ public class SavePersonalSellDiscountProcessor extends Processor {
     public void run(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
         String enteredValue = UpdateUtil.getMessageText(update).replaceAll(",", ".");
-        BigDecimal newPersonalBuy = BigDecimal.valueOf(Double.parseDouble(enteredValue));
+        BigDecimal newPersonalSell = BigDecimal.valueOf(Double.parseDouble(enteredValue));
         Long userChatId = Long.parseLong(userRepository.getBufferVariable(chatId));
         Long userPid = userRepository.getPidByChatId(userChatId);
         if (!userDiscountService.isExistByUserPid(userPid)) {
             UserDiscount userDiscount = new UserDiscount();
             userDiscount.setUser(new User(userPid));
-            userDiscount.setPersonalSell(newPersonalBuy);
+            userDiscount.setPersonalSell(newPersonalSell);
             userDiscountRepository.save(userDiscount);
-        } else userDiscountRepository.updatePersonalSellByUserPid(newPersonalBuy, userPid);
+        } else userDiscountRepository.updatePersonalSellByUserPid(newPersonalSell, userPid);
+        SellService.putToUsersPersonalSell(userChatId, newPersonalSell);
         responseSender.sendMessage(chatId, "Персональная скидка на продажу обновлена.");
         processToAdminMainPanel(chatId);
     }
