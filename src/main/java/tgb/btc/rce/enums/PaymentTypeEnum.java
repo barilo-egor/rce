@@ -2,7 +2,7 @@ package tgb.btc.rce.enums;
 
 import tgb.btc.rce.exception.BaseException;
 
-public enum PaymentType {
+public enum PaymentTypeEnum {
     RF_CARD("\uD83D\uDCB3 Карта РФ СБП"),
     QIWI("\uD83D\uDD35 QIWI"),
     TINKOFF("\uD83D\uDFE1 Tinkoff"),
@@ -10,7 +10,7 @@ public enum PaymentType {
 
     final String displayName;
 
-    PaymentType(String displayName) {
+    PaymentTypeEnum(String displayName) {
         this.displayName = displayName;
     }
 
@@ -18,9 +18,9 @@ public enum PaymentType {
         return displayName;
     }
 
-    public static PaymentType fromDisplayName(String displayName) {
-        for(PaymentType paymentType : PaymentType.values()){
-            if(paymentType.getDisplayName().equals(displayName)) return paymentType;
+    public static PaymentTypeEnum fromDisplayName(String displayName) {
+        for(PaymentTypeEnum paymentTypeEnum : PaymentTypeEnum.values()){
+            if(paymentTypeEnum.getDisplayName().equals(displayName)) return paymentTypeEnum;
         }
         throw new BaseException("Не найден тип оплаты.");
     }

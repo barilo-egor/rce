@@ -1,10 +1,9 @@
 package tgb.btc.rce.bean;
 
 import lombok.Builder;
-import org.hibernate.annotations.*;
 import tgb.btc.rce.enums.CryptoCurrency;
 import tgb.btc.rce.enums.DealType;
-import tgb.btc.rce.enums.PaymentType;
+import tgb.btc.rce.enums.PaymentTypeEnum;
 
 import javax.persistence.*;
 import javax.persistence.Entity;
@@ -30,7 +29,7 @@ public class Deal extends BasePersist {
 
     @Column(name = "PAYMENT_TYPE")
     @Enumerated(value = EnumType.STRING)
-    private PaymentType paymentType;
+    private PaymentTypeEnum paymentTypeEnum;
 
     @Column(name = "CRYPTO_AMOUNT", precision = 15, scale = 8)
     private BigDecimal cryptoAmount;
@@ -86,7 +85,7 @@ public class Deal extends BasePersist {
     public Deal() {
     }
 
-    public Deal(User user, LocalDateTime dateTime, LocalDate date, PaymentType paymentType, BigDecimal cryptoAmount,
+    public Deal(User user, LocalDateTime dateTime, LocalDate date, PaymentTypeEnum paymentTypeEnum, BigDecimal cryptoAmount,
                 BigDecimal amount, String wallet, String verificationPhoto, String userCheck, Boolean isActive,
                 Boolean isPassed, Boolean isCurrent, Boolean isUsedPromo, Boolean isUsedReferralDiscount,
                 CryptoCurrency cryptoCurrency, DealType dealType, BigDecimal commission,
@@ -94,7 +93,7 @@ public class Deal extends BasePersist {
         this.user = user;
         this.dateTime = dateTime;
         this.date = date;
-        this.paymentType = paymentType;
+        this.paymentTypeEnum = paymentTypeEnum;
         this.cryptoAmount = cryptoAmount;
         this.amount = amount;
         this.wallet = wallet;
@@ -161,12 +160,12 @@ public class Deal extends BasePersist {
         this.dateTime = dateTime;
     }
 
-    public PaymentType getPaymentType() {
-        return paymentType;
+    public PaymentTypeEnum getPaymentTypeEnum() {
+        return paymentTypeEnum;
     }
 
-    public void setPaymentType(PaymentType paymentType) {
-        this.paymentType = paymentType;
+    public void setPaymentTypeEnum(PaymentTypeEnum paymentTypeEnum) {
+        this.paymentTypeEnum = paymentTypeEnum;
     }
 
     public BigDecimal getAmount() {
@@ -279,12 +278,12 @@ public class Deal extends BasePersist {
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         Deal deal = (Deal) o;
-        return Objects.equals(user, deal.user) && Objects.equals(dateTime, deal.dateTime) && Objects.equals(date, deal.date) && paymentType == deal.paymentType && Objects.equals(cryptoAmount, deal.cryptoAmount) && Objects.equals(amount, deal.amount) && Objects.equals(wallet, deal.wallet) && Objects.equals(verificationPhoto, deal.verificationPhoto) && Objects.equals(userCheck, deal.userCheck) && Objects.equals(isActive, deal.isActive) && Objects.equals(isPassed, deal.isPassed) && Objects.equals(isCurrent, deal.isCurrent) && Objects.equals(isUsedPromo, deal.isUsedPromo) && Objects.equals(isUsedReferralDiscount, deal.isUsedReferralDiscount) && cryptoCurrency == deal.cryptoCurrency && dealType == deal.dealType && Objects.equals(commission, deal.commission) && Objects.equals(paymentReceipts, deal.paymentReceipts) && Objects.equals(discount, deal.discount) && Objects.equals(originalPrice, deal.originalPrice);
+        return Objects.equals(user, deal.user) && Objects.equals(dateTime, deal.dateTime) && Objects.equals(date, deal.date) && paymentTypeEnum == deal.paymentTypeEnum && Objects.equals(cryptoAmount, deal.cryptoAmount) && Objects.equals(amount, deal.amount) && Objects.equals(wallet, deal.wallet) && Objects.equals(verificationPhoto, deal.verificationPhoto) && Objects.equals(userCheck, deal.userCheck) && Objects.equals(isActive, deal.isActive) && Objects.equals(isPassed, deal.isPassed) && Objects.equals(isCurrent, deal.isCurrent) && Objects.equals(isUsedPromo, deal.isUsedPromo) && Objects.equals(isUsedReferralDiscount, deal.isUsedReferralDiscount) && cryptoCurrency == deal.cryptoCurrency && dealType == deal.dealType && Objects.equals(commission, deal.commission) && Objects.equals(paymentReceipts, deal.paymentReceipts) && Objects.equals(discount, deal.discount) && Objects.equals(originalPrice, deal.originalPrice);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), user, dateTime, date, paymentType, cryptoAmount, amount, wallet, verificationPhoto, userCheck, isActive, isPassed, isCurrent, isUsedPromo, isUsedReferralDiscount, cryptoCurrency, dealType, commission, paymentReceipts, discount, originalPrice);
+        return Objects.hash(super.hashCode(), user, dateTime, date, paymentTypeEnum, cryptoAmount, amount, wallet, verificationPhoto, userCheck, isActive, isPassed, isCurrent, isUsedPromo, isUsedReferralDiscount, cryptoCurrency, dealType, commission, paymentReceipts, discount, originalPrice);
     }
 
     @Override
@@ -293,7 +292,7 @@ public class Deal extends BasePersist {
                 "user=" + user +
                 ", dateTime=" + dateTime +
                 ", date=" + date +
-                ", paymentType=" + paymentType +
+                ", paymentType=" + paymentTypeEnum +
                 ", cryptoAmount=" + cryptoAmount +
                 ", amount=" + amount +
                 ", wallet='" + wallet + '\'' +

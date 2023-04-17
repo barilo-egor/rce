@@ -8,7 +8,7 @@ import tgb.btc.rce.bean.Deal;
 import tgb.btc.rce.bean.PaymentReceipt;
 import tgb.btc.rce.enums.CryptoCurrency;
 import tgb.btc.rce.enums.DealType;
-import tgb.btc.rce.enums.PaymentType;
+import tgb.btc.rce.enums.PaymentTypeEnum;
 import tgb.btc.rce.repository.BaseRepository;
 import tgb.btc.rce.repository.DealRepository;
 
@@ -93,8 +93,8 @@ public class DealService extends BasePersistService<Deal> {
         dealRepository.updateWalletByPid(wallet, pid);
     }
 
-    public void updatePaymentTypeByPid(PaymentType paymentType, Long pid) {
-        dealRepository.updatePaymentTypeByPid(paymentType, pid);
+    public void updatePaymentTypeByPid(PaymentTypeEnum paymentTypeEnum, Long pid) {
+        dealRepository.updatePaymentTypeByPid(paymentTypeEnum, pid);
     }
 
     public void updateIsUsedPromoByPid(Boolean isUsedPromo, Long pid) {

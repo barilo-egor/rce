@@ -384,7 +384,7 @@ public class ExchangeService {
                 + additionalText
                 + "<b>Выберите способ оплаты:</b>";
 
-        List<InlineButton> buttons = Arrays.stream(PaymentType.values()).map(paymentType -> {
+        List<InlineButton> buttons = Arrays.stream(PaymentTypeEnum.values()).map(paymentType -> {
                     PaymentConfig paymentConfig = paymentConfigService.getByPaymentType(paymentType);
                     if (paymentConfig == null || paymentConfig.getOn()) return InlineButton.builder()
                             .text(paymentType.getDisplayName())
@@ -404,8 +404,8 @@ public class ExchangeService {
     public boolean savePaymentType(Update update) {
         if (!update.hasCallbackQuery()) return false;
         responseSender.deleteMessage(UpdateUtil.getChatId(update), update.getCallbackQuery().getMessage().getMessageId());
-        PaymentType paymentType = PaymentType.valueOf(update.getCallbackQuery().getData());
-        dealService.updatePaymentTypeByPid(paymentType, userService.getCurrentDealByChatId(UpdateUtil.getChatId(update)));
+        PaymentTypeEnum paymentTypeEnum = PaymentTypeEnum.valueOf(update.getCallbackQuery().getData());
+        dealService.updatePaymentTypeByPid(paymentTypeEnum, userService.getCurrentDealByChatId(UpdateUtil.getChatId(update)));
         return true;
     }
 
@@ -420,9 +420,9 @@ public class ExchangeService {
             deal.setAmount(BigDecimalUtil.subtractHalfUp(deal.getAmount(), rankDiscount));
         }
         CryptoCurrency currency = deal.getCryptoCurrency();
-        PaymentConfig paymentConfig = paymentConfigService.getByPaymentType(deal.getPaymentType());
+        PaymentConfig paymentConfig = paymentConfigService.getByPaymentType(deal.getPaymentTypeEnum());
         if (paymentConfig == null)
-            throw new BaseException("Не установлены реквизиты для " + deal.getPaymentType().getDisplayName() + ".");
+            throw new BaseException("Не установлены реквизиты для " + deal.getPaymentTypeEnum().getDisplayName() + ".");
         String promoCodeText = Boolean.TRUE.equals(deal.getUsedPromo()) ?
                 "\n\n<b> Использован скидочный промокод</b>: "
                         + BotVariablePropertiesUtil.getVariable(BotVariableType.PROMO_CODE_NAME) + "\n\n"

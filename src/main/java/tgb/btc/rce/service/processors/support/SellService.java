@@ -216,7 +216,7 @@ public class SellService {
         Long chatId = UpdateUtil.getChatId(update);
         responseSender.deleteMessage(chatId, UpdateUtil.getMessage(update).getMessageId());
         Deal deal = dealService.findById(userService.getCurrentDealByChatId(chatId));
-        String message = "Введите " + deal.getPaymentType().getDisplayName() + " реквизиты, куда вы "
+        String message = "Введите " + deal.getPaymentTypeEnum().getDisplayName() + " реквизиты, куда вы "
                 + "хотите получить "
                 + BigDecimalUtil.round(deal.getAmount(), 0).stripTrailingZeros().toPlainString() + "₽";
 
@@ -252,7 +252,7 @@ public class SellService {
                 + additionalText
                 + "<b>Выберите способ получения перевода:</b>";
 
-        List<InlineButton> buttons = Arrays.stream(PaymentType.values()).map(paymentType -> {
+        List<InlineButton> buttons = Arrays.stream(PaymentTypeEnum.values()).map(paymentType -> {
                     PaymentConfig paymentConfig = paymentConfigService.getByPaymentType(paymentType);
                     if (paymentConfig == null || paymentConfig.getOn()) return InlineButton.builder()
                             .text(paymentType.getDisplayName())
@@ -272,17 +272,17 @@ public class SellService {
     public void savePaymentType(Update update) {
         if (!update.hasCallbackQuery()) return;
         responseSender.deleteMessage(UpdateUtil.getChatId(update), update.getCallbackQuery().getMessage().getMessageId());
-        PaymentType paymentType = PaymentType.valueOf(update.getCallbackQuery().getData());
-        dealService.updatePaymentTypeByPid(paymentType, userService.getCurrentDealByChatId(UpdateUtil.getChatId(update)));
+        PaymentTypeEnum paymentTypeEnum = PaymentTypeEnum.valueOf(update.getCallbackQuery().getData());
+        dealService.updatePaymentTypeByPid(paymentTypeEnum, userService.getCurrentDealByChatId(UpdateUtil.getChatId(update)));
     }
 
     public void buildDeal(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
         Deal deal = dealService.getByPid(userService.getCurrentDealByChatId(chatId));
         CryptoCurrency currency = deal.getCryptoCurrency();
-        PaymentConfig paymentConfig = paymentConfigService.getByPaymentType(deal.getPaymentType());
+        PaymentConfig paymentConfig = paymentConfigService.getByPaymentType(deal.getPaymentTypeEnum());
         if (paymentConfig == null)
-            throw new BaseException("Не установлены реквизиты для " + deal.getPaymentType().getDisplayName() + ".");
+            throw new BaseException("Не установлены реквизиты для " + deal.getPaymentTypeEnum().getDisplayName() + ".");
         String promoCodeText = Boolean.TRUE.equals(deal.getUsedPromo()) ?
                 "\n\n<b> Использован скидочный промокод</b>: "
                         + BotVariablePropertiesUtil.getVariable(BotVariableType.PROMO_CODE_NAME) + "\n\n"
@@ -328,7 +328,7 @@ public class SellService {
                 + "<b>Продаете</b>: "
                 + BigDecimalUtil.round(deal.getCryptoAmount(), currency.getScale()).stripTrailingZeros().toPlainString() + " " + currency.getShortName()
                 + "\n"
-                + "<b>" + deal.getPaymentType().getDisplayName() + " реквизиты</b>:" + "<code>" + deal.getWallet() + "</code>"
+                + "<b>" + deal.getPaymentTypeEnum().getDisplayName() + " реквизиты</b>:" + "<code>" + deal.getWallet() + "</code>"
                 + "\n\n"
                 + "Ваш ранг: " + rank.getSmile() + ", скидка " + rank.getPercent() + "%" + "\n\n"
                 + "\uD83D\uDCB5<b>Получаете</b>: <code>" + BigDecimalUtil.round(deal.getAmount(), 0).stripTrailingZeros().toPlainString() + "₽</code>"

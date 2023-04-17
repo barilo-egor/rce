@@ -24,7 +24,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.RoundingMode;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
@@ -127,7 +126,7 @@ public class DealReports extends Processor {
             cell = row.createCell(4);
             cell.setCellValue(deal.getCryptoAmount().setScale(8, RoundingMode.FLOOR).stripTrailingZeros().toString());
             cell = row.createCell(5);
-            cell.setCellValue(deal.getPaymentType().getDisplayName());
+            cell.setCellValue(deal.getPaymentTypeEnum().getDisplayName());
             cell = row.createCell(6);
             cell.setCellValue(deal.getUser().getChatId());
             i++;

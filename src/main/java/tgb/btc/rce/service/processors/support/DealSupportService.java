@@ -34,7 +34,7 @@ public class DealSupportService {
         User user = deal.getUser();
         return String.format(BotStringConstants.DEAL_INFO, deal.getDealType().getDisplayName(), deal.getPid(),
                 deal.getDateTime().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")),
-                deal.getPaymentType().getDisplayName(),
+                deal.getPaymentTypeEnum().getDisplayName(),
                 deal.getWallet(), StringUtils.defaultIfEmpty(userService.getUsernameByChatId(user.getChatId()), BotStringConstants.ABSENT),
                 dealService.getCountPassedByUserChatId(user.getChatId()), user.getChatId(), deal.getCryptoCurrency().getShortName(),
                 deal.getCryptoAmount().setScale(8, RoundingMode.FLOOR).stripTrailingZeros().toPlainString(),

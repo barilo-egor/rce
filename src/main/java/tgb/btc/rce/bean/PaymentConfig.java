@@ -1,7 +1,7 @@
 package tgb.btc.rce.bean;
 
 import lombok.Builder;
-import tgb.btc.rce.enums.PaymentType;
+import tgb.btc.rce.enums.PaymentTypeEnum;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -13,7 +13,7 @@ public class PaymentConfig extends BasePersist {
 
     @Column(name = "PAYMENT_TYPE", unique = true)
     @Enumerated(EnumType.STRING)
-    private PaymentType paymentType;
+    private PaymentTypeEnum paymentTypeEnum;
 
     @Column(name = "IS_ON")
     private Boolean isOn;
@@ -24,8 +24,8 @@ public class PaymentConfig extends BasePersist {
     public PaymentConfig() {
     }
 
-    public PaymentConfig(PaymentType paymentType, Boolean isOn, String requisites) {
-        this.paymentType = paymentType;
+    public PaymentConfig(PaymentTypeEnum paymentTypeEnum, Boolean isOn, String requisites) {
+        this.paymentTypeEnum = paymentTypeEnum;
         this.isOn = isOn;
         this.requisites = requisites;
     }
@@ -38,12 +38,12 @@ public class PaymentConfig extends BasePersist {
         this.requisites = requisites;
     }
 
-    public PaymentType getPaymentType() {
-        return paymentType;
+    public PaymentTypeEnum getPaymentTypeEnum() {
+        return paymentTypeEnum;
     }
 
-    public void setPaymentType(PaymentType paymentType) {
-        this.paymentType = paymentType;
+    public void setPaymentTypeEnum(PaymentTypeEnum paymentTypeEnum) {
+        this.paymentTypeEnum = paymentTypeEnum;
     }
 
     public Boolean getOn() {
@@ -60,18 +60,18 @@ public class PaymentConfig extends BasePersist {
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         PaymentConfig that = (PaymentConfig) o;
-        return paymentType == that.paymentType && Objects.equals(isOn, that.isOn) && Objects.equals(requisites, that.requisites);
+        return paymentTypeEnum == that.paymentTypeEnum && Objects.equals(isOn, that.isOn) && Objects.equals(requisites, that.requisites);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), paymentType, isOn, requisites);
+        return Objects.hash(super.hashCode(), paymentTypeEnum, isOn, requisites);
     }
 
     @Override
     public String toString() {
         return "PaymentConfig{" +
-                "paymentType=" + paymentType +
+                "paymentType=" + paymentTypeEnum +
                 ", isOn=" + isOn +
                 ", requisites='" + requisites + '\'' +
                 '}';
