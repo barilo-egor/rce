@@ -10,6 +10,7 @@ import tgb.btc.rce.bean.User;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.BotVariableType;
 import tgb.btc.rce.enums.Command;
+import tgb.btc.rce.repository.UserRepository;
 import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.impl.DealService;
@@ -27,6 +28,8 @@ import java.util.Objects;
 public class ConfirmUserDeal extends Processor {
 
     private final DealService dealService;
+
+    private UserRepository userRepository;
 
     @Autowired
     public ConfirmUserDeal(IResponseSender responseSender, UserService userService, DealService dealService) {
@@ -72,9 +75,12 @@ public class ConfirmUserDeal extends Processor {
         responseSender.deleteMessage(UpdateUtil.getChatId(update), UpdateUtil.getMessage(update).getMessageId());
         if (user.getFromChatId() != null) {
             User refUser = userService.findByChatId(user.getFromChatId());
+            BigDecimal refUserReferralPercent = userRepository.getReferralPercentByChatId(refUser.getChatId());
+            BigDecimal referralPercent = Objects.isNull(refUserReferralPercent) || BigDecimal.ZERO.equals(refUserReferralPercent)
+                    ? BigDecimal.valueOf(BotVariablePropertiesUtil.getDouble(BotVariableType.REFERRAL_PERCENT))
+                    : refUserReferralPercent;
             BigDecimal sumToAdd = BigDecimalUtil.multiplyHalfUp(deal.getAmount(),
-                    ConverterUtil.getPercentsFactor(
-                            BigDecimal.valueOf(BotVariablePropertiesUtil.getDouble(BotVariableType.REFERRAL_PERCENT))));
+                    ConverterUtil.getPercentsFactor(referralPercent));
             Integer total = refUser.getReferralBalance() + sumToAdd.intValue();
             log.info("Подтверждение сделки, зачисление на реф баланс пользователю. Админ чат айди = "
                     + UpdateUtil.getChatId(update) + ". refUserChatId = " + refUser.getChatId() + ", sumToAdd = "

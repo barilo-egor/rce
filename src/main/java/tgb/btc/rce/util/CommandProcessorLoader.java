@@ -27,10 +27,11 @@ public final class CommandProcessorLoader {
 
     public static final String PROCESSORS_PACKAGE = "tgb.btc.rce.service.processors";
 
-    private static Set<Command> COMMANDS_WITH_STEP = Set.of(
+    private static final Set<Command> COMMANDS_WITH_STEP = Set.of(
             Command.PERSONAL_BUY_DISCOUNT,
             Command.PERSONAL_SELL_DISCOUNT,
-            Command.BULK_DISCOUNTS
+            Command.BULK_DISCOUNTS,
+            Command.REFERRAL_PERCENT
     );
 
 

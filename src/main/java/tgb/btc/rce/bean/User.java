@@ -67,6 +67,9 @@ public class User extends BasePersist {
     @Column(name = "CURRENT_DEAL")
     private Long currentDeal;
 
+    @Column(name = "REFERRAL_PERCENT")
+    private BigDecimal referralPercent;
+
     @OneToMany(fetch = FetchType.EAGER)
     private List<ReferralUser> referralUsers;
 
@@ -87,6 +90,7 @@ public class User extends BasePersist {
         user.setActive(true);
         user.setBanned(false);
         user.setCharges(0);
+        user.setReferralPercent(BigDecimal.ZERO);
         return user;
     }
 
@@ -209,5 +213,13 @@ public class User extends BasePersist {
 
     public void setCharges(Integer charges) {
         this.charges = charges;
+    }
+
+    public BigDecimal getReferralPercent() {
+        return referralPercent;
+    }
+
+    public void setReferralPercent(BigDecimal referralPercent) {
+        this.referralPercent = referralPercent;
     }
 }

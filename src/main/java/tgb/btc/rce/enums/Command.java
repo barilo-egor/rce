@@ -64,6 +64,7 @@ public enum Command {
     PERSONAL_BUY_DISCOUNT("Персональная, покупка", true),
     PERSONAL_SELL_DISCOUNT("Персональная, продажа", true),
     BULK_DISCOUNTS("Оптовые скидки", true),
+    REFERRAL_PERCENT("Процент реферала", true),
 
     /** TURNING CURRENCIES */
     TURN_ON_CURRENCY("turn_on_currency", true),
