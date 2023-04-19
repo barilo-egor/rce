@@ -20,8 +20,6 @@ public class PaymentType extends BasePersist {
 
     private Boolean isOn;
 
-    private String requisites;
-
     private BigDecimal minSum;
 
     private DealType dealType;
@@ -40,14 +38,6 @@ public class PaymentType extends BasePersist {
 
     public void setOn(Boolean on) {
         isOn = on;
-    }
-
-    public String getRequisites() {
-        return requisites;
-    }
-
-    public void setRequisites(String requisites) {
-        this.requisites = requisites;
     }
 
     public BigDecimal getMinSum() {

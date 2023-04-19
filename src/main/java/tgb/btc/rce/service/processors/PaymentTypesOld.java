@@ -18,12 +18,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 @CommandProcessor(command = Command.PAYMENT_TYPES)
-public class PaymentTypes extends Processor {
+public class PaymentTypesOld extends Processor {
 
     private final PaymentConfigService paymentConfigService;
 
     @Autowired
-    public PaymentTypes(IResponseSender responseSender, UserService userService, PaymentConfigService paymentConfigService) {
+    public PaymentTypesOld(IResponseSender responseSender, UserService userService, PaymentConfigService paymentConfigService) {
         super(responseSender, userService);
         this.paymentConfigService = paymentConfigService;
     }

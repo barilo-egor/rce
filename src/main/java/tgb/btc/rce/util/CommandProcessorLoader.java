@@ -14,8 +14,10 @@ import tgb.btc.rce.service.processors.personaldiscounts.buy.SavePersonalBuyDisco
 import tgb.btc.rce.service.processors.personaldiscounts.sell.AskPersonalSellDiscountProcessor;
 import tgb.btc.rce.service.processors.personaldiscounts.sell.ChangePersonalSellDiscountProcessor;
 import tgb.btc.rce.service.processors.personaldiscounts.sell.SavePersonalSellDiscountProcessor;
+import tgb.btc.rce.service.processors.referralpercent.AskNewReferralPercent;
+import tgb.btc.rce.service.processors.referralpercent.ReferralPercent;
+import tgb.btc.rce.service.processors.referralpercent.SaveReferralPercent;
 
-import java.lang.annotation.Annotation;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -71,7 +73,7 @@ public final class CommandProcessorLoader {
         commandProcessors.add(OnBot.class);
         commandProcessors.add(PartnersReport.class);
         commandProcessors.add(PaymentRequisites.class);
-        commandProcessors.add(PaymentTypes.class);
+        commandProcessors.add(PaymentTypesOld.class);
         commandProcessors.add(PublishReview.class);
         commandProcessors.add(QuitAdminPanel.class);
         commandProcessors.add(Referral.class);
@@ -109,6 +111,9 @@ public final class CommandProcessorLoader {
         commandProcessors.add(ChangePersonalSellDiscountProcessor.class);
         commandProcessors.add(SendChecksForDate.class);
         commandProcessors.add(UpdateBulkDiscounts.class);
+        commandProcessors.add(AskNewReferralPercent.class);
+        commandProcessors.add(ReferralPercent.class);
+        commandProcessors.add(SaveReferralPercent.class);
         commandProcessors.stream()
                 .filter(processor -> !extendsProcessor(processor))
                 .findFirst()
