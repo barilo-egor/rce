@@ -11,6 +11,6 @@ import tgb.btc.rce.enums.PaymentTypeEnum;
 @Transactional
 public interface PaymentConfigRepository extends BaseRepository<PaymentConfig> {
 
-    @Query("from PaymentConfig where paymentType=:paymentType")
-    PaymentConfig getByPaymentType(@Param("paymentType") PaymentTypeEnum paymentTypeEnum);
+    @Query("from PaymentConfig where paymentTypeEnum=:paymentTypeEnum")
+    PaymentConfig getByPaymentType(@Param("paymentTypeEnum") PaymentTypeEnum paymentTypeEnum);
 }

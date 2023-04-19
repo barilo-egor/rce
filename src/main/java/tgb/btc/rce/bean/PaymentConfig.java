@@ -11,7 +11,7 @@ import java.util.Objects;
 @Builder
 public class PaymentConfig extends BasePersist {
 
-    @Column(name = "PAYMENT_TYPE", unique = true)
+    @Column(name = "PAYMENT_TYPE_ENUM", unique = true)
     @Enumerated(EnumType.STRING)
     private PaymentTypeEnum paymentTypeEnum;
 

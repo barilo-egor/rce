@@ -27,7 +27,7 @@ public class Deal extends BasePersist {
     @Column(name = "DATE")
     private LocalDate date;
 
-    @Column(name = "PAYMENT_TYPE")
+    @Column(name = "PAYMENT_TYPE_ENUM")
     @Enumerated(value = EnumType.STRING)
     private PaymentTypeEnum paymentTypeEnum;
 
