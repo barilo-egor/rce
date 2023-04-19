@@ -212,6 +212,10 @@ public class ExchangeService {
             if (Objects.nonNull(personalBuy)) putToUsersPersonalBuy(chatId, personalBuy);
             else putToUsersPersonalBuy(chatId, BigDecimal.ZERO);
         }
+        BigDecimal bulkDiscount = BulkDiscountUtil.getPercentBySum(sum);
+        if (!BigDecimal.ZERO.equals(bulkDiscount)) {
+            sum = sum.subtract(ConverterUtil.getPercentsFactor(sum).multiply(personalBuy));
+        }
         String dealType = DealType.BUY.equals(dealService.getDealTypeByPid(currentDealPid)) ? "Покупка: " : "Продажа: ";
         sendInlineAnswer(update, dealType + sum.stripTrailingZeros().toPlainString() + " " + currency.getDisplayName() + " ~ " +
                 roundedConvertedSum.stripTrailingZeros().toPlainString(), true);
@@ -440,19 +444,24 @@ public class ExchangeService {
             }
         }
         BigDecimal personalBuy = USERS_PERSONAL_BUY.get(chatId);
-        if (Objects.isNull(personalBuy) || !BigDecimal.ZERO.equals(personalBuy)) {
+        if ((Objects.isNull(personalBuy) || !BigDecimal.ZERO.equals(personalBuy))
+                && BooleanUtils.isNotTrue(deal.getPersonalApplied())) {
             personalBuy = userDiscountRepository.getPersonalBuyByChatId(chatId);
             if (Objects.nonNull(personalBuy) && !BigDecimal.ZERO.equals(personalBuy)) {
-                BigDecimal amount = deal.getAmount();
                 if (BigDecimal.ZERO.compareTo(personalBuy) > 0)
-                    amount = amount.subtract(ConverterUtil.getPercentsFactor(amount).multiply(personalBuy));
-                else amount = amount.add(ConverterUtil.getPercentsFactor(amount).multiply(personalBuy));
-                deal.setAmount(amount);
-                dealAmount = amount;
+                    dealAmount = dealAmount.subtract(ConverterUtil.getPercentsFactor(dealAmount).multiply(personalBuy));
+                else dealAmount = dealAmount.add(ConverterUtil.getPercentsFactor(dealAmount).multiply(personalBuy));
+                deal.setPersonalApplied(true);
             }
             if (Objects.nonNull(personalBuy)) putToUsersPersonalBuy(chatId, personalBuy);
             else putToUsersPersonalBuy(chatId, BigDecimal.ZERO);
         }
+        BigDecimal bulkDiscount = BulkDiscountUtil.getPercentBySum(dealAmount);
+        if (!BigDecimal.ZERO.equals(bulkDiscount) && BooleanUtils.isNotTrue(deal.getBulkApplied())) {
+            dealAmount = dealAmount.subtract(ConverterUtil.getPercentsFactor(dealAmount).multiply(personalBuy));
+            deal.setBulkApplied(true);
+        }
+        deal.setAmount(dealAmount);
         deal = dealService.save(deal);
 
         String message = "✅<b>Заявка №</b><code>" + deal.getPid() + "</code> успешно создана."

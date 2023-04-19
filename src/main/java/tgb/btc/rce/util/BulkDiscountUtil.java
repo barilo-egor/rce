@@ -7,10 +7,8 @@ import org.apache.commons.lang.exception.ExceptionUtils;
 import tgb.btc.rce.constants.FilePaths;
 import tgb.btc.rce.vo.BulkDiscount;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
+import java.math.BigDecimal;
+import java.util.*;
 
 @Slf4j
 public final class BulkDiscountUtil {
@@ -42,10 +40,19 @@ public final class BulkDiscountUtil {
                     .build());
         }
         BULK_DISCOUNTS.sort(Comparator.comparingInt(BulkDiscount::getSum));
+        Collections.reverse(BULK_DISCOUNTS);
         System.out.println();
     }
 
     public static List<BulkDiscount> getBulkDiscounts() {
         return new ArrayList<>(BULK_DISCOUNTS);
+    }
+
+    public static BigDecimal getPercentBySum(BigDecimal sum) {
+        for (BulkDiscount bulkDiscount : BULK_DISCOUNTS) {
+            if (BigDecimal.valueOf(bulkDiscount.getSum()).compareTo(sum) < 1)
+                return BigDecimal.valueOf(bulkDiscount.getPercent());
+        }
+        return BigDecimal.ZERO;
     }
 }

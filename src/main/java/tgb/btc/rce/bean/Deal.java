@@ -1,6 +1,8 @@
 package tgb.btc.rce.bean;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.NoArgsConstructor;
 import tgb.btc.rce.enums.CryptoCurrency;
 import tgb.btc.rce.enums.DealType;
 import tgb.btc.rce.enums.PaymentTypeEnum;
@@ -17,6 +19,8 @@ import java.util.Objects;
 @Entity
 @Table(name = "DEAL")
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Deal extends BasePersist {
     @ManyToOne(fetch = FetchType.EAGER)
     private User user;
@@ -82,35 +86,11 @@ public class Deal extends BasePersist {
     @Column(name = "ORIGINAL_PRICE")
     private BigDecimal originalPrice;
 
-    public Deal() {
-    }
+    @Column(name = "BULK_APPLIED")
+    private Boolean isBulkApplied;
 
-    public Deal(User user, LocalDateTime dateTime, LocalDate date, PaymentTypeEnum paymentTypeEnum, BigDecimal cryptoAmount,
-                BigDecimal amount, String wallet, String verificationPhoto, String userCheck, Boolean isActive,
-                Boolean isPassed, Boolean isCurrent, Boolean isUsedPromo, Boolean isUsedReferralDiscount,
-                CryptoCurrency cryptoCurrency, DealType dealType, BigDecimal commission,
-                List<PaymentReceipt> paymentReceipts, BigDecimal discount, BigDecimal originalPrice) {
-        this.user = user;
-        this.dateTime = dateTime;
-        this.date = date;
-        this.paymentTypeEnum = paymentTypeEnum;
-        this.cryptoAmount = cryptoAmount;
-        this.amount = amount;
-        this.wallet = wallet;
-        this.verificationPhoto = verificationPhoto;
-        this.userCheck = userCheck;
-        this.isActive = isActive;
-        this.isPassed = isPassed;
-        this.isCurrent = isCurrent;
-        this.isUsedPromo = isUsedPromo;
-        this.isUsedReferralDiscount = isUsedReferralDiscount;
-        this.cryptoCurrency = cryptoCurrency;
-        this.dealType = dealType;
-        this.commission = commission;
-        this.paymentReceipts = paymentReceipts;
-        this.discount = discount;
-        this.originalPrice = originalPrice;
-    }
+    @Column(name = "IS_PERSONAL_APPLIED")
+    private Boolean isPersonalApplied;
 
     public String getUserCheck() {
         return userCheck;
@@ -272,41 +252,19 @@ public class Deal extends BasePersist {
         this.originalPrice = originalPrice;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
-        Deal deal = (Deal) o;
-        return Objects.equals(user, deal.user) && Objects.equals(dateTime, deal.dateTime) && Objects.equals(date, deal.date) && paymentTypeEnum == deal.paymentTypeEnum && Objects.equals(cryptoAmount, deal.cryptoAmount) && Objects.equals(amount, deal.amount) && Objects.equals(wallet, deal.wallet) && Objects.equals(verificationPhoto, deal.verificationPhoto) && Objects.equals(userCheck, deal.userCheck) && Objects.equals(isActive, deal.isActive) && Objects.equals(isPassed, deal.isPassed) && Objects.equals(isCurrent, deal.isCurrent) && Objects.equals(isUsedPromo, deal.isUsedPromo) && Objects.equals(isUsedReferralDiscount, deal.isUsedReferralDiscount) && cryptoCurrency == deal.cryptoCurrency && dealType == deal.dealType && Objects.equals(commission, deal.commission) && Objects.equals(paymentReceipts, deal.paymentReceipts) && Objects.equals(discount, deal.discount) && Objects.equals(originalPrice, deal.originalPrice);
+    public Boolean getBulkApplied() {
+        return isBulkApplied;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(super.hashCode(), user, dateTime, date, paymentTypeEnum, cryptoAmount, amount, wallet, verificationPhoto, userCheck, isActive, isPassed, isCurrent, isUsedPromo, isUsedReferralDiscount, cryptoCurrency, dealType, commission, paymentReceipts, discount, originalPrice);
+    public void setBulkApplied(Boolean bulkApplied) {
+        isBulkApplied = bulkApplied;
     }
 
-    @Override
-    public String toString() {
-        return "Deal{" +
-                "user=" + user +
-                ", dateTime=" + dateTime +
-                ", date=" + date +
-                ", paymentTypeEnum=" + paymentTypeEnum +
-                ", cryptoAmount=" + cryptoAmount +
-                ", amount=" + amount +
-                ", wallet='" + wallet + '\'' +
-                ", verificationPhoto='" + verificationPhoto + '\'' +
-                ", userCheck='" + userCheck + '\'' +
-                ", isActive=" + isActive +
-                ", isPassed=" + isPassed +
-                ", isCurrent=" + isCurrent +
-                ", isUsedPromo=" + isUsedPromo +
-                ", isUsedReferralDiscount=" + isUsedReferralDiscount +
-                ", cryptoCurrency=" + cryptoCurrency +
-                ", dealType=" + dealType +
-                ", commission=" + commission +
-                ", paymentReceipts=" + paymentReceipts +
-                '}';
+    public Boolean getPersonalApplied() {
+        return isPersonalApplied;
+    }
+
+    public void setPersonalApplied(Boolean personalApplied) {
+        isPersonalApplied = personalApplied;
     }
 }

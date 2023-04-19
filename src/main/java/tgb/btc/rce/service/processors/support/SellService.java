@@ -310,7 +310,8 @@ public class SellService {
             deal.setAmount(BigDecimalUtil.addHalfUp(deal.getAmount(), rankDiscount));
         }
         BigDecimal personalSell = USERS_PERSONAL_SELL.get(chatId);
-        if (Objects.isNull(personalSell) || !BigDecimal.ZERO.equals(personalSell)) {
+        if ((Objects.isNull(personalSell) || !BigDecimal.ZERO.equals(personalSell))
+                && BooleanUtils.isNotTrue(deal.getPersonalApplied())) {
             personalSell = userDiscountRepository.getPersonalBuyByChatId(chatId);
             if (Objects.nonNull(personalSell) && !BigDecimal.ZERO.equals(personalSell)) {
                 BigDecimal amountWithPersonalSell = deal.getAmount();
@@ -318,6 +319,7 @@ public class SellService {
                     amountWithPersonalSell = amountWithPersonalSell.subtract(ConverterUtil.getPercentsFactor(amountWithPersonalSell).multiply(personalSell));
                 else amountWithPersonalSell = amountWithPersonalSell.add(ConverterUtil.getPercentsFactor(amountWithPersonalSell).multiply(personalSell));
                 deal.setAmount(amountWithPersonalSell);
+                deal.setPersonalApplied(true);
             }
             if (Objects.nonNull(personalSell)) putToUsersPersonalSell(chatId, personalSell);
             else putToUsersPersonalSell(chatId, BigDecimal.ZERO);
