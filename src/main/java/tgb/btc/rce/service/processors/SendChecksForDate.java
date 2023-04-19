@@ -1,13 +1,17 @@
 package tgb.btc.rce.service.processors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.bean.Deal;
+import tgb.btc.rce.bean.PaymentReceipt;
 import tgb.btc.rce.enums.Command;
+import tgb.btc.rce.enums.ReceiptFormat;
 import tgb.btc.rce.repository.DealRepository;
 import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
+import tgb.btc.rce.service.impl.DealService;
 import tgb.btc.rce.service.impl.UserService;
 import tgb.btc.rce.util.UpdateUtil;
 
@@ -18,6 +22,8 @@ import java.util.List;
 public class SendChecksForDate extends Processor {
 
     private DealRepository dealRepository;
+
+    private DealService dealService;
 
     @Autowired
     public void setDealRepository(DealRepository dealRepository) {
@@ -49,7 +55,14 @@ public class SendChecksForDate extends Processor {
 
         List<Deal> deals = dealRepository.getByDate(date);
         for (Deal deal : deals) {
-            responseSender.sendPhoto(chatId, "№" + deal.getPid(), deal.getUserCheck());
+            List<PaymentReceipt> paymentReceipts = dealService.getPaymentReceipts(deal.getPid());
+            paymentReceipts.forEach(paymentReceipt -> {
+                if (ReceiptFormat.PDF.equals(paymentReceipt.getReceiptFormat())) {
+                    responseSender.sendInputFile(chatId, new InputFile(paymentReceipt.getReceipt()));
+                } else if (ReceiptFormat.PICTURE.equals(paymentReceipt.getReceiptFormat())) {
+                    responseSender.sendPhoto(chatId, "№" + deal.getPid(), deal.getUserCheck());
+                }
+            });
         }
         processToAdminMainPanel(chatId);
     }
