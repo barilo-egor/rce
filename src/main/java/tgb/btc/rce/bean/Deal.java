@@ -292,7 +292,7 @@ public class Deal extends BasePersist {
                 "user=" + user +
                 ", dateTime=" + dateTime +
                 ", date=" + date +
-                ", paymentType=" + paymentTypeEnum +
+                ", paymentTypeEnum=" + paymentTypeEnum +
                 ", cryptoAmount=" + cryptoAmount +
                 ", amount=" + amount +
                 ", wallet='" + wallet + '\'' +

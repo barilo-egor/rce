@@ -72,8 +72,8 @@ public interface DealRepository extends BaseRepository<Deal> {
     void updateWalletByPid(@Param("wallet") String wallet, @Param("pid") Long pid);
 
     @Modifying
-    @Query("update Deal set paymentType=:paymentType where pid=:pid")
-    void updatePaymentTypeByPid(@Param("paymentType") PaymentTypeEnum paymentTypeEnum, @Param("pid") Long pid);
+    @Query("update Deal set paymentTypeEnum=:paymentTypeEnum where pid=:pid")
+    void updatePaymentTypeByPid(@Param("paymentTypeEnum") PaymentTypeEnum paymentTypeEnum, @Param("pid") Long pid);
 
     @Modifying
     @Query("update Deal set isUsedPromo=:isUsedPromo where pid=:pid")
