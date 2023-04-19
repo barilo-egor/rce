@@ -26,6 +26,11 @@ public class SendChecksForDate extends Processor {
     private DealService dealService;
 
     @Autowired
+    public void setDealService(DealService dealService) {
+        this.dealService = dealService;
+    }
+
+    @Autowired
     public void setDealRepository(DealRepository dealRepository) {
         this.dealRepository = dealRepository;
     }
