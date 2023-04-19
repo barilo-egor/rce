@@ -7,6 +7,7 @@ import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.processors.TurnOffCurrencyProcessor;
 import tgb.btc.rce.service.processors.TurningCurrencyProcessor;
 import tgb.btc.rce.service.processors.*;
+import tgb.btc.rce.service.processors.bulkdiscounts.UpdateBulkDiscounts;
 import tgb.btc.rce.service.processors.personaldiscounts.buy.AskPersonalBuyDiscountProcessor;
 import tgb.btc.rce.service.processors.personaldiscounts.buy.ChangePersonalBuyDiscountProcessor;
 import tgb.btc.rce.service.processors.personaldiscounts.buy.SavePersonalBuyDiscountProcessor;
@@ -105,6 +106,8 @@ public final class CommandProcessorLoader {
         commandProcessors.add(SavePersonalSellDiscountProcessor.class);
         commandProcessors.add(AskPersonalSellDiscountProcessor.class);
         commandProcessors.add(ChangePersonalSellDiscountProcessor.class);
+        commandProcessors.add(SendChecksForDate.class);
+        commandProcessors.add(UpdateBulkDiscounts.class);
         commandProcessors.stream()
                 .filter(processor -> !extendsProcessor(processor))
                 .findFirst()
