@@ -489,6 +489,8 @@ public class ExchangeService {
                         .build()
         ));
         Optional<Message> optionalMessage = responseSender.sendMessage(chatId, message, keyboard, "HTML");
+        deal.setDateTime(LocalDateTime.now());
+        dealService.save(deal);
         DealDeleteScheduler.addNewCryptoDeal(deal.getPid(), optionalMessage.map(Message::getMessageId).orElse(null));
     }
 
