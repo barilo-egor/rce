@@ -85,7 +85,8 @@ public enum Command {
     BOT_MESSAGES("Сообщения бота", true),
     BOT_VARIABLES("Переменные бота", true),
     SYSTEM_MESSAGES("Сис.сообщения", true),
-    PAYMENT_TYPES("Типы оплаты", true),
+    PAYMENT_TYPES_OLD("Типы оплаты", true),
+    PAYMENT_TYPES("New Типы оплаты", true),
     PAYMENT_REQUISITES("Реквизиты оплат", true),
 
     /** DEAL */
@@ -120,7 +121,18 @@ public enum Command {
 
     /** RECEIPTS */
     CONTINUE("Продолжить", true),
-    RECEIPTS_CANCEL_DEAL("Отмена сделки", true);
+    RECEIPTS_CANCEL_DEAL("Отмена сделки", true),
+
+    /**
+     * PAYMENT TYPES
+     */
+    NEW_PAYMENT_TYPE("Создать тип оплаты", true),
+    DELETE_PAYMENT_TYPE("Удалить тип оплаты", true),
+    NEW_PAYMENT_TYPE_REQUISITE("Создать реквизит", true),
+    DELETE_PAYMENT_TYPE_REQUISITE("Удалить реквизит", true),
+    TURNING_PAYMENT_TYPES("Включение типов оплат", true),
+    CHANGE_MIN_SUM("Мин.сумма", true);
+    ;
 
     final String text;
     final boolean isAdmin;

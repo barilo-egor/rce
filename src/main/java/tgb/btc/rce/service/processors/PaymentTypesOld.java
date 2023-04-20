@@ -17,7 +17,7 @@ import tgb.btc.rce.vo.ReplyButton;
 import java.util.ArrayList;
 import java.util.List;
 
-@CommandProcessor(command = Command.PAYMENT_TYPES)
+@CommandProcessor(command = Command.PAYMENT_TYPES_OLD)
 public class PaymentTypesOld extends Processor {
 
     private final PaymentConfigService paymentConfigService;
@@ -38,7 +38,7 @@ public class PaymentTypesOld extends Processor {
         switch (userService.getStepByChatId(chatId)) {
             case 0:
                 askForInput(chatId);
-                userService.nextStep(chatId, Command.PAYMENT_TYPES);
+                userService.nextStep(chatId, Command.PAYMENT_TYPES_OLD);
                 break;
             case 1:
                 String text = update.getMessage().getText();
