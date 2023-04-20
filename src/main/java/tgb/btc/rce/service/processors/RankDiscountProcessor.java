@@ -28,6 +28,11 @@ public class RankDiscountProcessor extends Processor {
         super(responseSender, userService);
     }
 
+    @Autowired
+    public void setUserDiscountRepository(UserDiscountRepository userDiscountRepository) {
+        this.userDiscountRepository = userDiscountRepository;
+    }
+
     @Override
     public void run(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
