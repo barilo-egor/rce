@@ -46,6 +46,7 @@ public class DealDeleteScheduler {
 
     public static void addNewCryptoDeal(Long pid, Integer messageId) {
         synchronized (NEW_CRYPTO_DEALS_PIDS) {
+            if (Objects.isNull(pid)) return;
             NEW_CRYPTO_DEALS_PIDS.put(pid, messageId);
         }
     }

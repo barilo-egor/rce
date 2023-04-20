@@ -29,9 +29,9 @@ public interface UserDiscountRepository extends BaseRepository<UserDiscount> {
 
 
     /** UPDATE **/
-    @Query("update UserDiscount set isRankDiscountOn=:isRankDiscountOn where user.chatId=:chatId")
+    @Query("update UserDiscount set isRankDiscountOn=:isRankDiscountOn where user.pid=:pid")
     @Modifying
-    void updateIsRankDiscountOnByChatId(@Param("isRankDiscountOn") Boolean isRankDiscountOn, @Param("chatId") Long chatId);
+    void updateIsRankDiscountOnByPid(@Param("isRankDiscountOn") Boolean isRankDiscountOn, @Param("pid") Long pid);
 
     @Query("update UserDiscount set personalBuy=:personalBuy where user.pid=:userPid")
     @Modifying

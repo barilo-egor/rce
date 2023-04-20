@@ -46,7 +46,7 @@ public class RankDiscountProcessor extends Processor {
                 userService.nextStep(chatId, Command.RANK_DISCOUNT);
                 break;
             case 1:
-                if (Command.CANCEL.getText().equals(UpdateUtil.getMessageText(update))) {
+                if (UpdateUtil.hasMessageText(update) && Command.CANCEL.getText().equals(UpdateUtil.getMessageText(update))) {
                     processToAdminMainPanel(chatId);
                     return;
                 }

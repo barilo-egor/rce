@@ -58,7 +58,7 @@ public class ChangeRankDiscountProcessor extends Processor {
         Boolean isRankDiscountOn = Boolean.valueOf(values[2]);
         Long userPid = userRepository.getPidByChatId(userChatId);
         if (userDiscountService.isExistByUserPid(userPid)) {
-            userDiscountRepository.updateIsRankDiscountOnByChatId(isRankDiscountOn, userChatId);
+            userDiscountRepository.updateIsRankDiscountOnByPid(isRankDiscountOn, userRepository.getPidByChatId(userChatId));
         } else {
             UserDiscount userDiscount = new UserDiscount();
             userDiscount.setUser(new User(userPid));
