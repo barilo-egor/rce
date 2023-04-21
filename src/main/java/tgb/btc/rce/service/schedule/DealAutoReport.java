@@ -46,13 +46,13 @@ public class DealAutoReport {
         this.userRepository = userRepository;
     }
 
-    @Scheduled(cron = "0 3 12 * * *")
+    @Scheduled(cron = "0 5 0 * * *")
     @Async
     public void everyDay() {
         YESTERDAY = LocalDate.now().minusDays(1);
 
         sendReport(DealReportData.builder()
-                           .period("месяц")
+                           .period("день")
                            .firstDay(YESTERDAY)
                            .lastDay(YESTERDAY)
                            .build());
@@ -65,7 +65,7 @@ public class DealAutoReport {
         LocalDate lastDay = LocalDate.now().minusDays(1);
 
         sendReport(DealReportData.builder()
-                           .period("месяц")
+                           .period("неделю")
                            .firstDay(firstDay)
                            .lastDay(lastDay)
                            .build());
@@ -113,7 +113,7 @@ public class DealAutoReport {
                     .setScale(0, RoundingMode.HALF_DOWN)
                     .stripTrailingZeros();
 
-            String report = "Отчет за прошедший " + data.getPeriod() + ":"
+            String report = "Отчет за " + data.getPeriod() + ":"
                     + "Куплено BTC: " + getSellCryptoAmount(CryptoCurrency.BITCOIN, 8) + "\n"
                     + "Куплено Litecoin: " + getSellCryptoAmount(CryptoCurrency.LITECOIN, 5) + "\n"
                     + "Куплено USDT: " + getSellCryptoAmount(CryptoCurrency.USDT, 0) + "\n\n"
@@ -155,10 +155,14 @@ public class DealAutoReport {
     }
 
     private BigDecimal getAmount(CryptoCurrency cryptoCurrency, LocalDate dateFrom, LocalDate dateTo, DealType dealType) {
-        if (Objects.nonNull(dateTo))
-            return dealRepository.getTotalAmountSum(true, dealType, dateFrom, dateTo, cryptoCurrency)
-                    .setScale(0, RoundingMode.HALF_DOWN).stripTrailingZeros();
-        else return dealRepository.getTotalAmountSum(true, dealType, dateFrom, cryptoCurrency)
-                .setScale(0, RoundingMode.HALF_DOWN).stripTrailingZeros();
+        BigDecimal totalAmount;
+        if (Objects.nonNull(dateTo)) {
+            totalAmount = dealRepository.getTotalAmountSum(true, dealType, dateFrom, dateTo, cryptoCurrency);
+        } else {
+            totalAmount = dealRepository.getTotalAmountSum(true, dealType, dateFrom, cryptoCurrency);
+        }
+        return Objects.nonNull(totalAmount)
+               ? totalAmount.setScale(0, RoundingMode.HALF_DOWN).stripTrailingZeros()
+               : BigDecimal.ZERO;
     }
 }
