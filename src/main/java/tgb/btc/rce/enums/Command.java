@@ -131,7 +131,8 @@ public enum Command {
     NEW_PAYMENT_TYPE_REQUISITE("Создать реквизит", true),
     DELETE_PAYMENT_TYPE_REQUISITE("Удалить реквизит", true),
     TURNING_PAYMENT_TYPES("Включение типов оплат", true),
-    CHANGE_MIN_SUM("Мин.сумма", true)
+    CHANGE_MIN_SUM("Мин.сумма", true),
+    TURNING_DYNAMIC_REQUISITES("Динамические реквизиты", true)
     ;
 
     final String text;

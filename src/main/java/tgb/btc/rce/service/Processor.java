@@ -84,4 +84,12 @@ public abstract class Processor {
     protected ReplyKeyboard getMainMenuKeyboard(Long chatId) {
         return MenuFactory.build(Menu.MAIN, userService.isAdminByChatId(chatId));
     }
+
+    protected boolean hasMessageText(Update update, String message) {
+        if (!UpdateUtil.hasMessageText(update)) {
+            responseSender.sendMessage(UpdateUtil.getChatId(update), message);
+            return false;
+        }
+        return true;
+    }
 }

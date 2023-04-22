@@ -152,4 +152,14 @@ public final class KeyboardUtil {
                 .keyboard(rows)
                 .build();
     }
+
+    public static ReplyKeyboardMarkup buildCancel() {
+        return buildReply(List.of(getCancelButton()));
+    }
+
+    public static ReplyButton getCancelButton() {
+        return ReplyButton.builder()
+                .text("Отмена")
+                .build();
+    }
 }

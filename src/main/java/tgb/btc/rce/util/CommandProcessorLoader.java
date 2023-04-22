@@ -33,7 +33,8 @@ public final class CommandProcessorLoader {
             Command.PERSONAL_BUY_DISCOUNT,
             Command.PERSONAL_SELL_DISCOUNT,
             Command.BULK_DISCOUNTS,
-            Command.REFERRAL_PERCENT
+            Command.REFERRAL_PERCENT,
+            Command.PAYMENT_TYPES
     );
 
 
