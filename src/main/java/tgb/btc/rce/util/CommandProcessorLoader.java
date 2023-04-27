@@ -15,6 +15,10 @@ import tgb.btc.rce.service.processors.paymenttypes.create.SaveNamePaymentType;
 import tgb.btc.rce.service.processors.paymenttypes.delete.DeletePaymentType;
 import tgb.btc.rce.service.processors.paymenttypes.delete.DeletingPaymentType;
 import tgb.btc.rce.service.processors.paymenttypes.delete.ShowPaymentTypesForDelete;
+import tgb.btc.rce.service.processors.paymenttypes.requisite.create.AskForNewRequisite;
+import tgb.btc.rce.service.processors.paymenttypes.requisite.create.NewPaymentTypeRequisite;
+import tgb.btc.rce.service.processors.paymenttypes.requisite.create.SaveNewRequisite;
+import tgb.btc.rce.service.processors.paymenttypes.requisite.create.ShowPaymentTypesForCreateRequisite;
 import tgb.btc.rce.service.processors.personaldiscounts.buy.AskPersonalBuyDiscountProcessor;
 import tgb.btc.rce.service.processors.personaldiscounts.buy.ChangePersonalBuyDiscountProcessor;
 import tgb.btc.rce.service.processors.personaldiscounts.buy.SavePersonalBuyDiscountProcessor;
@@ -42,7 +46,8 @@ public final class CommandProcessorLoader {
             Command.BULK_DISCOUNTS,
             Command.REFERRAL_PERCENT,
             Command.NEW_PAYMENT_TYPE,
-            Command.DELETE_PAYMENT_TYPE
+            Command.DELETE_PAYMENT_TYPE,
+            Command.NEW_PAYMENT_TYPE_REQUISITE
     );
 
 
@@ -132,6 +137,10 @@ public final class CommandProcessorLoader {
         commandProcessors.add(ShowPaymentTypesForDelete.class);
         commandProcessors.add(InlineDelete.class);
         commandProcessors.add(None.class);
+        commandProcessors.add(AskForNewRequisite.class);
+        commandProcessors.add(NewPaymentTypeRequisite.class);
+        commandProcessors.add(SaveNewRequisite.class);
+        commandProcessors.add(ShowPaymentTypesForCreateRequisite.class);
         commandProcessors.stream()
                 .filter(processor -> !extendsProcessor(processor))
                 .findFirst()
