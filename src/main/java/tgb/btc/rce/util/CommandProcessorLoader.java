@@ -8,6 +8,13 @@ import tgb.btc.rce.service.processors.TurnOffCurrencyProcessor;
 import tgb.btc.rce.service.processors.TurningCurrencyProcessor;
 import tgb.btc.rce.service.processors.*;
 import tgb.btc.rce.service.processors.bulkdiscounts.UpdateBulkDiscounts;
+import tgb.btc.rce.service.processors.paymenttypes.PaymentsTypes;
+import tgb.btc.rce.service.processors.paymenttypes.create.CreateNewPaymentType;
+import tgb.btc.rce.service.processors.paymenttypes.create.NewPaymentType;
+import tgb.btc.rce.service.processors.paymenttypes.create.SaveNamePaymentType;
+import tgb.btc.rce.service.processors.paymenttypes.delete.DeletePaymentType;
+import tgb.btc.rce.service.processors.paymenttypes.delete.DeletingPaymentType;
+import tgb.btc.rce.service.processors.paymenttypes.delete.ShowPaymentTypesForDelete;
 import tgb.btc.rce.service.processors.personaldiscounts.buy.AskPersonalBuyDiscountProcessor;
 import tgb.btc.rce.service.processors.personaldiscounts.buy.ChangePersonalBuyDiscountProcessor;
 import tgb.btc.rce.service.processors.personaldiscounts.buy.SavePersonalBuyDiscountProcessor;
@@ -34,7 +41,8 @@ public final class CommandProcessorLoader {
             Command.PERSONAL_SELL_DISCOUNT,
             Command.BULK_DISCOUNTS,
             Command.REFERRAL_PERCENT,
-            Command.PAYMENT_TYPES
+            Command.NEW_PAYMENT_TYPE,
+            Command.DELETE_PAYMENT_TYPE
     );
 
 
@@ -115,6 +123,15 @@ public final class CommandProcessorLoader {
         commandProcessors.add(AskNewReferralPercent.class);
         commandProcessors.add(ReferralPercent.class);
         commandProcessors.add(SaveReferralPercent.class);
+        commandProcessors.add(CreateNewPaymentType.class);
+        commandProcessors.add(NewPaymentType.class);
+        commandProcessors.add(SaveNamePaymentType.class);
+        commandProcessors.add(PaymentsTypes.class);
+        commandProcessors.add(DeletePaymentType.class);
+        commandProcessors.add(DeletingPaymentType.class);
+        commandProcessors.add(ShowPaymentTypesForDelete.class);
+        commandProcessors.add(InlineDelete.class);
+        commandProcessors.add(None.class);
         commandProcessors.stream()
                 .filter(processor -> !extendsProcessor(processor))
                 .findFirst()

@@ -13,4 +13,10 @@ public interface BotStringConstants {
             + "Количество сделок: %s\n" + "ID: %s\n" + "Сумма %s: %s\n" + "Сумма: %s ₽";
 
     String ABSENT = "Отсутствует";
+
+    String BUY_OR_SELL = "Покупка или продажа?";
+
+    String BUY = "Покупка";
+
+    String SELL = "Продажа";
 }

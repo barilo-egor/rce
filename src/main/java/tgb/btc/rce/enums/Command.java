@@ -13,6 +13,7 @@ public enum Command {
      */
 
     START("/start", false),
+    NONE("none", false),
 
     /*
       Reply
@@ -24,6 +25,7 @@ public enum Command {
     CANCEL("Отмена", false),
     SHARE_CONTACT("Поделиться контактом", false),
     BOT_OFFED("bot_offed", false),
+    INLINE_DELETE("inline_delete", false),
 
     /** MAIN */
     BUY_BITCOIN("\uD83D\uDCB0 Купить", false),
@@ -128,6 +130,7 @@ public enum Command {
      */
     NEW_PAYMENT_TYPE("Создать тип оплаты", true),
     DELETE_PAYMENT_TYPE("Удалить тип оплаты", true),
+    DELETING_PAYMENT_TYPE("deleting_pt", true),
     NEW_PAYMENT_TYPE_REQUISITE("Создать реквизит", true),
     DELETE_PAYMENT_TYPE_REQUISITE("Удалить реквизит", true),
     TURNING_PAYMENT_TYPES("Включение типов оплат", true),

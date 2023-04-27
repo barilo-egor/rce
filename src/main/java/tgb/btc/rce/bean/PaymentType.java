@@ -5,23 +5,29 @@ import lombok.Builder;
 import lombok.NoArgsConstructor;
 import tgb.btc.rce.enums.DealType;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import java.math.BigDecimal;
 
 @Entity
-@Table(name = "PAYMENT_TYPE")
+@Table(name = "PAYMENT_TYPE", uniqueConstraints = @UniqueConstraint(columnNames = {"NAME", "DEAL_TYPE"}))
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 public class PaymentType extends BasePersist {
 
+    @Column(name = "NAME")
     private String name;
 
+    @Column(name = "IS_ON")
     private Boolean isOn;
 
+    @Column(name = "MIN_SUM")
     private BigDecimal minSum;
 
+    @Column(name = "DEAL_TYPE")
     private DealType dealType;
 
     public String getName() {

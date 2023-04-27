@@ -5,6 +5,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMar
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
+import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.InlineType;
 import tgb.btc.rce.vo.InlineButton;
@@ -161,5 +162,17 @@ public final class KeyboardUtil {
         return ReplyButton.builder()
                 .text("Отмена")
                 .build();
+    }
+
+    public static ReplyKeyboardMarkup getBuyOrSell() {
+        return KeyboardUtil.buildReply(List.of(
+                ReplyButton.builder()
+                        .text(BotStringConstants.BUY)
+                        .build(),
+                ReplyButton.builder()
+                        .text(BotStringConstants.SELL)
+                        .build(),
+                KeyboardUtil.getCancelButton()
+        ));
     }
 }
