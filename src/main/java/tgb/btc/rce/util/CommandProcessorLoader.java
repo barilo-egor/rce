@@ -56,7 +56,8 @@ public final class CommandProcessorLoader {
             Command.DELETE_PAYMENT_TYPE,
             Command.NEW_PAYMENT_TYPE_REQUISITE,
             Command.DELETE_PAYMENT_TYPE_REQUISITE,
-            Command.TURN_PAYMENT_TYPES
+            Command.TURN_PAYMENT_TYPES,
+            Command.CHANGE_MIN_SUM
     );
 
 
