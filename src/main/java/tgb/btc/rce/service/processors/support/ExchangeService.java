@@ -458,7 +458,7 @@ public class ExchangeService {
         }
         BigDecimal bulkDiscount = BulkDiscountUtil.getPercentBySum(dealAmount);
         if (!BigDecimal.ZERO.equals(bulkDiscount) && BooleanUtils.isNotTrue(deal.getBulkApplied())) {
-            dealAmount = dealAmount.subtract(ConverterUtil.getPercentsFactor(dealAmount).multiply(personalBuy));
+            dealAmount = dealAmount.subtract(ConverterUtil.getPercentsFactor(dealAmount).multiply(bulkDiscount));
             deal.setBulkApplied(true);
         }
         deal.setAmount(dealAmount);
