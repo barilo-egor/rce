@@ -72,12 +72,16 @@ public class ShowPaymentTypesForTurn extends Processor {
                     + BotStringConstants.CALLBACK_DATA_SPLITTER + paymentType.getPid()
                     + BotStringConstants.CALLBACK_DATA_SPLITTER + (isOn ? Boolean.FALSE.toString() : Boolean.TRUE.toString());
             buttons.add(InlineButton.builder()
-                                .text(text)
-                                .data(data)
-                                .build());
+                    .text(text)
+                    .data(data)
+                    .build());
         }
+        buttons.add(InlineButton.builder()
+                .text("Отмена")
+                .data(Command.INLINE_DELETE.getText())
+                .build());
         responseSender.sendMessage(chatId, "Выберите тип оплаты для включения/выключения.",
-                                   KeyboardUtil.buildInline(buttons));
+                KeyboardUtil.buildInline(buttons));
     }
 
 }
