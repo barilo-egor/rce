@@ -136,7 +136,9 @@ public enum Command {
     DELETING_PAYMENT_TYPE_REQUISITE("delete_ptr", true),
     TURNING_PAYMENT_TYPES("Включение типов оплат", true),
     CHANGE_MIN_SUM("Мин.сумма", true),
-    TURNING_DYNAMIC_REQUISITES("Динамические реквизиты", true)
+    TURNING_DYNAMIC_REQUISITES("Динамические реквизиты", true),
+
+    CREATE_USER_DATA("/createuserdata", true)
     ;
 
     final String text;

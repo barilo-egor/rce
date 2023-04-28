@@ -43,7 +43,7 @@ public class DeletingPaymentRequisite extends Processor {
         String[] values = update.getCallbackQuery().getData().split(BotStringConstants.CALLBACK_DATA_SPLITTER);
 
         PaymentRequisite paymentRequisite = paymentRequisiteRepository.getById(Long.parseLong(values[1]));
-        PaymentType paymentType = paymentRequisite.getPaymentType();
+        PaymentType paymentType = paymentRequisiteRepository.getPaymentTypeByPid(paymentRequisite.getPid());
         paymentRequisiteRepository.delete(paymentRequisite);
         showRequisitesForDelete.sendRequisites(UpdateUtil.getChatId(update), paymentType.getPid());
     }

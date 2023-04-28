@@ -19,6 +19,9 @@ public interface UserDataRepository extends BaseRepository<UserData> {
     @Query("select dealTypeVariable from UserData where user.pid=:userPid")
     DealType getDealTypeByUserPid(@Param("userPid") Long userPid);
 
+    @Query("select count(pid) from UserData where user.pid=:userPid")
+    Long countByUserPid(Long userPid);
+
     @Modifying
     @Query("update UserData set longVariable=:longVariable where user.pid=:userPid")
     void updateLongByUserPid(@Param("userPid") Long userPid, @Param("longVariable") Long longVariable);

@@ -68,7 +68,7 @@ public class ShowPaymentTypesForDeleteRequisite extends Processor {
                                    KeyboardUtil.buildInline(buttons));
         responseSender.sendMessage(chatId, "Для возвращения в меню нажмите \"Отмена\".",
                                    KeyboardUtil.buildReply(List.of(KeyboardUtil.getCancelButton())));
-        processToAdminMainPanel(chatId);
+        userService.nextStep(chatId);
     }
 
 }

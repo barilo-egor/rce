@@ -1,5 +1,6 @@
 package tgb.btc.rce.service.processors.paymenttypes.requisite.delete;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.annotation.CommandProcessor;
@@ -47,6 +48,11 @@ public class ShowRequisitesForDelete extends Processor {
 
     public void sendRequisites(Long chatId, Long paymentTypePid) {
         List<PaymentRequisite> paymentRequisites = paymentRequisiteRepository.getByPaymentTypePid(paymentTypePid);
+        if (CollectionUtils.isEmpty(paymentRequisites)) {
+            responseSender.sendMessage(chatId, "Реквизиты отсутствуют.");
+            processToAdminMainPanel(chatId);
+            return;
+        }
         StringBuilder message = new StringBuilder();
 
         message.append("Выберите номер реквизита для удаления. \nСуществующие реквизиты:\n");

@@ -4,12 +4,14 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import tgb.btc.rce.bean.PaymentRequisite;
 import tgb.btc.rce.bean.PaymentType;
 
 import java.util.List;
 
 @Repository
+@Transactional
 public interface PaymentRequisiteRepository extends BaseRepository<PaymentRequisite> {
 
     @Query("from PaymentRequisite where paymentType=:paymentType")
@@ -17,6 +19,9 @@ public interface PaymentRequisiteRepository extends BaseRepository<PaymentRequis
 
     @Query("from PaymentRequisite where paymentType.pid=:paymentTypePid")
     List<PaymentRequisite> getByPaymentTypePid(@Param("paymentTypePid") Long paymentTypePid);
+
+    @Query("select pr.paymentType from PaymentRequisite pr where pr.pid=:pid")
+    PaymentType getPaymentTypeByPid(@Param("pid") Long pid);
 
     @Modifying
     @Query("update PaymentRequisite set requisite=:requisite where pid=:pid")

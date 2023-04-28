@@ -116,6 +116,9 @@ public interface UserRepository extends BaseRepository<User> {
     @Query("select referralPercent from User where chatId=:chatId")
     BigDecimal getReferralPercentByChatId(@Param("chatId") Long chatId);
 
+    @Query("select pid from User ")
+    List<Long> getPids();
+
     /**
      * Reports
      */

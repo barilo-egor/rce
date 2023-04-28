@@ -19,6 +19,10 @@ import tgb.btc.rce.service.processors.paymenttypes.requisite.create.AskForNewReq
 import tgb.btc.rce.service.processors.paymenttypes.requisite.create.NewPaymentTypeRequisite;
 import tgb.btc.rce.service.processors.paymenttypes.requisite.create.SaveNewRequisite;
 import tgb.btc.rce.service.processors.paymenttypes.requisite.create.ShowPaymentTypesForCreateRequisite;
+import tgb.btc.rce.service.processors.paymenttypes.requisite.delete.DeletePaymentTypeRequisite;
+import tgb.btc.rce.service.processors.paymenttypes.requisite.delete.DeletingPaymentRequisite;
+import tgb.btc.rce.service.processors.paymenttypes.requisite.delete.ShowPaymentTypesForDeleteRequisite;
+import tgb.btc.rce.service.processors.paymenttypes.requisite.delete.ShowRequisitesForDelete;
 import tgb.btc.rce.service.processors.personaldiscounts.buy.AskPersonalBuyDiscountProcessor;
 import tgb.btc.rce.service.processors.personaldiscounts.buy.ChangePersonalBuyDiscountProcessor;
 import tgb.btc.rce.service.processors.personaldiscounts.buy.SavePersonalBuyDiscountProcessor;
@@ -47,7 +51,8 @@ public final class CommandProcessorLoader {
             Command.REFERRAL_PERCENT,
             Command.NEW_PAYMENT_TYPE,
             Command.DELETE_PAYMENT_TYPE,
-            Command.NEW_PAYMENT_TYPE_REQUISITE
+            Command.NEW_PAYMENT_TYPE_REQUISITE,
+            Command.DELETE_PAYMENT_TYPE_REQUISITE
     );
 
 
@@ -141,6 +146,11 @@ public final class CommandProcessorLoader {
         commandProcessors.add(NewPaymentTypeRequisite.class);
         commandProcessors.add(SaveNewRequisite.class);
         commandProcessors.add(ShowPaymentTypesForCreateRequisite.class);
+        commandProcessors.add(DeletePaymentTypeRequisite.class);
+        commandProcessors.add(DeletingPaymentRequisite.class);
+        commandProcessors.add(ShowPaymentTypesForDeleteRequisite.class);
+        commandProcessors.add(ShowRequisitesForDelete.class);
+        commandProcessors.add(CreateUserDataProcessor.class);
         commandProcessors.stream()
                 .filter(processor -> !extendsProcessor(processor))
                 .findFirst()
