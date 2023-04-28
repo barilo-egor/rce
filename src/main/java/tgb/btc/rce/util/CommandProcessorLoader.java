@@ -23,6 +23,9 @@ import tgb.btc.rce.service.processors.paymenttypes.requisite.delete.DeletePaymen
 import tgb.btc.rce.service.processors.paymenttypes.requisite.delete.DeletingPaymentRequisite;
 import tgb.btc.rce.service.processors.paymenttypes.requisite.delete.ShowPaymentTypesForDeleteRequisite;
 import tgb.btc.rce.service.processors.paymenttypes.requisite.delete.ShowRequisitesForDelete;
+import tgb.btc.rce.service.processors.paymenttypes.turning.ShowPaymentTypesForTurn;
+import tgb.btc.rce.service.processors.paymenttypes.turning.TurnPaymentTypes;
+import tgb.btc.rce.service.processors.paymenttypes.turning.TurningPaymentType;
 import tgb.btc.rce.service.processors.personaldiscounts.buy.AskPersonalBuyDiscountProcessor;
 import tgb.btc.rce.service.processors.personaldiscounts.buy.ChangePersonalBuyDiscountProcessor;
 import tgb.btc.rce.service.processors.personaldiscounts.buy.SavePersonalBuyDiscountProcessor;
@@ -52,7 +55,8 @@ public final class CommandProcessorLoader {
             Command.NEW_PAYMENT_TYPE,
             Command.DELETE_PAYMENT_TYPE,
             Command.NEW_PAYMENT_TYPE_REQUISITE,
-            Command.DELETE_PAYMENT_TYPE_REQUISITE
+            Command.DELETE_PAYMENT_TYPE_REQUISITE,
+            Command.TURN_PAYMENT_TYPES
     );
 
 
@@ -151,6 +155,9 @@ public final class CommandProcessorLoader {
         commandProcessors.add(ShowPaymentTypesForDeleteRequisite.class);
         commandProcessors.add(ShowRequisitesForDelete.class);
         commandProcessors.add(CreateUserDataProcessor.class);
+        commandProcessors.add(ShowPaymentTypesForTurn.class);
+        commandProcessors.add(TurningPaymentType.class);
+        commandProcessors.add(TurnPaymentTypes.class);
         commandProcessors.stream()
                 .filter(processor -> !extendsProcessor(processor))
                 .findFirst()

@@ -4,6 +4,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import tgb.btc.rce.bean.PaymentType;
 import tgb.btc.rce.enums.DealType;
 
@@ -11,6 +12,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @Repository
+@Transactional
 public interface PaymentTypeRepository extends BaseRepository<PaymentType> {
 
     /** SELECT **/
@@ -20,6 +22,9 @@ public interface PaymentTypeRepository extends BaseRepository<PaymentType> {
 
     @Query("from PaymentType where dealType=:dealType")
     List<PaymentType> getByDealType(@Param("dealType") DealType dealType);
+
+    @Query("select dealType from PaymentType where pid=:pid")
+    DealType getDealTypeByPid(@Param("pid") Long pid);
 
 
     /** UPDATE **/
