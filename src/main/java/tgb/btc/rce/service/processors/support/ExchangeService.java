@@ -21,6 +21,7 @@ import tgb.btc.rce.enums.*;
 import tgb.btc.rce.exception.BaseException;
 import tgb.btc.rce.exception.EnumTypeNotFoundException;
 import tgb.btc.rce.exception.NumberParseException;
+import tgb.btc.rce.repository.DealRepository;
 import tgb.btc.rce.repository.PaymentRequisiteRepository;
 import tgb.btc.rce.repository.PaymentTypeRepository;
 import tgb.btc.rce.repository.UserDiscountRepository;
@@ -65,6 +66,13 @@ public class ExchangeService {
     private PaymentTypeRepository paymentTypeRepository;
 
     private PaymentRequisiteRepository paymentRequisiteRepository;
+
+    private DealRepository dealRepository;
+
+    @Autowired
+    public void setDealRepository(DealRepository dealRepository) {
+        this.dealRepository = dealRepository;
+    }
 
     @Autowired
     public void setPaymentTypeRepository(PaymentTypeRepository paymentTypeRepository) {
@@ -478,6 +486,12 @@ public class ExchangeService {
         List<PaymentRequisite> paymentRequisite = paymentRequisiteRepository.getByPaymentTypePid(paymentType.getPid());
         if (CollectionUtils.isEmpty(paymentRequisite)) {
             throw new BaseException("Не установлены реквизиты для " + paymentType.getName() + ".");
+        }
+        if (paymentRequisite.size() == 1) {
+            requisites = paymentRequisite.get(0).getRequisite();
+        } else {
+            Long lastPassedDeal = dealRepository.getLastPassedDealByDealType(DealType.BUY);
+            Integer lastOrder = paym
         }
 
         PaymentConfig paymentConfig = paymentConfigService.getByPaymentType(deal.getPaymentTypeEnum());
