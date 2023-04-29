@@ -13,7 +13,10 @@ import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.impl.UserService;
 import tgb.btc.rce.util.BotVariablePropertiesUtil;
+import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.UpdateUtil;
+
+import java.util.List;
 
 @CommandProcessor(command = Command.CHANGE_USD_COURSE)
 public class ChangeUsdCourseProcessor extends Processor {
@@ -28,7 +31,7 @@ public class ChangeUsdCourseProcessor extends Processor {
         Long chatId = UpdateUtil.getChatId(update);
         switch (userService.getStepByChatId(chatId)) {
             case 0:
-                responseSender.sendMessage(chatId, "Введите новый курс.");
+                responseSender.sendMessage(chatId, "Введите новый курс.", KeyboardUtil.buildReply(List.of(KeyboardUtil.getCancelButton())));
                 userService.nextStep(chatId, Command.CHANGE_USD_COURSE);
                 break;
             case 1:
