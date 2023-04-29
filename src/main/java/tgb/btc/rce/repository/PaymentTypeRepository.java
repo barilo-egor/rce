@@ -36,4 +36,7 @@ public interface PaymentTypeRepository extends BaseRepository<PaymentType> {
     @Query("update PaymentType set minSum=:minSum where pid=:pid")
     void updateMinSumByPid(@Param("minSum") BigDecimal minSum, @Param("pid") Long pid);
 
+    @Modifying
+    @Query("update PaymentType set isDynamicOn=:isDynamicOn where pid=:pid")
+    void updateIsDynamicOnByPid(@Param("isDynamicOn") Boolean isDynamicOn, @Param("pid") Long pid);
 }

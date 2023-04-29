@@ -30,6 +30,9 @@ public class PaymentType extends BasePersist {
     @Column(name = "DEAL_TYPE")
     private DealType dealType;
 
+    @Column(name = "IS_DYNAMIC_ON")
+    private Boolean isDynamicOn;
+
     public String getName() {
         return name;
     }
@@ -61,4 +64,13 @@ public class PaymentType extends BasePersist {
     public void setDealType(DealType dealType) {
         this.dealType = dealType;
     }
+
+    public Boolean getDynamicOn() {
+        return isDynamicOn;
+    }
+
+    public void setDynamicOn(Boolean dynamicOn) {
+        isDynamicOn = dynamicOn;
+    }
+
 }

@@ -137,7 +137,8 @@ public enum Command {
     TURN_PAYMENT_TYPES("Включение типов оплат", true),
     TURNING_PAYMENT_TYPES("turning_pt", true),
     CHANGE_MIN_SUM("Мин.сумма", true),
-    TURNING_DYNAMIC_REQUISITES("Динамические реквизиты", true),
+    TURN_DYNAMIC_REQUISITES("Динамические реквизиты", true),
+    TURNING_DYNAMIC_REQUISITES("turning_dr", true),
 
     CREATE_USER_DATA("/createuserdata", true)
     ;

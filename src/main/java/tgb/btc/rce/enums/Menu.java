@@ -23,7 +23,7 @@ public enum Menu {
 
     PAYMENT_TYPES(List.of(Command.NEW_PAYMENT_TYPE, Command.DELETE_PAYMENT_TYPE, Command.NEW_PAYMENT_TYPE_REQUISITE,
                           Command.DELETE_PAYMENT_TYPE_REQUISITE, Command.TURN_PAYMENT_TYPES, Command.CHANGE_MIN_SUM,
-                          Command.TURNING_DYNAMIC_REQUISITES, Command.ADMIN_BACK));
+                          Command.TURN_DYNAMIC_REQUISITES, Command.ADMIN_BACK));
 
     final List<Command> commands;
 

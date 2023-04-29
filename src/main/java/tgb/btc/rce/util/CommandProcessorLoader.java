@@ -27,6 +27,9 @@ import tgb.btc.rce.service.processors.paymenttypes.requisite.delete.DeletePaymen
 import tgb.btc.rce.service.processors.paymenttypes.requisite.delete.DeletingPaymentRequisite;
 import tgb.btc.rce.service.processors.paymenttypes.requisite.delete.ShowPaymentTypesForDeleteRequisite;
 import tgb.btc.rce.service.processors.paymenttypes.requisite.delete.ShowRequisitesForDelete;
+import tgb.btc.rce.service.processors.paymenttypes.requisite.dynamic.ShowPaymentTypesForDynamic;
+import tgb.btc.rce.service.processors.paymenttypes.requisite.dynamic.TurnDynamicRequisites;
+import tgb.btc.rce.service.processors.paymenttypes.requisite.dynamic.TurningDynamic;
 import tgb.btc.rce.service.processors.paymenttypes.turning.ShowPaymentTypesForTurn;
 import tgb.btc.rce.service.processors.paymenttypes.turning.TurnPaymentTypes;
 import tgb.btc.rce.service.processors.paymenttypes.turning.TurningPaymentType;
@@ -61,7 +64,8 @@ public final class CommandProcessorLoader {
             Command.NEW_PAYMENT_TYPE_REQUISITE,
             Command.DELETE_PAYMENT_TYPE_REQUISITE,
             Command.TURN_PAYMENT_TYPES,
-            Command.CHANGE_MIN_SUM
+            Command.CHANGE_MIN_SUM,
+            Command.TURN_DYNAMIC_REQUISITES
     );
 
 
@@ -167,6 +171,9 @@ public final class CommandProcessorLoader {
         commandProcessors.add(ChangeMinSum.class);
         commandProcessors.add(SaveMinSum.class);
         commandProcessors.add(ShowTypesForMinSum.class);
+        commandProcessors.add(ShowPaymentTypesForDynamic.class);
+        commandProcessors.add(TurnDynamicRequisites.class);
+        commandProcessors.add(TurningDynamic.class);
         commandProcessors.stream()
                 .filter(processor -> !extendsProcessor(processor))
                 .findFirst()
