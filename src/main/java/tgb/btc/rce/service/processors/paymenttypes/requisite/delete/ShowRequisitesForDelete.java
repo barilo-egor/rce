@@ -66,6 +66,7 @@ public class ShowRequisitesForDelete extends Processor {
                                 .data(Command.DELETING_PAYMENT_TYPE_REQUISITE.getText()
                                               + BotStringConstants.CALLBACK_DATA_SPLITTER + paymentRequisite.getPid())
                                 .build());
+            counter++;
         }
         responseSender.sendMessage(chatId, message.toString(), KeyboardUtil.buildInline(buttons));
     }

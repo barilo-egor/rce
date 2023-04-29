@@ -68,6 +68,7 @@ public class TurningDynamic extends Processor {
                 return;
             }
             paymentTypeRepository.updateIsDynamicOnByPid(true, pid);
+            responseSender.deleteMessage(chatId, update.getCallbackQuery().getMessage().getMessageId());
             responseSender.sendMessage(chatId, "Динамические реквизиты для " + paymentType.getName() + " включены.");
             showPaymentTypesForDynamic.sendPaymentTypes(chatId, paymentType.getDealType());
         }
