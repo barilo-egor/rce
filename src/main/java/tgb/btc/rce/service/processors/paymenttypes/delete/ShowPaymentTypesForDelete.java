@@ -71,7 +71,7 @@ public class ShowPaymentTypesForDelete extends Processor {
                         .build())
                 .collect(Collectors.toList());
         buttons.add(InlineButton.builder()
-                            .text("Отмена")
+                            .text("❌ Закрыть")
                             .data(Command.INLINE_DELETE.getText())
                             .build());
         responseSender.sendMessage(chatId, "Выберите тип оплаты для удаления.", KeyboardUtil.buildInline(buttons));

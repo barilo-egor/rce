@@ -15,6 +15,10 @@ import tgb.btc.rce.service.processors.paymenttypes.create.SaveNamePaymentType;
 import tgb.btc.rce.service.processors.paymenttypes.delete.DeletePaymentType;
 import tgb.btc.rce.service.processors.paymenttypes.delete.DeletingPaymentType;
 import tgb.btc.rce.service.processors.paymenttypes.delete.ShowPaymentTypesForDelete;
+import tgb.btc.rce.service.processors.paymenttypes.minsum.AskForMinSum;
+import tgb.btc.rce.service.processors.paymenttypes.minsum.ChangeMinSum;
+import tgb.btc.rce.service.processors.paymenttypes.minsum.SaveMinSum;
+import tgb.btc.rce.service.processors.paymenttypes.minsum.ShowTypesForMinSum;
 import tgb.btc.rce.service.processors.paymenttypes.requisite.create.AskForNewRequisite;
 import tgb.btc.rce.service.processors.paymenttypes.requisite.create.NewPaymentTypeRequisite;
 import tgb.btc.rce.service.processors.paymenttypes.requisite.create.SaveNewRequisite;
@@ -159,6 +163,10 @@ public final class CommandProcessorLoader {
         commandProcessors.add(ShowPaymentTypesForTurn.class);
         commandProcessors.add(TurningPaymentType.class);
         commandProcessors.add(TurnPaymentTypes.class);
+        commandProcessors.add(AskForMinSum.class);
+        commandProcessors.add(ChangeMinSum.class);
+        commandProcessors.add(SaveMinSum.class);
+        commandProcessors.add(ShowTypesForMinSum.class);
         commandProcessors.stream()
                 .filter(processor -> !extendsProcessor(processor))
                 .findFirst()

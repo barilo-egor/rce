@@ -53,7 +53,8 @@ public class SaveMinSum extends Processor {
             responseSender.sendMessage(chatId, "Ошибка. Введите новую минимальную сумму.");
             return;
         }
-        paymentTypeRepository.updateMinSumByPid(BigDecimal.valueOf(minSum), userRepository.getPidByChatId(chatId));
+        paymentTypeRepository.updateMinSumByPid(BigDecimal.valueOf(minSum),
+                                                userDataRepository.getLongByUserPid(userRepository.getPidByChatId(chatId)));
         responseSender.sendMessage(chatId, "Минимальная сумма обновлена.");
         processToAdminMainPanel(chatId);
     }
