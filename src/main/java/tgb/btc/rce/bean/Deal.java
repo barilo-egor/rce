@@ -35,6 +35,10 @@ public class Deal extends BasePersist {
     @Enumerated(value = EnumType.STRING)
     private PaymentTypeEnum paymentTypeEnum;
 
+    @Column(nullable = false)
+    @ManyToOne
+    private PaymentType paymentType;
+
     @Column(name = "CRYPTO_AMOUNT", precision = 15, scale = 8)
     private BigDecimal cryptoAmount;
 
@@ -146,6 +150,14 @@ public class Deal extends BasePersist {
 
     public void setPaymentTypeEnum(PaymentTypeEnum paymentTypeEnum) {
         this.paymentTypeEnum = paymentTypeEnum;
+    }
+
+    public PaymentType getPaymentType() {
+        return paymentType;
+    }
+
+    public void setPaymentType(PaymentType paymentType) {
+        this.paymentType = paymentType;
     }
 
     public BigDecimal getAmount() {

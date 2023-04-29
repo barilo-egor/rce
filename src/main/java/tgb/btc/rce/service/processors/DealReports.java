@@ -11,6 +11,7 @@ import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.bean.Deal;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.exception.BaseException;
+import tgb.btc.rce.repository.PaymentTypeRepository;
 import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.impl.DealService;
@@ -26,6 +27,7 @@ import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Objects;
 
 @CommandProcessor(command = Command.DEAL_REPORTS)
 @Slf4j
@@ -126,7 +128,10 @@ public class DealReports extends Processor {
             cell = row.createCell(4);
             cell.setCellValue(deal.getCryptoAmount().setScale(8, RoundingMode.FLOOR).stripTrailingZeros().toString());
             cell = row.createCell(5);
-            cell.setCellValue(deal.getPaymentTypeEnum().getDisplayName());
+            String paymentTypeName = Objects.nonNull(deal.getPaymentTypeEnum())
+                                     ? deal.getPaymentTypeEnum().getDisplayName()
+                                     : deal.getPaymentType().getName();
+            cell.setCellValue(paymentTypeName);
             cell = row.createCell(6);
             cell.setCellValue(deal.getUser().getChatId());
             i++;
