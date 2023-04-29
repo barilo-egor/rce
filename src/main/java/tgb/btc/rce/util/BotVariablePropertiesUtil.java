@@ -21,6 +21,7 @@ public class BotVariablePropertiesUtil {
 
     public static void loadProperties() {
         try (FileInputStream inputStream = new FileInputStream(FilePaths.BOT_VARIABLE_PROPERTIES)) {
+            botVariableProperties.clear();
             botVariableProperties.load(inputStream);
         } catch (IOException e) {
             log.error("Ошибка загрузки bot variable properties по пути " + FilePaths.BOT_VARIABLE_PROPERTIES + " : ", e);
@@ -53,6 +54,10 @@ public class BotVariablePropertiesUtil {
         } catch (NumberFormatException e) {
             throw new BaseException(String.format(wrongFormat, botVariableType.getKey()));
         }
+    }
+
+    public static Boolean getBoolean(BotVariableType botVariableType) {
+        return Boolean.parseBoolean(getVariable(botVariableType));
     }
 
     public static Integer getInt(BotVariableType botVariableType) {

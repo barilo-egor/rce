@@ -29,9 +29,9 @@ public enum BotVariableType {
     MIN_SUM_BUY_BTC("Мин.сумма пок.BTC", "deal.buy.sum.min.btc"),
     MIN_SUM_BUY_LTC("Мин.сумма пок.LTC", "deal.buy.sum.min.ltc"),
     MIN_SUM_BUY_USDT("Мин.сумма пок.USDT", "deal.buy.sum.min.usdt"),
-    MIN_SUM_SELL_BTC("Мин.сумма прод.BTC", "deal.buy.sum.min.btc"),
-    MIN_SUM_SELL_LTC("Мин.сумма прод.LTC", "deal.buy.sum.min.ltc"),
-    MIN_SUM_SELL_USDT("Мин.сумма прод.USDT", "deal.buy.sum.min.usdt"),
+    MIN_SUM_SELL_BTC("Мин.сумма прод.BTC", "deal.sell.sum.min.btc"),
+    MIN_SUM_SELL_LTC("Мин.сумма прод.LTC", "deal.sell.sum.min.ltc"),
+    MIN_SUM_SELL_USDT("Мин.сумма прод.USDT", "deal.sell.sum.min.usdt"),
     TRANSACTION_COMMISSION("Транз.комиссия", "transaction.commission"),
     TRANSACTION_COMMISSION_BTC("Транз.комиссия", "transaction.commission.btc"),
     TRANSACTION_COMMISSION_LTC("Транз.комиссия", "transaction.commission.ltc"),
@@ -46,7 +46,8 @@ public enum BotVariableType {
     REFERRAL_MIN_SUM("Мин.сумма вывода", "referral.min.sum"),
     CHANNEL_CHAT_ID("Айди канала", "channel.chat.id"),
     REVIEW_PRISE("Вознаграждение", "review.prise"),
-    USDT_COURSE("Курс USDT", "usdt.course");
+    USDT_COURSE("Курс USDT", "usdt.course"),
+    DEAL_RANK_DISCOUNT_ENABLE("Ранговая скидка для всех", "deal.rank.discount.enable");
 
     final String displayName;
     final String key;

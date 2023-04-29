@@ -61,12 +61,14 @@ public enum Command {
     QUIT_ADMIN_PANEL("Выйти", true),
 
     /** DISCOUNTS */
-    RANK_DISCOUNT("Ранговая скидка", true),
+    RANK_DISCOUNT("Ранговая скидка(персональная)", true),
     CHANGE_RANK_DISCOUNT("change_rank_discount", true),
     PERSONAL_BUY_DISCOUNT("Персональная, покупка", true),
     PERSONAL_SELL_DISCOUNT("Персональная, продажа", true),
     BULK_DISCOUNTS("Оптовые скидки", true),
     REFERRAL_PERCENT("Процент реферала", true),
+    TURN_RANK_DISCOUNT("Ранговая скидка(для всех)", true),
+    TURNING_RANK_DISCOUNT("turning_rd", true),
 
     /** TURNING CURRENCIES */
     TURN_ON_CURRENCY("turn_on_currency", true),

@@ -174,6 +174,8 @@ public final class CommandProcessorLoader {
         commandProcessors.add(ShowPaymentTypesForDynamic.class);
         commandProcessors.add(TurnDynamicRequisites.class);
         commandProcessors.add(TurningDynamic.class);
+        commandProcessors.add(TurnRankDiscount.class);
+        commandProcessors.add(TurningRankDiscount.class);
         commandProcessors.stream()
                 .filter(processor -> !extendsProcessor(processor))
                 .findFirst()
