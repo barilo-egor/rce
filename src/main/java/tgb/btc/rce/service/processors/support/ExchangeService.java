@@ -1,6 +1,7 @@
 package tgb.btc.rce.service.processors.support;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,13 +14,16 @@ import org.telegram.telegrambots.meta.api.objects.inlinequery.result.InlineQuery
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import tgb.btc.rce.bean.Deal;
 import tgb.btc.rce.bean.PaymentConfig;
+import tgb.btc.rce.bean.PaymentRequisite;
+import tgb.btc.rce.bean.PaymentType;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.*;
 import tgb.btc.rce.exception.BaseException;
 import tgb.btc.rce.exception.EnumTypeNotFoundException;
 import tgb.btc.rce.exception.NumberParseException;
+import tgb.btc.rce.repository.PaymentRequisiteRepository;
+import tgb.btc.rce.repository.PaymentTypeRepository;
 import tgb.btc.rce.repository.UserDiscountRepository;
-import tgb.btc.rce.repository.UserRepository;
 import tgb.btc.rce.service.processors.TurningCurrencyProcessor;
 import tgb.btc.rce.service.impl.*;
 import tgb.btc.rce.service.schedule.DealDeleteScheduler;
@@ -58,9 +62,19 @@ public class ExchangeService {
 
     private UserDiscountRepository userDiscountRepository;
 
-    private UserDiscountService userDiscountService;
+    private PaymentTypeRepository paymentTypeRepository;
 
-    private UserRepository userRepository;
+    private PaymentRequisiteRepository paymentRequisiteRepository;
+
+    @Autowired
+    public void setPaymentTypeRepository(PaymentTypeRepository paymentTypeRepository) {
+        this.paymentTypeRepository = paymentTypeRepository;
+    }
+
+    @Autowired
+    public void setPaymentRequisiteRepository(PaymentRequisiteRepository paymentRequisiteRepository) {
+        this.paymentRequisiteRepository = paymentRequisiteRepository;
+    }
 
     private static Map<Long, BigDecimal> USERS_PERSONAL_BUY = new HashMap<>();
 
@@ -69,16 +83,6 @@ public class ExchangeService {
             throw new BaseException("Персональная скидка на покупку не может быть null.");
         }
         USERS_PERSONAL_BUY.put(userChatId, personalBuy);
-    }
-
-    @Autowired
-    public void setUserDiscountService(UserDiscountService userDiscountService) {
-        this.userDiscountService = userDiscountService;
-    }
-
-    @Autowired
-    public void setUserRepository(UserRepository userRepository) {
-        this.userRepository = userRepository;
     }
 
     @Autowired
@@ -429,20 +433,14 @@ public class ExchangeService {
                 + additionalText
                 + "<b>Выберите способ оплаты:</b>";
 
-        List<InlineButton> buttons = Arrays.stream(PaymentTypeEnum.values()).map(paymentType -> {
-                    PaymentConfig paymentConfig = paymentConfigService.getByPaymentType(paymentType);
-                    if (paymentConfig == null || paymentConfig.getOn()) {
-                        return InlineButton.builder()
-                                .text(paymentType.getDisplayName())
-                                .data(paymentType.name())
-                                .inlineType(InlineType.CALLBACK_DATA)
-                                .build();
-                    } else {
-                        return null;
-                    }
-                })
-                .filter(Objects::nonNull)
+        List<InlineButton> buttons = paymentTypeRepository.getByDealTypeAndIsOn(DealType.BUY, Boolean.TRUE).stream()
+                .map(paymentType -> InlineButton.builder()
+                        .text(paymentType.getName())
+                        .data(paymentType.getPid().toString())
+                        .inlineType(InlineType.CALLBACK_DATA)
+                        .build())
                 .collect(Collectors.toList());
+
         buttons.add(KeyboardUtil.INLINE_BACK_BUTTON);
 
         ReplyKeyboard keyboard = KeyboardUtil.buildInlineDiff(buttons);
@@ -455,9 +453,9 @@ public class ExchangeService {
         }
         responseSender.deleteMessage(UpdateUtil.getChatId(update),
                                      update.getCallbackQuery().getMessage().getMessageId());
-        PaymentTypeEnum paymentTypeEnum = PaymentTypeEnum.valueOf(update.getCallbackQuery().getData());
-        dealService.updatePaymentTypeByPid(paymentTypeEnum,
-                                           userService.getCurrentDealByChatId(UpdateUtil.getChatId(update)));
+        PaymentType paymentType = paymentTypeRepository.getByPid(Long.parseLong(update.getCallbackQuery().getData()));
+        dealService.updatePaymentTypeByPid(paymentType,
+                                               userService.getCurrentDealByChatId(UpdateUtil.getChatId(update)));
         return true;
     }
 
@@ -475,6 +473,13 @@ public class ExchangeService {
             deal.setAmount(BigDecimalUtil.subtractHalfUp(deal.getAmount(), rankDiscount));
         }
         CryptoCurrency currency = deal.getCryptoCurrency();
+        PaymentType paymentType = deal.getPaymentType();
+        String requisites;
+        List<PaymentRequisite> paymentRequisite = paymentRequisiteRepository.getByPaymentTypePid(paymentType.getPid());
+        if (CollectionUtils.isEmpty(paymentRequisite)) {
+            throw new BaseException("Не установлены реквизиты для " + paymentType.getName() + ".");
+        }
+
         PaymentConfig paymentConfig = paymentConfigService.getByPaymentType(deal.getPaymentTypeEnum());
         if (paymentConfig == null) {
             throw new BaseException("Не установлены реквизиты для " + deal.getPaymentTypeEnum().getDisplayName() + ".");

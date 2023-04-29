@@ -23,6 +23,9 @@ public interface PaymentTypeRepository extends BaseRepository<PaymentType> {
     @Query("from PaymentType where dealType=:dealType")
     List<PaymentType> getByDealType(@Param("dealType") DealType dealType);
 
+    @Query("from PaymentType where dealType=:dealType and isOn=:isOn")
+    List<PaymentType> getByDealTypeAndIsOn(@Param("dealType") DealType dealType, @Param("isOn") Boolean isOn);
+
     @Query("select dealType from PaymentType where pid=:pid")
     DealType getDealTypeByPid(@Param("pid") Long pid);
 

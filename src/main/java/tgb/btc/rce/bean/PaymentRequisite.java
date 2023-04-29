@@ -20,6 +20,9 @@ public class PaymentRequisite extends BasePersist {
     @Column(name = "REQUISITE")
     private String requisite;
 
+    @Column(name = "ORDER")
+    private Integer order;
+
     public PaymentType getPaymentType() {
         return paymentType;
     }
@@ -35,4 +38,13 @@ public class PaymentRequisite extends BasePersist {
     public void setRequisite(String requisite) {
         this.requisite = requisite;
     }
+
+    public Integer getOrder() {
+        return order;
+    }
+
+    public void setOrder(Integer order) {
+        this.order = order;
+    }
+
 }

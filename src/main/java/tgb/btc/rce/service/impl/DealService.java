@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tgb.btc.rce.bean.Deal;
 import tgb.btc.rce.bean.PaymentReceipt;
+import tgb.btc.rce.bean.PaymentType;
 import tgb.btc.rce.enums.CryptoCurrency;
 import tgb.btc.rce.enums.DealType;
 import tgb.btc.rce.enums.PaymentTypeEnum;
@@ -93,9 +94,14 @@ public class DealService extends BasePersistService<Deal> {
         dealRepository.updateWalletByPid(wallet, pid);
     }
 
-    public void updatePaymentTypeByPid(PaymentTypeEnum paymentTypeEnum, Long pid) {
-        dealRepository.updatePaymentTypeByPid(paymentTypeEnum, pid);
+    public void updatePaymentTypeEnumByPid(PaymentTypeEnum paymentTypeEnum, Long pid) {
+        dealRepository.updatePaymentTypeEnumByPid(paymentTypeEnum, pid);
     }
+
+    public void updatePaymentTypeByPid(PaymentType paymentType, Long pid) {
+        dealRepository.updatePaymentTypeByPid(paymentType, pid);
+    }
+
 
     public void updateIsUsedPromoByPid(Boolean isUsedPromo, Long pid) {
         dealRepository.updateIsUsedPromoByPid(isUsedPromo, pid);

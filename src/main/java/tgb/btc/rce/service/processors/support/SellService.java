@@ -306,8 +306,8 @@ public class SellService {
         responseSender.deleteMessage(UpdateUtil.getChatId(update),
                                      update.getCallbackQuery().getMessage().getMessageId());
         PaymentTypeEnum paymentTypeEnum = PaymentTypeEnum.valueOf(update.getCallbackQuery().getData());
-        dealService.updatePaymentTypeByPid(paymentTypeEnum,
-                                           userService.getCurrentDealByChatId(UpdateUtil.getChatId(update)));
+        dealService.updatePaymentTypeEnumByPid(paymentTypeEnum,
+                                               userService.getCurrentDealByChatId(UpdateUtil.getChatId(update)));
     }
 
     public void buildDeal(Update update) {
