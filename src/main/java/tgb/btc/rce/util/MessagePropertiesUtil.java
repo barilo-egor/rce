@@ -2,6 +2,7 @@ package tgb.btc.rce.util;
 
 import lombok.extern.slf4j.Slf4j;
 import tgb.btc.rce.constants.FilePaths;
+import tgb.btc.rce.enums.DealType;
 import tgb.btc.rce.enums.PropertiesMessage;
 import tgb.btc.rce.exception.BaseException;
 
@@ -53,5 +54,11 @@ public class MessagePropertiesUtil {
 
     public static void validate(File file) throws BaseException {
 
+    }
+
+    public static String getChooseCurrency(DealType dealType) {
+        return getMessage(DealType.BUY.equals(dealType)
+                ? PropertiesMessage.CHOOSE_CURRENCY_BUY
+                : PropertiesMessage.CHOOSE_CURRENCY_SELL);
     }
 }

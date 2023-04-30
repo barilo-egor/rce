@@ -76,38 +76,6 @@ public class SellService {
         this.botMessageService = botMessageService;
     }
 
-    public void createDeal(Long chatId) {
-        Deal deal = new Deal();
-        deal.setActive(false);
-        deal.setPassed(false);
-        deal.setCurrent(true);
-        deal.setDateTime(LocalDateTime.now());
-        deal.setDate(LocalDate.now());
-        deal.setDealType(DealType.SELL);
-        deal.setUser(userService.findByChatId(chatId));
-        Deal savedDeal = dealService.save(deal);
-        userService.updateCurrentDealByChatId(savedDeal.getPid(), chatId);
-    }
-
-    public void askForCurrency(Long chatId) {
-        List<InlineButton> currencies = new ArrayList<>();
-        Arrays.stream(CryptoCurrency.values())
-                .filter(cryptoCurrency -> TurningCurrencyProcessor.SELL_TURNING.get(cryptoCurrency))
-                .forEach(currency -> currencies.add(InlineButton.builder()
-                        .text(currency.getDisplayName())
-                        .data(currency.name())
-                        .inlineType(InlineType.CALLBACK_DATA)
-                        .build()));
-        currencies.add(KeyboardUtil.INLINE_BACK_BUTTON);
-        Optional<Message> optionalMessage = responseSender.sendMessage(chatId,
-                MessagePropertiesUtil.getMessage(
-                        PropertiesMessage.CHOOSE_CURRENCY_SELL),
-                KeyboardUtil.buildInline(currencies));
-        optionalMessage.ifPresent(message ->
-                userService.updateBufferVariable(chatId, message.getMessageId().toString()));
-    }
-
-
     public void askForSum(Long chatId, CryptoCurrency currency, DealType dealType) {
         responseSender.sendMessage(chatId,
                         String.format(MessagePropertiesUtil.getMessage(
@@ -124,7 +92,7 @@ public class SellService {
         String operation = DealType.BUY.equals(dealType)
                 ? "-buy"
                 : "-sell";
-        return KeyboardUtil.buildInlineDiff(List.of(
+        return KeyboardUtil.buildInline(List.of(
                 InlineButton.builder()
                         .inlineType(InlineType.SWITCH_INLINE_QUERY_CURRENT_CHAT)
                         .text("Калькулятор")
@@ -299,7 +267,7 @@ public class SellService {
                 .collect(Collectors.toList());
         buttons.add(KeyboardUtil.INLINE_BACK_BUTTON);
 
-        ReplyKeyboard keyboard = KeyboardUtil.buildInlineDiff(buttons);
+        ReplyKeyboard keyboard = KeyboardUtil.buildInline(buttons);
         responseSender.sendMessage(chatId, message, keyboard, "HTML");
     }
 

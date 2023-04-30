@@ -14,4 +14,8 @@ public final class CallbackQueryUtil {
     public static Long getSplitLongData(Update update, int index) {
         return Long.parseLong(getSplitData(update, index));
     }
+
+    public static String buildCallbackData(String... variables) {
+        return String.join(BotStringConstants.CALLBACK_DATA_SPLITTER, variables);
+    }
 }

@@ -14,6 +14,7 @@ import tgb.btc.rce.service.impl.DealService;
 import tgb.btc.rce.service.impl.PaymentReceiptsService;
 import tgb.btc.rce.service.impl.UserService;
 import tgb.btc.rce.service.processors.support.ExchangeService;
+import tgb.btc.rce.service.processors.support.ExchangeServiceNew;
 import tgb.btc.rce.util.BotImageUtil;
 import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.UpdateUtil;
@@ -28,6 +29,13 @@ public class BuyBitcoin extends Processor {
     private final ExchangeService exchangeService;
     private final DealService dealService;
     private final PaymentReceiptsService paymentReceiptsService;
+
+    private ExchangeServiceNew exchangeServiceNew;
+
+    @Autowired
+    public void setExchangeServiceNew(ExchangeServiceNew exchangeServiceNew) {
+        this.exchangeServiceNew = exchangeServiceNew;
+    }
 
     private static final List<Command> MAIN_MENU_COMMANDS = Arrays.asList(Command.BUY_BITCOIN, Command.SELL_BITCOIN,
             Command.CONTACTS, Command.DRAWS, Command.REFERRAL, Command.ADMIN_PANEL);
@@ -98,8 +106,8 @@ public class BuyBitcoin extends Processor {
                                     .build())));
                     return;
                 }
-                exchangeService.createDeal(chatId);
-                exchangeService.askForCurrency(chatId);
+                dealService.createNewDeal(DealType.BUY, chatId);
+                exchangeServiceNew.askForCurrency(chatId, DealType.BUY);
                 userService.nextStep(chatId, Command.BUY_BITCOIN);
                 break;
             case 1:
@@ -206,7 +214,7 @@ public class BuyBitcoin extends Processor {
         Long currentDealPid;
         switch (userService.getStepByChatId(chatId)) {
             case 1:
-                exchangeService.askForCurrency(chatId);
+                exchangeServiceNew.askForCurrency(chatId, DealType.BUY);
                 break;
             case 2:
                 currentDealPid = userService.getCurrentDealByChatId(chatId);

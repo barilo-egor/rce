@@ -12,6 +12,7 @@ import tgb.btc.rce.enums.DealType;
 import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.impl.UserService;
+import tgb.btc.rce.util.TurningCurrenciesUtil;
 import tgb.btc.rce.util.UpdateUtil;
 
 @CommandProcessor(command = Command.TURN_OFF_CURRENCY)
@@ -36,14 +37,14 @@ public class TurnOffCurrencyProcessor extends Processor {
         CryptoCurrency currency = CryptoCurrency.valueOf(values[2]);
 
         if (DealType.BUY.equals(dealType)) {
-            TurningCurrencyProcessor.BUY_TURNING.put(currency, false);
-            TurningCurrencyProcessor.TURNING_PROPERTIES.setProperty("buy." + currency.name(), false);
+            TurningCurrenciesUtil.BUY_TURNING.put(currency, false);
+            TurningCurrenciesUtil.TURNING_PROPERTIES.setProperty("buy." + currency.name(), false);
         } else {
-            TurningCurrencyProcessor.SELL_TURNING.put(currency, false);
-            TurningCurrencyProcessor.TURNING_PROPERTIES.setProperty("sell." + currency.name(), false);
+            TurningCurrenciesUtil.SELL_TURNING.put(currency, false);
+            TurningCurrenciesUtil.TURNING_PROPERTIES.setProperty("sell." + currency.name(), false);
         }
         try {
-            TurningCurrencyProcessor.TURNING_PROPERTIES.save();
+            TurningCurrenciesUtil.TURNING_PROPERTIES.save();
         } catch (ConfigurationException e) {
             responseSender.sendMessage(UpdateUtil.getChatId(update), "Ошибка: " + e.getMessage() + "\n"
                     + ExceptionUtils.getFullStackTrace(e));

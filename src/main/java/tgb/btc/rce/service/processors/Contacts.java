@@ -44,8 +44,8 @@ public class Contacts extends Processor {
                         .map(contact -> InlineButton.builder()
                                 .text(contact.getLabel())
                                 .data(contact.getUrl())
+                                .inlineType(InlineType.URL)
                                 .build())
-                        .collect(Collectors.toList()),
-                InlineType.URL);
+                        .collect(Collectors.toList()));
     }
 }

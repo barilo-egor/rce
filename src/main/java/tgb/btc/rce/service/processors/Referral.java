@@ -59,7 +59,7 @@ public class Referral extends Processor {
                 refLink, currentBalance, numberOfReferrals, numberOfActiveReferrals,
                 userService.getChargesByChatId(chatId), dealsCount, rank.getSmile(), rank.getPercent()).concat("%");
 
-        responseSender.sendMessage(chatId, resultMessage, KeyboardUtil.buildInlineDiff(getButtons(refLink)));
+        responseSender.sendMessage(chatId, resultMessage, KeyboardUtil.buildInline(getButtons(refLink)));
     }
 
     private List<InlineButton> getButtons(String refLink) {

@@ -12,10 +12,12 @@ import tgb.btc.rce.enums.DealType;
 import tgb.btc.rce.enums.PaymentTypeEnum;
 import tgb.btc.rce.repository.BaseRepository;
 import tgb.btc.rce.repository.DealRepository;
+import tgb.btc.rce.repository.UserRepository;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,6 +25,8 @@ import java.util.List;
 public class DealService extends BasePersistService<Deal> {
 
     private final DealRepository dealRepository;
+
+    private UserRepository userRepository;
 
     @Autowired
     public DealService(BaseRepository<Deal> baseRepository, DealRepository dealRepository) {
@@ -159,5 +163,19 @@ public class DealService extends BasePersistService<Deal> {
     public List<PaymentReceipt> getPaymentReceipts(Long dealPid) {
         Deal deal = getByPid(dealPid);
         return new ArrayList<>(deal.getPaymentReceipts());
+    }
+
+    public Deal createNewDeal(DealType dealType, Long chatId) {
+        Deal deal = new Deal();
+        deal.setActive(false);
+        deal.setPassed(false);
+        deal.setCurrent(true);
+        deal.setDateTime(LocalDateTime.now());
+        deal.setDate(LocalDate.now());
+        deal.setDealType(dealType);
+        deal.setUser(userRepository.findByChatId(chatId));
+        Deal savedDeal = save(deal);
+        userRepository.updateCurrentDealByChatId(savedDeal.getPid(), chatId);
+        return savedDeal;
     }
 }

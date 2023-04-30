@@ -1,5 +1,6 @@
 package tgb.btc.rce.service.processors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.bean.Deal;
@@ -14,6 +15,7 @@ import tgb.btc.rce.service.impl.DealService;
 import tgb.btc.rce.service.impl.PaymentReceiptsService;
 import tgb.btc.rce.service.impl.UserService;
 import tgb.btc.rce.service.processors.support.ExchangeService;
+import tgb.btc.rce.service.processors.support.ExchangeServiceNew;
 import tgb.btc.rce.service.processors.support.SellService;
 import tgb.btc.rce.util.BotImageUtil;
 import tgb.btc.rce.util.KeyboardUtil;
@@ -29,6 +31,13 @@ public class SellBitcoin extends Processor {
     private final SellService sellService;
     private final PaymentReceiptsService paymentReceiptsService;
     private final ExchangeService exchangeService;
+
+    private ExchangeServiceNew exchangeServiceNew;
+
+    @Autowired
+    public void setExchangeServiceNew(ExchangeServiceNew exchangeServiceNew) {
+        this.exchangeServiceNew = exchangeServiceNew;
+    }
 
     public SellBitcoin(IResponseSender responseSender, UserService userService, DealService dealService,
                        SellService sellService, PaymentReceiptsService paymentReceiptsService,
@@ -102,8 +111,8 @@ public class SellBitcoin extends Processor {
                                     .build())));
                     return;
                 }
-                sellService.createDeal(chatId);
-                sellService.askForCurrency(chatId);
+                dealService.createNewDeal(DealType.SELL, chatId);
+                exchangeServiceNew.askForCurrency(chatId, DealType.SELL);
                 userService.nextStep(chatId, Command.SELL_BITCOIN);
                 break;
             case 1:
@@ -192,7 +201,7 @@ public class SellBitcoin extends Processor {
 
         switch (userService.getStepByChatId(chatId)) {
             case 1:
-                sellService.askForCurrency(chatId);
+                exchangeServiceNew.askForCurrency(chatId, DealType.SELL);
                 break;
             case 2:
                 Long currentDealPid = userService.getCurrentDealByChatId(chatId);
