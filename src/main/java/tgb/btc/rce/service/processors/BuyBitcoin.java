@@ -10,13 +10,12 @@ import tgb.btc.rce.exception.BaseException;
 import tgb.btc.rce.exception.NumberParseException;
 import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.service.impl.DealService;
-import tgb.btc.rce.service.impl.PaymentReceiptsService;
-import tgb.btc.rce.service.impl.UserService;
+import tgb.btc.rce.service.impl.*;
 import tgb.btc.rce.service.processors.support.ExchangeService;
 import tgb.btc.rce.service.processors.support.ExchangeServiceNew;
 import tgb.btc.rce.util.BotImageUtil;
 import tgb.btc.rce.util.KeyboardUtil;
+import tgb.btc.rce.util.MessagePropertiesUtil;
 import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.InlineButton;
 
@@ -26,11 +25,29 @@ import java.util.List;
 @CommandProcessor(command = Command.BUY_BITCOIN)
 public class BuyBitcoin extends Processor {
 
+    private final static DealType DEAL_TYPE = DealType.BUY;
+
     private final ExchangeService exchangeService;
+
     private final DealService dealService;
+
     private final PaymentReceiptsService paymentReceiptsService;
 
     private ExchangeServiceNew exchangeServiceNew;
+
+    private KeyboardService keyboardService;
+
+    private MessageService messageService;
+
+    @Autowired
+    public void setKeyboardService(KeyboardService keyboardService) {
+        this.keyboardService = keyboardService;
+    }
+
+    @Autowired
+    public void setMessageService(MessageService messageService) {
+        this.messageService = messageService;
+    }
 
     @Autowired
     public void setExchangeServiceNew(ExchangeServiceNew exchangeServiceNew) {
@@ -99,15 +116,12 @@ public class BuyBitcoin extends Processor {
             case 0:
                 if (dealService.getActiveDealsCountByUserChatId(chatId) > 0) {
                     responseSender.sendMessage(chatId, "У вас уже есть активная заявка.",
-                            KeyboardUtil.buildInline(List.of(InlineButton.builder()
-                                    .inlineType(InlineType.CALLBACK_DATA)
-                                    .text("Удалить")
-                                    .data(Command.DELETE_DEAL.getText())
-                                    .build())));
+                            InlineButton.buildData("Удалить", Command.DELETE_DEAL.getText()));
                     return;
                 }
-                dealService.createNewDeal(DealType.BUY, chatId);
-                exchangeServiceNew.askForCurrency(chatId, DealType.BUY);
+                dealService.createNewDeal(DEAL_TYPE, chatId);
+                messageService.sendMessageAndSaveMessageId(chatId, MessagePropertiesUtil.getChooseCurrency(DEAL_TYPE),
+                        keyboardService.getCurrencies(DEAL_TYPE));
                 userService.nextStep(chatId, Command.BUY_BITCOIN);
                 break;
             case 1:
@@ -117,10 +131,9 @@ public class BuyBitcoin extends Processor {
                     return;
                 }
                 CryptoCurrency currency = CryptoCurrency.valueOf(update.getCallbackQuery().getData());
-//                if (CryptoCurrency.USDT.equals(currency)) throw new BaseException("Проблема при получении курса. Создание заявки для этой валюты пока что невозможно.");
                 Long currentDealPid = userService.getCurrentDealByChatId(chatId);
                 dealService.updateCryptoCurrencyByPid(currentDealPid, currency);
-                exchangeService.askForSum(chatId, currency, dealService.getDealTypeByPid(currentDealPid));
+                exchangeServiceNew.askForSum(chatId, currency, dealService.getDealTypeByPid(currentDealPid));
                 userService.nextStep(chatId);
                 break;
             case 2:
@@ -214,11 +227,12 @@ public class BuyBitcoin extends Processor {
         Long currentDealPid;
         switch (userService.getStepByChatId(chatId)) {
             case 1:
-                exchangeServiceNew.askForCurrency(chatId, DealType.BUY);
+                messageService.sendMessageAndSaveMessageId(chatId, MessagePropertiesUtil.getChooseCurrency(DEAL_TYPE),
+                        keyboardService.getCurrencies(DEAL_TYPE));;
                 break;
             case 2:
                 currentDealPid = userService.getCurrentDealByChatId(chatId);
-                exchangeService.askForSum(chatId,
+                exchangeServiceNew.askForSum(chatId,
                         dealService.getCryptoCurrencyByPid(currentDealPid), dealService.getDealTypeByPid(currentDealPid));
                 break;
             case 3:
@@ -228,7 +242,7 @@ public class BuyBitcoin extends Processor {
                     exchangeService.askForReferralDiscount(update);
                 } else {
                     currentDealPid = userService.getCurrentDealByChatId(chatId);
-                    exchangeService.askForSum(chatId,
+                    exchangeServiceNew.askForSum(chatId,
                             dealService.getCryptoCurrencyByPid(currentDealPid), dealService.getDealTypeByPid(currentDealPid));
                     userService.previousStep(chatId);
                 }

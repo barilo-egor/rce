@@ -12,6 +12,7 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import tgb.btc.rce.bean.BotMessage;
 import tgb.btc.rce.enums.BotKeyboard;
 import tgb.btc.rce.enums.MessageTemplate;
+import tgb.btc.rce.vo.InlineButton;
 
 import java.io.File;
 import java.io.IOException;
@@ -23,6 +24,8 @@ public interface IResponseSender {
     Optional<Message> sendMessage(Long chatId, String text);
 
     Optional<Message> sendMessage(Long chatId, String text, ReplyKeyboard replyKeyboard);
+
+    Optional<Message> sendMessage(Long chatId, String text, InlineButton... inlineButtons);
 
     Optional<Message> sendMessage(Long chatId, String text, BotKeyboard botKeyboard);
 
