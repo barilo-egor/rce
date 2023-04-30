@@ -141,8 +141,8 @@ public interface DealRepository extends BaseRepository<Deal> {
     @Query(value = "select sum(amount) from Deal where user.chatId=:chatId and isPassed=true and dealType=:dealType")
     BigDecimal getUserAmountSum(@Param("chatId") Long chatId, @Param("dealType") DealType dealType);
 
-    @Query(value = "select max(pid) from Deal where isPassed=true and dealType=:dealType")
-    Long getLastPassedDealByDealType(@Param("dealType") DealType dealType);
+    @Query(value = "select max(pid) from Deal where isPassed=true and dealType=:dealType and paymentType.pid=:paymentTypePid")
+    Long getLastPassedDealByDealType(@Param("dealType") DealType dealType, @Param("paymentTypePid") Long paymentTypePid);
 
     @Query(value = "select d.paymentType.pid from Deal d where d.pid=:pid")
     Long getPaymentTypePidByPid(@Param("pid") Long pid);

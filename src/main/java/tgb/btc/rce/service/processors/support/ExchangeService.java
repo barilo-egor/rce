@@ -69,6 +69,10 @@ public class ExchangeService {
 
     private DealRepository dealRepository;
 
+    private PaymentRequisiteService paymentRequisiteService;
+
+    private Map<Long, Long> PAYMENT_REQUISITE_ORDER = new HashMap<>();
+
     @Autowired
     public void setDealRepository(DealRepository dealRepository) {
         this.dealRepository = dealRepository;
@@ -490,14 +494,10 @@ public class ExchangeService {
         if (paymentRequisite.size() == 1) {
             requisites = paymentRequisite.get(0).getRequisite();
         } else {
-            Long lastPassedDeal = dealRepository.getLastPassedDealByDealType(DealType.BUY);
-            Integer lastOrder = paym
+            Integer order = paymentRequisiteService.getOrder(paymentType.getPid());
+            requisites = paymentRequisiteRepository.getRequisiteByPaymentTypePidAndOrder(paymentType.getPid(), order);
         }
 
-        PaymentConfig paymentConfig = paymentConfigService.getByPaymentType(deal.getPaymentTypeEnum());
-        if (paymentConfig == null) {
-            throw new BaseException("Не установлены реквизиты для " + deal.getPaymentTypeEnum().getDisplayName() + ".");
-        }
         String promoCodeText = Boolean.TRUE.equals(deal.getUsedPromo())
                                ?
                                "\n\n<b> Использован скидочный промокод</b>: "
@@ -556,7 +556,7 @@ public class ExchangeService {
                 + "\n"
                 + "<b>Резквизиты для оплаты:</b>"
                 + "\n\n"
-                + "<code>" + paymentConfig.getRequisites() + "</code>"
+                + "<code>" + requisites + "</code>"
                 + "\n\n"
                 + "<b>⏳Заявка действительна</b>: " + BotVariablePropertiesUtil.getVariable(
                 BotVariableType.DEAL_ACTIVE_TIME) + " минут"
@@ -603,15 +603,15 @@ public class ExchangeService {
         userService.setDefaultValues(chatId);
         responseSender.sendMessage(chatId, MessagePropertiesUtil.getMessage(PropertiesMessage.DEAL_CONFIRMED));
         userService.getAdminsChatIds().forEach(adminChatId ->
-                                                       responseSender.sendMessage(adminChatId,
-                                                                                  "Поступила новая заявка на покупку.",
-                                                                                  KeyboardUtil.buildInline(List.of(
-                                                                                          InlineButton.builder()
-                                                                                                  .text(Command.SHOW_DEAL.getText())
-                                                                                                  .data(Command.SHOW_DEAL.getText() + BotStringConstants.CALLBACK_DATA_SPLITTER
-                                                                                                                + currentDealPid)
-                                                                                                  .build()
-                                                                                  ))));
+                responseSender.sendMessage(adminChatId,
+                        "Поступила новая заявка на покупку.",
+                        KeyboardUtil.buildInline(List.of(
+                                InlineButton.builder()
+                                        .text(Command.SHOW_DEAL.getText())
+                                        .data(Command.SHOW_DEAL.getText() + BotStringConstants.CALLBACK_DATA_SPLITTER
+                                                + currentDealPid)
+                                        .build()
+                        ))));
         userService.updateCurrentDealByChatId(null, chatId);
     }
 

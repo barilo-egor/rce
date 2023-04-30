@@ -14,6 +14,7 @@ import tgb.btc.rce.repository.UserRepository;
 import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.impl.DealService;
+import tgb.btc.rce.service.impl.PaymentRequisiteService;
 import tgb.btc.rce.service.impl.UserService;
 import tgb.btc.rce.util.*;
 import tgb.btc.rce.vo.InlineButton;
@@ -30,6 +31,13 @@ public class ConfirmUserDeal extends Processor {
     private final DealService dealService;
 
     private UserRepository userRepository;
+
+    private PaymentRequisiteService paymentRequisiteService;
+
+    @Autowired
+    public void setPaymentRequisiteService(PaymentRequisiteService paymentRequisiteService) {
+        this.paymentRequisiteService = paymentRequisiteService;
+    }
 
     @Autowired
     public ConfirmUserDeal(IResponseSender responseSender, UserService userService, DealService dealService) {
@@ -68,6 +76,7 @@ public class ConfirmUserDeal extends Processor {
             deal.setAmount(sumWithDiscount);
         }
         dealService.save(deal);
+        paymentRequisiteService.updateOrder(deal.getPaymentType().getPid());
         if (Objects.nonNull(user.getLotteryCount())) user.setLotteryCount(user.getLotteryCount() + 1);
         else user.setLotteryCount(1);
         user.setCurrentDeal(null);
