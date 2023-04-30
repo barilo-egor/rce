@@ -130,10 +130,11 @@ public class SellBitcoin extends Processor {
                 responseSender.deleteMessage(UpdateUtil.getChatId(update), Integer.parseInt(userService.getBufferVariable(chatId)));
                 break;
             case 3:
-                sellService.savePaymentType(update);
-                responseSender.deleteMessage(UpdateUtil.getChatId(update), UpdateUtil.getMessage(update).getMessageId());
-                sellService.askForWallet(update);
-                userService.nextStep(chatId);
+                if (exchangeService.savePaymentType(update)) {
+                    sellService.savePaymentType(update);
+                    sellService.askForWallet(update);
+                    userService.nextStep(chatId);
+                } else responseSender.sendMessage(chatId, "Выберите способ оплаты.");
                 break;
             case 4:
                 sellService.saveWallet(update);

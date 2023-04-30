@@ -12,11 +12,13 @@ import org.telegram.telegrambots.meta.api.objects.inlinequery.result.InlineQuery
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import tgb.btc.rce.bean.Deal;
 import tgb.btc.rce.bean.PaymentConfig;
+import tgb.btc.rce.bean.PaymentType;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.*;
 import tgb.btc.rce.exception.BaseException;
 import tgb.btc.rce.exception.EnumTypeNotFoundException;
 import tgb.btc.rce.exception.NumberParseException;
+import tgb.btc.rce.repository.PaymentTypeRepository;
 import tgb.btc.rce.repository.UserDiscountRepository;
 import tgb.btc.rce.service.processors.TurningCurrencyProcessor;
 import tgb.btc.rce.service.impl.*;
@@ -43,7 +45,14 @@ public class SellService {
 
     private UserDiscountRepository userDiscountRepository;
 
-    private static Map<Long, BigDecimal> USERS_PERSONAL_SELL = new HashMap<>();
+    private PaymentTypeRepository paymentTypeRepository;
+
+    @Autowired
+    public void setPaymentTypeRepository(PaymentTypeRepository paymentTypeRepository) {
+        this.paymentTypeRepository = paymentTypeRepository;
+    }
+
+    private final static Map<Long, BigDecimal> USERS_PERSONAL_SELL = new HashMap<>();
 
     public static void putToUsersPersonalSell(Long userChatId, BigDecimal personalSell) {
         if (Objects.isNull(personalSell)) {
@@ -280,19 +289,13 @@ public class SellService {
                 + additionalText
                 + "<b>Выберите способ получения перевода:</b>";
 
-        List<InlineButton> buttons = Arrays.stream(PaymentTypeEnum.values()).map(paymentType -> {
-                    PaymentConfig paymentConfig = paymentConfigService.getByPaymentType(paymentType);
-                    if (paymentConfig == null || paymentConfig.getOn()) {
-                        return InlineButton.builder()
-                                .text(paymentType.getDisplayName())
-                                .data(paymentType.name())
-                                .inlineType(InlineType.CALLBACK_DATA)
-                                .build();
-                    } else {
-                        return null;
-                    }
-                })
-                .filter(Objects::nonNull)
+
+        List<InlineButton> buttons = paymentTypeRepository.getByDealTypeAndIsOn(DealType.BUY, Boolean.TRUE).stream()
+                .map(paymentType -> InlineButton.builder()
+                        .text(paymentType.getName())
+                        .data(paymentType.getPid().toString())
+                        .inlineType(InlineType.CALLBACK_DATA)
+                        .build())
                 .collect(Collectors.toList());
         buttons.add(KeyboardUtil.INLINE_BACK_BUTTON);
 
@@ -300,15 +303,16 @@ public class SellService {
         responseSender.sendMessage(chatId, message, keyboard, "HTML");
     }
 
-    public void savePaymentType(Update update) {
+    public boolean savePaymentType(Update update) {
         if (!update.hasCallbackQuery()) {
-            return;
+            return false;
         }
         responseSender.deleteMessage(UpdateUtil.getChatId(update),
                 update.getCallbackQuery().getMessage().getMessageId());
-        PaymentTypeEnum paymentTypeEnum = PaymentTypeEnum.valueOf(update.getCallbackQuery().getData());
-        dealService.updatePaymentTypeEnumByPid(paymentTypeEnum,
+        PaymentType paymentType = paymentTypeRepository.getByPid(Long.parseLong(update.getCallbackQuery().getData()));
+        dealService.updatePaymentTypeByPid(paymentType,
                 userService.getCurrentDealByChatId(UpdateUtil.getChatId(update)));
+        return true;
     }
 
     public void buildDeal(Update update) {
