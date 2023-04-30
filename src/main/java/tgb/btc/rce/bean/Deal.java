@@ -35,7 +35,6 @@ public class Deal extends BasePersist {
     @Enumerated(value = EnumType.STRING)
     private PaymentTypeEnum paymentTypeEnum;
 
-    @Column(nullable = false)
     @ManyToOne
     private PaymentType paymentType;
 
@@ -80,7 +79,6 @@ public class Deal extends BasePersist {
     @Column(name = "COMMISSION")
     private BigDecimal commission;
 
-    @Column(name = "PAYMENT_RECEIPTS")
     @OneToMany
     private List<PaymentReceipt> paymentReceipts;
 

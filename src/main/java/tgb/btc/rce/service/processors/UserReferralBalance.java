@@ -3,16 +3,17 @@ package tgb.btc.rce.service.processors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.annotation.CommandProcessor;
+import tgb.btc.rce.enums.BotKeyboard;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.InlineType;
+import tgb.btc.rce.enums.MessageTemplate;
 import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.impl.UserService;
 import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.InlineButton;
-import tgb.btc.rce.vo.ReplyButton;
 
 import java.util.List;
 
@@ -33,11 +34,7 @@ public class UserReferralBalance extends Processor {
         }
         switch (userService.getStepByChatId(chatId)) {
             case 0:
-                responseSender.sendMessage(chatId, "Введите чат айди пользователя.",
-                        KeyboardUtil.buildReply(List.of(
-                                        ReplyButton.builder()
-                                                .text(Command.CANCEL.getText())
-                                                .build())));
+                responseSender.sendMessage(chatId, MessageTemplate.ASK_CHAT_ID);
                 userService.nextStep(chatId, Command.USER_REFERRAL_BALANCE);
                 break;
             case 1:

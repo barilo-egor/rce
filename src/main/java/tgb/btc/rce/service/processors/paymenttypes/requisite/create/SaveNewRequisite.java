@@ -60,7 +60,7 @@ public class SaveNewRequisite extends Processor {
         PaymentType paymentType = paymentTypeRepository.getByPid(
                 userDataRepository.getLongByUserPid(userRepository.getPidByChatId(chatId)));
         paymentRequisite.setPaymentType(paymentType);
-        paymentRequisite.setOrder(paymentRequisiteRepository.countByPaymentTypePid(paymentType.getPid()).intValue() + 1);
+        paymentRequisite.setRequisiteOrder(paymentRequisiteRepository.countByPaymentTypePid(paymentType.getPid()) + 1);
         paymentRequisiteRepository.save(paymentRequisite);
         responseSender.sendMessage(chatId, "Реквизит сохранен.");
         processToAdminMainPanel(chatId);

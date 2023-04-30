@@ -3,7 +3,6 @@ package tgb.btc.rce.bean;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.Fetch;
 
 import javax.persistence.*;
 
@@ -20,8 +19,8 @@ public class PaymentRequisite extends BasePersist {
     @Column(name = "REQUISITE")
     private String requisite;
 
-    @Column(name = "ORDER")
-    private Integer order;
+    @Column(name = "REQUISITE_ORDER")
+    private Integer requisiteOrder;
 
     public PaymentType getPaymentType() {
         return paymentType;
@@ -39,12 +38,12 @@ public class PaymentRequisite extends BasePersist {
         this.requisite = requisite;
     }
 
-    public Integer getOrder() {
-        return order;
+    public Integer getRequisiteOrder() {
+        return requisiteOrder;
     }
 
-    public void setOrder(Integer order) {
-        this.order = order;
+    public void setRequisiteOrder(Integer order) {
+        this.requisiteOrder = order;
     }
 
 }

@@ -1,7 +1,6 @@
 package tgb.btc.rce.service;
 
 import org.telegram.telegrambots.meta.api.methods.AnswerInlineQuery;
-import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.GetFile;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Document;
@@ -11,10 +10,11 @@ import org.telegram.telegrambots.meta.api.objects.media.InputMedia;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import tgb.btc.rce.bean.BotMessage;
+import tgb.btc.rce.enums.BotKeyboard;
+import tgb.btc.rce.enums.MessageTemplate;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,6 +23,8 @@ public interface IResponseSender {
     Optional<Message> sendMessage(Long chatId, String text);
 
     Optional<Message> sendMessage(Long chatId, String text, ReplyKeyboard replyKeyboard);
+
+    Optional<Message> sendMessage(Long chatId, String text, BotKeyboard botKeyboard);
 
     Optional<Message> sendMessage(SendMessage sendMessage);
 
@@ -49,4 +51,6 @@ public interface IResponseSender {
     void sendMedia(Long chatId, List<InputMedia> media);
 
     void sendInputFile(Long chatId, InputFile inputFile);
+
+    Optional<Message> sendMessage(Long chatId, MessageTemplate messageTemplate);
 }

@@ -153,26 +153,4 @@ public final class KeyboardUtil {
                 .keyboard(rows)
                 .build();
     }
-
-    public static ReplyKeyboardMarkup buildCancel() {
-        return buildReply(List.of(getCancelButton()));
-    }
-
-    public static ReplyButton getCancelButton() {
-        return ReplyButton.builder()
-                .text("Отмена")
-                .build();
-    }
-
-    public static ReplyKeyboardMarkup getBuyOrSell() {
-        return KeyboardUtil.buildReply(List.of(
-                ReplyButton.builder()
-                        .text(BotStringConstants.BUY)
-                        .build(),
-                ReplyButton.builder()
-                        .text(BotStringConstants.SELL)
-                        .build(),
-                KeyboardUtil.getCancelButton()
-        ));
-    }
 }

@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.bean.PaymentType;
+import tgb.btc.rce.enums.BotKeyboard;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.DealType;
@@ -66,8 +67,7 @@ public class ShowPaymentTypesForCreateRequisite extends Processor {
                 .collect(Collectors.toList());
         responseSender.sendMessage(chatId, "Выберите тип оплаты для добавления реквизита.",
                                    KeyboardUtil.buildInline(buttons));
-        responseSender.sendMessage(chatId, "Для возвращения в меню нажмите \"Отмена\".",
-                                   KeyboardUtil.buildReply(List.of(KeyboardUtil.getCancelButton())));
+        responseSender.sendMessage(chatId, "Для возвращения в меню нажмите \"Отмена\".", BotKeyboard.CANCEL);
         userService.nextStep(chatId);
     }
 
