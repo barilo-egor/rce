@@ -7,10 +7,12 @@ import org.springframework.transaction.annotation.Transactional;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.bean.ReferralUser;
 import tgb.btc.rce.bean.User;
+import tgb.btc.rce.bean.UserData;
 import tgb.btc.rce.bean.UserDiscount;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.exception.BaseException;
 import tgb.btc.rce.repository.BaseRepository;
+import tgb.btc.rce.repository.UserDataRepository;
 import tgb.btc.rce.repository.UserDiscountRepository;
 import tgb.btc.rce.repository.UserRepository;
 import tgb.btc.rce.util.CommandUtil;
@@ -27,6 +29,13 @@ public class UserService extends BasePersistService<User> {
     private final ReferralUserService referralUserService;
 
     private UserDiscountRepository userDiscountRepository;
+
+    private UserDataRepository userDataRepository;
+
+    @Autowired
+    public void setUserDataRepository(UserDataRepository userDataRepository) {
+        this.userDataRepository = userDataRepository;
+    }
 
     @Autowired
     public void setUserDiscountRepository(UserDiscountRepository userDiscountRepository) {
@@ -75,6 +84,9 @@ public class UserService extends BasePersistService<User> {
         userDiscount.setUser(newUser);
         userDiscount.setRankDiscountOn(true);
         userDiscountRepository.save(userDiscount);
+        UserData userData = new UserData();
+        userData.setUser(newUser);
+        userDataRepository.save(userData);
         return savedNewUser;
     }
 
