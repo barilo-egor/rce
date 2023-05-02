@@ -6,12 +6,14 @@ import org.apache.commons.math3.util.MathUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.annotation.CommandProcessor;
+import tgb.btc.rce.bean.LotteryWin;
 import tgb.btc.rce.bean.User;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.BotMessageType;
 import tgb.btc.rce.enums.BotVariableType;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.PropertiesMessage;
+import tgb.btc.rce.repository.LotteryWinRepository;
 import tgb.btc.rce.repository.UserRepository;
 import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
@@ -22,6 +24,7 @@ import tgb.btc.rce.util.MenuFactory;
 import tgb.btc.rce.util.MessagePropertiesUtil;
 import tgb.btc.rce.util.UpdateUtil;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.Random;
 
@@ -32,6 +35,13 @@ public class Lottery extends Processor {
     private final BotMessageService botMessageService;
 
     private UserRepository userRepository;
+
+    private LotteryWinRepository lotteryWinRepository;
+
+    @Autowired
+    public void setLotteryWinRepository(LotteryWinRepository lotteryWinRepository) {
+        this.lotteryWinRepository = lotteryWinRepository;
+    }
 
     @Autowired
     public void setUserRepository(UserRepository userRepository) {
@@ -70,16 +80,12 @@ public class Lottery extends Processor {
                                     + " выиграл лотерею.")
                     );
             log.debug("Пользователь " + UpdateUtil.getChatId(update) + " выиграл лотерею. Probability=" + probability);
+            lotteryWinRepository.save(new LotteryWin(user, LocalDateTime.now()));
         } else {
             responseSender.sendBotMessage(botMessageService.findByType(BotMessageType.LOSE_LOTTERY), user.getChatId());
             log.trace("Пользователь " + UpdateUtil.getChatId(update) + " проиграл лотерею.");
         }
         user.setLotteryCount(user.getLotteryCount() - 1);
         userService.save(user);
-    }
-
-    private boolean getRandomBoolean(float probability) { //0.0 to 99.9
-        double randomValue = Math.random() * probability;  //0.0 to 99.9
-        return randomValue <= probability;
     }
 }

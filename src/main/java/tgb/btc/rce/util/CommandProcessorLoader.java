@@ -176,6 +176,7 @@ public final class CommandProcessorLoader {
         commandProcessors.add(TurningDynamic.class);
         commandProcessors.add(TurnRankDiscount.class);
         commandProcessors.add(TurningRankDiscount.class);
+        commandProcessors.add(LotteryReport.class);
         commandProcessors.stream()
                 .filter(processor -> !extendsProcessor(processor))
                 .findFirst()

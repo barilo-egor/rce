@@ -120,6 +120,7 @@ public enum Command {
     PARTNERS_REPORT("Отчет по партнерам", true),
     CHECKS_FOR_DATE("Чеки по дате", true),
     SEND_CHECKS_FOR_DATE("send_checks_for_dats", true),
+    LOTTERY_REPORT("Отчет по лотереи", true),
 
     CHANNEL_POST("channel_post", false),
 
