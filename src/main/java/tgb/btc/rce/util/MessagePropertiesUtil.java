@@ -37,6 +37,10 @@ public class MessagePropertiesUtil {
         return text;
     }
 
+    public static String getMessage(PropertiesMessage message, Object... variables) {
+        return String.format(getMessage(message), variables);
+    }
+
     public static String getMessage(String key) {
         String text;
         try {

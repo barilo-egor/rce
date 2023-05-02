@@ -44,7 +44,7 @@ public class DealService extends BasePersistService<Deal> {
     }
 
     public CryptoCurrency getCryptoCurrencyByPid(@Param("pid") Long pid) {
-        return dealRepository.getCryptoCurrencyByPid(pid);
+        return dealRepository.getCryptoCurrencyByChatIdOfCurrentDeal(pid);
     }
 
     public boolean existByPid(Long pid) {
