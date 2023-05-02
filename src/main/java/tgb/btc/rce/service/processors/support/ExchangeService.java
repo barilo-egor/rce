@@ -149,7 +149,7 @@ public class ExchangeService {
         }
         BigDecimal bulkDiscount = BulkDiscountUtil.getPercentBySum(amount);
         if (!BigDecimal.ZERO.equals(bulkDiscount)) {
-            amount = amount.subtract(ConverterUtil.getPercentsFactor(amount).multiply(personalBuy));
+            amount = amount.subtract(ConverterUtil.getPercentsFactor(amount).multiply(bulkDiscount));
         }
         dealService.updateAmountByPid(amount, currentDealPid);
         dealService.updateCommissionByPid(
