@@ -125,7 +125,7 @@ public enum Command {
 
     /** RECEIPTS */
     CONTINUE("Продолжить", true),
-    RECEIPTS_CANCEL_DEAL("Отмена сделки", true),
+    RECEIPTS_CANCEL_DEAL("Отменить сделку", true),
 
     /**
      * PAYMENT TYPES

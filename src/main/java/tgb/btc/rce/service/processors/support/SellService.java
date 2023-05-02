@@ -97,7 +97,7 @@ public class SellService {
                 && BooleanUtils.isNotTrue(deal.getPersonalApplied())) {
             personalSell = userDiscountRepository.getPersonalBuyByChatId(chatId);
             if (Objects.nonNull(personalSell) && !BigDecimal.ZERO.equals(personalSell)) {
-                amount = amount.add(ConverterUtil.getPercentsFactor(amount).multiply(personalSell));
+                amount = amount.subtract(ConverterUtil.getPercentsFactor(amount).multiply(personalSell));
                 deal.setAmount(amount);
                 deal.setPersonalApplied(true);
             }
@@ -153,11 +153,7 @@ public class SellService {
         if (Objects.isNull(personalSell) || !BigDecimal.ZERO.equals(personalSell)) {
             personalSell = userDiscountRepository.getPersonalBuyByChatId(chatId);
             if (Objects.nonNull(personalSell) && !BigDecimal.ZERO.equals(personalSell)) {
-                if (BigDecimal.ZERO.compareTo(personalSell) > 0) {
-                    roundedConvertedSum = roundedConvertedSum.subtract(ConverterUtil.getPercentsFactor(roundedConvertedSum).multiply(personalSell));
-                } else {
-                    roundedConvertedSum = roundedConvertedSum.add(ConverterUtil.getPercentsFactor(roundedConvertedSum).multiply(personalSell));
-                }
+                roundedConvertedSum = roundedConvertedSum.subtract(ConverterUtil.getPercentsFactor(roundedConvertedSum).multiply(personalSell));
             }
             if (Objects.nonNull(personalSell)) {
                 putToUsersPersonalSell(chatId, personalSell);
@@ -205,7 +201,9 @@ public class SellService {
         Long chatId = UpdateUtil.getChatId(update);
         responseSender.deleteMessage(chatId, UpdateUtil.getMessage(update).getMessageId());
         Deal deal = dealService.findById(userService.getCurrentDealByChatId(chatId));
-        String message = "Введите " + deal.getPaymentTypeEnum().getDisplayName() + " реквизиты, куда вы "
+        PaymentTypeEnum paymentTypeEnum = deal.getPaymentTypeEnum();
+        String paymentTypeName = Objects.nonNull(paymentTypeEnum) ? paymentTypeEnum.getDisplayName() : deal.getPaymentType().getName();
+        String message = "Введите " + paymentTypeName + " реквизиты, куда вы "
                 + "хотите получить "
                 + BigDecimalUtil.round(deal.getAmount(), 0).stripTrailingZeros().toPlainString() + "₽";
 
@@ -311,14 +309,17 @@ public class SellService {
             deal.setAmount(BigDecimalUtil.addHalfUp(deal.getAmount(), rankDiscount));
         }
         deal = dealService.save(deal);
+        PaymentTypeEnum paymentTypeEnum = deal.getPaymentTypeEnum();
+        String paymentTypeName = Objects.nonNull(paymentTypeEnum)
+                                 ? paymentTypeEnum.getDisplayName()
+                                 : deal.getPaymentType().getName();
         String message = "✅<b>Заявка №</b><code>" + deal.getPid() + "</code> успешно создана."
                 + "\n\n"
                 + "<b>Продаете</b>: "
                 + BigDecimalUtil.round(deal.getCryptoAmount(), currency.getScale()).stripTrailingZeros()
                 .toPlainString() + " " + currency.getShortName()
                 + "\n"
-                + "<b>" + deal.getPaymentTypeEnum()
-                .getDisplayName() + " реквизиты</b>:" + "<code>" + deal.getWallet() + "</code>"
+                + "<b>" + paymentTypeName + " реквизиты</b>:" + "<code>" + deal.getWallet() + "</code>"
                 + "\n\n"
                 + "Ваш ранг: " + rank.getSmile() + ", скидка " + rank.getPercent() + "%" + "\n\n"
                 + "\uD83D\uDCB5<b>Получаете</b>: <code>" + BigDecimalUtil.round(deal.getAmount(), 0)
