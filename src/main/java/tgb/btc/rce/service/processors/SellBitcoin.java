@@ -9,6 +9,7 @@ import tgb.btc.rce.bean.User;
 import tgb.btc.rce.enums.*;
 import tgb.btc.rce.exception.BaseException;
 import tgb.btc.rce.exception.NumberParseException;
+import tgb.btc.rce.repository.DealRepository;
 import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.impl.DealService;
@@ -17,6 +18,7 @@ import tgb.btc.rce.service.impl.UserService;
 import tgb.btc.rce.service.processors.support.ExchangeService;
 import tgb.btc.rce.service.processors.support.ExchangeServiceNew;
 import tgb.btc.rce.service.processors.support.SellService;
+import tgb.btc.rce.service.schedule.DealDeleteScheduler;
 import tgb.btc.rce.util.BotImageUtil;
 import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.UpdateUtil;
@@ -31,6 +33,13 @@ public class SellBitcoin extends Processor {
     private final SellService sellService;
     private final PaymentReceiptsService paymentReceiptsService;
     private final ExchangeService exchangeService;
+
+    private DealRepository dealRepository;
+
+    @Autowired
+    public void setDealRepository(DealRepository dealRepository) {
+        this.dealRepository = dealRepository;
+    }
 
     private ExchangeServiceNew exchangeServiceNew;
 
@@ -154,8 +163,10 @@ public class SellBitcoin extends Processor {
                 break;
             case 5:
                 if (update.hasCallbackQuery() && Command.CANCEL_DEAL.name().equals(update.getCallbackQuery().getData())) {
+                    Long dealPid = userService.getCurrentDealByChatId(chatId);
+                    DealDeleteScheduler.deleteCryptoDeal(dealPid);
                     responseSender.deleteMessage(chatId, update.getCallbackQuery().getMessage().getMessageId());
-                    dealService.delete(dealService.findById(userService.getCurrentDealByChatId(chatId)));
+                    dealService.delete(dealService.findById(dealPid));
                     userService.updateCurrentDealByChatId(null, chatId);
                     responseSender.sendMessage(chatId, "Заявка отменена.");
                     processToMainMenu(chatId);
@@ -205,6 +216,7 @@ public class SellBitcoin extends Processor {
                 break;
             case 2:
                 Long currentDealPid = userService.getCurrentDealByChatId(chatId);
+                dealRepository.uppateIsPersonalAppliedByPid(currentDealPid, false);
                 exchangeServiceNew.askForSum(chatId,
                         dealService.getCryptoCurrencyByPid(currentDealPid), dealService.getDealTypeByPid(currentDealPid));
                 break;

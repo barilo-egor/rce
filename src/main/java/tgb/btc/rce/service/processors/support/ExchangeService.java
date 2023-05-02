@@ -131,8 +131,27 @@ public class ExchangeService {
         }
 
         dealService.updateCryptoAmountByPid(BigDecimal.valueOf(sum), currentDealPid);
-        dealService.updateAmountByPid(ConverterUtil.convertCryptoToRub(cryptoCurrency, sum, DealType.BUY),
-                currentDealPid);
+        Deal deal = dealService.getByPid(currentDealPid);
+        BigDecimal amount = ConverterUtil.convertCryptoToRub(cryptoCurrency, sum, DealType.BUY);
+        BigDecimal personalBuy = USERS_PERSONAL_BUY.get(chatId);
+        if ((Objects.isNull(personalBuy) || !BigDecimal.ZERO.equals(personalBuy)) && BooleanUtils.isNotTrue(deal.getPersonalApplied())) {
+            personalBuy = userDiscountRepository.getPersonalBuyByChatId(chatId);
+            if (Objects.nonNull(personalBuy) && !BigDecimal.ZERO.equals(personalBuy)) {
+                amount = amount.add(ConverterUtil.getPercentsFactor(amount).multiply(personalBuy));
+                deal.setPersonalApplied(true);
+                dealService.save(deal);
+            }
+            if (Objects.nonNull(personalBuy)) {
+                putToUsersPersonalBuy(chatId, personalBuy);
+            } else {
+                putToUsersPersonalBuy(chatId, BigDecimal.ZERO);
+            }
+        }
+        BigDecimal bulkDiscount = BulkDiscountUtil.getPercentBySum(amount);
+        if (!BigDecimal.ZERO.equals(bulkDiscount)) {
+            amount = amount.subtract(ConverterUtil.getPercentsFactor(amount).multiply(personalBuy));
+        }
+        dealService.updateAmountByPid(amount, currentDealPid);
         dealService.updateCommissionByPid(
                 ConverterUtil.getCommission(BigDecimal.valueOf(sum), cryptoCurrency, DealType.BUY), currentDealPid);
         return true;
@@ -183,9 +202,9 @@ public class ExchangeService {
             personalBuy = userDiscountRepository.getPersonalBuyByChatId(chatId);
             if (Objects.nonNull(personalBuy) && !BigDecimal.ZERO.equals(personalBuy)) {
                 if (BigDecimal.ZERO.compareTo(personalBuy) > 0) {
-                    sum = sum.subtract(ConverterUtil.getPercentsFactor(sum).multiply(personalBuy));
+                    roundedConvertedSum = roundedConvertedSum.add(ConverterUtil.getPercentsFactor(roundedConvertedSum).multiply(personalBuy));
                 } else {
-                    sum = sum.add(ConverterUtil.getPercentsFactor(sum).multiply(personalBuy));
+                    roundedConvertedSum = roundedConvertedSum.add(ConverterUtil.getPercentsFactor(roundedConvertedSum).multiply(personalBuy));
                 }
             }
             if (Objects.nonNull(personalBuy)) {
@@ -194,9 +213,9 @@ public class ExchangeService {
                 putToUsersPersonalBuy(chatId, BigDecimal.ZERO);
             }
         }
-        BigDecimal bulkDiscount = BulkDiscountUtil.getPercentBySum(sum);
+        BigDecimal bulkDiscount = BulkDiscountUtil.getPercentBySum(roundedConvertedSum);
         if (!BigDecimal.ZERO.equals(bulkDiscount)) {
-            sum = sum.subtract(ConverterUtil.getPercentsFactor(sum).multiply(personalBuy));
+            roundedConvertedSum = roundedConvertedSum.subtract(ConverterUtil.getPercentsFactor(roundedConvertedSum).multiply(personalBuy));
         }
         String dealType = DealType.BUY.equals(dealService.getDealTypeByPid(currentDealPid))
                 ? "Покупка: "
@@ -293,7 +312,10 @@ public class ExchangeService {
 
     public void askForWallet(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
-        responseSender.deleteMessage(chatId, UpdateUtil.getMessage(update).getMessageId());
+        try {
+            responseSender.deleteMessage(chatId, UpdateUtil.getMessage(update).getMessageId());
+        } catch (Exception ignored) {
+        }
         Deal deal = dealService.findById(userService.getCurrentDealByChatId(chatId));
         String message = "\uD83D\uDCDDВведите " + deal.getCryptoCurrency()
                 .getDisplayName() + "-адрес кошелька, куда вы "
@@ -463,29 +485,29 @@ public class ExchangeService {
                 dealAmount = BigDecimal.ZERO;
             }
         }
-        BigDecimal personalBuy = USERS_PERSONAL_BUY.get(chatId);
-        if ((Objects.isNull(personalBuy) || !BigDecimal.ZERO.equals(personalBuy))
-                && BooleanUtils.isNotTrue(deal.getPersonalApplied())) {
-            personalBuy = userDiscountRepository.getPersonalBuyByChatId(chatId);
-            if (Objects.nonNull(personalBuy) && !BigDecimal.ZERO.equals(personalBuy)) {
-                if (BigDecimal.ZERO.compareTo(personalBuy) > 0) {
-                    dealAmount = dealAmount.subtract(ConverterUtil.getPercentsFactor(dealAmount).multiply(personalBuy));
-                } else {
-                    dealAmount = dealAmount.add(ConverterUtil.getPercentsFactor(dealAmount).multiply(personalBuy));
-                }
-                deal.setPersonalApplied(true);
-            }
-            if (Objects.nonNull(personalBuy)) {
-                putToUsersPersonalBuy(chatId, personalBuy);
-            } else {
-                putToUsersPersonalBuy(chatId, BigDecimal.ZERO);
-            }
-        }
-        BigDecimal bulkDiscount = BulkDiscountUtil.getPercentBySum(dealAmount);
-        if (!BigDecimal.ZERO.equals(bulkDiscount) && BooleanUtils.isNotTrue(deal.getBulkApplied())) {
-            dealAmount = dealAmount.subtract(ConverterUtil.getPercentsFactor(dealAmount).multiply(bulkDiscount));
-            deal.setBulkApplied(true);
-        }
+//        BigDecimal personalBuy = USERS_PERSONAL_BUY.get(chatId);
+//        if ((Objects.isNull(personalBuy) || !BigDecimal.ZERO.equals(personalBuy))
+//                && BooleanUtils.isNotTrue(deal.getPersonalApplied())) {
+//            personalBuy = userDiscountRepository.getPersonalBuyByChatId(chatId);
+//            if (Objects.nonNull(personalBuy) && !BigDecimal.ZERO.equals(personalBuy)) {
+//                if (BigDecimal.ZERO.compareTo(personalBuy) > 0) {
+//                    dealAmount = dealAmount.subtract(ConverterUtil.getPercentsFactor(dealAmount).multiply(personalBuy));
+//                } else {
+//                    dealAmount = dealAmount.add(ConverterUtil.getPercentsFactor(dealAmount).multiply(personalBuy));
+//                }
+//                deal.setPersonalApplied(true);
+//            }
+//            if (Objects.nonNull(personalBuy)) {
+//                putToUsersPersonalBuy(chatId, personalBuy);
+//            } else {
+//                putToUsersPersonalBuy(chatId, BigDecimal.ZERO);
+//            }
+//        }
+//        BigDecimal bulkDiscount = BulkDiscountUtil.getPercentBySum(dealAmount);
+//        if (!BigDecimal.ZERO.equals(bulkDiscount) && BooleanUtils.isNotTrue(deal.getBulkApplied())) {
+//            dealAmount = dealAmount.subtract(ConverterUtil.getPercentsFactor(dealAmount).multiply(bulkDiscount));
+//            deal.setBulkApplied(true);
+//        }
         deal.setAmount(dealAmount);
         deal = dealService.save(deal);
 

@@ -90,11 +90,26 @@ public class SellService {
         }
 
         dealService.updateCryptoAmountByPid(BigDecimal.valueOf(sum), currentDealPid);
-        dealService.updateAmountByPid(ConverterUtil.convertCryptoToRub(cryptoCurrency, sum, DealType.SELL),
-                currentDealPid);
+        Deal deal = dealService.findById(userService.getCurrentDealByChatId(chatId));
+        BigDecimal amount = ConverterUtil.convertCryptoToRub(cryptoCurrency, sum, DealType.SELL);
+        BigDecimal personalSell = USERS_PERSONAL_SELL.get(chatId);
+        if ((Objects.isNull(personalSell) || !BigDecimal.ZERO.equals(personalSell))
+                && BooleanUtils.isNotTrue(deal.getPersonalApplied())) {
+            personalSell = userDiscountRepository.getPersonalBuyByChatId(chatId);
+            if (Objects.nonNull(personalSell) && !BigDecimal.ZERO.equals(personalSell)) {
+                amount = amount.add(ConverterUtil.getPercentsFactor(amount).multiply(personalSell));
+                deal.setAmount(amount);
+                deal.setPersonalApplied(true);
+            }
+            if (Objects.nonNull(personalSell)) {
+                putToUsersPersonalSell(chatId, personalSell);
+            } else {
+                putToUsersPersonalSell(chatId, BigDecimal.ZERO);
+            }
+        }
+        dealService.save(deal);
         dealService.updateCommissionByPid(ConverterUtil.getCommissionForSell(BigDecimal.valueOf(sum), cryptoCurrency,
-                dealService.getDealTypeByPid(
-                        currentDealPid)), currentDealPid);
+                dealService.getDealTypeByPid(currentDealPid)), currentDealPid);
     }
 
     public void convertToRub(Update update, Long currentDealPid) {
@@ -133,16 +148,15 @@ public class SellService {
             return;
         }
         sum = BigDecimal.valueOf(BigDecimalUtil.round(sum, cryptoCurrency.getScale()).doubleValue());
-        double roundedConvertedSum = BigDecimalUtil.round(
-                ConverterUtil.convertCryptoToRub(currency, sum.doubleValue(), DealType.SELL), 0).doubleValue();
+        BigDecimal roundedConvertedSum = ConverterUtil.convertCryptoToRub(currency, sum.doubleValue(), DealType.SELL);
         BigDecimal personalSell = USERS_PERSONAL_SELL.get(chatId);
         if (Objects.isNull(personalSell) || !BigDecimal.ZERO.equals(personalSell)) {
             personalSell = userDiscountRepository.getPersonalBuyByChatId(chatId);
             if (Objects.nonNull(personalSell) && !BigDecimal.ZERO.equals(personalSell)) {
                 if (BigDecimal.ZERO.compareTo(personalSell) > 0) {
-                    sum = sum.subtract(ConverterUtil.getPercentsFactor(sum).multiply(personalSell));
+                    roundedConvertedSum = roundedConvertedSum.subtract(ConverterUtil.getPercentsFactor(roundedConvertedSum).multiply(personalSell));
                 } else {
-                    sum = sum.add(ConverterUtil.getPercentsFactor(sum).multiply(personalSell));
+                    roundedConvertedSum = roundedConvertedSum.add(ConverterUtil.getPercentsFactor(roundedConvertedSum).multiply(personalSell));
                 }
             }
             if (Objects.nonNull(personalSell)) {
@@ -152,7 +166,7 @@ public class SellService {
             }
         }
         sendInlineAnswer(update, sum.stripTrailingZeros().toPlainString() + " " + currency.getDisplayName() + " ~ " +
-                roundedConvertedSum, true);
+                BigDecimalUtil.round(roundedConvertedSum, 0).toPlainString(), true);
     }
 
     private boolean hasInputSum(CryptoCurrency currency, String query) {
@@ -295,28 +309,6 @@ public class SellService {
             BigDecimal rankDiscount = BigDecimalUtil.multiplyHalfUp(commission, ConverterUtil.getPercentsFactor(
                     BigDecimal.valueOf(rank.getPercent())));
             deal.setAmount(BigDecimalUtil.addHalfUp(deal.getAmount(), rankDiscount));
-        }
-        BigDecimal personalSell = USERS_PERSONAL_SELL.get(chatId);
-        if ((Objects.isNull(personalSell) || !BigDecimal.ZERO.equals(personalSell))
-                && BooleanUtils.isNotTrue(deal.getPersonalApplied())) {
-            personalSell = userDiscountRepository.getPersonalBuyByChatId(chatId);
-            if (Objects.nonNull(personalSell) && !BigDecimal.ZERO.equals(personalSell)) {
-                BigDecimal amountWithPersonalSell = deal.getAmount();
-                if (BigDecimal.ZERO.compareTo(personalSell) > 0) {
-                    amountWithPersonalSell = amountWithPersonalSell.subtract(
-                            ConverterUtil.getPercentsFactor(amountWithPersonalSell).multiply(personalSell));
-                } else {
-                    amountWithPersonalSell = amountWithPersonalSell.add(
-                            ConverterUtil.getPercentsFactor(amountWithPersonalSell).multiply(personalSell));
-                }
-                deal.setAmount(amountWithPersonalSell);
-                deal.setPersonalApplied(true);
-            }
-            if (Objects.nonNull(personalSell)) {
-                putToUsersPersonalSell(chatId, personalSell);
-            } else {
-                putToUsersPersonalSell(chatId, BigDecimal.ZERO);
-            }
         }
         deal = dealService.save(deal);
         String message = "✅<b>Заявка №</b><code>" + deal.getPid() + "</code> успешно создана."

@@ -8,11 +8,13 @@ import tgb.btc.rce.bean.PaymentReceipt;
 import tgb.btc.rce.enums.*;
 import tgb.btc.rce.exception.BaseException;
 import tgb.btc.rce.exception.NumberParseException;
+import tgb.btc.rce.repository.DealRepository;
 import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.impl.*;
 import tgb.btc.rce.service.processors.support.ExchangeService;
 import tgb.btc.rce.service.processors.support.ExchangeServiceNew;
+import tgb.btc.rce.service.schedule.DealDeleteScheduler;
 import tgb.btc.rce.util.BotImageUtil;
 import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.MessagePropertiesUtil;
@@ -38,6 +40,13 @@ public class BuyBitcoin extends Processor {
     private KeyboardService keyboardService;
 
     private MessageService messageService;
+
+    private DealRepository dealRepository;
+
+    @Autowired
+    public void setDealRepository(DealRepository dealRepository) {
+        this.dealRepository = dealRepository;
+    }
 
     @Autowired
     public void setKeyboardService(KeyboardService keyboardService) {
@@ -144,7 +153,7 @@ public class BuyBitcoin extends Processor {
                 }
                 if (!exchangeService.saveSum(update)) return;
                 responseSender.deleteMessage(UpdateUtil.getChatId(update), Integer.parseInt(userService.getBufferVariable(chatId)));
-                if (dealService.getDealsCountByUserChatId(chatId) < 2) {
+                if (dealService.getDealsCountByUserChatId(chatId) < 1) {
                     exchangeService.askForUserPromoCode(chatId, false);
                 } else if (userService.getReferralBalanceByChatId(chatId) > 0) {
                     exchangeService.askForReferralDiscount(update);
@@ -169,7 +178,6 @@ public class BuyBitcoin extends Processor {
                 exchangeService.askForPaymentType(update);
                 userService.nextStep(chatId);
                 responseSender.deleteMessage(UpdateUtil.getChatId(update), UpdateUtil.getMessage(update).getMessageId());
-                responseSender.deleteMessage(UpdateUtil.getChatId(update), Integer.parseInt(userService.getBufferVariable(chatId)));
                 break;
             case 5:
                 if (exchangeService.savePaymentType(update)) {
@@ -179,8 +187,10 @@ public class BuyBitcoin extends Processor {
                 break;
             case 6:
                 if (update.hasCallbackQuery() && Command.CANCEL_DEAL.name().equals(update.getCallbackQuery().getData())) {
+                    Long dealPid = userService.getCurrentDealByChatId(chatId);
+                    DealDeleteScheduler.deleteCryptoDeal(dealPid);
                     responseSender.deleteMessage(chatId, update.getCallbackQuery().getMessage().getMessageId());
-                    dealService.delete(dealService.findById(userService.getCurrentDealByChatId(chatId)));
+                    dealService.delete(dealService.findById(dealPid));
                     userService.updateCurrentDealByChatId(null, chatId);
                     responseSender.sendMessage(chatId, "Заявка отменена.");
                     processToMainMenu(chatId);
@@ -232,6 +242,7 @@ public class BuyBitcoin extends Processor {
                 break;
             case 2:
                 currentDealPid = userService.getCurrentDealByChatId(chatId);
+                dealRepository.uppateIsPersonalAppliedByPid(currentDealPid, false);
                 exchangeServiceNew.askForSum(chatId,
                         dealService.getCryptoCurrencyByPid(currentDealPid), dealService.getDealTypeByPid(currentDealPid));
                 break;
@@ -242,6 +253,7 @@ public class BuyBitcoin extends Processor {
                     exchangeService.askForReferralDiscount(update);
                 } else {
                     currentDealPid = userService.getCurrentDealByChatId(chatId);
+                    dealRepository.uppateIsPersonalAppliedByPid(currentDealPid, false);
                     exchangeServiceNew.askForSum(chatId,
                             dealService.getCryptoCurrencyByPid(currentDealPid), dealService.getDealTypeByPid(currentDealPid));
                     userService.previousStep(chatId);

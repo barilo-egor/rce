@@ -118,6 +118,10 @@ public interface DealRepository extends BaseRepository<Deal> {
     @Query(value = "select dateTime from Deal where pid=:pid")
     LocalDateTime getDateTimeByPid(Long pid);
 
+    @Query(value = "update Deal set isPersonalApplied=:isPersonalApplied where pid=:pid")
+    @Modifying
+    void uppateIsPersonalAppliedByPid(@Param("pid") Long pid, @Param("isPersonalApplied") Boolean isPersonalApplied);
+
     /**
      * Reports
      */

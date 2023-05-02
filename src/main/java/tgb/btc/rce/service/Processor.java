@@ -55,7 +55,7 @@ public abstract class Processor {
     private boolean isCommand(Update update, Command command) {
         Command enteredCommand;
         try {
-            if(update.hasCallbackQuery() || update.getMessage().hasText()) enteredCommand = Command.fromUpdate(update);
+            if(update.hasCallbackQuery() || (update.hasMessage() && update.getMessage().hasText())) enteredCommand = Command.fromUpdate(update);
             else return false;
         } catch (BaseException e) {
             return false;

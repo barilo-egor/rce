@@ -51,6 +51,12 @@ public class DealDeleteScheduler {
         }
     }
 
+    public static void deleteCryptoDeal(Long pid) {
+        synchronized (NEW_CRYPTO_DEALS_PIDS) {
+            NEW_CRYPTO_DEALS_PIDS.remove(pid);
+        }
+    }
+
     @Scheduled(fixedDelay = 10000)
     @Async
     public void deleteOverdueDeals() {
