@@ -6,23 +6,14 @@ import tgb.btc.rce.enums.CryptoCurrency;
 import tgb.btc.rce.enums.DealType;
 import tgb.btc.rce.enums.PropertiesMessage;
 import tgb.btc.rce.repository.DealRepository;
-import tgb.btc.rce.service.IResponseSender;
-import tgb.btc.rce.service.impl.DealService;
 import tgb.btc.rce.service.impl.KeyboardService;
 import tgb.btc.rce.service.impl.MessageService;
-import tgb.btc.rce.service.impl.UserService;
 import tgb.btc.rce.util.MessagePropertiesUtil;
 
 @Service
 public class ExchangeServiceNew {
 
-    private IResponseSender responseSender;
-
-    private UserService userService;
-
     private KeyboardService keyboardService;
-
-    private DealService dealService;
 
     private MessageService messageService;
 
@@ -39,23 +30,8 @@ public class ExchangeServiceNew {
     }
 
     @Autowired
-    public void setDealService(DealService dealService) {
-        this.dealService = dealService;
-    }
-
-    @Autowired
     public void setKeyboardService(KeyboardService keyboardService) {
         this.keyboardService = keyboardService;
-    }
-
-    @Autowired
-    public void setUserService(UserService userService) {
-        this.userService = userService;
-    }
-
-    @Autowired
-    public void setResponseSender(IResponseSender responseSender) {
-        this.responseSender = responseSender;
     }
 
     public void askForCurrency(Long chatId, DealType dealType) {

@@ -119,9 +119,9 @@ public class ExchangeService {
 
     public boolean saveSum(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
-        Long currentDealPid = userService.getCurrentDealByChatId(chatId);
+        Deal deal = dealService.getByPid(userService.getCurrentDealByChatId(chatId));
         Double sum = UpdateUtil.getDoubleFromText(update);
-        CryptoCurrency cryptoCurrency = dealService.getCryptoCurrencyByPid(currentDealPid);
+        CryptoCurrency cryptoCurrency = deal.getCryptoCurrency();
         Double minSum = BotVariablePropertiesUtil.getMinSumBuy(cryptoCurrency);
 
         if (sum < minSum) {
@@ -130,8 +130,7 @@ public class ExchangeService {
             return false;
         }
 
-        dealService.updateCryptoAmountByPid(BigDecimal.valueOf(sum), currentDealPid);
-        Deal deal = dealService.getByPid(currentDealPid);
+        deal.setCryptoAmount(BigDecimal.valueOf(sum));
         BigDecimal amount = ConverterUtil.convertCryptoToRub(cryptoCurrency, sum, DealType.BUY);
         BigDecimal personalBuy = USERS_PERSONAL_BUY.get(chatId);
         if ((Objects.isNull(personalBuy) || !BigDecimal.ZERO.equals(personalBuy)) && BooleanUtils.isNotTrue(deal.getPersonalApplied())) {
@@ -139,7 +138,6 @@ public class ExchangeService {
             if (Objects.nonNull(personalBuy) && !BigDecimal.ZERO.equals(personalBuy)) {
                 amount = amount.add(ConverterUtil.getPercentsFactor(amount).multiply(personalBuy));
                 deal.setPersonalApplied(true);
-                dealService.save(deal);
             }
             if (Objects.nonNull(personalBuy)) {
                 putToUsersPersonalBuy(chatId, personalBuy);
@@ -151,9 +149,9 @@ public class ExchangeService {
         if (!BigDecimal.ZERO.equals(bulkDiscount)) {
             amount = amount.subtract(ConverterUtil.getPercentsFactor(amount).multiply(bulkDiscount));
         }
-        dealService.updateAmountByPid(amount, currentDealPid);
-        dealService.updateCommissionByPid(
-                ConverterUtil.getCommission(BigDecimal.valueOf(sum), cryptoCurrency, DealType.BUY), currentDealPid);
+        deal.setAmount(amount);
+        deal.setCommission(ConverterUtil.getCommission(BigDecimal.valueOf(sum), cryptoCurrency, DealType.BUY));
+        dealService.save(deal);
         return true;
     }
 
