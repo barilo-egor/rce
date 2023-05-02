@@ -29,6 +29,11 @@ public class DealService extends BasePersistService<Deal> {
     private UserRepository userRepository;
 
     @Autowired
+    public void setUserRepository(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
+    @Autowired
     public DealService(BaseRepository<Deal> baseRepository, DealRepository dealRepository) {
         super(baseRepository);
         this.dealRepository = dealRepository;
@@ -148,7 +153,7 @@ public class DealService extends BasePersistService<Deal> {
     }
 
     public List<Deal> getByDate(LocalDate dateTime) {
-        return dealRepository.getByDate(dateTime);
+        return dealRepository.getPassedByDate(dateTime);
     }
 
     public String getWalletFromLastNotCurrentByChatId(Long chatId, DealType dealType) {

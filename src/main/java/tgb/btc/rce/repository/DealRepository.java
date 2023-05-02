@@ -107,7 +107,7 @@ public interface DealRepository extends BaseRepository<Deal> {
     List<Deal> getByDateBetween(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 
     @Query("from Deal d where d.date=:date and d.isPassed=true")
-    List<Deal> getByDate(@Param("date") LocalDate dateTime);
+    List<Deal> getPassedByDate(@Param("date") LocalDate dateTime);
 
     @Query("select wallet from Deal where pid=(select max(d.pid) from Deal d where d.isCurrent=false and d.user.chatId=:chatId and d.dealType=:dealType)")
     String getWalletFromLastNotCurrentByChatId(@Param("chatId") Long chatId, @Param("dealType") DealType dealType);

@@ -1,5 +1,6 @@
 package tgb.btc.rce.service.processors;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -58,16 +59,21 @@ public class SendChecksForDate extends Processor {
             return;
         }
 
-        List<Deal> deals = dealRepository.getByDate(date);
-        for (Deal deal : deals) {
-            List<PaymentReceipt> paymentReceipts = dealService.getPaymentReceipts(deal.getPid());
-            paymentReceipts.forEach(paymentReceipt -> {
-                if (ReceiptFormat.PDF.equals(paymentReceipt.getReceiptFormat())) {
-                    responseSender.sendInputFile(chatId, new InputFile(paymentReceipt.getReceipt()));
-                } else if (ReceiptFormat.PICTURE.equals(paymentReceipt.getReceiptFormat())) {
-                    responseSender.sendPhoto(chatId, "№" + deal.getPid(), deal.getUserCheck());
-                }
-            });
+        List<Deal> deals = dealRepository.getPassedByDate(date);
+
+        if (CollectionUtils.isEmpty(deals)) {
+            responseSender.sendMessage(chatId, "Сделки за дату отсутствуют.");
+        } else {
+            for (Deal deal : deals) {
+                List<PaymentReceipt> paymentReceipts = dealService.getPaymentReceipts(deal.getPid());
+                paymentReceipts.forEach(paymentReceipt -> {
+                    if (ReceiptFormat.PDF.equals(paymentReceipt.getReceiptFormat())) {
+                        responseSender.sendInputFile(chatId, new InputFile(paymentReceipt.getReceipt()));
+                    } else if (ReceiptFormat.PICTURE.equals(paymentReceipt.getReceiptFormat())) {
+                        responseSender.sendPhoto(chatId, "№" + deal.getPid(), paymentReceipt.getReceipt());
+                    }
+                });
+            }
         }
         processToAdminMainPanel(chatId);
     }

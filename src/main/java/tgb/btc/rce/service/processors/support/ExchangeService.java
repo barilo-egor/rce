@@ -74,6 +74,11 @@ public class ExchangeService {
     private Map<Long, Long> PAYMENT_REQUISITE_ORDER = new HashMap<>();
 
     @Autowired
+    public void setPaymentRequisiteService(PaymentRequisiteService paymentRequisiteService) {
+        this.paymentRequisiteService = paymentRequisiteService;
+    }
+
+    @Autowired
     public void setDealRepository(DealRepository dealRepository) {
         this.dealRepository = dealRepository;
     }

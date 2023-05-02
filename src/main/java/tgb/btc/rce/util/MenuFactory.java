@@ -17,7 +17,7 @@ public final class MenuFactory {
     private MenuFactory() {
     }
 
-// TODO Егор
+    // TODO Егор
 //  Этот метод сейчас принимает булеан примитив. Сейчас эта переменная используется только в одном кейсе,
 //  а во всех местах, где вызывается этот метод, делается запрос в базу чтобы уточнить, является ли админом юзер.
 //  Нужно изменить этот параметр на обертку, чтобы была возможность передать в этот метод null, а во всех местах,
@@ -63,7 +63,9 @@ public final class MenuFactory {
 
     private static List<ReplyButton> main(boolean isAdmin) {
         List<Command> commands = new ArrayList<>(Menu.MAIN.getCommands());
-        if (isAdmin) commands.add(Command.ADMIN_PANEL);
+        if (isAdmin) {
+            commands.add(Command.ADMIN_PANEL);
+        }
         return fillReply(commands);
     }
 
@@ -74,7 +76,12 @@ public final class MenuFactory {
     }
 
     public static ReplyKeyboard getLink(String text, String data) {
-        return KeyboardUtil.buildInline(List.of(InlineButton.builder().text(text)
-                .data(data).build()), InlineType.URL);
+        return KeyboardUtil.buildInline(List.of(
+                InlineButton.builder()
+                        .text(text)
+                        .data(data)
+                        .inlineType(InlineType.URL)
+                        .build()));
     }
+
 }
