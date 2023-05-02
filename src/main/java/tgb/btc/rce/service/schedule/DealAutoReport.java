@@ -88,6 +88,11 @@ public class DealAutoReport {
             LocalDateTime dateTimeBegin = LocalDateTime.of(data.getFirstDay(), LocalTime.of(0, 0, 0));
             LocalDateTime dateTimeEnd = LocalDateTime.of(data.getLastDay(), LocalTime.of(23, 59, 59));
 
+            if (dealRepository.getCountByPeriod(dateTimeBegin, dateTimeEnd) == 0) {
+                userRepository.getAdminsChatIds().forEach(chatId -> responseSender.sendMessage(chatId,
+                        "Нет сделок за " + data.getPeriod() + "."));
+                return;
+            }
             Integer newUsersCount = userRepository.countByRegistrationDate(dateTimeBegin, dateTimeEnd);
             List<Long> allNewPartnersChatIds = userRepository.getChatIdsByRegistrationDateAndFromChatIdNotNull(
                     dateTimeBegin, dateTimeEnd);

@@ -16,6 +16,7 @@ import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.impl.DealService;
 import tgb.btc.rce.service.impl.PaymentRequisiteService;
 import tgb.btc.rce.service.impl.UserService;
+import tgb.btc.rce.service.schedule.DealDeleteScheduler;
 import tgb.btc.rce.util.*;
 import tgb.btc.rce.vo.InlineButton;
 
@@ -76,6 +77,7 @@ public class ConfirmUserDeal extends Processor {
             deal.setAmount(sumWithDiscount);
         }
         dealService.save(deal);
+        DealDeleteScheduler.deleteCryptoDeal(deal.getPid());
         paymentRequisiteService.updateOrder(deal.getPaymentType().getPid());
         if (Objects.nonNull(user.getLotteryCount())) user.setLotteryCount(user.getLotteryCount() + 1);
         else user.setLotteryCount(1);
