@@ -78,9 +78,9 @@ public class SellService {
 
     public void saveSum(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
-        Long currentDealPid = userService.getCurrentDealByChatId(chatId);
+        Deal deal = dealService.findById(userService.getCurrentDealByChatId(chatId));
         Double sum = UpdateUtil.getDoubleFromText(update);
-        CryptoCurrency cryptoCurrency = dealService.getCryptoCurrencyByPid(currentDealPid);
+        CryptoCurrency cryptoCurrency = dealService.getCryptoCurrencyByPid(deal.getPid());
         Double minSum = BotVariablePropertiesUtil.getMinSumSell(cryptoCurrency);
 
         if (sum < minSum) {
@@ -89,8 +89,7 @@ public class SellService {
             return;
         }
 
-        dealService.updateCryptoAmountByPid(BigDecimal.valueOf(sum), currentDealPid);
-        Deal deal = dealService.findById(userService.getCurrentDealByChatId(chatId));
+        dealService.updateCryptoAmountByPid(BigDecimal.valueOf(sum), deal.getPid());
         BigDecimal amount = ConverterUtil.convertCryptoToRub(cryptoCurrency, sum, DealType.SELL);
         BigDecimal personalSell = USERS_PERSONAL_SELL.get(chatId);
         if ((Objects.isNull(personalSell) || !BigDecimal.ZERO.equals(personalSell))
@@ -109,7 +108,7 @@ public class SellService {
         }
         dealService.save(deal);
         dealService.updateCommissionByPid(ConverterUtil.getCommissionForSell(BigDecimal.valueOf(sum), cryptoCurrency,
-                dealService.getDealTypeByPid(currentDealPid)), currentDealPid);
+                dealService.getDealTypeByPid(deal.getPid())), deal.getPid());
     }
 
     public void convertToRub(Update update, Long currentDealPid) {
