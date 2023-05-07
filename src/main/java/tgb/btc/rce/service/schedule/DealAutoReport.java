@@ -46,16 +46,16 @@ public class DealAutoReport {
         this.userRepository = userRepository;
     }
 
-    @Scheduled(cron = "0 5 0 * * *")
+    @Scheduled(cron = "0 37 22 * * *")
     @Async
     public void everyDay() {
         YESTERDAY = LocalDate.now().minusDays(1);
 
         sendReport(DealReportData.builder()
-                           .period("день")
-                           .firstDay(YESTERDAY)
-                           .lastDay(YESTERDAY)
-                           .build());
+                .period("день")
+                .firstDay(YESTERDAY)
+                .lastDay(YESTERDAY)
+                .build());
     }
 
     @Scheduled(cron = "0 5 0 * * MON")
@@ -65,10 +65,10 @@ public class DealAutoReport {
         LocalDate lastDay = LocalDate.now().minusDays(1);
 
         sendReport(DealReportData.builder()
-                           .period("неделю")
-                           .firstDay(firstDay)
-                           .lastDay(lastDay)
-                           .build());
+                .period("неделю")
+                .firstDay(firstDay)
+                .lastDay(lastDay)
+                .build());
     }
 
     @Scheduled(cron = "0 10 0 1 * *")
@@ -77,10 +77,10 @@ public class DealAutoReport {
         LocalDate firstDay = LocalDate.now().minusDays(1).withDayOfMonth(1);
         LocalDate lastDay = LocalDate.now().minusDays(1).withDayOfMonth(firstDay.getMonth().length(firstDay.isLeapYear()));
         sendReport(DealReportData.builder()
-                           .period("месяц")
-                           .firstDay(firstDay)
-                           .lastDay(lastDay)
-                           .build());
+                .period("месяц")
+                .firstDay(firstDay)
+                .lastDay(lastDay)
+                .build());
     }
 
     private void sendReport(DealReportData data) {
@@ -97,8 +97,8 @@ public class DealAutoReport {
             List<Long> allNewPartnersChatIds = userRepository.getChatIdsByRegistrationDateAndFromChatIdNotNull(
                     dateTimeBegin, dateTimeEnd);
             int allNewPartnersCount = (Objects.nonNull(allNewPartnersChatIds)
-                                       ? allNewPartnersChatIds.size()
-                                       : 0);
+                    ? allNewPartnersChatIds.size()
+                    : 0);
 
             int newActivePartnersCount = 0;
 
@@ -106,60 +106,59 @@ public class DealAutoReport {
                 if (dealRepository.getCountPassedByChatId(chatId) > 0) newActivePartnersCount++;
             }
 
-            BigDecimal amountOfPurchasedRubForBtc = getBuyAmount(CryptoCurrency.BITCOIN, data.getFirstDay(),
-                                                                 data.getLastDay());
-            BigDecimal amountOfPurchasedRubForLitecoin = getBuyAmount(CryptoCurrency.LITECOIN, data.getFirstDay(),
-                                                                      data.getLastDay());
-            BigDecimal amountOfPurchasedRubForUsdt = getBuyAmount(CryptoCurrency.USDT, data.getFirstDay(),
-                                                                  data.getLastDay());
+            BigDecimal amountOfPurchasedRubForBtc = getBuyAmount(CryptoCurrency.BITCOIN, dateTimeBegin, dateTimeEnd);
+            BigDecimal amountOfPurchasedRubForLitecoin = getBuyAmount(CryptoCurrency.LITECOIN, dateTimeBegin, dateTimeEnd);
+            BigDecimal amountOfPurchasedRubForUsdt = getBuyAmount(CryptoCurrency.USDT, dateTimeBegin, dateTimeEnd);
             BigDecimal totalPurchasedRubAmount = amountOfPurchasedRubForBtc
                     .add(amountOfPurchasedRubForLitecoin)
                     .add(amountOfPurchasedRubForUsdt)
                     .setScale(0, RoundingMode.HALF_DOWN)
                     .stripTrailingZeros();
 
-            String report = "Отчет за " + data.getPeriod() + ":"
-                    + "Куплено BTC: " + getSellCryptoAmount(CryptoCurrency.BITCOIN, 8) + "\n"
-                    + "Куплено Litecoin: " + getSellCryptoAmount(CryptoCurrency.LITECOIN, 5) + "\n"
-                    + "Куплено USDT: " + getSellCryptoAmount(CryptoCurrency.USDT, 0) + "\n\n"
+            String report = "Отчет за " + data.getPeriod() + ":\n"
+                    + "Куплено BTC: " + getBuyCryptoAmount(CryptoCurrency.BITCOIN, 8, dateTimeBegin, dateTimeEnd) + "\n"
+                    + "Куплено Litecoin: " + getBuyCryptoAmount(CryptoCurrency.LITECOIN, 5, dateTimeBegin, dateTimeEnd) + "\n"
+                    + "Куплено USDT: " + getBuyCryptoAmount(CryptoCurrency.USDT, 0, dateTimeBegin, dateTimeEnd) + "\n\n"
                     + "Получено рублей от BTC: " + amountOfPurchasedRubForBtc + "\n"
                     + "Получено рублей от Litecoin: " + amountOfPurchasedRubForLitecoin + "\n"
-                    + "Получено рублей от USDT: " + amountOfPurchasedRubForUsdt + "\n"
-                    + "Продано BTC: " + getBuyCryptoAmount(CryptoCurrency.BITCOIN, 8) + "\n"
-                    + "Продано Litecoin: " + getBuyCryptoAmount(CryptoCurrency.LITECOIN, 5) + "\n"
-                    + "Продано USDT: " + getSellCryptoAmount(CryptoCurrency.USDT, 0) + "\n\n"
+                    + "Получено рублей от USDT: " + amountOfPurchasedRubForUsdt + "\n\n"
+                    + "Продано BTC: " + getSellCryptoAmount(CryptoCurrency.BITCOIN, 8, dateTimeBegin, dateTimeEnd) + "\n"
+                    + "Продано Litecoin: " + getSellCryptoAmount(CryptoCurrency.LITECOIN, 5, dateTimeBegin, dateTimeEnd) + "\n"
+                    + "Продано USDT: " + getSellCryptoAmount(CryptoCurrency.USDT, 0, dateTimeBegin, dateTimeEnd) + "\n\n"
                     + "Всего получено рублей: " + totalPurchasedRubAmount
                     + "\n"
-                    + "Количество новых пользователей: " + newUsersCount
-                    + "Количество новых партнеров: " + allNewPartnersCount
+                    + "Количество новых пользователей: " + newUsersCount + "\n"
+                    + "Количество новых партнеров: " + allNewPartnersCount + "\n"
                     + "Количество активных новых партнеров: " + newActivePartnersCount;
             userRepository.getAdminsChatIds().forEach(chatId -> responseSender.sendMessage(chatId, report));
         } catch (Exception e) {
-            String message = "Ошибка при формировании периодического отчета за " + data.getPeriod()  + ":\n"
+            String message = "Ошибка при формировании периодического отчета за " + data.getPeriod() + ":\n"
                     + e.getMessage() + "\n"
                     + ExceptionUtils.getFullStackTrace(e);
             userRepository.getAdminsChatIds().forEach(chatId -> responseSender.sendMessage(chatId, message));
         }
     }
 
-    private BigDecimal getBuyCryptoAmount(CryptoCurrency cryptoCurrency, int scale) {
-        return getCryptoAmount(DealType.BUY, cryptoCurrency, scale);
+    private BigDecimal getBuyCryptoAmount(CryptoCurrency cryptoCurrency, int scale, LocalDateTime dateFrom, LocalDateTime dateTo) {
+        return getCryptoAmount(DealType.BUY, cryptoCurrency, scale, dateFrom, dateTo);
     }
 
-    private BigDecimal getSellCryptoAmount(CryptoCurrency cryptoCurrency, int scale) {
-        return getCryptoAmount(DealType.SELL, cryptoCurrency, scale);
+    private BigDecimal getSellCryptoAmount(CryptoCurrency cryptoCurrency, int scale, LocalDateTime dateFrom, LocalDateTime dateTo) {
+        return getCryptoAmount(DealType.SELL, cryptoCurrency, scale, dateFrom, dateTo);
     }
 
-    private BigDecimal getCryptoAmount(DealType dealType, CryptoCurrency cryptoCurrency, int scale) {
-        return dealRepository.getCryptoAmountSum(true, dealType, YESTERDAY, cryptoCurrency)
-                .setScale(scale, RoundingMode.HALF_DOWN).stripTrailingZeros();
+    private BigDecimal getCryptoAmount(DealType dealType, CryptoCurrency cryptoCurrency, int scale, LocalDateTime dateFrom, LocalDateTime dateTo) {
+        BigDecimal totalCryptoAmount = dealRepository.getCryptoAmountSum(true, dealType, dateFrom, dateTo, cryptoCurrency);
+        return Objects.nonNull(totalCryptoAmount)
+                ? totalCryptoAmount.setScale(scale, RoundingMode.HALF_DOWN).stripTrailingZeros()
+                : BigDecimal.ZERO;
     }
 
-    private BigDecimal getBuyAmount(CryptoCurrency cryptoCurrency, LocalDate dateFrom, LocalDate dateTo) {
+    private BigDecimal getBuyAmount(CryptoCurrency cryptoCurrency, LocalDateTime dateFrom, LocalDateTime dateTo) {
         return getAmount(cryptoCurrency, dateFrom, dateTo, DealType.BUY);
     }
 
-    private BigDecimal getAmount(CryptoCurrency cryptoCurrency, LocalDate dateFrom, LocalDate dateTo, DealType dealType) {
+    private BigDecimal getAmount(CryptoCurrency cryptoCurrency, LocalDateTime dateFrom, LocalDateTime dateTo, DealType dealType) {
         BigDecimal totalAmount;
         if (Objects.nonNull(dateTo)) {
             totalAmount = dealRepository.getTotalAmountSum(true, dealType, dateFrom, dateTo, cryptoCurrency);
@@ -167,7 +166,7 @@ public class DealAutoReport {
             totalAmount = dealRepository.getTotalAmountSum(true, dealType, dateFrom, cryptoCurrency);
         }
         return Objects.nonNull(totalAmount)
-               ? totalAmount.setScale(0, RoundingMode.HALF_DOWN).stripTrailingZeros()
-               : BigDecimal.ZERO;
+                ? totalAmount.setScale(0, RoundingMode.HALF_DOWN).stripTrailingZeros()
+                : BigDecimal.ZERO;
     }
 }

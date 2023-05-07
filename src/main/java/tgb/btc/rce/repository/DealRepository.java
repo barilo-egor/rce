@@ -132,16 +132,19 @@ public interface DealRepository extends BaseRepository<Deal> {
     @Query(value = "select sum(cryptoAmount) from Deal where isPassed=:isPassed and dealType=:dealType and date=:date and cryptoCurrency=:cryptoCurrency")
     BigDecimal getCryptoAmountSum(boolean isPassed, DealType dealType, LocalDate date, CryptoCurrency cryptoCurrency);
 
-    @Query(value = "select sum(amount) from Deal where isPassed=:isPassed and dealType=:dealType and date=:date and cryptoCurrency=:cryptoCurrency")
-    BigDecimal getTotalAmountSum(boolean isPassed, DealType dealType, LocalDate date, CryptoCurrency cryptoCurrency);
+    @Query(value = "select sum(cryptoAmount) from Deal where isPassed=:isPassed and dealType=:dealType and (dateTime between :dateFrom and :dateTo) and cryptoCurrency=:cryptoCurrency")
+    BigDecimal getCryptoAmountSum(boolean isPassed, DealType dealType, LocalDateTime dateFrom, LocalDateTime dateTo, CryptoCurrency cryptoCurrency);
 
-    @Query(value = "select sum(amount) from Deal where isPassed=:isPassed and dealType=:dealType and (date between :dateFrom and :dateTo) and cryptoCurrency=:cryptoCurrency")
-    BigDecimal getTotalAmountSum(boolean isPassed, DealType dealType, LocalDate dateFrom, LocalDate dateTo, CryptoCurrency cryptoCurrency);
+    @Query(value = "select sum(amount) from Deal where isPassed=:isPassed and dealType=:dealType and dateTime=:dateTime and cryptoCurrency=:cryptoCurrency")
+    BigDecimal getTotalAmountSum(boolean isPassed, DealType dealType, LocalDateTime dateTime, CryptoCurrency cryptoCurrency);
+
+    @Query(value = "select sum(amount) from Deal where isPassed=:isPassed and dealType=:dealType and (dateTime between :dateFrom and :dateTo) and cryptoCurrency=:cryptoCurrency")
+    BigDecimal getTotalAmountSum(boolean isPassed, DealType dealType, LocalDateTime dateFrom, LocalDateTime dateTo, CryptoCurrency cryptoCurrency);
 
     @Query(value = "select count(pid) from Deal where user.chatId=:chatId and isPassed=true")
     Integer getCountPassedByChatId(Long chatId);
 
-    @Query(value = "select count(pid) from Deal where dateTime between :startDateTime and :endDateTime")
+    @Query(value = "select count(pid) from Deal where dateTime between :startDateTime and :endDateTime and isPassed=true")
     Integer getCountByPeriod(@Param("startDateTime") LocalDateTime startDateTime, @Param("endDateTime") LocalDateTime endDateTime);
 
     @Query(value = "select sum(cryptoAmount) from Deal where user.chatId=:chatId and isPassed=true and cryptoCurrency=:cryptoCurrency and dealType=:dealType")
