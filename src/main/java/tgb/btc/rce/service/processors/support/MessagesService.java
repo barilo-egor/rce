@@ -1,10 +1,9 @@
 package tgb.btc.rce.service.processors.support;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-import tgb.btc.rce.bean.User;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.Menu;
 import tgb.btc.rce.exception.BaseException;
@@ -13,8 +12,6 @@ import tgb.btc.rce.service.impl.UserService;
 import tgb.btc.rce.util.MenuFactory;
 import tgb.btc.rce.util.NumberUtil;
 import tgb.btc.rce.util.UpdateUtil;
-
-import java.util.Objects;
 
 @Service
 public class MessagesService {
@@ -62,9 +59,10 @@ public class MessagesService {
         }
     }
 
+    @Async
     public void sendMessageToUsers(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
-        userService.getChatIdsNotAdmins()
+        userService.getChatIdsNotAdminsAndIsActive()
                 .forEach(userChatId -> {
                     try {
                         responseSender.sendMessage(userChatId, UpdateUtil.getMessageText(update));

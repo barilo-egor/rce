@@ -5,7 +5,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import tgb.btc.rce.bean.Deal;
 import tgb.btc.rce.bean.ReferralUser;
 import tgb.btc.rce.bean.User;
 import tgb.btc.rce.enums.Command;
@@ -69,8 +68,8 @@ public interface UserRepository extends BaseRepository<User> {
     @Query("select bufferVariable from User where chatId=:chatId")
     String getBufferVariable(@Param("chatId") Long chatId);
 
-    @Query("select chatId from User where isAdmin=false")
-    List<Long> getChatIdsNotAdmins();
+    @Query("select chatId from User where isAdmin=false and isActive=true")
+    List<Long> getChatIdsNotAdminsAndIsActive();
 
     @Modifying
     @Query("update User set isActive=:isActive where chatId=:chatId")
