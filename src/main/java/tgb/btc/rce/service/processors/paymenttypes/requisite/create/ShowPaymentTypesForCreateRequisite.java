@@ -10,6 +10,8 @@ import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.DealType;
 import tgb.btc.rce.repository.PaymentTypeRepository;
+import tgb.btc.rce.repository.UserDataRepository;
+import tgb.btc.rce.repository.UserRepository;
 import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.impl.UserService;
@@ -23,11 +25,18 @@ import java.util.stream.Collectors;
 @CommandProcessor(command = Command.NEW_PAYMENT_TYPE_REQUISITE, step = 1)
 public class ShowPaymentTypesForCreateRequisite extends Processor {
 
-    private PaymentTypeRepository paymentTypeRepository;
+    private UserDataRepository userDataRepository;
+
+    private UserRepository userRepository;
 
     @Autowired
-    public void setPaymentTypeRepository(PaymentTypeRepository paymentTypeRepository) {
-        this.paymentTypeRepository = paymentTypeRepository;
+    public void setUserRepository(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
+    @Autowired
+    public void setUserDataRepository(UserDataRepository userDataRepository) {
+        this.userDataRepository = userDataRepository;
     }
 
     @Autowired
@@ -37,38 +46,16 @@ public class ShowPaymentTypesForCreateRequisite extends Processor {
 
     @Override
     public void run(Update update) {
-        if (!hasMessageText(update, BotStringConstants.BUY_OR_SELL)) {
-            return;
-        }
         Long chatId = UpdateUtil.getChatId(update);
-        String message = UpdateUtil.getMessageText(update);
-        DealType dealType;
-        if (BotStringConstants.BUY.equals(message)) {
-            dealType = DealType.BUY;
-        } else if (BotStringConstants.SELL.equals(message)) {
-            dealType = DealType.SELL;
-        } else {
-            responseSender.sendMessage(chatId, BotStringConstants.BUY_OR_SELL);
+        if (!update.hasCallbackQuery()) {
+            responseSender.sendMessage(chatId, "Выберите тип оплаты.");
             return;
         }
-        List<PaymentType> paymentTypes = paymentTypeRepository.getByDealType(dealType);
-        if (CollectionUtils.isEmpty(paymentTypes)) {
-            responseSender.sendMessage(chatId, "Список тип оплат на " + dealType.getDisplayName() + " пуст.");
-            processToAdminMainPanel(chatId);
-            return;
-        }
-
-        List<InlineButton> buttons = paymentTypes.stream()
-                .map(paymentType -> InlineButton.builder()
-                        .text(paymentType.getName())
-                        .data(Command.NEW_PAYMENT_TYPE_REQUISITE.getText()
-                                      + BotStringConstants.CALLBACK_DATA_SPLITTER + paymentType.getPid())
-                        .build())
-                .collect(Collectors.toList());
-        responseSender.sendMessage(chatId, "Выберите тип оплаты для добавления реквизита.",
-                                   KeyboardUtil.buildInline(buttons));
-        responseSender.sendMessage(chatId, "Для возвращения в меню нажмите \"Отмена\".", BotKeyboard.CANCEL);
+        String[] values = update.getCallbackQuery().getData().split(BotStringConstants.CALLBACK_DATA_SPLITTER);
+        userDataRepository.updateLongByUserPid(userRepository.getPidByChatId(chatId), Long.parseLong(values[1]));
+        responseSender.deleteMessage(chatId, update.getCallbackQuery().getMessage().getMessageId());
         userService.nextStep(chatId);
+        responseSender.sendMessage(chatId, "Введите реквизит.");
     }
 
 }

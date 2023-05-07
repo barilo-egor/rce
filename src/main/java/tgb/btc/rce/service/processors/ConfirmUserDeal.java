@@ -3,6 +3,7 @@ package tgb.btc.rce.service.processors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.bean.Deal;
@@ -36,6 +37,11 @@ public class ConfirmUserDeal extends Processor {
     private PaymentRequisiteService paymentRequisiteService;
 
     @Autowired
+    public void setUserRepository(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
+    @Autowired
     public void setPaymentRequisiteService(PaymentRequisiteService paymentRequisiteService) {
         this.paymentRequisiteService = paymentRequisiteService;
     }
@@ -47,6 +53,7 @@ public class ConfirmUserDeal extends Processor {
     }
 
     @Override
+    @Transactional
     public void run(Update update) {
         if (!update.hasCallbackQuery()) return;
         Deal deal = dealService.getByPid(Long.parseLong(
@@ -87,7 +94,8 @@ public class ConfirmUserDeal extends Processor {
         if (user.getFromChatId() != null) {
             User refUser = userService.findByChatId(user.getFromChatId());
             BigDecimal refUserReferralPercent = userRepository.getReferralPercentByChatId(refUser.getChatId());
-            BigDecimal referralPercent = Objects.isNull(refUserReferralPercent) || BigDecimal.ZERO.equals(refUserReferralPercent)
+            boolean isGeneralReferralPercent = Objects.isNull(refUserReferralPercent) || refUserReferralPercent.compareTo(BigDecimal.ZERO) == 0;
+            BigDecimal referralPercent = isGeneralReferralPercent
                     ? BigDecimal.valueOf(BotVariablePropertiesUtil.getDouble(BotVariableType.REFERRAL_PERCENT))
                     : refUserReferralPercent;
             BigDecimal sumToAdd = BigDecimalUtil.multiplyHalfUp(deal.getAmount(),
@@ -98,7 +106,8 @@ public class ConfirmUserDeal extends Processor {
                     + sumToAdd.toPlainString() + ", refUser.referralBalance = " + refUser.getReferralBalance().toString()
                     + ", total = " + total);
             userService.updateReferralBalanceByChatId(total, refUser.getChatId());
-            responseSender.sendMessage(refUser.getChatId(), "На реферальный баланс было добавлено " + sumToAdd.intValue() + "₽ по сделке партнера.");
+            if (BigDecimal.ZERO.compareTo(sumToAdd) != 0)
+                responseSender.sendMessage(refUser.getChatId(), "На реферальный баланс было добавлено " + sumToAdd.intValue() + "₽ по сделке партнера.");
             userService.updateChargesByChatId(refUser.getCharges() + sumToAdd.intValue(), refUser.getChatId());
         }
         switch (deal.getCryptoCurrency()) {

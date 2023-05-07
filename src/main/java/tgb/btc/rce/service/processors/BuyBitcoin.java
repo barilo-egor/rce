@@ -175,7 +175,12 @@ public class BuyBitcoin extends Processor {
                 exchangeService.askForWallet(update);
                 break;
             case 4:
-                exchangeService.saveWallet(update);
+                try {
+                    exchangeService.saveWallet(update);
+                } catch (BaseException e) {
+                    responseSender.sendMessage(chatId, e.getMessage());
+                    return;
+                }
                 exchangeService.askForPaymentType(update);
                 userService.nextStep(chatId);
                 responseSender.deleteMessage(UpdateUtil.getChatId(update), UpdateUtil.getMessage(update).getMessageId());

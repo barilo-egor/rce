@@ -135,16 +135,21 @@ public class ExchangeService {
         deal.setCryptoAmount(BigDecimal.valueOf(sum));
         BigDecimal amount = ConverterUtil.convertCryptoToRub(cryptoCurrency, sum, DealType.BUY);
         BigDecimal personalBuy = USERS_PERSONAL_BUY.get(chatId);
-        if ((Objects.isNull(personalBuy) || !BigDecimal.ZERO.equals(personalBuy)) && BooleanUtils.isNotTrue(deal.getPersonalApplied())) {
-            personalBuy = userDiscountRepository.getPersonalBuyByChatId(chatId);
-            if (Objects.nonNull(personalBuy) && !BigDecimal.ZERO.equals(personalBuy)) {
+        if (BooleanUtils.isNotTrue(deal.getPersonalApplied())) {
+            if (Objects.isNull(personalBuy)) {
+                personalBuy = userDiscountRepository.getPersonalBuyByChatId(chatId);
+                if (Objects.nonNull(personalBuy) && !BigDecimal.ZERO.equals(personalBuy)) {
+                    amount = amount.add(ConverterUtil.getPercentsFactor(amount).multiply(personalBuy));
+                    deal.setPersonalApplied(true);
+                }
+                if (Objects.nonNull(personalBuy)) {
+                    putToUsersPersonalBuy(chatId, personalBuy);
+                } else {
+                    putToUsersPersonalBuy(chatId, BigDecimal.ZERO);
+                }
+            } else if (!BigDecimal.ZERO.equals(personalBuy)) {
                 amount = amount.add(ConverterUtil.getPercentsFactor(amount).multiply(personalBuy));
                 deal.setPersonalApplied(true);
-            }
-            if (Objects.nonNull(personalBuy)) {
-                putToUsersPersonalBuy(chatId, personalBuy);
-            } else {
-                putToUsersPersonalBuy(chatId, BigDecimal.ZERO);
             }
         }
         BigDecimal bulkDiscount = BulkDiscountUtil.getPercentBySum(amount);
@@ -474,12 +479,12 @@ public class ExchangeService {
         if (CollectionUtils.isEmpty(paymentRequisite)) {
             throw new BaseException("Не установлены реквизиты для " + paymentType.getName() + ".");
         }
-        if (paymentRequisite.size() == 1) {
+        if (!paymentType.getDynamicOn() || paymentRequisite.size() == 1) {
             requisites = paymentRequisite.get(0).getRequisite();
-        } else {
+        } else if (paymentRequisite.size() > 0){
             Integer order = paymentRequisiteService.getOrder(paymentType.getPid());
             requisites = paymentRequisiteRepository.getRequisiteByPaymentTypePidAndOrder(paymentType.getPid(), order);
-        }
+        } else throw new BaseException("Не найдены реквизиты для " + paymentType.getName() + ".");
 
         String promoCodeText = Boolean.TRUE.equals(deal.getUsedPromo())
                 ?

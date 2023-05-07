@@ -3,8 +3,12 @@ package tgb.btc.rce.service.processors.paymenttypes.requisite.create;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.annotation.CommandProcessor;
+import tgb.btc.rce.bean.PaymentRequisite;
+import tgb.btc.rce.bean.PaymentType;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
+import tgb.btc.rce.repository.PaymentRequisiteRepository;
+import tgb.btc.rce.repository.PaymentTypeRepository;
 import tgb.btc.rce.repository.UserDataRepository;
 import tgb.btc.rce.repository.UserRepository;
 import tgb.btc.rce.service.IResponseSender;
@@ -15,7 +19,11 @@ import tgb.btc.rce.util.UpdateUtil;
 @CommandProcessor(command = Command.NEW_PAYMENT_TYPE_REQUISITE, step = 2)
 public class AskForNewRequisite extends Processor {
 
+    private PaymentTypeRepository paymentTypeRepository;
+
     private UserDataRepository userDataRepository;
+
+    private PaymentRequisiteRepository paymentRequisiteRepository;
 
     private UserRepository userRepository;
 
@@ -25,8 +33,18 @@ public class AskForNewRequisite extends Processor {
     }
 
     @Autowired
+    public void setPaymentTypeRepository(PaymentTypeRepository paymentTypeRepository) {
+        this.paymentTypeRepository = paymentTypeRepository;
+    }
+
+    @Autowired
     public void setUserDataRepository(UserDataRepository userDataRepository) {
         this.userDataRepository = userDataRepository;
+    }
+
+    @Autowired
+    public void setPaymentRequisiteRepository(PaymentRequisiteRepository paymentRequisiteRepository) {
+        this.paymentRequisiteRepository = paymentRequisiteRepository;
     }
 
     @Autowired
@@ -37,15 +55,16 @@ public class AskForNewRequisite extends Processor {
     @Override
     public void run(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
-        if (!update.hasCallbackQuery()) {
-            responseSender.sendMessage(chatId, "Выберите тип оплаты.");
-            return;
-        }
-        String[] values = update.getCallbackQuery().getData().split(BotStringConstants.CALLBACK_DATA_SPLITTER);
-        userDataRepository.updateLongByUserPid(userRepository.getPidByChatId(chatId), Long.parseLong(values[1]));
-        responseSender.deleteMessage(chatId, update.getCallbackQuery().getMessage().getMessageId());
-        userService.nextStep(chatId);
-        responseSender.sendMessage(chatId, "Введите реквизит.");
+        String requisite = UpdateUtil.getMessageText(update);
+        PaymentRequisite paymentRequisite = new PaymentRequisite();
+        paymentRequisite.setRequisite(requisite);
+        PaymentType paymentType = paymentTypeRepository.getByPid(
+                userDataRepository.getLongByUserPid(userRepository.getPidByChatId(chatId)));
+        paymentRequisite.setPaymentType(paymentType);
+        paymentRequisite.setRequisiteOrder(paymentRequisiteRepository.countByPaymentTypePid(paymentType.getPid()) + 1);
+        paymentRequisiteRepository.save(paymentRequisite);
+        responseSender.sendMessage(chatId, "Реквизит сохранен.");
+        processToAdminMainPanel(chatId);
     }
 
 }

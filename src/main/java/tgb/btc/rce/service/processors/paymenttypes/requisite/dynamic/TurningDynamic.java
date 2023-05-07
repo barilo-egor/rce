@@ -23,11 +23,11 @@ public class TurningDynamic extends Processor {
 
     private PaymentRequisiteRepository paymentRequisiteRepository;
 
-    private ShowPaymentTypesForDynamic showPaymentTypesForDynamic;
+    private TurnDynamicRequisites turnDynamicRequisites;
 
     @Autowired
-    public void setShowPaymentTypesForDynamic(ShowPaymentTypesForDynamic showPaymentTypesForDynamic) {
-        this.showPaymentTypesForDynamic = showPaymentTypesForDynamic;
+    public void setTurnDynamicRequisites(TurnDynamicRequisites turnDynamicRequisites) {
+        this.turnDynamicRequisites = turnDynamicRequisites;
     }
 
     @Autowired
@@ -59,7 +59,7 @@ public class TurningDynamic extends Processor {
             paymentTypeRepository.updateIsDynamicOnByPid(false, pid);
             responseSender.deleteMessage(chatId, update.getCallbackQuery().getMessage().getMessageId());
             responseSender.sendMessage(chatId, "Динамические реквизиты для " + paymentType.getName() + " выключены.");
-            showPaymentTypesForDynamic.sendPaymentTypes(chatId, paymentType.getDealType());
+            turnDynamicRequisites.sendPaymentTypes(chatId, paymentType.getDealType());
         } else {
             List<PaymentRequisite> paymentRequisites = paymentRequisiteRepository.getByPaymentTypePid(pid);
             if (paymentRequisites.size() <= 1) {
@@ -70,7 +70,7 @@ public class TurningDynamic extends Processor {
             paymentTypeRepository.updateIsDynamicOnByPid(true, pid);
             responseSender.deleteMessage(chatId, update.getCallbackQuery().getMessage().getMessageId());
             responseSender.sendMessage(chatId, "Динамические реквизиты для " + paymentType.getName() + " включены.");
-            showPaymentTypesForDynamic.sendPaymentTypes(chatId, paymentType.getDealType());
+            turnDynamicRequisites.sendPaymentTypes(chatId, paymentType.getDealType());
         }
     }
 

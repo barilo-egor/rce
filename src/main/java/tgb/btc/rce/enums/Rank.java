@@ -6,7 +6,7 @@ import java.util.function.Predicate;
 
 public enum Rank {
     FIRST(0, "\uD83D\uDC76", x -> x < 10),
-    SECOND(50, "\uD83D\uDE0A", x -> x >= 10 && x < 20), // TODO вернуть 0.1%
+    SECOND(0.1, "\uD83D\uDE0A", x -> x >= 10 && x < 20),
     THIRD(0.25, "\uD83E\uDD13", x -> x >= 20 && x < 50),
     FOURTH(0.5, "\uD83D\uDE0E", x -> x >= 50 && x < 80),
     FIFTH(0.75, "\uD83D\uDE08", x -> x >= 80 && x < 110),

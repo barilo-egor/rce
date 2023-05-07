@@ -107,17 +107,21 @@ public class SellService {
         deal.setCryptoAmount(BigDecimal.valueOf(sum));
         BigDecimal amount = ConverterUtil.convertCryptoToRub(cryptoCurrency, sum, DealType.SELL);
         BigDecimal personalSell = USERS_PERSONAL_SELL.get(chatId);
-        if ((Objects.isNull(personalSell) || !BigDecimal.ZERO.equals(personalSell))
-                && BooleanUtils.isNotTrue(deal.getPersonalApplied())) {
-            personalSell = userDiscountRepository.getPersonalBuyByChatId(chatId);
-            if (Objects.nonNull(personalSell) && !BigDecimal.ZERO.equals(personalSell)) {
+        if (BooleanUtils.isNotTrue(deal.getPersonalApplied())) {
+            if (Objects.isNull(personalSell)) {
+                personalSell = userDiscountRepository.getPersonalSellByChatId(chatId);
+                if (Objects.nonNull(personalSell) && !BigDecimal.ZERO.equals(personalSell)) {
+                    amount = amount.subtract(ConverterUtil.getPercentsFactor(amount).multiply(personalSell));
+                    deal.setPersonalApplied(true);
+                }
+                if (Objects.nonNull(personalSell)) {
+                    putToUsersPersonalSell(chatId, personalSell);
+                } else {
+                    putToUsersPersonalSell(chatId, BigDecimal.ZERO);
+                }
+            } else if (!BigDecimal.ZERO.equals(personalSell)) {
                 amount = amount.subtract(ConverterUtil.getPercentsFactor(amount).multiply(personalSell));
                 deal.setPersonalApplied(true);
-            }
-            if (Objects.nonNull(personalSell)) {
-                putToUsersPersonalSell(chatId, personalSell);
-            } else {
-                putToUsersPersonalSell(chatId, BigDecimal.ZERO);
             }
         }
         deal.setAmount(amount);
@@ -338,8 +342,8 @@ public class SellService {
         deal = dealService.save(deal);
         PaymentTypeEnum paymentTypeEnum = deal.getPaymentTypeEnum();
         String paymentTypeName = Objects.nonNull(paymentTypeEnum)
-                                 ? paymentTypeEnum.getDisplayName()
-                                 : deal.getPaymentType().getName();
+                ? paymentTypeEnum.getDisplayName()
+                : deal.getPaymentType().getName();
         String message = "✅<b>Заявка №</b><code>" + deal.getPid() + "</code> успешно создана."
                 + "\n\n"
                 + "<b>Продаете</b>: "
