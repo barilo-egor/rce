@@ -1,5 +1,6 @@
 package tgb.btc.rce.service.processors;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.annotation.CommandProcessor;
@@ -142,17 +143,18 @@ public class SellBitcoin extends Processor {
                             userService.getCurrentDealByChatId(UpdateUtil.getChatId(update)));
                     return;
                 }
-                sellService.saveSum(update);
-                sellService.askForPaymentType(update);
-                userService.nextStep(chatId);
-                responseSender.deleteMessage(UpdateUtil.getChatId(update), Integer.parseInt(userService.getBufferVariable(chatId)));
+                if (sellService.saveSum(update)) {
+                    sellService.askForPaymentType(update);
+                    userService.nextStep(chatId);
+                    responseSender.deleteMessage(UpdateUtil.getChatId(update), Integer.parseInt(userService.getBufferVariable(chatId)));
+                }
                 break;
             case 3:
-                if (exchangeService.savePaymentType(update)) {
-                    sellService.savePaymentType(update);
+                Boolean result = sellService.savePaymentType(update);
+                if (BooleanUtils.isTrue(result)) {
                     sellService.askForWallet(update);
                     userService.nextStep(chatId);
-                } else responseSender.sendMessage(chatId, "Выберите способ оплаты.");
+                } else if (BooleanUtils.isFalse(result)) responseSender.sendMessage(chatId, "Выберите способ оплаты.");
                 break;
             case 4:
                 sellService.saveWallet(update);

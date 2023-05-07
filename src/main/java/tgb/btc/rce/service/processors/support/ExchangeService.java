@@ -13,7 +13,6 @@ import org.telegram.telegrambots.meta.api.objects.inlinequery.inputmessageconten
 import org.telegram.telegrambots.meta.api.objects.inlinequery.result.InlineQueryResultArticle;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import tgb.btc.rce.bean.Deal;
-import tgb.btc.rce.bean.PaymentConfig;
 import tgb.btc.rce.bean.PaymentRequisite;
 import tgb.btc.rce.bean.PaymentType;
 import tgb.btc.rce.constants.BotStringConstants;
@@ -25,7 +24,6 @@ import tgb.btc.rce.repository.DealRepository;
 import tgb.btc.rce.repository.PaymentRequisiteRepository;
 import tgb.btc.rce.repository.PaymentTypeRepository;
 import tgb.btc.rce.repository.UserDiscountRepository;
-import tgb.btc.rce.service.processors.TurningCurrencyProcessor;
 import tgb.btc.rce.service.impl.*;
 import tgb.btc.rce.service.schedule.DealDeleteScheduler;
 import tgb.btc.rce.util.*;
@@ -34,7 +32,6 @@ import tgb.btc.rce.vo.ReplyButton;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -71,7 +68,12 @@ public class ExchangeService {
 
     private PaymentRequisiteService paymentRequisiteService;
 
-    private Map<Long, Long> PAYMENT_REQUISITE_ORDER = new HashMap<>();
+    private ExchangeServiceNew exchangeServiceNew;
+
+    @Autowired
+    public void setExchangeServiceNew(ExchangeServiceNew exchangeServiceNew) {
+        this.exchangeServiceNew = exchangeServiceNew;
+    }
 
     @Autowired
     public void setPaymentRequisiteService(PaymentRequisiteService paymentRequisiteService) {
@@ -427,15 +429,28 @@ public class ExchangeService {
         responseSender.sendMessage(chatId, message, keyboard, "HTML");
     }
 
-    public boolean savePaymentType(Update update) {
+    public Boolean savePaymentType(Update update) {
         if (!update.hasCallbackQuery()) {
             return false;
         }
         responseSender.deleteMessage(UpdateUtil.getChatId(update),
                 update.getCallbackQuery().getMessage().getMessageId());
         PaymentType paymentType = paymentTypeRepository.getByPid(Long.parseLong(update.getCallbackQuery().getData()));
-        dealService.updatePaymentTypeByPid(paymentType,
-                userService.getCurrentDealByChatId(UpdateUtil.getChatId(update)));
+        Long currentDealPid = userService.getCurrentDealByChatId(UpdateUtil.getChatId(update));
+        if (paymentType.getMinSum().compareTo(dealRepository.getAmountByPid(currentDealPid)) > 0) {
+            Long chatId = UpdateUtil.getChatId(update);
+            responseSender.sendMessage(chatId, "Минимальная сумма для покупки через "
+                    + paymentType.getName() + " равна " + paymentType.getMinSum().toPlainString());
+            userService.previousStep(chatId);
+            userService.previousStep(chatId);
+            userService.previousStep(chatId);
+            currentDealPid = userService.getCurrentDealByChatId(chatId);
+            dealRepository.uppateIsPersonalAppliedByPid(currentDealPid, false);
+            exchangeServiceNew.askForSum(chatId,
+                    dealService.getCryptoCurrencyByPid(currentDealPid), DealType.BUY);
+            return null;
+        }
+        dealService.updatePaymentTypeByPid(paymentType, currentDealPid);
         return true;
     }
 

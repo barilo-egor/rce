@@ -18,6 +18,7 @@ import tgb.btc.rce.enums.*;
 import tgb.btc.rce.exception.BaseException;
 import tgb.btc.rce.exception.EnumTypeNotFoundException;
 import tgb.btc.rce.exception.NumberParseException;
+import tgb.btc.rce.repository.DealRepository;
 import tgb.btc.rce.repository.PaymentTypeRepository;
 import tgb.btc.rce.repository.UserDiscountRepository;
 import tgb.btc.rce.service.processors.TurningCurrencyProcessor;
@@ -46,6 +47,20 @@ public class SellService {
     private UserDiscountRepository userDiscountRepository;
 
     private PaymentTypeRepository paymentTypeRepository;
+
+    private DealRepository dealRepository;
+
+    private ExchangeServiceNew exchangeServiceNew;
+
+    @Autowired
+    public void setDealRepository(DealRepository dealRepository) {
+        this.dealRepository = dealRepository;
+    }
+
+    @Autowired
+    public void setExchangeServiceNew(ExchangeServiceNew exchangeServiceNew) {
+        this.exchangeServiceNew = exchangeServiceNew;
+    }
 
     @Autowired
     public void setPaymentTypeRepository(PaymentTypeRepository paymentTypeRepository) {
@@ -76,7 +91,7 @@ public class SellService {
         this.botMessageService = botMessageService;
     }
 
-    public void saveSum(Update update) {
+    public boolean saveSum(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
         Deal deal = dealService.findById(userService.getCurrentDealByChatId(chatId));
         Double sum = UpdateUtil.getDoubleFromText(update);
@@ -86,10 +101,10 @@ public class SellService {
         if (sum < minSum) {
             responseSender.sendMessage(chatId, "Минимальная сумма покупки " + cryptoCurrency.getDisplayName()
                     + " = " + BigDecimal.valueOf(minSum).stripTrailingZeros().toPlainString() + ".");
-            return;
+            return false;
         }
 
-        dealService.updateCryptoAmountByPid(BigDecimal.valueOf(sum), deal.getPid());
+        deal.setCryptoAmount(BigDecimal.valueOf(sum));
         BigDecimal amount = ConverterUtil.convertCryptoToRub(cryptoCurrency, sum, DealType.SELL);
         BigDecimal personalSell = USERS_PERSONAL_SELL.get(chatId);
         if ((Objects.isNull(personalSell) || !BigDecimal.ZERO.equals(personalSell))
@@ -109,6 +124,7 @@ public class SellService {
         dealService.save(deal);
         dealService.updateCommissionByPid(ConverterUtil.getCommissionForSell(BigDecimal.valueOf(sum), cryptoCurrency,
                 dealService.getDealTypeByPid(deal.getPid())), deal.getPid());
+        return true;
     }
 
     public void convertToRub(Update update, Long currentDealPid) {
@@ -257,13 +273,27 @@ public class SellService {
         responseSender.sendMessage(chatId, message, keyboard, "HTML");
     }
 
-    public boolean savePaymentType(Update update) {
+    public Boolean savePaymentType(Update update) {
         if (!update.hasCallbackQuery()) {
             return false;
         }
         responseSender.deleteMessage(UpdateUtil.getChatId(update),
                 update.getCallbackQuery().getMessage().getMessageId());
         PaymentType paymentType = paymentTypeRepository.getByPid(Long.parseLong(update.getCallbackQuery().getData()));
+        Long currentDealPid = userService.getCurrentDealByChatId(UpdateUtil.getChatId(update));
+        if (paymentType.getMinSum().compareTo(dealRepository.getAmountByPid(currentDealPid)) > 0) {
+            Long chatId = UpdateUtil.getChatId(update);
+            responseSender.sendMessage(chatId, "Минимальная сумма для продажи через "
+                    + paymentType.getName() + " равна " + paymentType.getMinSum().toPlainString());
+            userService.previousStep(chatId);
+            userService.previousStep(chatId);
+            userService.previousStep(chatId);
+            currentDealPid = userService.getCurrentDealByChatId(chatId);
+            dealRepository.uppateIsPersonalAppliedByPid(currentDealPid, false);
+            exchangeServiceNew.askForSum(chatId,
+                    dealService.getCryptoCurrencyByPid(currentDealPid), DealType.SELL);
+            return null;
+        }
         dealService.updatePaymentTypeByPid(paymentType,
                 userService.getCurrentDealByChatId(UpdateUtil.getChatId(update)));
         return true;

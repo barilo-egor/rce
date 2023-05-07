@@ -13,6 +13,7 @@ import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.impl.KeyboardService;
 import tgb.btc.rce.service.impl.MessageService;
 import tgb.btc.rce.util.BotVariablePropertiesUtil;
+import tgb.btc.rce.util.ConverterUtil;
 import tgb.btc.rce.util.MessagePropertiesUtil;
 import tgb.btc.rce.util.UpdateUtil;
 
@@ -30,6 +31,13 @@ public class ExchangeServiceNew {
     private UserRepository userRepository;
 
     private IResponseSender responseSender;
+
+    private PersonalDiscountsCache personalDiscountsCache;
+
+    @Autowired
+    public void setPersonalDiscountsCache(PersonalDiscountsCache personalDiscountsCache) {
+        this.personalDiscountsCache = personalDiscountsCache;
+    }
 
     @Autowired
     public void setResponseSender(IResponseSender responseSender) {
@@ -66,7 +74,7 @@ public class ExchangeServiceNew {
         messageService.sendMessageAndSaveMessageId(chatId, text, keyboardService.getCalculator(currency, dealType));
     }
 
-    public boolean saveSum(Update update) {
+    public boolean saveSum(Update update, DealType dealType) {
         Long chatId = UpdateUtil.getChatId(update);
         Deal deal = dealRepository.getById(userRepository.getCurrentDealByChatId(chatId));
         CryptoCurrency cryptoCurrency = deal.getCryptoCurrency();
@@ -80,6 +88,8 @@ public class ExchangeServiceNew {
         }
 
         deal.setCryptoAmount(BigDecimal.valueOf(sum));
+        BigDecimal amount = ConverterUtil.convertCryptoToRub(cryptoCurrency, sum, dealType);
+        BigDecimal personalDiscount = personalDiscountsCache.getDiscount(chatId, dealType);
         return false;
     }
 }

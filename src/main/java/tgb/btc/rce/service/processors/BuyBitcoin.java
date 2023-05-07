@@ -1,5 +1,6 @@
 package tgb.btc.rce.service.processors;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.annotation.CommandProcessor;
@@ -180,10 +181,11 @@ public class BuyBitcoin extends Processor {
                 responseSender.deleteMessage(UpdateUtil.getChatId(update), UpdateUtil.getMessage(update).getMessageId());
                 break;
             case 5:
-                if (exchangeService.savePaymentType(update)) {
+                Boolean result = exchangeService.savePaymentType(update);
+                if (BooleanUtils.isTrue(result)) {
                     exchangeService.buildDeal(update);
                     userService.nextStep(chatId);
-                } else responseSender.sendMessage(chatId, "Выберите способ оплаты.");
+                } else if (BooleanUtils.isFalse(result)) responseSender.sendMessage(chatId, "Выберите способ оплаты.");
                 break;
             case 6:
                 if (update.hasCallbackQuery() && Command.CANCEL_DEAL.name().equals(update.getCallbackQuery().getData())) {
@@ -230,7 +232,7 @@ public class BuyBitcoin extends Processor {
         }
     }
 
-    private void previousStep(Update update) {
+    public void previousStep(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
         userService.previousStep(chatId);
 
