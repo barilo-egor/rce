@@ -56,7 +56,6 @@ public class ShowDeal extends Processor {
         responseSender.sendMessage(chatId, dealInfo, dealSupportService.dealToStringButtons(dealPid));
         List<PaymentReceipt> paymentReceipts = dealService.getPaymentReceipts(dealPid);
         if (paymentReceipts.size() > 0) {
-            List<InputMedia> inputMedia = new ArrayList<>();
             for (PaymentReceipt paymentReceipt : paymentReceipts) {
                 if (paymentReceipt.getReceiptFormat().equals(ReceiptFormat.PICTURE)) {
                     responseSender.sendPhoto(chatId, StringUtils.EMPTY, paymentReceipt.getReceipt());
@@ -64,7 +63,6 @@ public class ShowDeal extends Processor {
                     responseSender.sendInputFile(chatId, new InputFile(paymentReceipt.getReceipt()));
                 }
             }
-            responseSender.sendMedia(chatId, inputMedia);
         }
     }
 }

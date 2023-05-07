@@ -82,12 +82,12 @@ public class UsersReport extends Processor {
                 );
                 Cell cell4 = row.createCell(3);
                 cell4.setCellValue(BigDecimalUtil.roundNullSafe(
-                        dealRepository.getUserCryptoAmountSum(user.getChatId(), CryptoCurrency.BITCOIN, DealType.BUY),
+                        dealRepository.getUserCryptoAmountSum(user.getChatId(), CryptoCurrency.LITECOIN, DealType.BUY),
                         CryptoCurrency.LITECOIN.getScale()).toPlainString()
                 );
                 Cell cell5 = row.createCell(4);
                 cell5.setCellValue(BigDecimalUtil.roundNullSafe(
-                        dealRepository.getUserCryptoAmountSum(user.getChatId(), CryptoCurrency.BITCOIN, DealType.BUY),
+                        dealRepository.getUserCryptoAmountSum(user.getChatId(), CryptoCurrency.USDT, DealType.BUY),
                         CryptoCurrency.USDT.getScale()).toPlainString()
                 );
                 Cell cell6 = row.createCell(5);
@@ -97,12 +97,12 @@ public class UsersReport extends Processor {
                 );
                 Cell cell7 = row.createCell(6);
                 cell7.setCellValue(BigDecimalUtil.roundNullSafe(
-                        dealRepository.getUserCryptoAmountSum(user.getChatId(), CryptoCurrency.BITCOIN, DealType.SELL),
+                        dealRepository.getUserCryptoAmountSum(user.getChatId(), CryptoCurrency.LITECOIN, DealType.SELL),
                         CryptoCurrency.LITECOIN.getScale()).toPlainString()
                 );
                 Cell cell8 = row.createCell(7);
                 cell8.setCellValue(BigDecimalUtil.roundNullSafe(
-                        dealRepository.getUserCryptoAmountSum(user.getChatId(), CryptoCurrency.BITCOIN, DealType.SELL),
+                        dealRepository.getUserCryptoAmountSum(user.getChatId(), CryptoCurrency.USDT, DealType.SELL),
                         CryptoCurrency.USDT.getScale()).toPlainString()
                 );
                 Cell cell9 = row.createCell(8);

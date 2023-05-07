@@ -112,7 +112,6 @@ public class SellService {
             personalSell = userDiscountRepository.getPersonalBuyByChatId(chatId);
             if (Objects.nonNull(personalSell) && !BigDecimal.ZERO.equals(personalSell)) {
                 amount = amount.subtract(ConverterUtil.getPercentsFactor(amount).multiply(personalSell));
-                deal.setAmount(amount);
                 deal.setPersonalApplied(true);
             }
             if (Objects.nonNull(personalSell)) {
@@ -121,6 +120,7 @@ public class SellService {
                 putToUsersPersonalSell(chatId, BigDecimal.ZERO);
             }
         }
+        deal.setAmount(amount);
         dealService.save(deal);
         dealService.updateCommissionByPid(ConverterUtil.getCommissionForSell(BigDecimal.valueOf(sum), cryptoCurrency,
                 dealService.getDealTypeByPid(deal.getPid())), deal.getPid());
@@ -352,7 +352,7 @@ public class SellService {
                 + "\uD83D\uDCB5<b>Получаете</b>: <code>" + BigDecimalUtil.round(deal.getAmount(), 0)
                 .stripTrailingZeros().toPlainString() + "₽</code>"
                 + "\n"
-                + "<b>Резквизиты для перевода " + currency.getShortName() + ":</b>"
+                + "<b>Реквизиты для перевода " + currency.getShortName() + ":</b>"
                 + "\n\n"
                 + "<code>" + walletRequisites + "</code>"
                 + "\n\n"
