@@ -13,6 +13,8 @@ import tgb.btc.rce.service.IUpdateDispatcher;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.util.*;
 
+import java.util.Objects;
+
 @Service
 @Slf4j
 public class UpdateDispatcher implements IUpdateDispatcher {
@@ -43,6 +45,7 @@ public class UpdateDispatcher implements IUpdateDispatcher {
         if (userService.getStepByChatId(chatId).equals(User.DEFAULT_STEP) || CommandUtil.isStartCommand(update))
             command = Command.fromUpdate(update);
         else command = userService.getCommandByChatId(chatId);
+        if (Objects.isNull(command)) return Command.START;
         if (!hasAccess(command, chatId)) return Command.START;
         else return command;
     }

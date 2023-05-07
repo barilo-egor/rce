@@ -260,7 +260,7 @@ public class SellService {
                 + "<b>Выберите способ получения перевода:</b>";
 
 
-        List<InlineButton> buttons = paymentTypeRepository.getByDealTypeAndIsOn(DealType.BUY, Boolean.TRUE).stream()
+        List<InlineButton> buttons = paymentTypeRepository.getByDealTypeAndIsOn(DealType.SELL, Boolean.TRUE).stream()
                 .map(paymentType -> InlineButton.builder()
                         .text(paymentType.getName())
                         .data(paymentType.getPid().toString())
@@ -285,8 +285,6 @@ public class SellService {
             Long chatId = UpdateUtil.getChatId(update);
             responseSender.sendMessage(chatId, "Минимальная сумма для продажи через "
                     + paymentType.getName() + " равна " + paymentType.getMinSum().toPlainString());
-            userService.previousStep(chatId);
-            userService.previousStep(chatId);
             userService.previousStep(chatId);
             currentDealPid = userService.getCurrentDealByChatId(chatId);
             dealRepository.uppateIsPersonalAppliedByPid(currentDealPid, false);

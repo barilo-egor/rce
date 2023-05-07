@@ -57,8 +57,8 @@ public class TurningCurrencyProcessor extends Processor {
         boolean isCurrencyOn = TurningCurrenciesUtil.getIsOn(currency, dealType);
         Command command = isCurrencyOn ? Command.TURN_OFF_CURRENCY : Command.TURN_ON_CURRENCY;
         return InlineButton.builder()
-                .text(isCurrencyOn ? "Выключить " : "Включить " + currency.getShortName())
-                .data(CallbackQueryUtil.buildCallbackData(command.getText(), DealType.BUY.name(), currency.name()))
+                .text(isCurrencyOn ? "Выключить " + currency.getShortName() : "Включить " + currency.getShortName())
+                .data(CallbackQueryUtil.buildCallbackData(command.getText(), dealType.name(), currency.name()))
                 .build();
     }
 }
