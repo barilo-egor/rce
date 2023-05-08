@@ -5,6 +5,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.Menu;
 import tgb.btc.rce.exception.BaseException;
@@ -68,7 +69,12 @@ public class MessagesService {
                     try {
                         responseSender.sendMessageThrows(userChatId, UpdateUtil.getMessageText(update));
                     } catch (TelegramApiException e) {
-                        userService.updateIsActiveByChatId(false, userChatId);
+                        if (e instanceof TelegramApiRequestException) {
+                            TelegramApiRequestException exception = (TelegramApiRequestException) e;
+                            if (exception.getApiResponse().contains("bot was blocked by the user")) {
+                                userService.updateIsActiveByChatId(false, userChatId);
+                            }
+                        }
                     }
                 });
         responseSender.sendMessage(chatId, "Рассылка произведена.");
