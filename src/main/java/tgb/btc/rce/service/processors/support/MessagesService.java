@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.Menu;
 import tgb.btc.rce.exception.BaseException;
@@ -65,8 +66,8 @@ public class MessagesService {
         userService.getChatIdsNotAdminsAndIsActive()
                 .forEach(userChatId -> {
                     try {
-                        responseSender.sendMessage(userChatId, UpdateUtil.getMessageText(update));
-                    } catch (BaseException e) {
+                        responseSender.sendMessageThrows(userChatId, UpdateUtil.getMessageText(update));
+                    } catch (TelegramApiException e) {
                         userService.updateIsActiveByChatId(false, userChatId);
                     }
                 });

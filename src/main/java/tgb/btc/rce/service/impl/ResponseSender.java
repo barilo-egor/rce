@@ -50,8 +50,8 @@ public class ResponseSender implements IResponseSender {
     }
 
 
-    public Optional<Message> sendMessageThrows(Long chatId, String text) {
-        return Optional.ofNullable(executeSendMessage(SendMessage.builder()
+    public Optional<Message> sendMessageThrows(Long chatId, String text) throws TelegramApiException {
+        return Optional.ofNullable(executeSendMessageThrows(SendMessage.builder()
                 .chatId(chatId.toString())
                 .text(text)
                 .build()));
@@ -83,6 +83,10 @@ public class ResponseSender implements IResponseSender {
             log.warn("Не получилось отправить sendMessage: " + sendMessage);
             return null;
         }
+    }
+
+    private Message executeSendMessageThrows(SendMessage sendMessage) throws TelegramApiException {
+        return bot.execute(sendMessage);
     }
 
     public Optional<Message> sendBotMessage(BotMessage botMessage, Long chatId) {
