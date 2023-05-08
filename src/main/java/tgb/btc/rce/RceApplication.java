@@ -17,6 +17,7 @@ public class RceApplication {
         BotPropertiesUtil.loadProperties();
         BotConfig.init(); // TODO загружать проперти по первому обращению(PropertiesReader)
         UpdateDispatcher.applicationContext = SpringApplication.run(RceApplication.class, args);
+        BotConfig.init();
     }
 
 }

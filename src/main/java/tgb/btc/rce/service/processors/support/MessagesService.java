@@ -5,7 +5,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-import tgb.btc.rce.bean.User;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.Menu;
 import tgb.btc.rce.exception.BaseException;
@@ -14,8 +14,6 @@ import tgb.btc.rce.service.impl.UserService;
 import tgb.btc.rce.util.MenuFactory;
 import tgb.btc.rce.util.NumberUtil;
 import tgb.btc.rce.util.UpdateUtil;
-
-import java.util.Objects;
 
 @Service
 public class MessagesService {
@@ -66,12 +64,17 @@ public class MessagesService {
     @Async
     public void sendMessageToUsers(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
-        userService.getChatIdsNotAdmins()
+        userService.getChatIdsNotAdminsAndIsActive()
                 .forEach(userChatId -> {
                     try {
-                        responseSender.sendMessage(userChatId, UpdateUtil.getMessageText(update));
-                    } catch (BaseException e) {
-                        userService.updateIsActiveByChatId(false, userChatId);
+                        responseSender.sendMessageThrows(userChatId, UpdateUtil.getMessageText(update));
+                    } catch (TelegramApiException e) {
+                        if (e instanceof TelegramApiRequestException) {
+                            TelegramApiRequestException exception = (TelegramApiRequestException) e;
+                            if (exception.getApiResponse().contains("bot was blocked by the user")) {
+                                userService.updateIsActiveByChatId(false, userChatId);
+                            }
+                        }
                     }
                 });
         responseSender.sendMessage(chatId, "Рассылка произведена.");

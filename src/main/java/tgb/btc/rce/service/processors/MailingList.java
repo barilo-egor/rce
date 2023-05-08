@@ -30,7 +30,10 @@ public class MailingList extends Processor {
                 messagesService.askForMessageText(update, Command.MAILING_LIST);
                 break;
             case 1:
-                responseSender.sendMessage(chatId, "Началась отправка рассылки.");
+                if (!update.hasMessage() || !update.getMessage().hasText()) {
+                    responseSender.sendMessage(chatId, "Введите текст для рассылки.");
+                    return;
+                }
                 messagesService.sendMessageToUsers(update);
                 processToAdminMainPanel(UpdateUtil.getChatId(update));
                 break;
