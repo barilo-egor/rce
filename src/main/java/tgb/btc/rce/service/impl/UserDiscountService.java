@@ -9,6 +9,7 @@ import tgb.btc.rce.repository.UserDiscountRepository;
 import tgb.btc.rce.service.IUserDiscountService;
 import tgb.btc.rce.service.processors.support.PersonalDiscountsCache;
 import tgb.btc.rce.util.BigDecimalUtil;
+import tgb.btc.rce.util.BulkDiscountUtil;
 import tgb.btc.rce.util.CalculateUtil;
 
 import java.math.BigDecimal;
@@ -35,27 +36,23 @@ public class UserDiscountService implements IUserDiscountService {
         return userDiscountRepository.countByUserPid(userPid) > 0;
     }
 
-    private BigDecimal getPersonalByDealType(DealType dealType, Long chatId) {
-        return personalDiscountsCache.getDiscount(chatId, dealType);
-    }
-
-    public void applyPersonal(Long chatId, Deal deal, DealType dealType) {
+    @Override
+    public void applyPersonal(Long chatId, Deal deal) {
+        if (BooleanUtils.isTrue(deal.getPersonalApplied())) return;
+        DealType dealType = deal.getDealType();
         BigDecimal personalDiscount = personalDiscountsCache.getDiscount(chatId, dealType);
-        boolean isBuyDealType = DealType.BUY.equals(dealType);
-        BigDecimal dealAmount = deal.getAmount();
-        if (BooleanUtils.isNotTrue(deal.getPersonalApplied())) {
-            if (Objects.isNull(personalDiscount)) {
-                personalDiscount = getPersonalByDealType(dealType, chatId);
-                if (Objects.nonNull(personalDiscount) && !BigDecimalUtil.isZero(personalDiscount)) {
-                    deal.setAmount(CalculateUtil.calculateDiscount(dealType, dealAmount, personalDiscount));
-                    deal.setPersonalApplied(true);
-                }
-            } else if (!BigDecimalUtil.isZero(personalDiscount)) {
-                BigDecimal totalDiscount = CalculateUtil.getPercentsFactor(dealAmount).multiply(personalDiscount);
-                deal.setAmount(isBuyDealType ? dealAmount.add(totalDiscount) : dealAmount.subtract(totalDiscount));
-                deal.setPersonalApplied(true);
-            }
+        if (!BigDecimalUtil.isZero(personalDiscount)) {
+            deal.setAmount(CalculateUtil.calculateDiscount(dealType, deal.getAmount(), personalDiscount));
+            deal.setPersonalApplied(true);
         }
     }
 
+    @Override
+    public void applyBulk(Deal deal) {
+        DealType dealType = deal.getDealType();
+        if (!DealType.isBuy(dealType)) return;
+        BigDecimal bulkDiscount = BulkDiscountUtil.getPercentBySum(deal.getAmount());
+        if (!BigDecimalUtil.isZero(bulkDiscount))
+            deal.setAmount(CalculateUtil.calculateDiscount(dealType, deal.getAmount(), bulkDiscount));
+    }
 }

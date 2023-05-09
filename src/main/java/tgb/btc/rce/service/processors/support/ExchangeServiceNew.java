@@ -33,20 +33,11 @@ public class ExchangeServiceNew {
 
     private IResponseSender responseSender;
 
-    private PersonalDiscountsCache personalDiscountsCache;
-
-    private UserDiscountRepository userDiscountRepository;
-
     private IUserDiscountService userDiscountService;
 
     @Autowired
-    public void setUserDiscountRepository(UserDiscountRepository userDiscountRepository) {
-        this.userDiscountRepository = userDiscountRepository;
-    }
-
-    @Autowired
-    public void setPersonalDiscountsCache(PersonalDiscountsCache personalDiscountsCache) {
-        this.personalDiscountsCache = personalDiscountsCache;
+    public void setUserDiscountService(IUserDiscountService userDiscountService) {
+        this.userDiscountService = userDiscountService;
     }
 
     @Autowired
@@ -90,7 +81,7 @@ public class ExchangeServiceNew {
         CryptoCurrency cryptoCurrency = deal.getCryptoCurrency();
         Double sum = UpdateUtil.getDoubleFromText(update);
         DealType dealType = deal.getDealType();
-        boolean isBuyDealType = DealType.BUY.equals(dealType);
+        boolean isBuyDealType = DealType.isBuy(dealType);
 
         Double minSum = BotVariablePropertiesUtil.getMinSumBuy(cryptoCurrency);
         if (sum < minSum) {
@@ -102,12 +93,8 @@ public class ExchangeServiceNew {
 
         deal.setCryptoAmount(BigDecimal.valueOf(sum));
         deal.setAmount(CalculateUtil.convertCryptoToRub(cryptoCurrency, sum, dealType));
-        userDiscountService.applyPersonal(chatId, deal, dealType);
-        if (isBuyDealType) {
-            BigDecimal bulkDiscount = BulkDiscountUtil.getPercentBySum(deal.getAmount());
-            if (!BigDecimalUtil.isZero(bulkDiscount))
-                deal.setAmount(CalculateUtil.calculateDiscount(dealType, deal.getAmount(), bulkDiscount));
-        }
+        userDiscountService.applyPersonal(chatId, deal);
+        userDiscountService.applyBulk(deal);
         deal.setCommission(CalculateUtil.getCommission(BigDecimal.valueOf(sum), cryptoCurrency, dealType));
         dealRepository.save(deal);
         return false;
