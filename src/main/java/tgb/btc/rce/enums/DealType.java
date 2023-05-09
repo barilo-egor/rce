@@ -13,4 +13,8 @@ public enum DealType {
     public String getDisplayName() {
         return displayName;
     }
+
+    public static boolean isBuy(DealType dealType) {
+        return DealType.BUY.equals(dealType);
+    }
 }

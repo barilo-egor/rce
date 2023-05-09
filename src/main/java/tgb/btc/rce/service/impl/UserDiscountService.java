@@ -36,9 +36,7 @@ public class UserDiscountService implements IUserDiscountService {
     }
 
     private BigDecimal getPersonalByDealType(DealType dealType, Long chatId) {
-        return DealType.BUY.equals(dealType)
-                ? personalDiscountsCache.getBuyDiscount(chatId)
-                : personalDiscountsCache.getSellDiscount(chatId);
+        return personalDiscountsCache.getDiscount(chatId, dealType);
     }
 
     public void applyPersonal(Long chatId, Deal deal, DealType dealType) {

@@ -25,7 +25,12 @@ public class PersonalDiscountsCache {
 
     private final Map<Long, BigDecimal> USERS_PERSONAL_BUY = new HashMap<>();
 
-    public void putToUsersPersonalSell(Long userChatId, BigDecimal personalSell) {
+    public void putByDealType(DealType dealType, Long userChatId, BigDecimal personalDiscount) {
+        if (DealType.isBuy(dealType)) putToBuy(userChatId, personalDiscount);
+        else putToSell(userChatId, personalDiscount);
+    }
+
+    public void putToSell(Long userChatId, BigDecimal personalSell) {
         synchronized (this) {
             if (Objects.isNull(personalSell)) {
                 throw new BaseException("Персональная скидка на продажу не может быть null.");
@@ -34,7 +39,7 @@ public class PersonalDiscountsCache {
         }
     }
 
-    public void putToUsersPersonalBuy(Long userChatId, BigDecimal personalBuy) {
+    public void putToBuy(Long userChatId, BigDecimal personalBuy) {
         synchronized (this) {
             if (Objects.isNull(personalBuy)) {
                 throw new BaseException("Персональная скидка на покупку не может быть null.");
@@ -43,34 +48,18 @@ public class PersonalDiscountsCache {
         }
     }
 
-    public BigDecimal getBuyDiscount(Long chatId) {
-        return getDiscount(chatId, DealType.BUY);
-    }
-
-    public BigDecimal getSellDiscount(Long chatId) {
-        return getDiscount(chatId, DealType.SELL);
-    }
-
     public BigDecimal getDiscount(Long chatId, DealType dealType) {
         synchronized (this) {
-            BigDecimal discount;
-            if (DealType.BUY.equals(dealType)) {
-                discount = USERS_PERSONAL_BUY.get(chatId);
-                if (Objects.isNull(discount)) {
-                    BigDecimal actualDiscount = userDiscountRepository.getPersonalBuyByChatId(chatId);
-                    if (Objects.isNull(actualDiscount)) actualDiscount = BigDecimal.ZERO;
-                    putToUsersPersonalBuy(chatId, actualDiscount);
-                }
-                return USERS_PERSONAL_BUY.get(chatId);
-            } else {
-                discount = USERS_PERSONAL_SELL.get(chatId);
-                if (Objects.isNull(discount)) {
-                    BigDecimal actualDiscount = userDiscountRepository.getPersonalSellByChatId(chatId);
-                    if (Objects.isNull(actualDiscount)) actualDiscount = BigDecimal.ZERO;
-                    putToUsersPersonalSell(chatId, actualDiscount);
-                }
-                return USERS_PERSONAL_SELL.get(chatId);
-            }
+            boolean isBuy = DealType.isBuy(dealType);
+            Map<Long, BigDecimal> USERS_PERSONAL = isBuy ? USERS_PERSONAL_BUY : USERS_PERSONAL_SELL;
+            BigDecimal discount = USERS_PERSONAL.get(chatId);
+            if (Objects.nonNull(discount)) return discount;
+            BigDecimal actualDiscount = isBuy
+                    ? userDiscountRepository.getPersonalBuyByChatId(chatId)
+                    : userDiscountRepository.getPersonalSellByChatId(chatId);
+            if (Objects.isNull(actualDiscount)) actualDiscount = BigDecimal.ZERO;
+            putByDealType(dealType, chatId, actualDiscount);
+            return actualDiscount;
         }
     }
 }
