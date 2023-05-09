@@ -33,7 +33,7 @@ public class ChangeUsdCourseProcessor extends Processor {
                 userService.nextStep(chatId, Command.CHANGE_USD_COURSE);
                 break;
             case 1:
-                Long newCourse = UpdateUtil.getLongFromText(update);
+                Double newCourse = UpdateUtil.getDoubleFromText(update);
                 PropertiesConfiguration conf;
                 try {
                     conf = new PropertiesConfiguration(FilePaths.BOT_VARIABLE_PROPERTIES);
