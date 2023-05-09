@@ -7,6 +7,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.constants.FilePaths;
+import tgb.btc.rce.enums.BotKeyboard;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.exception.BaseException;
 import tgb.btc.rce.service.IResponseSender;
@@ -34,13 +35,13 @@ public class BotVariables extends Processor {
         switch (userService.getStepByChatId(chatId)) {
             case 0:
                 responseSender.sendMessage(chatId, "Измените нужные значения и отправьте исправленный файл. " +
-                        "Обязательно закройте файл, перед тем как отправлять.");
+                        "Обязательно закройте файл, перед тем как отправлять.", BotKeyboard.CANCEL);
                 responseSender.sendFile(chatId, new File(FilePaths.BOT_VARIABLE_PROPERTIES));
                 userService.nextStep(chatId, Command.BOT_VARIABLES);
                 break;
             case 1:
                 if (!update.hasMessage() || !update.getMessage().hasDocument()) {
-                    responseSender.sendMessage(chatId, "Отправьте файл или вернитесь в главное меню.");
+                    responseSender.sendMessage(chatId, "Отправьте файл или вернитесь в главное меню.", BotKeyboard.CANCEL);
                     return;
                 }
                 updateProperties(update);

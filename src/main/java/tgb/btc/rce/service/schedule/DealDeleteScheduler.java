@@ -12,14 +12,13 @@ import tgb.btc.rce.service.processors.Start;
 import tgb.btc.rce.util.BotVariablePropertiesUtil;
 import tgb.btc.rce.util.MessagePropertiesUtil;
 
+import javax.annotation.PostConstruct;
 import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
 @Slf4j
 public class DealDeleteScheduler {
-
-    public static int DEAL_ACTIVE_TIME = BotVariablePropertiesUtil.getInt(BotVariableType.DEAL_ACTIVE_TIME);
 
     private static final Map<Long, Integer> NEW_CRYPTO_DEALS_PIDS = new HashMap<>();
 
@@ -28,6 +27,11 @@ public class DealDeleteScheduler {
     private IResponseSender responseSender;
 
     private Start start;
+
+    @PostConstruct
+    public void post() {
+        log.info("Автоматическое удаление недействительных заявок загружено в контекст.");
+    }
 
     @Autowired
     public void setDealRepository(DealRepository dealRepository) {
@@ -61,24 +65,25 @@ public class DealDeleteScheduler {
     @Async
     public void deleteOverdueDeals() {
         if (NEW_CRYPTO_DEALS_PIDS.isEmpty()) return;
+        Integer dealActiveTime = BotVariablePropertiesUtil.getInt(BotVariableType.DEAL_ACTIVE_TIME);
         Map<Long, Integer> bufferDealsPids = new HashMap<>(NEW_CRYPTO_DEALS_PIDS);
         for (Map.Entry<Long, Integer> dealData : bufferDealsPids.entrySet()) {
             Long dealPid = dealData.getKey();
-            if (isDealNotActive(dealPid)) {
+            if (isDealNotActive(dealPid, dealActiveTime)) {
                 Long chatId = dealRepository.getUserChatIdByDealPid(dealPid);
                 dealRepository.deleteById(dealPid);
                 if (Objects.nonNull(dealData.getValue())) responseSender.deleteMessage(chatId, dealData.getValue());
-                responseSender.sendMessage(chatId, String.format(MessagePropertiesUtil.getMessage("deal.deleted.auto"), DEAL_ACTIVE_TIME));
+                responseSender.sendMessage(chatId, String.format(MessagePropertiesUtil.getMessage("deal.deleted.auto"), dealActiveTime));
                 start.run(chatId);
                 synchronized (NEW_CRYPTO_DEALS_PIDS) {
                     NEW_CRYPTO_DEALS_PIDS.remove(dealPid);
                 }
-                log.debug("Автоматически удалена заявка №" + dealPid + " по истечению " + DEAL_ACTIVE_TIME + " минут.");
+                log.debug("Автоматически удалена заявка №" + dealPid + " по истечению " + dealActiveTime + " минут.");
             }
         }
     }
 
-    private boolean isDealNotActive(Long dealPid) {
-        return dealRepository.getDateTimeByPid(dealPid).plusMinutes(DEAL_ACTIVE_TIME).isBefore(LocalDateTime.now());
+    private boolean isDealNotActive(Long dealPid, Integer dealActiveTime) {
+        return dealRepository.getDateTimeByPid(dealPid).plusMinutes(dealActiveTime).isBefore(LocalDateTime.now());
     }
 }
