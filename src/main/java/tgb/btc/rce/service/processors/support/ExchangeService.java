@@ -479,7 +479,7 @@ public class ExchangeService {
         if (CollectionUtils.isEmpty(paymentRequisite)) {
             throw new BaseException("Не установлены реквизиты для " + paymentType.getName() + ".");
         }
-        if (!paymentType.getDynamicOn() || paymentRequisite.size() == 1) {
+        if (BooleanUtils.isNotTrue(deal.getPaymentType().getDynamicOn()) || paymentRequisite.size() == 1) {
             requisites = paymentRequisite.get(0).getRequisite();
         } else if (paymentRequisite.size() > 0){
             Integer order = paymentRequisiteService.getOrder(paymentType.getPid());

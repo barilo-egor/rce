@@ -89,8 +89,8 @@ public enum Command {
     BOT_MESSAGES("Сообщения бота", true),
     BOT_VARIABLES("Переменные бота", true),
     SYSTEM_MESSAGES("Сис.сообщения", true),
-    PAYMENT_TYPES_OLD("Типы оплаты", true),
-    PAYMENT_TYPES("New Типы оплаты", true),
+    PAYMENT_TYPES_OLD("old Типы оплаты", true),
+    PAYMENT_TYPES("Типы оплаты", true),
     PAYMENT_REQUISITES("Реквизиты оплат", true),
 
     /** DEAL */
