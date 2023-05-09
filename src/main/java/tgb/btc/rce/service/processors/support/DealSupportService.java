@@ -34,6 +34,7 @@ public class DealSupportService {
     public String dealToString(Long pid) {
         Deal deal = dealService.getByPid(pid);
         User user = deal.getUser();
+        // getPaymentTypeEnum используется для старых сделок
         PaymentTypeEnum paymentTypeEnum = deal.getPaymentTypeEnum();
         String paymentTypeName = Objects.nonNull(paymentTypeEnum)
                                  ? paymentTypeEnum.getDisplayName()

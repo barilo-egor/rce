@@ -31,8 +31,12 @@ public class Deal extends BasePersist {
     @Column(name = "DATE")
     private LocalDate date;
 
+    @Deprecated
     @Column(name = "PAYMENT_TYPE_ENUM")
     @Enumerated(value = EnumType.STRING)
+    /**
+     * use paymentType
+     */
     private PaymentTypeEnum paymentTypeEnum;
 
     @ManyToOne
@@ -142,10 +146,19 @@ public class Deal extends BasePersist {
         this.dateTime = dateTime;
     }
 
+    @Deprecated
+    /**
+     * use paymentType
+     */
+    // TODO написать скрипт по пере
     public PaymentTypeEnum getPaymentTypeEnum() {
         return paymentTypeEnum;
     }
 
+    @Deprecated
+    /**
+     * use paymentType
+     */
     public void setPaymentTypeEnum(PaymentTypeEnum paymentTypeEnum) {
         this.paymentTypeEnum = paymentTypeEnum;
     }

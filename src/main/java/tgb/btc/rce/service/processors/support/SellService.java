@@ -218,9 +218,7 @@ public class SellService {
         Long chatId = UpdateUtil.getChatId(update);
         responseSender.deleteMessage(chatId, UpdateUtil.getMessage(update).getMessageId());
         Deal deal = dealService.findById(userService.getCurrentDealByChatId(chatId));
-        PaymentTypeEnum paymentTypeEnum = deal.getPaymentTypeEnum();
-        String paymentTypeName = Objects.nonNull(paymentTypeEnum) ? paymentTypeEnum.getDisplayName() : deal.getPaymentType().getName();
-        String message = "Введите " + paymentTypeName + " реквизиты, куда вы "
+        String message = "Введите " + deal.getPaymentType().getName() + " реквизиты, куда вы "
                 + "хотите получить "
                 + BigDecimalUtil.round(deal.getAmount(), 0).stripTrailingZeros().toPlainString() + "₽";
 
@@ -303,10 +301,6 @@ public class SellService {
         Long chatId = UpdateUtil.getChatId(update);
         Deal deal = dealService.getByPid(userService.getCurrentDealByChatId(chatId));
         CryptoCurrency currency = deal.getCryptoCurrency();
-        PaymentConfig paymentConfig = paymentConfigService.getByPaymentType(deal.getPaymentTypeEnum());
-        if (paymentConfig == null) {
-            throw new BaseException("Не установлены реквизиты для " + deal.getPaymentTypeEnum().getDisplayName() + ".");
-        }
         String promoCodeText = Boolean.TRUE.equals(deal.getUsedPromo())
                 ?
                 "\n\n<b> Использован скидочный промокод</b>: "
@@ -338,17 +332,13 @@ public class SellService {
             deal.setAmount(BigDecimalUtil.addHalfUp(deal.getAmount(), rankDiscount));
         }
         deal = dealService.save(deal);
-        PaymentTypeEnum paymentTypeEnum = deal.getPaymentTypeEnum();
-        String paymentTypeName = Objects.nonNull(paymentTypeEnum)
-                ? paymentTypeEnum.getDisplayName()
-                : deal.getPaymentType().getName();
         String message = "✅<b>Заявка №</b><code>" + deal.getPid() + "</code> успешно создана."
                 + "\n\n"
                 + "<b>Продаете</b>: "
                 + BigDecimalUtil.round(deal.getCryptoAmount(), currency.getScale()).stripTrailingZeros()
                 .toPlainString() + " " + currency.getShortName()
                 + "\n"
-                + "<b>" + paymentTypeName + " реквизиты</b>:" + "<code>" + deal.getWallet() + "</code>"
+                + "<b>" + deal.getPaymentType().getName() + " реквизиты</b>:" + "<code>" + deal.getWallet() + "</code>"
                 + "\n\n"
                 + "Ваш ранг: " + rank.getSmile() + ", скидка " + rank.getPercent() + "%" + "\n\n"
                 + "\uD83D\uDCB5<b>Получаете</b>: <code>" + BigDecimalUtil.round(deal.getAmount(), 0)
