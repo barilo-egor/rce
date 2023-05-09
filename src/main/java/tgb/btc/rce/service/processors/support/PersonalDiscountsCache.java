@@ -63,6 +63,12 @@ public class PersonalDiscountsCache {
                 }
                 return USERS_PERSONAL_BUY.get(chatId);
             } else {
+                discount = USERS_PERSONAL_SELL.get(chatId);
+                if (Objects.isNull(discount)) {
+                    BigDecimal actualDiscount = userDiscountRepository.getPersonalSellByChatId(chatId);
+                    if (Objects.isNull(actualDiscount)) actualDiscount = BigDecimal.ZERO;
+                    putToUsersPersonalSell(chatId, actualDiscount);
+                }
                 return USERS_PERSONAL_SELL.get(chatId);
             }
         }

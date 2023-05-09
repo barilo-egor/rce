@@ -1,5 +1,6 @@
 package tgb.btc.rce.service.processors.support;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -8,16 +9,16 @@ import tgb.btc.rce.enums.CryptoCurrency;
 import tgb.btc.rce.enums.DealType;
 import tgb.btc.rce.enums.PropertiesMessage;
 import tgb.btc.rce.repository.DealRepository;
+import tgb.btc.rce.repository.UserDiscountRepository;
 import tgb.btc.rce.repository.UserRepository;
 import tgb.btc.rce.service.IResponseSender;
+import tgb.btc.rce.service.IUserDiscountService;
 import tgb.btc.rce.service.impl.KeyboardService;
 import tgb.btc.rce.service.impl.MessageService;
-import tgb.btc.rce.util.BotVariablePropertiesUtil;
-import tgb.btc.rce.util.ConverterUtil;
-import tgb.btc.rce.util.MessagePropertiesUtil;
-import tgb.btc.rce.util.UpdateUtil;
+import tgb.btc.rce.util.*;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 
 @Service
 public class ExchangeServiceNew {
@@ -33,6 +34,15 @@ public class ExchangeServiceNew {
     private IResponseSender responseSender;
 
     private PersonalDiscountsCache personalDiscountsCache;
+
+    private UserDiscountRepository userDiscountRepository;
+
+    private IUserDiscountService userDiscountService;
+
+    @Autowired
+    public void setUserDiscountRepository(UserDiscountRepository userDiscountRepository) {
+        this.userDiscountRepository = userDiscountRepository;
+    }
 
     @Autowired
     public void setPersonalDiscountsCache(PersonalDiscountsCache personalDiscountsCache) {
@@ -74,22 +84,32 @@ public class ExchangeServiceNew {
         messageService.sendMessageAndSaveMessageId(chatId, text, keyboardService.getCalculator(currency, dealType));
     }
 
-    public boolean saveSum(Update update, DealType dealType) {
+    public boolean saveSum(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
         Deal deal = dealRepository.getById(userRepository.getCurrentDealByChatId(chatId));
         CryptoCurrency cryptoCurrency = deal.getCryptoCurrency();
-        Double minSum = BotVariablePropertiesUtil.getMinSumBuy(cryptoCurrency);
         Double sum = UpdateUtil.getDoubleFromText(update);
+        DealType dealType = deal.getDealType();
+        boolean isBuyDealType = DealType.BUY.equals(dealType);
 
+        Double minSum = BotVariablePropertiesUtil.getMinSumBuy(cryptoCurrency);
         if (sum < minSum) {
-            responseSender.sendMessage(chatId, "Минимальная сумма покупки " + cryptoCurrency.getDisplayName()
+            String dealTypeString = isBuyDealType ? "покупки" : "продажи";
+            responseSender.sendMessage(chatId, "Минимальная сумма " + dealTypeString + " " + cryptoCurrency.getDisplayName()
                     + " = " + BigDecimal.valueOf(minSum).stripTrailingZeros().toPlainString() + ".");
             return false;
         }
 
         deal.setCryptoAmount(BigDecimal.valueOf(sum));
-        BigDecimal amount = ConverterUtil.convertCryptoToRub(cryptoCurrency, sum, dealType);
-        BigDecimal personalDiscount = personalDiscountsCache.getDiscount(chatId, dealType);
+        deal.setAmount(CalculateUtil.convertCryptoToRub(cryptoCurrency, sum, dealType));
+        userDiscountService.applyPersonal(chatId, deal, dealType);
+        if (isBuyDealType) {
+            BigDecimal bulkDiscount = BulkDiscountUtil.getPercentBySum(deal.getAmount());
+            if (!BigDecimalUtil.isZero(bulkDiscount))
+                deal.setAmount(CalculateUtil.calculateDiscount(dealType, deal.getAmount(), bulkDiscount));
+        }
+        deal.setCommission(CalculateUtil.getCommission(BigDecimal.valueOf(sum), cryptoCurrency, dealType));
+        dealRepository.save(deal);
         return false;
     }
 }

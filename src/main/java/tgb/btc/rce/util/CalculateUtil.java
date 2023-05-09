@@ -13,8 +13,8 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
-public final class ConverterUtil {
-    private ConverterUtil() {
+public final class CalculateUtil {
+    private CalculateUtil() {
     }
 
     // в комментарии проперти джсона с курсом
@@ -158,14 +158,14 @@ public final class ConverterUtil {
 
     @SneakyThrows
     public static BigDecimal getLtcCurrency() {
-        JSONObject currency = readJsonFromUrl(ConverterUtil.LTC_USD_URL_BINANCE);
+        JSONObject currency = readJsonFromUrl(CalculateUtil.LTC_USD_URL_BINANCE);
         Object obj = currency.get("price");
         return parse(obj, CryptoCurrency.LITECOIN);
     }
 
     @SneakyThrows
     public static BigDecimal getBtcCurrency() {
-        JSONObject currency = readJsonFromUrl(ConverterUtil.BTC_USD_URL_BLOCKCHAIN);
+        JSONObject currency = readJsonFromUrl(CalculateUtil.BTC_USD_URL_BLOCKCHAIN);
         Object obj = currency.get("last_trade_price");
         return parse(obj, CryptoCurrency.BITCOIN);
     }
@@ -202,5 +202,12 @@ public final class ConverterUtil {
             sb.append((char) cp);
         }
         return sb.toString();
+    }
+
+    public static BigDecimal calculateDiscount(DealType dealType, BigDecimal amount, BigDecimal discount) {
+        BigDecimal totalDiscount = CalculateUtil.getPercentsFactor(amount).multiply(discount);
+        return DealType.BUY.equals(dealType)
+                ? amount.add(totalDiscount)
+                : amount.subtract(totalDiscount);
     }
 }

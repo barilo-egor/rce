@@ -133,13 +133,13 @@ public class ExchangeService {
         }
 
         deal.setCryptoAmount(BigDecimal.valueOf(sum));
-        BigDecimal amount = ConverterUtil.convertCryptoToRub(cryptoCurrency, sum, DealType.BUY);
+        BigDecimal amount = CalculateUtil.convertCryptoToRub(cryptoCurrency, sum, DealType.BUY);
         BigDecimal personalBuy = USERS_PERSONAL_BUY.get(chatId);
         if (BooleanUtils.isNotTrue(deal.getPersonalApplied())) {
             if (Objects.isNull(personalBuy)) {
                 personalBuy = userDiscountRepository.getPersonalBuyByChatId(chatId);
                 if (Objects.nonNull(personalBuy) && !BigDecimal.ZERO.equals(personalBuy)) {
-                    amount = amount.add(ConverterUtil.getPercentsFactor(amount).multiply(personalBuy));
+                    amount = amount.add(CalculateUtil.getPercentsFactor(amount).multiply(personalBuy));
                     deal.setPersonalApplied(true);
                 }
                 if (Objects.nonNull(personalBuy)) {
@@ -148,16 +148,16 @@ public class ExchangeService {
                     putToUsersPersonalBuy(chatId, BigDecimal.ZERO);
                 }
             } else if (!BigDecimal.ZERO.equals(personalBuy)) {
-                amount = amount.add(ConverterUtil.getPercentsFactor(amount).multiply(personalBuy));
+                amount = amount.add(CalculateUtil.getPercentsFactor(amount).multiply(personalBuy));
                 deal.setPersonalApplied(true);
             }
         }
         BigDecimal bulkDiscount = BulkDiscountUtil.getPercentBySum(amount);
         if (!BigDecimal.ZERO.equals(bulkDiscount)) {
-            amount = amount.subtract(ConverterUtil.getPercentsFactor(amount).multiply(bulkDiscount));
+            amount = amount.subtract(CalculateUtil.getPercentsFactor(amount).multiply(bulkDiscount));
         }
         deal.setAmount(amount);
-        deal.setCommission(ConverterUtil.getCommission(BigDecimal.valueOf(sum), cryptoCurrency, DealType.BUY));
+        deal.setCommission(CalculateUtil.getCommission(BigDecimal.valueOf(sum), cryptoCurrency, DealType.BUY));
         dealService.save(deal);
         return true;
     }
@@ -201,15 +201,15 @@ public class ExchangeService {
         }
         sum = BigDecimalUtil.round(sum, cryptoCurrency.getScale());
         BigDecimal roundedConvertedSum = BigDecimalUtil.round(
-                ConverterUtil.convertCryptoToRub(currency, sum.doubleValue(), DealType.BUY), 0);
+                CalculateUtil.convertCryptoToRub(currency, sum.doubleValue(), DealType.BUY), 0);
         BigDecimal personalBuy = USERS_PERSONAL_BUY.get(chatId);
         if (Objects.isNull(personalBuy) || !BigDecimal.ZERO.equals(personalBuy)) {
             personalBuy = userDiscountRepository.getPersonalBuyByChatId(chatId);
             if (Objects.nonNull(personalBuy) && !BigDecimal.ZERO.equals(personalBuy)) {
                 if (BigDecimal.ZERO.compareTo(personalBuy) > 0) {
-                    roundedConvertedSum = roundedConvertedSum.add(ConverterUtil.getPercentsFactor(roundedConvertedSum).multiply(personalBuy));
+                    roundedConvertedSum = roundedConvertedSum.add(CalculateUtil.getPercentsFactor(roundedConvertedSum).multiply(personalBuy));
                 } else {
-                    roundedConvertedSum = roundedConvertedSum.add(ConverterUtil.getPercentsFactor(roundedConvertedSum).multiply(personalBuy));
+                    roundedConvertedSum = roundedConvertedSum.add(CalculateUtil.getPercentsFactor(roundedConvertedSum).multiply(personalBuy));
                 }
             }
             if (Objects.nonNull(personalBuy)) {
@@ -220,7 +220,7 @@ public class ExchangeService {
         }
         BigDecimal bulkDiscount = BulkDiscountUtil.getPercentBySum(roundedConvertedSum);
         if (!BigDecimal.ZERO.equals(bulkDiscount)) {
-            roundedConvertedSum = roundedConvertedSum.subtract(ConverterUtil.getPercentsFactor(roundedConvertedSum).multiply(personalBuy));
+            roundedConvertedSum = roundedConvertedSum.subtract(CalculateUtil.getPercentsFactor(roundedConvertedSum).multiply(personalBuy));
         }
         String dealType = DealType.BUY.equals(dealService.getDealTypeByPid(currentDealPid))
                 ? "Покупка: "
@@ -281,7 +281,7 @@ public class ExchangeService {
         } else {
             dealAmount = deal.getAmount().setScale(0, RoundingMode.HALF_UP).stripTrailingZeros().doubleValue();
             sumWithDiscount = deal.getAmount().subtract(BigDecimalUtil.multiplyHalfUp(deal.getCommission(),
-                            ConverterUtil.getPercentsFactor(
+                            CalculateUtil.getPercentsFactor(
                                     discount)))
                     .setScale(0, RoundingMode.HALF_UP)
                     .stripTrailingZeros();
@@ -356,7 +356,7 @@ public class ExchangeService {
                     BotVariablePropertiesUtil.getDouble(BotVariableType.PROMO_CODE_DISCOUNT));
             BigDecimal dealAmount = dealService.getAmountByPid(currentDealPid);
             BigDecimal totalDiscount = BigDecimalUtil.multiplyHalfUp(dealService.getCommissionByPid(currentDealPid),
-                    ConverterUtil.getPercentsFactor(discount));
+                    CalculateUtil.getPercentsFactor(discount));
             dealService.updateDiscountByPid(totalDiscount, currentDealPid);
             BigDecimal sumWithDiscount = dealAmount.subtract(totalDiscount)
                     .setScale(0, RoundingMode.HALF_UP)
@@ -468,7 +468,7 @@ public class ExchangeService {
                 && BooleanUtils.isNotFalse(userDiscountRepository.getRankDiscountByUserChatId(chatId));
         if (!Rank.FIRST.equals(rank) && isRankDiscountOn) {
             BigDecimal commission = deal.getCommission();
-            BigDecimal rankDiscount = BigDecimalUtil.multiplyHalfUp(commission, ConverterUtil.getPercentsFactor(
+            BigDecimal rankDiscount = BigDecimalUtil.multiplyHalfUp(commission, CalculateUtil.getPercentsFactor(
                     BigDecimal.valueOf(rank.getPercent())));
             deal.setAmount(BigDecimalUtil.subtractHalfUp(deal.getAmount(), rankDiscount));
         }

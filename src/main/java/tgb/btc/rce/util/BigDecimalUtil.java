@@ -38,4 +38,8 @@ public final class BigDecimalUtil {
     public static BigDecimal round(Double num, int scale) {
         return BigDecimal.valueOf(num).setScale(scale, RoundingMode.HALF_UP).stripTrailingZeros();
     }
+
+    public static boolean isZero(BigDecimal number) {
+        return BigDecimal.ZERO.compareTo(number) == 0;
+    }
 }

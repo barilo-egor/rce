@@ -99,7 +99,7 @@ public class ConfirmUserDeal extends Processor {
                     ? BigDecimal.valueOf(BotVariablePropertiesUtil.getDouble(BotVariableType.REFERRAL_PERCENT))
                     : refUserReferralPercent;
             BigDecimal sumToAdd = BigDecimalUtil.multiplyHalfUp(deal.getAmount(),
-                    ConverterUtil.getPercentsFactor(referralPercent));
+                    CalculateUtil.getPercentsFactor(referralPercent));
             Integer total = refUser.getReferralBalance() + sumToAdd.intValue();
             log.info("Подтверждение сделки, зачисление на реф баланс пользователю. Админ чат айди = "
                     + UpdateUtil.getChatId(update) + ". refUserChatId = " + refUser.getChatId() + ", sumToAdd = "
