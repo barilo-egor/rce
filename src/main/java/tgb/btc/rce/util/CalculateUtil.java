@@ -165,8 +165,9 @@ public final class CalculateUtil {
 
     @SneakyThrows
     public static BigDecimal getBtcCurrency() {
-        JSONObject currency = readJsonFromUrl(CalculateUtil.BTC_USD_URL_BLOCKCHAIN);
-        Object obj = currency.get("last_trade_price");
+        JSONObject currency = readJsonFromUrl(CalculateUtil.BTC_USD_URL_BINANCE);
+//        Object obj = currency.get("last_trade_price"); blockchain
+        Object obj = currency.get("price");
         return parse(obj, CryptoCurrency.BITCOIN);
     }
 
