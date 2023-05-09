@@ -7,6 +7,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.bean.User;
@@ -42,7 +43,12 @@ public class UsersReport extends Processor {
     }
 
     @Override
+    @Async
     public void run(Update update) {
+        Long chatId = UpdateUtil.getChatId(update);
+        responseSender.sendMessage(chatId, "Формирование отчета запущено.");
+        responseSender.sendMessage(chatId, "Отчет придет после того, как сформируется. Это может занять некоторое время.");
+        processToAdminMainPanel(chatId);
         try {
             HSSFWorkbook book = new HSSFWorkbook();
             Sheet sheet = book.createSheet("Пользователи");
@@ -117,7 +123,6 @@ public class UsersReport extends Processor {
             book.close();
             outputStream.close();
             File file = new File(fileName);
-            Long chatId = UpdateUtil.getChatId(update);
             responseSender.sendFile(chatId, file);
             log.debug("Админ " + chatId + " выгрузил отчет по пользователям.");
             if (file.delete()) log.trace("Файл успешно удален.");
