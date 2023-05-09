@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.constants.FilePaths;
+import tgb.btc.rce.enums.BotKeyboard;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
@@ -27,7 +28,7 @@ public class BulkDiscounts extends Processor {
         Long chatId = UpdateUtil.getChatId(update);
         if (checkForCancel(update)) return;
         responseSender.sendMessage(chatId, "Измените нужные значения и отправьте исправленный файл. " +
-                "Обязательно закройте файл, перед тем как отправлять.");
+                "Обязательно закройте файл, перед тем как отправлять.", BotKeyboard.CANCEL);
         responseSender.sendFile(chatId, new File(FilePaths.BULK_DISCOUNT_PROPERTIES));
         userService.nextStep(chatId, Command.BULK_DISCOUNTS);
     }
