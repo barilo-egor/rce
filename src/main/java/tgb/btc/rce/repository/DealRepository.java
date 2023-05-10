@@ -27,9 +27,6 @@ public interface DealRepository extends BaseRepository<Deal> {
     @Query("select cryptoCurrency from Deal where pid=:pid")
     CryptoCurrency getCryptoCurrencyByPid(@Param("pid") Long pid);
 
-    @Query("select d.cryptoCurrency from Deal d where d.user.chatId=:chatId and d.isCurrent=true")
-    CryptoCurrency getCryptoCurrencyByChatIdOfCurrentDeal(@Param("chatId") Long chatId);
-
     @Modifying
     @Query("update Deal set cryptoAmount=:cryptoAmount where pid=:pid")
     void updateCryptoAmountByPid(@Param("cryptoAmount") BigDecimal cryptoAmount, @Param("pid") Long pid);
