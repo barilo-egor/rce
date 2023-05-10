@@ -62,7 +62,6 @@ public class ConfirmUserDeal extends Processor {
 
         deal.setActive(false);
         deal.setPassed(true);
-        deal.setCurrent(false);
 
         if (BooleanUtils.isTrue(deal.getUsedReferralDiscount())) {
             Integer referralBalance = user.getReferralBalance();

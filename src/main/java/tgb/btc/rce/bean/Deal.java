@@ -106,14 +106,6 @@ public class Deal extends BasePersist {
         this.userCheck = check;
     }
 
-    public Boolean getCurrent() {
-        return isCurrent;
-    }
-
-    public void setCurrent(Boolean current) {
-        isCurrent = current;
-    }
-
     public Boolean getActive() {
         return isActive;
     }
