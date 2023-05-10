@@ -17,7 +17,6 @@ import tgb.btc.rce.service.processors.support.ExchangeService;
 import tgb.btc.rce.service.processors.support.ExchangeServiceNew;
 import tgb.btc.rce.service.schedule.DealDeleteScheduler;
 import tgb.btc.rce.util.BotImageUtil;
-import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.MessagePropertiesUtil;
 import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.InlineButton;
@@ -249,7 +248,7 @@ public class BuyBitcoin extends Processor {
                 break;
             case 2:
                 currentDealPid = userService.getCurrentDealByChatId(chatId);
-                dealRepository.uppateIsPersonalAppliedByPid(currentDealPid, false);
+                dealRepository.updateIsPersonalAppliedByPid(currentDealPid, false);
                 exchangeServiceNew.askForSum(chatId,
                         dealService.getCryptoCurrencyByPid(currentDealPid), dealService.getDealTypeByPid(currentDealPid));
                 break;
@@ -260,7 +259,7 @@ public class BuyBitcoin extends Processor {
                     exchangeService.askForReferralDiscount(update);
                 } else {
                     currentDealPid = userService.getCurrentDealByChatId(chatId);
-                    dealRepository.uppateIsPersonalAppliedByPid(currentDealPid, false);
+                    dealRepository.updateIsPersonalAppliedByPid(currentDealPid, false);
                     exchangeServiceNew.askForSum(chatId,
                             dealService.getCryptoCurrencyByPid(currentDealPid), dealService.getDealTypeByPid(currentDealPid));
                     userService.previousStep(chatId);

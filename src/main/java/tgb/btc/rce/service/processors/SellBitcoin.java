@@ -218,7 +218,7 @@ public class SellBitcoin extends Processor {
                 break;
             case 2:
                 Long currentDealPid = userService.getCurrentDealByChatId(chatId);
-                dealRepository.uppateIsPersonalAppliedByPid(currentDealPid, false);
+                dealRepository.updateIsPersonalAppliedByPid(currentDealPid, false);
                 exchangeServiceNew.askForSum(chatId,
                         dealService.getCryptoCurrencyByPid(currentDealPid), dealService.getDealTypeByPid(currentDealPid));
                 break;

@@ -450,7 +450,7 @@ public class ExchangeService {
             userService.previousStep(chatId);
             userService.previousStep(chatId);
             currentDealPid = userService.getCurrentDealByChatId(chatId);
-            dealRepository.uppateIsPersonalAppliedByPid(currentDealPid, false);
+            dealRepository.updateIsPersonalAppliedByPid(currentDealPid, false);
             exchangeServiceNew.askForSum(chatId,
                     dealService.getCryptoCurrencyByPid(currentDealPid), DealType.BUY);
             return null;

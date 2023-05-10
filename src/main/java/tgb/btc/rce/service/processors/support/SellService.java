@@ -11,7 +11,6 @@ import org.telegram.telegrambots.meta.api.objects.inlinequery.inputmessageconten
 import org.telegram.telegrambots.meta.api.objects.inlinequery.result.InlineQueryResultArticle;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import tgb.btc.rce.bean.Deal;
-import tgb.btc.rce.bean.PaymentConfig;
 import tgb.btc.rce.bean.PaymentType;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.*;
@@ -93,7 +92,7 @@ public class SellService {
         Long chatId = UpdateUtil.getChatId(update);
         Deal deal = dealService.findById(userService.getCurrentDealByChatId(chatId));
         Double sum = UpdateUtil.getDoubleFromText(update);
-        CryptoCurrency cryptoCurrency = dealService.getCryptoCurrencyByPid(deal.getPid());
+        CryptoCurrency cryptoCurrency = deal.getCryptoCurrency();
         Double minSum = BotVariablePropertiesUtil.getMinSumSell(cryptoCurrency);
 
         if (sum < minSum) {
@@ -287,7 +286,7 @@ public class SellService {
                     + paymentType.getName() + " равна " + paymentType.getMinSum().toPlainString());
             userService.previousStep(chatId);
             currentDealPid = userService.getCurrentDealByChatId(chatId);
-            dealRepository.uppateIsPersonalAppliedByPid(currentDealPid, false);
+            dealRepository.updateIsPersonalAppliedByPid(currentDealPid, false);
             exchangeServiceNew.askForSum(chatId,
                     dealService.getCryptoCurrencyByPid(currentDealPid), DealType.SELL);
             return null;
