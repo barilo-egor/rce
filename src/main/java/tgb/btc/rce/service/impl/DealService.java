@@ -76,11 +76,11 @@ public class DealService extends BasePersistService<Deal> {
     }
 
     public Long getDealsCountByUserChatId(Long chatId) {
-        return dealRepository.getDealsCountByUserChatId(chatId);
+        return dealRepository.getPassedDealsCountByUserChatId(chatId);
     }
 
     public Long getNotCurrentDealsCountByUserChatId(Long chatId, DealType dealType) {
-        return dealRepository.getNotCurrentDealsCountByUserChatId(chatId, dealType);
+        return dealRepository.getPassedDealsCountByUserChatId(chatId, dealType);
     }
 
     public Deal getByPid(Long pid) {
@@ -132,10 +132,6 @@ public class DealService extends BasePersistService<Deal> {
         dealRepository.updateIsActiveByPid(isActive, pid);
     }
 
-    public void updateIsCurrentByPid(Boolean isCurrent, Long pid) {
-        dealRepository.updateIsCurrentByPid(isCurrent, pid);
-    }
-
     public Long getCountPassedByUserChatId(Long chatId) {
         return dealRepository.getCountPassedByUserChatId(chatId);
     }
@@ -157,7 +153,7 @@ public class DealService extends BasePersistService<Deal> {
     }
 
     public String getWalletFromLastNotCurrentByChatId(Long chatId, DealType dealType) {
-        return dealRepository.getWalletFromLastNotCurrentByChatId(chatId, dealType);
+        return dealRepository.getWalletFromLastPassedByChatId(chatId, dealType);
     }
 
     public DealType getDealTypeByPid(Long pid) {

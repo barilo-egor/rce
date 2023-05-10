@@ -576,7 +576,6 @@ public class ExchangeService {
         Long chatId = UpdateUtil.getChatId(update);
         Long currentDealPid = userService.getCurrentDealByChatId(chatId);
         dealService.updateIsActiveByPid(true, currentDealPid);
-        dealService.updateIsCurrentByPid(false, currentDealPid);
         Deal deal = dealService.getByPid(currentDealPid);
         if (BooleanUtils.isTrue(deal.getUsedReferralDiscount())) {
             Integer referralBalance = userService.getReferralBalanceByChatId(UpdateUtil.getChatId(update));

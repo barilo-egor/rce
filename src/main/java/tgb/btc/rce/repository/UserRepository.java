@@ -16,6 +16,7 @@ import java.util.List;
 @Repository
 @Transactional
 public interface UserRepository extends BaseRepository<User> {
+
     User findByChatId(Long chatId);
 
     @Query("select pid from User where chatId=:chatId")
