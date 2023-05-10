@@ -18,7 +18,7 @@ import tgb.btc.rce.vo.InlineButton;
 import java.util.ArrayList;
 import java.util.List;
 
-@CommandProcessor(command = Command.DELETE_PAYMENT_TYPE_REQUISITE, step = 2)
+@CommandProcessor(command = Command.DELETE_PAYMENT_TYPE_REQUISITE, step = 1)
 public class ShowRequisitesForDelete extends Processor {
 
     private PaymentRequisiteRepository paymentRequisiteRepository;

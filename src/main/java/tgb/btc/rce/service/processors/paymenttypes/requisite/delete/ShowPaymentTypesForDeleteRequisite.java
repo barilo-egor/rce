@@ -20,7 +20,7 @@ import tgb.btc.rce.vo.InlineButton;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@CommandProcessor(command = Command.DELETE_PAYMENT_TYPE_REQUISITE, step = 1)
+@CommandProcessor(command = Command.DELETE_PAYMENT_TYPE_REQUISITE)
 public class ShowPaymentTypesForDeleteRequisite extends Processor {
 
     private PaymentTypeRepository paymentTypeRepository;
@@ -37,23 +37,10 @@ public class ShowPaymentTypesForDeleteRequisite extends Processor {
 
     @Override
     public void run(Update update) {
-        if (!hasMessageText(update, BotStringConstants.BUY_OR_SELL)) {
-            return;
-        }
         Long chatId = UpdateUtil.getChatId(update);
-        String message = UpdateUtil.getMessageText(update);
-        DealType dealType;
-        if (BotStringConstants.BUY.equals(message)) {
-            dealType = DealType.BUY;
-        } else if (BotStringConstants.SELL.equals(message)) {
-            dealType = DealType.SELL;
-        } else {
-            responseSender.sendMessage(chatId, BotStringConstants.BUY_OR_SELL);
-            return;
-        }
-        List<PaymentType> paymentTypes = paymentTypeRepository.getByDealType(dealType);
+        List<PaymentType> paymentTypes = paymentTypeRepository.getByDealType(DealType.BUY);
         if (CollectionUtils.isEmpty(paymentTypes)) {
-            responseSender.sendMessage(chatId, "Список тип оплат на " + dealType.getDisplayName() + " пуст.");
+            responseSender.sendMessage(chatId, "Список тип оплат на " + DealType.BUY.getDisplayName() + " пуст.");
             processToAdminMainPanel(chatId);
             return;
         }
@@ -68,7 +55,7 @@ public class ShowPaymentTypesForDeleteRequisite extends Processor {
         responseSender.sendMessage(chatId, "Выберите тип оплаты для удаления реквизита.",
                                    KeyboardUtil.buildInline(buttons));
         responseSender.sendMessage(chatId, "Для возвращения в меню нажмите \"Отмена\".", BotKeyboard.CANCEL);
-        userService.nextStep(chatId);
+        userService.nextStep(chatId, Command.DELETE_PAYMENT_TYPE_REQUISITE);
     }
 
 }
