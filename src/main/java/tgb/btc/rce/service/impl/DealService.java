@@ -170,7 +170,6 @@ public class DealService extends BasePersistService<Deal> {
         Deal deal = new Deal();
         deal.setActive(false);
         deal.setPassed(false);
-        deal.setCurrent(true);
         deal.setDateTime(LocalDateTime.now());
         deal.setDate(LocalDate.now());
         deal.setDealType(dealType);
