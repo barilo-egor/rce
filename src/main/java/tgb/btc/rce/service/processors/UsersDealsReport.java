@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.annotation.CommandProcessor;
-import tgb.btc.rce.bean.Deal;
 import tgb.btc.rce.bean.User;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.exception.BaseException;
@@ -23,8 +22,7 @@ import tgb.btc.rce.util.UpdateUtil;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.*;
 
 @CommandProcessor(command = Command.USERS_DEALS_REPORT)
 @Slf4j
@@ -53,19 +51,26 @@ public class UsersDealsReport extends Processor {
 
             int i = 2;
 
-            List<User> users = userService.findAll().stream()
-                    .filter(user -> dealService.getCountPassedByUserChatId(user.getChatId()) != 0)
-                    .sorted((user1, user2) -> dealService.getCountPassedByUserChatId(user2.getChatId())
-                            .compareTo(dealService.getCountPassedByUserChatId(user1.getChatId())))
-                    .collect(Collectors.toList());
-            for (User user : users) {
+            List<User> users = userService.findAll();
+            Map<User, Long> map = new HashMap<>();
+            users.forEach(user -> {
+                Long count = dealService.getCountPassedByUserChatId(user.getChatId());
+                if (count != 0) {
+                    map.put(user, dealService.getCountPassedByUserChatId(user.getChatId()));
+                }
+            });
+
+            Map<User, Long> sortedMap = new TreeMap<>(Comparator.comparing(User::getChatId));
+            sortedMap.putAll(map);
+
+            for (Map.Entry<User, Long> entry : sortedMap.entrySet()) {
                 Row row = sheet.createRow(i);
                 Cell cell1 = row.createCell(0);
-                cell1.setCellValue(user.getChatId());
+                cell1.setCellValue(entry.getKey().getChatId());
                 Cell cell2 = row.createCell(1);
-                cell2.setCellValue(StringUtils.defaultIfEmpty(user.getUsername(), "скрыт"));
+                cell2.setCellValue(StringUtils.defaultIfEmpty(entry.getKey().getUsername(), "скрыт"));
                 Cell cell3 = row.createCell(2);
-                cell3.setCellValue(dealService.getCountPassedByUserChatId(user.getChatId()));
+                cell3.setCellValue(entry.getValue());
                 i++;
             }
             String fileName = "UsersDeals.xlsx";
