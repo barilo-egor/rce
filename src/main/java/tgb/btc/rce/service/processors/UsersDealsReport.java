@@ -7,6 +7,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.bean.Deal;
@@ -36,6 +37,7 @@ public class UsersDealsReport extends Processor {
         this.dealService = dealService;
     }
 
+    @Async
     @Override
     public void run(Update update) {
         try {
@@ -54,7 +56,7 @@ public class UsersDealsReport extends Processor {
             List<User> users = userService.findAll().stream()
                     .filter(user -> dealService.getCountPassedByUserChatId(user.getChatId()) != 0)
                     .sorted((user1, user2) -> dealService.getCountPassedByUserChatId(user2.getChatId())
-                            .compareTo(dealService.getDealsCountByUserChatId(user1.getChatId())))
+                            .compareTo(dealService.getCountPassedByUserChatId(user1.getChatId())))
                     .collect(Collectors.toList());
             for (User user : users) {
                 Row row = sheet.createRow(i);
