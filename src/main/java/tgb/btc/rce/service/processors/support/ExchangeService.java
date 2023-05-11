@@ -503,29 +503,6 @@ public class ExchangeService {
                 dealAmount = BigDecimal.ZERO;
             }
         }
-//        BigDecimal personalBuy = USERS_PERSONAL_BUY.get(chatId);
-//        if ((Objects.isNull(personalBuy) || !BigDecimal.ZERO.equals(personalBuy))
-//                && BooleanUtils.isNotTrue(deal.getPersonalApplied())) {
-//            personalBuy = userDiscountRepository.getPersonalBuyByChatId(chatId);
-//            if (Objects.nonNull(personalBuy) && !BigDecimal.ZERO.equals(personalBuy)) {
-//                if (BigDecimal.ZERO.compareTo(personalBuy) > 0) {
-//                    dealAmount = dealAmount.subtract(ConverterUtil.getPercentsFactor(dealAmount).multiply(personalBuy));
-//                } else {
-//                    dealAmount = dealAmount.add(ConverterUtil.getPercentsFactor(dealAmount).multiply(personalBuy));
-//                }
-//                deal.setPersonalApplied(true);
-//            }
-//            if (Objects.nonNull(personalBuy)) {
-//                putToUsersPersonalBuy(chatId, personalBuy);
-//            } else {
-//                putToUsersPersonalBuy(chatId, BigDecimal.ZERO);
-//            }
-//        }
-//        BigDecimal bulkDiscount = BulkDiscountUtil.getPercentBySum(dealAmount);
-//        if (!BigDecimal.ZERO.equals(bulkDiscount) && BooleanUtils.isNotTrue(deal.getBulkApplied())) {
-//            dealAmount = dealAmount.subtract(ConverterUtil.getPercentsFactor(dealAmount).multiply(bulkDiscount));
-//            deal.setBulkApplied(true);
-//        }
         deal.setAmount(dealAmount);
         deal = dealService.save(deal);
 
@@ -576,17 +553,6 @@ public class ExchangeService {
         Long chatId = UpdateUtil.getChatId(update);
         Long currentDealPid = userService.getCurrentDealByChatId(chatId);
         dealService.updateIsActiveByPid(true, currentDealPid);
-        Deal deal = dealService.getByPid(currentDealPid);
-        if (BooleanUtils.isTrue(deal.getUsedReferralDiscount())) {
-            Integer referralBalance = userService.getReferralBalanceByChatId(UpdateUtil.getChatId(update));
-            deal.setOriginalPrice(deal.getAmount());
-            if (referralBalance <= deal.getAmount().intValue()) {
-                deal.setAmount(deal.getAmount().subtract(BigDecimal.valueOf(referralBalance)));
-            } else {
-                deal.setAmount(BigDecimal.ZERO);
-            }
-            dealService.save(deal);
-        }
         userService.setDefaultValues(chatId);
         responseSender.sendMessage(chatId, MessagePropertiesUtil.getMessage(PropertiesMessage.DEAL_CONFIRMED));
         userService.getAdminsChatIds().forEach(adminChatId ->
