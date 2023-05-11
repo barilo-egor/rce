@@ -16,4 +16,6 @@ public interface FilePaths {
     String BULK_DISCOUNT_PROPERTIES = "config/bulk_discount.properties";
 
     String BULK_DISCOUNT_BUFFER_PROPERTIES = "config/buffer/bulk_discount.properties";
+
+    String ANTI_SPAM_PROPERTIES = "config/antispam/antispam_properties";
 }

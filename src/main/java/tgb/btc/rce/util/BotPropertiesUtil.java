@@ -14,8 +14,6 @@ public final class BotPropertiesUtil {
     private BotPropertiesUtil() {
     }
 
-
-
     private final static Properties botProperties = new Properties();
 
     private static String BOT_TOKEN;
