@@ -16,7 +16,7 @@ public class AntiSpamPropertiesUtil {
         try {
             ANTI_SPAM_PROPERTIES.load(new FileInputStream(FilePaths.ANTI_SPAM_PROPERTIES));
         } catch (IOException e) {
-            log.error("Ошибка загрузки anti_spam.properties по пути " + FilePaths.ANTI_SPAM_PROPERTIES + " : ", e);
+            log.error("Ошибка загрузки antispam.properties по пути " + FilePaths.ANTI_SPAM_PROPERTIES + " : ", e);
         }
     }
 

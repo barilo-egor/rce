@@ -16,6 +16,9 @@ public interface UserDataRepository extends BaseRepository<UserData> {
     @Query("select stringVariable from UserData where user.pid=:userPid")
     String getStringByUserPid(@Param("userPid") Long userPid);
 
+    @Query("select stringVariable from UserData where user.chatId=:chatId")
+    String getStringByUserChatId(@Param("chatId") Long chatId);
+
     @Query("select dealTypeVariable from UserData where user.pid=:userPid")
     DealType getDealTypeByUserPid(@Param("userPid") Long userPid);
 
@@ -29,6 +32,10 @@ public interface UserDataRepository extends BaseRepository<UserData> {
     @Modifying
     @Query("update UserData set stringVariable=:stringVariable where user.pid=:userPid")
     void updateStringByUserPid(@Param("userPid") Long userPid, @Param("stringVariable") String stringVariable);
+
+    @Modifying
+    @Query("update UserData set stringVariable=:stringVariable where user.chatId=:chatId")
+    void updateStringByUserChatId(@Param("chatId") Long chatId, @Param("stringVariable") String stringVariable);
 
     @Modifying
     @Query("update UserData set dealTypeVariable=:dealTypeVariable where user.pid=:userPid")

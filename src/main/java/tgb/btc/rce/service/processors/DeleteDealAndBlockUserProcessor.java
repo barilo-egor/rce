@@ -46,6 +46,6 @@ public class DeleteDealAndBlockUserProcessor extends Processor {
         DealDeleteScheduler.deleteCryptoDeal(dealPid);
         responseSender.sendMessage(chatId, "Заявка №" + dealPid + " удалена.");
         responseSender.deleteMessage(chatId, update.getCallbackQuery().getMessage().getMessageId());
-        userRepository.updateIsBannedByChatId(true, userChatId);
+        userRepository.updateIsBannedByChatId(userChatId, true);
     }
 }

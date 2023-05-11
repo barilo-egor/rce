@@ -50,7 +50,7 @@ public class BanUnban extends Processor {
                     MenuFactory.build(Menu.ADMIN_BACK, userService.isAdminByChatId(chatId)));
             return;
         }
-        User user = userService.findByChatId(inputChatId);
+        User user = userService.findByChatId(inputChatId); // TODO оптимизировать, в userService методы ban и unban
         if(!user.getBanned()) {
             user.setBanned(true);
             responseSender.sendMessage(chatId,

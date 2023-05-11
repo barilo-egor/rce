@@ -118,6 +118,19 @@ public class ResponseSender implements IResponseSender {
         return sendPhoto(chatId, caption, photo, null);
     }
 
+    public Optional<Message> sendPhoto(Long chatId, String caption, InputFile photo) {
+        try {
+            return Optional.of(bot.execute(SendPhoto.builder()
+                    .chatId(chatId.toString())
+                    .caption(caption)
+                    .photo(photo)
+                    .build()));
+        } catch (TelegramApiException e) {
+            log.debug("Не получилось отправить фото: chatId=" + chatId + ", caption=" + caption + ", photo=" + photo, e);
+            return Optional.empty();
+        }
+    }
+
     public Optional<Message> sendPhoto(Long chatId, String caption, String photo, ReplyKeyboard replyKeyboard) {
         try {
             return Optional.of(bot.execute(SendPhoto.builder()

@@ -192,4 +192,12 @@ public class UserService extends BasePersistService<User> {
     public Integer getChargesByChatId(Long chatId) {
         return userRepository.getChargesByChatId(chatId);
     }
+
+    public void ban(Long chatId) {
+        userRepository.updateIsBannedByChatId(chatId, true);
+    }
+
+    public void unban(Long chatId) {
+        userRepository.updateIsBannedByChatId(chatId, false);
+    }
 }

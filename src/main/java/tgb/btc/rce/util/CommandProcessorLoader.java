@@ -38,6 +38,7 @@ import tgb.btc.rce.service.processors.personaldiscounts.sell.SavePersonalSellDis
 import tgb.btc.rce.service.processors.referralpercent.AskNewReferralPercent;
 import tgb.btc.rce.service.processors.referralpercent.ReferralPercent;
 import tgb.btc.rce.service.processors.referralpercent.SaveReferralPercent;
+import tgb.btc.rce.vo.Captcha;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -171,6 +172,7 @@ public final class CommandProcessorLoader {
         commandProcessors.add(TurningRankDiscount.class);
         commandProcessors.add(LotteryReport.class);
         commandProcessors.add(BulkDiscounts.class);
+        commandProcessors.add(CaptchaProcessor.class);
         commandProcessors.stream()
                 .filter(processor -> !extendsProcessor(processor))
                 .findFirst()

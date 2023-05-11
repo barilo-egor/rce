@@ -1,6 +1,11 @@
 package tgb.btc.rce.constants;
 
 public interface FilePaths {
+
+    /**
+     * properties
+     */
+
     String BOT_PROPERTIES = "config/bot/bot.properties";
 
     String MESSAGE_PROPERTIES = "config/message.properties";
@@ -17,5 +22,10 @@ public interface FilePaths {
 
     String BULK_DISCOUNT_BUFFER_PROPERTIES = "config/buffer/bulk_discount.properties";
 
-    String ANTI_SPAM_PROPERTIES = "config/antispam/antispam_properties";
+    String ANTI_SPAM_PROPERTIES = "config/antispam/antispam.properties";
+
+    /**
+     * PICTURES
+     */
+    String CAPTCHA_PICTURES_PACKAGE = "config/antispam/picture";
 }

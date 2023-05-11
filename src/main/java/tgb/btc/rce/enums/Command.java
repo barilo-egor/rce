@@ -26,6 +26,7 @@ public enum Command {
     SHARE_CONTACT("Поделиться контактом", false),
     BOT_OFFED("bot_offed", false),
     INLINE_DELETE("inline_delete", false),
+    CAPTCHA("captcha", false),
 
     /** MAIN */
     BUY_BITCOIN("\uD83D\uDCB0 Купить", false),
