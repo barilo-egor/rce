@@ -166,7 +166,6 @@ public class SellBitcoin extends Processor {
             case 5:
                 if (update.hasCallbackQuery() && Command.CANCEL_DEAL.name().equals(update.getCallbackQuery().getData())) {
                     Long dealPid = userService.getCurrentDealByChatId(chatId);
-                    DealDeleteScheduler.deleteCryptoDeal(dealPid);
                     responseSender.deleteMessage(chatId, update.getCallbackQuery().getMessage().getMessageId());
                     dealService.delete(dealService.findById(dealPid));
                     userService.updateCurrentDealByChatId(null, chatId);
