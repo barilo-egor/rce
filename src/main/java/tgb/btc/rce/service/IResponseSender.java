@@ -24,6 +24,7 @@ public interface IResponseSender {
     Optional<Message> sendMessage(Long chatId, String text);
 
     Optional<Message> sendMessage(Long chatId, String text, ReplyKeyboard replyKeyboard);
+    Optional<Message> sendMessage(Long chatId, String text, String parseMode);
 
     Optional<Message> sendMessage(Long chatId, String text, InlineButton... inlineButtons);
 

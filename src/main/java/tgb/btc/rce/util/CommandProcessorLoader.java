@@ -121,6 +121,7 @@ public final class CommandProcessorLoader {
         commandProcessors.add(UserAdditionalVerification.class);
         commandProcessors.add(UserReferralBalance.class);
         commandProcessors.add(UsersReport.class);
+        commandProcessors.add(UserInformation.class);
         commandProcessors.add(WithdrawalOfFunds.class);
         commandProcessors.add(UsersDealsReport.class);
         commandProcessors.add(ChecksForDate.class);
