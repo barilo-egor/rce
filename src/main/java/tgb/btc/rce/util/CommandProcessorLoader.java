@@ -175,6 +175,7 @@ public final class CommandProcessorLoader {
         commandProcessors.add(LotteryReport.class);
         commandProcessors.add(BulkDiscounts.class);
         commandProcessors.add(CaptchaProcessor.class);
+        commandProcessors.add(DeleteUser.class);
         commandProcessors.stream()
                 .filter(processor -> !extendsProcessor(processor))
                 .findFirst()

@@ -11,15 +11,14 @@ import tgb.btc.rce.enums.*;
 import tgb.btc.rce.exception.BaseException;
 import tgb.btc.rce.exception.NumberParseException;
 import tgb.btc.rce.repository.DealRepository;
+import tgb.btc.rce.repository.PaymentReceiptRepository;
 import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.impl.DealService;
-import tgb.btc.rce.service.impl.PaymentReceiptsService;
 import tgb.btc.rce.service.impl.UserService;
 import tgb.btc.rce.service.processors.support.ExchangeService;
 import tgb.btc.rce.service.processors.support.ExchangeServiceNew;
 import tgb.btc.rce.service.processors.support.SellService;
-import tgb.btc.rce.service.schedule.DealDeleteScheduler;
 import tgb.btc.rce.util.BotImageUtil;
 import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.UpdateUtil;
@@ -32,7 +31,7 @@ public class SellBitcoin extends Processor {
     
     private final DealService dealService;
     private final SellService sellService;
-    private final PaymentReceiptsService paymentReceiptsService;
+    private final PaymentReceiptRepository paymentReceiptRepository;
     private final ExchangeService exchangeService;
 
     private DealRepository dealRepository;
@@ -50,12 +49,12 @@ public class SellBitcoin extends Processor {
     }
 
     public SellBitcoin(IResponseSender responseSender, UserService userService, DealService dealService,
-                       SellService sellService, PaymentReceiptsService paymentReceiptsService,
+                       SellService sellService, PaymentReceiptRepository paymentReceiptRepository,
                        ExchangeService exchangeService) {
         super(responseSender, userService);
         this.dealService = dealService;
         this.sellService = sellService;
-        this.paymentReceiptsService = paymentReceiptsService;
+        this.paymentReceiptRepository = paymentReceiptRepository;
         this.exchangeService = exchangeService;
     }
 
@@ -182,7 +181,7 @@ public class SellBitcoin extends Processor {
             case 6:
                 if (update.hasMessage() && update.getMessage().hasPhoto()) {
                     Deal deal = dealService.getByPid(userService.getCurrentDealByChatId(chatId));
-                    PaymentReceipt paymentReceipt = paymentReceiptsService.save(PaymentReceipt.builder()
+                    PaymentReceipt paymentReceipt = paymentReceiptRepository.save(PaymentReceipt.builder()
                             .receipt(BotImageUtil.getImageId(update.getMessage().getPhoto()))
                             .receiptFormat(ReceiptFormat.PICTURE)
                             .build());
@@ -192,7 +191,7 @@ public class SellBitcoin extends Processor {
                     dealService.save(deal);
                 } else if (update.hasMessage() && update.getMessage().hasDocument()) {
                     Deal deal = dealService.getByPid(userService.getCurrentDealByChatId(chatId));
-                    PaymentReceipt paymentReceipt = paymentReceiptsService.save(PaymentReceipt.builder()
+                    PaymentReceipt paymentReceipt = paymentReceiptRepository.save(PaymentReceipt.builder()
                             .receipt(update.getMessage().getDocument().getFileId())
                             .receiptFormat(ReceiptFormat.PDF)
                             .build());

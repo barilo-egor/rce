@@ -40,4 +40,8 @@ public interface UserDataRepository extends BaseRepository<UserData> {
     @Modifying
     @Query("update UserData set dealTypeVariable=:dealTypeVariable where user.pid=:userPid")
     void updateDealTypeByUserPid(@Param("userPid") Long userPid, @Param("dealTypeVariable") DealType dealTypeVariable);
+
+    @Modifying
+    @Query("delete from UserData where user.pid in (select pid from User where chatId=:userChatId)")
+    void deleteByUserChatId(@Param("userChatId") Long userChatId);
 }
