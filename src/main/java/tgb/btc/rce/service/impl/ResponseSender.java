@@ -62,6 +62,10 @@ public class ResponseSender implements IResponseSender {
         return sendMessage(chatId, text, replyKeyboard, null);
     }
 
+    public Optional<Message> sendMessage(Long chatId, String text, String parseMode) {
+        return sendMessage(chatId, text, null, parseMode);
+    }
+
     public Optional<Message> sendMessage(Long chatId, String text, InlineButton... inlineButtons) {
         return sendMessage(chatId, text, KeyboardUtil.buildInline(List.of(inlineButtons)));
     }

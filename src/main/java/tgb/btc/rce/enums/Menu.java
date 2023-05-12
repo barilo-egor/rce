@@ -18,7 +18,7 @@ public enum Menu {
                          Command.BOT_VARIABLES, Command.SYSTEM_MESSAGES, Command.PAYMENT_TYPES,
                          Command.ADMIN_BACK)),
     REQUESTS(List.of(Command.NEW_DEALS, Command.NEW_WITHDRAWALS, Command.NEW_REVIEWS, Command.ADMIN_BACK)),
-    REPORTS(List.of(Command.CHECKS_FOR_DATE, Command.USERS_REPORT, Command.DEAL_REPORTS, Command.PARTNERS_REPORT,
+    REPORTS(List.of(Command.CHECKS_FOR_DATE, Command.USERS_REPORT, Command.USER_INFORMATION, Command.DEAL_REPORTS, Command.PARTNERS_REPORT,
                     Command.USERS_DEALS_REPORT, Command.LOTTERY_REPORT, Command.ADMIN_BACK)),
 
     PAYMENT_TYPES(List.of(Command.NEW_PAYMENT_TYPE, Command.DELETE_PAYMENT_TYPE, Command.NEW_PAYMENT_TYPE_REQUISITE,
