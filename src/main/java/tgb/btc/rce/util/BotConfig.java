@@ -7,7 +7,6 @@ public final class BotConfig {
     public static void init() {
         CommandProcessorLoader.scan();
         MessagePropertiesUtil.loadProperties();
-        BotVariablePropertiesUtil.loadProperties();
         BulkDiscountUtil.load();
     }
 }

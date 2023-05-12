@@ -8,6 +8,7 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.constants.FilePaths;
 import tgb.btc.rce.enums.BotKeyboard;
+import tgb.btc.rce.enums.BotProperties;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.exception.BaseException;
 import tgb.btc.rce.service.IResponseSender;
@@ -84,7 +85,7 @@ public class BotVariables extends Processor {
                     + FilePaths.BOT_VARIABLE_BUFFER_PROPERTIES + " в " + FilePaths.BOT_VARIABLE_PROPERTIES);
             return;
         }
-        BotVariablePropertiesUtil.loadProperties();
+        BotProperties.BOT_VARIABLE_PROPERTIES.reload();
         responseSender.sendMessage(chatId, "Переменные обновлены.");
     }
 }

@@ -1,5 +1,6 @@
 package tgb.btc.rce.service;
 
+import com.google.common.collect.Lists;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
@@ -8,9 +9,7 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public interface PropertiesReader {
@@ -78,6 +77,11 @@ public interface PropertiesReader {
 
     default Boolean getBoolean(String key) {
         return BooleanUtils.toBooleanObject(getString(key));
+    }
+
+    default void reload() {
+        ReaderSupport.properties.remove(this);
+        ReaderSupport.getInstance(this);
     }
 
     class ReaderSupport {

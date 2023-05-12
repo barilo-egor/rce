@@ -2,6 +2,7 @@ package tgb.btc.rce.util;
 
 import lombok.extern.slf4j.Slf4j;
 import tgb.btc.rce.constants.FilePaths;
+import tgb.btc.rce.enums.BotProperties;
 import tgb.btc.rce.enums.BotVariableType;
 import tgb.btc.rce.enums.CryptoCurrency;
 import tgb.btc.rce.exception.BaseException;
@@ -19,19 +20,10 @@ public class BotVariablePropertiesUtil {
 
     private final static Properties botVariableProperties = new Properties();
 
-    public static void loadProperties() {
-        try (FileInputStream inputStream = new FileInputStream(FilePaths.BOT_VARIABLE_PROPERTIES)) {
-            botVariableProperties.clear();
-            botVariableProperties.load(inputStream);
-        } catch (IOException e) {
-            log.error("Ошибка загрузки bot variable properties по пути " + FilePaths.BOT_VARIABLE_PROPERTIES + " : ", e);
-        }
-    }
-
     public static String getVariable(BotVariableType botVariableType) {
         String text;
         try {
-            text = botVariableProperties.getProperty(botVariableType.getKey());
+            text = BotProperties.BOT_VARIABLE_PROPERTIES.getString(botVariableType.getKey());
         } catch (Exception e) {
             throw new BaseException("Переменная по ключу " + botVariableType.getKey() + " не найдена.");
         }
