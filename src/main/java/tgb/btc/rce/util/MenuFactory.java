@@ -48,6 +48,8 @@ public final class MenuFactory {
                 return KeyboardUtil.buildReply(2, fillReply(Menu.REPORTS.getCommands()), false);
             case DISCOUNTS:
                 return KeyboardUtil.buildReply(2, fillReply(Menu.DISCOUNTS.getCommands()), false);
+            case USERS:
+                return KeyboardUtil.buildReply(2, fillReply(Menu.USERS.getCommands()), false);
             case PAYMENT_TYPES:
                 return KeyboardUtil.buildReply(2, fillReply(Menu.PAYMENT_TYPES.getCommands()), false);
         }

@@ -59,6 +59,7 @@ public enum Command {
     CHANGE_USD_COURSE("Курс доллара", true),
     TURNING_CURRENCY("Включение криптовалют", true),
     DISCOUNTS("Скидки", true),
+    USERS("Пользователи", true),
     QUIT_ADMIN_PANEL("Выйти", true),
 
     /** DISCOUNTS */
