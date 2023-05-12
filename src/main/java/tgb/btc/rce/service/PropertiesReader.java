@@ -61,6 +61,18 @@ public interface PropertiesReader {
         return defaultValue;
     }
 
+    default Double getDouble(String key, Double defaultValue) {
+        String value = getString(key);
+        if (StringUtils.isNotBlank(value) && StringUtils.isNumeric(value)) {
+            return Double.valueOf(value);
+        }
+        return defaultValue;
+    }
+
+    default Double getDouble(String key) {
+        return getDouble(key, null);
+    }
+
     default boolean isNotBlankSafely(String key) {
         try {
             return StringUtils.isNotBlank(getString(key));
@@ -77,6 +89,12 @@ public interface PropertiesReader {
 
     default Boolean getBoolean(String key) {
         return BooleanUtils.toBooleanObject(getString(key));
+    }
+
+    default List<String> getKeys() {
+        List<String> keys = new ArrayList<>();
+        ReaderSupport.getInstance(this).getKeys();
+        return keys;
     }
 
     default void reload() {
