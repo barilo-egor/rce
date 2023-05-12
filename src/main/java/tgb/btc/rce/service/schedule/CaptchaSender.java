@@ -42,7 +42,7 @@ public class CaptchaSender {
 
     public void sendCaptcha(Long chatId) {
         Captcha captcha = captchaService.getRandomCaptcha();
-        responseSender.sendPhoto(chatId, "Сработала антифрод система. Введите капчу, чтобы продолжить.",
+        responseSender.sendPhoto(chatId, "Сработала антиспам система. Введите капчу, чтобы продолжить.",
                 captcha.getImage());
         AntiSpam.CAPTCHA_CASH.put(chatId, captcha.getStr());
     }
