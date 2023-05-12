@@ -25,4 +25,8 @@ public interface WithdrawalRequestRepository extends BaseRepository<WithdrawalRe
 
     @Query("select w.pid from WithdrawalRequest w where w.user.chatId=:chatId")
     Long getPidByUserChatId(@Param("chatId") Long chatId);
+
+    @Modifying
+    @Query("delete from WithdrawalRequest where user.pid in (select pid from User where chatId=:userChatId)")
+    void deleteByUserChatId(@Param("userChatId") Long userChatId);
 }

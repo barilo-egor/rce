@@ -146,4 +146,11 @@ public interface DealRepository extends BaseRepository<Deal> {
 
     @Query(value = "select sum(amount) from Deal where user.chatId=:chatId and isPassed=true and dealType=:dealType")
     BigDecimal getUserAmountSum(@Param("chatId") Long chatId, @Param("dealType") DealType dealType);
+
+    @Modifying
+    @Query(value = "delete from Deal where user.chatId=:userChatId")
+    void deleteByUserChatId(@Param("userChatId") Long userChatId);
+
+    @Query(value = "from Deal where user.chatId=:userChatId")
+    List<Deal> getByChatId(Long userChatId);
 }

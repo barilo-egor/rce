@@ -40,4 +40,8 @@ public interface UserDiscountRepository extends BaseRepository<UserDiscount> {
     @Query("update UserDiscount set personalSell=:personalSell where user.pid=:userPid")
     @Modifying
     void updatePersonalSellByUserPid(@Param("personalSell") BigDecimal personalSell, @Param("userPid") Long userPid);
+
+    @Modifying
+    @Query("delete from UserDiscount where user.pid in (select pid from User where chatId=:userChatId)")
+    void deleteByUserChatId(@Param("userChatId") Long userChatId);
 }

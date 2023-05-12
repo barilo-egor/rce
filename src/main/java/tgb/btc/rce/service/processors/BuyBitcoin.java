@@ -10,6 +10,7 @@ import tgb.btc.rce.enums.*;
 import tgb.btc.rce.exception.BaseException;
 import tgb.btc.rce.exception.NumberParseException;
 import tgb.btc.rce.repository.DealRepository;
+import tgb.btc.rce.repository.PaymentReceiptRepository;
 import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.impl.*;
@@ -33,7 +34,7 @@ public class BuyBitcoin extends Processor {
 
     private final DealService dealService;
 
-    private final PaymentReceiptsService paymentReceiptsService;
+    private final PaymentReceiptRepository paymentReceiptRepository;
 
     private ExchangeServiceNew exchangeServiceNew;
 
@@ -68,11 +69,11 @@ public class BuyBitcoin extends Processor {
 
     @Autowired
     public BuyBitcoin(IResponseSender responseSender, UserService userService, ExchangeService exchangeService,
-                      DealService dealService, PaymentReceiptsService paymentReceiptsService) {
+                      DealService dealService, PaymentReceiptRepository paymentReceiptRepository) {
         super(responseSender, userService);
         this.exchangeService = exchangeService;
         this.dealService = dealService;
-        this.paymentReceiptsService = paymentReceiptsService;
+        this.paymentReceiptRepository = paymentReceiptRepository;
     }
 
     @Override
@@ -211,7 +212,7 @@ public class BuyBitcoin extends Processor {
             case 7:
                 if (update.hasMessage() && update.getMessage().hasPhoto()) {
                     Deal deal = dealService.getByPid(userService.getCurrentDealByChatId(chatId));
-                    PaymentReceipt paymentReceipt = paymentReceiptsService.save(PaymentReceipt.builder()
+                    PaymentReceipt paymentReceipt = paymentReceiptRepository.save(PaymentReceipt.builder()
                             .receipt(BotImageUtil.getImageId(update.getMessage().getPhoto()))
                             .receiptFormat(ReceiptFormat.PICTURE)
                             .build());
@@ -221,7 +222,7 @@ public class BuyBitcoin extends Processor {
                     dealService.save(deal);
                 } else if (update.hasMessage() && update.getMessage().hasDocument()) {
                     Deal deal = dealService.getByPid(userService.getCurrentDealByChatId(chatId));
-                    PaymentReceipt paymentReceipt = paymentReceiptsService.save(PaymentReceipt.builder()
+                    PaymentReceipt paymentReceipt = paymentReceiptRepository.save(PaymentReceipt.builder()
                             .receipt(update.getMessage().getDocument().getFileId())
                             .receiptFormat(ReceiptFormat.PDF)
                             .build());
