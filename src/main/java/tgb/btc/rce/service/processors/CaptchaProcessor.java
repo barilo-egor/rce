@@ -4,6 +4,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.annotation.CommandProcessor;
+import tgb.btc.rce.enums.BotKeyboard;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.exception.BaseException;
 import tgb.btc.rce.repository.UserDataRepository;
@@ -75,7 +76,7 @@ public class CaptchaProcessor extends Processor {
                 break;
             case 3:
                 userService.ban(chatId);
-                responseSender.sendMessage(chatId, "Вы были заблокированы.");
+                responseSender.sendMessage(chatId, "Вы были заблокированы.", BotKeyboard.OPERATOR);
                 userService.setDefaultValues(chatId);
                 antiSpam.removeUser(chatId);
                 break;

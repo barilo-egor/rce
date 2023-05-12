@@ -148,9 +148,9 @@ public interface DealRepository extends BaseRepository<Deal> {
     BigDecimal getUserAmountSum(@Param("chatId") Long chatId, @Param("dealType") DealType dealType);
 
     @Modifying
-    @Query(value = "delete from Deal where user.chatId=:userChatId")
+    @Query(value = "delete from Deal where user.pid in (select pid from User where chatId=:userChatId)")
     void deleteByUserChatId(@Param("userChatId") Long userChatId);
 
-    @Query(value = "from Deal where user.chatId=:userChatId")
+    @Query(value = "from Deal where user.pid in (select pid from User where chatId=:userChatId)")
     List<Deal> getByChatId(Long userChatId);
 }

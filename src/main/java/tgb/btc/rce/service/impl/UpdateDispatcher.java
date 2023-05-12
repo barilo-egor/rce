@@ -51,10 +51,10 @@ public class UpdateDispatcher implements IUpdateDispatcher {
         Long chatId = UpdateUtil.getChatId(update);
         boolean isUserExists = userService.existByChatId(chatId);
         if (!isUserExists || antiSpam.isSpamUser(chatId)) {
-            if (!isUserExists) userService.register(update);
-            return Command.CAPTCHA;
-        }
-        if (antiSpam.isSpamUser(chatId)) {
+            if (!isUserExists) {
+                userService.register(update);
+                antiSpam.addUser(chatId);
+            }
             return Command.CAPTCHA;
         }
         Command command;
