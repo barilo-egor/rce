@@ -3,7 +3,7 @@ package tgb.btc.rce.service;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import tgb.btc.rce.util.AntiSpamPropertiesUtil;
+import tgb.btc.rce.enums.BotProperties;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,7 +43,7 @@ public class AntiSpam {
     @Async
     public void check() {
         synchronized (this) {
-            int allowedCount = AntiSpamPropertiesUtil.getInt("allowed.count");
+            int allowedCount = BotProperties.ANTI_SPAM_PROPERTIES.getInteger("allowed.count",20);
             for (Map.Entry<Long, Integer> entry : MESSAGES_COUNTER.entrySet()) {
                 if (entry.getValue() > allowedCount) addUser(entry.getKey());
             }

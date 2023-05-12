@@ -5,6 +5,7 @@ import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import tgb.btc.rce.constants.FilePaths;
+import tgb.btc.rce.enums.BotProperties;
 import tgb.btc.rce.vo.BulkDiscount;
 
 import java.math.BigDecimal;
