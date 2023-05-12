@@ -42,7 +42,6 @@ public class UpdateDispatcher implements IUpdateDispatcher {
         Long chatId = UpdateUtil.getChatId(update);
         antiSpam.saveTime(chatId);
         if (BooleanUtils.isTrue(userService.getIsBannedByChatId(chatId))) return;
-        if (!userService.existByChatId(chatId)) userService.register(update);
         Command command = getCommand(update);
         int step = userService.getStepByChatId(chatId);
         ((Processor) applicationContext.getBean(CommandProcessorLoader.getByCommand(command, step))).process(update);
@@ -50,10 +49,15 @@ public class UpdateDispatcher implements IUpdateDispatcher {
 
     private Command getCommand(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
-        Command command;
+        boolean isUserExists = userService.existByChatId(chatId);
+        if (!isUserExists || antiSpam.isSpamUser(chatId)) {
+            if (!isUserExists) userService.register(update);
+            return Command.CAPTCHA;
+        }
         if (antiSpam.isSpamUser(chatId)) {
             return Command.CAPTCHA;
         }
+        Command command;
         if (!isOn() && !userService.isAdminByChatId(chatId)) return Command.BOT_OFFED;
         if (userService.getStepByChatId(chatId).equals(User.DEFAULT_STEP) || CommandUtil.isStartCommand(update))
             command = Command.fromUpdate(update);

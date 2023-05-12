@@ -28,6 +28,11 @@ public enum Command {
     INLINE_DELETE("inline_delete", false),
     CAPTCHA("captcha", false),
 
+    /**
+     * HIDDEN
+     */
+    DELETE_USER("/deleteuser", true),
+
     /** MAIN */
     BUY_BITCOIN("\uD83D\uDCB0 Купить", false),
     SELL_BITCOIN("\uD83D\uDCC8 Продать", false),
