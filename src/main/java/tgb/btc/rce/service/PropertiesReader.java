@@ -72,8 +72,7 @@ public interface PropertiesReader {
 
     default Double getDouble(String key, Double defaultValue) {
         String value = getString(key);
-        if (StringUtils.isNotBlank(value) && (Pattern.matches("([0-9]*)\\.([0-9]*)", value)
-                || StringUtils.isNumeric(value))) {
+        if (StringUtils.isNotBlank(value)) {
             return Double.valueOf(value);
         }
         return defaultValue;

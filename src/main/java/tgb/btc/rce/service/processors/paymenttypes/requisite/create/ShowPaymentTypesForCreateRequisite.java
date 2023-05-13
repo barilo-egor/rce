@@ -1,5 +1,6 @@
 package tgb.btc.rce.service.processors.paymenttypes.requisite.create;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -23,6 +24,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @CommandProcessor(command = Command.NEW_PAYMENT_TYPE_REQUISITE, step = 1)
+@Slf4j
 public class ShowPaymentTypesForCreateRequisite extends Processor {
 
     private UserDataRepository userDataRepository;
@@ -53,6 +55,7 @@ public class ShowPaymentTypesForCreateRequisite extends Processor {
         }
         String[] values = update.getCallbackQuery().getData().split(BotStringConstants.CALLBACK_DATA_SPLITTER);
         userDataRepository.updateLongByUserPid(userRepository.getPidByChatId(chatId), Long.parseLong(values[1]));
+        log.info("Пид типа оплаты=" + Long.parseLong(values[1]));
         responseSender.deleteMessage(chatId, update.getCallbackQuery().getMessage().getMessageId());
         userService.nextStep(chatId);
         responseSender.sendMessage(chatId, "Введите реквизит.");
