@@ -67,7 +67,7 @@ public class ShareReview extends Processor {
                             .build());
                 } else if (update.hasCallbackQuery()) {
                     if (update.getCallbackQuery().getData().equals("public"))
-                        author = "Отзыв от @" + update.getCallbackQuery().getFrom().getUserName() + "\n\n";
+                        author = "Отзыв от " + update.getCallbackQuery().getFrom().getUserName() + "\n\n";
                     reviewService.save(Review.builder()
                             .text(author + userService.getBufferVariable(chatId))
                             .username(update.getCallbackQuery().getFrom().getUserName())
