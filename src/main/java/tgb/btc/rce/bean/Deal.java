@@ -29,6 +29,7 @@ public class Deal extends BasePersist {
     @Column(name = "DATE_TIME")
     private LocalDateTime dateTime;
 
+    @Deprecated
     @Column(name = "DATE")
     private LocalDate date;
 
@@ -56,6 +57,7 @@ public class Deal extends BasePersist {
     private String verificationPhoto;
 
     @Column(name = "USER_CHECK")
+    @Deprecated
     private String userCheck;
 
     @Column(name = "IS_ACTIVE")
