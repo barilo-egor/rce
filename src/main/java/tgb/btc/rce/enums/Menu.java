@@ -1,18 +1,25 @@
 package tgb.btc.rce.enums;
 
+import tgb.btc.rce.service.impl.UserService;
+
 import java.util.List;
 
 public enum Menu {
-    MAIN(List.of(Command.BUY_BITCOIN, Command.SELL_BITCOIN, Command.CONTACTS, Command.DRAWS, Command.REFERRAL)),
+    MAIN(ReferralType.STANDARD.equals(UserService.REFERRAL_TYPE)
+            ? List.of(Command.BUY_BITCOIN, Command.SELL_BITCOIN, Command.CONTACTS, Command.DRAWS, Command.REFERRAL)
+            :List.of(Command.BUY_BITCOIN, Command.SELL_BITCOIN, Command.CONTACTS, Command.DRAWS)),
     DRAWS(List.of(Command.LOTTERY, Command.ROULETTE, Command.BACK)),
     ASK_CONTACT(List.of(Command.SHARE_CONTACT, Command.CANCEL)),
     ADMIN_PANEL(List.of(Command.REQUESTS, Command.BOT_SETTINGS, Command.REPORTS, Command.DISCOUNTS,
                         Command.USERS, Command.QUIT_ADMIN_PANEL)),
-    DISCOUNTS(List.of(Command.RANK_DISCOUNT, Command.TURN_RANK_DISCOUNT, Command.PERSONAL_BUY_DISCOUNT,
-                      Command.PERSONAL_SELL_DISCOUNT, Command.BULK_DISCOUNTS, Command.REFERRAL_PERCENT,
-                      Command.ADMIN_BACK)),
-    USERS(List.of(Command.SEND_MESSAGES,  Command.BAN_UNBAN, Command.USER_REFERRAL_BALANCE, Command.USER_INFORMATION,
-                  Command.ADMIN_BACK)),
+    DISCOUNTS(ReferralType.STANDARD.equals(UserService.REFERRAL_TYPE)
+            ? List.of(Command.RANK_DISCOUNT, Command.TURN_RANK_DISCOUNT, Command.PERSONAL_BUY_DISCOUNT,
+                      Command.PERSONAL_SELL_DISCOUNT, Command.BULK_DISCOUNTS, Command.REFERRAL_PERCENT, Command.ADMIN_BACK)
+            : List.of(Command.RANK_DISCOUNT, Command.TURN_RANK_DISCOUNT, Command.PERSONAL_BUY_DISCOUNT,
+            Command.PERSONAL_SELL_DISCOUNT, Command.BULK_DISCOUNTS, Command.ADMIN_BACK)),
+    USERS(ReferralType.STANDARD.equals(UserService.REFERRAL_TYPE)
+            ? List.of(Command.SEND_MESSAGES,  Command.BAN_UNBAN, Command.USER_INFORMATION, Command.USER_REFERRAL_BALANCE, Command.ADMIN_BACK)
+            : List.of(Command.SEND_MESSAGES,  Command.BAN_UNBAN, Command.USER_INFORMATION, Command.ADMIN_BACK)),
     EDIT_CONTACTS(List.of(Command.ADD_CONTACT, Command.DELETE_CONTACT, Command.ADMIN_BACK)),
     ADMIN_BACK(List.of(Command.ADMIN_BACK)),
     SEND_MESSAGES(List.of(Command.MAILING_LIST, Command.SEND_MESSAGE_TO_USER, Command.ADMIN_BACK)),
@@ -20,8 +27,10 @@ public enum Menu {
                          Command.BOT_VARIABLES, Command.SYSTEM_MESSAGES, Command.PAYMENT_TYPES,
                          Command.TURNING_CURRENCY, Command.CHANGE_USD_COURSE, Command.EDIT_CONTACTS,
                          Command.ADMIN_BACK)),
-    REQUESTS(List.of(Command.NEW_DEALS, Command.NEW_WITHDRAWALS, Command.NEW_REVIEWS, Command.NEW_SPAM_BANS,
-                     Command.ADMIN_BACK)),
+    REQUESTS(ReferralType.STANDARD.equals(UserService.REFERRAL_TYPE)
+            ? List.of(Command.NEW_DEALS, Command.NEW_WITHDRAWALS, Command.NEW_REVIEWS, Command.NEW_SPAM_BANS,
+                     Command.ADMIN_BACK)
+            :List.of(Command.NEW_DEALS, Command.NEW_REVIEWS, Command.NEW_SPAM_BANS, Command.ADMIN_BACK)),
     REPORTS(List.of(Command.CHECKS_FOR_DATE, Command.USERS_REPORT, Command.DEAL_REPORTS, Command.PARTNERS_REPORT,
                     Command.USERS_DEALS_REPORT, Command.LOTTERY_REPORT, Command.ADMIN_BACK)),
 

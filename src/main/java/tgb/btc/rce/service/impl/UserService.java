@@ -5,18 +5,20 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import tgb.btc.rce.bean.ReferralUser;
 import tgb.btc.rce.bean.User;
 import tgb.btc.rce.bean.UserData;
 import tgb.btc.rce.bean.UserDiscount;
+import tgb.btc.rce.enums.BotProperties;
 import tgb.btc.rce.enums.Command;
-import tgb.btc.rce.enums.PropertiesMessage;
+import tgb.btc.rce.enums.ReferralType;
 import tgb.btc.rce.exception.BaseException;
-import tgb.btc.rce.repository.*;
-import tgb.btc.rce.service.IResponseSender;
-import tgb.btc.rce.util.*;
-import tgb.btc.rce.vo.InlineButton;
+import tgb.btc.rce.repository.BaseRepository;
+import tgb.btc.rce.repository.UserDataRepository;
+import tgb.btc.rce.repository.UserDiscountRepository;
+import tgb.btc.rce.repository.UserRepository;
+import tgb.btc.rce.util.CommandUtil;
+import tgb.btc.rce.util.UpdateUtil;
 
 import java.util.List;
 import java.util.Objects;
@@ -31,6 +33,9 @@ public class UserService extends BasePersistService<User> {
     private UserDiscountRepository userDiscountRepository;
 
     private UserDataRepository userDataRepository;
+
+    public static final ReferralType REFERRAL_TYPE =
+            ReferralType.valueOf(BotProperties.MODULES_PROPERTIES.getString("referral.type"));
 
     @Autowired
     public void setUserDataRepository(UserDataRepository userDataRepository) {
@@ -65,7 +70,7 @@ public class UserService extends BasePersistService<User> {
     public User register(Update update) {
         User newUser = User.buildFromUpdate(update);
         User inviter = null;
-        if (CommandUtil.isStartCommand(update)) {
+        if (CommandUtil.isStartCommand(update) && ReferralType.STANDARD.equals(REFERRAL_TYPE)) {
             try {
                 Long chatIdFrom = Long.parseLong(update.getMessage().getText()
                         .replaceAll(Command.START.getText(), "").trim());
