@@ -53,8 +53,12 @@ public interface DealRepository extends BaseRepository<Deal> {
     @Query("select count(d) from Deal d where d.user.chatId=:chatId and d.isPassed=true and d.isActive=false")
     Long getPassedDealsCountByUserChatId(@Param("chatId") Long chatId);
 
-    @Query("select count(d) from Deal d where d.user.chatId=:chatId and d.isPassed=false and d.dealType=:dealType")
+    @Query("select count(d) from Deal d where d.user.chatId=:chatId and d.isPassed=true and d.dealType=:dealType")
     Long getPassedDealsCountByUserChatId(@Param("chatId") Long chatId, @Param("dealType") DealType dealType);
+
+
+    @Query("select wallet from Deal where pid=(select max(d.pid) from Deal d where d.user.chatId=:chatId and d.isPassed=true and d.dealType=:dealType)")
+    String getWalletFromLastPassedByChatId(@Param("chatId") Long chatId, @Param("dealType") DealType dealType);
 
     Deal findByPid(Long pid);
 
@@ -104,9 +108,6 @@ public interface DealRepository extends BaseRepository<Deal> {
 
     @Query("from Deal d where d.date=:date and d.isPassed=true")
     List<Deal> getPassedByDate(@Param("date") LocalDate dateTime);
-
-    @Query("select wallet from Deal where pid=(select max(d.pid) from Deal d where d.isPassed=true and d.user.chatId=:chatId and d.dealType=:dealType)")
-    String getWalletFromLastPassedByChatId(@Param("chatId") Long chatId, @Param("dealType") DealType dealType);
 
     @Query("select dealType from Deal where pid=:pid")
     DealType getDealTypeByPid(@Param("pid") Long pid);

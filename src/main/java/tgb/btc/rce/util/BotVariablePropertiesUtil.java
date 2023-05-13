@@ -81,8 +81,8 @@ public class BotVariablePropertiesUtil {
     }
 
     public static BigDecimal getCommission(CryptoCurrency cryptoCurrency, DealType dealType) {
-        BotVariableType type = DealType.isBuy(dealType) ? BotVariableType.FIX_COMMISSION_BUY
-                                                        : BotVariableType.FIX_COMMISSION_SELL;
+        BotVariableType type = DealType.isBuy(dealType) ? BotVariableType.COMMISSION_BUY
+                                                        : BotVariableType.COMMISSION_SELL;
         return getBigDecimal(type.getKey(cryptoCurrency));
     }
 

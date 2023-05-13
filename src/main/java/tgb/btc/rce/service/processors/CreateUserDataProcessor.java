@@ -1,6 +1,7 @@
 package tgb.btc.rce.service.processors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.bean.User;
@@ -38,6 +39,7 @@ public class CreateUserDataProcessor extends Processor {
     }
 
     @Override
+    @Async
     public void run(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
         responseSender.sendMessage(chatId, "Начало создания UserData.");
