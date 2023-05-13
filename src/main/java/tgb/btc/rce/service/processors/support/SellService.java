@@ -215,7 +215,6 @@ public class SellService {
 
     public void askForWallet(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
-        responseSender.deleteMessage(chatId, UpdateUtil.getMessage(update).getMessageId());
         Deal deal = dealService.findById(userService.getCurrentDealByChatId(chatId));
         String message = "Введите " + deal.getPaymentType().getName() + " реквизиты, куда вы "
                 + "хотите получить "
@@ -276,8 +275,6 @@ public class SellService {
         if (!update.hasCallbackQuery()) {
             return false;
         }
-        responseSender.deleteMessage(UpdateUtil.getChatId(update),
-                update.getCallbackQuery().getMessage().getMessageId());
         PaymentType paymentType = paymentTypeRepository.getByPid(Long.parseLong(update.getCallbackQuery().getData()));
         Long currentDealPid = userService.getCurrentDealByChatId(UpdateUtil.getChatId(update));
         if (paymentType.getMinSum().compareTo(dealRepository.getAmountByPid(currentDealPid)) > 0) {

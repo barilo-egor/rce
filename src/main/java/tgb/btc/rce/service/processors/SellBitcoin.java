@@ -149,6 +149,8 @@ public class SellBitcoin extends Processor {
                 }
                 break;
             case 3:
+                responseSender.deleteMessage(UpdateUtil.getChatId(update),
+                        update.getCallbackQuery().getMessage().getMessageId());
                 Boolean result = sellService.savePaymentType(update);
                 if (BooleanUtils.isTrue(result)) {
                     sellService.askForWallet(update);

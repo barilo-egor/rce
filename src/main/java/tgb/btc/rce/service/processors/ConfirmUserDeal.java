@@ -9,9 +9,7 @@ import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.bean.Deal;
 import tgb.btc.rce.bean.User;
 import tgb.btc.rce.constants.BotStringConstants;
-import tgb.btc.rce.enums.BotVariableType;
-import tgb.btc.rce.enums.Command;
-import tgb.btc.rce.enums.DealType;
+import tgb.btc.rce.enums.*;
 import tgb.btc.rce.exception.BaseException;
 import tgb.btc.rce.repository.UserRepository;
 import tgb.btc.rce.service.IResponseSender;
@@ -134,16 +132,18 @@ public class ConfirmUserDeal extends Processor {
         }
         responseSender.sendMessage(deal.getUser().getChatId(), message);
 
-        Integer reviewPrise = BotVariablePropertiesUtil.getInt(BotVariableType.REVIEW_PRISE); // TODO уточнить нужно ли 30 выводить или брать число из проперти
-        responseSender.sendMessage(deal.getUser().getChatId(), "Хотите оставить отзыв?\n" +
-                        "За оставленный отзыв вы получите вознаграждение в размере до 30₽" +
-                        " на реферальный баланс после публикации.",
-                KeyboardUtil.buildInline(List.of(
-                        InlineButton.builder()
-                                .data(Command.SHARE_REVIEW.getText())
-                                .text("Оставить")
-                                .build()
-                        )
-                ));
+        if (UserService.REFERRAL_TYPE.equals(ReferralType.STANDARD)) {
+            Integer reviewPrise = BotVariablePropertiesUtil.getInt(BotVariableType.REVIEW_PRISE); // TODO уточнить нужно ли 30 выводить или брать число из проперти
+            responseSender.sendMessage(deal.getUser().getChatId(), "Хотите оставить отзыв?\n" +
+                            "За оставленный отзыв вы получите вознаграждение в размере до 30₽" +
+                            " на реферальный баланс после публикации.",
+                    KeyboardUtil.buildInline(List.of(
+                                    InlineButton.builder()
+                                            .data(Command.SHARE_REVIEW.getText())
+                                            .text("Оставить")
+                                            .build()
+                            )
+                    ));
+        }
     }
 }
