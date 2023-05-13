@@ -1,6 +1,5 @@
 package tgb.btc.rce.service;
 
-import com.google.common.collect.Lists;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
@@ -10,7 +9,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public interface PropertiesReader {
@@ -54,20 +58,8 @@ public interface PropertiesReader {
         return defaultValue;
     }
 
-    default Double getDouble(String key) {
-        return getDouble(key, null);
-    }
-
     default BigDecimal getBigDecimal(String key) {
         return BigDecimal.valueOf(getDouble(key));
-    }
-
-    default Double getDouble(String key, Double defaultValue) {
-        String value = getString(key);
-        if (StringUtils.isNotBlank(value)) {
-            return Double.parseDouble(value);
-        }
-        return defaultValue;
     }
 
     default Long getLong(String key, Long defaultValue) {
@@ -76,6 +68,19 @@ public interface PropertiesReader {
             return Long.valueOf(value);
         }
         return defaultValue;
+    }
+
+    default Double getDouble(String key, Double defaultValue) {
+        String value = getString(key);
+        if (StringUtils.isNotBlank(value) && (Pattern.matches("([0-9]*)\\.([0-9]*)", value)
+                || StringUtils.isNumeric(value))) {
+            return Double.valueOf(value);
+        }
+        return defaultValue;
+    }
+
+    default Double getDouble(String key) {
+        return getDouble(key, null);
     }
 
     default boolean isNotBlankSafely(String key) {
@@ -96,6 +101,20 @@ public interface PropertiesReader {
         return BooleanUtils.toBooleanObject(getString(key));
     }
 
+    default List<String> getKeys() {
+        List<String> keys = new ArrayList<>();
+        ReaderSupport.getInstance(this).getKeys().forEachRemaining(keys::add);
+        return keys;
+    }
+
+    default void setProperty(String key, Object value) {
+        ReaderSupport.getInstance(this).setProperty(key, value);
+    }
+
+    default File getFile() {
+        return ReaderSupport.getInstance(this).getFile();
+    }
+
     default void reload() {
         ReaderSupport.properties.remove(this);
         ReaderSupport.getInstance(this);
@@ -112,6 +131,7 @@ public interface PropertiesReader {
                     instance.setFileName(propertiesReader.getFileName());
                     instance.setListDelimiter(propertiesReader.getListDelimiter());
                     instance.setDelimiterParsingDisabled(true);
+                    instance.setAutoSave(true);
                     instance.load();
                     instance.setReloadingStrategy(new FileChangedReloadingStrategy());
                     properties.put(propertiesReader, instance);

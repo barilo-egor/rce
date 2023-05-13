@@ -6,11 +6,10 @@ import tgb.btc.rce.enums.BotVariableType;
 import tgb.btc.rce.enums.CryptoCurrency;
 import tgb.btc.rce.enums.DealType;
 import tgb.btc.rce.exception.BaseException;
+import tgb.btc.rce.exception.PropertyValueNotFoundException;
 
-import java.io.File;
 import java.math.BigDecimal;
 import java.util.Objects;
-import java.util.Properties;
 
 @Slf4j
 public class BotVariablePropertiesUtil {
@@ -56,8 +55,39 @@ public class BotVariablePropertiesUtil {
             throw new BaseException(String.format(wrongFormat, botVariableType.getKey()));
         }
     }
-    public static void validate(File file) throws BaseException {
-        // TODO
+
+    public static Double getMinSumBuy(CryptoCurrency cryptoCurrency) {
+        switch (cryptoCurrency) {
+            case BITCOIN:
+                return BotVariablePropertiesUtil.getDouble(BotVariableType.MIN_SUM_BUY_BTC);
+            case LITECOIN:
+                return BotVariablePropertiesUtil.getDouble(BotVariableType.MIN_SUM_BUY_LTC);
+            case USDT:
+                return BotVariablePropertiesUtil.getDouble(BotVariableType.MIN_SUM_BUY_USDT);
+            default:
+                throw new BaseException("Не определена крипто валюта.");
+        }
+    }
+
+    public static Double getMinSumSell(CryptoCurrency cryptoCurrency) {
+        switch (cryptoCurrency) {
+            case BITCOIN:
+                return BotVariablePropertiesUtil.getDouble(BotVariableType.MIN_SUM_SELL_BTC);
+            case LITECOIN:
+                return BotVariablePropertiesUtil.getDouble(BotVariableType.MIN_SUM_SELL_LTC);
+            case USDT:
+                return BotVariablePropertiesUtil.getDouble(BotVariableType.MIN_SUM_SELL_USDT);
+            default:
+                throw new BaseException("Не определена крипто валюта.");
+        }
+    }
+
+    public static void validate(BotProperties botProperties) throws PropertyValueNotFoundException {
+        for (String key : botProperties.getKeys()) {
+            if (Objects.isNull(botProperties.getString(key))) {
+                throw new PropertyValueNotFoundException("Не корректно указано значение для переменной " + key + ".");
+            }
+        }
     }
 
     public static Double getMinSum(CryptoCurrency cryptoCurrency, DealType dealType) {
