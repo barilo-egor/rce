@@ -7,6 +7,7 @@ import tgb.btc.rce.bean.ReferralUser;
 import tgb.btc.rce.bean.User;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.PropertiesMessage;
+import tgb.btc.rce.enums.ReferralType;
 import tgb.btc.rce.repository.DealRepository;
 import tgb.btc.rce.repository.LotteryWinRepository;
 import tgb.btc.rce.repository.SpamBanRepository;
@@ -71,18 +72,26 @@ public class UserInfoService {
         String userName = Objects.nonNull(user.getUsername()) ? user.getUsername() : "скрыт";
         Long dealsCount = dealRepository.getCountPassedByUserChatId(chatId);
         List<ReferralUser> referralUsers = userRepository.getUserReferralsByChatId(chatId);
-        int numberOfReferrals = referralUsers.size();
-        int numberOfActiveReferrals = (int) referralUsers.stream()
-                .filter(usr -> dealRepository.getCountPassedByUserChatId(usr.getChatId()) > 0).count();
-        String currentBalance = userRepository.getReferralBalanceByChatId(chatId).toString();
         String isAdmin = user.getAdmin() ? "да" : "нет";
         String isBanned = user.getBanned() ? "да" : "нет";
         Long lotteryWinCount = lotteryWinRepository.getLotteryWinCount(chatId);
         String fromChatId = Objects.nonNull(user.getFromChatId()) ? String.valueOf(user.getFromChatId()) : "отсутствует";
-        return String.format(MessagePropertiesUtil.getMessage(PropertiesMessage.USER_INFORMATION_MAIN),
-                             chatId, userName, dealsCount, numberOfReferrals,
-                             numberOfActiveReferrals, currentBalance, isBanned, isAdmin,
-                             lotteryWinCount, fromChatId);
+        String result = null;
+        if (ReferralType.STANDARD.equals(UserService.REFERRAL_TYPE)) {
+            int numberOfReferrals = referralUsers.size();
+            int numberOfActiveReferrals = (int) referralUsers.stream()
+                    .filter(usr -> dealRepository.getCountPassedByUserChatId(usr.getChatId()) > 0).count();
+            String currentBalance = userRepository.getReferralBalanceByChatId(chatId).toString();
+            result = String.format(MessagePropertiesUtil.getMessage(PropertiesMessage.USER_INFORMATION_MAIN),
+                    chatId, userName, dealsCount, numberOfReferrals,
+                    numberOfActiveReferrals, currentBalance, isBanned, isAdmin,
+                    lotteryWinCount, fromChatId);
+        } else {
+            result = String.format(MessagePropertiesUtil.getMessage(PropertiesMessage.USER_INFORMATION_WITHOUT_REFERRAL_MAIN),
+                    chatId, userName, dealsCount, isBanned, isAdmin,
+                    lotteryWinCount, fromChatId);
+        }
+        return result;
     }
 
     public void sendSpamBannedUser(Long messageChatId, Long spamBanPid) {
