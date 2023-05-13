@@ -1,14 +1,10 @@
 package tgb.btc.rce.util;
 
 import lombok.extern.slf4j.Slf4j;
-import tgb.btc.rce.constants.FilePaths;
 import tgb.btc.rce.enums.BotProperties;
 import tgb.btc.rce.exception.BaseException;
 
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.Objects;
-import java.util.Properties;
 
 @Slf4j
 public final class BotPropertiesUtil {

@@ -1,10 +1,8 @@
 package tgb.btc.rce.util;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.lang.BooleanUtils;
-import tgb.btc.rce.constants.FilePaths;
+import tgb.btc.rce.enums.BotProperties;
 import tgb.btc.rce.enums.CryptoCurrency;
 import tgb.btc.rce.enums.DealType;
 
@@ -18,18 +16,12 @@ import java.util.stream.Collectors;
 public class TurningCurrenciesUtil {
     public static Map<CryptoCurrency, Boolean> BUY_TURNING = new HashMap<>();
     public static Map<CryptoCurrency, Boolean> SELL_TURNING = new HashMap<>();
-    public static PropertiesConfiguration TURNING_PROPERTIES;
 
     static {
-        try {
-            TURNING_PROPERTIES = new PropertiesConfiguration(FilePaths.CURRENCIES_TURNING);
             for (CryptoCurrency currency : CryptoCurrency.values()) {
-                BUY_TURNING.put(currency, TURNING_PROPERTIES.getBoolean("buy." + currency.name()));
-                SELL_TURNING.put(currency, TURNING_PROPERTIES.getBoolean("sell." + currency.name()));
+                BUY_TURNING.put(currency, BotProperties.TURNING_CURRENCIES_PROPERTIES.getBoolean("buy." + currency.name()));
+                SELL_TURNING.put(currency, BotProperties.TURNING_CURRENCIES_PROPERTIES.getBoolean("sell." + currency.name()));
             }
-        } catch (ConfigurationException e) {
-            log.error("Ошибка при прочтении " + FilePaths.CURRENCIES_TURNING);
-        }
     }
 
     public static boolean getIsOn(CryptoCurrency cryptoCurrency, DealType dealType) {

@@ -14,7 +14,6 @@ import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.impl.UserService;
-import tgb.btc.rce.util.BotVariablePropertiesUtil;
 import tgb.btc.rce.util.UpdateUtil;
 
 @CommandProcessor(command = Command.TURNING_RANK_DISCOUNT)

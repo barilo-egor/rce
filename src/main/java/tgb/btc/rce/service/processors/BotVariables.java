@@ -10,7 +10,7 @@ import tgb.btc.rce.constants.FilePaths;
 import tgb.btc.rce.enums.BotKeyboard;
 import tgb.btc.rce.enums.BotProperties;
 import tgb.btc.rce.enums.Command;
-import tgb.btc.rce.exception.BaseException;
+import tgb.btc.rce.exception.PropertyValueNotFoundException;
 import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.impl.UserService;
@@ -60,16 +60,22 @@ public class BotVariables extends Processor {
             responseSender.sendMessage(chatId, "Ошибка при скачивании новых переменных: " + e.getMessage());
             return;
         }
-        File newProperties = new File(FilePaths.BOT_VARIABLE_BUFFER_PROPERTIES);
         try {
-            BotVariablePropertiesUtil.validate(newProperties);
-        } catch (BaseException e) {
-            log.error("Ошибка при чтении файла: ", e);
-            responseSender.sendMessage(chatId, "Ошибка при чтении файла: " + e.getMessage());
+            BotVariablePropertiesUtil.validate(BotProperties.BOT_VARIABLE_BUFFER_PROPERTIES);
+        } catch (PropertyValueNotFoundException e) {
+            log.error(e.getMessage(),e);
+            responseSender.sendMessage(chatId,e.getMessage());
+            try {
+                FileUtils.delete(BotProperties.BOT_VARIABLE_BUFFER_PROPERTIES.getFile());
+            } catch (IOException ex) {
+                log.error("Ошибки при удалении " + FilePaths.BOT_VARIABLE_BUFFER_PROPERTIES, ex);
+                responseSender.sendMessage(chatId, "Ошибки при удалении " + FilePaths.BOT_VARIABLE_BUFFER_PROPERTIES + ":"
+                        + ex.getMessage());
+            }
             return;
         }
         try {
-            FileUtils.delete(new File(FilePaths.BOT_VARIABLE_PROPERTIES));
+            FileUtils.delete(BotProperties.BOT_VARIABLE_PROPERTIES.getFile());
         } catch (IOException e) {
             log.error("Ошибки при удалении " + FilePaths.BOT_VARIABLE_PROPERTIES, e);
             responseSender.sendMessage(chatId, "Ошибки при удалении " + FilePaths.BOT_VARIABLE_PROPERTIES + ":"
@@ -77,7 +83,7 @@ public class BotVariables extends Processor {
             return;
         }
         try {
-            FileUtils.moveFile(newProperties, new File(FilePaths.BOT_VARIABLE_PROPERTIES));
+            FileUtils.moveFile(BotProperties.BOT_VARIABLE_BUFFER_PROPERTIES.getFile(), BotProperties.BOT_VARIABLE_PROPERTIES.getFile());
         } catch (IOException e) {
             log.error("Ошибки при перемещении файла + " + FilePaths.BOT_VARIABLE_BUFFER_PROPERTIES
                     + " в " + FilePaths.BOT_VARIABLE_PROPERTIES, e);
