@@ -46,9 +46,11 @@ public class UsersDealsReport extends Processor {
             Row head = sheet.createRow(0);
             sheet.setDefaultColumnWidth(30);
             Cell headCell = head.createCell(0);
-            headCell.setCellValue("Количество совершенных сделок");
-            headCell = headCell.getRow().createCell(1);
+            headCell.setCellValue("Chat ID");
+            headCell = head.createCell(1);
             headCell.setCellValue("Username");
+            headCell = head.createCell(2);
+            headCell.setCellValue("Количество совершенных сделок");
 
             int i = 2;
 
