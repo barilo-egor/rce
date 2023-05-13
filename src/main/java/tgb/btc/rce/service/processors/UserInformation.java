@@ -13,6 +13,7 @@ import tgb.btc.rce.repository.LotteryWinRepository;
 import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.impl.DealService;
+import tgb.btc.rce.service.impl.UserInfoService;
 import tgb.btc.rce.service.impl.UserService;
 import tgb.btc.rce.service.processors.support.MessagesService;
 import tgb.btc.rce.util.MessagePropertiesUtil;
@@ -27,8 +28,21 @@ import java.util.Objects;
 @CommandProcessor(command = Command.USER_INFORMATION)
 public class UserInformation extends Processor {
 
+    private UserInfoService userInfoService;
+
     private MessagesService messagesService;
 
+    @Autowired
+    public void setMessagesService(MessagesService messagesService) {
+        this.messagesService = messagesService;
+    }
+
+    @Autowired
+    public void setUserInfoService(UserInfoService userInfoService) {
+        this.userInfoService = userInfoService;
+    }
+
+    @Autowired
     public UserInformation(IResponseSender responseSender, UserService userService) {
         super(responseSender, userService);
     }
@@ -42,7 +56,7 @@ public class UserInformation extends Processor {
                 messagesService.askForChatId(update, Command.USER_INFORMATION);
                 break;
             case 1:
-                userService.sendUserInformation(chatId, NumberUtil.getInputLong(UpdateUtil.getMessageText(update)));
+                userInfoService.sendUserInformation(chatId, NumberUtil.getInputLong(UpdateUtil.getMessageText(update)));
                 processToAdminMainPanel(chatId);
                 break;
         }

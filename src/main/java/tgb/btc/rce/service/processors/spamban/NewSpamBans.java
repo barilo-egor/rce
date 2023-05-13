@@ -7,6 +7,7 @@ import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.repository.SpamBanRepository;
 import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
+import tgb.btc.rce.service.impl.UserInfoService;
 import tgb.btc.rce.service.impl.UserService;
 import tgb.btc.rce.util.UpdateUtil;
 
@@ -14,6 +15,13 @@ import tgb.btc.rce.util.UpdateUtil;
 public class NewSpamBans extends Processor {
 
     private SpamBanRepository spamBanRepository;
+
+    private UserInfoService userInfoService;
+
+    @Autowired
+    public void setUserInfoService(UserInfoService userInfoService) {
+        this.userInfoService = userInfoService;
+    }
 
     @Autowired
     public void setSpamBanRepository(SpamBanRepository spamBanRepository) {
@@ -29,7 +37,7 @@ public class NewSpamBans extends Processor {
     public void run(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
         for (Long spamBanPid : spamBanRepository.getPids()) {
-            userService.sendSpamBannedUser(chatId, spamBanPid);
+            userInfoService.sendSpamBannedUser(chatId, spamBanPid);
         }
     }
 
