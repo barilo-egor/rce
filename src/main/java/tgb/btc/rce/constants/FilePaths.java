@@ -24,6 +24,8 @@ public interface FilePaths {
 
     String ANTI_SPAM_PROPERTIES = "config/antispam/antispam.properties";
 
+    String MODULES_PROPERTIES = "config/bot/modules.properties";
+
     /**
      * PICTURES
      */

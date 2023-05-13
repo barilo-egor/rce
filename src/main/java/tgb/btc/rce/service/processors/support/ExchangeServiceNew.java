@@ -72,6 +72,7 @@ public class ExchangeServiceNew {
     public void askForSum(Long chatId, CryptoCurrency currency, DealType dealType) {
         String text = MessagePropertiesUtil.getMessage(PropertiesMessage.DEAL_INPUT_SUM,
                                                        dealRepository.getCryptoCurrencyByPid(userRepository.getCurrentDealByChatId(chatId)));
+
         messageService.sendMessageAndSaveMessageId(chatId, text, keyboardService.getCalculator(currency, dealType));
     }
 
