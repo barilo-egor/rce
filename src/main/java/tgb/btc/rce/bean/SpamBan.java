@@ -17,6 +17,6 @@ public class SpamBan extends BasePersist {
     @OneToOne
     private User user;
 
-    @Column("LOCAL_DATE_TIMEN")
+    @Column(name = "LOCAL_DATE_TIMEN")
     private LocalDateTime localDateTime;
 }
