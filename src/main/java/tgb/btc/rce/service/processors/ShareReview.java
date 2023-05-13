@@ -61,16 +61,16 @@ public class ShareReview extends Processor {
                 if (update.hasMessage()) {
                     reviewService.save(Review.builder()
                             .text(author + UpdateUtil.getMessageText(update))
-                            .username(update.getMessage().getFrom().getUserName())
+                            .username(update.getMessage().getFrom().getFirstName())
                                     .isPublished(false)
                             .chatId(chatId)
                             .build());
                 } else if (update.hasCallbackQuery()) {
                     if (update.getCallbackQuery().getData().equals("public"))
-                        author = "Отзыв от @" + update.getCallbackQuery().getFrom().getUserName() + "\n\n";
+                        author = "Отзыв от " + update.getCallbackQuery().getFrom().getFirstName() + "\n\n";
                     reviewService.save(Review.builder()
                             .text(author + userService.getBufferVariable(chatId))
-                            .username(update.getCallbackQuery().getFrom().getUserName())
+                            .username(update.getCallbackQuery().getFrom().getFirstName())
                                     .isPublished(false)
                             .chatId(chatId)
                             .build());

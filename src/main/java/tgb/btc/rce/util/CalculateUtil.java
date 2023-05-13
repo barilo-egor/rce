@@ -28,16 +28,17 @@ public final class CalculateUtil {
 
     public static final String BTC_USD_URL_BLOCKCHAIN = "https://api.blockchain.com/v3/exchange/tickers/BTC-USD"; // last
 
+    public static final String MONERO_URL_COINREMITTER = "https://coinremitter.com/api/v3/get-coin-rate";
+
 
     public static final int MAX_BTC_AMOUNT = 1;
 
     public static BigDecimal convertCryptoToRub(CryptoCurrency cryptoCurrency, Double sum, DealType dealType) {
-        BigDecimal fix = BigDecimal.valueOf(BotVariablePropertiesUtil.getDouble(BotVariableType.getFix(cryptoCurrency, dealType)));
+        BigDecimal fix = BotVariablePropertiesUtil.getFix(cryptoCurrency, dealType);
         BigDecimal usdCourse = BigDecimal.valueOf(BotVariablePropertiesUtil.getDouble(BotVariableType.USD_COURSE));
-        BigDecimal commission = BigDecimal.valueOf(BotVariablePropertiesUtil.getDouble(BotVariableType.getCommission(cryptoCurrency, dealType)));
-        BigDecimal fixCommission = BigDecimal.valueOf(BotVariablePropertiesUtil.getDouble(BotVariableType.getFixCommission(cryptoCurrency, dealType)));
-        BigDecimal transactionalCommission =
-                BigDecimal.valueOf(BotVariablePropertiesUtil.getDouble(BotVariableType.getTransactionCommission(cryptoCurrency)));
+        BigDecimal commission = BotVariablePropertiesUtil.getCommission(cryptoCurrency, dealType);
+        BigDecimal fixCommission = BotVariablePropertiesUtil.getFixCommission(cryptoCurrency, dealType);
+        BigDecimal transactionalCommission = BotVariablePropertiesUtil.getTransactionCommission(cryptoCurrency);
 
         BigDecimal currency;
         switch (cryptoCurrency) {
@@ -49,6 +50,9 @@ public final class CalculateUtil {
                 break;
             case USDT:
                 currency = getUsdtCurrency();
+                break;
+            case MONERO:
+                currency = getXmrCurrency();
                 break;
             default:
                 throw new BaseException("Не определена крипто валюта.");
@@ -90,13 +94,16 @@ public final class CalculateUtil {
             case USDT:
                 currency = getUsdtCurrency();
                 break;
+            case MONERO:
+                currency = getXmrCurrency();
+                break;
             default:
                 throw new BaseException("Не определена крипто валюта.");
         }
         BigDecimal usd = BigDecimalUtil.multiplyHalfUp(amount, currency);
         BigDecimal course = BigDecimal.valueOf(BotVariablePropertiesUtil.getDouble(BotVariableType.USD_COURSE));
         BigDecimal rub = BigDecimalUtil.multiplyHalfUp(usd, course);
-        BigDecimal percentCommission = BigDecimal.valueOf(BotVariablePropertiesUtil.getDouble(BotVariableType.getCommission(cryptoCurrency, dealType)));
+        BigDecimal percentCommission = BotVariablePropertiesUtil.getCommission(cryptoCurrency, dealType);
         return BigDecimalUtil.multiplyHalfUp(rub, getPercentsFactor(percentCommission));
     }
 
@@ -120,7 +127,7 @@ public final class CalculateUtil {
     }
 
     public static BigDecimal getCommission(BigDecimal amount, CryptoCurrency cryptoCurrency, DealType dealType) {
-        BigDecimal fix = BigDecimal.valueOf(BotVariablePropertiesUtil.getDouble(BotVariableType.getFix(cryptoCurrency, dealType)));
+        BigDecimal fix = BotVariablePropertiesUtil.getFix(cryptoCurrency, dealType);
         BigDecimal currency;
         switch (cryptoCurrency) {
             case BITCOIN:
@@ -132,15 +139,18 @@ public final class CalculateUtil {
             case USDT:
                 currency = getUsdtCurrency();
                 break;
+            case MONERO:
+                currency = getXmrCurrency();
+                break;
             default:
                 throw new BaseException("Не определена крипто валюта.");
         }
-        BigDecimal percentCommission = BigDecimal.valueOf(BotVariablePropertiesUtil.getDouble(BotVariableType.getCommission(cryptoCurrency, dealType)));
+        BigDecimal percentCommission = BotVariablePropertiesUtil.getCommission(cryptoCurrency, dealType);
         BigDecimal course = BigDecimal.valueOf(BotVariablePropertiesUtil.getDouble(BotVariableType.USD_COURSE));
         BigDecimal usd = BigDecimalUtil.multiplyHalfUp(amount, currency);
         BigDecimal rub = BigDecimalUtil.multiplyHalfUp(usd, course);
         if (rub.doubleValue() <= fix.doubleValue()) {
-            return BigDecimal.valueOf(BotVariablePropertiesUtil.getDouble(BotVariableType.getFixCommission(cryptoCurrency, dealType)));
+            return BotVariablePropertiesUtil.getFixCommission(cryptoCurrency, dealType);
         }
         return BigDecimalUtil.multiplyHalfUp(rub, getPercentsFactor(percentCommission));
     }
@@ -169,6 +179,13 @@ public final class CalculateUtil {
 //        Object obj = currency.get("last_trade_price"); blockchain
         Object obj = currency.get("price");
         return parse(obj, CryptoCurrency.BITCOIN);
+    }
+
+    @SneakyThrows
+    public static BigDecimal getXmrCurrency() {
+        JSONObject currency = readJsonFromUrl(MONERO_URL_COINREMITTER);
+        Object obj = ((JSONObject) ((JSONObject) readJsonFromUrl(MONERO_URL_COINREMITTER).get("data")).get("XMR")).get("price");
+        return parse(obj, CryptoCurrency.MONERO);
     }
 
     public static BigDecimal parse(Object obj, CryptoCurrency cryptoCurrency) {

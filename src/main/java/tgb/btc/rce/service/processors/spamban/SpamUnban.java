@@ -31,9 +31,9 @@ public class SpamUnban extends Processor {
         Long spamBanPid = CallbackQueryUtil.getSplitLongData(update, 1);
         Long chatId = UpdateUtil.getChatId(update);
         responseSender.deleteMessage(chatId, update.getCallbackQuery().getMessage().getMessageId());
-        userService.unban(spamBanRepository.getUserChatIdByPid(spamBanPid));
-        spamBanRepository.deleteById(spamBanPid);
         Long userChatId = spamBanRepository.getUserChatIdByPid(spamBanPid);
+        userService.unban(userChatId);
+        spamBanRepository.deleteById(spamBanPid);
         responseSender.sendMessage(userChatId,
                                    "Вы были разблокированы из спам блока администратором.");
         responseSender.sendMessage(chatId, "Пользователь " + userChatId + " был разблокирован.");

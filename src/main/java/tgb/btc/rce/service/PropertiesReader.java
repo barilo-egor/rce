@@ -9,6 +9,7 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -49,6 +50,22 @@ public interface PropertiesReader {
         String value = getString(key);
         if (StringUtils.isNotBlank(value) && StringUtils.isNumeric(value)) {
             return Integer.valueOf(value);
+        }
+        return defaultValue;
+    }
+
+    default Double getDouble(String key) {
+        return getDouble(key, null);
+    }
+
+    default BigDecimal getBigDecimal(String key) {
+        return BigDecimal.valueOf(getDouble(key));
+    }
+
+    default Double getDouble(String key, Double defaultValue) {
+        String value = getString(key);
+        if (StringUtils.isNotBlank(value)) {
+            return Double.parseDouble(value);
         }
         return defaultValue;
     }

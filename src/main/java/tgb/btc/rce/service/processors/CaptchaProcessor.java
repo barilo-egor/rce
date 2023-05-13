@@ -81,20 +81,32 @@ public class CaptchaProcessor extends Processor {
                 String cashedCaptcha = AntiSpam.CAPTCHA_CASH.get(chatId);
                 if (StringUtils.isEmpty(cashedCaptcha))
                     throw new BaseException("Не найдена строка капчи в кэше.");
-                if (UpdateUtil.getMessageText(update).equals(AntiSpam.CAPTCHA_CASH.get(chatId))) {
-                    antiSpam.removeUser(chatId);
-                    AntiSpam.CAPTCHA_CASH.remove(chatId);
-                    start.run(chatId);
+                if (isEnteredCaptchaIsRight(update)) {
+                    removeUserFromSpam(chatId);
                 } else send(chatId);
                 break;
             case 3:
-                userService.ban(chatId);
-                responseSender.sendMessage(chatId, "Вы были заблокированы.", BotKeyboard.OPERATOR);
-                spamBanService.saveAndNotifyAdmins(chatId);
-                userService.setDefaultValues(chatId);
-                antiSpam.removeUser(chatId);
+                if (isEnteredCaptchaIsRight(update)) {
+                    removeUserFromSpam(chatId);
+                } else {
+                    userService.ban(chatId);
+                    responseSender.sendMessage(chatId, "Вы были заблокированы.", BotKeyboard.OPERATOR);
+                    spamBanService.saveAndNotifyAdmins(chatId);
+                    userService.setDefaultValues(chatId);
+                    antiSpam.removeUser(chatId);
+                }
                 break;
         }
+    }
+
+    private void removeUserFromSpam(Long chatId) {
+        antiSpam.removeUser(chatId);
+        AntiSpam.CAPTCHA_CASH.remove(chatId);
+        start.run(chatId);
+    }
+
+    private boolean isEnteredCaptchaIsRight(Update update) {
+        return UpdateUtil.getMessageText(update).equals(AntiSpam.CAPTCHA_CASH.get(UpdateUtil.getChatId(update)));
     }
 
     public void send(Long chatId) {

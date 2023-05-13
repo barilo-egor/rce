@@ -72,6 +72,7 @@ public class ExchangeServiceNew {
     public void askForSum(Long chatId, CryptoCurrency currency, DealType dealType) {
         String text = MessagePropertiesUtil.getMessage(PropertiesMessage.DEAL_INPUT_SUM,
                                                        dealRepository.getCryptoCurrencyByPid(userRepository.getCurrentDealByChatId(chatId)));
+
         messageService.sendMessageAndSaveMessageId(chatId, text, keyboardService.getCalculator(currency, dealType));
     }
 
@@ -83,7 +84,7 @@ public class ExchangeServiceNew {
         DealType dealType = deal.getDealType();
         boolean isBuyDealType = DealType.isBuy(dealType);
 
-        Double minSum = BotVariablePropertiesUtil.getMinSumBuy(cryptoCurrency);
+        Double minSum = BotVariablePropertiesUtil.getMinSum(cryptoCurrency, dealType);
         if (sum < minSum) {
             String dealTypeString = isBuyDealType ? "покупки" : "продажи";
             responseSender.sendMessage(chatId, "Минимальная сумма " + dealTypeString + " " + cryptoCurrency.getDisplayName()

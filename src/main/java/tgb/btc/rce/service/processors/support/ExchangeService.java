@@ -124,7 +124,7 @@ public class ExchangeService {
         Deal deal = dealService.getByPid(userService.getCurrentDealByChatId(chatId));
         Double sum = UpdateUtil.getDoubleFromText(update);
         CryptoCurrency cryptoCurrency = deal.getCryptoCurrency();
-        Double minSum = BotVariablePropertiesUtil.getMinSumBuy(cryptoCurrency);
+        Double minSum = BotVariablePropertiesUtil.getMinSum(cryptoCurrency, DealType.BUY);
 
         if (sum < minSum) {
             responseSender.sendMessage(chatId, "Минимальная сумма покупки " + cryptoCurrency.getDisplayName()
@@ -190,7 +190,7 @@ public class ExchangeService {
         }
 
         CryptoCurrency cryptoCurrency = dealService.getCryptoCurrencyByPid(currentDealPid);
-        double minSum = BigDecimalUtil.round(BotVariablePropertiesUtil.getMinSumBuy(cryptoCurrency),
+        double minSum = BigDecimalUtil.round(BotVariablePropertiesUtil.getMinSum(cryptoCurrency, DealType.BUY),
                         cryptoCurrency.getScale())
                 .doubleValue();
 

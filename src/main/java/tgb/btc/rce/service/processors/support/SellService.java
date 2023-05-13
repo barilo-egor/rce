@@ -93,7 +93,7 @@ public class SellService {
         Deal deal = dealService.findById(userService.getCurrentDealByChatId(chatId));
         Double sum = UpdateUtil.getDoubleFromText(update);
         CryptoCurrency cryptoCurrency = deal.getCryptoCurrency();
-        Double minSum = BotVariablePropertiesUtil.getMinSumSell(cryptoCurrency);
+        Double minSum = BotVariablePropertiesUtil.getMinSum(cryptoCurrency, DealType.SELL);
 
         if (sum < minSum) {
             responseSender.sendMessage(chatId, "Минимальная сумма продажи " + cryptoCurrency.getDisplayName()
@@ -155,7 +155,7 @@ public class SellService {
         }
 
         CryptoCurrency cryptoCurrency = dealService.getCryptoCurrencyByPid(currentDealPid);
-        BigDecimal minSum = BigDecimalUtil.round(BotVariablePropertiesUtil.getMinSumSell(cryptoCurrency),
+        BigDecimal minSum = BigDecimalUtil.round(BotVariablePropertiesUtil.getMinSum(cryptoCurrency, DealType.SELL),
                 cryptoCurrency.getScale());
 
         if (sum.doubleValue() < minSum.doubleValue()) {
@@ -306,20 +306,8 @@ public class SellService {
                         + BotVariablePropertiesUtil.getVariable(BotVariableType.PROMO_CODE_NAME) + "\n\n"
                 : "\n\n";
 
-        String walletRequisites;
-        switch (deal.getCryptoCurrency()) {
-            case BITCOIN:
-                walletRequisites = BotVariablePropertiesUtil.getVariable(BotVariableType.WALLET_BTC);
-                break;
-            case LITECOIN:
-                walletRequisites = BotVariablePropertiesUtil.getVariable(BotVariableType.WALLET_LTC);
-                break;
-            case USDT:
-                walletRequisites = BotVariablePropertiesUtil.getVariable(BotVariableType.WALLET_USDT);
-                break;
-            default:
-                throw new BaseException("Не найдены реквизиты крипто кошелька.");
-        }
+        String walletRequisites = BotVariablePropertiesUtil.getWallet(currency);
+
         Rank rank = Rank.getByDealsNumber(dealService.getCountPassedByUserChatId(chatId).intValue());
         boolean isRankDiscountOn = BooleanUtils.isTrue(
                 BotVariablePropertiesUtil.getBoolean(BotVariableType.DEAL_RANK_DISCOUNT_ENABLE))

@@ -11,6 +11,8 @@ import tgb.btc.rce.bean.User;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.BotVariableType;
 import tgb.btc.rce.enums.Command;
+import tgb.btc.rce.enums.DealType;
+import tgb.btc.rce.exception.BaseException;
 import tgb.btc.rce.repository.UserRepository;
 import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
@@ -109,46 +111,30 @@ public class ConfirmUserDeal extends Processor {
                 responseSender.sendMessage(refUser.getChatId(), "На реферальный баланс было добавлено " + sumToAdd.intValue() + "₽ по сделке партнера.");
             userService.updateChargesByChatId(refUser.getCharges() + sumToAdd.intValue(), refUser.getChatId());
         }
-        switch (deal.getCryptoCurrency()) {
-            case BITCOIN:
-                switch (deal.getDealType()) {
-                    case BUY:
-                        responseSender.sendMessage(deal.getUser().getChatId(),
-                                "Биткоин отправлен ✅\nhttps://blockchair.com/bitcoin/address/" + deal.getWallet());
-                        break;
-                    case SELL:
-                        responseSender.sendMessage(deal.getUser().getChatId(),
-                                "Заявка обработана, деньги отправлены.");
-                        break;
-                }
-                break;
-            case LITECOIN:
-                switch (deal.getDealType()) {
-                    case BUY:
-                        responseSender.sendMessage(deal.getUser().getChatId(),
-                                "Валюта отправлена.\nhttps://blockchair.com/ru/litecoin/address/" + deal.getWallet());
-                        break;
-                    case SELL:
-                        responseSender.sendMessage(deal.getUser().getChatId(),
-                                "Заявка обработана, деньги отправлены.");
-                        break;
-                }
-                break;
-            case USDT:
-                switch (deal.getDealType()) {
-                    case BUY:
-                        responseSender.sendMessage(deal.getUser().getChatId(),
-                                "Валюта отправлена.https://tronscan.io/#/address/" + deal.getWallet());
-                        break;
-                    case SELL:
-                        responseSender.sendMessage(deal.getUser().getChatId(),
-                                "Заявка обработана, деньги отправлены.");
-                        break;
-                }
-                break;
+        String message;
+        if (!DealType.isBuy(deal.getDealType())) {
+            message = "Заявка обработана, деньги отправлены.";
+        } else {
+            switch (deal.getCryptoCurrency()) {
+                case BITCOIN:
+                    message = "Биткоин отправлен ✅\nhttps://blockchair.com/bitcoin/address/" + deal.getWallet();
+                    break;
+                case LITECOIN:
+                    message = "Валюта отправлена.\nhttps://blockchair.com/ru/litecoin/address/" + deal.getWallet();
+                    break;
+                case USDT:
+                    message = "Валюта отправлена.https://tronscan.io/#/address/" + deal.getWallet();
+                    break;
+                case MONERO:
+                    message = "Валюта отправлена."; // TODO добавить url
+                    break;
+                default:
+                    throw new BaseException("Не найдена криптовалюта у сделки. dealPid=" + deal.getPid());
+            }
         }
+        responseSender.sendMessage(deal.getUser().getChatId(), message);
 
-        Integer reviewPrise = BotVariablePropertiesUtil.getInt(BotVariableType.REVIEW_PRISE);
+        Integer reviewPrise = BotVariablePropertiesUtil.getInt(BotVariableType.REVIEW_PRISE); // TODO уточнить нужно ли 30 выводить или брать число из проперти
         responseSender.sendMessage(deal.getUser().getChatId(), "Хотите оставить отзыв?\n" +
                         "За оставленный отзыв вы получите вознаграждение в размере до 30₽" +
                         " на реферальный баланс после публикации.",

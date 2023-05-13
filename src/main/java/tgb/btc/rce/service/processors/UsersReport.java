@@ -25,6 +25,7 @@ import tgb.btc.rce.util.UpdateUtil;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.List;
 
 @CommandProcessor(command = Command.USERS_REPORT)
 @Slf4j
@@ -52,67 +53,36 @@ public class UsersReport extends Processor {
         try {
             HSSFWorkbook book = new HSSFWorkbook();
             Sheet sheet = book.createSheet("Пользователи");
-
             Row headRow = sheet.createRow(0);
             sheet.setDefaultColumnWidth(30);
-            Cell headCell = headRow.createCell(0);
-            headCell.setCellValue("Chat ID");
-            headCell = headRow.createCell(1);
-            headCell.setCellValue("Username");
-            headCell = headRow.createCell(2);
-            headCell.setCellValue("Куплено BTC");
-            headCell = headRow.createCell(3);
-            headCell.setCellValue("Куплено LTC");
-            headCell = headRow.createCell(4);
-            headCell.setCellValue("Куплено USDT");
-            headCell = headRow.createCell(5);
-            headCell.setCellValue("Продано BTC");
-            headCell = headRow.createCell(6);
-            headCell.setCellValue("Продано LTC");
-            headCell = headRow.createCell(7);
-            headCell.setCellValue("Продано USDT");
-            headCell = headRow.createCell(8);
-            headCell.setCellValue("Потрачено рублей");
+            List<String> cellHeaders = List.of("Chat ID", "Username", "Куплено BTC", "Куплено LTC", "Куплено USDT",
+                                               "Куплено MONERO", "Продано BTC", "Продано LTC", "Продано USDT",
+                                               "Продано MONERO", "Потрачено рублей");
+            Cell headCell;
+            for (int i = 0; i < cellHeaders.size(); i++) {
+                headCell = headRow.createCell(i);
+                headCell.setCellValue(cellHeaders.get(i));
+                i++;
+            }
 
             int i = 2;
             for (User user : userService.findAll()) {
+                int cellCount = 0;
                 Row row = sheet.createRow(i);
-                Cell cell1 = row.createCell(0);
+                Cell cell1 = row.createCell(++cellCount);
                 cell1.setCellValue(user.getChatId());
-                Cell cell2 = row.createCell(1);
+                Cell cell2 = row.createCell(++cellCount);
                 cell2.setCellValue(StringUtils.defaultIfEmpty(user.getUsername(), "скрыт"));
-                Cell cell3 = row.createCell(2);
-                cell3.setCellValue(BigDecimalUtil.roundNullSafe(
-                        dealRepository.getUserCryptoAmountSum(user.getChatId(), CryptoCurrency.BITCOIN, DealType.BUY),
-                        CryptoCurrency.BITCOIN.getScale()).toPlainString()
-                );
-                Cell cell4 = row.createCell(3);
-                cell4.setCellValue(BigDecimalUtil.roundNullSafe(
-                        dealRepository.getUserCryptoAmountSum(user.getChatId(), CryptoCurrency.LITECOIN, DealType.BUY),
-                        CryptoCurrency.LITECOIN.getScale()).toPlainString()
-                );
-                Cell cell5 = row.createCell(4);
-                cell5.setCellValue(BigDecimalUtil.roundNullSafe(
-                        dealRepository.getUserCryptoAmountSum(user.getChatId(), CryptoCurrency.USDT, DealType.BUY),
-                        CryptoCurrency.USDT.getScale()).toPlainString()
-                );
-                Cell cell6 = row.createCell(5);
-                cell6.setCellValue(BigDecimalUtil.roundNullSafe(
-                        dealRepository.getUserCryptoAmountSum(user.getChatId(), CryptoCurrency.BITCOIN, DealType.SELL),
-                        CryptoCurrency.BITCOIN.getScale()).toPlainString()
-                );
-                Cell cell7 = row.createCell(6);
-                cell7.setCellValue(BigDecimalUtil.roundNullSafe(
-                        dealRepository.getUserCryptoAmountSum(user.getChatId(), CryptoCurrency.LITECOIN, DealType.SELL),
-                        CryptoCurrency.LITECOIN.getScale()).toPlainString()
-                );
-                Cell cell8 = row.createCell(7);
-                cell8.setCellValue(BigDecimalUtil.roundNullSafe(
-                        dealRepository.getUserCryptoAmountSum(user.getChatId(), CryptoCurrency.USDT, DealType.SELL),
-                        CryptoCurrency.USDT.getScale()).toPlainString()
-                );
-                Cell cell9 = row.createCell(8);
-                cell9.setCellValue(BigDecimalUtil.roundNullSafe(
+                for (int j = 0; j < CryptoCurrency.values().length; j++) {
+                    Cell cell = row.createCell(++cellCount);
+                    setUserCryptoAmount(cell, user.getChatId(), CryptoCurrency.values()[j], DealType.BUY);
+                }
+                for (int j = 0; j < CryptoCurrency.values().length; j++) {
+                    Cell cell = row.createCell(++cellCount);
+                    setUserCryptoAmount(cell, user.getChatId(), CryptoCurrency.values()[j], DealType.SELL);
+                }
+                Cell cell11 = row.createCell(++cellCount);
+                cell11.setCellValue(BigDecimalUtil.roundNullSafe(
                         dealRepository.getUserAmountSum(user.getChatId(), DealType.BUY), 0).toPlainString()
                 );
                 i++;
@@ -131,5 +101,12 @@ public class UsersReport extends Processor {
             log.error("Ошибка при выгрузке файла " + this.getClass().getSimpleName(), e);
             throw new BaseException("Ошибка при выгрузке файла: " + e.getMessage());
         }
+    }
+
+    public void setUserCryptoAmount(Cell cell, Long chatId, CryptoCurrency cryptoCurrency, DealType dealType) {
+        cell.setCellValue(BigDecimalUtil.roundNullSafe(
+                dealRepository.getUserCryptoAmountSum(chatId, cryptoCurrency, dealType),
+                cryptoCurrency.getScale()).toPlainString()
+        );
     }
 }
