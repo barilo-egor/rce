@@ -83,7 +83,7 @@ public class ExchangeServiceNew {
         DealType dealType = deal.getDealType();
         boolean isBuyDealType = DealType.isBuy(dealType);
 
-        Double minSum = BotVariablePropertiesUtil.getMinSumBuy(cryptoCurrency);
+        Double minSum = BotVariablePropertiesUtil.getMinSum(cryptoCurrency, dealType);
         if (sum < minSum) {
             String dealTypeString = isBuyDealType ? "покупки" : "продажи";
             responseSender.sendMessage(chatId, "Минимальная сумма " + dealTypeString + " " + cryptoCurrency.getDisplayName()
