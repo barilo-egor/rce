@@ -16,6 +16,8 @@ import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.impl.UserService;
 import tgb.btc.rce.util.UpdateUtil;
 
+import java.util.Objects;
+
 @CommandProcessor(command = Command.NEW_PAYMENT_TYPE_REQUISITE, step = 2)
 public class AskForNewRequisite extends Processor {
 
@@ -61,7 +63,9 @@ public class AskForNewRequisite extends Processor {
         PaymentType paymentType = paymentTypeRepository.getByPid(
                 userDataRepository.getLongByUserPid(userRepository.getPidByChatId(chatId)));
         paymentRequisite.setPaymentType(paymentType);
-        paymentRequisite.setRequisiteOrder(paymentRequisiteRepository.countByPaymentTypePid(paymentType.getPid()) + 1);
+        Integer count = paymentRequisiteRepository.countByPaymentTypePid(paymentType.getPid());
+        if (Objects.isNull(count)) count = 0;
+        paymentRequisite.setRequisiteOrder(count + 1);
         paymentRequisiteRepository.save(paymentRequisite);
         responseSender.sendMessage(chatId, "Реквизит сохранен.");
         processToAdminMainPanel(chatId);
