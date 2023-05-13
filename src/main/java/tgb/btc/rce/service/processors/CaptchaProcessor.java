@@ -4,17 +4,23 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.annotation.CommandProcessor;
+import tgb.btc.rce.bean.SpamBan;
+import tgb.btc.rce.bean.User;
 import tgb.btc.rce.enums.BotKeyboard;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.exception.BaseException;
+import tgb.btc.rce.repository.SpamBanRepository;
 import tgb.btc.rce.repository.UserDataRepository;
 import tgb.btc.rce.repository.UserRepository;
 import tgb.btc.rce.service.AntiSpam;
 import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
+import tgb.btc.rce.service.impl.SpamBanService;
 import tgb.btc.rce.service.impl.UserService;
 import tgb.btc.rce.service.schedule.CaptchaSender;
 import tgb.btc.rce.util.UpdateUtil;
+
+import java.time.LocalDateTime;
 
 @CommandProcessor(command = Command.CAPTCHA)
 public class CaptchaProcessor extends Processor {
@@ -26,6 +32,13 @@ public class CaptchaProcessor extends Processor {
     private AntiSpam antiSpam;
 
     private UserRepository userRepository;
+
+    private SpamBanService spamBanService;
+
+    @Autowired
+    public void setSpamBanService(SpamBanService spamBanService) {
+        this.spamBanService = spamBanService;
+    }
 
     @Autowired
     public void setUserRepository(UserRepository userRepository) {
@@ -77,6 +90,7 @@ public class CaptchaProcessor extends Processor {
             case 3:
                 userService.ban(chatId);
                 responseSender.sendMessage(chatId, "Вы были заблокированы.", BotKeyboard.OPERATOR);
+                spamBanService.saveAndNotifyAdmins(chatId);
                 userService.setDefaultValues(chatId);
                 antiSpam.removeUser(chatId);
                 break;

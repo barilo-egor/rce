@@ -74,6 +74,7 @@ public class ResponseSender implements IResponseSender {
         return sendMessage(chatId, text, botKeyboard.getKeyboard(), null);
     }
 
+    @Override
     public Optional<Message> sendMessage(Long chatId, String text, ReplyKeyboard replyKeyboard, String parseMode) {
         SendMessage sendMessage = SendMessage.builder()
                 .chatId(chatId.toString())
