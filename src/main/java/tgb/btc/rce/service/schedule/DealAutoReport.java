@@ -109,22 +109,27 @@ public class DealAutoReport {
             BigDecimal amountOfPurchasedRubForBtc = getBuyAmount(CryptoCurrency.BITCOIN, dateTimeBegin, dateTimeEnd);
             BigDecimal amountOfPurchasedRubForLitecoin = getBuyAmount(CryptoCurrency.LITECOIN, dateTimeBegin, dateTimeEnd);
             BigDecimal amountOfPurchasedRubForUsdt = getBuyAmount(CryptoCurrency.USDT, dateTimeBegin, dateTimeEnd);
+            BigDecimal amountOfPurchasedRubForXmr = getBuyAmount(CryptoCurrency.MONERO, dateTimeBegin, dateTimeEnd);
             BigDecimal totalPurchasedRubAmount = amountOfPurchasedRubForBtc
                     .add(amountOfPurchasedRubForLitecoin)
                     .add(amountOfPurchasedRubForUsdt)
+                    .add(amountOfPurchasedRubForXmr)
                     .setScale(0, RoundingMode.HALF_DOWN)
                     .stripTrailingZeros();
 
             String report = "Отчет за " + data.getPeriod() + ":\n"
                     + "Куплено BTC: " + getBuyCryptoAmount(CryptoCurrency.BITCOIN, 8, dateTimeBegin, dateTimeEnd) + "\n"
                     + "Куплено Litecoin: " + getBuyCryptoAmount(CryptoCurrency.LITECOIN, 5, dateTimeBegin, dateTimeEnd) + "\n"
-                    + "Куплено USDT: " + getBuyCryptoAmount(CryptoCurrency.USDT, 0, dateTimeBegin, dateTimeEnd) + "\n\n"
+                    + "Куплено USDT: " + getBuyCryptoAmount(CryptoCurrency.USDT, 0, dateTimeBegin, dateTimeEnd) + "\n"
+                    + "Куплено XMR: " + getBuyCryptoAmount(CryptoCurrency.MONERO, 0, dateTimeBegin, dateTimeEnd) + "\n\n"
                     + "Получено рублей от BTC: " + amountOfPurchasedRubForBtc + "\n"
                     + "Получено рублей от Litecoin: " + amountOfPurchasedRubForLitecoin + "\n"
-                    + "Получено рублей от USDT: " + amountOfPurchasedRubForUsdt + "\n\n"
+                    + "Получено рублей от USDT: " + amountOfPurchasedRubForUsdt + "\n"
+                    + "Получено рублей от XMR: " + amountOfPurchasedRubForXmr + "\n\n"
                     + "Продано BTC: " + getSellCryptoAmount(CryptoCurrency.BITCOIN, 8, dateTimeBegin, dateTimeEnd) + "\n"
                     + "Продано Litecoin: " + getSellCryptoAmount(CryptoCurrency.LITECOIN, 5, dateTimeBegin, dateTimeEnd) + "\n"
-                    + "Продано USDT: " + getSellCryptoAmount(CryptoCurrency.USDT, 0, dateTimeBegin, dateTimeEnd) + "\n\n"
+                    + "Продано USDT: " + getSellCryptoAmount(CryptoCurrency.USDT, 0, dateTimeBegin, dateTimeEnd) + "\n"
+                    + "Продано XMR: " + getSellCryptoAmount(CryptoCurrency.MONERO, 0, dateTimeBegin, dateTimeEnd) + "\n\n"
                     + "Всего получено рублей: " + totalPurchasedRubAmount
                     + "\n"
                     + "Количество новых пользователей: " + newUsersCount + "\n"

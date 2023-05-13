@@ -59,21 +59,22 @@ public class DeleteUser extends Processor {
     @Override
     @Transactional
     public void run(Update update) {
+        Long chatId = UpdateUtil.getChatId(update);
         try {
-            Long chatId = Long.parseLong(UpdateUtil.getMessageText(update).split(" ")[1]);
-            userDiscountRepository.deleteByUserChatId(chatId);
-            userDataRepository.deleteByUserChatId(chatId);
-            withdrawalRequestRepository.deleteByUserChatId(chatId);
-            lotteryWinRepository.deleteByUserChatId(chatId);
-            paymentReceiptRepository.getByDealsPids(chatId);
-            dealRepository.deleteByUserChatId(chatId);
-            User user = userRepository.getByChatId(chatId);
-            referralUserRepository.deleteAll(user.getReferralUsers());
+            Long userChatId = Long.parseLong(UpdateUtil.getMessageText(update).split(" ")[1]);
+            userDiscountRepository.deleteByUserChatId(userChatId);
+            userDataRepository.deleteByUserChatId(userChatId);
+            withdrawalRequestRepository.deleteByUserChatId(userChatId);
+            lotteryWinRepository.deleteByUserChatId(userChatId);
+            paymentReceiptRepository.getByDealsPids(userChatId);
+            dealRepository.deleteByUserChatId(userChatId);
+            User user = userRepository.getByChatId(userChatId);
             userRepository.delete(user);
-            responseSender.sendMessage(chatId, "Пользователь " + chatId + " удален.");
+            referralUserRepository.deleteAll(user.getReferralUsers());
+            responseSender.sendMessage(chatId, "Пользователь " + userChatId + " удален.");
         } catch (Exception e) {
             log.error("Ошибки при удалении пользователя.", e);
-            responseSender.sendMessage(UpdateUtil.getChatId(update), "Ошибка при удалении пользователя: " + e.getMessage());
+            responseSender.sendMessage(chatId, "Ошибка при удалении пользователя: " + e.getMessage());
         }
     }
 

@@ -89,4 +89,8 @@ public class BotVariablePropertiesUtil {
     private static BigDecimal getBigDecimal(String key) {
         return BotProperties.BOT_VARIABLE_PROPERTIES.getBigDecimal(key);
     }
+
+    public static String getWallet(CryptoCurrency cryptoCurrency) {
+        return BotProperties.BOT_VARIABLE_PROPERTIES.getString(BotVariableType.WALLET.getKey(cryptoCurrency));
+    }
 }

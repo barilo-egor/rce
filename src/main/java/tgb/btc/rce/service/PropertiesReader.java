@@ -64,7 +64,7 @@ public interface PropertiesReader {
 
     default Double getDouble(String key, Double defaultValue) {
         String value = getString(key);
-        if (StringUtils.isNotBlank(value) && StringUtils.isNumeric(value)) {
+        if (StringUtils.isNotBlank(value)) {
             return Double.parseDouble(value);
         }
         return defaultValue;

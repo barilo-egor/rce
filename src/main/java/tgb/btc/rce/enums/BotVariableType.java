@@ -36,6 +36,7 @@ public enum BotVariableType {
     PROMO_CODE_DISCOUNT("Скидка от промокода", "promo.code.discount"),
     PROMO_CODE_NAME("Название промокода", "promo.code.name"),
     DEAL_ACTIVE_TIME("Время активности заявки", "deal.active.time"),
+    WALLET("Кошелек BTC", "wallet"),
     WALLET_BTC("Кошелек BTC", "wallet.btc"),
     WALLET_LTC("Кошелек LTC", "wallet.ltc"),
     WALLET_USDT("Кошелек USDT", "wallet.usdt"),
@@ -64,7 +65,7 @@ public enum BotVariableType {
     }
 
     public String getKey(CryptoCurrency cryptoCurrency) {
-        return key.concat("." + cryptoCurrency);
+        return key.concat("." + cryptoCurrency.getShortName());
     }
 
     public static BotVariableType getByDisplayName(String name) {
