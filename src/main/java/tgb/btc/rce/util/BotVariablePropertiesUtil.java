@@ -56,32 +56,6 @@ public class BotVariablePropertiesUtil {
         }
     }
 
-    public static Double getMinSumBuy(CryptoCurrency cryptoCurrency) {
-        switch (cryptoCurrency) {
-            case BITCOIN:
-                return BotVariablePropertiesUtil.getDouble(BotVariableType.MIN_SUM_BUY_BTC);
-            case LITECOIN:
-                return BotVariablePropertiesUtil.getDouble(BotVariableType.MIN_SUM_BUY_LTC);
-            case USDT:
-                return BotVariablePropertiesUtil.getDouble(BotVariableType.MIN_SUM_BUY_USDT);
-            default:
-                throw new BaseException("Не определена крипто валюта.");
-        }
-    }
-
-    public static Double getMinSumSell(CryptoCurrency cryptoCurrency) {
-        switch (cryptoCurrency) {
-            case BITCOIN:
-                return BotVariablePropertiesUtil.getDouble(BotVariableType.MIN_SUM_SELL_BTC);
-            case LITECOIN:
-                return BotVariablePropertiesUtil.getDouble(BotVariableType.MIN_SUM_SELL_LTC);
-            case USDT:
-                return BotVariablePropertiesUtil.getDouble(BotVariableType.MIN_SUM_SELL_USDT);
-            default:
-                throw new BaseException("Не определена крипто валюта.");
-        }
-    }
-
     public static void validate(BotProperties botProperties) throws PropertyValueNotFoundException {
         for (String key : botProperties.getKeys()) {
             if (Objects.isNull(botProperties.getString(key))) {
