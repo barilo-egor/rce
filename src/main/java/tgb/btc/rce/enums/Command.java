@@ -2,7 +2,6 @@ package tgb.btc.rce.enums;
 
 import lombok.extern.slf4j.Slf4j;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import tgb.btc.rce.util.BotPropertiesUtil;
 
 import java.util.Arrays;
 
@@ -32,6 +31,7 @@ public enum Command {
      * HIDDEN
      */
     DELETE_USER("/deleteuser", true),
+    CREATE_USER_DATA("/createuserdata", true),
 
     /** MAIN */
     BUY_BITCOIN("\uD83D\uDCB0 Купить", false),
@@ -151,8 +151,13 @@ public enum Command {
     TURN_DYNAMIC_REQUISITES("Динамические реквизиты", true),
     TURNING_DYNAMIC_REQUISITES("turning_dr", true),
 
-    CREATE_USER_DATA("/createuserdata", true)
-    ;
+    /**
+     * ANTISPAM
+     */
+    SHOW_SPAM_BANNED_USER("show_sb_user", true),
+    KEEP_SPAM_BAN("keep_sb", true),
+    SPAM_UNBAN("spam_unban", true),
+    NEW_SPAM_BANS("Антиспам блоки", true);
 
     final String text;
     final boolean isAdmin;

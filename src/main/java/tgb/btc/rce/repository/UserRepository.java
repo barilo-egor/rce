@@ -129,4 +129,7 @@ public interface UserRepository extends BaseRepository<User> {
 
     @Query("select chatId from User where registrationDate between :localDateTime1 and :localDateTime2 and fromChatId is not null")
     List<Long> getChatIdsByRegistrationDateAndFromChatIdNotNull(LocalDateTime localDateTime1, LocalDateTime localDateTime2);
+
+    @Query("select chatId from User where pid=:pid")
+    Long getChatIdByPid(Long pid);
 }

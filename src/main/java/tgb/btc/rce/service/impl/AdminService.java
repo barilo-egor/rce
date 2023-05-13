@@ -3,6 +3,7 @@ package tgb.btc.rce.service.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
@@ -28,8 +29,8 @@ public class AdminService {
         userService.getAdminsChatIds().forEach(chatId -> responseSender.sendMessage(chatId, message));
     }
 
-    public void notify(String message, ReplyKeyboardMarkup replyKeyboardMarkup) {
-        userService.getAdminsChatIds().forEach(chatId -> responseSender.sendMessage(chatId, message, replyKeyboardMarkup));
+    public void notify(String message, ReplyKeyboard replyKeyboard) {
+        userService.getAdminsChatIds().forEach(chatId -> responseSender.sendMessage(chatId, message, replyKeyboard));
     }
 
     public void notify(String message, String data) {

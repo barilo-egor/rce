@@ -38,7 +38,10 @@ import tgb.btc.rce.service.processors.personaldiscounts.sell.SavePersonalSellDis
 import tgb.btc.rce.service.processors.referralpercent.AskNewReferralPercent;
 import tgb.btc.rce.service.processors.referralpercent.ReferralPercent;
 import tgb.btc.rce.service.processors.referralpercent.SaveReferralPercent;
-import tgb.btc.rce.vo.Captcha;
+import tgb.btc.rce.service.processors.spamban.KeepSpamBan;
+import tgb.btc.rce.service.processors.spamban.NewSpamBans;
+import tgb.btc.rce.service.processors.spamban.ShowSpamBannedUser;
+import tgb.btc.rce.service.processors.spamban.SpamUnban;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -176,6 +179,10 @@ public final class CommandProcessorLoader {
         commandProcessors.add(BulkDiscounts.class);
         commandProcessors.add(CaptchaProcessor.class);
         commandProcessors.add(DeleteUser.class);
+        commandProcessors.add(ShowSpamBannedUser.class);
+        commandProcessors.add(KeepSpamBan.class);
+        commandProcessors.add(SpamUnban.class);
+        commandProcessors.add(NewSpamBans.class);
         commandProcessors.stream()
                 .filter(processor -> !extendsProcessor(processor))
                 .findFirst()
