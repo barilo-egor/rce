@@ -17,13 +17,14 @@ import tgb.btc.rce.service.impl.*;
 import tgb.btc.rce.service.processors.support.ExchangeService;
 import tgb.btc.rce.service.processors.support.ExchangeServiceNew;
 import tgb.btc.rce.service.schedule.DealDeleteScheduler;
-import tgb.btc.rce.util.BotImageUtil;
-import tgb.btc.rce.util.MessagePropertiesUtil;
-import tgb.btc.rce.util.UpdateUtil;
+import tgb.btc.rce.util.*;
 import tgb.btc.rce.vo.InlineButton;
+import tgb.btc.rce.vo.ReplyButton;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @CommandProcessor(command = Command.BUY_BITCOIN)
 public class BuyBitcoin extends Processor {
@@ -100,8 +101,11 @@ public class BuyBitcoin extends Processor {
     }
 
     public void processCancel(Long chatId) {
-        dealService.delete(dealService.findById(userService.getCurrentDealByChatId(chatId)));
-        userService.updateCurrentDealByChatId(null, chatId);
+        Long currentDealPid = userService.getCurrentDealByChatId(chatId);
+        if (Objects.nonNull(currentDealPid)) {
+            dealService.deleteById(currentDealPid);
+            userService.updateCurrentDealByChatId(null, chatId);
+        }
         processToMainMenu(chatId);
     }
 
@@ -121,7 +125,7 @@ public class BuyBitcoin extends Processor {
             } else previousStep(update);
             return;
         }
-
+        Deal deal;
         switch (userService.getStepByChatId(chatId)) {
             case 0:
                 if (dealService.getActiveDealsCountByUserChatId(chatId) > 0) {
@@ -129,7 +133,15 @@ public class BuyBitcoin extends Processor {
                             InlineButton.buildData("Удалить", Command.DELETE_DEAL.getText()));
                     return;
                 }
-                dealService.createNewDeal(DEAL_TYPE, chatId);
+                deal = dealService.createNewDeal(DEAL_TYPE, chatId);
+                if (Objects.isNull(dealRepository.getFiatCurrencyByPid(userService.getCurrentDealByChatId(chatId)))
+                        && FiatCurrenciesUtil.isFew()) {
+                    responseSender.sendMessage(chatId, "Выберите валюту.", keyboardService.getFiatCurrencies());
+                    userService.nextStep(chatId, Command.CHOOSING_FIAT_CURRENCY);
+                    return;
+                } else {
+                    dealRepository.updateFiatCurrencyByPid(deal.getPid(), FiatCurrenciesUtil.getFirst());
+                }
                 messageService.sendMessageAndSaveMessageId(chatId, MessagePropertiesUtil.getChooseCurrency(DEAL_TYPE),
                         keyboardService.getCurrencies(DEAL_TYPE));
                 userService.nextStep(chatId, Command.BUY_BITCOIN);
@@ -211,7 +223,7 @@ public class BuyBitcoin extends Processor {
                 break;
             case 7:
                 if (update.hasMessage() && update.getMessage().hasPhoto()) {
-                    Deal deal = dealService.getByPid(userService.getCurrentDealByChatId(chatId));
+                    deal = dealService.getByPid(userService.getCurrentDealByChatId(chatId));
                     PaymentReceipt paymentReceipt = paymentReceiptRepository.save(PaymentReceipt.builder()
                             .receipt(BotImageUtil.getImageId(update.getMessage().getPhoto()))
                             .receiptFormat(ReceiptFormat.PICTURE)
@@ -221,7 +233,7 @@ public class BuyBitcoin extends Processor {
                     deal.setPaymentReceipts(paymentReceipts);
                     dealService.save(deal);
                 } else if (update.hasMessage() && update.getMessage().hasDocument()) {
-                    Deal deal = dealService.getByPid(userService.getCurrentDealByChatId(chatId));
+                    deal = dealService.getByPid(userService.getCurrentDealByChatId(chatId));
                     PaymentReceipt paymentReceipt = paymentReceiptRepository.save(PaymentReceipt.builder()
                             .receipt(update.getMessage().getDocument().getFileId())
                             .receiptFormat(ReceiptFormat.PDF)

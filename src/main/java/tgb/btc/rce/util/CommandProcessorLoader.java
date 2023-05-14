@@ -65,7 +65,8 @@ public final class CommandProcessorLoader {
             Command.DELETE_PAYMENT_TYPE_REQUISITE,
             Command.TURN_PAYMENT_TYPES,
             Command.CHANGE_MIN_SUM,
-            Command.TURN_DYNAMIC_REQUISITES
+            Command.TURN_DYNAMIC_REQUISITES,
+            Command.CHOOSING_FIAT_CURRENCY
     );
 
 
@@ -183,6 +184,7 @@ public final class CommandProcessorLoader {
         commandProcessors.add(KeepSpamBan.class);
         commandProcessors.add(SpamUnban.class);
         commandProcessors.add(NewSpamBans.class);
+        commandProcessors.add(ChoosingFiatCurrency.class);
         commandProcessors.stream()
                 .filter(processor -> !extendsProcessor(processor))
                 .findFirst()

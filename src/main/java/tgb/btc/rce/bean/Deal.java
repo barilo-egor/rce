@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Fetch;
 import tgb.btc.rce.enums.CryptoCurrency;
 import tgb.btc.rce.enums.DealType;
+import tgb.btc.rce.enums.FiatCurrency;
 import tgb.btc.rce.enums.PaymentTypeEnum;
 
 import javax.persistence.*;
@@ -100,6 +101,25 @@ public class Deal extends BasePersist {
 
     @Column(name = "IS_PERSONAL_APPLIED")
     private Boolean isPersonalApplied;
+
+    @Column(name = "FIAT_CURRENCY")
+    private FiatCurrency fiatCurrency;
+
+    public Boolean getCurrent() {
+        return isCurrent;
+    }
+
+    public void setCurrent(Boolean current) {
+        isCurrent = current;
+    }
+
+    public FiatCurrency getFiatCurrency() {
+        return fiatCurrency;
+    }
+
+    public void setFiatCurrency(FiatCurrency fiatCurrency) {
+        this.fiatCurrency = fiatCurrency;
+    }
 
     public String getUserCheck() {
         return userCheck;

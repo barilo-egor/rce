@@ -4,9 +4,19 @@ public enum FiatCurrency {
     /**
      * Бел.рубль
      */
-    BYN,
+    BYN("byn"),
     /**
      * Рос.рубль
      */
-    RUB
+    RUB("rub");
+
+    final String code;
+
+    FiatCurrency(String code) {
+        this.code = code;
+    }
+
+    public String getCode() {
+        return code;
+    }
 }

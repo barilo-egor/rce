@@ -157,7 +157,13 @@ public enum Command {
     SHOW_SPAM_BANNED_USER("show_sb_user", true),
     KEEP_SPAM_BAN("keep_sb", true),
     SPAM_UNBAN("spam_unban", true),
-    NEW_SPAM_BANS("Антиспам блоки", true);
+    NEW_SPAM_BANS("Антиспам блоки", true),
+
+    /**
+     * USERS STATES
+     */
+    CHOOSING_FIAT_CURRENCY("chs_fc", false)
+    ;
 
     final String text;
     final boolean isAdmin;

@@ -9,6 +9,7 @@ import tgb.btc.rce.bean.Deal;
 import tgb.btc.rce.bean.PaymentType;
 import tgb.btc.rce.enums.CryptoCurrency;
 import tgb.btc.rce.enums.DealType;
+import tgb.btc.rce.enums.FiatCurrency;
 import tgb.btc.rce.enums.PaymentTypeEnum;
 
 import java.math.BigDecimal;
@@ -118,6 +119,13 @@ public interface DealRepository extends BaseRepository<Deal> {
     @Query(value = "update Deal set isPersonalApplied=:isPersonalApplied where pid=:pid")
     @Modifying
     void updateIsPersonalAppliedByPid(@Param("pid") Long pid, @Param("isPersonalApplied") Boolean isPersonalApplied);
+
+    @Modifying
+    @Query(value = "update Deal set fiatCurrency=:fiatCurrency where pid=:pid")
+    void updateFiatCurrencyByPid(Long pid, FiatCurrency fiatCurrency);
+
+    @Query(value = "select fiatCurrency from Deal where pid=:pid")
+    FiatCurrency getFiatCurrencyByPid(Long pid);
 
     /**
      * Reports
