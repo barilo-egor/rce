@@ -234,7 +234,6 @@ public class BuyBitcoin extends Processor {
                 if (update.hasMessage() && Command.RECEIPTS_CANCEL_DEAL.getText().equals(UpdateUtil.getMessageText(update))) {
                     dealPid = userService.getCurrentDealByChatId(chatId);
                     DealDeleteScheduler.deleteCryptoDeal(dealPid);
-                    responseSender.deleteMessage(chatId, update.getCallbackQuery().getMessage().getMessageId());
                     dealService.delete(dealService.findById(dealPid));
                     userService.updateCurrentDealByChatId(null, chatId);
                     responseSender.sendMessage(chatId, "Заявка отменена.");

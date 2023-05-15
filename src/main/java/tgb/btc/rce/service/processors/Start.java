@@ -38,10 +38,10 @@ public class Start extends Processor {
         userService.updateIsActiveByChatId(true, chatId);
         Long currentDealPid = userService.getCurrentDealByChatId(chatId);
         if (Objects.nonNull(currentDealPid)) {
+            if (dealService.existByPid(currentDealPid)) {
+                dealService.deleteById(currentDealPid);
+            }
             userService.updateCurrentDealByChatId(null, chatId);
-        }
-        if (dealService.existByPid(currentDealPid)) {
-            dealService.deleteById(currentDealPid);
         }
         responseSender.sendBotMessage(botMessageService.findByType(BotMessageType.START), chatId);
         processToMainMenu(chatId);
