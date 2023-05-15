@@ -232,6 +232,10 @@ public class BuyBitcoin extends Processor {
                 }
                 break;
             case 7:
+                if (!update.hasMessage() || !update.getMessage().hasPhoto() || !update.getMessage().hasDocument()) {
+                    responseSender.sendMessage(chatId, "Отправьте скрин перевода.");
+                    return;
+                }
                 if (update.hasMessage() && update.getMessage().hasPhoto()) {
                     deal = dealService.getByPid(userService.getCurrentDealByChatId(chatId));
                     PaymentReceipt paymentReceipt = paymentReceiptRepository.save(PaymentReceipt.builder()
