@@ -7,9 +7,11 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import tgb.btc.rce.enums.CryptoCurrency;
 import tgb.btc.rce.enums.DealType;
+import tgb.btc.rce.enums.FiatCurrency;
 import tgb.btc.rce.repository.DealRepository;
 import tgb.btc.rce.repository.UserRepository;
 import tgb.btc.rce.service.IResponseSender;
+import tgb.btc.rce.util.FiatCurrenciesUtil;
 import tgb.btc.rce.vo.DealReportData;
 
 import java.math.BigDecimal;
@@ -17,7 +19,9 @@ import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 @Service
@@ -106,36 +110,45 @@ public class DealAutoReport {
                 if (dealRepository.getCountPassedByChatId(chatId) > 0) newActivePartnersCount++;
             }
 
-            BigDecimal amountOfPurchasedRubForBtc = getBuyAmount(CryptoCurrency.BITCOIN, dateTimeBegin, dateTimeEnd);
-            BigDecimal amountOfPurchasedRubForLitecoin = getBuyAmount(CryptoCurrency.LITECOIN, dateTimeBegin, dateTimeEnd);
-            BigDecimal amountOfPurchasedRubForUsdt = getBuyAmount(CryptoCurrency.USDT, dateTimeBegin, dateTimeEnd);
-            BigDecimal amountOfPurchasedRubForXmr = getBuyAmount(CryptoCurrency.MONERO, dateTimeBegin, dateTimeEnd);
-            BigDecimal totalPurchasedRubAmount = amountOfPurchasedRubForBtc
-                    .add(amountOfPurchasedRubForLitecoin)
-                    .add(amountOfPurchasedRubForUsdt)
-                    .add(amountOfPurchasedRubForXmr)
-                    .setScale(0, RoundingMode.HALF_DOWN)
-                    .stripTrailingZeros();
-
-            String report = "Отчет за " + data.getPeriod() + ":\n"
-                    + "Куплено BTC: " + getBuyCryptoAmount(CryptoCurrency.BITCOIN, 8, dateTimeBegin, dateTimeEnd).toPlainString() + "\n"
-                    + "Куплено Litecoin: " + getBuyCryptoAmount(CryptoCurrency.LITECOIN, 5, dateTimeBegin, dateTimeEnd).toPlainString() + "\n"
-                    + "Куплено USDT: " + getBuyCryptoAmount(CryptoCurrency.USDT, 0, dateTimeBegin, dateTimeEnd).toPlainString() + "\n"
-                    + "Куплено XMR: " + getBuyCryptoAmount(CryptoCurrency.MONERO, 0, dateTimeBegin, dateTimeEnd).toPlainString() + "\n\n"
-                    + "Получено рублей от BTC: " + amountOfPurchasedRubForBtc.toPlainString() + "\n"
-                    + "Получено рублей от Litecoin: " + amountOfPurchasedRubForLitecoin.toPlainString() + "\n"
-                    + "Получено рублей от USDT: " + amountOfPurchasedRubForUsdt.toPlainString() + "\n"
-                    + "Получено рублей от XMR: " + amountOfPurchasedRubForXmr.toPlainString() + "\n\n"
-                    + "Продано BTC: " + getSellCryptoAmount(CryptoCurrency.BITCOIN, 8, dateTimeBegin, dateTimeEnd).toPlainString() + "\n"
-                    + "Продано Litecoin: " + getSellCryptoAmount(CryptoCurrency.LITECOIN, 5, dateTimeBegin, dateTimeEnd).toPlainString() + "\n"
-                    + "Продано USDT: " + getSellCryptoAmount(CryptoCurrency.USDT, 0, dateTimeBegin, dateTimeEnd).toPlainString() + "\n"
-                    + "Продано XMR: " + getSellCryptoAmount(CryptoCurrency.MONERO, 0, dateTimeBegin, dateTimeEnd).toPlainString() + "\n\n"
-                    + "Всего получено рублей: " + totalPurchasedRubAmount.toPlainString()
-                    + "\n"
-                    + "Количество новых пользователей: " + newUsersCount + "\n"
-                    + "Количество новых партнеров: " + allNewPartnersCount + "\n"
-                    + "Количество активных новых партнеров: " + newActivePartnersCount;
-            userRepository.getAdminsChatIds().forEach(chatId -> responseSender.sendMessage(chatId, report));
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("Отчет за ").append(data.getPeriod()).append(":\n").append("Куплено BTC: ")
+                    .append(getBuyCryptoAmount(CryptoCurrency.BITCOIN, 8, dateTimeBegin, dateTimeEnd).toPlainString())
+                    .append("\n").append("Куплено Litecoin: ")
+                    .append(getBuyCryptoAmount(CryptoCurrency.LITECOIN, 5, dateTimeBegin, dateTimeEnd).toPlainString())
+                    .append("\n").append("Куплено USDT: ")
+                    .append(getBuyCryptoAmount(CryptoCurrency.USDT, 0, dateTimeBegin, dateTimeEnd).toPlainString())
+                    .append("\n").append("Куплено XMR: ")
+                    .append(getBuyCryptoAmount(CryptoCurrency.MONERO, 0, dateTimeBegin, dateTimeEnd).toPlainString())
+                    .append("\n\n");
+            Map<FiatCurrency, BigDecimal> totalAmounts = new HashMap<>();
+            for (FiatCurrency fiatCurrency : FiatCurrenciesUtil.getFiatCurrencies()) {
+                BigDecimal buyAmountBTC = getBuyAmount(CryptoCurrency.BITCOIN, dateTimeBegin, dateTimeEnd, fiatCurrency);
+                stringBuilder.append("Получено ").append(fiatCurrency.getCode()).append(" от BTC: ").append(buyAmountBTC).append("\n");
+                BigDecimal buyAmountLTC = getBuyAmount(CryptoCurrency.LITECOIN, dateTimeBegin, dateTimeEnd, fiatCurrency);
+                stringBuilder.append("Получено ").append(fiatCurrency.getCode()).append(" от Litecoin: ").append(getBuyAmount(CryptoCurrency.LITECOIN, dateTimeBegin, dateTimeEnd, fiatCurrency)).append("\n");
+                BigDecimal buyAmountUSDT = getBuyAmount(CryptoCurrency.USDT, dateTimeBegin, dateTimeEnd, fiatCurrency);
+                stringBuilder.append("Получено ").append(fiatCurrency.getCode()).append(" от USDT: ").append(getBuyAmount(CryptoCurrency.USDT, dateTimeBegin, dateTimeEnd, fiatCurrency)).append("\n");
+                BigDecimal buyAmountXMR = getBuyAmount(CryptoCurrency.MONERO, dateTimeBegin, dateTimeEnd, fiatCurrency);
+                stringBuilder.append("Получено ").append(fiatCurrency.getCode()).append(" от XMR: ").append(getBuyAmount(CryptoCurrency.MONERO, dateTimeBegin, dateTimeEnd, fiatCurrency)).append("\n\n");
+                totalAmounts.put(fiatCurrency, buyAmountBTC.add(buyAmountLTC).add(buyAmountUSDT).add(buyAmountXMR));
+            }
+            stringBuilder.append("Продано BTC: ")
+                    .append(getSellCryptoAmount(CryptoCurrency.BITCOIN, 8, dateTimeBegin, dateTimeEnd).toPlainString())
+                    .append("\n").append("Продано Litecoin: ")
+                    .append(getSellCryptoAmount(CryptoCurrency.LITECOIN, 5, dateTimeBegin, dateTimeEnd).toPlainString())
+                    .append("\n").append("Продано USDT: ")
+                    .append(getSellCryptoAmount(CryptoCurrency.USDT, 0, dateTimeBegin, dateTimeEnd).toPlainString())
+                    .append("\n").append("Продано XMR: ")
+                    .append(getSellCryptoAmount(CryptoCurrency.MONERO, 0, dateTimeBegin, dateTimeEnd).toPlainString())
+                    .append("\n\n");
+            for (FiatCurrency fiatCurrency : FiatCurrenciesUtil.getFiatCurrencies()) {
+                stringBuilder.append("Всего получено рублей от ").append(fiatCurrency.getCode()).append(" : ")
+                        .append(totalAmounts.get(fiatCurrency).toPlainString()).append("\n");
+            }
+            stringBuilder.append("\n" + "Количество новых пользователей: ").append(newUsersCount).append("\n")
+                    .append("Количество новых партнеров: ").append(allNewPartnersCount).append("\n")
+                    .append("Количество активных новых партнеров: ").append(newActivePartnersCount);
+            userRepository.getAdminsChatIds().forEach(chatId -> responseSender.sendMessage(chatId, stringBuilder.toString()));
         } catch (Exception e) {
             String message = "Ошибка при формировании периодического отчета за " + data.getPeriod() + ":\n"
                     + e.getMessage() + "\n"
@@ -160,16 +173,16 @@ public class DealAutoReport {
                 : BigDecimal.ZERO;
     }
 
-    private BigDecimal getBuyAmount(CryptoCurrency cryptoCurrency, LocalDateTime dateFrom, LocalDateTime dateTo) {
-        return getAmount(cryptoCurrency, dateFrom, dateTo, DealType.BUY);
+    private BigDecimal getBuyAmount(CryptoCurrency cryptoCurrency, LocalDateTime dateFrom, LocalDateTime dateTo, FiatCurrency fiatCurrency) {
+        return getAmount(cryptoCurrency, dateFrom, dateTo, DealType.BUY, fiatCurrency);
     }
 
-    private BigDecimal getAmount(CryptoCurrency cryptoCurrency, LocalDateTime dateFrom, LocalDateTime dateTo, DealType dealType) {
+    private BigDecimal getAmount(CryptoCurrency cryptoCurrency, LocalDateTime dateFrom, LocalDateTime dateTo, DealType dealType, FiatCurrency fiatCurrency) {
         BigDecimal totalAmount;
         if (Objects.nonNull(dateTo)) {
-            totalAmount = dealRepository.getTotalAmountSum(true, dealType, dateFrom, dateTo, cryptoCurrency);
+            totalAmount = dealRepository.getTotalAmountSum(true, dealType, dateFrom, dateTo, cryptoCurrency, fiatCurrency);
         } else {
-            totalAmount = dealRepository.getTotalAmountSum(true, dealType, dateFrom, cryptoCurrency);
+            totalAmount = dealRepository.getTotalAmountSum(true, dealType, dateFrom, cryptoCurrency, fiatCurrency);
         }
         return Objects.nonNull(totalAmount)
                 ? totalAmount.setScale(0, RoundingMode.HALF_DOWN).stripTrailingZeros()

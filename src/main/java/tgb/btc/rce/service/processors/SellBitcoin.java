@@ -20,6 +20,8 @@ import tgb.btc.rce.service.impl.UserService;
 import tgb.btc.rce.service.processors.support.ExchangeService;
 import tgb.btc.rce.service.processors.support.ExchangeServiceNew;
 import tgb.btc.rce.service.processors.support.SellService;
+import tgb.btc.rce.service.schedule.DealAutoReport;
+import tgb.btc.rce.service.schedule.DealDeleteScheduler;
 import tgb.btc.rce.util.BotImageUtil;
 import tgb.btc.rce.util.FiatCurrenciesUtil;
 import tgb.btc.rce.util.KeyboardUtil;
@@ -220,6 +222,7 @@ public class SellBitcoin extends Processor {
                     paymentReceipts.add(paymentReceipt);
                     deal.setPaymentReceipts(paymentReceipts);
                     dealService.save(deal);
+                    DealDeleteScheduler.deleteCryptoDeal(deal.getPid());
                 } else if (update.hasMessage() && update.getMessage().hasDocument()) {
                     deal = dealService.getByPid(userService.getCurrentDealByChatId(chatId));
                     PaymentReceipt paymentReceipt = paymentReceiptRepository.save(PaymentReceipt.builder()

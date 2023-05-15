@@ -415,7 +415,7 @@ public class ExchangeService {
                 .toPlainString() + "\n"
                 + "<b>" + displayCurrencyName + "-адрес</b>:" + "<code>" + deal.getWallet() + "</code>"
                 + "\n\n"
-                + "\uD83D\uDCB5<b>Сумма перевода</b>: " + dealAmount.stripTrailingZeros().toPlainString() + "₽"
+                + "\uD83D\uDCB5<b>Сумма перевода</b>: " + dealAmount.stripTrailingZeros().toPlainString() + " " + deal.getFiatCurrency().getDisplayName()
                 + "\n\n"
                 + additionalText
                 + "<b>Выберите способ оплаты:</b>";
@@ -517,7 +517,7 @@ public class ExchangeService {
                 + "\n\n"
                 + "Ваш ранг: " + rank.getSmile() + ", скидка " + rank.getPercent() + "%" + "\n\n"
                 + "<b>\uD83D\uDCB5Сумма к оплате</b>: <code>" + BigDecimalUtil.round(dealAmount, 0).stripTrailingZeros()
-                .toPlainString() + "₽</code>"
+                .toPlainString() + " " + deal.getFiatCurrency().getDisplayName() + "</code>"
                 + "\n"
                 + "<b>Резквизиты для оплаты:</b>"
                 + "\n\n"

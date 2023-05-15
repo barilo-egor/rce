@@ -106,12 +106,14 @@ public class DealReports extends Processor {
         headCell = headRow.createCell(2);
         headCell.setCellValue("Сум.руб.");
         headCell = headRow.createCell(3);
-        headCell.setCellValue("Валюта");
+        headCell.setCellValue("Крипто валюта");
         headCell = headRow.createCell(4);
-        headCell.setCellValue("Сумма крипты");
+        headCell.setCellValue("Фиатная валюта");
         headCell = headRow.createCell(5);
-        headCell.setCellValue("Оплата");
+        headCell.setCellValue("Сумма крипты");
         headCell = headRow.createCell(6);
+        headCell.setCellValue("Оплата");
+        headCell = headRow.createCell(7);
         headCell.setCellValue("ID");
 
         int i = 2;
@@ -128,12 +130,14 @@ public class DealReports extends Processor {
             cell = row.createCell(4);
             cell.setCellValue(deal.getCryptoAmount().setScale(8, RoundingMode.FLOOR).stripTrailingZeros().toString());
             cell = row.createCell(5);
+            cell.setCellValue(deal.getFiatCurrency().getCode());
+            cell = row.createCell(6);
             // getPaymentTypeEnum используется для старых сделок
             String paymentTypeName = Objects.nonNull(deal.getPaymentTypeEnum())
                                      ? deal.getPaymentTypeEnum().getDisplayName()
                                      : deal.getPaymentType().getName();
             cell.setCellValue(paymentTypeName);
-            cell = row.createCell(6);
+            cell = row.createCell(7);
             cell.setCellValue(deal.getUser().getChatId());
             i++;
         }

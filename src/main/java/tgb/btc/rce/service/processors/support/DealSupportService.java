@@ -50,7 +50,8 @@ public class DealSupportService {
                 deal.getCryptoCurrency().getShortName(),
                 deal.getCryptoAmount().setScale(8, RoundingMode.FLOOR).stripTrailingZeros()
                         .toPlainString(),
-                deal.getAmount().setScale(0, RoundingMode.HALF_UP).stripTrailingZeros().toPlainString()
+                deal.getAmount().setScale(0, RoundingMode.HALF_UP).stripTrailingZeros().toPlainString(),
+                deal.getFiatCurrency().getDisplayName()
         );
     }
 

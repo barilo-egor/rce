@@ -218,7 +218,7 @@ public class SellService {
         Deal deal = dealService.findById(userService.getCurrentDealByChatId(chatId));
         String message = "Введите " + deal.getPaymentType().getName() + " реквизиты, куда вы "
                 + "хотите получить "
-                + BigDecimalUtil.round(deal.getAmount(), 0).stripTrailingZeros().toPlainString() + "₽";
+                + BigDecimalUtil.round(deal.getAmount(), 0).stripTrailingZeros().toPlainString() + " " + deal.getFiatCurrency().getDisplayName();
 
         Optional<Message> optionalMessage = responseSender.sendMessage(chatId, message,
                 KeyboardUtil.buildInline(
@@ -252,7 +252,7 @@ public class SellService {
                 + "\uD83D\uDCAC<b>Продажа " + displayCurrencyName + "</b>: " + dealCryptoAmount.stripTrailingZeros()
                 .toPlainString()
                 + "\n\n"
-                + "\uD83D\uDCB5<b>Сумма перевода</b>: " + dealAmount.stripTrailingZeros().toPlainString() + "₽"
+                + "\uD83D\uDCB5<b>Сумма перевода</b>: " + dealAmount.stripTrailingZeros().toPlainString() + " " + deal.getFiatCurrency().getDisplayName()
                 + "\n\n"
                 + additionalText
                 + "<b>Выберите способ получения перевода:</b>";
@@ -326,7 +326,7 @@ public class SellService {
                 + "\n\n"
                 + "Ваш ранг: " + rank.getSmile() + ", скидка " + rank.getPercent() + "%" + "\n\n"
                 + "\uD83D\uDCB5<b>Получаете</b>: <code>" + BigDecimalUtil.round(deal.getAmount(), 0)
-                .stripTrailingZeros().toPlainString() + "₽</code>"
+                .stripTrailingZeros().toPlainString() + " " + deal.getFiatCurrency().getDisplayName() + "</code>"
                 + "\n"
                 + "<b>Реквизиты для перевода " + currency.getShortName() + ":</b>"
                 + "\n\n"

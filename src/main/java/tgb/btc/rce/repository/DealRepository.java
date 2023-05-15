@@ -140,9 +140,16 @@ public interface DealRepository extends BaseRepository<Deal> {
     @Query(value = "select sum(amount) from Deal where isPassed=:isPassed and dealType=:dealType and dateTime=:dateTime and cryptoCurrency=:cryptoCurrency")
     BigDecimal getTotalAmountSum(boolean isPassed, DealType dealType, LocalDateTime dateTime, CryptoCurrency cryptoCurrency);
 
+    @Query(value = "select sum(amount) from Deal where isPassed=:isPassed and dealType=:dealType and dateTime=:dateTime and cryptoCurrency=:cryptoCurrency and fiatCurrency=:fiatCurrency")
+    BigDecimal getTotalAmountSum(boolean isPassed, DealType dealType, LocalDateTime dateTime, CryptoCurrency cryptoCurrency, FiatCurrency fiatCurrency);
+
+
     @Query(value = "select sum(amount) from Deal where isPassed=:isPassed and dealType=:dealType and (dateTime between :dateFrom and :dateTo) and cryptoCurrency=:cryptoCurrency")
     BigDecimal getTotalAmountSum(boolean isPassed, DealType dealType, LocalDateTime dateFrom, LocalDateTime dateTo, CryptoCurrency cryptoCurrency);
 
+    @Query(value = "select sum(amount) from Deal where isPassed=:isPassed and dealType=:dealType and (dateTime between :dateFrom and :dateTo) and cryptoCurrency=:cryptoCurrency and fiatCurrency=:fiatCurrency")
+    BigDecimal getTotalAmountSum(boolean isPassed, DealType dealType, LocalDateTime dateFrom, LocalDateTime dateTo, CryptoCurrency cryptoCurrency, FiatCurrency fiatCurrency);
+    
     @Query(value = "select count(pid) from Deal where user.chatId=:chatId and isPassed=true")
     Integer getCountPassedByChatId(Long chatId);
 
@@ -155,6 +162,9 @@ public interface DealRepository extends BaseRepository<Deal> {
 
     @Query(value = "select sum(amount) from Deal where user.chatId=:chatId and isPassed=true and dealType=:dealType")
     BigDecimal getUserAmountSum(@Param("chatId") Long chatId, @Param("dealType") DealType dealType);
+
+    @Query(value = "select sum(amount) from Deal where user.chatId=:chatId and isPassed=true and dealType=:dealType and fiatCurrency=:fiatCurrency")
+    BigDecimal getUserAmountSumByDealTypeAndFiatCurrency(@Param("chatId") Long chatId, @Param("dealType") DealType dealType, FiatCurrency fiatCurrency);
 
     @Modifying
     @Query(value = "delete from Deal where user.pid in (select pid from User where chatId=:userChatId)")
