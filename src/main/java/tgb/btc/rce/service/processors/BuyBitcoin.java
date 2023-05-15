@@ -215,21 +215,20 @@ public class BuyBitcoin extends Processor {
                 } else if (BooleanUtils.isFalse(result)) responseSender.sendMessage(chatId, "Выберите способ оплаты.");
                 break;
             case 6:
+                Long dealPid = userService.getCurrentDealByChatId(chatId);
                 if (update.hasCallbackQuery() && Command.CANCEL_DEAL.name().equals(update.getCallbackQuery().getData())) {
-                    Long dealPid = userService.getCurrentDealByChatId(chatId);
                     DealDeleteScheduler.deleteCryptoDeal(dealPid);
                     responseSender.deleteMessage(chatId, update.getCallbackQuery().getMessage().getMessageId());
                     dealService.delete(dealService.findById(dealPid));
                     userService.updateCurrentDealByChatId(null, chatId);
                     responseSender.sendMessage(chatId, "Заявка отменена.");
                     processToMainMenu(chatId);
-                    return;
                 } else if (update.hasCallbackQuery() && Command.PAID.name().equals(update.getCallbackQuery().getData())) {
                     responseSender.deleteMessage(chatId, update.getCallbackQuery().getMessage().getMessageId());
                     exchangeService.askForReceipts(update);
                     userService.nextStep(chatId);
-                    break;
                 }
+                DealDeleteScheduler.deleteCryptoDeal(dealPid);
                 break;
             case 7:
                 if (!update.hasMessage() || !update.getMessage().hasPhoto() || !update.getMessage().hasDocument()) {
@@ -257,6 +256,7 @@ public class BuyBitcoin extends Processor {
                     paymentReceipts.add(paymentReceipt);
                     deal.setPaymentReceipts(paymentReceipts);
                     dealService.save(deal);
+                    DealDeleteScheduler.deleteCryptoDeal(deal.getPid());
                 }
                 exchangeService.confirmDeal(update);
                 processToMainMenu(chatId);

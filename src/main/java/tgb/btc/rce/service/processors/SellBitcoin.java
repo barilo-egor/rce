@@ -196,8 +196,8 @@ public class SellBitcoin extends Processor {
                 responseSender.deleteMessage(UpdateUtil.getChatId(update), Integer.parseInt(userService.getBufferVariable(chatId)));
                 break;
             case 5:
+                Long dealPid = userService.getCurrentDealByChatId(chatId);
                 if (update.hasCallbackQuery() && Command.CANCEL_DEAL.name().equals(update.getCallbackQuery().getData())) {
-                    Long dealPid = userService.getCurrentDealByChatId(chatId);
                     responseSender.deleteMessage(chatId, update.getCallbackQuery().getMessage().getMessageId());
                     dealService.delete(dealService.findById(dealPid));
                     userService.updateCurrentDealByChatId(null, chatId);
@@ -208,6 +208,7 @@ public class SellBitcoin extends Processor {
                     responseSender.deleteMessage(chatId, update.getCallbackQuery().getMessage().getMessageId());
                     exchangeService.askForReceipts(update);
                     userService.nextStep(chatId);
+                    DealDeleteScheduler.deleteCryptoDeal(dealPid);
                     break;
                 }
                 break;
