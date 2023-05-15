@@ -11,12 +11,12 @@ import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.bean.Deal;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.exception.BaseException;
-import tgb.btc.rce.repository.PaymentTypeRepository;
 import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.impl.DealService;
 import tgb.btc.rce.service.impl.UserService;
 import tgb.btc.rce.util.KeyboardUtil;
+import tgb.btc.rce.util.MessageTextUtil;
 import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.ReplyButton;
 
@@ -35,7 +35,8 @@ public class DealReports extends Processor {
 
     private final static String TODAY = "За сегодня";
     private final static String TEN_DAYS = "За десять дней";
-    public static final String MONTH = "За месяц";
+    private final static String MONTH = "За месяц";
+    private final static String DATE = "За дату";
 
     private final DealService dealService;
 
@@ -64,6 +65,9 @@ public class DealReports extends Processor {
                                                 .text(MONTH)
                                                 .build(),
                                         ReplyButton.builder()
+                                                .text(DATE)
+                                                .build(),
+                                        ReplyButton.builder()
                                                 .text(Command.ADMIN_BACK.getText())
                                                 .build()
                                 )));
@@ -81,6 +85,10 @@ public class DealReports extends Processor {
                     case MONTH:
                         loadReport(dealService.getByDateBetween(LocalDate.now().minusDays(30), LocalDate.now()), chatId, period);
                         break;
+                    case DATE:
+                        responseSender.sendMessage(chatId, "Введите дату в формате дд.мм.гггг");
+                        userService.nextStep(chatId);
+                        return;
                     case "Назад":
                         processToAdminMainPanel(chatId);
                         break;
@@ -89,6 +97,15 @@ public class DealReports extends Processor {
                         return;
                 }
                 processToAdminMainPanel(chatId);
+                break;
+            case 2:
+                try {
+                    LocalDate date = MessageTextUtil.getDate(update);
+                    loadReport(dealService.getByDate(date), chatId, date.format(DateTimeFormatter.ISO_DATE));
+                    processToAdminMainPanel(chatId);
+                } catch (BaseException e) {
+                    responseSender.sendMessage(chatId, e.getMessage());
+                }
                 break;
         }
     }
@@ -134,8 +151,8 @@ public class DealReports extends Processor {
             cell = row.createCell(6);
             // getPaymentTypeEnum используется для старых сделок
             String paymentTypeName = Objects.nonNull(deal.getPaymentTypeEnum())
-                                     ? deal.getPaymentTypeEnum().getDisplayName()
-                                     : deal.getPaymentType().getName();
+                    ? deal.getPaymentTypeEnum().getDisplayName()
+                    : deal.getPaymentType().getName();
             cell.setCellValue(paymentTypeName);
             cell = row.createCell(7);
             cell.setCellValue(deal.getUser().getChatId());
