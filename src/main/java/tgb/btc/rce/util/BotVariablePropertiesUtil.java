@@ -56,14 +56,6 @@ public class BotVariablePropertiesUtil {
         }
     }
 
-    public static void validate(BotProperties botProperties) throws PropertyValueNotFoundException {
-        for (String key : botProperties.getKeys()) {
-            if (Objects.isNull(botProperties.getString(key))) {
-                throw new PropertyValueNotFoundException("Не корректно указано значение для переменной " + key + ".");
-            }
-        }
-    }
-
     public static Double getMinSum(CryptoCurrency cryptoCurrency, DealType dealType) {
         BotVariableType botVariableType = DealType.isBuy(dealType) ? BotVariableType.MIN_SUM_BUY : BotVariableType.MIN_SUM_SELL;
         return BotProperties.BOT_VARIABLE_PROPERTIES.getDouble(botVariableType.getKey(cryptoCurrency));
