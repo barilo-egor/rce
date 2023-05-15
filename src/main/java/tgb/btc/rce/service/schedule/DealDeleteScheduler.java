@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import tgb.btc.rce.enums.BotVariableType;
 import tgb.btc.rce.repository.DealRepository;
 import tgb.btc.rce.service.IResponseSender;
+import tgb.btc.rce.service.impl.UserService;
 import tgb.btc.rce.service.processors.Start;
 import tgb.btc.rce.util.BotVariablePropertiesUtil;
 import tgb.btc.rce.util.MessagePropertiesUtil;
@@ -26,11 +27,18 @@ public class DealDeleteScheduler {
 
     private IResponseSender responseSender;
 
+    private UserService userService;
+
     private Start start;
 
     @PostConstruct
     public void post() {
         log.info("Автоматическое удаление недействительных заявок загружено в контекст.");
+    }
+
+    @Autowired
+    public void setUserService(UserService userService) {
+        this.userService = userService;
     }
 
     @Autowired
@@ -72,6 +80,7 @@ public class DealDeleteScheduler {
             if (isDealNotActive(dealPid, dealActiveTime)) {
                 Long chatId = dealRepository.getUserChatIdByDealPid(dealPid);
                 dealRepository.deleteById(dealPid);
+                userService.updateCurrentDealByChatId(null, chatId);
                 if (Objects.nonNull(dealData.getValue())) responseSender.deleteMessage(chatId, dealData.getValue());
                 responseSender.sendMessage(chatId, String.format(MessagePropertiesUtil.getMessage("deal.deleted.auto"), dealActiveTime));
                 start.run(chatId);

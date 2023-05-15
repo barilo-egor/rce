@@ -103,6 +103,7 @@ public class Deal extends BasePersist {
     private Boolean isPersonalApplied;
 
     @Column(name = "FIAT_CURRENCY")
+    @Enumerated(value = EnumType.STRING)
     private FiatCurrency fiatCurrency;
 
     public Boolean getCurrent() {

@@ -119,13 +119,19 @@ public class BuyBitcoin extends Processor {
         if (update.hasCallbackQuery() && Command.BACK.getText().equals(update.getCallbackQuery().getData())) {
             responseSender.deleteMessage(chatId, update.getCallbackQuery().getMessage().getMessageId());
             if (userService.getStepByChatId(chatId) == 1) {
-                dealService.delete(dealService.findById(userService.getCurrentDealByChatId(chatId)));
-                userService.updateCurrentDealByChatId(null, chatId);
-                processToMainMenu(chatId);
+                if (FiatCurrenciesUtil.isFew()) {
+                    responseSender.sendMessage(chatId, "Выберите валюту.", keyboardService.getFiatCurrencies());
+                    userService.updateCommandByChatId(Command.CHOOSING_FIAT_CURRENCY, chatId);
+                } else {
+                    dealService.delete(dealService.findById(userService.getCurrentDealByChatId(chatId)));
+                    userService.updateCurrentDealByChatId(null, chatId);
+                    processToMainMenu(chatId);
+                }
             } else previousStep(update);
             return;
         }
         Deal deal;
+        Long currentDealPid;
         switch (userService.getStepByChatId(chatId)) {
             case 0:
                 if (dealService.getActiveDealsCountByUserChatId(chatId) > 0) {
@@ -133,14 +139,18 @@ public class BuyBitcoin extends Processor {
                             InlineButton.buildData("Удалить", Command.DELETE_DEAL.getText()));
                     return;
                 }
-                deal = dealService.createNewDeal(DEAL_TYPE, chatId);
-                if (Objects.isNull(dealRepository.getFiatCurrencyByPid(userService.getCurrentDealByChatId(chatId)))
-                        && FiatCurrenciesUtil.isFew()) {
+                if (update.hasCallbackQuery() && Command.BACK.getText().equals(update.getCallbackQuery().getData())) {
+                    processCancel(chatId);
+                    return;
+                }
+                currentDealPid = userService.getCurrentDealByChatId(chatId);
+                if (Objects.isNull(currentDealPid)) currentDealPid = dealService.createNewDeal(DEAL_TYPE, chatId).getPid();
+                if (Objects.isNull(dealRepository.getFiatCurrencyByPid(currentDealPid)) && FiatCurrenciesUtil.isFew()) {
                     responseSender.sendMessage(chatId, "Выберите валюту.", keyboardService.getFiatCurrencies());
                     userService.nextStep(chatId, Command.CHOOSING_FIAT_CURRENCY);
                     return;
                 } else {
-                    dealRepository.updateFiatCurrencyByPid(deal.getPid(), FiatCurrenciesUtil.getFirst());
+                    dealRepository.updateFiatCurrencyByPid(currentDealPid, FiatCurrenciesUtil.getFirst());
                 }
                 messageService.sendMessageAndSaveMessageId(chatId, MessagePropertiesUtil.getChooseCurrency(DEAL_TYPE),
                         keyboardService.getCurrencies(DEAL_TYPE));
@@ -153,7 +163,7 @@ public class BuyBitcoin extends Processor {
                     return;
                 }
                 CryptoCurrency currency = CryptoCurrency.valueOf(update.getCallbackQuery().getData());
-                Long currentDealPid = userService.getCurrentDealByChatId(chatId);
+                currentDealPid = userService.getCurrentDealByChatId(chatId);
                 dealService.updateCryptoCurrencyByPid(currentDealPid, currency);
                 exchangeServiceNew.askForSum(chatId, currency, dealService.getDealTypeByPid(currentDealPid));
                 userService.nextStep(chatId);

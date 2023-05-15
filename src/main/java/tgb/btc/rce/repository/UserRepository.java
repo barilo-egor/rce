@@ -120,6 +120,10 @@ public interface UserRepository extends BaseRepository<User> {
     @Query("select pid from User ")
     List<Long> getPids();
 
+    @Modifying
+    @Query("update User set step=:step, command=:command where chatId=:chatId")
+    void updateStepAndCommandByChatId(Long chatId, Command command, Integer step);
+
     /**
      * Reports
      */

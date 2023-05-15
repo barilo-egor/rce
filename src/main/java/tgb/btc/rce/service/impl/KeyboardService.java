@@ -3,6 +3,7 @@ package tgb.btc.rce.service.impl;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import tgb.btc.rce.enums.*;
+import tgb.btc.rce.util.CallbackQueryUtil;
 import tgb.btc.rce.util.FiatCurrenciesUtil;
 import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.TurningCurrenciesUtil;
@@ -47,12 +48,13 @@ public class KeyboardService {
     }
 
     public ReplyKeyboard getFiatCurrencies() {
-        List<ReplyButton> buttons = FiatCurrenciesUtil.getFiatCurrencies().stream()
-                .map(fiatCurrency -> ReplyButton.builder()
+        List<InlineButton> buttons = FiatCurrenciesUtil.getFiatCurrencies().stream()
+                .map(fiatCurrency -> InlineButton.builder()
                         .text(fiatCurrency.getCode().toUpperCase())
+                        .data(CallbackQueryUtil.buildCallbackData(Command.CHOOSING_FIAT_CURRENCY.getText(), fiatCurrency.name()))
                         .build())
                 .collect(Collectors.toList());
-        buttons.add(BotReplyButton.CANCEL.getButton());
-        return KeyboardUtil.buildReply(buttons, false);
+        buttons.add(KeyboardUtil.INLINE_BACK_BUTTON);
+        return KeyboardUtil.buildInline(buttons);
     }
 }

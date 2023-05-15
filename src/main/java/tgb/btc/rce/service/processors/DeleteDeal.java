@@ -29,6 +29,8 @@ public class DeleteDeal extends Processor {
         Long dealPid = dealService.getPidActiveDealByChatId(chatId);
         DealDeleteScheduler.deleteCryptoDeal(dealPid);
         dealService.deleteById(dealPid);
+        DealDeleteScheduler.deleteCryptoDeal(dealPid);
+        userService.updateCurrentDealByChatId(null, chatId);
         responseSender.sendMessage(chatId, "Заявка удалена.");
     }
 }
