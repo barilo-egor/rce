@@ -2,6 +2,7 @@ package tgb.btc.rce.bean;
 
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import tgb.btc.rce.enums.CryptoCurrency;
 import tgb.btc.rce.enums.DealType;
 
 import javax.persistence.Column;
@@ -26,6 +27,9 @@ public class UserData extends BasePersist {
 
     @Column(name = "DEAL_TYPE_VARIABLE")
     private DealType dealTypeVariable;
+
+    @Column(name = "CRYPTO_CURRENCY")
+    private CryptoCurrency cryptoCurrency;
 
     public User getUser() {
         return user;
@@ -57,6 +61,14 @@ public class UserData extends BasePersist {
 
     public void setDealTypeVariable(DealType dealTypeVariable) {
         this.dealTypeVariable = dealTypeVariable;
+    }
+
+    public CryptoCurrency getCryptoCurrency() {
+        return cryptoCurrency;
+    }
+
+    public void setCryptoCurrency(CryptoCurrency cryptoCurrency) {
+        this.cryptoCurrency = cryptoCurrency;
     }
 
 }

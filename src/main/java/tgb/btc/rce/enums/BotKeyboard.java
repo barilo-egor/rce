@@ -25,7 +25,8 @@ public enum BotKeyboard {
                     .data(BotProperties.BOT_VARIABLE_PROPERTIES.getString(BotVariableType.OPERATOR_LINK.getKey()))
                     .inlineType(InlineType.URL)
                     .build()
-    )));
+    ))),
+    CRYPTO_CURRENCIES(KeyboardUtil.buildReply(List.of(KeyboardUtil.getCryptoCurrencyButtons())));
 
     final ReplyKeyboard keyboard;
 
