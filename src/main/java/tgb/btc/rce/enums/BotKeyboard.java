@@ -1,6 +1,7 @@
 package tgb.btc.rce.enums;
 
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.vo.InlineButton;
@@ -25,7 +26,8 @@ public enum BotKeyboard {
                     .data(BotProperties.BOT_VARIABLE_PROPERTIES.getString(BotVariableType.OPERATOR_LINK.getKey()))
                     .inlineType(InlineType.URL)
                     .build()
-    )));
+    ))),
+    CRYPTO_CURRENCIES(getCryptoCurrencyKeyboard());
 
     final ReplyKeyboard keyboard;
 
@@ -36,4 +38,9 @@ public enum BotKeyboard {
     public ReplyKeyboard getKeyboard() {
         return keyboard;
     }
+
+    private static ReplyKeyboardMarkup getCryptoCurrencyKeyboard() {
+        return KeyboardUtil.buildReply(List.of(KeyboardUtil.getCryptoCurrencyButtons()));
+    }
+
 }
