@@ -57,7 +57,7 @@ public class DealAutoReport {
         this.userRepository = userRepository;
     }
 
-    @Scheduled(cron = "0 5 0 * * *")
+    @Scheduled(cron = "0 50 23 * * *")
     @Async
     public void everyDay() {
         YESTERDAY = LocalDate.now().minusDays(1);
@@ -139,7 +139,9 @@ public class DealAutoReport {
                             .append(cryptoCurrency.getDisplayName()).append(": ").append(cryptoAmount).append("\n");
                 }
                 totalAmounts.put(fiatCurrency, totalSum);
+                stringBuilder.append("\n");
             }
+            stringBuilder.append("\n");
             for (CryptoCurrency cryptoCurrency : CryptoCurrency.values()) {
                 BigDecimal cryptoAmount =
                         getSellCryptoAmount(cryptoCurrency, cryptoCurrency.getScale(), dateTimeBegin, dateTimeEnd);
@@ -147,8 +149,9 @@ public class DealAutoReport {
                         .append(cryptoAmount.toPlainString())
                         .append("\n");
             }
+            stringBuilder.append("\n");
             for (FiatCurrency fiatCurrency : FiatCurrenciesUtil.getFiatCurrencies()) {
-                stringBuilder.append("Всего получено рублей от ").append(fiatCurrency.getCode()).append(" : ")
+                stringBuilder.append("Всего получено от ").append(fiatCurrency.getCode()).append(" : ")
                         .append(totalAmounts.get(fiatCurrency).toPlainString()).append("\n");
             }
             stringBuilder.append("\n" + "Количество новых пользователей: ").append(newUsersCount).append("\n")
