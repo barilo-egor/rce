@@ -38,7 +38,7 @@ public class DealSupportService {
         PaymentTypeEnum paymentTypeEnum = deal.getPaymentTypeEnum();
         String paymentTypeName = Objects.nonNull(paymentTypeEnum)
                                  ? paymentTypeEnum.getDisplayName()
-                                 : deal.getPaymentType().getName();
+                                 : Objects.nonNull(deal.getPaymentType()) ? deal.getPaymentType().getName() : "Не установлен тип оплаты.";
         return String.format(
                 BotStringConstants.DEAL_INFO, deal.getDealType().getDisplayName(), deal.getPid(),
                 deal.getDateTime().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")),
