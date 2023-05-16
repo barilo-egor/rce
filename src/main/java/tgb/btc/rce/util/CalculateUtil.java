@@ -35,7 +35,7 @@ public final class CalculateUtil {
 
     public static BigDecimal convertCryptoToRub(CryptoCurrency cryptoCurrency, Double sum, DealType dealType) {
         BigDecimal fix = BotVariablePropertiesUtil.getFix(cryptoCurrency, dealType);
-        BigDecimal usdCourse = BigDecimal.valueOf(BotVariablePropertiesUtil.getDouble(BotVariableType.USD_COURSE));
+        BigDecimal usdCourse = BigDecimal.valueOf(BotVariablePropertiesUtil.getCourse(dealType, cryptoCurrency));
         BigDecimal commission = BotVariablePropertiesUtil.getCommission(cryptoCurrency, dealType);
         BigDecimal fixCommission = BotVariablePropertiesUtil.getFixCommission(cryptoCurrency, dealType);
         BigDecimal transactionalCommission = BotVariablePropertiesUtil.getTransactionCommission(cryptoCurrency);
@@ -101,7 +101,7 @@ public final class CalculateUtil {
                 throw new BaseException("Не определена крипто валюта.");
         }
         BigDecimal usd = BigDecimalUtil.multiplyHalfUp(amount, currency);
-        BigDecimal course = BigDecimal.valueOf(BotVariablePropertiesUtil.getDouble(BotVariableType.USD_COURSE));
+        BigDecimal course = BigDecimal.valueOf(BotVariablePropertiesUtil.getCourse(dealType, cryptoCurrency));
         BigDecimal rub = BigDecimalUtil.multiplyHalfUp(usd, course);
         BigDecimal percentCommission = BotVariablePropertiesUtil.getCommission(cryptoCurrency, dealType);
         return BigDecimalUtil.multiplyHalfUp(rub, getPercentsFactor(percentCommission));
@@ -146,7 +146,7 @@ public final class CalculateUtil {
                 throw new BaseException("Не определена крипто валюта.");
         }
         BigDecimal percentCommission = BotVariablePropertiesUtil.getCommission(cryptoCurrency, dealType);
-        BigDecimal course = BigDecimal.valueOf(BotVariablePropertiesUtil.getDouble(BotVariableType.USD_COURSE));
+        BigDecimal course = BigDecimal.valueOf(BotVariablePropertiesUtil.getCourse(dealType, cryptoCurrency));
         BigDecimal usd = BigDecimalUtil.multiplyHalfUp(amount, currency);
         BigDecimal rub = BigDecimalUtil.multiplyHalfUp(usd, course);
         if (rub.doubleValue() <= fix.doubleValue()) {

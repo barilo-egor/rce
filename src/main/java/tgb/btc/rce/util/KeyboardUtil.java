@@ -5,8 +5,9 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMar
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
-import tgb.btc.rce.constants.BotStringConstants;
+import tgb.btc.rce.enums.BotReplyButton;
 import tgb.btc.rce.enums.Command;
+import tgb.btc.rce.enums.CryptoCurrency;
 import tgb.btc.rce.enums.InlineType;
 import tgb.btc.rce.vo.InlineButton;
 import tgb.btc.rce.vo.ReplyButton;
@@ -106,4 +107,19 @@ public final class KeyboardUtil {
                 .keyboard(rows)
                 .build();
     }
+
+    public static ReplyButton[] getCryptoCurrencyButtons() {
+        ReplyButton[] replyButtons = new ReplyButton[CryptoCurrency.values().length + 1];
+        int i = 0;
+        for (CryptoCurrency cryptoCurrency : CryptoCurrency.values()) {
+            ReplyButton replyButton = ReplyButton.builder()
+                    .text(cryptoCurrency.getDisplayName())
+                    .build();
+            replyButtons[i] = replyButton;
+            i++;
+        }
+        replyButtons[i] = BotReplyButton.CANCEL.getButton();
+        return replyButtons;
+    }
+
 }

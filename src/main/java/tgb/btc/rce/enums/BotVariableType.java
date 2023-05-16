@@ -68,6 +68,10 @@ public enum BotVariableType {
         return key.concat("." + cryptoCurrency.getShortName());
     }
 
+    public String getKey(DealType dealType, CryptoCurrency cryptoCurrency) {
+        return key.concat("." + dealType.getKey()).concat("." + cryptoCurrency.getShortName());
+    }
+
     public static BotVariableType getByDisplayName(String name) {
         return Arrays.stream(BotVariableType.values()).filter(t -> t.getDisplayName().equals(name)).findFirst()
                 .orElseThrow(() -> new BaseException("Не найдена переменна бота: " + name));

@@ -42,4 +42,10 @@ public enum CryptoCurrency {
         return Arrays.stream(CryptoCurrency.values()).filter(t -> t.getShortName().equals(shortName)).findFirst()
                 .orElseThrow(() -> new EnumTypeNotFoundException("Не найдена крипто валюта: " + shortName));
     }
+
+    public static CryptoCurrency fromDisplayName(String displayName) {
+        return Arrays.stream(CryptoCurrency.values()).filter(t -> t.getDisplayName().equals(displayName)).findFirst()
+                .orElseThrow(() -> new EnumTypeNotFoundException("Не найдена крипто валюта: " + displayName));
+    }
+
 }

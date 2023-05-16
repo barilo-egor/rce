@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import tgb.btc.rce.bean.UserData;
+import tgb.btc.rce.enums.CryptoCurrency;
 import tgb.btc.rce.enums.DealType;
 
 @Repository
@@ -21,6 +22,12 @@ public interface UserDataRepository extends BaseRepository<UserData> {
 
     @Query("select dealTypeVariable from UserData where user.pid=:userPid")
     DealType getDealTypeByUserPid(@Param("userPid") Long userPid);
+
+    @Query("select dealTypeVariable from UserData where user.chatId=:chatId")
+    DealType getDealTypeByChatId(@Param("chatId") Long chatId);
+
+    @Query("select cryptoCurrency from UserData where user.chatId=:chatId")
+    CryptoCurrency getCryptoCurrencyByChatId(@Param("chatId") Long chatId);
 
     @Query("select count(pid) from UserData where user.pid=:userPid")
     Long countByUserPid(Long userPid);
@@ -42,6 +49,14 @@ public interface UserDataRepository extends BaseRepository<UserData> {
     void updateDealTypeByUserPid(@Param("userPid") Long userPid, @Param("dealTypeVariable") DealType dealTypeVariable);
 
     @Modifying
+    @Query("update UserData set dealTypeVariable=:dealTypeVariable where user.pid in (select pid from User where chatId=:userChatId)")
+    void updateDealTypeByUserChatId(@Param("userChatId") Long userChatId, @Param("dealTypeVariable") DealType dealTypeVariable);
+
+    @Modifying
     @Query("delete from UserData where user.pid in (select pid from User where chatId=:userChatId)")
     void deleteByUserChatId(@Param("userChatId") Long userChatId);
+
+    @Modifying
+    @Query("update UserData set cryptoCurrency=:cryptoCurrency where user.pid in (select pid from User where chatId=:userChatId)")
+    void updateCryptoCurrencyByChatId(@Param("userChatId") Long userChatId, @Param("cryptoCurrency") CryptoCurrency cryptoCurrency);
 }
