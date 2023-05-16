@@ -145,12 +145,14 @@ public class BuyBitcoin extends Processor {
                 }
                 currentDealPid = userService.getCurrentDealByChatId(chatId);
                 if (Objects.isNull(currentDealPid)) currentDealPid = dealService.createNewDeal(DEAL_TYPE, chatId).getPid();
-                if (Objects.isNull(dealRepository.getFiatCurrencyByPid(currentDealPid)) && FiatCurrenciesUtil.isFew()) {
-                    responseSender.sendMessage(chatId, "Выберите валюту.", keyboardService.getFiatCurrencies());
-                    userService.nextStep(chatId, Command.CHOOSING_FIAT_CURRENCY);
-                    return;
-                } else {
-                    dealRepository.updateFiatCurrencyByPid(currentDealPid, FiatCurrenciesUtil.getFirst());
+                if (Objects.isNull(dealRepository.getFiatCurrencyByPid(currentDealPid))) {
+                    if (FiatCurrenciesUtil.isFew()) {
+                        responseSender.sendMessage(chatId, "Выберите валюту.", keyboardService.getFiatCurrencies());
+                        userService.nextStep(chatId, Command.CHOOSING_FIAT_CURRENCY);
+                        return;
+                    } else {
+                        dealRepository.updateFiatCurrencyByPid(currentDealPid, FiatCurrenciesUtil.getFirst());
+                    }
                 }
                 messageService.sendMessageAndSaveMessageId(chatId, MessagePropertiesUtil.getChooseCurrency(DEAL_TYPE),
                         keyboardService.getCurrencies(DEAL_TYPE));
@@ -239,7 +241,7 @@ public class BuyBitcoin extends Processor {
                     responseSender.sendMessage(chatId, "Заявка отменена.");
                     processToMainMenu(chatId);
                 }
-                if (!update.hasMessage() || !update.getMessage().hasPhoto() || !update.getMessage().hasDocument()) {
+                if (!update.hasMessage() || (!update.getMessage().hasPhoto() && !update.getMessage().hasDocument())) {
                     responseSender.sendMessage(chatId, "Отправьте скрин перевода.");
                     return;
                 }

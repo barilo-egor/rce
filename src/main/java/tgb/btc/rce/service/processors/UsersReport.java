@@ -68,14 +68,13 @@ public class UsersReport extends Processor {
             for (int i = 0; i < cellHeaders.size(); i++) {
                 headCell = headRow.createCell(i);
                 headCell.setCellValue(cellHeaders.get(i));
-                i++;
             }
 
             int i = 2;
             for (User user : userService.findAll()) {
                 int cellCount = 0;
                 Row row = sheet.createRow(i);
-                Cell cell1 = row.createCell(++cellCount);
+                Cell cell1 = row.createCell(cellCount);
                 cell1.setCellValue(user.getChatId());
                 Cell cell2 = row.createCell(++cellCount);
                 cell2.setCellValue(StringUtils.defaultIfEmpty(user.getUsername(), "скрыт"));

@@ -145,12 +145,14 @@ public class SellBitcoin extends Processor {
                 }
                 currentDealPid = userService.getCurrentDealByChatId(chatId);
                 if (Objects.isNull(currentDealPid)) currentDealPid = dealService.createNewDeal(DealType.SELL, chatId).getPid();
-                if (Objects.isNull(dealRepository.getFiatCurrencyByPid(currentDealPid)) && FiatCurrenciesUtil.isFew()) {
-                    responseSender.sendMessage(chatId, "Выберите валюту.", keyboardService.getFiatCurrencies());
-                    userService.nextStep(chatId, Command.CHOOSING_FIAT_CURRENCY);
-                    return;
-                } else {
-                    dealRepository.updateFiatCurrencyByPid(currentDealPid, FiatCurrenciesUtil.getFirst());
+                if (Objects.isNull(dealRepository.getFiatCurrencyByPid(currentDealPid))) {
+                    if (FiatCurrenciesUtil.isFew()) {
+                        responseSender.sendMessage(chatId, "Выберите валюту.", keyboardService.getFiatCurrencies());
+                        userService.nextStep(chatId, Command.CHOOSING_FIAT_CURRENCY);
+                        return;
+                    } else {
+                        dealRepository.updateFiatCurrencyByPid(currentDealPid, FiatCurrenciesUtil.getFirst());
+                    }
                 }
                 exchangeServiceNew.askForCurrency(chatId, DealType.SELL);
                 userService.nextStep(chatId, Command.SELL_BITCOIN);
@@ -222,7 +224,7 @@ public class SellBitcoin extends Processor {
                     responseSender.sendMessage(chatId, "Заявка отменена.");
                     processToMainMenu(chatId);
                 }
-                if (!update.hasMessage() || !update.getMessage().hasPhoto() || !update.getMessage().hasDocument()) {
+                if (!update.hasMessage() || (!update.getMessage().hasPhoto() && !update.getMessage().hasDocument())) {
                     responseSender.sendMessage(chatId, "Отправьте скрин перевода.");
                     return;
                 }

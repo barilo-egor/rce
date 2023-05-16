@@ -122,38 +122,42 @@ public class DealReports extends Processor {
         Row headRow = sheet.createRow(0);
         sheet.setDefaultColumnWidth(30);
         Cell headCell = headRow.createCell(0);
-        headCell.setCellValue("Кошелек");
+        headCell.setCellValue("Тип сделки");
         headCell = headRow.createCell(1);
-        headCell.setCellValue("Дата, время");
+        headCell.setCellValue("Кошелек");
         headCell = headRow.createCell(2);
-        headCell.setCellValue("Сум.руб.");
+        headCell.setCellValue("Дата, время");
         headCell = headRow.createCell(3);
-        headCell.setCellValue("Крипто валюта");
+        headCell.setCellValue("Сум.руб.");
         headCell = headRow.createCell(4);
-        headCell.setCellValue("Фиатная валюта");
+        headCell.setCellValue("Крипто валюта");
         headCell = headRow.createCell(5);
         headCell.setCellValue("Сумма крипты");
         headCell = headRow.createCell(6);
-        headCell.setCellValue("Оплата");
+        headCell.setCellValue("Фиатная валюта");
         headCell = headRow.createCell(7);
+        headCell.setCellValue("Оплата");
+        headCell = headRow.createCell(8);
         headCell.setCellValue("ID");
 
         int i = 2;
         for (Deal deal : deals) {
             Row row = sheet.createRow(i);
             Cell cell = row.createCell(0);
-            cell.setCellValue(deal.getWallet());
+            cell.setCellValue(deal.getDealType().name());
             cell = row.createCell(1);
-            cell.setCellValue(deal.getDateTime().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")));
+            cell.setCellValue(deal.getWallet());
             cell = row.createCell(2);
-            cell.setCellValue(deal.getAmount().setScale(0, RoundingMode.FLOOR).toString());
+            cell.setCellValue(deal.getDateTime().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")));
             cell = row.createCell(3);
-            cell.setCellValue(deal.getCryptoCurrency().getDisplayName());
+            cell.setCellValue(deal.getAmount().setScale(0, RoundingMode.FLOOR).toString());
             cell = row.createCell(4);
-            cell.setCellValue(deal.getCryptoAmount().setScale(8, RoundingMode.FLOOR).stripTrailingZeros().toString());
+            cell.setCellValue(deal.getCryptoCurrency().getDisplayName());
             cell = row.createCell(5);
-            cell.setCellValue(deal.getFiatCurrency().getCode());
+            cell.setCellValue(deal.getCryptoAmount().setScale(8, RoundingMode.FLOOR).stripTrailingZeros().toString());
             cell = row.createCell(6);
+            cell.setCellValue(deal.getFiatCurrency().getCode());
+            cell = row.createCell(7);
             // getPaymentTypeEnum используется для старых сделок
             String paymentTypeName = Objects.nonNull(deal.getPaymentTypeEnum())
                     ? deal.getPaymentTypeEnum().getDisplayName()
