@@ -1,16 +1,13 @@
 package tgb.btc.rce.service.processors;
 
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.PropertiesConfiguration;
-import org.apache.commons.lang.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.annotation.CommandProcessor;
-import tgb.btc.rce.constants.FilePaths;
-import tgb.btc.rce.enums.BotKeyboard;
-import tgb.btc.rce.enums.BotProperties;
-import tgb.btc.rce.enums.BotVariableType;
-import tgb.btc.rce.enums.Command;
+import tgb.btc.rce.bean.UserData;
+import tgb.btc.rce.constants.BotStringConstants;
+import tgb.btc.rce.enums.*;
+import tgb.btc.rce.exception.BaseException;
+import tgb.btc.rce.exception.EnumTypeNotFoundException;
 import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.impl.UserService;
@@ -18,6 +15,8 @@ import tgb.btc.rce.util.UpdateUtil;
 
 @CommandProcessor(command = Command.CHANGE_USD_COURSE)
 public class ChangeUsdCourseProcessor extends Processor {
+
+    private static UserData userData;
 
     @Autowired
     public ChangeUsdCourseProcessor(IResponseSender responseSender, UserService userService) {
@@ -29,32 +28,59 @@ public class ChangeUsdCourseProcessor extends Processor {
         Long chatId = UpdateUtil.getChatId(update);
         switch (userService.getStepByChatId(chatId)) {
             case 0:
-                responseSender.sendMessage(chatId, "Введите новый курс.", BotKeyboard.CANCEL);
+                userData = new UserData();
+                responseSender.sendMessage(chatId, BotStringConstants.BUY_OR_SELL, BotKeyboard.BUY_OR_SELL);
                 userService.nextStep(chatId, Command.CHANGE_USD_COURSE);
                 break;
             case 1:
-                Double newCourse = UpdateUtil.getDoubleFromText(update);
-                PropertiesConfiguration conf;
-                try {
-                    conf = new PropertiesConfiguration(FilePaths.BOT_VARIABLE_PROPERTIES);
-                } catch (ConfigurationException e) {
-                    responseSender.sendMessage(chatId, "Ошибки при открытии " + FilePaths.BOT_VARIABLE_PROPERTIES
-                            + ": " + e.getMessage() + "\n" + ExceptionUtils.getFullStackTrace(e));
-                    userService.setDefaultValues(chatId);
-                    break;
+                if (!hasMessageText(update, BotStringConstants.BUY_OR_SELL)) {
+                    return;
                 }
-                conf.setProperty(BotVariableType.USD_COURSE.getKey(), newCourse);
-                try {
-                    conf.save();
-                    responseSender.sendMessage(chatId, "Курс обновлен.");
-                    processToAdminMainPanel(chatId);
-                    BotProperties.BOT_VARIABLE_PROPERTIES.reload();
-                } catch (ConfigurationException e) {
-                    responseSender.sendMessage(chatId, "Ошибки при замене курса: " + e.getMessage() + "\n"
-                            + ExceptionUtils.getFullStackTrace(e));
-                    userService.setDefaultValues(chatId);
-                    processToAdminMainPanel(chatId);
+                String dealTypeString = UpdateUtil.getMessageText(update);
+                DealType dealType;
+                if (BotStringConstants.BUY.equals(dealTypeString)) {
+                    dealType = DealType.BUY;
+                } else if (BotStringConstants.SELL.equals(dealTypeString)) {
+                    dealType = DealType.SELL;
+                } else {
+                    responseSender.sendMessage(chatId, BotStringConstants.BUY_OR_SELL);
+                    return;
                 }
+                userData.setDealTypeVariable(dealType);
+                responseSender.sendMessage(chatId, BotStringConstants.SELECT_CRYPTO_CURRENCY, BotKeyboard.CRYPTO_CURRENCIES);
+                userService.nextStep(chatId, Command.CHANGE_USD_COURSE);
+                break;
+            case 2:
+                if (!hasMessageText(update, BotStringConstants.SELECT_CRYPTO_CURRENCY)) {
+                    return;
+                }
+                String cryptoCurrencyString = UpdateUtil.getMessageText(update);
+                CryptoCurrency cryptoCurrency;
+                try {
+                cryptoCurrency = CryptoCurrency.fromDisplayName(cryptoCurrencyString);
+                } catch (EnumTypeNotFoundException e) {
+                    responseSender.sendMessage(chatId, BotStringConstants.SELECT_CRYPTO_CURRENCY);
+                    return;
+                }
+                userData.setCryptoCurrency(cryptoCurrency);
+                responseSender.sendMessage(chatId, BotStringConstants.ENTER_NEW_COURSE, BotKeyboard.CANCEL);
+                userService.nextStep(chatId, Command.CHANGE_USD_COURSE);
+                break;
+            case 3:
+                if (!update.hasMessage() || !update.getMessage().hasText()) throw new BaseException("Не найден текст.");
+                String newCourseString = UpdateUtil.getMessageText(update).replaceAll(",", ".");
+                double newCourse;
+                try {
+                    newCourse = Double.parseDouble(newCourseString);
+                } catch (NumberFormatException e) {
+                    responseSender.sendMessage(chatId, BotStringConstants.INCORRECT_VALUE);
+                    return;
+                }
+                BotProperties.BOT_VARIABLE_PROPERTIES.setProperty(
+                        BotVariableType.USD_COURSE.getKey(userData.getDealTypeVariable(), userData.getCryptoCurrency()),
+                        newCourse);
+                responseSender.sendMessage(chatId, BotStringConstants.SUCCESSFUL_COURSE_CHANGE);
+                processToAdminMainPanel(chatId);
                 break;
         }
     }
