@@ -1,6 +1,7 @@
 package tgb.btc.rce.service.processors;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -103,7 +104,7 @@ public class DealReports extends Processor {
                     LocalDate date = MessageTextUtil.getDate(update);
                     loadReport(dealService.getByDate(date), chatId, date.format(DateTimeFormatter.ISO_DATE));
                     processToAdminMainPanel(chatId);
-                } catch (BaseException e) {
+                } catch (Exception e) {
                     responseSender.sendMessage(chatId, e.getMessage());
                 }
                 break;
@@ -111,6 +112,10 @@ public class DealReports extends Processor {
     }
 
     private void loadReport(List<Deal> deals, Long chatId, String period) {
+        if (CollectionUtils.isEmpty(deals)) {
+            responseSender.sendMessage(chatId, "Сделки отсутствуют.");
+            return;
+        }
         HSSFWorkbook book = new HSSFWorkbook();
         Sheet sheet = book.createSheet("Сделки " + period);
 
@@ -158,7 +163,7 @@ public class DealReports extends Processor {
             cell.setCellValue(deal.getUser().getChatId());
             i++;
         }
-        String fileName = LocalDate.now() + ".xlsx";
+        String fileName = period + ".xlsx";
         try {
             FileOutputStream outputStream = new FileOutputStream(fileName);
             book.write(outputStream);
