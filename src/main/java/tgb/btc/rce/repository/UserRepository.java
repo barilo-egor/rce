@@ -136,4 +136,9 @@ public interface UserRepository extends BaseRepository<User> {
 
     @Query("select chatId from User where pid=:pid")
     Long getChatIdByPid(Long pid);
+
+    @Modifying
+    @Query("update User set isAdmin=:isAdmin where chatId=:chatId")
+    void updateIsAdminByChatId(@Param("chatId") Long chatId, @Param("isAdmin") Boolean isAdmin);
+
 }

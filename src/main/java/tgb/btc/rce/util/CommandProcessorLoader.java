@@ -185,6 +185,7 @@ public final class CommandProcessorLoader {
         commandProcessors.add(SpamUnban.class);
         commandProcessors.add(NewSpamBans.class);
         commandProcessors.add(ChoosingFiatCurrency.class);
+        commandProcessors.add(MakeAdmin.class);
         commandProcessors.stream()
                 .filter(processor -> !extendsProcessor(processor))
                 .findFirst()
