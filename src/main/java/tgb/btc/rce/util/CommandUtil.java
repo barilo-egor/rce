@@ -9,6 +9,7 @@ public final class CommandUtil {
     }
 
     public static boolean isStartCommand(Update update) {
+        if (!UpdateUtil.hasMessageText(update)) return false;
         return UpdateType.MESSAGE.equals(UpdateType.fromUpdate(update))
                 && Command.START.equals(Command.fromUpdate(update));
     }
