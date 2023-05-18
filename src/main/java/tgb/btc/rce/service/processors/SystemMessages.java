@@ -52,7 +52,7 @@ public class SystemMessages extends Processor {
             return;
         }
         try {
-            MessagePropertiesUtil.validate(BotProperties.MESSAGE_BUFFER_PROPERTIES);
+            BotProperties.MESSAGE_BUFFER_PROPERTIES.validate();
         } catch (PropertyValueNotFoundException e) {
             log.error(e.getMessage(), e);
             responseSender.sendMessage(chatId, e.getMessage());

@@ -53,7 +53,7 @@ public class BotVariables extends Processor {
             return;
         }
         try {
-            BotVariablePropertiesUtil.validate(BotProperties.BOT_VARIABLE_BUFFER_PROPERTIES);
+            BotProperties.BOT_VARIABLE_BUFFER_PROPERTIES.validate();
         } catch (PropertyValueNotFoundException e) {
             log.error(e.getMessage(),e);
             responseSender.sendMessage(chatId,e.getMessage());

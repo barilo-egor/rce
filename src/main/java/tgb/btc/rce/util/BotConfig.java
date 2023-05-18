@@ -1,9 +1,12 @@
 package tgb.btc.rce.util;
 
 import lombok.extern.slf4j.Slf4j;
+import tgb.btc.rce.enums.BotProperties;
 import tgb.btc.rce.exception.InitPropertyValueNotFoundException;
 import tgb.btc.rce.exception.PropertyValueNotFoundException;
 import tgb.btc.rce.service.BeanHolder;
+
+import java.util.Map;
 
 @Slf4j
 public final class BotConfig {
@@ -14,7 +17,12 @@ public final class BotConfig {
         CommandProcessorLoader.scan();
         BeanHolder.load();
         try {
-            BulkDiscountUtil.load(null);
+            for (BotProperties botProperties : BotProperties.values()) {
+                if (!botProperties.getIsBufferProperties()) {
+                    botProperties.validate();
+                    botProperties.load();
+                }
+            }
         } catch (PropertyValueNotFoundException e) {
             log.error(e.getMessage(),e);
             throw new InitPropertyValueNotFoundException(e.getMessage());

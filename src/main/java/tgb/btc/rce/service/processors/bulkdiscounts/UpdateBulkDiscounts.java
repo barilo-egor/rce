@@ -40,9 +40,8 @@ public class UpdateBulkDiscounts extends Processor {
             responseSender.sendMessage(chatId, "Ошибка при скачивании оптовых скидок: " + e.getMessage());
             return;
         }
-        Map<Integer, Double> discounts;
         try {
-            discounts = BulkDiscountUtil.validate(BotProperties.BULK_DISCOUNT_BUFFER_PROPERTIES);
+            BotProperties.BULK_DISCOUNT_BUFFER_PROPERTIES.validate();
         } catch (PropertyValueNotFoundException e) {
             log.error(e.getMessage(), e);
             responseSender.sendMessage(chatId, e.getMessage());
@@ -73,7 +72,7 @@ public class UpdateBulkDiscounts extends Processor {
             return;
         }
         BotProperties.BULK_DISCOUNT_PROPERTIES.reload();
-        BulkDiscountUtil.load(discounts);
+        BotProperties.BULK_DISCOUNT_PROPERTIES.load();
         responseSender.sendMessage(chatId, "Оптовые скидки обновлены.");
     }
 }

@@ -43,14 +43,6 @@ public class MessagePropertiesUtil {
         return String.format(errorMessage, key);
     }
 
-    public static void validate(BotProperties botProperties) throws PropertyValueNotFoundException {
-        for (String key : botProperties.getKeys()) {
-            if (Objects.isNull(botProperties.getString(key))) {
-                throw new PropertyValueNotFoundException("Не указано сообщение для ключа " + key + ".");
-            }
-        }
-    }
-
     public static String getChooseCurrency(DealType dealType) {
         return getMessage(DealType.BUY.equals(dealType)
                 ? PropertiesMessage.CHOOSE_CURRENCY_BUY
