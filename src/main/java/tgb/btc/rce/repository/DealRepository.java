@@ -107,7 +107,7 @@ public interface DealRepository extends BaseRepository<Deal> {
     List<Deal> getByDateBetween(LocalDate startDate, LocalDate endDate);
 
     @Query("from Deal d where d.date=:date and d.isPassed=true")
-    List<Deal> getPassedByDate(LocalDate dateTime);
+    List<Deal> getPassedByDate(LocalDate date);
 
     @Query("select dealType from Deal where pid=:pid")
     DealType getDealTypeByPid(Long pid);
