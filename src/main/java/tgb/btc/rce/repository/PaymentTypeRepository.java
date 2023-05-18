@@ -21,25 +21,25 @@ public interface PaymentTypeRepository extends BaseRepository<PaymentType> {
     PaymentType getByPid(@Param("pid") Long pid);
 
     @Query("from PaymentType where dealType=:dealType")
-    List<PaymentType> getByDealType(@Param("dealType") DealType dealType);
+    List<PaymentType> getByDealType(DealType dealType);
 
     @Query("from PaymentType where dealType=:dealType and isOn=:isOn")
-    List<PaymentType> getByDealTypeAndIsOn(@Param("dealType") DealType dealType, @Param("isOn") Boolean isOn);
+    List<PaymentType> getByDealTypeAndIsOn(DealType dealType, Boolean isOn);
 
     @Query("select dealType from PaymentType where pid=:pid")
-    DealType getDealTypeByPid(@Param("pid") Long pid);
+    DealType getDealTypeByPid(Long pid);
 
 
     /** UPDATE **/
     @Modifying
     @Query("update PaymentType set isOn=:isOn where pid=:pid")
-    void updateIsOnByPid(@Param("isOn") Boolean isOn, @Param("pid") Long pid);
+    void updateIsOnByPid(Boolean isOn, Long pid);
 
     @Modifying
     @Query("update PaymentType set minSum=:minSum where pid=:pid")
-    void updateMinSumByPid(@Param("minSum") BigDecimal minSum, @Param("pid") Long pid);
+    void updateMinSumByPid(BigDecimal minSum, Long pid);
 
     @Modifying
     @Query("update PaymentType set isDynamicOn=:isDynamicOn where pid=:pid")
-    void updateIsDynamicOnByPid(@Param("isDynamicOn") Boolean isDynamicOn, @Param("pid") Long pid);
+    void updateIsDynamicOnByPid(Boolean isDynamicOn, Long pid);
 }

@@ -15,6 +15,7 @@ import tgb.btc.rce.vo.ReplyButton;
 import java.util.ArrayList;
 import java.util.List;
 
+// TODO выкосить
 @CommandProcessor(command = Command.PAYMENT_REQUISITES)
 public class PaymentRequisites extends Processor {
 
