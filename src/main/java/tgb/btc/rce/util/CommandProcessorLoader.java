@@ -105,8 +105,6 @@ public final class CommandProcessorLoader {
         commandProcessors.add(OffBot.class);
         commandProcessors.add(OnBot.class);
         commandProcessors.add(PartnersReport.class);
-        commandProcessors.add(PaymentRequisites.class);
-        commandProcessors.add(PaymentTypesOld.class);
         commandProcessors.add(PublishReview.class);
         commandProcessors.add(QuitAdminPanel.class);
         commandProcessors.add(Referral.class);
