@@ -5,7 +5,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.bean.PaymentConfig;
 import tgb.btc.rce.enums.Command;
-import tgb.btc.rce.enums.PaymentType;
+import tgb.btc.rce.enums.PaymentTypeEnum;
 import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.impl.PaymentConfigService;
@@ -17,13 +17,13 @@ import tgb.btc.rce.vo.ReplyButton;
 import java.util.ArrayList;
 import java.util.List;
 
-@CommandProcessor(command = Command.PAYMENT_TYPES)
-public class PaymentTypes extends Processor {
+@CommandProcessor(command = Command.PAYMENT_TYPES_OLD)
+public class PaymentTypesOld extends Processor {
 
     private final PaymentConfigService paymentConfigService;
 
     @Autowired
-    public PaymentTypes(IResponseSender responseSender, UserService userService, PaymentConfigService paymentConfigService) {
+    public PaymentTypesOld(IResponseSender responseSender, UserService userService, PaymentConfigService paymentConfigService) {
         super(responseSender, userService);
         this.paymentConfigService = paymentConfigService;
     }
@@ -38,18 +38,18 @@ public class PaymentTypes extends Processor {
         switch (userService.getStepByChatId(chatId)) {
             case 0:
                 askForInput(chatId);
-                userService.nextStep(chatId, Command.PAYMENT_TYPES);
+                userService.nextStep(chatId, Command.PAYMENT_TYPES_OLD);
                 break;
             case 1:
                 String text = update.getMessage().getText();
-                for (PaymentType paymentType : PaymentType.values()) {
-                    if (text.startsWith(paymentType.getDisplayName())) {
-                        PaymentConfig paymentConfig = paymentConfigService.getByPaymentType(paymentType);
+                for (PaymentTypeEnum paymentTypeEnum : PaymentTypeEnum.values()) {
+                    if (text.startsWith(paymentTypeEnum.getDisplayName())) {
+                        PaymentConfig paymentConfig = paymentConfigService.getByPaymentType(paymentTypeEnum);
                         String message = paymentConfig.getOn() ? "выключен" : "включен";
                         paymentConfig.setOn(!paymentConfig.getOn());
                         paymentConfigService.save(paymentConfig);
                         responseSender.sendMessage(chatId, "Способ оплаты " +
-                                paymentType.getDisplayName() + " " + message + ".");
+                                paymentTypeEnum.getDisplayName() + " " + message + ".");
                         askForInput(chatId);
                         return;
                     }
@@ -60,11 +60,11 @@ public class PaymentTypes extends Processor {
 
     private void askForInput(Long chatId) {
         List<ReplyButton> buttons = new ArrayList<>();
-        for (PaymentType paymentType : PaymentType.values()) {
-            PaymentConfig paymentConfig = paymentConfigService.getByPaymentType(paymentType);
+        for (PaymentTypeEnum paymentTypeEnum : PaymentTypeEnum.values()) {
+            PaymentConfig paymentConfig = paymentConfigService.getByPaymentType(paymentTypeEnum);
             String isOn = paymentConfig != null && paymentConfig.getOn() ? "выключить" : "включить";
             buttons.add(ReplyButton.builder()
-                    .text(paymentType.getDisplayName() + "(" + isOn + ")")
+                    .text(paymentTypeEnum.getDisplayName() + "(" + isOn + ")")
                     .build());
         }
         buttons.add(ReplyButton.builder()

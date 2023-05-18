@@ -9,11 +9,14 @@ import tgb.btc.rce.bean.ReferralUser;
 import tgb.btc.rce.bean.User;
 import tgb.btc.rce.enums.Command;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
 @Transactional
 public interface UserRepository extends BaseRepository<User> {
+
     User findByChatId(Long chatId);
 
     @Query("select pid from User where chatId=:chatId")
@@ -68,8 +71,8 @@ public interface UserRepository extends BaseRepository<User> {
     @Query("select bufferVariable from User where chatId=:chatId")
     String getBufferVariable(@Param("chatId") Long chatId);
 
-    @Query("select chatId from User where isAdmin=false and isActive=true")
-    List<Long> getChatIdsNotAdminsAndIsActive();
+    @Query("select chatId from User where isAdmin=false and isActive=true and isBanned=false")
+    List<Long> getChatIdsNotAdminsAndIsActiveAndNotBanned();
 
     @Modifying
     @Query("update User set isActive=:isActive where chatId=:chatId")
@@ -102,4 +105,40 @@ public interface UserRepository extends BaseRepository<User> {
 
     @Query("select charges from User where chatId=:chatId")
     Integer getChargesByChatId(@Param("chatId") Long chatId);
+
+    @Modifying
+    @Query("update User set isBanned=:isBanned where chatId=:chatId")
+    void updateIsBannedByChatId(@Param("chatId") Long chatId, @Param("isBanned") Boolean isBanned);
+
+    @Query("update User set referralPercent=:referralPercent where chatId=:chatId")
+    @Modifying
+    void updateReferralPercent(@Param("referralPercent") BigDecimal referralPercent, @Param("chatId") Long chatId);
+
+    @Query("select referralPercent from User where chatId=:chatId")
+    BigDecimal getReferralPercentByChatId(@Param("chatId") Long chatId);
+
+    @Query("select pid from User ")
+    List<Long> getPids();
+
+    @Modifying
+    @Query("update User set step=:step, command=:command where chatId=:chatId")
+    void updateStepAndCommandByChatId(Long chatId, Command command, Integer step);
+
+    /**
+     * Reports
+     */
+
+    @Query("select count(pid) from User where registrationDate between :localDateTime1 and :localDateTime2")
+    Integer countByRegistrationDate(LocalDateTime localDateTime1, LocalDateTime localDateTime2);
+
+    @Query("select chatId from User where registrationDate between :localDateTime1 and :localDateTime2 and fromChatId is not null")
+    List<Long> getChatIdsByRegistrationDateAndFromChatIdNotNull(LocalDateTime localDateTime1, LocalDateTime localDateTime2);
+
+    @Query("select chatId from User where pid=:pid")
+    Long getChatIdByPid(Long pid);
+
+    @Modifying
+    @Query("update User set isAdmin=:isAdmin where chatId=:chatId")
+    void updateIsAdminByChatId(@Param("chatId") Long chatId, @Param("isAdmin") Boolean isAdmin);
+
 }

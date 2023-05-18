@@ -37,6 +37,10 @@ public class UpdateUtil {
         return update.getMessage().getMessageId();
     }
 
+    public static boolean hasMessageText(Update update) {
+        return update.hasMessage() && update.getMessage().hasText();
+    }
+
     public static String getMessageText(Update update) {
         if(Objects.isNull(update.getMessage()))
             throw new BaseException("Невозможно получить message id, т.к. message==null.");
@@ -52,7 +56,7 @@ public class UpdateUtil {
     }
 
     public static Double getDoubleFromText(Update update) {
-        return NumberUtil.getInputDouble(getMessageText(update));
+        return NumberUtil.getInputDouble(getMessageText(update).replaceAll(",", "."));
     }
 
     public static Message getMessage(Update update) {

@@ -19,6 +19,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import tgb.btc.rce.enums.InlineType;
+import tgb.btc.rce.exception.NumberParseException;
 import tgb.btc.rce.service.IUpdateDispatcher;
 import tgb.btc.rce.util.BotPropertiesUtil;
 import tgb.btc.rce.util.KeyboardUtil;
@@ -51,16 +52,24 @@ public class RceBot extends TelegramLongPollingBot {
     @Override
     public void onUpdateReceived(Update update) {
         try {
-            updateDispatcher.dispatch(update);
-        } catch (Exception e) {
             try {
+                updateDispatcher.dispatch(update);
+            } catch (NumberParseException e) {
                 execute(SendMessage.builder()
-                        .chatId(UpdateUtil.getChatId(update).toString())
-                        .text("Что-то пошло не так: " + e.getMessage() + "\n" + ExceptionUtils.getFullStackTrace(e))
-                        .build());
+                                .chatId(UpdateUtil.getChatId(update).toString())
+                                .text("Неверный формат.")
+                                .build());
+            } catch (Exception e) {
+                execute(SendMessage.builder()
+                                .chatId(UpdateUtil.getChatId(update).toString())
+                                .text("Что-то пошло не так: " + e.getMessage() + "\n" + ExceptionUtils.getFullStackTrace(
+                                        e))
+                                .build());
                 log.error("Ошибка", e);
-            } catch (TelegramApiException ignored) {
+
             }
+        } catch (TelegramApiException ignored) {
         }
     }
+
 }

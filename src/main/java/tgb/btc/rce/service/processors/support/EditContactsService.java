@@ -64,7 +64,7 @@ public class EditContactsService {
         Integer messageId = optionalMessage.get().getMessageId();
         responseSender.sendEditedMessageText(chatId, messageId,
                 MessagePropertiesUtil.getMessage(PropertiesMessage.CONTACT_ASK_DELETE),
-                KeyboardUtil.buildInline(buildContactButtons(messageId), InlineType.CALLBACK_DATA));
+                KeyboardUtil.buildInline(buildContactButtons(messageId)));
     }
 
     private List<InlineButton> buildContactButtons(Integer messageId) {

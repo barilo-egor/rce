@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tgb.btc.rce.bean.PaymentConfig;
-import tgb.btc.rce.enums.PaymentType;
+import tgb.btc.rce.enums.PaymentTypeEnum;
 import tgb.btc.rce.repository.BaseRepository;
 import tgb.btc.rce.repository.PaymentConfigRepository;
 
@@ -23,13 +23,13 @@ public class PaymentConfigService extends BasePersistService<PaymentConfig> {
         this.paymentConfigRepository = paymentConfigRepository;
     }
 
-    public PaymentConfig getByPaymentType(PaymentType paymentType) {
+    public PaymentConfig getByPaymentType(PaymentTypeEnum paymentTypeEnum) {
         try {
-            PaymentConfig paymentConfig = paymentConfigRepository.getByPaymentType(paymentType);
+            PaymentConfig paymentConfig = paymentConfigRepository.getByPaymentType(paymentTypeEnum);
             if (paymentConfig == null)
                 paymentConfig = paymentConfigRepository.save(PaymentConfig.builder()
                         .isOn(true)
-                        .paymentType(paymentType)
+                        .paymentTypeEnum(paymentTypeEnum)
                         .requisites("Отсутствуют")
                         .build());
             return paymentConfig;

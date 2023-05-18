@@ -5,13 +5,16 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMar
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
+import tgb.btc.rce.enums.BotReplyButton;
 import tgb.btc.rce.enums.Command;
+import tgb.btc.rce.enums.CryptoCurrency;
 import tgb.btc.rce.enums.InlineType;
 import tgb.btc.rce.vo.InlineButton;
 import tgb.btc.rce.vo.ReplyButton;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public final class KeyboardUtil {
     private KeyboardUtil() {
@@ -23,19 +26,10 @@ public final class KeyboardUtil {
             .build();
 
     public static InlineKeyboardMarkup buildInline(List<InlineButton> buttons) {
-        return buildInline(buttons, 1, InlineType.CALLBACK_DATA);
+        return buildInline(buttons, 1);
     }
 
     public static InlineKeyboardMarkup buildInline(List<InlineButton> buttons, int numberOfColumns) {
-        return buildInline(buttons, numberOfColumns, InlineType.CALLBACK_DATA);
-    }
-
-    public static InlineKeyboardMarkup buildInline(List<InlineButton> buttons, InlineType inlineType) {
-        return buildInline(buttons, 1, inlineType);
-    }
-
-    public static InlineKeyboardMarkup buildInline(List<InlineButton> buttons, int numberOfColumns,
-                                                   InlineType inlineType) {
         List<List<InlineKeyboardButton>> rows = new ArrayList<>();
         List<InlineKeyboardButton> row = new ArrayList<>();
         int j = 0;
@@ -44,47 +38,8 @@ public final class KeyboardUtil {
             InlineKeyboardButton inlineKeyboardButton = new InlineKeyboardButton();
             inlineKeyboardButton.setText(buttons.get(i).getText());
             String data = buttons.get(i).getData();
-            switch (inlineType) {
-                case URL:
-                    inlineKeyboardButton.setUrl(data);
-                    break;
-                case CALLBACK_DATA:
-                    inlineKeyboardButton.setCallbackData(data);
-                    break;
-                case SWITCH_INLINE_QUERY:
-                    inlineKeyboardButton.setSwitchInlineQuery(data);
-                    break;
-                case SWITCH_INLINE_QUERY_CURRENT_CHAT:
-                    inlineKeyboardButton.setSwitchInlineQueryCurrentChat(data);
-                    break;
-            }
-            row.add(inlineKeyboardButton);
-            j++;
-            if (j == numberOfColumns || i == (buttons.size() - 1)) {
-                rows.add(row);
-                row = new ArrayList<>();
-                j = 0;
-            }
-        }
-        return InlineKeyboardMarkup.builder()
-                .keyboard(rows)
-                .build();
-    }
-
-    public static InlineKeyboardMarkup buildInlineDiff(List<InlineButton> buttons) {
-        return buildInlineDiff(buttons, 1);
-    }
-
-    public static InlineKeyboardMarkup buildInlineDiff(List<InlineButton> buttons, int numberOfColumns) {
-        List<List<InlineKeyboardButton>> rows = new ArrayList<>();
-        List<InlineKeyboardButton> row = new ArrayList<>();
-        int j = 0;
-
-        for (int i = 0; i < buttons.size(); i++) {
-            InlineKeyboardButton inlineKeyboardButton = new InlineKeyboardButton();
-            inlineKeyboardButton.setText(buttons.get(i).getText());
-            String data = buttons.get(i).getData();
-            switch (buttons.get(i).getInlineType()) {
+            InlineType inlineType = buttons.get(i).getInlineType();
+            switch (Objects.isNull(inlineType) ? InlineType.CALLBACK_DATA : inlineType) {
                 case URL:
                     inlineKeyboardButton.setUrl(data);
                     break;
@@ -152,4 +107,19 @@ public final class KeyboardUtil {
                 .keyboard(rows)
                 .build();
     }
+
+    public static ReplyButton[] getCryptoCurrencyButtons() {
+        ReplyButton[] replyButtons = new ReplyButton[CryptoCurrency.values().length + 1];
+        int i = 0;
+        for (CryptoCurrency cryptoCurrency : CryptoCurrency.values()) {
+            ReplyButton replyButton = ReplyButton.builder()
+                    .text(cryptoCurrency.getDisplayName())
+                    .build();
+            replyButtons[i] = replyButton;
+            i++;
+        }
+        replyButtons[i] = BotReplyButton.CANCEL.getButton();
+        return replyButtons;
+    }
+
 }

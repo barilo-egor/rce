@@ -1,6 +1,8 @@
 package tgb.btc.rce.bean;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.NoArgsConstructor;
 import tgb.btc.rce.enums.ReceiptFormat;
 
 import javax.persistence.*;
@@ -9,6 +11,8 @@ import java.util.Objects;
 @Entity
 @Table(name = "PAYMENT_RECEIPT")
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class PaymentReceipt extends BasePersist {
 
     @Column(name = "RECEIPT", length = 1000)
@@ -18,12 +22,15 @@ public class PaymentReceipt extends BasePersist {
     @Enumerated(EnumType.STRING)
     private ReceiptFormat receiptFormat;
 
-    public PaymentReceipt() {
+    @ManyToOne
+    private Deal deal;
+
+    public Deal getDeal() {
+        return deal;
     }
 
-    public PaymentReceipt(String receipt, ReceiptFormat receiptFormat) {
-        this.receipt = receipt;
-        this.receiptFormat = receiptFormat;
+    public void setDeal(Deal deal) {
+        this.deal = deal;
     }
 
     public String getReceipt() {

@@ -31,10 +31,17 @@ public class Start extends Processor {
     @Override
     public void run(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
+        run(chatId);
+    }
+
+    public void run(Long chatId) {
         userService.updateIsActiveByChatId(true, chatId);
         Long currentDealPid = userService.getCurrentDealByChatId(chatId);
-        if (Objects.nonNull(currentDealPid) && dealService.existByPid(currentDealPid)) {
-            dealService.deleteById(currentDealPid);
+        if (Objects.nonNull(currentDealPid)) {
+            if (dealService.existByPid(currentDealPid)) {
+                dealService.deleteById(currentDealPid);
+            }
+            userService.updateCurrentDealByChatId(null, chatId);
         }
         responseSender.sendBotMessage(botMessageService.findByType(BotMessageType.START), chatId);
         processToMainMenu(chatId);

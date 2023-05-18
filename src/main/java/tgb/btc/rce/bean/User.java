@@ -1,20 +1,22 @@
 package tgb.btc.rce.bean;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.NoArgsConstructor;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.enums.Command;
-import tgb.btc.rce.exception.BaseException;
-import tgb.btc.rce.util.CommandUtil;
 import tgb.btc.rce.util.UpdateUtil;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
 
 @Entity
 @Table(name = "USER")
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class User extends BasePersist {
 
     public static final int DEFAULT_STEP = 0;
@@ -62,31 +64,14 @@ public class User extends BasePersist {
     @Column(name = "CURRENT_DEAL")
     private Long currentDeal;
 
+    @Column(name = "REFERRAL_PERCENT")
+    private BigDecimal referralPercent;
+
     @OneToMany(fetch = FetchType.EAGER)
     private List<ReferralUser> referralUsers;
 
-    public User() {
-    }
-
-    public User(Long chatId, String username, Integer step, Command command, LocalDateTime registrationDate,
-                Boolean isAdmin, Integer lotteryCount, Long fromChatId, Integer referralBalance, Integer charges,
-                String bufferVariable, Boolean isActive, Boolean isBanned, Long currentDeal,
-                List<ReferralUser> referralUsers) {
-        this.chatId = chatId;
-        this.username = username;
-        this.step = step;
-        this.command = command;
-        this.registrationDate = registrationDate;
-        this.isAdmin = isAdmin;
-        this.lotteryCount = lotteryCount;
-        this.fromChatId = fromChatId;
-        this.referralBalance = referralBalance;
-        this.charges = charges;
-        this.bufferVariable = bufferVariable;
-        this.isActive = isActive;
-        this.isBanned = isBanned;
-        this.currentDeal = currentDeal;
-        this.referralUsers = referralUsers;
+    public User(Long pid) {
+        this.setPid(pid);
     }
 
     public static User buildFromUpdate(Update update) {
@@ -102,12 +87,8 @@ public class User extends BasePersist {
         user.setActive(true);
         user.setBanned(false);
         user.setCharges(0);
+        user.setReferralPercent(BigDecimal.ZERO);
         return user;
-    }
-
-    private void setDefaultValues() {
-        this.step = DEFAULT_STEP;
-        this.command = Command.START;
     }
 
     public Long getChatId() {
@@ -231,38 +212,11 @@ public class User extends BasePersist {
         this.charges = charges;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
-        User user = (User) o;
-        return Objects.equals(chatId, user.chatId) && Objects.equals(username, user.username) && Objects.equals(step, user.step) && command == user.command && Objects.equals(registrationDate, user.registrationDate) && Objects.equals(isAdmin, user.isAdmin) && Objects.equals(lotteryCount, user.lotteryCount) && Objects.equals(fromChatId, user.fromChatId) && Objects.equals(referralBalance, user.referralBalance) && Objects.equals(charges, user.charges) && Objects.equals(bufferVariable, user.bufferVariable) && Objects.equals(isActive, user.isActive) && Objects.equals(isBanned, user.isBanned) && Objects.equals(currentDeal, user.currentDeal) && Objects.equals(referralUsers, user.referralUsers);
+    public BigDecimal getReferralPercent() {
+        return referralPercent;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(super.hashCode(), chatId, username, step, command, registrationDate, isAdmin, lotteryCount, fromChatId, referralBalance, charges, bufferVariable, isActive, isBanned, currentDeal, referralUsers);
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "chatId=" + chatId +
-                ", username='" + username + '\'' +
-                ", step=" + step +
-                ", command=" + command +
-                ", registrationDate=" + registrationDate +
-                ", isAdmin=" + isAdmin +
-                ", lotteryCount=" + lotteryCount +
-                ", fromChatId=" + fromChatId +
-                ", referralBalance=" + referralBalance +
-                ", charges=" + charges +
-                ", bufferVariable='" + bufferVariable + '\'' +
-                ", isActive=" + isActive +
-                ", isBanned=" + isBanned +
-                ", currentDeal=" + currentDeal +
-                ", referralUsers=" + referralUsers +
-                '}';
+    public void setReferralPercent(BigDecimal referralPercent) {
+        this.referralPercent = referralPercent;
     }
 }

@@ -6,15 +6,18 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tgb.btc.rce.bean.Deal;
 import tgb.btc.rce.bean.PaymentReceipt;
+import tgb.btc.rce.bean.PaymentType;
 import tgb.btc.rce.enums.CryptoCurrency;
 import tgb.btc.rce.enums.DealType;
-import tgb.btc.rce.enums.PaymentType;
+import tgb.btc.rce.enums.PaymentTypeEnum;
 import tgb.btc.rce.repository.BaseRepository;
 import tgb.btc.rce.repository.DealRepository;
+import tgb.btc.rce.repository.UserRepository;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,6 +25,13 @@ import java.util.List;
 public class DealService extends BasePersistService<Deal> {
 
     private final DealRepository dealRepository;
+
+    private UserRepository userRepository;
+
+    @Autowired
+    public void setUserRepository(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     @Autowired
     public DealService(BaseRepository<Deal> baseRepository, DealRepository dealRepository) {
@@ -66,11 +76,11 @@ public class DealService extends BasePersistService<Deal> {
     }
 
     public Long getDealsCountByUserChatId(Long chatId) {
-        return dealRepository.getDealsCountByUserChatId(chatId);
+        return dealRepository.getPassedDealsCountByUserChatId(chatId);
     }
 
     public Long getNotCurrentDealsCountByUserChatId(Long chatId, DealType dealType) {
-        return dealRepository.getNotCurrentDealsCountByUserChatId(chatId, dealType);
+        return dealRepository.getPassedDealsCountByUserChatId(chatId, dealType);
     }
 
     public Deal getByPid(Long pid) {
@@ -93,9 +103,14 @@ public class DealService extends BasePersistService<Deal> {
         dealRepository.updateWalletByPid(wallet, pid);
     }
 
+    public void updatePaymentTypeEnumByPid(PaymentTypeEnum paymentTypeEnum, Long pid) {
+        dealRepository.updatePaymentTypeEnumByPid(paymentTypeEnum, pid);
+    }
+
     public void updatePaymentTypeByPid(PaymentType paymentType, Long pid) {
         dealRepository.updatePaymentTypeByPid(paymentType, pid);
     }
+
 
     public void updateIsUsedPromoByPid(Boolean isUsedPromo, Long pid) {
         dealRepository.updateIsUsedPromoByPid(isUsedPromo, pid);
@@ -117,10 +132,6 @@ public class DealService extends BasePersistService<Deal> {
         dealRepository.updateIsActiveByPid(isActive, pid);
     }
 
-    public void updateIsCurrentByPid(Boolean isCurrent, Long pid) {
-        dealRepository.updateIsCurrentByPid(isCurrent, pid);
-    }
-
     public Long getCountPassedByUserChatId(Long chatId) {
         return dealRepository.getCountPassedByUserChatId(chatId);
     }
@@ -129,7 +140,7 @@ public class DealService extends BasePersistService<Deal> {
         return dealRepository.getActiveDealPids();
     }
 
-    public Long getUserByDealPid(Long pid) {
+    public Long getUserChatIdByDealPid(Long pid) {
         return dealRepository.getUserChatIdByDealPid(pid);
     }
 
@@ -138,11 +149,11 @@ public class DealService extends BasePersistService<Deal> {
     }
 
     public List<Deal> getByDate(LocalDate dateTime) {
-        return dealRepository.getByDate(dateTime);
+        return dealRepository.getPassedByDate(dateTime);
     }
 
     public String getWalletFromLastNotCurrentByChatId(Long chatId, DealType dealType) {
-        return dealRepository.getWalletFromLastNotCurrentByChatId(chatId, dealType);
+        return dealRepository.getWalletFromLastPassedByChatId(chatId, dealType);
     }
 
     public DealType getDealTypeByPid(Long pid) {
@@ -153,5 +164,18 @@ public class DealService extends BasePersistService<Deal> {
     public List<PaymentReceipt> getPaymentReceipts(Long dealPid) {
         Deal deal = getByPid(dealPid);
         return new ArrayList<>(deal.getPaymentReceipts());
+    }
+
+    public Deal createNewDeal(DealType dealType, Long chatId) {
+        Deal deal = new Deal();
+        deal.setActive(false);
+        deal.setPassed(false);
+        deal.setDateTime(LocalDateTime.now());
+        deal.setDate(LocalDate.now());
+        deal.setDealType(dealType);
+        deal.setUser(userRepository.findByChatId(chatId));
+        Deal savedDeal = save(deal);
+        userRepository.updateCurrentDealByChatId(savedDeal.getPid(), chatId);
+        return savedDeal;
     }
 }

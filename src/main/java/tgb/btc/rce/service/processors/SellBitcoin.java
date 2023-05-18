@@ -1,5 +1,6 @@
 package tgb.btc.rce.service.processors;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.annotation.CommandProcessor;
@@ -9,35 +10,63 @@ import tgb.btc.rce.bean.User;
 import tgb.btc.rce.enums.*;
 import tgb.btc.rce.exception.BaseException;
 import tgb.btc.rce.exception.NumberParseException;
+import tgb.btc.rce.repository.DealRepository;
+import tgb.btc.rce.repository.PaymentReceiptRepository;
 import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.impl.DealService;
-import tgb.btc.rce.service.impl.PaymentReceiptsService;
+import tgb.btc.rce.service.impl.KeyboardService;
 import tgb.btc.rce.service.impl.UserService;
 import tgb.btc.rce.service.processors.support.ExchangeService;
+import tgb.btc.rce.service.processors.support.ExchangeServiceNew;
 import tgb.btc.rce.service.processors.support.SellService;
+import tgb.btc.rce.service.schedule.DealAutoReport;
+import tgb.btc.rce.service.schedule.DealDeleteScheduler;
 import tgb.btc.rce.util.BotImageUtil;
+import tgb.btc.rce.util.FiatCurrenciesUtil;
 import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.InlineButton;
 
 import java.util.List;
+import java.util.Objects;
 
 @CommandProcessor(command = Command.SELL_BITCOIN)
 public class SellBitcoin extends Processor {
     
     private final DealService dealService;
     private final SellService sellService;
-    private final PaymentReceiptsService paymentReceiptsService;
+    private final PaymentReceiptRepository paymentReceiptRepository;
     private final ExchangeService exchangeService;
 
+    private DealRepository dealRepository;
+
+    @Autowired
+    public void setDealRepository(DealRepository dealRepository) {
+        this.dealRepository = dealRepository;
+    }
+
+    private ExchangeServiceNew exchangeServiceNew;
+
+    private KeyboardService keyboardService;
+
+    @Autowired
+    public void setKeyboardService(KeyboardService keyboardService) {
+        this.keyboardService = keyboardService;
+    }
+
+    @Autowired
+    public void setExchangeServiceNew(ExchangeServiceNew exchangeServiceNew) {
+        this.exchangeServiceNew = exchangeServiceNew;
+    }
+
     public SellBitcoin(IResponseSender responseSender, UserService userService, DealService dealService,
-                       SellService sellService, PaymentReceiptsService paymentReceiptsService,
+                       SellService sellService, PaymentReceiptRepository paymentReceiptRepository,
                        ExchangeService exchangeService) {
         super(responseSender, userService);
         this.dealService = dealService;
         this.sellService = sellService;
-        this.paymentReceiptsService = paymentReceiptsService;
+        this.paymentReceiptRepository = paymentReceiptRepository;
         this.exchangeService = exchangeService;
     }
 
@@ -46,7 +75,7 @@ public class SellBitcoin extends Processor {
         Long chatId = UpdateUtil.getChatId(update);
         try {
             if (isMainMenuCommand(update)) processCancel(chatId);
-            else process(update);
+            else processSelling(update);
         } catch (NumberParseException e) {
             processCancel(chatId);
         } catch (BaseException e) {
@@ -75,7 +104,7 @@ public class SellBitcoin extends Processor {
         }
     }
 
-    public void process(Update update) {
+    public void processSelling(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
         if (checkForCancel(update)) {
             dealService.delete(dealService.findById(userService.getCurrentDealByChatId(chatId)));
@@ -85,13 +114,20 @@ public class SellBitcoin extends Processor {
         if (update.hasCallbackQuery() && Command.BACK.getText().equals(update.getCallbackQuery().getData())) {
             responseSender.deleteMessage(chatId, update.getCallbackQuery().getMessage().getMessageId());
             if (userService.getStepByChatId(chatId) == 1) {
-                dealService.delete(dealService.findById(userService.getCurrentDealByChatId(chatId)));
-                userService.updateCurrentDealByChatId(null, chatId);
-                processToMainMenu(chatId);
+                if (FiatCurrenciesUtil.isFew()) {
+                    responseSender.sendMessage(chatId, "Выберите валюту.", keyboardService.getFiatCurrencies());
+                    userService.updateCommandByChatId(Command.CHOOSING_FIAT_CURRENCY, chatId);
+                } else {
+                    dealService.delete(dealService.findById(userService.getCurrentDealByChatId(chatId)));
+                    userService.updateCurrentDealByChatId(null, chatId);
+                    processToMainMenu(chatId);
+                }
             } else previousStep(update);
             return;
         }
 
+        Long currentDealPid;
+        Deal deal;
         switch (userService.getStepByChatId(chatId)) {
             case 0:
                 if (dealService.getActiveDealsCountByUserChatId(chatId) > 0) {
@@ -103,8 +139,22 @@ public class SellBitcoin extends Processor {
                                     .build())));
                     return;
                 }
-                sellService.createDeal(chatId);
-                sellService.askForCurrency(chatId);
+                if (update.hasCallbackQuery() && Command.BACK.getText().equals(update.getCallbackQuery().getData())) {
+                    processCancel(chatId);
+                    return;
+                }
+                currentDealPid = userService.getCurrentDealByChatId(chatId);
+                if (Objects.isNull(currentDealPid)) currentDealPid = dealService.createNewDeal(DealType.SELL, chatId).getPid();
+                if (Objects.isNull(dealRepository.getFiatCurrencyByPid(currentDealPid))) {
+                    if (FiatCurrenciesUtil.isFew()) {
+                        responseSender.sendMessage(chatId, "Выберите валюту.", keyboardService.getFiatCurrencies());
+                        userService.nextStep(chatId, Command.CHOOSING_FIAT_CURRENCY);
+                        return;
+                    } else {
+                        dealRepository.updateFiatCurrencyByPid(currentDealPid, FiatCurrenciesUtil.getFirst());
+                    }
+                }
+                exchangeServiceNew.askForCurrency(chatId, DealType.SELL);
                 userService.nextStep(chatId, Command.SELL_BITCOIN);
                 break;
             case 1:
@@ -114,10 +164,9 @@ public class SellBitcoin extends Processor {
                     return;
                 }
                 CryptoCurrency currency = CryptoCurrency.valueOf(update.getCallbackQuery().getData());
-//                if (CryptoCurrency.USDT.equals(currency)) throw new BaseException("Проблема при получении курса. Создание заявки для этой валюты пока что невозможно.");
-                Long currentDealPid = userService.getCurrentDealByChatId(chatId);
+                currentDealPid = userService.getCurrentDealByChatId(chatId);
                 dealService.updateCryptoCurrencyByPid(currentDealPid, currency);
-                sellService.askForSum(chatId, currency, dealService.getDealTypeByPid(currentDealPid));
+                exchangeServiceNew.askForSum(chatId, currency, dealService.getDealTypeByPid(currentDealPid));
                 userService.nextStep(chatId);
                 break;
             case 2:
@@ -126,16 +175,20 @@ public class SellBitcoin extends Processor {
                             userService.getCurrentDealByChatId(UpdateUtil.getChatId(update)));
                     return;
                 }
-                sellService.saveSum(update);
-                sellService.askForPaymentType(update);
-                userService.nextStep(chatId);
-                responseSender.deleteMessage(UpdateUtil.getChatId(update), Integer.parseInt(userService.getBufferVariable(chatId)));
+                if (sellService.saveSum(update)) {
+                    sellService.askForPaymentType(update);
+                    userService.nextStep(chatId);
+                    responseSender.deleteMessage(UpdateUtil.getChatId(update), Integer.parseInt(userService.getBufferVariable(chatId)));
+                }
                 break;
             case 3:
-                sellService.savePaymentType(update);
-                responseSender.deleteMessage(UpdateUtil.getChatId(update), UpdateUtil.getMessage(update).getMessageId());
-                sellService.askForWallet(update);
-                userService.nextStep(chatId);
+                Boolean result = sellService.savePaymentType(update);
+                if (BooleanUtils.isTrue(result)) {
+                    responseSender.deleteMessage(UpdateUtil.getChatId(update),
+                            update.getCallbackQuery().getMessage().getMessageId());
+                    sellService.askForWallet(update);
+                    userService.nextStep(chatId);
+                } else if (BooleanUtils.isFalse(result)) responseSender.sendMessage(chatId, "Выберите способ оплаты.");
                 break;
             case 4:
                 sellService.saveWallet(update);
@@ -145,9 +198,10 @@ public class SellBitcoin extends Processor {
                 responseSender.deleteMessage(UpdateUtil.getChatId(update), Integer.parseInt(userService.getBufferVariable(chatId)));
                 break;
             case 5:
+                Long dealPid = userService.getCurrentDealByChatId(chatId);
                 if (update.hasCallbackQuery() && Command.CANCEL_DEAL.name().equals(update.getCallbackQuery().getData())) {
                     responseSender.deleteMessage(chatId, update.getCallbackQuery().getMessage().getMessageId());
-                    dealService.delete(dealService.findById(userService.getCurrentDealByChatId(chatId)));
+                    dealService.delete(dealService.findById(dealPid));
                     userService.updateCurrentDealByChatId(null, chatId);
                     responseSender.sendMessage(chatId, "Заявка отменена.");
                     processToMainMenu(chatId);
@@ -156,13 +210,27 @@ public class SellBitcoin extends Processor {
                     responseSender.deleteMessage(chatId, update.getCallbackQuery().getMessage().getMessageId());
                     exchangeService.askForReceipts(update);
                     userService.nextStep(chatId);
+                    DealDeleteScheduler.deleteCryptoDeal(dealPid);
                     break;
                 }
                 break;
             case 6:
+                if (update.hasMessage() && Command.RECEIPTS_CANCEL_DEAL.getText().equals(UpdateUtil.getMessageText(update))) {
+                    dealPid = userService.getCurrentDealByChatId(chatId);
+                    DealDeleteScheduler.deleteCryptoDeal(dealPid);
+                    responseSender.deleteMessage(chatId, update.getCallbackQuery().getMessage().getMessageId());
+                    dealService.delete(dealService.findById(dealPid));
+                    userService.updateCurrentDealByChatId(null, chatId);
+                    responseSender.sendMessage(chatId, "Заявка отменена.");
+                    processToMainMenu(chatId);
+                }
+                if (!update.hasMessage() || (!update.getMessage().hasPhoto() && !update.getMessage().hasDocument())) {
+                    responseSender.sendMessage(chatId, "Отправьте скрин перевода.");
+                    return;
+                }
                 if (update.hasMessage() && update.getMessage().hasPhoto()) {
-                    Deal deal = dealService.getByPid(userService.getCurrentDealByChatId(chatId));
-                    PaymentReceipt paymentReceipt = paymentReceiptsService.save(PaymentReceipt.builder()
+                    deal = dealService.getByPid(userService.getCurrentDealByChatId(chatId));
+                    PaymentReceipt paymentReceipt = paymentReceiptRepository.save(PaymentReceipt.builder()
                             .receipt(BotImageUtil.getImageId(update.getMessage().getPhoto()))
                             .receiptFormat(ReceiptFormat.PICTURE)
                             .build());
@@ -170,9 +238,10 @@ public class SellBitcoin extends Processor {
                     paymentReceipts.add(paymentReceipt);
                     deal.setPaymentReceipts(paymentReceipts);
                     dealService.save(deal);
+                    DealDeleteScheduler.deleteCryptoDeal(deal.getPid());
                 } else if (update.hasMessage() && update.getMessage().hasDocument()) {
-                    Deal deal = dealService.getByPid(userService.getCurrentDealByChatId(chatId));
-                    PaymentReceipt paymentReceipt = paymentReceiptsService.save(PaymentReceipt.builder()
+                    deal = dealService.getByPid(userService.getCurrentDealByChatId(chatId));
+                    PaymentReceipt paymentReceipt = paymentReceiptRepository.save(PaymentReceipt.builder()
                             .receipt(update.getMessage().getDocument().getFileId())
                             .receiptFormat(ReceiptFormat.PDF)
                             .build());
@@ -193,11 +262,12 @@ public class SellBitcoin extends Processor {
 
         switch (userService.getStepByChatId(chatId)) {
             case 1:
-                sellService.askForCurrency(chatId);
+                exchangeServiceNew.askForCurrency(chatId, DealType.SELL);
                 break;
             case 2:
                 Long currentDealPid = userService.getCurrentDealByChatId(chatId);
-                sellService.askForSum(chatId,
+                dealRepository.updateIsPersonalAppliedByPid(currentDealPid, false);
+                exchangeServiceNew.askForSum(chatId,
                         dealService.getCryptoCurrencyByPid(currentDealPid), dealService.getDealTypeByPid(currentDealPid));
                 break;
             case 3:

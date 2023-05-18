@@ -7,7 +7,8 @@ import java.util.Arrays;
 public enum CryptoCurrency {
     BITCOIN("Bitcoin", "btc", String.class, 8),
     LITECOIN("Litecoin", "ltc", String.class, 8),
-    USDT("USDT(trc20)", "usdt", String.class, 1);
+    USDT("USDT(trc20)", "usdt", String.class, 1),
+    MONERO("Monero(XMR)", "xmr", Double.class, 8);
 
     final String displayName;
     final String shortName;
@@ -41,4 +42,10 @@ public enum CryptoCurrency {
         return Arrays.stream(CryptoCurrency.values()).filter(t -> t.getShortName().equals(shortName)).findFirst()
                 .orElseThrow(() -> new EnumTypeNotFoundException("Не найдена крипто валюта: " + shortName));
     }
+
+    public static CryptoCurrency fromDisplayName(String displayName) {
+        return Arrays.stream(CryptoCurrency.values()).filter(t -> t.getDisplayName().equals(displayName)).findFirst()
+                .orElseThrow(() -> new EnumTypeNotFoundException("Не найдена крипто валюта: " + displayName));
+    }
+
 }

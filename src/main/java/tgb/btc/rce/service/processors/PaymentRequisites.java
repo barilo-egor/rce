@@ -5,7 +5,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.bean.PaymentConfig;
 import tgb.btc.rce.enums.Command;
-import tgb.btc.rce.enums.PaymentType;
+import tgb.btc.rce.enums.PaymentTypeEnum;
 import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.impl.PaymentConfigService;
@@ -42,19 +42,19 @@ public class PaymentRequisites extends Processor {
                 userService.nextStep(chatId, Command.PAYMENT_REQUISITES);
                 break;
             case 1:
-                PaymentType paymentType = PaymentType.fromDisplayName(update.getMessage().getText());
-                userService.updateBufferVariable(chatId, paymentType.name());
+                PaymentTypeEnum paymentTypeEnum = PaymentTypeEnum.fromDisplayName(update.getMessage().getText());
+                userService.updateBufferVariable(chatId, paymentTypeEnum.name());
                 responseSender.sendMessage(chatId, "Введите новые реквизиты.");
                 userService.nextStep(chatId);
                 return;
             case 2:
                 String text = update.getMessage().getText();
-                paymentType = PaymentType.valueOf(userService.getBufferVariable(chatId));
-                PaymentConfig paymentConfig = paymentConfigService.getByPaymentType(paymentType);
+                paymentTypeEnum = PaymentTypeEnum.valueOf(userService.getBufferVariable(chatId));
+                PaymentConfig paymentConfig = paymentConfigService.getByPaymentType(paymentTypeEnum);
                 paymentConfig.setRequisites(text);
                 paymentConfigService.save(paymentConfig);
                 responseSender.sendMessage(chatId, "Реквизиты " +
-                        paymentType.getDisplayName() + " заменены.");
+                        paymentTypeEnum.getDisplayName() + " заменены.");
                 processToAdminMainPanel(chatId);
                 break;
         }
@@ -62,9 +62,9 @@ public class PaymentRequisites extends Processor {
 
     private void askForInput(Long chatId) {
         List<ReplyButton> buttons = new ArrayList<>();
-        for (PaymentType paymentType : PaymentType.values()) {
+        for (PaymentTypeEnum paymentTypeEnum : PaymentTypeEnum.values()) {
             buttons.add(ReplyButton.builder()
-                    .text(paymentType.getDisplayName())
+                    .text(paymentTypeEnum.getDisplayName())
                     .build());
         }
         buttons.add(ReplyButton.builder()

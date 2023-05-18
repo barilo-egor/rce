@@ -2,7 +2,6 @@ package tgb.btc.rce.enums;
 
 import lombok.extern.slf4j.Slf4j;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import tgb.btc.rce.exception.BaseException;
 
 import java.util.Arrays;
 
@@ -13,6 +12,7 @@ public enum Command {
      */
 
     START("/start", false),
+    NONE("none", false),
 
     /*
       Reply
@@ -24,6 +24,15 @@ public enum Command {
     CANCEL("Отмена", false),
     SHARE_CONTACT("Поделиться контактом", false),
     BOT_OFFED("bot_offed", false),
+    INLINE_DELETE("inline_delete", false),
+    CAPTCHA("captcha", false),
+
+    /**
+     * HIDDEN
+     */
+    DELETE_USER("/deleteuser", true),
+    CREATE_USER_DATA("/createuserdata", true),
+    MAKE_ADMIN("/makeadmin", true),
 
     /** MAIN */
     BUY_BITCOIN("\uD83D\uDCB0 Купить", false),
@@ -40,7 +49,7 @@ public enum Command {
     /** REFERRAL */
     WITHDRAWAL_OF_FUNDS("withdrawal", false),
     SHOW_WITHDRAWAL_REQUEST("show_withdrawal", false),
-    SEND_LINK("send_link", false),
+    SEND_LINK(BotProperties.BOT_CONFIG_PROPERTIES.getString("bot.link"), false),
     HIDE_WITHDRAWAL("hide_withdrawal", true),
     CHANGE_REFERRAL_BALANCE("change_ref", true),
     DELETE_WITHDRAWAL_REQUEST("withdrawal_delete", false),
@@ -52,8 +61,26 @@ public enum Command {
     BOT_SETTINGS("Настройки бота", true),
     REPORTS("Отчеты", true),
     EDIT_CONTACTS("Редактирование контактов", true),
-    QUIT_ADMIN_PANEL("Выйти", true),
     USER_REFERRAL_BALANCE("Реф.баланс юзера", true),
+    CHANGE_USD_COURSE("Курс доллара", true),
+    TURNING_CURRENCY("Включение криптовалют", true),
+    DISCOUNTS("Скидки", true),
+    USERS("Пользователи", true),
+    QUIT_ADMIN_PANEL("Выйти", true),
+
+    /** DISCOUNTS */
+    RANK_DISCOUNT("Ранговая скидка(персональная)", true),
+    CHANGE_RANK_DISCOUNT("change_rank_discount", true),
+    PERSONAL_BUY_DISCOUNT("Персональная, покупка", true),
+    PERSONAL_SELL_DISCOUNT("Персональная, продажа", true),
+    BULK_DISCOUNTS("Оптовые скидки", true),
+    REFERRAL_PERCENT("Процент реферала", true),
+    TURN_RANK_DISCOUNT("Ранговая скидка(для всех)", true),
+    TURNING_RANK_DISCOUNT("turning_rd", true),
+
+    /** TURNING CURRENCIES */
+    TURN_ON_CURRENCY("turn_on_currency", true),
+    TURN_OFF_CURRENCY("turn_off_currency", true),
 
     /** EDIT CONTACTS */
     ADD_CONTACT("Добавить контакт", true),
@@ -70,6 +97,7 @@ public enum Command {
     BOT_MESSAGES("Сообщения бота", true),
     BOT_VARIABLES("Переменные бота", true),
     SYSTEM_MESSAGES("Сис.сообщения", true),
+    PAYMENT_TYPES_OLD("old Типы оплаты", true),
     PAYMENT_TYPES("Типы оплаты", true),
     PAYMENT_REQUISITES("Реквизиты оплат", true),
 
@@ -79,6 +107,7 @@ public enum Command {
     DELETE_DEAL("Удалить заявку", false),
     SHOW_DEAL("Показать", true),
     DELETE_USER_DEAL("delete_deal", true),
+    DELETE_DEAL_AND_BLOCK_USER("deleteDeal_and_block_user", true),
     CONFIRM_USER_DEAL("confirm_deal", true),
     ADDITIONAL_VERIFICATION("add_verification", true),
     USER_ADDITIONAL_VERIFICATION("user_verification", false),
@@ -94,15 +123,48 @@ public enum Command {
 
     /** REPORTS */
     USERS_REPORT("Отчет по пользователям", true),
+    USER_INFORMATION("Информация о пользователе", true),
     USERS_DEALS_REPORT("Отчет сделки пользователей", true),
     DEAL_REPORTS("Отчет по сделкам", true),
     PARTNERS_REPORT("Отчет по партнерам", true),
+    CHECKS_FOR_DATE("Чеки по дате", true),
+    SEND_CHECKS_FOR_DATE("send_checks_for_dats", true),
+    LOTTERY_REPORT("Отчет по лотереи", true),
 
     CHANNEL_POST("channel_post", false),
 
     /** RECEIPTS */
     CONTINUE("Продолжить", true),
-    RECEIPTS_CANCEL_DEAL("Отмена сделки", true);
+    RECEIPTS_CANCEL_DEAL("Отменить сделку", true),
+
+    /**
+     * PAYMENT TYPES
+     */
+    NEW_PAYMENT_TYPE("Создать тип оплаты", true),
+    DELETE_PAYMENT_TYPE("Удалить тип оплаты", true),
+    DELETING_PAYMENT_TYPE("deleting_pt", true),
+    NEW_PAYMENT_TYPE_REQUISITE("Создать реквизит", true),
+    DELETE_PAYMENT_TYPE_REQUISITE("Удалить реквизит", true),
+    DELETING_PAYMENT_TYPE_REQUISITE("delete_ptr", true),
+    TURN_PAYMENT_TYPES("Включение типов оплат", true),
+    TURNING_PAYMENT_TYPES("turning_pt", true),
+    CHANGE_MIN_SUM("Мин.сумма", true),
+    TURN_DYNAMIC_REQUISITES("Динамические реквизиты", true),
+    TURNING_DYNAMIC_REQUISITES("turning_dr", true),
+
+    /**
+     * ANTISPAM
+     */
+    SHOW_SPAM_BANNED_USER("show_sb_user", true),
+    KEEP_SPAM_BAN("keep_sb", true),
+    SPAM_UNBAN("spam_unban", true),
+    NEW_SPAM_BANS("Антиспам блоки", true),
+
+    /**
+     * USERS STATES
+     */
+    CHOOSING_FIAT_CURRENCY("chs_fc", false)
+    ;
 
     final String text;
     final boolean isAdmin;
@@ -126,8 +188,12 @@ public enum Command {
                 return findByText(update.getMessage().getText());
             case CALLBACK_QUERY:
                 return findByText(update.getCallbackQuery().getData());
+            case INLINE_QUERY:
+                return findByText(update.getInlineQuery().getQuery());
+            case CHANNEL_POST:
+                return Command.CHANNEL_POST;
             default:
-                throw new BaseException("Тип апдейта не найден: " + update);
+                return Command.START;
         }
     }
 
@@ -135,6 +201,6 @@ public enum Command {
         return Arrays.stream(Command.values())
                 .filter(command -> value.startsWith(command.getText()))
                 .findFirst()
-                .orElseThrow(() -> new BaseException("Команда для \"" + value + "\" не найдена."));
+                .orElse(null);
     }
 }

@@ -50,18 +50,16 @@ public class BanUnban extends Processor {
                     MenuFactory.build(Menu.ADMIN_BACK, userService.isAdminByChatId(chatId)));
             return;
         }
-        User user = userService.findByChatId(inputChatId);
-        if(!user.getBanned()) {
-            user.setBanned(true);
+        if(!userService.getIsBannedByChatId(inputChatId)) {
+            userService.ban(inputChatId);
             responseSender.sendMessage(chatId,
                     "Пользователь заблокирован.");
-            log.debug("Админ " + chatId + " забанил пользователя " + user.getChatId());
+            log.debug("Админ " + chatId + " забанил пользователя " + inputChatId);
         } else {
-            user.setBanned(false);
+            userService.unban(inputChatId);
             responseSender.sendMessage(UpdateUtil.getChatId(update),
                     "Пользователь разблокирован.");
-            log.debug("Админ " + chatId + " разбанил пользователя " + user.getChatId());
+            log.debug("Админ " + chatId + " разбанил пользователя " + inputChatId);
         }
-        userService.save(user);
     }
 }

@@ -23,13 +23,25 @@ public abstract class Processor {
         this.userService = userService;
     }
 
+    public void process(Update update) {
+        if (checkForCancel(update)) {
+            beforeCancel(update);
+            return;
+        }
+        run(update);
+    }
+
+    public void beforeCancel(Update update) {
+        userService.setDefaultValues(UpdateUtil.getChatId(update));
+    }
+
     public abstract void run(Update update);
 
     public boolean checkForCancel(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
         if (User.DEFAULT_STEP == userService.getStepByChatId(chatId)) return false;
         if (this.getClass().getAnnotation(CommandProcessor.class).command().isAdmin() &&
-                isCommand(update, Command.ADMIN_BACK)) {
+                (isCommand(update, Command.ADMIN_BACK)) || isCommand(update, Command.CANCEL)) {
             processToAdminMainPanel(chatId);
             return true;
         } else if (User.DEFAULT_STEP != userService.getStepByChatId(chatId)
@@ -43,7 +55,7 @@ public abstract class Processor {
     private boolean isCommand(Update update, Command command) {
         Command enteredCommand;
         try {
-            if(update.hasCallbackQuery() || update.getMessage().hasText()) enteredCommand = Command.fromUpdate(update);
+            if(update.hasCallbackQuery() || (update.hasMessage() && update.getMessage().hasText())) enteredCommand = Command.fromUpdate(update);
             else return false;
         } catch (BaseException e) {
             return false;
@@ -71,5 +83,13 @@ public abstract class Processor {
 
     protected ReplyKeyboard getMainMenuKeyboard(Long chatId) {
         return MenuFactory.build(Menu.MAIN, userService.isAdminByChatId(chatId));
+    }
+
+    protected boolean hasMessageText(Update update, String message) {
+        if (!UpdateUtil.hasMessageText(update)) {
+            responseSender.sendMessage(UpdateUtil.getChatId(update), message);
+            return false;
+        }
+        return true;
     }
 }

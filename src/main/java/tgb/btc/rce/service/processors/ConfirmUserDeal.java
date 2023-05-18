@@ -3,17 +3,21 @@ package tgb.btc.rce.service.processors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.bean.Deal;
 import tgb.btc.rce.bean.User;
 import tgb.btc.rce.constants.BotStringConstants;
-import tgb.btc.rce.enums.BotVariableType;
-import tgb.btc.rce.enums.Command;
+import tgb.btc.rce.enums.*;
+import tgb.btc.rce.exception.BaseException;
+import tgb.btc.rce.repository.UserRepository;
 import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.impl.DealService;
+import tgb.btc.rce.service.impl.PaymentRequisiteService;
 import tgb.btc.rce.service.impl.UserService;
+import tgb.btc.rce.service.schedule.DealDeleteScheduler;
 import tgb.btc.rce.util.*;
 import tgb.btc.rce.vo.InlineButton;
 
@@ -28,6 +32,20 @@ public class ConfirmUserDeal extends Processor {
 
     private final DealService dealService;
 
+    private UserRepository userRepository;
+
+    private PaymentRequisiteService paymentRequisiteService;
+
+    @Autowired
+    public void setUserRepository(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
+    @Autowired
+    public void setPaymentRequisiteService(PaymentRequisiteService paymentRequisiteService) {
+        this.paymentRequisiteService = paymentRequisiteService;
+    }
+
     @Autowired
     public ConfirmUserDeal(IResponseSender responseSender, UserService userService, DealService dealService) {
         super(responseSender, userService);
@@ -35,6 +53,7 @@ public class ConfirmUserDeal extends Processor {
     }
 
     @Override
+    @Transactional
     public void run(Update update) {
         if (!update.hasCallbackQuery()) return;
         Deal deal = dealService.getByPid(Long.parseLong(
@@ -43,7 +62,6 @@ public class ConfirmUserDeal extends Processor {
 
         deal.setActive(false);
         deal.setPassed(true);
-        deal.setCurrent(false);
 
         if (BooleanUtils.isTrue(deal.getUsedReferralDiscount())) {
             Integer referralBalance = user.getReferralBalance();
@@ -65,6 +83,8 @@ public class ConfirmUserDeal extends Processor {
             deal.setAmount(sumWithDiscount);
         }
         dealService.save(deal);
+        DealDeleteScheduler.deleteCryptoDeal(deal.getPid());
+        paymentRequisiteService.updateOrder(deal.getPaymentType().getPid());
         if (Objects.nonNull(user.getLotteryCount())) user.setLotteryCount(user.getLotteryCount() + 1);
         else user.setLotteryCount(1);
         user.setCurrentDeal(null);
@@ -72,66 +92,58 @@ public class ConfirmUserDeal extends Processor {
         responseSender.deleteMessage(UpdateUtil.getChatId(update), UpdateUtil.getMessage(update).getMessageId());
         if (user.getFromChatId() != null) {
             User refUser = userService.findByChatId(user.getFromChatId());
+            BigDecimal refUserReferralPercent = userRepository.getReferralPercentByChatId(refUser.getChatId());
+            boolean isGeneralReferralPercent = Objects.isNull(refUserReferralPercent) || refUserReferralPercent.compareTo(BigDecimal.ZERO) == 0;
+            BigDecimal referralPercent = isGeneralReferralPercent
+                    ? BigDecimal.valueOf(BotVariablePropertiesUtil.getDouble(BotVariableType.REFERRAL_PERCENT))
+                    : refUserReferralPercent;
             BigDecimal sumToAdd = BigDecimalUtil.multiplyHalfUp(deal.getAmount(),
-                    ConverterUtil.getPercentsFactor(
-                            BigDecimal.valueOf(BotVariablePropertiesUtil.getDouble(BotVariableType.REFERRAL_PERCENT))));
+                    CalculateUtil.getPercentsFactor(referralPercent));
             Integer total = refUser.getReferralBalance() + sumToAdd.intValue();
             log.info("Подтверждение сделки, зачисление на реф баланс пользователю. Админ чат айди = "
                     + UpdateUtil.getChatId(update) + ". refUserChatId = " + refUser.getChatId() + ", sumToAdd = "
                     + sumToAdd.toPlainString() + ", refUser.referralBalance = " + refUser.getReferralBalance().toString()
                     + ", total = " + total);
             userService.updateReferralBalanceByChatId(total, refUser.getChatId());
+            if (BigDecimal.ZERO.compareTo(sumToAdd) != 0)
+                responseSender.sendMessage(refUser.getChatId(), "На реферальный баланс было добавлено " + sumToAdd.intValue() + "₽ по сделке партнера.");
             userService.updateChargesByChatId(refUser.getCharges() + sumToAdd.intValue(), refUser.getChatId());
         }
-        switch (deal.getCryptoCurrency()) {
-            case BITCOIN:
-                switch (deal.getDealType()) {
-                    case BUY:
-                        responseSender.sendMessage(deal.getUser().getChatId(),
-                                "Биткоин отправлен ✅\nhttps://blockchair.com/bitcoin/address/" + deal.getWallet());
-                        break;
-                    case SELL:
-                        responseSender.sendMessage(deal.getUser().getChatId(),
-                                "Заявка обработана, деньги отправлены.");
-                        break;
-                }
-                break;
-            case LITECOIN:
-                switch (deal.getDealType()) {
-                    case BUY:
-                        responseSender.sendMessage(deal.getUser().getChatId(),
-                                "Валюта отправлена.\nhttps://blockchair.com/ru/litecoin/address/" + deal.getWallet());
-                        break;
-                    case SELL:
-                        responseSender.sendMessage(deal.getUser().getChatId(),
-                                "Заявка обработана, деньги отправлены.");
-                        break;
-                }
-                break;
-            case USDT:
-                switch (deal.getDealType()) {
-                    case BUY:
-                        responseSender.sendMessage(deal.getUser().getChatId(),
-                                "Валюта отправлена.https://tronscan.io/#/address/" + deal.getWallet());
-                        break;
-                    case SELL:
-                        responseSender.sendMessage(deal.getUser().getChatId(),
-                                "Заявка обработана, деньги отправлены.");
-                        break;
-                }
-                break;
+        String message;
+        if (!DealType.isBuy(deal.getDealType())) {
+            message = "Заявка обработана, деньги отправлены.";
+        } else {
+            switch (deal.getCryptoCurrency()) {
+                case BITCOIN:
+                    message = "Биткоин отправлен ✅\nhttps://blockchair.com/bitcoin/address/" + deal.getWallet();
+                    break;
+                case LITECOIN:
+                    message = "Валюта отправлена.\nhttps://blockchair.com/ru/litecoin/address/" + deal.getWallet();
+                    break;
+                case USDT:
+                    message = "Валюта отправлена.https://tronscan.io/#/address/" + deal.getWallet();
+                    break;
+                case MONERO:
+                    message = "Валюта отправлена."; // TODO добавить url
+                    break;
+                default:
+                    throw new BaseException("Не найдена криптовалюта у сделки. dealPid=" + deal.getPid());
+            }
         }
+        responseSender.sendMessage(deal.getUser().getChatId(), message);
 
-        Integer reviewPrise = BotVariablePropertiesUtil.getInt(BotVariableType.REVIEW_PRISE);
-        responseSender.sendMessage(deal.getUser().getChatId(), "Хотите оставить отзыв?\n" +
-                        "За оставленный отзыв вы получите вознаграждение в размере до 30₽" +
-                        " на реферальный баланс после публикации.",
-                KeyboardUtil.buildInline(List.of(
-                        InlineButton.builder()
-                                .data(Command.SHARE_REVIEW.getText())
-                                .text("Оставить")
-                                .build()
-                        )
-                ));
+        if (UserService.REFERRAL_TYPE.equals(ReferralType.STANDARD)) {
+            Integer reviewPrise = BotVariablePropertiesUtil.getInt(BotVariableType.REVIEW_PRISE); // TODO уточнить нужно ли 30 выводить или брать число из проперти
+            responseSender.sendMessage(deal.getUser().getChatId(), "Хотите оставить отзыв?\n" +
+                            "За оставленный отзыв вы получите вознаграждение в размере до 30₽" +
+                            " на реферальный баланс после публикации.",
+                    KeyboardUtil.buildInline(List.of(
+                                    InlineButton.builder()
+                                            .data(Command.SHARE_REVIEW.getText())
+                                            .text("Оставить")
+                                            .build()
+                            )
+                    ));
+        }
     }
 }

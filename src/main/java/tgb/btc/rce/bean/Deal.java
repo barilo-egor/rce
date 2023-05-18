@@ -1,10 +1,13 @@
 package tgb.btc.rce.bean;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
-import org.hibernate.annotations.*;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Fetch;
 import tgb.btc.rce.enums.CryptoCurrency;
 import tgb.btc.rce.enums.DealType;
-import tgb.btc.rce.enums.PaymentType;
+import tgb.btc.rce.enums.FiatCurrency;
+import tgb.btc.rce.enums.PaymentTypeEnum;
 
 import javax.persistence.*;
 import javax.persistence.Entity;
@@ -18,6 +21,8 @@ import java.util.Objects;
 @Entity
 @Table(name = "DEAL")
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Deal extends BasePersist {
     @ManyToOne(fetch = FetchType.EAGER)
     private User user;
@@ -25,11 +30,19 @@ public class Deal extends BasePersist {
     @Column(name = "DATE_TIME")
     private LocalDateTime dateTime;
 
+    @Deprecated
     @Column(name = "DATE")
     private LocalDate date;
 
-    @Column(name = "PAYMENT_TYPE")
+    @Deprecated
+    @Column(name = "PAYMENT_TYPE_ENUM")
     @Enumerated(value = EnumType.STRING)
+    /**
+     * use paymentType
+     */
+    private PaymentTypeEnum paymentTypeEnum;
+
+    @ManyToOne
     private PaymentType paymentType;
 
     @Column(name = "CRYPTO_AMOUNT", precision = 15, scale = 8)
@@ -45,6 +58,7 @@ public class Deal extends BasePersist {
     private String verificationPhoto;
 
     @Column(name = "USER_CHECK")
+    @Deprecated
     private String userCheck;
 
     @Column(name = "IS_ACTIVE")
@@ -73,7 +87,6 @@ public class Deal extends BasePersist {
     @Column(name = "COMMISSION")
     private BigDecimal commission;
 
-    @Column(name = "PAYMENT_RECEIPTS")
     @OneToMany
     private List<PaymentReceipt> paymentReceipts;
 
@@ -83,34 +96,30 @@ public class Deal extends BasePersist {
     @Column(name = "ORIGINAL_PRICE")
     private BigDecimal originalPrice;
 
-    public Deal() {
+    @Column(name = "BULK_APPLIED")
+    private Boolean isBulkApplied;
+
+    @Column(name = "IS_PERSONAL_APPLIED")
+    private Boolean isPersonalApplied;
+
+    @Column(name = "FIAT_CURRENCY")
+    @Enumerated(value = EnumType.STRING)
+    private FiatCurrency fiatCurrency;
+
+    public Boolean getCurrent() {
+        return isCurrent;
     }
 
-    public Deal(User user, LocalDateTime dateTime, LocalDate date, PaymentType paymentType, BigDecimal cryptoAmount,
-                BigDecimal amount, String wallet, String verificationPhoto, String userCheck, Boolean isActive,
-                Boolean isPassed, Boolean isCurrent, Boolean isUsedPromo, Boolean isUsedReferralDiscount,
-                CryptoCurrency cryptoCurrency, DealType dealType, BigDecimal commission,
-                List<PaymentReceipt> paymentReceipts, BigDecimal discount, BigDecimal originalPrice) {
-        this.user = user;
-        this.dateTime = dateTime;
-        this.date = date;
-        this.paymentType = paymentType;
-        this.cryptoAmount = cryptoAmount;
-        this.amount = amount;
-        this.wallet = wallet;
-        this.verificationPhoto = verificationPhoto;
-        this.userCheck = userCheck;
-        this.isActive = isActive;
-        this.isPassed = isPassed;
-        this.isCurrent = isCurrent;
-        this.isUsedPromo = isUsedPromo;
-        this.isUsedReferralDiscount = isUsedReferralDiscount;
-        this.cryptoCurrency = cryptoCurrency;
-        this.dealType = dealType;
-        this.commission = commission;
-        this.paymentReceipts = paymentReceipts;
-        this.discount = discount;
-        this.originalPrice = originalPrice;
+    public void setCurrent(Boolean current) {
+        isCurrent = current;
+    }
+
+    public FiatCurrency getFiatCurrency() {
+        return fiatCurrency;
+    }
+
+    public void setFiatCurrency(FiatCurrency fiatCurrency) {
+        this.fiatCurrency = fiatCurrency;
     }
 
     public String getUserCheck() {
@@ -119,14 +128,6 @@ public class Deal extends BasePersist {
 
     public void setUserCheck(String check) {
         this.userCheck = check;
-    }
-
-    public Boolean getCurrent() {
-        return isCurrent;
-    }
-
-    public void setCurrent(Boolean current) {
-        isCurrent = current;
     }
 
     public Boolean getActive() {
@@ -159,6 +160,23 @@ public class Deal extends BasePersist {
 
     public void setDateTime(LocalDateTime dateTime) {
         this.dateTime = dateTime;
+    }
+
+    @Deprecated
+    /**
+     * use paymentType
+     */
+    // TODO написать скрипт по пере
+    public PaymentTypeEnum getPaymentTypeEnum() {
+        return paymentTypeEnum;
+    }
+
+    @Deprecated
+    /**
+     * use paymentType
+     */
+    public void setPaymentTypeEnum(PaymentTypeEnum paymentTypeEnum) {
+        this.paymentTypeEnum = paymentTypeEnum;
     }
 
     public PaymentType getPaymentType() {
@@ -273,41 +291,19 @@ public class Deal extends BasePersist {
         this.originalPrice = originalPrice;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
-        Deal deal = (Deal) o;
-        return Objects.equals(user, deal.user) && Objects.equals(dateTime, deal.dateTime) && Objects.equals(date, deal.date) && paymentType == deal.paymentType && Objects.equals(cryptoAmount, deal.cryptoAmount) && Objects.equals(amount, deal.amount) && Objects.equals(wallet, deal.wallet) && Objects.equals(verificationPhoto, deal.verificationPhoto) && Objects.equals(userCheck, deal.userCheck) && Objects.equals(isActive, deal.isActive) && Objects.equals(isPassed, deal.isPassed) && Objects.equals(isCurrent, deal.isCurrent) && Objects.equals(isUsedPromo, deal.isUsedPromo) && Objects.equals(isUsedReferralDiscount, deal.isUsedReferralDiscount) && cryptoCurrency == deal.cryptoCurrency && dealType == deal.dealType && Objects.equals(commission, deal.commission) && Objects.equals(paymentReceipts, deal.paymentReceipts) && Objects.equals(discount, deal.discount) && Objects.equals(originalPrice, deal.originalPrice);
+    public Boolean getBulkApplied() {
+        return isBulkApplied;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(super.hashCode(), user, dateTime, date, paymentType, cryptoAmount, amount, wallet, verificationPhoto, userCheck, isActive, isPassed, isCurrent, isUsedPromo, isUsedReferralDiscount, cryptoCurrency, dealType, commission, paymentReceipts, discount, originalPrice);
+    public void setBulkApplied(Boolean bulkApplied) {
+        isBulkApplied = bulkApplied;
     }
 
-    @Override
-    public String toString() {
-        return "Deal{" +
-                "user=" + user +
-                ", dateTime=" + dateTime +
-                ", date=" + date +
-                ", paymentType=" + paymentType +
-                ", cryptoAmount=" + cryptoAmount +
-                ", amount=" + amount +
-                ", wallet='" + wallet + '\'' +
-                ", verificationPhoto='" + verificationPhoto + '\'' +
-                ", userCheck='" + userCheck + '\'' +
-                ", isActive=" + isActive +
-                ", isPassed=" + isPassed +
-                ", isCurrent=" + isCurrent +
-                ", isUsedPromo=" + isUsedPromo +
-                ", isUsedReferralDiscount=" + isUsedReferralDiscount +
-                ", cryptoCurrency=" + cryptoCurrency +
-                ", dealType=" + dealType +
-                ", commission=" + commission +
-                ", paymentReceipts=" + paymentReceipts +
-                '}';
+    public Boolean getPersonalApplied() {
+        return isPersonalApplied;
+    }
+
+    public void setPersonalApplied(Boolean personalApplied) {
+        isPersonalApplied = personalApplied;
     }
 }

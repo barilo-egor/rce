@@ -6,7 +6,6 @@ import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.AnswerInlineQuery;
-import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.GetFile;
 import org.telegram.telegrambots.meta.api.methods.send.*;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
@@ -20,13 +19,15 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import tgb.btc.rce.bean.BotMessage;
 import tgb.btc.rce.bot.RceBot;
-import tgb.btc.rce.exception.BaseException;
+import tgb.btc.rce.enums.BotKeyboard;
+import tgb.btc.rce.enums.MessageTemplate;
 import tgb.btc.rce.service.IResponseSender;
+import tgb.btc.rce.util.KeyboardUtil;
+import tgb.btc.rce.vo.InlineButton;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.Serializable;
 import java.net.URL;
 import java.util.List;
 import java.util.Optional;
@@ -61,6 +62,19 @@ public class ResponseSender implements IResponseSender {
         return sendMessage(chatId, text, replyKeyboard, null);
     }
 
+    public Optional<Message> sendMessage(Long chatId, String text, String parseMode) {
+        return sendMessage(chatId, text, null, parseMode);
+    }
+
+    public Optional<Message> sendMessage(Long chatId, String text, InlineButton... inlineButtons) {
+        return sendMessage(chatId, text, KeyboardUtil.buildInline(List.of(inlineButtons)));
+    }
+
+    public Optional<Message> sendMessage(Long chatId, String text, BotKeyboard botKeyboard) {
+        return sendMessage(chatId, text, botKeyboard.getKeyboard(), null);
+    }
+
+    @Override
     public Optional<Message> sendMessage(Long chatId, String text, ReplyKeyboard replyKeyboard, String parseMode) {
         SendMessage sendMessage = SendMessage.builder()
                 .chatId(chatId.toString())
@@ -107,6 +121,19 @@ public class ResponseSender implements IResponseSender {
 
     public Optional<Message> sendPhoto(Long chatId, String caption, String photo) {
         return sendPhoto(chatId, caption, photo, null);
+    }
+
+    public Optional<Message> sendPhoto(Long chatId, String caption, InputFile photo) {
+        try {
+            return Optional.of(bot.execute(SendPhoto.builder()
+                    .chatId(chatId.toString())
+                    .caption(caption)
+                    .photo(photo)
+                    .build()));
+        } catch (TelegramApiException e) {
+            log.debug("Не получилось отправить фото: chatId=" + chatId + ", caption=" + caption + ", photo=" + photo, e);
+            return Optional.empty();
+        }
     }
 
     public Optional<Message> sendPhoto(Long chatId, String caption, String photo, ReplyKeyboard replyKeyboard) {
@@ -229,5 +256,10 @@ public class ResponseSender implements IResponseSender {
         } catch (TelegramApiException e) {
             log.debug("Не получилось отправить input file: chatId=" + chatId);
         }
+    }
+
+    @Override
+    public Optional<Message> sendMessage(Long chatId, MessageTemplate messageTemplate) {
+        return sendMessage(chatId, messageTemplate.getMessage(), messageTemplate.getBotKeyboard());
     }
 }

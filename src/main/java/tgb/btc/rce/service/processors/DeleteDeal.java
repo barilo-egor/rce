@@ -8,6 +8,7 @@ import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.impl.DealService;
 import tgb.btc.rce.service.impl.UserService;
+import tgb.btc.rce.service.schedule.DealDeleteScheduler;
 import tgb.btc.rce.util.UpdateUtil;
 
 @CommandProcessor(command = Command.DELETE_DEAL)
@@ -25,7 +26,11 @@ public class DeleteDeal extends Processor {
     public void run(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
         responseSender.deleteMessage(chatId, update.getCallbackQuery().getMessage().getMessageId());
-        dealService.deleteById(dealService.getPidActiveDealByChatId(chatId));
+        Long dealPid = dealService.getPidActiveDealByChatId(chatId);
+        DealDeleteScheduler.deleteCryptoDeal(dealPid);
+        dealService.deleteById(dealPid);
+        DealDeleteScheduler.deleteCryptoDeal(dealPid);
+        userService.updateCurrentDealByChatId(null, chatId);
         responseSender.sendMessage(chatId, "Заявка удалена.");
     }
 }

@@ -1,0 +1,73 @@
+package tgb.btc.rce.service.processors.paymenttypes.requisite.dynamic;
+
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang.BooleanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.telegram.telegrambots.meta.api.objects.Update;
+import tgb.btc.rce.annotation.CommandProcessor;
+import tgb.btc.rce.bean.PaymentType;
+import tgb.btc.rce.enums.BotKeyboard;
+import tgb.btc.rce.constants.BotStringConstants;
+import tgb.btc.rce.enums.Command;
+import tgb.btc.rce.enums.DealType;
+import tgb.btc.rce.repository.PaymentTypeRepository;
+import tgb.btc.rce.service.IResponseSender;
+import tgb.btc.rce.service.Processor;
+import tgb.btc.rce.service.impl.UserService;
+import tgb.btc.rce.util.KeyboardUtil;
+import tgb.btc.rce.util.UpdateUtil;
+import tgb.btc.rce.vo.InlineButton;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@CommandProcessor(command = Command.TURN_DYNAMIC_REQUISITES)
+public class TurnDynamicRequisites extends Processor {
+
+    private PaymentTypeRepository paymentTypeRepository;
+
+    @Autowired
+    public void setPaymentTypeRepository(PaymentTypeRepository paymentTypeRepository) {
+        this.paymentTypeRepository = paymentTypeRepository;
+    }
+
+    @Autowired
+    public TurnDynamicRequisites(IResponseSender responseSender, UserService userService) {
+        super(responseSender, userService);
+    }
+
+    @Override
+    public void run(Update update) {
+        Long chatId = UpdateUtil.getChatId(update);
+        sendPaymentTypes(chatId, DealType.BUY);
+        processToAdminMainPanel(chatId);
+    }
+
+    public void sendPaymentTypes(Long chatId, DealType dealType) {
+        List<PaymentType> paymentTypes = paymentTypeRepository.getByDealType(dealType);
+        if (CollectionUtils.isEmpty(paymentTypes)) {
+            responseSender.sendMessage(chatId, "Список тип оплат на " + dealType.getDisplayName() + " пуст.");
+            processToAdminMainPanel(chatId);
+            return;
+        }
+        List<InlineButton> buttons = new ArrayList<>();
+        for (PaymentType paymentType : paymentTypes) {
+            boolean isDynamicOn = BooleanUtils.isTrue(paymentType.getDynamicOn());
+            String text = paymentType.getName() + " - " +
+                    (isDynamicOn ? "выключить" : "включить");
+            String data = Command.TURNING_DYNAMIC_REQUISITES.getText()
+                    + BotStringConstants.CALLBACK_DATA_SPLITTER + paymentType.getPid()
+                    + BotStringConstants.CALLBACK_DATA_SPLITTER + (isDynamicOn ? Boolean.FALSE.toString() : Boolean.TRUE.toString());
+            buttons.add(InlineButton.builder()
+                    .text(text)
+                    .data(data)
+                    .build());
+        }
+        buttons.add(InlineButton.builder()
+                .text("❌ Закрыть")
+                .data(Command.INLINE_DELETE.getText())
+                .build());
+        responseSender.sendMessage(chatId, "Выберите тип оплаты для включения/выключения динамических реквизитов.",
+                KeyboardUtil.buildInline(buttons));
+    }
+}

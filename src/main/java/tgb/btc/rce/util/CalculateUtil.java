@@ -5,6 +5,7 @@ import org.json.JSONObject;
 import tgb.btc.rce.enums.BotVariableType;
 import tgb.btc.rce.enums.CryptoCurrency;
 import tgb.btc.rce.enums.DealType;
+import tgb.btc.rce.enums.FiatCurrency;
 import tgb.btc.rce.exception.BaseException;
 
 import java.io.*;
@@ -13,8 +14,8 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
-public final class ConverterUtil {
-    private ConverterUtil() {
+public final class CalculateUtil {
+    private CalculateUtil() {
     }
 
     // в комментарии проперти джсона с курсом
@@ -24,18 +25,22 @@ public final class ConverterUtil {
 
     public static final String USDT_USD_RATE = "https://www.bitstamp.net/api/v2/ticker/usdtusd/"; // last
 
-    public static final String BTC_USD_URL_BLOCKCHAIN = "https://blockchain.info/ticker"; // last
+//    public static final String BTC_USD_URL_BLOCKCHAIN = "https://blockchain.info/ticker"; // last
+
+    public static final String BTC_USD_URL_BLOCKCHAIN = "https://api.blockchain.com/v3/exchange/tickers/BTC-USD"; // last
+
+    public static final String MONERO_URL_COINREMITTER = "https://coinremitter.com/api/v3/get-coin-rate";
 
 
     public static final int MAX_BTC_AMOUNT = 1;
 
-    public static BigDecimal convertCryptoToRub(CryptoCurrency cryptoCurrency, Double sum, DealType dealType) {
-        BigDecimal fix = BigDecimal.valueOf(BotVariablePropertiesUtil.getDouble(BotVariableType.getFix(cryptoCurrency, dealType)));
-        BigDecimal usdCourse = BigDecimal.valueOf(BotVariablePropertiesUtil.getDouble(BotVariableType.USD_COURSE));
-        BigDecimal commission = BigDecimal.valueOf(BotVariablePropertiesUtil.getDouble(BotVariableType.getCommission(cryptoCurrency, dealType)));
-        BigDecimal fixCommission = BigDecimal.valueOf(BotVariablePropertiesUtil.getDouble(BotVariableType.getFixCommission(cryptoCurrency, dealType)));
-        BigDecimal transactionalCommission =
-                BigDecimal.valueOf(BotVariablePropertiesUtil.getDouble(BotVariableType.getTransactionCommission(cryptoCurrency)));
+    public static BigDecimal convertCryptoToRub(CryptoCurrency cryptoCurrency, Double sum, FiatCurrency fiatCurrency,
+                                                DealType dealType) {
+        BigDecimal fix = BotVariablePropertiesUtil.getBigDecimal(BotVariableType.FIX, fiatCurrency, dealType, cryptoCurrency);
+        BigDecimal usdCourse = BotVariablePropertiesUtil.getBigDecimal(BotVariableType.USD_COURSE, fiatCurrency, dealType, cryptoCurrency);
+        BigDecimal commission = BotVariablePropertiesUtil.getBigDecimal(BotVariableType.COMMISSION, dealType, cryptoCurrency);
+        BigDecimal fixCommission = BotVariablePropertiesUtil.getBigDecimal(BotVariableType.FIX_COMMISSION, fiatCurrency, dealType, cryptoCurrency);
+        BigDecimal transactionalCommission = BotVariablePropertiesUtil.getTransactionCommission(cryptoCurrency);
 
         BigDecimal currency;
         switch (cryptoCurrency) {
@@ -47,6 +52,9 @@ public final class ConverterUtil {
                 break;
             case USDT:
                 currency = getUsdtCurrency();
+                break;
+            case MONERO:
+                currency = getXmrCurrency();
                 break;
             default:
                 throw new BaseException("Не определена крипто валюта.");
@@ -76,7 +84,8 @@ public final class ConverterUtil {
         return BigDecimalUtil.multiplyHalfUp(rub, getPercentsFactor(percentCommission));
     }
 
-    public static BigDecimal getCommissionForSell(BigDecimal amount, CryptoCurrency cryptoCurrency, DealType dealType) {
+    public static BigDecimal getCommissionForSell(BigDecimal amount, CryptoCurrency cryptoCurrency,
+                                                  FiatCurrency fiatCurrency, DealType dealType) {
         BigDecimal currency;
         switch (cryptoCurrency) {
             case BITCOIN:
@@ -88,13 +97,17 @@ public final class ConverterUtil {
             case USDT:
                 currency = getUsdtCurrency();
                 break;
+            case MONERO:
+                currency = getXmrCurrency();
+                break;
             default:
                 throw new BaseException("Не определена крипто валюта.");
         }
         BigDecimal usd = BigDecimalUtil.multiplyHalfUp(amount, currency);
-        BigDecimal course = BigDecimal.valueOf(BotVariablePropertiesUtil.getDouble(BotVariableType.USD_COURSE));
+        BigDecimal course = BotVariablePropertiesUtil.getBigDecimal(BotVariableType.USD_COURSE, fiatCurrency, dealType, cryptoCurrency);
         BigDecimal rub = BigDecimalUtil.multiplyHalfUp(usd, course);
-        BigDecimal percentCommission = BigDecimal.valueOf(BotVariablePropertiesUtil.getDouble(BotVariableType.getCommission(cryptoCurrency, dealType)));
+        BigDecimal percentCommission = BotVariablePropertiesUtil.getBigDecimal(BotVariableType.COMMISSION,
+                dealType, cryptoCurrency);
         return BigDecimalUtil.multiplyHalfUp(rub, getPercentsFactor(percentCommission));
     }
 
@@ -117,8 +130,9 @@ public final class ConverterUtil {
         return BigDecimalUtil.multiplyHalfUp(rub, getPercentsFactor(percentCommission));
     }
 
-    public static BigDecimal getCommission(BigDecimal amount, CryptoCurrency cryptoCurrency, DealType dealType) {
-        BigDecimal fix = BigDecimal.valueOf(BotVariablePropertiesUtil.getDouble(BotVariableType.getFix(cryptoCurrency, dealType)));
+    public static BigDecimal getCommission(BigDecimal amount, CryptoCurrency cryptoCurrency, FiatCurrency fiatCurrency,
+                                           DealType dealType) {
+        BigDecimal fix = BotVariablePropertiesUtil.getBigDecimal(BotVariableType.FIX, fiatCurrency, dealType, cryptoCurrency);
         BigDecimal currency;
         switch (cryptoCurrency) {
             case BITCOIN:
@@ -130,42 +144,52 @@ public final class ConverterUtil {
             case USDT:
                 currency = getUsdtCurrency();
                 break;
+            case MONERO:
+                currency = getXmrCurrency();
+                break;
             default:
                 throw new BaseException("Не определена крипто валюта.");
         }
-        BigDecimal percentCommission = BigDecimal.valueOf(BotVariablePropertiesUtil.getDouble(BotVariableType.getCommission(cryptoCurrency, dealType)));
-        BigDecimal course = BigDecimal.valueOf(BotVariablePropertiesUtil.getDouble(BotVariableType.USD_COURSE));
+        BigDecimal percentCommission = BotVariablePropertiesUtil.getBigDecimal(BotVariableType.COMMISSION, dealType, cryptoCurrency);
+        BigDecimal course = BotVariablePropertiesUtil.getBigDecimal(BotVariableType.USD_COURSE, fiatCurrency, dealType, cryptoCurrency);
         BigDecimal usd = BigDecimalUtil.multiplyHalfUp(amount, currency);
         BigDecimal rub = BigDecimalUtil.multiplyHalfUp(usd, course);
         if (rub.doubleValue() <= fix.doubleValue()) {
-            return BigDecimal.valueOf(BotVariablePropertiesUtil.getDouble(BotVariableType.getFixCommission(cryptoCurrency, dealType)));
+            return BotVariablePropertiesUtil.getBigDecimal(BotVariableType.FIX_COMMISSION, fiatCurrency, dealType, cryptoCurrency);
         }
         return BigDecimalUtil.multiplyHalfUp(rub, getPercentsFactor(percentCommission));
     }
 
-    public static BigDecimal getPercentsFactor(BigDecimal percents) {
-        return BigDecimalUtil.divideHalfUp(percents, BigDecimal.valueOf(100));
+    public static BigDecimal getPercentsFactor(BigDecimal sum) {
+        return BigDecimalUtil.divideHalfUp(sum, BigDecimal.valueOf(100));
     }
 
     @SneakyThrows
     public static BigDecimal getUsdtCurrency() {
-        String currency = BotVariablePropertiesUtil.getVariable(BotVariableType.USDT_COURSE);
-        return parse(currency, CryptoCurrency.USDT);
+        return BigDecimal.valueOf(Double.parseDouble(BotVariablePropertiesUtil.getVariable(BotVariableType.USDT_COURSE)));
     }
 
 
     @SneakyThrows
     public static BigDecimal getLtcCurrency() {
-        JSONObject currency = readJsonFromUrl(ConverterUtil.LTC_USD_URL_BINANCE);
+        JSONObject currency = readJsonFromUrl(CalculateUtil.LTC_USD_URL_BINANCE);
         Object obj = currency.get("price");
         return parse(obj, CryptoCurrency.LITECOIN);
     }
 
     @SneakyThrows
     public static BigDecimal getBtcCurrency() {
-        JSONObject currency = readJsonFromUrl(ConverterUtil.BTC_USD_URL_BINANCE);
+        JSONObject currency = readJsonFromUrl(CalculateUtil.BTC_USD_URL_BINANCE);
+//        Object obj = currency.get("last_trade_price"); blockchain
         Object obj = currency.get("price");
         return parse(obj, CryptoCurrency.BITCOIN);
+    }
+
+    @SneakyThrows
+    public static BigDecimal getXmrCurrency() {
+        JSONObject currency = readJsonFromUrl(MONERO_URL_COINREMITTER);
+        Object obj = ((JSONObject) ((JSONObject) readJsonFromUrl(MONERO_URL_COINREMITTER).get("data")).get("XMR")).get("price");
+        return parse(obj, CryptoCurrency.MONERO);
     }
 
     public static BigDecimal parse(Object obj, CryptoCurrency cryptoCurrency) {
@@ -200,5 +224,12 @@ public final class ConverterUtil {
             sb.append((char) cp);
         }
         return sb.toString();
+    }
+
+    public static BigDecimal calculateDiscount(DealType dealType, BigDecimal amount, BigDecimal discount) {
+        BigDecimal totalDiscount = CalculateUtil.getPercentsFactor(amount).multiply(discount);
+        return DealType.BUY.equals(dealType)
+                ? amount.add(totalDiscount)
+                : amount.subtract(totalDiscount);
     }
 }

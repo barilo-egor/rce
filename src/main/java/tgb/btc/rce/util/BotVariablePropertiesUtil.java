@@ -1,36 +1,22 @@
 package tgb.btc.rce.util;
 
 import lombok.extern.slf4j.Slf4j;
-import tgb.btc.rce.constants.FilePaths;
-import tgb.btc.rce.enums.BotVariableType;
-import tgb.btc.rce.enums.CryptoCurrency;
+import tgb.btc.rce.enums.*;
 import tgb.btc.rce.exception.BaseException;
+import tgb.btc.rce.exception.PropertyValueNotFoundException;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.Objects;
-import java.util.Properties;
 
 @Slf4j
 public class BotVariablePropertiesUtil {
 
     private final static String wrongFormat = "Неверный формат переменной по ключу %s";
 
-    private final static Properties botVariableProperties = new Properties();
-
-    public static void loadProperties() {
-        try (FileInputStream inputStream = new FileInputStream(FilePaths.BOT_VARIABLE_PROPERTIES)) {
-            botVariableProperties.load(inputStream);
-        } catch (IOException e) {
-            log.error("Ошибка загрузки bot variable properties по пути " + FilePaths.BOT_VARIABLE_PROPERTIES + " : ", e);
-        }
-    }
-
     public static String getVariable(BotVariableType botVariableType) {
         String text;
         try {
-            text = botVariableProperties.getProperty(botVariableType.getKey());
+            text = BotProperties.BOT_VARIABLE_PROPERTIES.getString(botVariableType.getKey());
         } catch (Exception e) {
             throw new BaseException("Переменная по ключу " + botVariableType.getKey() + " не найдена.");
         }
@@ -38,6 +24,55 @@ public class BotVariablePropertiesUtil {
             throw new BaseException("Переменная по ключу " + botVariableType.getKey() + " не найдена.");
         return text;
     }
+
+    public static String getVariable(BotVariableType botVariableType, FiatCurrency fiatCurrency,
+                                     DealType dealType, CryptoCurrency cryptoCurrency) {
+        String text;
+        String key = botVariableType.getKey() + "."
+                + fiatCurrency.getCode() + "."
+                + dealType.getKey() + "."
+                + cryptoCurrency.getShortName();
+        try {
+            text = BotProperties.BOT_VARIABLE_PROPERTIES.getString(botVariableType.getKey() + "."
+                    + fiatCurrency.getCode() + "."
+                    + dealType.getKey() + "."
+                    + cryptoCurrency.getShortName());
+        } catch (Exception e) {
+            throw new BaseException("Переменная по ключу " + key + " не найдена.");
+        }
+        if (Objects.isNull(text))
+            throw new BaseException("Переменная по ключу " + botVariableType.getKey() + " не найдена.");
+        return text;
+    }
+
+    public static String getVariable(BotVariableType botVariableType, DealType dealType, CryptoCurrency cryptoCurrency) {
+        String text;
+        String key = botVariableType.getKey() + "."
+                + dealType.getKey() + "."
+                + cryptoCurrency.getShortName();
+        try {
+            text = BotProperties.BOT_VARIABLE_PROPERTIES.getString(key);
+        } catch (Exception e) {
+            throw new BaseException("Переменная по ключу " + key + " не найдена.");
+        }
+        if (Objects.isNull(text))
+            throw new BaseException("Переменная по ключу " + key + " не найдена.");
+        return text;
+    }
+
+    public static BigDecimal getBigDecimal(BotVariableType botVariableType, FiatCurrency fiatCurrency, DealType dealType,
+                                           CryptoCurrency cryptoCurrency) {
+        return BigDecimal.valueOf(Double.parseDouble(getVariable(botVariableType, fiatCurrency, dealType, cryptoCurrency)));
+    }
+
+    public static BigDecimal getBigDecimal(BotVariableType botVariableType, DealType dealType, CryptoCurrency cryptoCurrency) {
+        return BigDecimal.valueOf(getDouble(botVariableType, dealType, cryptoCurrency));
+    }
+
+    public static Double getDouble(BotVariableType botVariableType, DealType dealType, CryptoCurrency cryptoCurrency) {
+        return Double.parseDouble(getVariable(botVariableType, dealType, cryptoCurrency));
+    }
+
 
     public static Float getFloat(BotVariableType botVariableType) {
         try {
@@ -55,6 +90,10 @@ public class BotVariablePropertiesUtil {
         }
     }
 
+    public static Boolean getBoolean(BotVariableType botVariableType) {
+        return Boolean.parseBoolean(getVariable(botVariableType));
+    }
+
     public static Integer getInt(BotVariableType botVariableType) {
         try {
             return Integer.parseInt(getVariable(botVariableType));
@@ -63,20 +102,23 @@ public class BotVariablePropertiesUtil {
         }
     }
 
-    public static Double getMinSum(CryptoCurrency cryptoCurrency) {
-        switch (cryptoCurrency) {
-            case BITCOIN:
-                return BotVariablePropertiesUtil.getDouble(BotVariableType.MIN_SUM_BUY_BTC);
-            case LITECOIN:
-                return BotVariablePropertiesUtil.getDouble(BotVariableType.MIN_SUM_BUY_LTC);
-            case USDT:
-                return BotVariablePropertiesUtil.getDouble(BotVariableType.MIN_SUM_BUY_USDT);
-            default:
-                throw new BaseException("Не определена крипто валюта.");
+    public static void validate(BotProperties botProperties) throws PropertyValueNotFoundException {
+        for (String key : botProperties.getKeys()) {
+            if (Objects.isNull(botProperties.getString(key))) {
+                throw new PropertyValueNotFoundException("Не корректно указано значение для переменной " + key + ".");
+            }
         }
     }
 
-    public static void validate(File file) throws BaseException {
-        // TODO
+    public static BigDecimal getTransactionCommission(CryptoCurrency cryptoCurrency) {
+        return getBigDecimal(BotVariableType.TRANSACTION_COMMISSION.getKey(cryptoCurrency));
+    }
+
+    private static BigDecimal getBigDecimal(String key) {
+        return BotProperties.BOT_VARIABLE_PROPERTIES.getBigDecimal(key);
+    }
+
+    public static String getWallet(CryptoCurrency cryptoCurrency) {
+        return BotProperties.BOT_VARIABLE_PROPERTIES.getString(BotVariableType.WALLET.getKey(cryptoCurrency));
     }
 }

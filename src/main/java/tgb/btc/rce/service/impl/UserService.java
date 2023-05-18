@@ -7,9 +7,15 @@ import org.springframework.transaction.annotation.Transactional;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.bean.ReferralUser;
 import tgb.btc.rce.bean.User;
+import tgb.btc.rce.bean.UserData;
+import tgb.btc.rce.bean.UserDiscount;
+import tgb.btc.rce.enums.BotProperties;
 import tgb.btc.rce.enums.Command;
+import tgb.btc.rce.enums.ReferralType;
 import tgb.btc.rce.exception.BaseException;
 import tgb.btc.rce.repository.BaseRepository;
+import tgb.btc.rce.repository.UserDataRepository;
+import tgb.btc.rce.repository.UserDiscountRepository;
 import tgb.btc.rce.repository.UserRepository;
 import tgb.btc.rce.util.CommandUtil;
 import tgb.btc.rce.util.UpdateUtil;
@@ -24,6 +30,23 @@ public class UserService extends BasePersistService<User> {
     private final UserRepository userRepository;
     private final ReferralUserService referralUserService;
 
+    private UserDiscountRepository userDiscountRepository;
+
+    private UserDataRepository userDataRepository;
+
+    public static final ReferralType REFERRAL_TYPE =
+            ReferralType.valueOf(BotProperties.MODULES_PROPERTIES.getString("referral.type"));
+
+    @Autowired
+    public void setUserDataRepository(UserDataRepository userDataRepository) {
+        this.userDataRepository = userDataRepository;
+    }
+
+    @Autowired
+    public void setUserDiscountRepository(UserDiscountRepository userDiscountRepository) {
+        this.userDiscountRepository = userDiscountRepository;
+    }
+
     @Autowired
     public UserService(BaseRepository<User> baseRepository, UserRepository userRepository,
                        ReferralUserService referralUserService) {
@@ -36,6 +59,10 @@ public class UserService extends BasePersistService<User> {
         return userRepository.getStepByChatId(chatId);
     }
 
+    public boolean isDefaultStep(Long chatId) {
+        return User.DEFAULT_STEP == getStepByChatId(chatId);
+    }
+
     public Command getCommandByChatId(Long chatId) {
         return userRepository.getCommandByChatId(chatId);
     }
@@ -43,7 +70,7 @@ public class UserService extends BasePersistService<User> {
     public User register(Update update) {
         User newUser = User.buildFromUpdate(update);
         User inviter = null;
-        if (CommandUtil.isStartCommand(update)) {
+        if (CommandUtil.isStartCommand(update) && ReferralType.STANDARD.equals(REFERRAL_TYPE)) {
             try {
                 Long chatIdFrom = Long.parseLong(update.getMessage().getText()
                         .replaceAll(Command.START.getText(), "").trim());
@@ -58,6 +85,13 @@ public class UserService extends BasePersistService<User> {
             inviter.getReferralUsers().add(referralUserService.save(ReferralUser.buildDefault(newUser.getChatId())));
             userRepository.save(inviter);
         }
+        UserDiscount userDiscount = new UserDiscount();
+        userDiscount.setUser(newUser);
+        userDiscount.setRankDiscountOn(true);
+        userDiscountRepository.save(userDiscount);
+        UserData userData = new UserData();
+        userData.setUser(newUser);
+        userDataRepository.save(userData);
         return savedNewUser;
     }
 
@@ -120,8 +154,8 @@ public class UserService extends BasePersistService<User> {
         return userRepository.getBufferVariable(chatId);
     }
 
-    public List<Long> getChatIdsNotAdminsAndIsActive() {
-        return userRepository.getChatIdsNotAdminsAndIsActive();
+    public List<Long> getChatIdsNotAdminsAndIsActiveAndNotBanned() {
+        return userRepository.getChatIdsNotAdminsAndIsActiveAndNotBanned();
     }
 
     public void updateIsActiveByChatId(boolean isActive, Long chatId) {
@@ -162,5 +196,13 @@ public class UserService extends BasePersistService<User> {
 
     public Integer getChargesByChatId(Long chatId) {
         return userRepository.getChargesByChatId(chatId);
+    }
+
+    public void ban(Long chatId) {
+        userRepository.updateIsBannedByChatId(chatId, true);
+    }
+
+    public void unban(Long chatId) {
+        userRepository.updateIsBannedByChatId(chatId, false);
     }
 }

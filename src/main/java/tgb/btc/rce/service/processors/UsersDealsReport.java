@@ -7,9 +7,9 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.annotation.CommandProcessor;
-import tgb.btc.rce.bean.Deal;
 import tgb.btc.rce.bean.User;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.exception.BaseException;
@@ -22,7 +22,7 @@ import tgb.btc.rce.util.UpdateUtil;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @CommandProcessor(command = Command.USERS_DEALS_REPORT)
@@ -36,6 +36,7 @@ public class UsersDealsReport extends Processor {
         this.dealService = dealService;
     }
 
+    @Async
     @Override
     public void run(Update update) {
         try {
@@ -45,17 +46,26 @@ public class UsersDealsReport extends Processor {
             Row head = sheet.createRow(0);
             sheet.setDefaultColumnWidth(30);
             Cell headCell = head.createCell(0);
-            headCell.setCellValue("Количество совершенных сделок");
-            headCell = headCell.getRow().createCell(1);
+            headCell.setCellValue("Chat ID");
+            headCell = head.createCell(1);
             headCell.setCellValue("Username");
+            headCell = head.createCell(2);
+            headCell.setCellValue("Количество совершенных сделок");
 
             int i = 2;
 
-            List<User> users = userService.findAll().stream()
-                    .filter(user -> dealService.getCountPassedByUserChatId(user.getChatId()) != 0)
-                    .sorted((user1, user2) -> dealService.getCountPassedByUserChatId(user2.getChatId())
-                            .compareTo(dealService.getDealsCountByUserChatId(user1.getChatId())))
+            List<User> users = userService.findAll();
+            Map<Long, Long> map = new HashMap<>();
+            users.forEach(user -> {
+                Long count = dealService.getCountPassedByUserChatId(user.getChatId());
+                if (count != 0) map.put(user.getChatId(), count);
+            });
+
+            users = users.stream()
+                    .filter(user -> Objects.nonNull(map.get(user.getChatId())))
+                    .sorted(Comparator.comparing(user -> map.get(user.getChatId())))
                     .collect(Collectors.toList());
+
             for (User user : users) {
                 Row row = sheet.createRow(i);
                 Cell cell1 = row.createCell(0);
@@ -63,9 +73,10 @@ public class UsersDealsReport extends Processor {
                 Cell cell2 = row.createCell(1);
                 cell2.setCellValue(StringUtils.defaultIfEmpty(user.getUsername(), "скрыт"));
                 Cell cell3 = row.createCell(2);
-                cell3.setCellValue(dealService.getCountPassedByUserChatId(user.getChatId()));
+                cell3.setCellValue(map.get(user.getChatId()));
                 i++;
             }
+
             String fileName = "UsersDeals.xlsx";
             FileOutputStream outputStream = new FileOutputStream(fileName);
             book.write(outputStream);
