@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
 import tgb.btc.rce.enums.DealType;
+import tgb.btc.rce.enums.FiatCurrency;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -32,6 +33,17 @@ public class PaymentType extends BasePersist {
 
     @Column(name = "IS_DYNAMIC_ON")
     private Boolean isDynamicOn;
+
+    @Column(name = "FIAT_CURRENCY")
+    private FiatCurrency fiatCurrency;
+
+    public FiatCurrency getFiatCurrency() {
+        return fiatCurrency;
+    }
+
+    public void setFiatCurrency(FiatCurrency fiatCurrency) {
+        this.fiatCurrency = fiatCurrency;
+    }
 
     public String getName() {
         return name;

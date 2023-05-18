@@ -7,7 +7,9 @@ import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.vo.InlineButton;
 import tgb.btc.rce.vo.ReplyButton;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public enum BotKeyboard {
     CANCEL(KeyboardUtil.buildReply(List.of(BotReplyButton.CANCEL.getButton()))),
@@ -27,7 +29,8 @@ public enum BotKeyboard {
                     .inlineType(InlineType.URL)
                     .build()
     ))),
-    CRYPTO_CURRENCIES(getCryptoCurrencyKeyboard());
+    CRYPTO_CURRENCIES(getCryptoCurrencyKeyboard()),
+    FIAT_CURRENCIES(getFiatCurrenciesKeyboard());
 
     final ReplyKeyboard keyboard;
 
@@ -41,6 +44,12 @@ public enum BotKeyboard {
 
     private static ReplyKeyboardMarkup getCryptoCurrencyKeyboard() {
         return KeyboardUtil.buildReply(List.of(KeyboardUtil.getCryptoCurrencyButtons()));
+    }
+
+    private static ReplyKeyboardMarkup getFiatCurrenciesKeyboard() {
+        return KeyboardUtil.buildReply(Arrays.stream(FiatCurrency.values())
+                .map(fiatCurrency -> ReplyButton.builder().text(fiatCurrency.getCode()).build())
+                .collect(Collectors.toList()));
     }
 
 }
