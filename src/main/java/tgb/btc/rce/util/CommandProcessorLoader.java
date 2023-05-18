@@ -207,6 +207,6 @@ public final class CommandProcessorLoader {
                     return annotation.command().equals(command) && (!COMMANDS_WITH_STEP.contains(command) || annotation.step() == step);
                 })
                 .findFirst()
-                .orElseThrow(() -> new BaseException("Не найден процессор для команды " + command.name()));
+                .orElseThrow(() -> new BaseException("Не найден процессор для команты " + command.name()));
     }
 }
