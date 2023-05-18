@@ -19,10 +19,12 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import tgb.btc.rce.bean.BotMessage;
 import tgb.btc.rce.bot.RceBot;
-import tgb.btc.rce.enums.BotKeyboard;
-import tgb.btc.rce.enums.MessageTemplate;
+import tgb.btc.rce.enums.*;
+import tgb.btc.rce.repository.UserRepository;
 import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.util.KeyboardUtil;
+import tgb.btc.rce.util.MenuFactory;
+import tgb.btc.rce.util.MessagePropertiesUtil;
 import tgb.btc.rce.vo.InlineButton;
 
 import java.io.File;
@@ -37,6 +39,20 @@ import java.util.Optional;
 public class ResponseSender implements IResponseSender {
 
     private RceBot bot;
+
+    private BotMessageService botMessageService;
+
+    private UserRepository userRepository;
+
+    @Autowired
+    public void setUserRepository(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
+    @Autowired
+    public void setBotMessageService(BotMessageService botMessageService) {
+        this.botMessageService = botMessageService;
+    }
 
     @Autowired
     public void setBot(RceBot bot) {
@@ -56,6 +72,14 @@ public class ResponseSender implements IResponseSender {
                 .chatId(chatId.toString())
                 .text(text)
                 .build()));
+    }
+
+    public Optional<Message> sendMessage(Long chatId, String text, Menu menu) {
+        return sendMessage(chatId, text, MenuFactory.build(menu, userRepository.isAdminByChatId(chatId)), null);
+    }
+
+    public Optional<Message> sendMessage(Long chatId, PropertiesMessage propertiesMessage, Menu menu) {
+        return sendMessage(chatId, MessagePropertiesUtil.getMessage(propertiesMessage), menu);
     }
 
     public Optional<Message> sendMessage(Long chatId, String text, ReplyKeyboard replyKeyboard) {
@@ -103,8 +127,21 @@ public class ResponseSender implements IResponseSender {
         return bot.execute(sendMessage);
     }
 
+    public Optional<Message> sendBotMessage(BotMessageType botMessageType, Long chatId) {
+        return sendBotMessage(botMessageService.findByType(botMessageType), chatId, null);
+    }
+
     public Optional<Message> sendBotMessage(BotMessage botMessage, Long chatId) {
         return sendBotMessage(botMessage, chatId, null);
+    }
+
+    public Optional<Message> sendBotMessage(BotMessageType botMessageType, Long chatId, Menu menu) {
+        return sendBotMessage(botMessageType, chatId, MenuFactory.build(menu, userRepository.isAdminByChatId(chatId)));
+    }
+
+    public Optional<Message> sendBotMessage(BotMessageType botMessageType, Long chatId, ReplyKeyboard replyKeyboard) {
+        BotMessage botMessage = botMessageService.findByType(botMessageType);
+        return sendBotMessage(botMessage, chatId, replyKeyboard);
     }
 
     public Optional<Message> sendBotMessage(BotMessage botMessage, Long chatId, ReplyKeyboard replyKeyboard) {

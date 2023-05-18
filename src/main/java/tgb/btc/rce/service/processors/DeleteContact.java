@@ -21,9 +21,9 @@ public class DeleteContact extends Processor {
 
     @Override
     public void run(Update update) {
-        if(UpdateType.MESSAGE.equals(UpdateType.fromUpdate(update)))
+        if (UpdateType.MESSAGE.equals(UpdateType.fromUpdate(update)))
             editContactsService.askForChoose(update);
-        else if(UpdateType.CALLBACK_QUERY.equals(UpdateType.fromUpdate(update))) {
+        else if (UpdateType.CALLBACK_QUERY.equals(UpdateType.fromUpdate(update))) {
             editContactsService.delete(update);
             processToAdminMainPanel(UpdateUtil.getChatId(update));
         }

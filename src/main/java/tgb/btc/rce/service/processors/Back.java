@@ -2,7 +2,6 @@ package tgb.btc.rce.service.processors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.BotMessageType;
 import tgb.btc.rce.enums.Command;
@@ -26,10 +25,6 @@ public class Back extends Processor {
         Long chatId = UpdateUtil.getChatId(update);
         responseSender.sendBotMessage(botMessageService.findByType(BotMessageType.START),
                 chatId,
-                getMenuKeyboard(chatId));
-    }
-
-    private ReplyKeyboard getMenuKeyboard(Long chatId) {
-        return MenuFactory.build(Menu.MAIN, userService.isAdminByChatId(chatId));
+                MenuFactory.build(Menu.MAIN, userService.isAdminByChatId(chatId)));
     }
 }

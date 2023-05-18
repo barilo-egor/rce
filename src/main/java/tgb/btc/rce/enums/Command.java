@@ -12,19 +12,19 @@ public enum Command {
      */
 
     START("/start", false, false),
-    NONE("none", false, false),
+    NONE("none", false, true),
 
     /*
       Reply
      */
 
     /** UTIL */
-    BACK("◀️ Назад", false, false),
+    BACK("◀️ Назад", false, true),
     ADMIN_BACK("Назад", true, false),
     CANCEL("Отмена", false, false),
     SHARE_CONTACT("Поделиться контактом", false, false),
     BOT_OFFED("bot_offed", false, true),
-    INLINE_DELETE("inline_delete", false, false),
+    INLINE_DELETE("inline_delete", false, true),
     CAPTCHA("captcha", false, false),
 
     /**
@@ -37,14 +37,14 @@ public enum Command {
     /** MAIN */
     BUY_BITCOIN("\uD83D\uDCB0 Купить", false, false),
     SELL_BITCOIN("\uD83D\uDCC8 Продать", false, false),
-    CONTACTS("\uD83D\uDEC3 Контакты", false, false),
-    DRAWS("\uD83C\uDFB0 Розыгрыши", false, false),
+    CONTACTS("\uD83D\uDEC3 Контакты", false, true),
+    DRAWS("\uD83C\uDFB0 Розыгрыши", false, true),
     REFERRAL("\uD83E\uDD1D Реферальная программа", false, false),
-    ADMIN_PANEL("Админ панель", true, false),
+    ADMIN_PANEL("Админ панель", true, true),
 
     /** DRAWS */
     LOTTERY("\uD83C\uDFB0 Лотерея", false, false),
-    ROULETTE("\uD83C\uDFB0 Рулетка", false, false),
+    ROULETTE("\uD83C\uDFB0 Рулетка", false, true),
 
     /** REFERRAL */
     WITHDRAWAL_OF_FUNDS("withdrawal", false, false),
@@ -55,17 +55,17 @@ public enum Command {
     DELETE_WITHDRAWAL_REQUEST("withdrawal_delete", false, false),
 
     /** ADMIN PANEL */
-    REQUESTS("Заявки", true, false),
-    SEND_MESSAGES("Отправка сообщений", true, false),
+    REQUESTS("Заявки", true, true),
+    SEND_MESSAGES("Отправка сообщений", true, true),
     BAN_UNBAN("Бан/разбан", true, false),
-    BOT_SETTINGS("Настройки бота", true, false),
-    REPORTS("Отчеты", true, false),
-    EDIT_CONTACTS("Редактирование контактов", true, false),
+    BOT_SETTINGS("Настройки бота", true, true),
+    REPORTS("Отчеты", true, true),
+    EDIT_CONTACTS("Редактирование контактов", true, true),
     USER_REFERRAL_BALANCE("Реф.баланс юзера", true, false),
     CHANGE_USD_COURSE("Курс доллара", true, false),
     TURNING_CURRENCY("Включение криптовалют", true, false),
     DISCOUNTS("Скидки", true, false),
-    USERS("Пользователи", true, false),
+    USERS("Пользователи", true, true),
     QUIT_ADMIN_PANEL("Выйти", true, false),
 
     /** DISCOUNTS */

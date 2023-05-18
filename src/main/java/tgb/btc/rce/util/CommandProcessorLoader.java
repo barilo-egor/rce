@@ -76,16 +76,13 @@ public final class CommandProcessorLoader {
         commandProcessors.add(AddContact.class);
         commandProcessors.add(AdditionalVerification.class);
         commandProcessors.add(AdminBack.class);
-        commandProcessors.add(AdminPanel.class);
         commandProcessors.add(Back.class);
         commandProcessors.add(BanUnban.class);
         commandProcessors.add(BotMessages.class);
-        commandProcessors.add(BotSettings.class);
         commandProcessors.add(BotVariables.class);
         commandProcessors.add(BuyBitcoin.class);
         commandProcessors.add(ChangeReferralBalance.class);
         commandProcessors.add(ConfirmUserDeal.class);
-        commandProcessors.add(Contacts.class);
         commandProcessors.add(CurrentData.class);
         commandProcessors.add(DealReports.class);
         commandProcessors.add(DeleteContact.class);
@@ -93,8 +90,6 @@ public final class CommandProcessorLoader {
         commandProcessors.add(DeleteReview.class);
         commandProcessors.add(DeleteUserDeal.class);
         commandProcessors.add(DeleteWithdrawalRequest.class);
-        commandProcessors.add(Draws.class);
-        commandProcessors.add(EditContacts.class);
         commandProcessors.add(HideWithdrawal.class);
         commandProcessors.add(Lottery.class);
         commandProcessors.add(MailingList.class);
@@ -107,12 +102,8 @@ public final class CommandProcessorLoader {
         commandProcessors.add(PublishReview.class);
         commandProcessors.add(QuitAdminPanel.class);
         commandProcessors.add(Referral.class);
-        commandProcessors.add(Reports.class);
-        commandProcessors.add(Requests.class);
-        commandProcessors.add(Roulette.class);
         commandProcessors.add(SellBitcoin.class);
         commandProcessors.add(SendLink.class);
-        commandProcessors.add(SendMessages.class);
         commandProcessors.add(SendMessageToUser.class);
         commandProcessors.add(ShareReview.class);
         commandProcessors.add(ShowDeal.class);
@@ -132,7 +123,6 @@ public final class CommandProcessorLoader {
         commandProcessors.add(TurnOnCurrencyProcessor.class);
         commandProcessors.add(TurnOffCurrencyProcessor.class);
         commandProcessors.add(DiscountsProcessor.class);
-        commandProcessors.add(Users.class);
         commandProcessors.add(RankDiscountProcessor.class);
         commandProcessors.add(ChangeRankDiscountProcessor.class);
         commandProcessors.add(SavePersonalBuyDiscountProcessor.class);
@@ -153,8 +143,6 @@ public final class CommandProcessorLoader {
         commandProcessors.add(DeletePaymentType.class);
         commandProcessors.add(DeletingPaymentType.class);
         commandProcessors.add(ShowPaymentTypesForDelete.class);
-        commandProcessors.add(InlineDelete.class);
-        commandProcessors.add(None.class);
         commandProcessors.add(AskForNewRequisite.class);
         commandProcessors.add(NewPaymentTypeRequisite.class);
         commandProcessors.add(ShowPaymentTypesForCreateRequisite.class);

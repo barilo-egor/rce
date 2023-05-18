@@ -10,8 +10,7 @@ import org.telegram.telegrambots.meta.api.objects.media.InputMedia;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import tgb.btc.rce.bean.BotMessage;
-import tgb.btc.rce.enums.BotKeyboard;
-import tgb.btc.rce.enums.MessageTemplate;
+import tgb.btc.rce.enums.*;
 import tgb.btc.rce.vo.InlineButton;
 
 import java.io.File;
@@ -24,6 +23,11 @@ public interface IResponseSender {
     Optional<Message> sendMessage(Long chatId, String text);
 
     Optional<Message> sendMessage(Long chatId, String text, ReplyKeyboard replyKeyboard);
+
+    Optional<Message> sendMessage(Long chatId, String text, Menu menu);
+
+    Optional<Message> sendMessage(Long chatId, PropertiesMessage propertiesMessage, Menu menu);
+
     Optional<Message> sendMessage(Long chatId, String text, String parseMode);
 
     Optional<Message> sendMessage(Long chatId, String text, ReplyKeyboard replyKeyboard, String parseMode);
@@ -42,7 +46,13 @@ public interface IResponseSender {
 
     Optional<Message> sendAnimation(Long chatId, String caption, String animation, ReplyKeyboard replyKeyboard);
 
+    Optional<Message> sendBotMessage(BotMessageType botMessageType, Long chatId, Menu menu);
+
+    Optional<Message> sendBotMessage(BotMessageType botMessageType, Long chatId, ReplyKeyboard replyKeyboard);
+
     Optional<Message> sendBotMessage(BotMessage botMessage, Long chatId, ReplyKeyboard replyKeyboard);
+
+    Optional<Message> sendBotMessage(BotMessageType botMessageType, Long chatId);
 
     Optional<Message> sendBotMessage(BotMessage botMessage, Long chatId);
 

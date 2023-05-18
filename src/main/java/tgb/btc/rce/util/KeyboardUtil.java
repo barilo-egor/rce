@@ -1,10 +1,12 @@
 package tgb.btc.rce.util;
 
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
+import tgb.btc.rce.bean.Contact;
 import tgb.btc.rce.enums.BotReplyButton;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.CryptoCurrency;
@@ -15,6 +17,7 @@ import tgb.btc.rce.vo.ReplyButton;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public final class KeyboardUtil {
     private KeyboardUtil() {
@@ -122,4 +125,14 @@ public final class KeyboardUtil {
         return replyButtons;
     }
 
+    public static ReplyKeyboard buildContacts(List<Contact> contacts) {
+        return KeyboardUtil.buildInline(
+                contacts.stream()
+                        .map(contact -> InlineButton.builder()
+                                .text(contact.getLabel())
+                                .data(contact.getUrl())
+                                .inlineType(InlineType.URL)
+                                .build())
+                        .collect(Collectors.toList()));
+    }
 }
