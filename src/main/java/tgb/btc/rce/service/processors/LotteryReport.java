@@ -11,16 +11,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.bean.LotteryWin;
-import tgb.btc.rce.bean.User;
 import tgb.btc.rce.enums.Command;
-import tgb.btc.rce.enums.CryptoCurrency;
-import tgb.btc.rce.enums.DealType;
 import tgb.btc.rce.exception.BaseException;
 import tgb.btc.rce.repository.LotteryWinRepository;
-import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.service.impl.UserService;
-import tgb.btc.rce.util.BigDecimalUtil;
 import tgb.btc.rce.util.UpdateUtil;
 
 import java.io.File;
@@ -37,11 +31,6 @@ public class LotteryReport extends Processor {
     @Autowired
     public void setLotteryWinRepository(LotteryWinRepository lotteryWinRepository) {
         this.lotteryWinRepository = lotteryWinRepository;
-    }
-
-    @Autowired
-    public LotteryReport(IResponseSender responseSender, UserService userService) {
-        super(responseSender, userService);
     }
 
     @Override
@@ -64,7 +53,6 @@ public class LotteryReport extends Processor {
             headCell.setCellValue("Username");
             headCell = headRow.createCell(2);
             headCell.setCellValue("Дата и время");
-            headCell = headRow.createCell(3);
 
             int i = 2;
             for (LotteryWin lotteryWin : lotteryWins) {

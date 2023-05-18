@@ -7,11 +7,8 @@ import tgb.btc.rce.bean.User;
 import tgb.btc.rce.bean.UserDiscount;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.repository.UserDiscountRepository;
-import tgb.btc.rce.repository.UserRepository;
-import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.IUserDiscountService;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.service.impl.UserService;
 import tgb.btc.rce.service.processors.support.ExchangeService;
 import tgb.btc.rce.util.UpdateUtil;
 
@@ -19,8 +16,6 @@ import java.math.BigDecimal;
 
 @CommandProcessor(command = Command.PERSONAL_BUY_DISCOUNT, step = 2)
 public class SavePersonalBuyDiscountProcessor extends Processor {
-
-    private UserRepository userRepository;
 
     private UserDiscountRepository userDiscountRepository;
 
@@ -34,16 +29,6 @@ public class SavePersonalBuyDiscountProcessor extends Processor {
     @Autowired
     public void setUserDiscountService(IUserDiscountService userDiscountService) {
         this.userDiscountService = userDiscountService;
-    }
-
-    @Autowired
-    public void setUserRepository(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
-
-    @Autowired
-    public SavePersonalBuyDiscountProcessor(IResponseSender responseSender, UserService userService) {
-        super(responseSender, userService);
     }
 
     @Override

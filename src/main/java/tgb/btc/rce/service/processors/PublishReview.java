@@ -1,7 +1,6 @@
 package tgb.btc.rce.service.processors;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.annotation.CommandProcessor;
@@ -9,24 +8,19 @@ import tgb.btc.rce.bean.Review;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.BotVariableType;
 import tgb.btc.rce.enums.Command;
-import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.impl.ReviewService;
-import tgb.btc.rce.service.impl.UserService;
 import tgb.btc.rce.util.BotVariablePropertiesUtil;
 import tgb.btc.rce.util.UpdateUtil;
-
-import java.math.BigDecimal;
 
 @CommandProcessor(command = Command.PUBLISH_REVIEW)
 @Slf4j
 public class PublishReview extends Processor {
 
-    private final ReviewService reviewService;
+    private ReviewService reviewService;
 
     @Autowired
-    public PublishReview(IResponseSender responseSender, UserService userService, ReviewService reviewService) {
-        super(responseSender, userService);
+    public void setReviewService(ReviewService reviewService) {
         this.reviewService = reviewService;
     }
 

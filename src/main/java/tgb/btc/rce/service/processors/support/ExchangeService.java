@@ -124,7 +124,7 @@ public class ExchangeService {
         Deal deal = dealService.getByPid(userService.getCurrentDealByChatId(chatId));
         Double sum = UpdateUtil.getDoubleFromText(update);
         CryptoCurrency cryptoCurrency = deal.getCryptoCurrency();
-        Double minSum = BotVariablePropertiesUtil.getMinSum(cryptoCurrency, DealType.BUY);
+        Double minSum = BotVariablePropertiesUtil.getDouble(BotVariableType.MIN_SUM, DealType.BUY, cryptoCurrency);
 
         if (sum < minSum) {
             responseSender.sendMessage(chatId, "Минимальная сумма покупки " + cryptoCurrency.getDisplayName()
@@ -133,7 +133,7 @@ public class ExchangeService {
         }
 
         deal.setCryptoAmount(BigDecimal.valueOf(sum));
-        BigDecimal amount = CalculateUtil.convertCryptoToRub(cryptoCurrency, sum, DealType.BUY);
+        BigDecimal amount = CalculateUtil.convertCryptoToRub(cryptoCurrency, sum, deal.getFiatCurrency(), DealType.BUY);
         BigDecimal personalBuy = USERS_PERSONAL_BUY.get(chatId);
         if (BooleanUtils.isNotTrue(deal.getPersonalApplied())) {
             if (Objects.isNull(personalBuy)) {
@@ -157,7 +157,7 @@ public class ExchangeService {
             amount = amount.subtract(CalculateUtil.getPercentsFactor(amount).multiply(bulkDiscount));
         }
         deal.setAmount(amount);
-        deal.setCommission(CalculateUtil.getCommission(BigDecimal.valueOf(sum), cryptoCurrency, DealType.BUY));
+        deal.setCommission(CalculateUtil.getCommission(BigDecimal.valueOf(sum), cryptoCurrency, deal.getFiatCurrency(), DealType.BUY));
         dealService.save(deal);
         return true;
     }
@@ -190,7 +190,7 @@ public class ExchangeService {
         }
 
         CryptoCurrency cryptoCurrency = dealService.getCryptoCurrencyByPid(currentDealPid);
-        double minSum = BigDecimalUtil.round(BotVariablePropertiesUtil.getMinSum(cryptoCurrency, DealType.BUY),
+        double minSum = BigDecimalUtil.round(BotVariablePropertiesUtil.getDouble(BotVariableType.MIN_SUM, DealType.BUY, cryptoCurrency),
                         cryptoCurrency.getScale())
                 .doubleValue();
 
@@ -201,7 +201,8 @@ public class ExchangeService {
         }
         sum = BigDecimalUtil.round(sum, cryptoCurrency.getScale());
         BigDecimal roundedConvertedSum = BigDecimalUtil.round(
-                CalculateUtil.convertCryptoToRub(currency, sum.doubleValue(), DealType.BUY), 0);
+                CalculateUtil.convertCryptoToRub(currency, sum.doubleValue(),
+                        dealRepository.getFiatCurrencyByPid(currentDealPid), DealType.BUY), 0);
         BigDecimal personalBuy = USERS_PERSONAL_BUY.get(chatId);
         if (Objects.isNull(personalBuy) || !BigDecimal.ZERO.equals(personalBuy)) {
             personalBuy = userDiscountRepository.getPersonalBuyByChatId(chatId);
@@ -415,7 +416,7 @@ public class ExchangeService {
                 .toPlainString() + "\n"
                 + "<b>" + displayCurrencyName + "-адрес</b>:" + "<code>" + deal.getWallet() + "</code>"
                 + "\n\n"
-                + "\uD83D\uDCB5<b>Сумма перевода</b>: " + dealAmount.stripTrailingZeros().toPlainString() + "₽"
+                + "\uD83D\uDCB5<b>Сумма перевода</b>: " + dealAmount.stripTrailingZeros().toPlainString() + " " + deal.getFiatCurrency().getDisplayName()
                 + "\n\n"
                 + additionalText
                 + "<b>Выберите способ оплаты:</b>";
@@ -517,7 +518,7 @@ public class ExchangeService {
                 + "\n\n"
                 + "Ваш ранг: " + rank.getSmile() + ", скидка " + rank.getPercent() + "%" + "\n\n"
                 + "<b>\uD83D\uDCB5Сумма к оплате</b>: <code>" + BigDecimalUtil.round(dealAmount, 0).stripTrailingZeros()
-                .toPlainString() + "₽</code>"
+                .toPlainString() + " " + deal.getFiatCurrency().getDisplayName() + "</code>"
                 + "\n"
                 + "<b>Резквизиты для оплаты:</b>"
                 + "\n\n"
@@ -605,7 +606,7 @@ public class ExchangeService {
     }
 
     public void askForReceipts(Update update) {
-        responseSender.sendMessage(UpdateUtil.getChatId(update), "Отправьте скрин перевода. ",
+        responseSender.sendMessage(UpdateUtil.getChatId(update), "Отправьте скрин перевода.",
                 KeyboardUtil.buildReply(
                         List.of(ReplyButton.builder().text(Command.RECEIPTS_CANCEL_DEAL.getText())
                                 .build())));

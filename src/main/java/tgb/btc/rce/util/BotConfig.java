@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import tgb.btc.rce.enums.BotProperties;
 import tgb.btc.rce.exception.InitPropertyValueNotFoundException;
 import tgb.btc.rce.exception.PropertyValueNotFoundException;
+import tgb.btc.rce.service.BeanHolder;
 
 import java.util.Map;
 
@@ -14,6 +15,7 @@ public final class BotConfig {
 
     public static void init() throws InitPropertyValueNotFoundException {
         CommandProcessorLoader.scan();
+        BeanHolder.load();
         try {
             for (BotProperties botProperties : BotProperties.values()) {
                 if (!botProperties.getIsBufferProperties()) {

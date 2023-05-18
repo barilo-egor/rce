@@ -14,17 +14,18 @@ import tgb.btc.rce.bean.User;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.CryptoCurrency;
 import tgb.btc.rce.enums.DealType;
+import tgb.btc.rce.enums.FiatCurrency;
 import tgb.btc.rce.exception.BaseException;
 import tgb.btc.rce.repository.DealRepository;
-import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.service.impl.UserService;
 import tgb.btc.rce.util.BigDecimalUtil;
+import tgb.btc.rce.util.FiatCurrenciesUtil;
 import tgb.btc.rce.util.UpdateUtil;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @CommandProcessor(command = Command.USERS_REPORT)
@@ -36,11 +37,6 @@ public class UsersReport extends Processor {
     @Autowired
     public void setDealRepository(DealRepository dealRepository) {
         this.dealRepository = dealRepository;
-    }
-
-    @Autowired
-    public UsersReport(IResponseSender responseSender, UserService userService) {
-        super(responseSender, userService);
     }
 
     @Override
@@ -55,21 +51,23 @@ public class UsersReport extends Processor {
             Sheet sheet = book.createSheet("Пользователи");
             Row headRow = sheet.createRow(0);
             sheet.setDefaultColumnWidth(30);
-            List<String> cellHeaders = List.of("Chat ID", "Username", "Куплено BTC", "Куплено LTC", "Куплено USDT",
-                                               "Куплено MONERO", "Продано BTC", "Продано LTC", "Продано USDT",
-                                               "Продано MONERO", "Потрачено рублей");
+            List<String> cellHeaders = new ArrayList<>(List.of("Chat ID", "Username", "Куплено BTC", "Куплено LTC", "Куплено USDT",
+                                                               "Куплено MONERO", "Продано BTC", "Продано LTC", "Продано USDT",
+                                                               "Продано MONERO"));
+            for (FiatCurrency fiatCurrency : FiatCurrenciesUtil.getFiatCurrencies()) {
+                cellHeaders.add("Потрачено " + fiatCurrency.getCode());
+            }
             Cell headCell;
             for (int i = 0; i < cellHeaders.size(); i++) {
                 headCell = headRow.createCell(i);
                 headCell.setCellValue(cellHeaders.get(i));
-                i++;
             }
 
             int i = 2;
             for (User user : userService.findAll()) {
                 int cellCount = 0;
                 Row row = sheet.createRow(i);
-                Cell cell1 = row.createCell(++cellCount);
+                Cell cell1 = row.createCell(cellCount);
                 cell1.setCellValue(user.getChatId());
                 Cell cell2 = row.createCell(++cellCount);
                 cell2.setCellValue(StringUtils.defaultIfEmpty(user.getUsername(), "скрыт"));
@@ -81,10 +79,13 @@ public class UsersReport extends Processor {
                     Cell cell = row.createCell(++cellCount);
                     setUserCryptoAmount(cell, user.getChatId(), CryptoCurrency.values()[j], DealType.SELL);
                 }
-                Cell cell11 = row.createCell(++cellCount);
-                cell11.setCellValue(BigDecimalUtil.roundNullSafe(
-                        dealRepository.getUserAmountSum(user.getChatId(), DealType.BUY), 0).toPlainString()
-                );
+                for (FiatCurrency fiatCurrency : FiatCurrenciesUtil.getFiatCurrencies()) {
+                    cellHeaders.add("Потрачено " + fiatCurrency.getCode());
+                    Cell cell = row.createCell(++cellCount);
+                    cell.setCellValue(BigDecimalUtil.roundNullSafe(
+                            dealRepository.getUserAmountSumByDealTypeAndFiatCurrency(user.getChatId(), DealType.BUY, fiatCurrency), 0).toPlainString()
+                    );
+                }
                 i++;
             }
             String fileName = "users.xlsx";

@@ -6,17 +6,14 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.bean.User;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.exception.BaseException;
-import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.impl.DealService;
-import tgb.btc.rce.service.impl.UserService;
 import tgb.btc.rce.util.UpdateUtil;
 
 import java.io.File;
@@ -28,13 +25,7 @@ import java.util.stream.Collectors;
 @CommandProcessor(command = Command.USERS_DEALS_REPORT)
 @Slf4j
 public class UsersDealsReport extends Processor {
-    private final DealService dealService;
-
-    @Autowired
-    public UsersDealsReport(IResponseSender responseSender, UserService userService, DealService dealService) {
-        super(responseSender, userService);
-        this.dealService = dealService;
-    }
+    private DealService dealService;
 
     @Async
     @Override

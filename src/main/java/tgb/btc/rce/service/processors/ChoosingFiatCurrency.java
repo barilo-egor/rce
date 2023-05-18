@@ -8,10 +8,7 @@ import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.DealType;
 import tgb.btc.rce.enums.FiatCurrency;
 import tgb.btc.rce.repository.DealRepository;
-import tgb.btc.rce.repository.UserRepository;
-import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.service.impl.UserService;
 import tgb.btc.rce.util.CallbackQueryUtil;
 import tgb.btc.rce.util.UpdateUtil;
 
@@ -24,16 +21,9 @@ public class ChoosingFiatCurrency extends Processor {
 
     private SellBitcoin sellBitcoin;
 
-    private UserRepository userRepository;
-
     @Autowired
     public void setSellBitcoin(SellBitcoin sellBitcoin) {
         this.sellBitcoin = sellBitcoin;
-    }
-
-    @Autowired
-    public void setUserRepository(UserRepository userRepository) {
-        this.userRepository = userRepository;
     }
 
     @Autowired
@@ -44,11 +34,6 @@ public class ChoosingFiatCurrency extends Processor {
     @Autowired
     public void setBuyBitcoin(BuyBitcoin buyBitcoin) {
         this.buyBitcoin = buyBitcoin;
-    }
-
-    @Autowired
-    public ChoosingFiatCurrency(IResponseSender responseSender, UserService userService) {
-        super(responseSender, userService);
     }
 
     @Override

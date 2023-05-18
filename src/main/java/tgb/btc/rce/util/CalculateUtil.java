@@ -5,6 +5,7 @@ import org.json.JSONObject;
 import tgb.btc.rce.enums.BotVariableType;
 import tgb.btc.rce.enums.CryptoCurrency;
 import tgb.btc.rce.enums.DealType;
+import tgb.btc.rce.enums.FiatCurrency;
 import tgb.btc.rce.exception.BaseException;
 
 import java.io.*;
@@ -33,11 +34,12 @@ public final class CalculateUtil {
 
     public static final int MAX_BTC_AMOUNT = 1;
 
-    public static BigDecimal convertCryptoToRub(CryptoCurrency cryptoCurrency, Double sum, DealType dealType) {
-        BigDecimal fix = BotVariablePropertiesUtil.getFix(cryptoCurrency, dealType);
-        BigDecimal usdCourse = BigDecimal.valueOf(BotVariablePropertiesUtil.getDouble(BotVariableType.USD_COURSE));
-        BigDecimal commission = BotVariablePropertiesUtil.getCommission(cryptoCurrency, dealType);
-        BigDecimal fixCommission = BotVariablePropertiesUtil.getFixCommission(cryptoCurrency, dealType);
+    public static BigDecimal convertCryptoToRub(CryptoCurrency cryptoCurrency, Double sum, FiatCurrency fiatCurrency,
+                                                DealType dealType) {
+        BigDecimal fix = BotVariablePropertiesUtil.getBigDecimal(BotVariableType.FIX, fiatCurrency, dealType, cryptoCurrency);
+        BigDecimal usdCourse = BotVariablePropertiesUtil.getBigDecimal(BotVariableType.USD_COURSE, fiatCurrency, dealType, cryptoCurrency);
+        BigDecimal commission = BotVariablePropertiesUtil.getBigDecimal(BotVariableType.COMMISSION, dealType, cryptoCurrency);
+        BigDecimal fixCommission = BotVariablePropertiesUtil.getBigDecimal(BotVariableType.FIX_COMMISSION, fiatCurrency, dealType, cryptoCurrency);
         BigDecimal transactionalCommission = BotVariablePropertiesUtil.getTransactionCommission(cryptoCurrency);
 
         BigDecimal currency;
@@ -82,7 +84,8 @@ public final class CalculateUtil {
         return BigDecimalUtil.multiplyHalfUp(rub, getPercentsFactor(percentCommission));
     }
 
-    public static BigDecimal getCommissionForSell(BigDecimal amount, CryptoCurrency cryptoCurrency, DealType dealType) {
+    public static BigDecimal getCommissionForSell(BigDecimal amount, CryptoCurrency cryptoCurrency,
+                                                  FiatCurrency fiatCurrency, DealType dealType) {
         BigDecimal currency;
         switch (cryptoCurrency) {
             case BITCOIN:
@@ -101,9 +104,10 @@ public final class CalculateUtil {
                 throw new BaseException("Не определена крипто валюта.");
         }
         BigDecimal usd = BigDecimalUtil.multiplyHalfUp(amount, currency);
-        BigDecimal course = BigDecimal.valueOf(BotVariablePropertiesUtil.getDouble(BotVariableType.USD_COURSE));
+        BigDecimal course = BotVariablePropertiesUtil.getBigDecimal(BotVariableType.USD_COURSE, fiatCurrency, dealType, cryptoCurrency);
         BigDecimal rub = BigDecimalUtil.multiplyHalfUp(usd, course);
-        BigDecimal percentCommission = BotVariablePropertiesUtil.getCommission(cryptoCurrency, dealType);
+        BigDecimal percentCommission = BotVariablePropertiesUtil.getBigDecimal(BotVariableType.COMMISSION,
+                dealType, cryptoCurrency);
         return BigDecimalUtil.multiplyHalfUp(rub, getPercentsFactor(percentCommission));
     }
 
@@ -126,8 +130,9 @@ public final class CalculateUtil {
         return BigDecimalUtil.multiplyHalfUp(rub, getPercentsFactor(percentCommission));
     }
 
-    public static BigDecimal getCommission(BigDecimal amount, CryptoCurrency cryptoCurrency, DealType dealType) {
-        BigDecimal fix = BotVariablePropertiesUtil.getFix(cryptoCurrency, dealType);
+    public static BigDecimal getCommission(BigDecimal amount, CryptoCurrency cryptoCurrency, FiatCurrency fiatCurrency,
+                                           DealType dealType) {
+        BigDecimal fix = BotVariablePropertiesUtil.getBigDecimal(BotVariableType.FIX, fiatCurrency, dealType, cryptoCurrency);
         BigDecimal currency;
         switch (cryptoCurrency) {
             case BITCOIN:
@@ -145,12 +150,12 @@ public final class CalculateUtil {
             default:
                 throw new BaseException("Не определена крипто валюта.");
         }
-        BigDecimal percentCommission = BotVariablePropertiesUtil.getCommission(cryptoCurrency, dealType);
-        BigDecimal course = BigDecimal.valueOf(BotVariablePropertiesUtil.getDouble(BotVariableType.USD_COURSE));
+        BigDecimal percentCommission = BotVariablePropertiesUtil.getBigDecimal(BotVariableType.COMMISSION, dealType, cryptoCurrency);
+        BigDecimal course = BotVariablePropertiesUtil.getBigDecimal(BotVariableType.USD_COURSE, fiatCurrency, dealType, cryptoCurrency);
         BigDecimal usd = BigDecimalUtil.multiplyHalfUp(amount, currency);
         BigDecimal rub = BigDecimalUtil.multiplyHalfUp(usd, course);
         if (rub.doubleValue() <= fix.doubleValue()) {
-            return BotVariablePropertiesUtil.getFixCommission(cryptoCurrency, dealType);
+            return BotVariablePropertiesUtil.getBigDecimal(BotVariableType.FIX_COMMISSION, fiatCurrency, dealType, cryptoCurrency);
         }
         return BigDecimalUtil.multiplyHalfUp(rub, getPercentsFactor(percentCommission));
     }
@@ -161,8 +166,7 @@ public final class CalculateUtil {
 
     @SneakyThrows
     public static BigDecimal getUsdtCurrency() {
-        String currency = BotVariablePropertiesUtil.getVariable(BotVariableType.USDT_COURSE);
-        return parse(currency, CryptoCurrency.USDT);
+        return BigDecimal.valueOf(Double.parseDouble(BotVariablePropertiesUtil.getVariable(BotVariableType.USDT_COURSE)));
     }
 
 

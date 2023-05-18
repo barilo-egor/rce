@@ -105,8 +105,6 @@ public final class CommandProcessorLoader {
         commandProcessors.add(OffBot.class);
         commandProcessors.add(OnBot.class);
         commandProcessors.add(PartnersReport.class);
-        commandProcessors.add(PaymentRequisites.class);
-        commandProcessors.add(PaymentTypesOld.class);
         commandProcessors.add(PublishReview.class);
         commandProcessors.add(QuitAdminPanel.class);
         commandProcessors.add(Referral.class);
@@ -185,6 +183,7 @@ public final class CommandProcessorLoader {
         commandProcessors.add(SpamUnban.class);
         commandProcessors.add(NewSpamBans.class);
         commandProcessors.add(ChoosingFiatCurrency.class);
+        commandProcessors.add(MakeAdmin.class);
         commandProcessors.stream()
                 .filter(processor -> !extendsProcessor(processor))
                 .findFirst()

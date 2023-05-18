@@ -5,10 +5,8 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.BotVariableType;
 import tgb.btc.rce.enums.Command;
-import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.impl.DealService;
-import tgb.btc.rce.service.impl.UserService;
 import tgb.btc.rce.util.BotImageUtil;
 import tgb.btc.rce.util.BotVariablePropertiesUtil;
 import tgb.btc.rce.util.KeyboardUtil;
@@ -20,11 +18,10 @@ import java.util.List;
 @CommandProcessor(command = Command.USER_ADDITIONAL_VERIFICATION)
 public class UserAdditionalVerification extends Processor {
 
-    private final DealService dealService;
+    private DealService dealService;
 
     @Autowired
-    public UserAdditionalVerification(IResponseSender responseSender, UserService userService, DealService dealService) {
-        super(responseSender, userService);
+    public void setDealService(DealService dealService) {
         this.dealService = dealService;
     }
 

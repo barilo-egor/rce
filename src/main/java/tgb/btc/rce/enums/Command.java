@@ -32,6 +32,7 @@ public enum Command {
      */
     DELETE_USER("/deleteuser", true),
     CREATE_USER_DATA("/createuserdata", true),
+    MAKE_ADMIN("/makeadmin", true),
 
     /** MAIN */
     BUY_BITCOIN("\uD83D\uDCB0 Купить", false),
@@ -96,9 +97,7 @@ public enum Command {
     BOT_MESSAGES("Сообщения бота", true),
     BOT_VARIABLES("Переменные бота", true),
     SYSTEM_MESSAGES("Сис.сообщения", true),
-    PAYMENT_TYPES_OLD("old Типы оплаты", true),
     PAYMENT_TYPES("Типы оплаты", true),
-    PAYMENT_REQUISITES("Реквизиты оплат", true),
 
     /** DEAL */
     PAID("Я оплатил(а)", false),

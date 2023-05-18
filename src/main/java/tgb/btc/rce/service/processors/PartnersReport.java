@@ -13,9 +13,7 @@ import tgb.btc.rce.bean.User;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.exception.BaseException;
 import tgb.btc.rce.repository.DealRepository;
-import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.service.impl.UserService;
 import tgb.btc.rce.util.UpdateUtil;
 
 import java.io.File;
@@ -34,11 +32,6 @@ public class PartnersReport extends Processor {
     @Autowired
     public void setDealRepository(DealRepository dealRepository) {
         this.dealRepository = dealRepository;
-    }
-
-    @Autowired
-    public PartnersReport(IResponseSender responseSender, UserService userService) {
-        super(responseSender, userService);
     }
 
     @Override

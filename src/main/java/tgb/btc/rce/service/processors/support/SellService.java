@@ -93,7 +93,7 @@ public class SellService {
         Deal deal = dealService.findById(userService.getCurrentDealByChatId(chatId));
         Double sum = UpdateUtil.getDoubleFromText(update);
         CryptoCurrency cryptoCurrency = deal.getCryptoCurrency();
-        Double minSum = BotVariablePropertiesUtil.getMinSum(cryptoCurrency, DealType.SELL);
+        Double minSum = BotVariablePropertiesUtil.getDouble(BotVariableType.MIN_SUM, DealType.SELL, cryptoCurrency);
 
         if (sum < minSum) {
             responseSender.sendMessage(chatId, "Минимальная сумма продажи " + cryptoCurrency.getDisplayName()
@@ -102,7 +102,7 @@ public class SellService {
         }
 
         deal.setCryptoAmount(BigDecimal.valueOf(sum));
-        BigDecimal amount = CalculateUtil.convertCryptoToRub(cryptoCurrency, sum, DealType.SELL);
+        BigDecimal amount = CalculateUtil.convertCryptoToRub(cryptoCurrency, sum, deal.getFiatCurrency(), DealType.SELL);
         BigDecimal personalSell = USERS_PERSONAL_SELL.get(chatId);
         if (BooleanUtils.isNotTrue(deal.getPersonalApplied())) {
             if (Objects.isNull(personalSell)) {
@@ -124,7 +124,7 @@ public class SellService {
         deal.setAmount(amount);
         dealService.save(deal);
         dealService.updateCommissionByPid(CalculateUtil.getCommissionForSell(BigDecimal.valueOf(sum), cryptoCurrency,
-                dealService.getDealTypeByPid(deal.getPid())), deal.getPid());
+                deal.getFiatCurrency(), deal.getDealType()), deal.getPid());
         return true;
     }
 
@@ -155,8 +155,10 @@ public class SellService {
         }
 
         CryptoCurrency cryptoCurrency = dealService.getCryptoCurrencyByPid(currentDealPid);
-        BigDecimal minSum = BigDecimalUtil.round(BotVariablePropertiesUtil.getMinSum(cryptoCurrency, DealType.SELL),
-                cryptoCurrency.getScale());
+        BigDecimal minSum = BigDecimalUtil.round(
+                BotVariablePropertiesUtil.getDouble(BotVariableType.MIN_SUM, DealType.SELL, cryptoCurrency),
+                cryptoCurrency.getScale()
+        );
 
         if (sum.doubleValue() < minSum.doubleValue()) {
             sendInlineAnswer(update, "Минимальная сумма покупки " + cryptoCurrency.getDisplayName()
@@ -164,7 +166,8 @@ public class SellService {
             return;
         }
         sum = BigDecimal.valueOf(BigDecimalUtil.round(sum, cryptoCurrency.getScale()).doubleValue());
-        BigDecimal roundedConvertedSum = CalculateUtil.convertCryptoToRub(currency, sum.doubleValue(), DealType.SELL);
+        BigDecimal roundedConvertedSum = CalculateUtil.convertCryptoToRub(currency, sum.doubleValue(),
+                dealRepository.getFiatCurrencyByPid(currentDealPid), DealType.SELL);
         BigDecimal personalSell = USERS_PERSONAL_SELL.get(chatId);
         if (Objects.isNull(personalSell) || !BigDecimal.ZERO.equals(personalSell)) {
             personalSell = userDiscountRepository.getPersonalBuyByChatId(chatId);
@@ -218,7 +221,7 @@ public class SellService {
         Deal deal = dealService.findById(userService.getCurrentDealByChatId(chatId));
         String message = "Введите " + deal.getPaymentType().getName() + " реквизиты, куда вы "
                 + "хотите получить "
-                + BigDecimalUtil.round(deal.getAmount(), 0).stripTrailingZeros().toPlainString() + "₽";
+                + BigDecimalUtil.round(deal.getAmount(), 0).stripTrailingZeros().toPlainString() + " " + deal.getFiatCurrency().getDisplayName();
 
         Optional<Message> optionalMessage = responseSender.sendMessage(chatId, message,
                 KeyboardUtil.buildInline(
@@ -252,7 +255,7 @@ public class SellService {
                 + "\uD83D\uDCAC<b>Продажа " + displayCurrencyName + "</b>: " + dealCryptoAmount.stripTrailingZeros()
                 .toPlainString()
                 + "\n\n"
-                + "\uD83D\uDCB5<b>Сумма перевода</b>: " + dealAmount.stripTrailingZeros().toPlainString() + "₽"
+                + "\uD83D\uDCB5<b>Сумма перевода</b>: " + dealAmount.stripTrailingZeros().toPlainString() + " " + deal.getFiatCurrency().getDisplayName()
                 + "\n\n"
                 + additionalText
                 + "<b>Выберите способ получения перевода:</b>";
@@ -326,7 +329,7 @@ public class SellService {
                 + "\n\n"
                 + "Ваш ранг: " + rank.getSmile() + ", скидка " + rank.getPercent() + "%" + "\n\n"
                 + "\uD83D\uDCB5<b>Получаете</b>: <code>" + BigDecimalUtil.round(deal.getAmount(), 0)
-                .stripTrailingZeros().toPlainString() + "₽</code>"
+                .stripTrailingZeros().toPlainString() + " " + deal.getFiatCurrency().getDisplayName() + "</code>"
                 + "\n"
                 + "<b>Реквизиты для перевода " + currency.getShortName() + ":</b>"
                 + "\n\n"

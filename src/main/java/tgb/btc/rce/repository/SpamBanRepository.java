@@ -17,4 +17,6 @@ public interface SpamBanRepository extends BaseRepository<SpamBan> {
 
     @Query("select pid from SpamBan")
     List<Long> getPids();
+
+    long countByPid(Long pid);
 }

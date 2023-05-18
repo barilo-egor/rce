@@ -8,18 +8,12 @@ import tgb.btc.rce.enums.Menu;
 import tgb.btc.rce.enums.PropertiesMessage;
 import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.service.impl.UserService;
 import tgb.btc.rce.util.MenuFactory;
 import tgb.btc.rce.util.MessagePropertiesUtil;
 import tgb.btc.rce.util.UpdateUtil;
 
 @CommandProcessor(command = Command.ADMIN_PANEL)
 public class AdminPanel extends Processor {
-
-    @Autowired
-    public AdminPanel(IResponseSender responseSender, UserService userService) {
-        super(responseSender, userService);
-    }
 
     @Override
     public void run(Update update) {

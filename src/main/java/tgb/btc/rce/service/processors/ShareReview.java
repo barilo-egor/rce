@@ -7,10 +7,8 @@ import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.bean.Review;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.InlineType;
-import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.impl.ReviewService;
-import tgb.btc.rce.service.impl.UserService;
 import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.InlineButton;
@@ -20,11 +18,10 @@ import java.util.List;
 @CommandProcessor(command = Command.SHARE_REVIEW)
 public class ShareReview extends Processor {
 
-    private final ReviewService reviewService;
+    private ReviewService reviewService;
 
     @Autowired
-    public ShareReview(IResponseSender responseSender, UserService userService, ReviewService reviewService) {
-        super(responseSender, userService);
+    public void setReviewService(ReviewService reviewService) {
         this.reviewService = reviewService;
     }
 

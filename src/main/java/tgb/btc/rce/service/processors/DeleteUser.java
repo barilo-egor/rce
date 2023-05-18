@@ -1,29 +1,19 @@
 package tgb.btc.rce.service.processors;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.annotation.CommandProcessor;
-import tgb.btc.rce.bean.BasePersist;
-import tgb.btc.rce.bean.Deal;
 import tgb.btc.rce.bean.User;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.repository.*;
-import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.service.impl.UserService;
 import tgb.btc.rce.util.UpdateUtil;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @CommandProcessor(command = Command.DELETE_USER)
 public class DeleteUser extends Processor {
-
-    private final UserRepository userRepository;
 
     private final DealRepository dealRepository;
 
@@ -40,13 +30,10 @@ public class DeleteUser extends Processor {
     private final ReferralUserRepository referralUserRepository;
 
     @Autowired
-    public DeleteUser(IResponseSender responseSender, UserService userService, UserRepository userRepository,
-                      DealRepository dealRepository, UserDiscountRepository userDiscountRepository,
+    public DeleteUser(DealRepository dealRepository, UserDiscountRepository userDiscountRepository,
                       UserDataRepository userDataRepository, PaymentReceiptRepository paymentReceiptRepository,
                       WithdrawalRequestRepository withdrawalRequestRepository, LotteryWinRepository lotteryWinRepository,
                       ReferralUserRepository referralUserRepository) {
-        super(responseSender, userService);
-        this.userRepository = userRepository;
         this.dealRepository = dealRepository;
         this.userDiscountRepository = userDiscountRepository;
         this.userDataRepository = userDataRepository;

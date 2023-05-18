@@ -1,10 +1,7 @@
 package tgb.btc.rce.util;
 
 import lombok.extern.slf4j.Slf4j;
-import tgb.btc.rce.enums.BotProperties;
-import tgb.btc.rce.enums.BotVariableType;
-import tgb.btc.rce.enums.CryptoCurrency;
-import tgb.btc.rce.enums.DealType;
+import tgb.btc.rce.enums.*;
 import tgb.btc.rce.exception.BaseException;
 import tgb.btc.rce.exception.PropertyValueNotFoundException;
 
@@ -27,6 +24,55 @@ public class BotVariablePropertiesUtil {
             throw new BaseException("Переменная по ключу " + botVariableType.getKey() + " не найдена.");
         return text;
     }
+
+    public static String getVariable(BotVariableType botVariableType, FiatCurrency fiatCurrency,
+                                     DealType dealType, CryptoCurrency cryptoCurrency) {
+        String text;
+        String key = botVariableType.getKey() + "."
+                + fiatCurrency.getCode() + "."
+                + dealType.getKey() + "."
+                + cryptoCurrency.getShortName();
+        try {
+            text = BotProperties.BOT_VARIABLE_PROPERTIES.getString(botVariableType.getKey() + "."
+                    + fiatCurrency.getCode() + "."
+                    + dealType.getKey() + "."
+                    + cryptoCurrency.getShortName());
+        } catch (Exception e) {
+            throw new BaseException("Переменная по ключу " + key + " не найдена.");
+        }
+        if (Objects.isNull(text))
+            throw new BaseException("Переменная по ключу " + botVariableType.getKey() + " не найдена.");
+        return text;
+    }
+
+    public static String getVariable(BotVariableType botVariableType, DealType dealType, CryptoCurrency cryptoCurrency) {
+        String text;
+        String key = botVariableType.getKey() + "."
+                + dealType.getKey() + "."
+                + cryptoCurrency.getShortName();
+        try {
+            text = BotProperties.BOT_VARIABLE_PROPERTIES.getString(key);
+        } catch (Exception e) {
+            throw new BaseException("Переменная по ключу " + key + " не найдена.");
+        }
+        if (Objects.isNull(text))
+            throw new BaseException("Переменная по ключу " + key + " не найдена.");
+        return text;
+    }
+
+    public static BigDecimal getBigDecimal(BotVariableType botVariableType, FiatCurrency fiatCurrency, DealType dealType,
+                                           CryptoCurrency cryptoCurrency) {
+        return BigDecimal.valueOf(Double.parseDouble(getVariable(botVariableType, fiatCurrency, dealType, cryptoCurrency)));
+    }
+
+    public static BigDecimal getBigDecimal(BotVariableType botVariableType, DealType dealType, CryptoCurrency cryptoCurrency) {
+        return BigDecimal.valueOf(getDouble(botVariableType, dealType, cryptoCurrency));
+    }
+
+    public static Double getDouble(BotVariableType botVariableType, DealType dealType, CryptoCurrency cryptoCurrency) {
+        return Double.parseDouble(getVariable(botVariableType, dealType, cryptoCurrency));
+    }
+
 
     public static Float getFloat(BotVariableType botVariableType) {
         try {
@@ -53,6 +99,14 @@ public class BotVariablePropertiesUtil {
             return Integer.parseInt(getVariable(botVariableType));
         } catch (NumberFormatException e) {
             throw new BaseException(String.format(wrongFormat, botVariableType.getKey()));
+        }
+    }
+
+    public static void validate(BotProperties botProperties) throws PropertyValueNotFoundException {
+        for (String key : botProperties.getKeys()) {
+            if (Objects.isNull(botProperties.getString(key))) {
+                throw new PropertyValueNotFoundException("Не корректно указано значение для переменной " + key + ".");
+            }
         }
     }
 

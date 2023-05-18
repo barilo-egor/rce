@@ -77,6 +77,7 @@ public class DealDeleteScheduler {
         Map<Long, Integer> bufferDealsPids = new HashMap<>(NEW_CRYPTO_DEALS_PIDS);
         for (Map.Entry<Long, Integer> dealData : bufferDealsPids.entrySet()) {
             Long dealPid = dealData.getKey();
+            if (!dealRepository.existsById(dealPid)) deleteCryptoDeal(dealPid);
             if (isDealNotActive(dealPid, dealActiveTime)) {
                 Long chatId = dealRepository.getUserChatIdByDealPid(dealPid);
                 dealRepository.deleteById(dealPid);
@@ -84,9 +85,7 @@ public class DealDeleteScheduler {
                 if (Objects.nonNull(dealData.getValue())) responseSender.deleteMessage(chatId, dealData.getValue());
                 responseSender.sendMessage(chatId, String.format(MessagePropertiesUtil.getMessage("deal.deleted.auto"), dealActiveTime));
                 start.run(chatId);
-                synchronized (NEW_CRYPTO_DEALS_PIDS) {
-                    NEW_CRYPTO_DEALS_PIDS.remove(dealPid);
-                }
+                deleteCryptoDeal(dealPid);
                 log.debug("Автоматически удалена заявка №" + dealPid + " по истечению " + dealActiveTime + " минут.");
             }
         }

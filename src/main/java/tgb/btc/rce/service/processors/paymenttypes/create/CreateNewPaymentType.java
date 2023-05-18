@@ -8,9 +8,7 @@ import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.DealType;
 import tgb.btc.rce.repository.PaymentTypeRepository;
-import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.service.impl.UserService;
 import tgb.btc.rce.util.UpdateUtil;
 
 import java.math.BigDecimal;
@@ -23,11 +21,6 @@ public class CreateNewPaymentType extends Processor {
     @Autowired
     public void setPaymentTypeRepository(PaymentTypeRepository paymentTypeRepository) {
         this.paymentTypeRepository = paymentTypeRepository;
-    }
-
-    @Autowired
-    public CreateNewPaymentType(IResponseSender responseSender, UserService userService) {
-        super(responseSender, userService);
     }
 
     @Override

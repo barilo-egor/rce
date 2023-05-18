@@ -38,7 +38,7 @@ public class DealSupportService {
         PaymentTypeEnum paymentTypeEnum = deal.getPaymentTypeEnum();
         String paymentTypeName = Objects.nonNull(paymentTypeEnum)
                                  ? paymentTypeEnum.getDisplayName()
-                                 : deal.getPaymentType().getName();
+                                 : Objects.nonNull(deal.getPaymentType()) ? deal.getPaymentType().getName() : "Не установлен тип оплаты.";
         return String.format(
                 BotStringConstants.DEAL_INFO, deal.getDealType().getDisplayName(), deal.getPid(),
                 deal.getDateTime().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")),
@@ -50,7 +50,8 @@ public class DealSupportService {
                 deal.getCryptoCurrency().getShortName(),
                 deal.getCryptoAmount().setScale(8, RoundingMode.FLOOR).stripTrailingZeros()
                         .toPlainString(),
-                deal.getAmount().setScale(0, RoundingMode.HALF_UP).stripTrailingZeros().toPlainString()
+                deal.getAmount().setScale(0, RoundingMode.HALF_UP).stripTrailingZeros().toPlainString(),
+                deal.getFiatCurrency().getDisplayName()
         );
     }
 

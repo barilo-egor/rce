@@ -8,11 +8,8 @@ import tgb.btc.rce.bean.UserDiscount;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.repository.UserDiscountRepository;
-import tgb.btc.rce.repository.UserRepository;
-import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.impl.UserDiscountService;
-import tgb.btc.rce.service.impl.UserService;
 import tgb.btc.rce.util.UpdateUtil;
 
 @CommandProcessor(command = Command.CHANGE_RANK_DISCOUNT)
@@ -23,13 +20,6 @@ public class ChangeRankDiscountProcessor extends Processor {
     private UserDiscountRepository userDiscountRepository;
 
     private UserDiscountService userDiscountService;
-
-    private UserRepository userRepository;
-
-    @Autowired
-    public void setUserRepository(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
 
     @Autowired
     public void setUserDiscountService(UserDiscountService userDiscountService) {
@@ -44,11 +34,6 @@ public class ChangeRankDiscountProcessor extends Processor {
     @Autowired
     public void setRankDiscountProcessor(RankDiscountProcessor rankDiscountProcessor) {
         this.rankDiscountProcessor = rankDiscountProcessor;
-    }
-
-    @Autowired
-    public ChangeRankDiscountProcessor(IResponseSender responseSender, UserService userService) {
-        super(responseSender, userService);
     }
 
     @Override

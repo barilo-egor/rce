@@ -8,9 +8,7 @@ import tgb.btc.rce.enums.BotProperties;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.CryptoCurrency;
 import tgb.btc.rce.enums.DealType;
-import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.service.impl.UserService;
 import tgb.btc.rce.util.TurningCurrenciesUtil;
 import tgb.btc.rce.util.UpdateUtil;
 
@@ -22,11 +20,6 @@ public class TurnOnCurrencyProcessor extends Processor {
     @Autowired
     public void setTurningCurrencyProcessor(TurningCurrencyProcessor turningCurrencyProcessor) {
         this.turningCurrencyProcessor = turningCurrencyProcessor;
-    }
-
-    @Autowired
-    public TurnOnCurrencyProcessor(IResponseSender responseSender, UserService userService) {
-        super(responseSender, userService);
     }
 
     @Override
