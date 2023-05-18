@@ -154,8 +154,8 @@ public class UserService extends BasePersistService<User> {
         return userRepository.getBufferVariable(chatId);
     }
 
-    public List<Long> getChatIdsNotAdminsAndIsActive() {
-        return userRepository.getChatIdsNotAdminsAndIsActive();
+    public List<Long> getChatIdsNotAdminsAndIsActiveAndNotBanned() {
+        return userRepository.getChatIdsNotAdminsAndIsActiveAndNotBanned();
     }
 
     public void updateIsActiveByChatId(boolean isActive, Long chatId) {
