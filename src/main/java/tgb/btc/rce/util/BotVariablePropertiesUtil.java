@@ -110,28 +110,6 @@ public class BotVariablePropertiesUtil {
         }
     }
 
-    public static Double getMinSum(CryptoCurrency cryptoCurrency, DealType dealType) {
-        BotVariableType botVariableType = DealType.isBuy(dealType) ? BotVariableType.MIN_SUM_BUY : BotVariableType.MIN_SUM_SELL;
-        return BotProperties.BOT_VARIABLE_PROPERTIES.getDouble(botVariableType.getKey(cryptoCurrency));
-    }
-
-    public static BigDecimal getFix(CryptoCurrency cryptoCurrency, DealType dealType) {
-        BotVariableType type = DealType.isBuy(dealType) ? BotVariableType.FIX_BUY : BotVariableType.FIX_SELL;
-        return getBigDecimal(type.getKey(cryptoCurrency));
-    }
-
-    public static BigDecimal getFixCommission(CryptoCurrency cryptoCurrency, DealType dealType) {
-        BotVariableType type = DealType.isBuy(dealType) ? BotVariableType.FIX_COMMISSION_BUY
-                                                        : BotVariableType.FIX_COMMISSION_SELL;
-        return getBigDecimal(type.getKey(cryptoCurrency));
-    }
-
-    public static BigDecimal getCommission(CryptoCurrency cryptoCurrency, DealType dealType) {
-        BotVariableType type = DealType.isBuy(dealType) ? BotVariableType.COMMISSION_BUY
-                                                        : BotVariableType.COMMISSION_SELL;
-        return getBigDecimal(type.getKey(cryptoCurrency));
-    }
-
     public static BigDecimal getTransactionCommission(CryptoCurrency cryptoCurrency) {
         return getBigDecimal(BotVariableType.TRANSACTION_COMMISSION.getKey(cryptoCurrency));
     }
