@@ -32,6 +32,7 @@ public enum Command {
      */
     DELETE_USER("/deleteuser", true),
     CREATE_USER_DATA("/createuserdata", true),
+    MAKE_ADMIN("/makeadmin", true),
 
     /** MAIN */
     BUY_BITCOIN("\uD83D\uDCB0 Купить", false),
