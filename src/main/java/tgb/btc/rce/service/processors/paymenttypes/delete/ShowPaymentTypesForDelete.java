@@ -8,22 +8,31 @@ import tgb.btc.rce.bean.PaymentType;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.DealType;
+import tgb.btc.rce.enums.FiatCurrency;
 import tgb.btc.rce.repository.PaymentTypeRepository;
+import tgb.btc.rce.repository.UserDataRepository;
 import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.impl.UserService;
+import tgb.btc.rce.util.FiatCurrencyUtil;
 import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.InlineButton;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@CommandProcessor(command = Command.DELETE_PAYMENT_TYPE, step = 1)
+@CommandProcessor(command = Command.DELETE_PAYMENT_TYPE, step = 2)
 public class ShowPaymentTypesForDelete extends Processor {
 
     private PaymentTypeRepository paymentTypeRepository;
+
+    private UserDataRepository userDataRepository;
+
+    @Autowired
+    public void setUserDataRepository(UserDataRepository userDataRepository) {
+        this.userDataRepository = userDataRepository;
+    }
 
     @Autowired
     public void setPaymentTypeRepository(PaymentTypeRepository paymentTypeRepository) {
@@ -51,11 +60,14 @@ public class ShowPaymentTypesForDelete extends Processor {
             responseSender.sendMessage(chatId, BotStringConstants.BUY_OR_SELL);
             return;
         }
-        sendPaymentTypes(chatId, dealType);
+        FiatCurrency fiatCurrency = FiatCurrencyUtil.isFew()
+                ? userDataRepository.getFiatCurrencyByChatId(chatId)
+                : FiatCurrencyUtil.getFirst();
+        sendPaymentTypes(chatId, dealType, fiatCurrency);
         processToAdminMainPanel(chatId);
     }
 
-    public void sendPaymentTypes(Long chatId, DealType dealType) {
+    public void sendPaymentTypes(Long chatId, DealType dealType, FiatCurrency fiatCurrency) {
         List<PaymentType> paymentTypes = paymentTypeRepository.getByDealType(dealType);
         if (CollectionUtils.isEmpty(paymentTypes)) {
             responseSender.sendMessage(chatId, "Список тип оплат на " + dealType.getDisplayName() + " пуст.");

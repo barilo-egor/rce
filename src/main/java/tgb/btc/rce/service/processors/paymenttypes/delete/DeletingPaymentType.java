@@ -47,6 +47,6 @@ public class DeletingPaymentType extends Processor {
         Long chatId = UpdateUtil.getChatId(update);
         responseSender.deleteMessage(chatId, update.getCallbackQuery().getMessage().getMessageId());
         responseSender.sendMessage(UpdateUtil.getChatId(update), message);
-        showPaymentTypesForDelete.sendPaymentTypes(chatId, dealType);
+        showPaymentTypesForDelete.sendPaymentTypes(chatId, dealType, paymentType.getFiatCurrency());
     }
 }

@@ -12,7 +12,7 @@ import tgb.btc.rce.repository.DealRepository;
 import tgb.btc.rce.repository.UserRepository;
 import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.impl.AdminService;
-import tgb.btc.rce.util.FiatCurrenciesUtil;
+import tgb.btc.rce.util.FiatCurrencyUtil;
 import tgb.btc.rce.vo.DealReportData;
 
 import java.math.BigDecimal;
@@ -129,7 +129,7 @@ public class DealAutoReport {
             }
             stringBuilder.append("\n");
             Map<FiatCurrency, BigDecimal> totalAmounts = new HashMap<>();
-            for (FiatCurrency fiatCurrency : FiatCurrenciesUtil.getFiatCurrencies()) {
+            for (FiatCurrency fiatCurrency : FiatCurrencyUtil.getFiatCurrencies()) {
                 BigDecimal totalSum = BigDecimal.ZERO;
                 for (CryptoCurrency cryptoCurrency : CryptoCurrency.values()) {
                     BigDecimal cryptoAmount = getBuyAmount(cryptoCurrency, dateTimeBegin, dateTimeEnd,
@@ -150,7 +150,7 @@ public class DealAutoReport {
                         .append("\n");
             }
             stringBuilder.append("\n");
-            for (FiatCurrency fiatCurrency : FiatCurrenciesUtil.getFiatCurrencies()) {
+            for (FiatCurrency fiatCurrency : FiatCurrencyUtil.getFiatCurrencies()) {
                 stringBuilder.append("Всего получено от ").append(fiatCurrency.getCode()).append(" : ")
                         .append(totalAmounts.get(fiatCurrency).toPlainString()).append("\n");
             }

@@ -1,4 +1,4 @@
-package tgb.btc.rce.service.processors.paymenttypes.requisite.create;
+package tgb.btc.rce.service.processors.paymenttypes.requisite.delete;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,8 +21,8 @@ import tgb.btc.rce.vo.InlineButton;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@CommandProcessor(command = Command.NEW_PAYMENT_TYPE_REQUISITE)
-public class FiatCurrencyCreateRequisite extends Processor {
+@CommandProcessor(command = Command.CHOOSING_FIAT_CURRENCY)
+public class FiatCurrenciesDeleteRequisite extends Processor {
 
     private PaymentTypeRepository paymentTypeRepository;
 
@@ -32,7 +32,7 @@ public class FiatCurrencyCreateRequisite extends Processor {
     }
 
     @Autowired
-    public FiatCurrencyCreateRequisite(IResponseSender responseSender, UserService userService) {
+    public FiatCurrenciesDeleteRequisite(IResponseSender responseSender, UserService userService) {
         super(responseSender, userService);
     }
 
@@ -42,7 +42,7 @@ public class FiatCurrencyCreateRequisite extends Processor {
         if (FiatCurrencyUtil.isFew()) {
             responseSender.sendMessage(chatId, BotStringConstants.FIAT_CURRENCY_CHOOSE, BotKeyboard.FIAT_CURRENCIES);
         } else {
-            List<PaymentType> paymentTypes = paymentTypeRepository.getByDealTypeAndFiatCurrency(DealType.BUY, FiatCurrencyUtil.getFirst());
+            List<PaymentType> paymentTypes = paymentTypeRepository.getByDealTypeAndFiatCurrency(DealType.BUY, FiatCurrencyUtil.getFirst());  // todo рефактор
             if (CollectionUtils.isEmpty(paymentTypes)) {
                 responseSender.sendMessage(chatId, "Список тип оплат на " + DealType.BUY.getDisplayName() + "-" + FiatCurrencyUtil.getFirst().getCode() + " пуст.");
                 processToAdminMainPanel(chatId);
@@ -52,15 +52,15 @@ public class FiatCurrencyCreateRequisite extends Processor {
             List<InlineButton> buttons = paymentTypes.stream()
                     .map(paymentType -> InlineButton.builder()
                             .text(paymentType.getName())
-                            .data(Command.NEW_PAYMENT_TYPE_REQUISITE.getText()
+                            .data(Command.DELETE_PAYMENT_TYPE_REQUISITE.getText()
                                     + BotStringConstants.CALLBACK_DATA_SPLITTER + paymentType.getPid())
                             .build())
                     .collect(Collectors.toList());
-            responseSender.sendMessage(chatId, "Выберите тип оплаты для добавления реквизита.",
+            responseSender.sendMessage(chatId, "Выберите тип оплаты для удаления реквизита.",
                     KeyboardUtil.buildInline(buttons));
             responseSender.sendMessage(chatId, "Для возвращения в меню нажмите \"Отмена\".", BotKeyboard.CANCEL);
-            userService.nextStep(chatId, Command.NEW_PAYMENT_TYPE_REQUISITE);
+            userService.nextStep(chatId, Command.DELETE_PAYMENT_TYPE_REQUISITE);
         }
-        userService.nextStep(chatId, Command.NEW_PAYMENT_TYPE_REQUISITE);
+        userService.nextStep(chatId, Command.DELETE_PAYMENT_TYPE_REQUISITE);
     }
 }

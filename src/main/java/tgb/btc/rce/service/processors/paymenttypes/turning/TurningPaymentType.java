@@ -3,6 +3,7 @@ package tgb.btc.rce.service.processors.paymenttypes.turning;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.annotation.CommandProcessor;
+import tgb.btc.rce.bean.PaymentType;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.repository.PaymentTypeRepository;
@@ -43,7 +44,8 @@ public class TurningPaymentType extends Processor {
         Long paymentTypePid = Long.parseLong(values[1]);
         paymentTypeRepository.updateIsOnByPid(Boolean.valueOf(values[2]), paymentTypePid);
         responseSender.deleteMessage(chatId, update.getCallbackQuery().getMessage().getMessageId());
-        showPaymentTypesForTurn.sendPaymentTypes(chatId, paymentTypeRepository.getDealTypeByPid(paymentTypePid));
+        PaymentType paymentType = paymentTypeRepository.getByPid(paymentTypePid);
+        showPaymentTypesForTurn.sendPaymentTypes(chatId, paymentType.getDealType(), paymentType.getFiatCurrency());
     }
 
 }

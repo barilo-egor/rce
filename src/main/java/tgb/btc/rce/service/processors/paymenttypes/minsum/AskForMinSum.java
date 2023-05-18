@@ -12,7 +12,7 @@ import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.impl.UserService;
 import tgb.btc.rce.util.UpdateUtil;
 
-@CommandProcessor(command = Command.CHANGE_MIN_SUM, step = 2)
+@CommandProcessor(command = Command.CHANGE_MIN_SUM, step = 3)
 public class AskForMinSum extends Processor {
 
     private UserRepository userRepository;

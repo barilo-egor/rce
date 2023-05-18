@@ -1,22 +1,30 @@
-package tgb.btc.rce.service.processors.paymenttypes.minsum;
+package tgb.btc.rce.service.processors.paymenttypes.delete;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.annotation.CommandProcessor;
-import tgb.btc.rce.enums.BotKeyboard;
 import tgb.btc.rce.constants.BotStringConstants;
+import tgb.btc.rce.enums.BotKeyboard;
 import tgb.btc.rce.enums.Command;
+import tgb.btc.rce.repository.UserDataRepository;
 import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.impl.UserService;
 import tgb.btc.rce.util.FiatCurrencyUtil;
 import tgb.btc.rce.util.UpdateUtil;
 
-@CommandProcessor(command = Command.CHANGE_MIN_SUM)
-public class ChangeMinSum extends Processor {
+@CommandProcessor(command = Command.DELETE_PAYMENT_TYPE)
+public class FiatCurrencyDeletePaymentType extends Processor {
+
+    private UserDataRepository userDataRepository;
 
     @Autowired
-    public ChangeMinSum(IResponseSender responseSender, UserService userService) {
+    public void setUserDataRepository(UserDataRepository userDataRepository) {
+        this.userDataRepository = userDataRepository;
+    }
+
+    @Autowired
+    public FiatCurrencyDeletePaymentType(IResponseSender responseSender, UserService userService) {
         super(responseSender, userService);
     }
 

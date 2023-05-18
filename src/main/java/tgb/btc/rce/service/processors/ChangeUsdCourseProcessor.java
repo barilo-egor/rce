@@ -11,13 +11,11 @@ import tgb.btc.rce.repository.UserDataRepository;
 import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.impl.UserService;
-import tgb.btc.rce.util.BotVariablePropertiesUtil;
-import tgb.btc.rce.util.FiatCurrenciesUtil;
+import tgb.btc.rce.util.FiatCurrencyUtil;
 import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.ReplyButton;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -76,7 +74,7 @@ public class ChangeUsdCourseProcessor extends Processor {
                     return;
                 }
                 userDataRepository.updateCryptoCurrencyByChatId(chatId, cryptoCurrency);
-                if (!FiatCurrenciesUtil.isFew()) {
+                if (!FiatCurrencyUtil.isFew()) {
                     responseSender.sendMessage(chatId, BotStringConstants.ENTER_NEW_COURSE, BotKeyboard.CANCEL);
                     userService.nextStep(chatId);
                 } else {
@@ -114,9 +112,9 @@ public class ChangeUsdCourseProcessor extends Processor {
                     responseSender.sendMessage(chatId, BotStringConstants.INCORRECT_VALUE);
                     return;
                 }
-                fiatCurrency = FiatCurrenciesUtil.isFew()
+                fiatCurrency = FiatCurrencyUtil.isFew()
                         ? FiatCurrency.valueOf(userDataRepository.getStringByUserChatId(chatId))
-                        : FiatCurrenciesUtil.getFirst();
+                        : FiatCurrencyUtil.getFirst();
                 BotProperties.BOT_VARIABLE_PROPERTIES.setProperty(BotVariableType.USD_COURSE.getKey() + "."
                         + fiatCurrency.getCode() + "."
                         + userDataRepository.getDealTypeByChatId(chatId).getKey() + "."

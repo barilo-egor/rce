@@ -22,7 +22,7 @@ import tgb.btc.rce.service.processors.support.ExchangeService;
 import tgb.btc.rce.service.processors.support.ExchangeServiceNew;
 import tgb.btc.rce.service.schedule.DealDeleteScheduler;
 import tgb.btc.rce.util.BotImageUtil;
-import tgb.btc.rce.util.FiatCurrenciesUtil;
+import tgb.btc.rce.util.FiatCurrencyUtil;
 import tgb.btc.rce.util.MessagePropertiesUtil;
 import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.InlineButton;
@@ -131,7 +131,7 @@ public class BuyBitcoin extends Processor {
         if (update.hasCallbackQuery() && Command.BACK.getText().equals(update.getCallbackQuery().getData())) {
             responseSender.deleteMessage(chatId, update.getCallbackQuery().getMessage().getMessageId());
             if (userService.getStepByChatId(chatId) == 1) {
-                if (FiatCurrenciesUtil.isFew()) {
+                if (FiatCurrencyUtil.isFew()) {
                     responseSender.sendMessage(chatId, "Выберите валюту.", keyboardService.getFiatCurrencies());
                     userService.updateCommandByChatId(Command.CHOOSING_FIAT_CURRENCY, chatId);
                 } else {
@@ -159,12 +159,12 @@ public class BuyBitcoin extends Processor {
                 currentDealPid = userService.getCurrentDealByChatId(chatId);
                 if (Objects.isNull(currentDealPid)) currentDealPid = dealService.createNewDeal(DEAL_TYPE, chatId).getPid();
                 if (Objects.isNull(dealRepository.getFiatCurrencyByPid(currentDealPid))) {
-                    if (FiatCurrenciesUtil.isFew()) {
+                    if (FiatCurrencyUtil.isFew()) {
                         responseSender.sendMessage(chatId, "Выберите валюту.", keyboardService.getFiatCurrencies());
                         userService.nextStep(chatId, Command.CHOOSING_FIAT_CURRENCY);
                         return;
                     } else {
-                        dealRepository.updateFiatCurrencyByPid(currentDealPid, FiatCurrenciesUtil.getFirst());
+                        dealRepository.updateFiatCurrencyByPid(currentDealPid, FiatCurrencyUtil.getFirst());
                     }
                 }
                 messageService.sendMessageAndSaveMessageId(chatId, MessagePropertiesUtil.getChooseCurrency(DEAL_TYPE),
