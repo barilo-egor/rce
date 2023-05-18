@@ -124,7 +124,7 @@ public class ExchangeService {
         Deal deal = dealService.getByPid(userService.getCurrentDealByChatId(chatId));
         Double sum = UpdateUtil.getDoubleFromText(update);
         CryptoCurrency cryptoCurrency = deal.getCryptoCurrency();
-        Double minSum = BotVariablePropertiesUtil.getMinSum(cryptoCurrency, DealType.BUY);
+        Double minSum = BotVariablePropertiesUtil.getDouble(BotVariableType.MIN_SUM, DealType.BUY, cryptoCurrency);
 
         if (sum < minSum) {
             responseSender.sendMessage(chatId, "Минимальная сумма покупки " + cryptoCurrency.getDisplayName()
@@ -133,7 +133,7 @@ public class ExchangeService {
         }
 
         deal.setCryptoAmount(BigDecimal.valueOf(sum));
-        BigDecimal amount = CalculateUtil.convertCryptoToRub(cryptoCurrency, sum, DealType.BUY);
+        BigDecimal amount = CalculateUtil.convertCryptoToRub(cryptoCurrency, sum, deal.getFiatCurrency(), DealType.BUY);
         BigDecimal personalBuy = USERS_PERSONAL_BUY.get(chatId);
         if (BooleanUtils.isNotTrue(deal.getPersonalApplied())) {
             if (Objects.isNull(personalBuy)) {
@@ -157,7 +157,7 @@ public class ExchangeService {
             amount = amount.subtract(CalculateUtil.getPercentsFactor(amount).multiply(bulkDiscount));
         }
         deal.setAmount(amount);
-        deal.setCommission(CalculateUtil.getCommission(BigDecimal.valueOf(sum), cryptoCurrency, DealType.BUY));
+        deal.setCommission(CalculateUtil.getCommission(BigDecimal.valueOf(sum), cryptoCurrency, deal.getFiatCurrency(), DealType.BUY));
         dealService.save(deal);
         return true;
     }
@@ -190,7 +190,7 @@ public class ExchangeService {
         }
 
         CryptoCurrency cryptoCurrency = dealService.getCryptoCurrencyByPid(currentDealPid);
-        double minSum = BigDecimalUtil.round(BotVariablePropertiesUtil.getMinSum(cryptoCurrency, DealType.BUY),
+        double minSum = BigDecimalUtil.round(BotVariablePropertiesUtil.getDouble(BotVariableType.MIN_SUM, DealType.BUY, cryptoCurrency),
                         cryptoCurrency.getScale())
                 .doubleValue();
 
@@ -201,7 +201,8 @@ public class ExchangeService {
         }
         sum = BigDecimalUtil.round(sum, cryptoCurrency.getScale());
         BigDecimal roundedConvertedSum = BigDecimalUtil.round(
-                CalculateUtil.convertCryptoToRub(currency, sum.doubleValue(), DealType.BUY), 0);
+                CalculateUtil.convertCryptoToRub(currency, sum.doubleValue(),
+                        dealRepository.getFiatCurrencyByPid(currentDealPid), DealType.BUY), 0);
         BigDecimal personalBuy = USERS_PERSONAL_BUY.get(chatId);
         if (Objects.isNull(personalBuy) || !BigDecimal.ZERO.equals(personalBuy)) {
             personalBuy = userDiscountRepository.getPersonalBuyByChatId(chatId);

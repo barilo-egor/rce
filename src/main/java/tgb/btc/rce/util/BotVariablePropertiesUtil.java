@@ -1,10 +1,7 @@
 package tgb.btc.rce.util;
 
 import lombok.extern.slf4j.Slf4j;
-import tgb.btc.rce.enums.BotProperties;
-import tgb.btc.rce.enums.BotVariableType;
-import tgb.btc.rce.enums.CryptoCurrency;
-import tgb.btc.rce.enums.DealType;
+import tgb.btc.rce.enums.*;
 import tgb.btc.rce.exception.BaseException;
 import tgb.btc.rce.exception.PropertyValueNotFoundException;
 
@@ -27,6 +24,50 @@ public class BotVariablePropertiesUtil {
             throw new BaseException("Переменная по ключу " + botVariableType.getKey() + " не найдена.");
         return text;
     }
+
+    public static String getVariable(BotVariableType botVariableType, FiatCurrency fiatCurrency,
+                                     DealType dealType, CryptoCurrency cryptoCurrency) {
+        String text;
+        try {
+            text = BotProperties.BOT_VARIABLE_PROPERTIES.getString(botVariableType.getKey() + "."
+                    + fiatCurrency.getCode() + "."
+                    + dealType.getKey() + "."
+                    + cryptoCurrency.getShortName());
+        } catch (Exception e) {
+            throw new BaseException("Переменная по ключу " + botVariableType.getKey() + " не найдена.");
+        }
+        if (Objects.isNull(text))
+            throw new BaseException("Переменная по ключу " + botVariableType.getKey() + " не найдена.");
+        return text;
+    }
+
+    public static String getVariable(BotVariableType botVariableType, DealType dealType, CryptoCurrency cryptoCurrency) {
+        String text;
+        try {
+            text = BotProperties.BOT_VARIABLE_PROPERTIES.getString(botVariableType.getKey() + "."
+                    + cryptoCurrency.getShortName() + "."
+                    + dealType.getKey());
+        } catch (Exception e) {
+            throw new BaseException("Переменная по ключу " + botVariableType.getKey() + " не найдена.");
+        }
+        if (Objects.isNull(text))
+            throw new BaseException("Переменная по ключу " + botVariableType.getKey() + " не найдена.");
+        return text;
+    }
+
+    public static BigDecimal getBigDecimal(BotVariableType botVariableType, FiatCurrency fiatCurrency, DealType dealType,
+                                           CryptoCurrency cryptoCurrency) {
+        return BigDecimal.valueOf(Double.parseDouble(getVariable(botVariableType, fiatCurrency, dealType, cryptoCurrency)));
+    }
+
+    public static BigDecimal getBigDecimal(BotVariableType botVariableType, DealType dealType, CryptoCurrency cryptoCurrency) {
+        return BigDecimal.valueOf(getDouble(botVariableType, dealType, cryptoCurrency));
+    }
+
+    public static Double getDouble(BotVariableType botVariableType, DealType dealType, CryptoCurrency cryptoCurrency) {
+        return Double.parseDouble(getVariable(botVariableType, dealType, cryptoCurrency));
+    }
+
 
     public static Float getFloat(BotVariableType botVariableType) {
         try {
@@ -62,28 +103,6 @@ public class BotVariablePropertiesUtil {
                 throw new PropertyValueNotFoundException("Не корректно указано значение для переменной " + key + ".");
             }
         }
-    }
-
-    public static Double getMinSum(CryptoCurrency cryptoCurrency, DealType dealType) {
-        BotVariableType botVariableType = DealType.isBuy(dealType) ? BotVariableType.MIN_SUM_BUY : BotVariableType.MIN_SUM_SELL;
-        return BotProperties.BOT_VARIABLE_PROPERTIES.getDouble(botVariableType.getKey(cryptoCurrency));
-    }
-
-    public static BigDecimal getFix(CryptoCurrency cryptoCurrency, DealType dealType) {
-        BotVariableType type = DealType.isBuy(dealType) ? BotVariableType.FIX_BUY : BotVariableType.FIX_SELL;
-        return getBigDecimal(type.getKey(cryptoCurrency));
-    }
-
-    public static BigDecimal getFixCommission(CryptoCurrency cryptoCurrency, DealType dealType) {
-        BotVariableType type = DealType.isBuy(dealType) ? BotVariableType.FIX_COMMISSION_BUY
-                                                        : BotVariableType.FIX_COMMISSION_SELL;
-        return getBigDecimal(type.getKey(cryptoCurrency));
-    }
-
-    public static BigDecimal getCommission(CryptoCurrency cryptoCurrency, DealType dealType) {
-        BotVariableType type = DealType.isBuy(dealType) ? BotVariableType.COMMISSION_BUY
-                                                        : BotVariableType.COMMISSION_SELL;
-        return getBigDecimal(type.getKey(cryptoCurrency));
     }
 
     public static BigDecimal getTransactionCommission(CryptoCurrency cryptoCurrency) {

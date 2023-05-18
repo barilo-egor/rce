@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.bean.Deal;
+import tgb.btc.rce.enums.BotVariableType;
 import tgb.btc.rce.enums.CryptoCurrency;
 import tgb.btc.rce.enums.DealType;
 import tgb.btc.rce.enums.PropertiesMessage;
@@ -84,7 +85,7 @@ public class ExchangeServiceNew {
         DealType dealType = deal.getDealType();
         boolean isBuyDealType = DealType.isBuy(dealType);
 
-        Double minSum = BotVariablePropertiesUtil.getMinSum(cryptoCurrency, dealType);
+        Double minSum = BotVariablePropertiesUtil.getDouble(BotVariableType.MIN_SUM, dealType, cryptoCurrency);
         if (sum < minSum) {
             String dealTypeString = isBuyDealType ? "покупки" : "продажи";
             responseSender.sendMessage(chatId, "Минимальная сумма " + dealTypeString + " " + cryptoCurrency.getDisplayName()
@@ -93,10 +94,10 @@ public class ExchangeServiceNew {
         }
 
         deal.setCryptoAmount(BigDecimal.valueOf(sum));
-        deal.setAmount(CalculateUtil.convertCryptoToRub(cryptoCurrency, sum, dealType));
+        deal.setAmount(CalculateUtil.convertCryptoToRub(cryptoCurrency, sum, deal.getFiatCurrency(), dealType));
         userDiscountService.applyPersonal(chatId, deal);
         userDiscountService.applyBulk(deal);
-        deal.setCommission(CalculateUtil.getCommission(BigDecimal.valueOf(sum), cryptoCurrency, dealType));
+        deal.setCommission(CalculateUtil.getCommission(BigDecimal.valueOf(sum), cryptoCurrency, deal.getFiatCurrency(), dealType));
         dealRepository.save(deal);
         return false;
     }
