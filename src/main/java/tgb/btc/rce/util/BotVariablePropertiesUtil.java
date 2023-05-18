@@ -28,13 +28,17 @@ public class BotVariablePropertiesUtil {
     public static String getVariable(BotVariableType botVariableType, FiatCurrency fiatCurrency,
                                      DealType dealType, CryptoCurrency cryptoCurrency) {
         String text;
+        String key = botVariableType.getKey() + "."
+                + fiatCurrency.getCode() + "."
+                + dealType.getKey() + "."
+                + cryptoCurrency.getShortName();
         try {
             text = BotProperties.BOT_VARIABLE_PROPERTIES.getString(botVariableType.getKey() + "."
                     + fiatCurrency.getCode() + "."
                     + dealType.getKey() + "."
                     + cryptoCurrency.getShortName());
         } catch (Exception e) {
-            throw new BaseException("Переменная по ключу " + botVariableType.getKey() + " не найдена.");
+            throw new BaseException("Переменная по ключу " + key + " не найдена.");
         }
         if (Objects.isNull(text))
             throw new BaseException("Переменная по ключу " + botVariableType.getKey() + " не найдена.");
@@ -43,15 +47,16 @@ public class BotVariablePropertiesUtil {
 
     public static String getVariable(BotVariableType botVariableType, DealType dealType, CryptoCurrency cryptoCurrency) {
         String text;
+        String key = botVariableType.getKey() + "."
+                + dealType.getKey() + "."
+                + cryptoCurrency.getShortName();
         try {
-            text = BotProperties.BOT_VARIABLE_PROPERTIES.getString(botVariableType.getKey() + "."
-                    + dealType.getKey() + "."
-                    + cryptoCurrency.getShortName());
+            text = BotProperties.BOT_VARIABLE_PROPERTIES.getString(key);
         } catch (Exception e) {
-            throw new BaseException("Переменная по ключу " + botVariableType.getKey() + " не найдена.");
+            throw new BaseException("Переменная по ключу " + key + " не найдена.");
         }
         if (Objects.isNull(text))
-            throw new BaseException("Переменная по ключу " + botVariableType.getKey() + " не найдена.");
+            throw new BaseException("Переменная по ключу " + key + " не найдена.");
         return text;
     }
 
