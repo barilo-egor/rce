@@ -10,7 +10,6 @@ import tgb.btc.rce.bean.User;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.AntiSpam;
 import tgb.btc.rce.service.IUpdateDispatcher;
-import tgb.btc.rce.service.IUserService;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.util.CommandProcessorLoader;
 import tgb.btc.rce.util.CommandUtil;
@@ -25,7 +24,7 @@ public class UpdateDispatcher implements IUpdateDispatcher {
     public static ApplicationContext applicationContext;
     private static boolean IS_ON = false; // TODO
 
-    private final IUserService userService;
+    private final UserService userService;
 
     private AntiSpam antiSpam;
 
