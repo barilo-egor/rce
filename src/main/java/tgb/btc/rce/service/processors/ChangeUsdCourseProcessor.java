@@ -11,7 +11,16 @@ import tgb.btc.rce.repository.UserDataRepository;
 import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.impl.UserService;
+import tgb.btc.rce.util.BotVariablePropertiesUtil;
+import tgb.btc.rce.util.FiatCurrenciesUtil;
+import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.UpdateUtil;
+import tgb.btc.rce.vo.ReplyButton;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @CommandProcessor(command = Command.CHANGE_USD_COURSE)
 public class ChangeUsdCourseProcessor extends Processor {
@@ -52,7 +61,7 @@ public class ChangeUsdCourseProcessor extends Processor {
                 }
                 userDataRepository.updateDealTypeByUserChatId(chatId, dealType);
                 responseSender.sendMessage(chatId, BotStringConstants.SELECT_CRYPTO_CURRENCY, BotKeyboard.CRYPTO_CURRENCIES);
-                userService.nextStep(chatId, Command.CHANGE_USD_COURSE);
+                userService.nextStep(chatId);
                 break;
             case 2:
                 if (!hasMessageText(update, BotStringConstants.SELECT_CRYPTO_CURRENCY)) {
@@ -61,16 +70,41 @@ public class ChangeUsdCourseProcessor extends Processor {
                 String cryptoCurrencyString = UpdateUtil.getMessageText(update);
                 CryptoCurrency cryptoCurrency;
                 try {
-                cryptoCurrency = CryptoCurrency.fromDisplayName(cryptoCurrencyString);
+                    cryptoCurrency = CryptoCurrency.fromDisplayName(cryptoCurrencyString);
                 } catch (EnumTypeNotFoundException e) {
                     responseSender.sendMessage(chatId, BotStringConstants.SELECT_CRYPTO_CURRENCY);
                     return;
                 }
                 userDataRepository.updateCryptoCurrencyByChatId(chatId, cryptoCurrency);
-                responseSender.sendMessage(chatId, BotStringConstants.ENTER_NEW_COURSE, BotKeyboard.CANCEL);
-                userService.nextStep(chatId, Command.CHANGE_USD_COURSE);
+                if (!FiatCurrenciesUtil.isFew()) {
+                    responseSender.sendMessage(chatId, BotStringConstants.ENTER_NEW_COURSE, BotKeyboard.CANCEL);
+                    userService.nextStep(chatId);
+                } else {
+                    List<ReplyButton> buttons = Arrays.stream(FiatCurrency.values())
+                            .map(fiatCurrency -> ReplyButton.builder().text(fiatCurrency.name()).build())
+                            .collect(Collectors.toList());
+                    buttons.add(BotReplyButton.CANCEL.getButton());
+                    responseSender.sendMessage(chatId, BotStringConstants.SELECT_FIAT_CURRENCY, KeyboardUtil.buildReply(buttons));
+                }
+                userService.nextStep(chatId);
                 break;
             case 3:
+                if (!hasMessageText(update, BotStringConstants.SELECT_CRYPTO_CURRENCY)) {
+                    return;
+                }
+                String fiatCurrencyString = UpdateUtil.getMessageText(update);
+                FiatCurrency fiatCurrency;
+                try {
+                    fiatCurrency = FiatCurrency.valueOf(fiatCurrencyString);
+                } catch (EnumTypeNotFoundException e) {
+                    responseSender.sendMessage(chatId, BotStringConstants.SELECT_CRYPTO_CURRENCY);
+                    return;
+                }
+                userDataRepository.updateStringByUserChatId(chatId, fiatCurrency.name());
+                responseSender.sendMessage(chatId, BotStringConstants.ENTER_NEW_COURSE, BotKeyboard.CANCEL);
+                userService.nextStep(chatId);
+                break;
+            case 4:
                 if (!update.hasMessage() || !update.getMessage().hasText()) throw new BaseException("Не найден текст.");
                 String newCourseString = UpdateUtil.getMessageText(update).replaceAll(",", ".");
                 double newCourse;
@@ -80,9 +114,13 @@ public class ChangeUsdCourseProcessor extends Processor {
                     responseSender.sendMessage(chatId, BotStringConstants.INCORRECT_VALUE);
                     return;
                 }
-                BotProperties.BOT_VARIABLE_PROPERTIES.setProperty(
-                        BotVariableType.USD_COURSE.getKey(userDataRepository.getDealTypeByChatId(chatId), userDataRepository.getCryptoCurrencyByChatId(chatId)),
-                        newCourse);
+                fiatCurrency = FiatCurrenciesUtil.isFew()
+                        ? FiatCurrency.valueOf(userDataRepository.getStringByUserChatId(chatId))
+                        : FiatCurrenciesUtil.getFirst();
+                BotProperties.BOT_VARIABLE_PROPERTIES.setProperty(BotVariableType.USD_COURSE.getKey() + "."
+                        + fiatCurrency.getCode() + "."
+                        + userDataRepository.getDealTypeByChatId(chatId).getKey() + "."
+                        + userDataRepository.getCryptoCurrencyByChatId(chatId).getShortName(), newCourse);
                 responseSender.sendMessage(chatId, BotStringConstants.SUCCESSFUL_COURSE_CHANGE);
                 processToAdminMainPanel(chatId);
                 break;

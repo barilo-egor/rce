@@ -41,7 +41,7 @@ public interface UserDataRepository extends BaseRepository<UserData> {
     void updateStringByUserPid(@Param("userPid") Long userPid, @Param("stringVariable") String stringVariable);
 
     @Modifying
-    @Query("update UserData set stringVariable=:stringVariable where user.chatId=:chatId")
+    @Query("update UserData set stringVariable=:stringVariable where user.pid in (select pid from User where chatId=:chatId)")
     void updateStringByUserChatId(@Param("chatId") Long chatId, @Param("stringVariable") String stringVariable);
 
     @Modifying
