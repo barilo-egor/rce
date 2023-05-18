@@ -45,8 +45,8 @@ public class BotVariablePropertiesUtil {
         String text;
         try {
             text = BotProperties.BOT_VARIABLE_PROPERTIES.getString(botVariableType.getKey() + "."
-                    + cryptoCurrency.getShortName() + "."
-                    + dealType.getKey());
+                    + dealType.getKey() + "."
+                    + cryptoCurrency.getShortName());
         } catch (Exception e) {
             throw new BaseException("Переменная по ключу " + botVariableType.getKey() + " не найдена.");
         }
@@ -116,17 +116,4 @@ public class BotVariablePropertiesUtil {
     public static String getWallet(CryptoCurrency cryptoCurrency) {
         return BotProperties.BOT_VARIABLE_PROPERTIES.getString(BotVariableType.WALLET.getKey(cryptoCurrency));
     }
-
-    public static String getCourseProperty(DealType dealType, CryptoCurrency cryptoCurrency) {
-        return BotProperties.BOT_VARIABLE_PROPERTIES.getString(BotVariableType.USD_COURSE.getKey(dealType, cryptoCurrency));
-    }
-
-    public static Double getCourse(DealType dealType, CryptoCurrency cryptoCurrency) {
-        try {
-            return Double.parseDouble(getCourseProperty(dealType, cryptoCurrency));
-        } catch (NumberFormatException e) {
-            throw new BaseException(String.format(wrongFormat, BotVariableType.USD_COURSE.getKey(dealType, cryptoCurrency)));
-        }
-    }
-
 }

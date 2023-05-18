@@ -8,7 +8,7 @@ public enum BotVariableType {
     USD_COURSE("Курс доллара", "course.usd"),
     FIX("Фикс рублей покупка", "fix"),
     FIX_COMMISSION("Фикс комиссия", "commission.fix"),
-    COMMISSION("Комиссия", "commission.main"),
+    COMMISSION("Комиссия", "commission"),
     OPERATOR_LINK("Ссылка на оператора", "operator.link"),
     PROBABILITY("Шанс лотереи", "lottery.chance"),
     MIN_SUM("Мин.сумма пок.", "deal.min.sum"),
