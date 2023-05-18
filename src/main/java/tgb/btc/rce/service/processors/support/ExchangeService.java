@@ -152,7 +152,7 @@ public class ExchangeService {
                 deal.setPersonalApplied(true);
             }
         }
-        BigDecimal bulkDiscount = BulkDiscountUtil.getPercentBySum(amount);
+        BigDecimal bulkDiscount = BulkDiscountUtil.getPercentBySum(amount, deal.getFiatCurrency());
         if (!BigDecimal.ZERO.equals(bulkDiscount)) {
             amount = amount.subtract(CalculateUtil.getPercentsFactor(amount).multiply(bulkDiscount));
         }
@@ -219,7 +219,7 @@ public class ExchangeService {
                 putToUsersPersonalBuy(chatId, BigDecimal.ZERO);
             }
         }
-        BigDecimal bulkDiscount = BulkDiscountUtil.getPercentBySum(roundedConvertedSum);
+        BigDecimal bulkDiscount = BulkDiscountUtil.getPercentBySum(roundedConvertedSum, dealRepository.getFiatCurrencyByPid(currentDealPid));
         if (!BigDecimal.ZERO.equals(bulkDiscount)) {
             roundedConvertedSum = roundedConvertedSum.subtract(CalculateUtil.getPercentsFactor(roundedConvertedSum).multiply(personalBuy));
         }
