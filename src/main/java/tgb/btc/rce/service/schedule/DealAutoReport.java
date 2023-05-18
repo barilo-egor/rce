@@ -57,7 +57,7 @@ public class DealAutoReport {
         this.userRepository = userRepository;
     }
 
-    @Scheduled(cron = "0 50 23 * * *")
+    @Scheduled(cron = "0 5 0 * * *")
     @Async
     public void everyDay() {
         YESTERDAY = LocalDate.now().minusDays(1);

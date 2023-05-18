@@ -5,7 +5,6 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.bean.PaymentRequisite;
 import tgb.btc.rce.bean.PaymentType;
-import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.repository.PaymentRequisiteRepository;
 import tgb.btc.rce.repository.PaymentTypeRepository;
@@ -18,7 +17,7 @@ import tgb.btc.rce.util.UpdateUtil;
 
 import java.util.Objects;
 
-@CommandProcessor(command = Command.NEW_PAYMENT_TYPE_REQUISITE, step = 2)
+@CommandProcessor(command = Command.NEW_PAYMENT_TYPE_REQUISITE, step = 3)
 public class AskForNewRequisite extends Processor {
 
     private PaymentTypeRepository paymentTypeRepository;

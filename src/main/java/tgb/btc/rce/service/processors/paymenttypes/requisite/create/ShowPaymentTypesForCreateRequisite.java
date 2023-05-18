@@ -1,29 +1,19 @@
 package tgb.btc.rce.service.processors.paymenttypes.requisite.create;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.annotation.CommandProcessor;
-import tgb.btc.rce.bean.PaymentType;
-import tgb.btc.rce.enums.BotKeyboard;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
-import tgb.btc.rce.enums.DealType;
-import tgb.btc.rce.repository.PaymentTypeRepository;
 import tgb.btc.rce.repository.UserDataRepository;
 import tgb.btc.rce.repository.UserRepository;
 import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.impl.UserService;
-import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.UpdateUtil;
-import tgb.btc.rce.vo.InlineButton;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
-@CommandProcessor(command = Command.NEW_PAYMENT_TYPE_REQUISITE, step = 1)
+@CommandProcessor(command = Command.NEW_PAYMENT_TYPE_REQUISITE, step = 2)
 @Slf4j
 public class ShowPaymentTypesForCreateRequisite extends Processor {
 

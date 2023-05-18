@@ -64,7 +64,7 @@ public class CreateNewPaymentType extends Processor {
             fiatCurrency = FiatCurrenciesUtil.getFirst();
         }
         PaymentType paymentType = new PaymentType();
-        paymentType.setName(userService.getBufferVariable(chatId));
+        paymentType.setName(userDataRepository.getStringByUserChatId(chatId));
         paymentType.setDealType(dealType);
         paymentType.setMinSum(BigDecimal.ZERO);
         paymentType.setFiatCurrency(fiatCurrency);

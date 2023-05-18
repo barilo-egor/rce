@@ -20,6 +20,7 @@ import tgb.btc.rce.service.processors.paymenttypes.minsum.ChangeMinSum;
 import tgb.btc.rce.service.processors.paymenttypes.minsum.SaveMinSum;
 import tgb.btc.rce.service.processors.paymenttypes.minsum.ShowTypesForMinSum;
 import tgb.btc.rce.service.processors.paymenttypes.requisite.create.AskForNewRequisite;
+import tgb.btc.rce.service.processors.paymenttypes.requisite.create.FiatCurrencyCreateRequisite;
 import tgb.btc.rce.service.processors.paymenttypes.requisite.create.NewPaymentTypeRequisite;
 import tgb.btc.rce.service.processors.paymenttypes.requisite.create.ShowPaymentTypesForCreateRequisite;
 import tgb.btc.rce.service.processors.paymenttypes.requisite.delete.DeletingPaymentRequisite;
@@ -188,6 +189,7 @@ public final class CommandProcessorLoader {
         commandProcessors.add(ChoosingFiatCurrency.class);
         commandProcessors.add(MakeAdmin.class);
         commandProcessors.add(FiatCurrencyNewPaymentType.class);
+        commandProcessors.add(FiatCurrencyCreateRequisite.class);
         commandProcessors.stream()
                 .filter(processor -> !extendsProcessor(processor))
                 .findFirst()

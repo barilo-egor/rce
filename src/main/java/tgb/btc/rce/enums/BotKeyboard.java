@@ -7,6 +7,7 @@ import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.vo.InlineButton;
 import tgb.btc.rce.vo.ReplyButton;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -43,13 +44,17 @@ public enum BotKeyboard {
     }
 
     private static ReplyKeyboardMarkup getCryptoCurrencyKeyboard() {
-        return KeyboardUtil.buildReply(List.of(KeyboardUtil.getCryptoCurrencyButtons()));
+        List<ReplyButton> buttons = new ArrayList<>(List.of(KeyboardUtil.getCryptoCurrencyButtons()));
+        buttons.add(BotReplyButton.CANCEL.getButton());
+        return KeyboardUtil.buildReply(buttons);
     }
 
     private static ReplyKeyboardMarkup getFiatCurrenciesKeyboard() {
-        return KeyboardUtil.buildReply(Arrays.stream(FiatCurrency.values())
+        List<ReplyButton> buttons = Arrays.stream(FiatCurrency.values())
                 .map(fiatCurrency -> ReplyButton.builder().text(fiatCurrency.getCode()).build())
-                .collect(Collectors.toList()));
+                .collect(Collectors.toList());
+        buttons.add(BotReplyButton.CANCEL.getButton());
+        return KeyboardUtil.buildReply(buttons);
     }
 
 }

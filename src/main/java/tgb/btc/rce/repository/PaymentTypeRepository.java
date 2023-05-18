@@ -24,8 +24,14 @@ public interface PaymentTypeRepository extends BaseRepository<PaymentType> {
     @Query("from PaymentType where dealType=:dealType")
     List<PaymentType> getByDealType(@Param("dealType") DealType dealType);
 
+    @Query("from PaymentType where dealType=:dealType and fiatCurrency=:fiatCurrency")
+    List<PaymentType> getByDealTypeAndFiatCurrency(DealType dealType,  FiatCurrency fiatCurrency);
+
     @Query("from PaymentType where dealType=:dealType and isOn=:isOn and fiatCurrency=:fiatCurrency")
     List<PaymentType> getByDealTypeAndIsOnAndFiatCurrency(@Param("dealType") DealType dealType, @Param("isOn") Boolean isOn, FiatCurrency fiatCurrency);
+
+    @Query("select count(pid) from PaymentType where dealType=:dealType and isOn=:isOn and fiatCurrency=:fiatCurrency")
+    Integer countByDealTypeAndIsOnAndFiatCurrency(@Param("dealType") DealType dealType, @Param("isOn") Boolean isOn, FiatCurrency fiatCurrency);
 
     @Query("select dealType from PaymentType where pid=:pid")
     DealType getDealTypeByPid(@Param("pid") Long pid);

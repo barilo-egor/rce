@@ -9,6 +9,7 @@ import tgb.btc.rce.enums.BotKeyboard;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.DealType;
+import tgb.btc.rce.enums.FiatCurrency;
 import tgb.btc.rce.repository.PaymentTypeRepository;
 import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
@@ -20,7 +21,7 @@ import tgb.btc.rce.vo.InlineButton;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@CommandProcessor(command = Command.NEW_PAYMENT_TYPE_REQUISITE)
+@CommandProcessor(command = Command.NEW_PAYMENT_TYPE_REQUISITE, step = 1)
 public class NewPaymentTypeRequisite extends Processor {
 
     private PaymentTypeRepository paymentTypeRepository;
@@ -38,9 +39,10 @@ public class NewPaymentTypeRequisite extends Processor {
     @Override
     public void run(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
-        List<PaymentType> paymentTypes = paymentTypeRepository.getByDealType(DealType.BUY);
+        FiatCurrency fiatCurrency = FiatCurrency.getByCode(UpdateUtil.getMessageText(update));
+        List<PaymentType> paymentTypes = paymentTypeRepository.getByDealTypeAndFiatCurrency(DealType.BUY, fiatCurrency);
         if (CollectionUtils.isEmpty(paymentTypes)) {
-            responseSender.sendMessage(chatId, "Список тип оплат на " + DealType.BUY.getDisplayName() + " пуст.");
+            responseSender.sendMessage(chatId, "Список тип оплат на " + DealType.BUY.getDisplayName() + "-" + fiatCurrency.getCode() + " пуст.");
             processToAdminMainPanel(chatId);
             return;
         }
