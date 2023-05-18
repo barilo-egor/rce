@@ -7,6 +7,7 @@ import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.bean.Deal;
 import tgb.btc.rce.bean.PaymentReceipt;
 import tgb.btc.rce.enums.*;
+import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.exception.BaseException;
 import tgb.btc.rce.exception.NumberParseException;
 import tgb.btc.rce.repository.DealRepository;

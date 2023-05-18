@@ -3,12 +3,12 @@ package tgb.btc.rce.service.impl;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import tgb.btc.rce.enums.*;
+import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.util.CallbackQueryUtil;
 import tgb.btc.rce.util.FiatCurrenciesUtil;
 import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.TurningCurrenciesUtil;
 import tgb.btc.rce.vo.InlineButton;
-import tgb.btc.rce.vo.ReplyButton;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +19,6 @@ public class KeyboardService {
 
     private static final CalculatorType CALCULATOR_TYPE =
             CalculatorType.valueOf(BotProperties.MODULES_PROPERTIES.getString("calculator.type"));
-    ;
 
     public ReplyKeyboard getCurrencies(DealType dealType) {
         List<InlineButton> currencies = new ArrayList<>();

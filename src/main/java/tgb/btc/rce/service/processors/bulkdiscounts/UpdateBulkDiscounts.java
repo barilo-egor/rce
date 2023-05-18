@@ -10,11 +10,9 @@ import tgb.btc.rce.enums.BotProperties;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.exception.PropertyValueNotFoundException;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.util.BulkDiscountUtil;
 import tgb.btc.rce.util.UpdateUtil;
 
 import java.io.IOException;
-import java.util.Map;
 
 @CommandProcessor(command = Command.BULK_DISCOUNTS, step = 1)
 @Slf4j

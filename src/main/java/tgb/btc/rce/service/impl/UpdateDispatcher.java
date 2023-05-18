@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.bean.User;
 import tgb.btc.rce.enums.Command;
+import tgb.btc.rce.enums.SimpleCommand;
 import tgb.btc.rce.service.AntiSpam;
 import tgb.btc.rce.service.IUpdateDispatcher;
 import tgb.btc.rce.service.Processor;
@@ -44,7 +45,8 @@ public class UpdateDispatcher implements IUpdateDispatcher {
         if (BooleanUtils.isTrue(userService.getIsBannedByChatId(chatId))) return;
         Command command = getCommand(update);
         int step = userService.getStepByChatId(chatId);
-        ((Processor) applicationContext.getBean(CommandProcessorLoader.getByCommand(command, step))).process(update);
+        if (!command.isSimple()) ((Processor) applicationContext.getBean(CommandProcessorLoader.getByCommand(command, step))).process(update);
+        else SimpleCommand.getByCommand(command).getConsumer().accept(update);
     }
 
     private Command getCommand(Update update) {

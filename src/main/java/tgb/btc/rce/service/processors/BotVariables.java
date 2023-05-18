@@ -11,7 +11,6 @@ import tgb.btc.rce.enums.BotProperties;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.exception.PropertyValueNotFoundException;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.util.BotVariablePropertiesUtil;
 import tgb.btc.rce.util.UpdateUtil;
 
 import java.io.File;

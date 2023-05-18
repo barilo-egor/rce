@@ -14,6 +14,7 @@ import tgb.btc.rce.bean.Deal;
 import tgb.btc.rce.bean.PaymentType;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.*;
+import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.exception.BaseException;
 import tgb.btc.rce.exception.EnumTypeNotFoundException;
 import tgb.btc.rce.exception.NumberParseException;
@@ -21,7 +22,6 @@ import tgb.btc.rce.repository.DealRepository;
 import tgb.btc.rce.repository.PaymentTypeRepository;
 import tgb.btc.rce.repository.UserDiscountRepository;
 import tgb.btc.rce.service.impl.*;
-import tgb.btc.rce.service.schedule.DealDeleteScheduler;
 import tgb.btc.rce.util.*;
 import tgb.btc.rce.vo.InlineButton;
 
@@ -37,7 +37,6 @@ public class SellService {
     private final ResponseSender responseSender;
     private final UserService userService;
     private final DealService dealService;
-    private final PaymentConfigService paymentConfigService;
 
     private final BotMessageService botMessageService;
 
@@ -80,11 +79,10 @@ public class SellService {
 
     @Autowired
     public SellService(ResponseSender responseSender, UserService userService, DealService dealService,
-                       PaymentConfigService paymentConfigService, BotMessageService botMessageService) {
+                       BotMessageService botMessageService) {
         this.responseSender = responseSender;
         this.userService = userService;
         this.dealService = dealService;
-        this.paymentConfigService = paymentConfigService;
         this.botMessageService = botMessageService;
     }
 

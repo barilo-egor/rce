@@ -80,7 +80,6 @@ public final class CommandProcessorLoader {
         commandProcessors.add(Back.class);
         commandProcessors.add(BanUnban.class);
         commandProcessors.add(BotMessages.class);
-        commandProcessors.add(BotOffed.class);
         commandProcessors.add(BotSettings.class);
         commandProcessors.add(BotVariables.class);
         commandProcessors.add(BuyBitcoin.class);
