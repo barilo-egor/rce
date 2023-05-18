@@ -26,6 +26,11 @@ public class CreateNewPaymentType extends Processor {
     private UserDataRepository userDataRepository;
 
     @Autowired
+    public void setUserDataRepository(UserDataRepository userDataRepository) {
+        this.userDataRepository = userDataRepository;
+    }
+
+    @Autowired
     public void setPaymentTypeRepository(PaymentTypeRepository paymentTypeRepository) {
         this.paymentTypeRepository = paymentTypeRepository;
     }
@@ -42,8 +47,13 @@ public class CreateNewPaymentType extends Processor {
         DealType dealType;
         FiatCurrency fiatCurrency;
         if (FiatCurrenciesUtil.isFew()) {
-            dealType = userDataRepository.getDealTypeByChatId(chatId);
-            fiatCurrency = FiatCurrency.getByCode(message);
+            if (BotStringConstants.BUY.equals(message)) dealType = DealType.BUY;
+            else if (BotStringConstants.SELL.equals(message)) dealType = DealType.SELL;
+            else {
+                responseSender.sendMessage(chatId, BotStringConstants.BUY_OR_SELL);
+                return;
+            }
+            fiatCurrency = userDataRepository.getFiatCurrencyByChatId(chatId);
         } else {
             if (BotStringConstants.BUY.equals(message)) dealType = DealType.BUY;
             else if (BotStringConstants.SELL.equals(message)) dealType = DealType.SELL;

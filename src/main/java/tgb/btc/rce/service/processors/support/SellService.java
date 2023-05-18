@@ -21,7 +21,6 @@ import tgb.btc.rce.repository.DealRepository;
 import tgb.btc.rce.repository.PaymentTypeRepository;
 import tgb.btc.rce.repository.UserDiscountRepository;
 import tgb.btc.rce.service.impl.*;
-import tgb.btc.rce.service.schedule.DealDeleteScheduler;
 import tgb.btc.rce.util.*;
 import tgb.btc.rce.vo.InlineButton;
 
@@ -261,7 +260,7 @@ public class SellService {
                 + "<b>Выберите способ получения перевода:</b>";
 
 
-        List<InlineButton> buttons = paymentTypeRepository.getByDealTypeAndIsOn(DealType.SELL, Boolean.TRUE).stream()
+        List<InlineButton> buttons = paymentTypeRepository.getByDealTypeAndIsOnAndFiatCurrency(DealType.SELL, Boolean.TRUE, deal.getFiatCurrency()).stream()
                 .map(paymentType -> InlineButton.builder()
                         .text(paymentType.getName())
                         .data(paymentType.getPid().toString())

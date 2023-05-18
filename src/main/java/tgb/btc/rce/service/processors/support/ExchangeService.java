@@ -421,7 +421,7 @@ public class ExchangeService {
                 + additionalText
                 + "<b>Выберите способ оплаты:</b>";
 
-        List<InlineButton> buttons = paymentTypeRepository.getByDealTypeAndIsOn(DealType.BUY, Boolean.TRUE).stream()
+        List<InlineButton> buttons = paymentTypeRepository.getByDealTypeAndIsOnAndFiatCurrency(DealType.BUY, Boolean.TRUE, deal.getFiatCurrency()).stream()
                 .map(paymentType -> InlineButton.builder()
                         .text(paymentType.getName())
                         .data(paymentType.getPid().toString())

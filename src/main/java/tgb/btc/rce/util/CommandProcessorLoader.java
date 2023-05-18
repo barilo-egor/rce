@@ -9,6 +9,7 @@ import tgb.btc.rce.service.processors.bulkdiscounts.BulkDiscounts;
 import tgb.btc.rce.service.processors.bulkdiscounts.UpdateBulkDiscounts;
 import tgb.btc.rce.service.processors.paymenttypes.PaymentsTypes;
 import tgb.btc.rce.service.processors.paymenttypes.create.CreateNewPaymentType;
+import tgb.btc.rce.service.processors.paymenttypes.create.FiatCurrencyNewPaymentType;
 import tgb.btc.rce.service.processors.paymenttypes.create.NewPaymentType;
 import tgb.btc.rce.service.processors.paymenttypes.create.SaveNamePaymentType;
 import tgb.btc.rce.service.processors.paymenttypes.delete.DeletePaymentType;
@@ -186,6 +187,7 @@ public final class CommandProcessorLoader {
         commandProcessors.add(NewSpamBans.class);
         commandProcessors.add(ChoosingFiatCurrency.class);
         commandProcessors.add(MakeAdmin.class);
+        commandProcessors.add(FiatCurrencyNewPaymentType.class);
         commandProcessors.stream()
                 .filter(processor -> !extendsProcessor(processor))
                 .findFirst()

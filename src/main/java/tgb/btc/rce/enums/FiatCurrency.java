@@ -6,7 +6,7 @@ public enum FiatCurrency {
     /**
      * Бел.рубль
      */
-    BYN("byn", "рублей"),
+    BYN("byn", "бел.рублей"),
     /**
      * Рос.рубль
      */
