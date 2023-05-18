@@ -5,12 +5,18 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+import tgb.btc.rce.bean.ReferralUser;
 import tgb.btc.rce.bean.User;
 import tgb.btc.rce.enums.Command;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Repository
 @Transactional
 public interface UserRepository extends BaseRepository<User> {
+
     User findByChatId(Long chatId);
 
     @Query("select pid from User where chatId=:chatId")
@@ -34,4 +40,105 @@ public interface UserRepository extends BaseRepository<User> {
 
     @Query("select isAdmin from User where chatId=:chatId")
     boolean isAdminByChatId(@Param("chatId") Long chatId);
+
+    @Query("select referralBalance from User where chatId=:chatId")
+    Integer getReferralBalanceByChatId(@Param("chatId") Long chatId);
+
+    @Query("select u.referralUsers from User u where u.chatId=:chatId")
+    List<ReferralUser> getUserReferralsByChatId(@Param("chatId") Long chatId);
+
+    User getByChatId(Long chatId);
+
+    @Modifying
+    @Query("update User set step=step + 1, command=:command where chatId=:chatId")
+    void nextStep(@Param("chatId") Long chatId, @Param("command") Command command);
+
+    @Modifying
+    @Query("update User set step=step + 1 where chatId=:chatId")
+    void nextStep(@Param("chatId") Long chatId);
+
+    @Modifying
+    @Query("update User set step=step - 1 where chatId=:chatId")
+    void previousStep(@Param("chatId") Long chatId);
+
+    @Query("select chatId from User where isAdmin=true")
+    List<Long> getAdminsChatIds();
+
+    @Modifying
+    @Query("update User set bufferVariable=:bufferVariable where chatId=:chatId")
+    void updateBufferVariable(@Param("chatId") Long chatId, @Param("bufferVariable") String bufferVariable);
+
+    @Query("select bufferVariable from User where chatId=:chatId")
+    String getBufferVariable(@Param("chatId") Long chatId);
+
+    @Query("select chatId from User where isAdmin=false and isActive=true and isBanned=false")
+    List<Long> getChatIdsNotAdminsAndIsActiveAndNotBanned();
+
+    @Modifying
+    @Query("update User set isActive=:isActive where chatId=:chatId")
+    void updateIsActiveByChatId(@Param("isActive") boolean isActive, @Param("chatId") Long chatId);
+
+    @Query("select isBanned from User where chatId=:chatId")
+    Boolean getIsBannedByChatId(@Param("chatId") Long chatId);
+
+    @Modifying
+    @Query("update User set currentDeal=:currentDeal where chatId=:chatId")
+    void updateCurrentDealByChatId(@Param("currentDeal") Long dealPid, @Param("chatId") Long chatId);
+
+    @Query("select currentDeal from User where chatId=:chatId")
+    Long getCurrentDealByChatId(@Param("chatId") Long chatId);
+
+    @Query("select username from User where chatId=:chatId")
+    String getUsernameByChatId(@Param("chatId") Long chatId);
+
+    @Modifying
+    @Query("update User set command=:command where chatId=:chatId")
+    void updateCommandByChatId(@Param("command") Command command, @Param("chatId") Long chatId);
+
+    @Modifying
+    @Query("update User set referralBalance=:referralBalance where chatId=:chatId")
+    void updateReferralBalanceByChatId(@Param("referralBalance") Integer referralBalance, @Param("chatId") Long chatId);
+
+    @Modifying
+    @Query("update User set charges=:charges where chatId=:chatId")
+    void updateChargesByChatId(@Param("charges") Integer charges, @Param("chatId") Long chatId);
+
+    @Query("select charges from User where chatId=:chatId")
+    Integer getChargesByChatId(@Param("chatId") Long chatId);
+
+    @Modifying
+    @Query("update User set isBanned=:isBanned where chatId=:chatId")
+    void updateIsBannedByChatId(@Param("chatId") Long chatId, @Param("isBanned") Boolean isBanned);
+
+    @Query("update User set referralPercent=:referralPercent where chatId=:chatId")
+    @Modifying
+    void updateReferralPercent(@Param("referralPercent") BigDecimal referralPercent, @Param("chatId") Long chatId);
+
+    @Query("select referralPercent from User where chatId=:chatId")
+    BigDecimal getReferralPercentByChatId(@Param("chatId") Long chatId);
+
+    @Query("select pid from User ")
+    List<Long> getPids();
+
+    @Modifying
+    @Query("update User set step=:step, command=:command where chatId=:chatId")
+    void updateStepAndCommandByChatId(Long chatId, Command command, Integer step);
+
+    /**
+     * Reports
+     */
+
+    @Query("select count(pid) from User where registrationDate between :localDateTime1 and :localDateTime2")
+    Integer countByRegistrationDate(LocalDateTime localDateTime1, LocalDateTime localDateTime2);
+
+    @Query("select chatId from User where registrationDate between :localDateTime1 and :localDateTime2 and fromChatId is not null")
+    List<Long> getChatIdsByRegistrationDateAndFromChatIdNotNull(LocalDateTime localDateTime1, LocalDateTime localDateTime2);
+
+    @Query("select chatId from User where pid=:pid")
+    Long getChatIdByPid(Long pid);
+
+    @Modifying
+    @Query("update User set isAdmin=:isAdmin where chatId=:chatId")
+    void updateIsAdminByChatId(@Param("chatId") Long chatId, @Param("isAdmin") Boolean isAdmin);
+
 }

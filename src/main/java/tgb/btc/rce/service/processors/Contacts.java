@@ -11,6 +11,7 @@ import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.impl.BotMessageService;
 import tgb.btc.rce.service.impl.ContactService;
+import tgb.btc.rce.service.impl.UserService;
 import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.InlineButton;
@@ -23,9 +24,9 @@ public class Contacts extends Processor {
     private final ContactService contactService;
 
     @Autowired
-    public Contacts(IResponseSender responseSender, BotMessageService botMessageService,
+    public Contacts(IResponseSender responseSender, UserService userService, BotMessageService botMessageService,
                     ContactService contactService) {
-        super(responseSender);
+        super(responseSender, userService);
         this.botMessageService = botMessageService;
         this.contactService = contactService;
     }
@@ -43,8 +44,8 @@ public class Contacts extends Processor {
                         .map(contact -> InlineButton.builder()
                                 .text(contact.getLabel())
                                 .data(contact.getUrl())
+                                .inlineType(InlineType.URL)
                                 .build())
-                        .collect(Collectors.toList()),
-                InlineType.URL);
+                        .collect(Collectors.toList()));
     }
 }

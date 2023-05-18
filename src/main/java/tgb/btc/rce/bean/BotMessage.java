@@ -76,6 +76,20 @@ public class BotMessage extends BasePersist {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        BotMessage that = (BotMessage) o;
+        return type == that.type && Objects.equals(text, that.text) && Objects.equals(image, that.image) && Objects.equals(animation, that.animation) && messageType == that.messageType;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), type, text, image, animation, messageType);
+    }
+
+    @Override
     public String toString() {
         return "BotMessage{" +
                 "type=" + type +
@@ -84,20 +98,5 @@ public class BotMessage extends BasePersist {
                 ", animation='" + animation + '\'' +
                 ", messageType=" + messageType +
                 '}';
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
-        BotMessage that = (BotMessage) o;
-        return type == that.type && Objects.equals(text, that.text) && Objects.equals(image, that.image)
-                && Objects.equals(animation, that.animation) && messageType == that.messageType;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(super.hashCode(), type, text, image, animation, messageType);
     }
 }

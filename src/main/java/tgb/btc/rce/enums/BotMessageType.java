@@ -13,7 +13,9 @@ public enum BotMessageType {
     ROULETTE("Кн.рулетка"),
 
     WON_LOTTERY("Выигр.лотереи"),
-    LOSE_LOTTERY("Проигр.лотереи");
+    LOSE_LOTTERY("Проигр.лотереи"),
+    ADDITIONAL_DEAL_TEXT("Доп.текст заявки"),
+    BOT_OFF("Выкл.бот");
 
     final String displayName;
 
@@ -27,6 +29,11 @@ public enum BotMessageType {
 
     public static BotMessageType getByDisplayName(String name) {
         return Arrays.stream(BotMessageType.values()).filter(t -> t.getDisplayName().equals(name)).findFirst()
+                .orElseThrow(() -> new BaseException("Не найдено сообщение бота: " + name));
+    }
+
+    public static BotMessageType getByName(String name) {
+        return Arrays.stream(BotMessageType.values()).filter(t -> t.name().equals(name)).findFirst()
                 .orElseThrow(() -> new BaseException("Не найдено сообщение бота: " + name));
     }
 }

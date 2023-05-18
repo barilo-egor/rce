@@ -16,14 +16,11 @@ import tgb.btc.rce.util.UpdateUtil;
 
 @CommandProcessor(command = Command.BACK)
 public class Back extends Processor {
-
-    private final UserService userService;
     private final BotMessageService botMessageService;
 
     @Autowired
     public Back(IResponseSender responseSender, UserService userService, BotMessageService botMessageService) {
-        super(responseSender);
-        this.userService = userService;
+        super(responseSender, userService);
         this.botMessageService = botMessageService;
     }
 
