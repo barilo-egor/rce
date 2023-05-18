@@ -9,10 +9,11 @@ import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.bean.Deal;
 import tgb.btc.rce.bean.User;
 import tgb.btc.rce.constants.BotStringConstants;
-import tgb.btc.rce.enums.*;
+import tgb.btc.rce.enums.BotVariableType;
+import tgb.btc.rce.enums.Command;
+import tgb.btc.rce.enums.DealType;
+import tgb.btc.rce.enums.ReferralType;
 import tgb.btc.rce.exception.BaseException;
-import tgb.btc.rce.repository.UserRepository;
-import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.impl.DealService;
 import tgb.btc.rce.service.impl.PaymentRequisiteService;
@@ -30,16 +31,9 @@ import java.util.Objects;
 @Slf4j
 public class ConfirmUserDeal extends Processor {
 
-    private final DealService dealService;
-
-    private UserRepository userRepository;
+    private DealService dealService;
 
     private PaymentRequisiteService paymentRequisiteService;
-
-    @Autowired
-    public void setUserRepository(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
 
     @Autowired
     public void setPaymentRequisiteService(PaymentRequisiteService paymentRequisiteService) {
@@ -47,8 +41,7 @@ public class ConfirmUserDeal extends Processor {
     }
 
     @Autowired
-    public ConfirmUserDeal(IResponseSender responseSender, UserService userService, DealService dealService) {
-        super(responseSender, userService);
+    public void setDealService(DealService dealService) {
         this.dealService = dealService;
     }
 

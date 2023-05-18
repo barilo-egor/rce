@@ -6,10 +6,8 @@ import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.bean.PaymentConfig;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.PaymentTypeEnum;
-import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.impl.PaymentConfigService;
-import tgb.btc.rce.service.impl.UserService;
 import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.ReplyButton;
@@ -20,12 +18,10 @@ import java.util.List;
 @CommandProcessor(command = Command.PAYMENT_REQUISITES)
 public class PaymentRequisites extends Processor {
 
-    private final PaymentConfigService paymentConfigService;
+    private PaymentConfigService paymentConfigService;
 
     @Autowired
-    public PaymentRequisites(IResponseSender responseSender, UserService userService,
-                             PaymentConfigService paymentConfigService) {
-        super(responseSender, userService);
+    public void setPaymentConfigService(PaymentConfigService paymentConfigService) {
         this.paymentConfigService = paymentConfigService;
     }
 

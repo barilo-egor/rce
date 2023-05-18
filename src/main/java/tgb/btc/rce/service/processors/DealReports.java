@@ -12,10 +12,8 @@ import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.bean.Deal;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.exception.BaseException;
-import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.impl.DealService;
-import tgb.btc.rce.service.impl.UserService;
 import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.MessageTextUtil;
 import tgb.btc.rce.util.UpdateUtil;
@@ -39,11 +37,10 @@ public class DealReports extends Processor {
     private final static String MONTH = "За месяц";
     private final static String DATE = "За дату";
 
-    private final DealService dealService;
+    private DealService dealService;
 
     @Autowired
-    public DealReports(IResponseSender responseSender, UserService userService, DealService dealService) {
-        super(responseSender, userService);
+    public void setDealService(DealService dealService) {
         this.dealService = dealService;
     }
 

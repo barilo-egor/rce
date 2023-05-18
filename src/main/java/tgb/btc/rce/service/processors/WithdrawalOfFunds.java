@@ -6,12 +6,9 @@ import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.BotVariableType;
 import tgb.btc.rce.enums.Command;
-import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.service.impl.UserService;
 import tgb.btc.rce.service.impl.WithdrawalRequestService;
 import tgb.btc.rce.service.processors.support.WithdrawalOfFundsService;
-import tgb.btc.rce.util.BotPropertiesUtil;
 import tgb.btc.rce.util.BotVariablePropertiesUtil;
 import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.UpdateUtil;
@@ -25,10 +22,7 @@ public class WithdrawalOfFunds extends Processor {
     private final WithdrawalRequestService withdrawalRequestService;
 
     @Autowired
-    public WithdrawalOfFunds(IResponseSender responseSender, UserService userService,
-                             WithdrawalOfFundsService withdrawalOfFundsService,
-                             WithdrawalRequestService withdrawalRequestService) {
-        super(responseSender, userService);
+    public WithdrawalOfFunds(WithdrawalOfFundsService withdrawalOfFundsService, WithdrawalRequestService withdrawalRequestService) {
         this.withdrawalOfFundsService = withdrawalOfFundsService;
         this.withdrawalRequestService = withdrawalRequestService;
     }

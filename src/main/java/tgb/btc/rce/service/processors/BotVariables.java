@@ -2,7 +2,6 @@ package tgb.btc.rce.service.processors;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import tgb.btc.rce.annotation.CommandProcessor;
@@ -11,9 +10,7 @@ import tgb.btc.rce.enums.BotKeyboard;
 import tgb.btc.rce.enums.BotProperties;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.exception.PropertyValueNotFoundException;
-import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.service.impl.UserService;
 import tgb.btc.rce.util.BotVariablePropertiesUtil;
 import tgb.btc.rce.util.UpdateUtil;
 
@@ -23,11 +20,6 @@ import java.io.IOException;
 @Slf4j
 @CommandProcessor(command = Command.BOT_VARIABLES)
 public class BotVariables extends Processor {
-
-    @Autowired
-    public BotVariables(IResponseSender responseSender, UserService userService) {
-        super(responseSender, userService);
-    }
 
     @Override
     public void run(Update update) {

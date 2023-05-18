@@ -8,9 +8,7 @@ import tgb.btc.rce.bean.PaymentRequisite;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.repository.PaymentRequisiteRepository;
-import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.service.impl.UserService;
 import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.InlineButton;
@@ -26,11 +24,6 @@ public class ShowRequisitesForDelete extends Processor {
     @Autowired
     public void setPaymentRequisiteRepository(PaymentRequisiteRepository paymentRequisiteRepository) {
         this.paymentRequisiteRepository = paymentRequisiteRepository;
-    }
-
-    @Autowired
-    public ShowRequisitesForDelete(IResponseSender responseSender, UserService userService) {
-        super(responseSender, userService);
     }
 
     @Override

@@ -4,12 +4,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.annotation.CommandProcessor;
-import tgb.btc.rce.bean.User;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.Menu;
-import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.service.impl.UserService;
 import tgb.btc.rce.service.processors.support.MessagesService;
 import tgb.btc.rce.util.MenuFactory;
 import tgb.btc.rce.util.NumberUtil;
@@ -19,11 +16,10 @@ import tgb.btc.rce.util.UpdateUtil;
 @CommandProcessor(command = Command.BAN_UNBAN)
 public class BanUnban extends Processor {
 
-    private final MessagesService messagesService;
+    private MessagesService messagesService;
 
     @Autowired
-    public BanUnban(IResponseSender responseSender, UserService userService, MessagesService messagesService) {
-        super(responseSender, userService);
+    public void setMessagesService(MessagesService messagesService) {
         this.messagesService = messagesService;
     }
 

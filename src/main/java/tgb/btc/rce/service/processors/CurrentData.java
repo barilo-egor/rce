@@ -6,20 +6,17 @@ import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.bean.BotMessage;
 import tgb.btc.rce.enums.BotMessageType;
 import tgb.btc.rce.enums.Command;
-import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.impl.BotMessageService;
-import tgb.btc.rce.service.impl.UserService;
 import tgb.btc.rce.util.UpdateUtil;
 
 @CommandProcessor(command = Command.CURRENT_DATA)
 public class CurrentData extends Processor {
 
-    private final BotMessageService botMessageService;
+    private BotMessageService botMessageService;
 
     @Autowired
-    public CurrentData(IResponseSender responseSender, UserService userService, BotMessageService botMessageService) {
-        super(responseSender, userService);
+    public void setBotMessageService(BotMessageService botMessageService) {
         this.botMessageService = botMessageService;
     }
 

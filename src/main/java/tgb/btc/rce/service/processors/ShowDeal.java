@@ -4,37 +4,33 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.media.InputMedia;
-import org.telegram.telegrambots.meta.api.objects.media.InputMediaDocument;
-import org.telegram.telegrambots.meta.api.objects.media.InputMediaPhoto;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.bean.Deal;
 import tgb.btc.rce.bean.PaymentReceipt;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.ReceiptFormat;
-import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.impl.DealService;
-import tgb.btc.rce.service.impl.UserService;
 import tgb.btc.rce.service.processors.support.DealSupportService;
 import tgb.btc.rce.util.UpdateUtil;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 @CommandProcessor(command = Command.SHOW_DEAL)
 public class ShowDeal extends Processor {
 
-    private final DealSupportService dealSupportService;
-    private final DealService dealService;
+    private DealSupportService dealSupportService;
+    private DealService dealService;
 
     @Autowired
-    public ShowDeal(IResponseSender responseSender, UserService userService, DealSupportService dealSupportService, DealService dealService) {
-        super(responseSender, userService);
+    public void setDealSupportService(DealSupportService dealSupportService) {
         this.dealSupportService = dealSupportService;
+    }
+
+    @Autowired
+    public void setDealService(DealService dealService) {
         this.dealService = dealService;
     }
 

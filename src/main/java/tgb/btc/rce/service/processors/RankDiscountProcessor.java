@@ -7,10 +7,7 @@ import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.repository.UserDiscountRepository;
-import tgb.btc.rce.repository.UserRepository;
-import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.service.impl.UserService;
 import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.InlineButton;
@@ -22,11 +19,6 @@ import java.util.List;
 public class RankDiscountProcessor extends Processor {
 
     private UserDiscountRepository userDiscountRepository;
-
-    @Autowired
-    public RankDiscountProcessor(IResponseSender responseSender, UserService userService) {
-        super(responseSender, userService);
-    }
 
     @Autowired
     public void setUserDiscountRepository(UserDiscountRepository userDiscountRepository) {
