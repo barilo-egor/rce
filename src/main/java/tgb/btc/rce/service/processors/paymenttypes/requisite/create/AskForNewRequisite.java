@@ -14,7 +14,7 @@ import tgb.btc.rce.util.UpdateUtil;
 
 import java.util.Objects;
 
-@CommandProcessor(command = Command.NEW_PAYMENT_TYPE_REQUISITE, step = 2)
+@CommandProcessor(command = Command.NEW_PAYMENT_TYPE_REQUISITE, step = 3)
 public class AskForNewRequisite extends Processor {
 
     private PaymentTypeRepository paymentTypeRepository;

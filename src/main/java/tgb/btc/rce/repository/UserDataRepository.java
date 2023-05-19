@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 import tgb.btc.rce.bean.UserData;
 import tgb.btc.rce.enums.CryptoCurrency;
 import tgb.btc.rce.enums.DealType;
+import tgb.btc.rce.enums.FiatCurrency;
 
 @Repository
 public interface UserDataRepository extends BaseRepository<UserData> {
@@ -18,6 +19,9 @@ public interface UserDataRepository extends BaseRepository<UserData> {
 
     @Query("select dealTypeVariable from UserData where user.chatId=:chatId")
     DealType getDealTypeByChatId(Long chatId);
+
+    @Query("select fiatCurrency from UserData where user.chatId=:chatId")
+    FiatCurrency getFiatCurrencyByChatId(Long chatId);
 
     @Query("select cryptoCurrency from UserData where user.chatId=:chatId")
     CryptoCurrency getCryptoCurrencyByChatId(Long chatId);
@@ -36,6 +40,10 @@ public interface UserDataRepository extends BaseRepository<UserData> {
     @Modifying
     @Query("update UserData set dealTypeVariable=:dealTypeVariable where user.pid in (select pid from User where chatId=:userChatId)")
     void updateDealTypeByUserChatId(Long userChatId, DealType dealTypeVariable);
+
+    @Modifying
+    @Query("update UserData set fiatCurrency=:fiatCurrency where user.pid in (select pid from User where chatId=:chatId)")
+    void updateFiatCurrencyByUserChatId(Long chatId, FiatCurrency fiatCurrency);
 
     @Modifying
     @Query("delete from UserData where user.pid in (select pid from User where chatId=:userChatId)")

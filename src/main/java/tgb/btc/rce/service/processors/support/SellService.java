@@ -259,7 +259,7 @@ public class SellService {
                 + "<b>Выберите способ получения перевода:</b>";
 
 
-        List<InlineButton> buttons = paymentTypeRepository.getByDealTypeAndIsOn(DealType.SELL, Boolean.TRUE).stream()
+        List<InlineButton> buttons = paymentTypeRepository.getByDealTypeAndIsOnAndFiatCurrency(DealType.SELL, Boolean.TRUE, deal.getFiatCurrency()).stream()
                 .map(paymentType -> InlineButton.builder()
                         .text(paymentType.getName())
                         .data(paymentType.getPid().toString())

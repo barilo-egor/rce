@@ -11,7 +11,7 @@ import tgb.btc.rce.util.UpdateUtil;
 
 import java.math.BigDecimal;
 
-@CommandProcessor(command = Command.CHANGE_MIN_SUM, step = 3)
+@CommandProcessor(command = Command.CHANGE_MIN_SUM, step = 4)
 public class SaveMinSum extends Processor {
 
     private PaymentTypeRepository paymentTypeRepository;

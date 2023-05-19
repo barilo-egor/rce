@@ -10,8 +10,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public final class FiatCurrenciesUtil {
-    private FiatCurrenciesUtil() {
+public final class FiatCurrencyUtil {
+    private FiatCurrencyUtil() {
     }
 
     private static final List<FiatCurrency> FIAT_CURRENCIES;

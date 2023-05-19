@@ -20,6 +20,8 @@ public interface BotStringConstants {
 
     String BUY_OR_SELL = "Покупка или продажа?";
 
+    String FIAT_CURRENCY_CHOOSE = "Выберите фиатную валюту.";
+
     String BUY = "Покупка";
 
     String SELL = "Продажа";

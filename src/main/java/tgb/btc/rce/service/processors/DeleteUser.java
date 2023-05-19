@@ -8,12 +8,16 @@ import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.bean.User;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.repository.*;
+import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
+import tgb.btc.rce.service.impl.UserService;
 import tgb.btc.rce.util.UpdateUtil;
 
 @Slf4j
 @CommandProcessor(command = Command.DELETE_USER)
 public class DeleteUser extends Processor {
+
+    private final UserRepository userRepository;
 
     private final DealRepository dealRepository;
 
@@ -29,11 +33,16 @@ public class DeleteUser extends Processor {
 
     private final ReferralUserRepository referralUserRepository;
 
+    private final SpamBanRepository spamBanRepository;
+
     @Autowired
-    public DeleteUser(DealRepository dealRepository, UserDiscountRepository userDiscountRepository,
+    public DeleteUser(IResponseSender responseSender, UserService userService, UserRepository userRepository,
+                      DealRepository dealRepository, UserDiscountRepository userDiscountRepository,
                       UserDataRepository userDataRepository, PaymentReceiptRepository paymentReceiptRepository,
                       WithdrawalRequestRepository withdrawalRequestRepository, LotteryWinRepository lotteryWinRepository,
-                      ReferralUserRepository referralUserRepository) {
+                      ReferralUserRepository referralUserRepository, SpamBanRepository spamBanRepository) {
+        super(responseSender, userService);
+        this.userRepository = userRepository;
         this.dealRepository = dealRepository;
         this.userDiscountRepository = userDiscountRepository;
         this.userDataRepository = userDataRepository;
@@ -41,6 +50,7 @@ public class DeleteUser extends Processor {
         this.withdrawalRequestRepository = withdrawalRequestRepository;
         this.lotteryWinRepository = lotteryWinRepository;
         this.referralUserRepository = referralUserRepository;
+        this.spamBanRepository = spamBanRepository;
     }
 
     @Override
@@ -56,6 +66,7 @@ public class DeleteUser extends Processor {
             paymentReceiptRepository.getByDealsPids(userChatId);
             dealRepository.deleteByUserChatId(userChatId);
             User user = userRepository.getByChatId(userChatId);
+            spamBanRepository.deleteByUserPid(user.getPid());
             userRepository.delete(user);
             referralUserRepository.deleteAll(user.getReferralUsers());
             responseSender.sendMessage(chatId, "Пользователь " + userChatId + " удален.");

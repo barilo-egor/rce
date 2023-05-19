@@ -9,23 +9,26 @@ import tgb.btc.rce.service.processors.bulkdiscounts.BulkDiscounts;
 import tgb.btc.rce.service.processors.bulkdiscounts.UpdateBulkDiscounts;
 import tgb.btc.rce.service.processors.paymenttypes.PaymentsTypes;
 import tgb.btc.rce.service.processors.paymenttypes.create.CreateNewPaymentType;
+import tgb.btc.rce.service.processors.paymenttypes.create.FiatCurrencyNewPaymentType;
 import tgb.btc.rce.service.processors.paymenttypes.create.NewPaymentType;
 import tgb.btc.rce.service.processors.paymenttypes.create.SaveNamePaymentType;
 import tgb.btc.rce.service.processors.paymenttypes.delete.DeletePaymentType;
 import tgb.btc.rce.service.processors.paymenttypes.delete.DeletingPaymentType;
+import tgb.btc.rce.service.processors.paymenttypes.delete.FiatCurrencyDeletePaymentType;
 import tgb.btc.rce.service.processors.paymenttypes.delete.ShowPaymentTypesForDelete;
-import tgb.btc.rce.service.processors.paymenttypes.minsum.AskForMinSum;
-import tgb.btc.rce.service.processors.paymenttypes.minsum.ChangeMinSum;
-import tgb.btc.rce.service.processors.paymenttypes.minsum.SaveMinSum;
-import tgb.btc.rce.service.processors.paymenttypes.minsum.ShowTypesForMinSum;
+import tgb.btc.rce.service.processors.paymenttypes.minsum.*;
 import tgb.btc.rce.service.processors.paymenttypes.requisite.create.AskForNewRequisite;
+import tgb.btc.rce.service.processors.paymenttypes.requisite.create.FiatCurrencyCreateRequisite;
 import tgb.btc.rce.service.processors.paymenttypes.requisite.create.NewPaymentTypeRequisite;
 import tgb.btc.rce.service.processors.paymenttypes.requisite.create.ShowPaymentTypesForCreateRequisite;
 import tgb.btc.rce.service.processors.paymenttypes.requisite.delete.DeletingPaymentRequisite;
+import tgb.btc.rce.service.processors.paymenttypes.requisite.delete.FiatCurrenciesDeleteRequisite;
 import tgb.btc.rce.service.processors.paymenttypes.requisite.delete.ShowPaymentTypesForDeleteRequisite;
 import tgb.btc.rce.service.processors.paymenttypes.requisite.delete.ShowRequisitesForDelete;
+import tgb.btc.rce.service.processors.paymenttypes.requisite.dynamic.FiatCurrencyDynamicRequisite;
 import tgb.btc.rce.service.processors.paymenttypes.requisite.dynamic.TurnDynamicRequisites;
 import tgb.btc.rce.service.processors.paymenttypes.requisite.dynamic.TurningDynamic;
+import tgb.btc.rce.service.processors.paymenttypes.turning.FiatCurrencyTurnPaymentType;
 import tgb.btc.rce.service.processors.paymenttypes.turning.ShowPaymentTypesForTurn;
 import tgb.btc.rce.service.processors.paymenttypes.turning.TurnPaymentTypes;
 import tgb.btc.rce.service.processors.paymenttypes.turning.TurningPaymentType;
@@ -171,6 +174,13 @@ public final class CommandProcessorLoader {
         commandProcessors.add(NewSpamBans.class);
         commandProcessors.add(ChoosingFiatCurrency.class);
         commandProcessors.add(MakeAdmin.class);
+        commandProcessors.add(FiatCurrencyNewPaymentType.class);
+        commandProcessors.add(FiatCurrencyCreateRequisite.class);
+        commandProcessors.add(FiatCurrencyDynamicRequisite.class);
+        commandProcessors.add(FiatCurrencyDeletePaymentType.class);
+        commandProcessors.add(SaveFiatCurrencyMinSum.class);
+        commandProcessors.add(FiatCurrencyTurnPaymentType.class);
+        commandProcessors.add(FiatCurrenciesDeleteRequisite.class);
         commandProcessors.stream()
                 .filter(processor -> !extendsProcessor(processor))
                 .findFirst()

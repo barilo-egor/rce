@@ -1,5 +1,6 @@
 package tgb.btc.rce.repository;
 
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import tgb.btc.rce.bean.SpamBan;
@@ -17,6 +18,10 @@ public interface SpamBanRepository extends BaseRepository<SpamBan> {
 
     @Query("select pid from SpamBan")
     List<Long> getPids();
+
+    @Modifying
+    @Query("delete from SpamBan where user.pid=:userPid")
+    void deleteByUserPid(Long userPid);
 
     long countByPid(Long pid);
 }

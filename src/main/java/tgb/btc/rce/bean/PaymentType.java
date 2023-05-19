@@ -4,11 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
 import tgb.btc.rce.enums.DealType;
+import tgb.btc.rce.enums.FiatCurrency;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
+import javax.persistence.*;
 import java.math.BigDecimal;
 
 @Entity
@@ -28,10 +26,23 @@ public class PaymentType extends BasePersist {
     private BigDecimal minSum;
 
     @Column(name = "DEAL_TYPE")
+    @Enumerated(value = EnumType.STRING)
     private DealType dealType;
 
     @Column(name = "IS_DYNAMIC_ON")
     private Boolean isDynamicOn;
+
+    @Column(name = "FIAT_CURRENCY")
+    @Enumerated(value = EnumType.STRING)
+    private FiatCurrency fiatCurrency;
+
+    public FiatCurrency getFiatCurrency() {
+        return fiatCurrency;
+    }
+
+    public void setFiatCurrency(FiatCurrency fiatCurrency) {
+        this.fiatCurrency = fiatCurrency;
+    }
 
     public String getName() {
         return name;

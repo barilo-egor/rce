@@ -7,7 +7,6 @@ import tgb.btc.rce.service.PropertiesReader;
 import tgb.btc.rce.service.impl.BulkDiscountValidateService;
 import tgb.btc.rce.service.impl.CurrenciesTurningValidateService;
 
-import java.util.Map;
 import java.util.Objects;
 
 public enum BotProperties implements PropertiesReader {

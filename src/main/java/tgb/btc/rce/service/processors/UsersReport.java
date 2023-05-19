@@ -19,7 +19,7 @@ import tgb.btc.rce.exception.BaseException;
 import tgb.btc.rce.repository.DealRepository;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.util.BigDecimalUtil;
-import tgb.btc.rce.util.FiatCurrenciesUtil;
+import tgb.btc.rce.util.FiatCurrencyUtil;
 import tgb.btc.rce.util.UpdateUtil;
 
 import java.io.File;
@@ -54,7 +54,7 @@ public class UsersReport extends Processor {
             List<String> cellHeaders = new ArrayList<>(List.of("Chat ID", "Username", "Куплено BTC", "Куплено LTC", "Куплено USDT",
                                                                "Куплено MONERO", "Продано BTC", "Продано LTC", "Продано USDT",
                                                                "Продано MONERO"));
-            for (FiatCurrency fiatCurrency : FiatCurrenciesUtil.getFiatCurrencies()) {
+            for (FiatCurrency fiatCurrency : FiatCurrencyUtil.getFiatCurrencies()) {
                 cellHeaders.add("Потрачено " + fiatCurrency.getCode());
             }
             Cell headCell;
@@ -79,7 +79,7 @@ public class UsersReport extends Processor {
                     Cell cell = row.createCell(++cellCount);
                     setUserCryptoAmount(cell, user.getChatId(), CryptoCurrency.values()[j], DealType.SELL);
                 }
-                for (FiatCurrency fiatCurrency : FiatCurrenciesUtil.getFiatCurrencies()) {
+                for (FiatCurrency fiatCurrency : FiatCurrencyUtil.getFiatCurrencies()) {
                     cellHeaders.add("Потрачено " + fiatCurrency.getCode());
                     Cell cell = row.createCell(++cellCount);
                     cell.setCellValue(BigDecimalUtil.roundNullSafe(

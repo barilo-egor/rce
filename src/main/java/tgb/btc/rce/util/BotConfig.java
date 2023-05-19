@@ -8,6 +8,8 @@ import tgb.btc.rce.service.BeanHolder;
 
 import java.util.Map;
 
+import java.util.Map;
+
 @Slf4j
 public final class BotConfig {
     private BotConfig() {

@@ -52,7 +52,7 @@ public class TurningDynamic extends Processor {
             paymentTypeRepository.updateIsDynamicOnByPid(false, pid);
             responseSender.deleteMessage(chatId, update.getCallbackQuery().getMessage().getMessageId());
             responseSender.sendMessage(chatId, "Динамические реквизиты для " + paymentType.getName() + " выключены.");
-            turnDynamicRequisites.sendPaymentTypes(chatId, paymentType.getDealType());
+            turnDynamicRequisites.sendPaymentTypes(chatId, paymentType.getDealType(), paymentType.getFiatCurrency());
         } else {
             List<PaymentRequisite> paymentRequisites = paymentRequisiteRepository.getByPaymentTypePid(pid);
             if (paymentRequisites.size() <= 1) {
@@ -63,7 +63,7 @@ public class TurningDynamic extends Processor {
             paymentTypeRepository.updateIsDynamicOnByPid(true, pid);
             responseSender.deleteMessage(chatId, update.getCallbackQuery().getMessage().getMessageId());
             responseSender.sendMessage(chatId, "Динамические реквизиты для " + paymentType.getName() + " включены.");
-            turnDynamicRequisites.sendPaymentTypes(chatId, paymentType.getDealType());
+            turnDynamicRequisites.sendPaymentTypes(chatId, paymentType.getDealType(), paymentType.getFiatCurrency());
         }
     }
 

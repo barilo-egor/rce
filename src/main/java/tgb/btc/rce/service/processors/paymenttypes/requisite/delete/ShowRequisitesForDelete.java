@@ -16,7 +16,7 @@ import tgb.btc.rce.vo.InlineButton;
 import java.util.ArrayList;
 import java.util.List;
 
-@CommandProcessor(command = Command.DELETE_PAYMENT_TYPE_REQUISITE, step = 1)
+@CommandProcessor(command = Command.DELETE_PAYMENT_TYPE_REQUISITE, step = 2)
 public class ShowRequisitesForDelete extends Processor {
 
     private PaymentRequisiteRepository paymentRequisiteRepository;
@@ -42,7 +42,7 @@ public class ShowRequisitesForDelete extends Processor {
     public void sendRequisites(Long chatId, Long paymentTypePid) {
         List<PaymentRequisite> paymentRequisites = paymentRequisiteRepository.getByPaymentTypePid(paymentTypePid);
         if (CollectionUtils.isEmpty(paymentRequisites)) {
-            responseSender.sendMessage(chatId, "Реквизиты отсутствуют.");
+            responseSender.sendMessage(chatId, "Реквизиты в этом типе оплаты отсутствуют.");
             processToAdminMainPanel(chatId);
             return;
         }

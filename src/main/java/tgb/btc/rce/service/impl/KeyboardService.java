@@ -5,7 +5,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import tgb.btc.rce.enums.*;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.util.CallbackQueryUtil;
-import tgb.btc.rce.util.FiatCurrenciesUtil;
+import tgb.btc.rce.util.FiatCurrencyUtil;
 import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.TurningCurrenciesUtil;
 import tgb.btc.rce.vo.InlineButton;
@@ -47,7 +47,7 @@ public class KeyboardService {
     }
 
     public ReplyKeyboard getFiatCurrencies() {
-        List<InlineButton> buttons = FiatCurrenciesUtil.getFiatCurrencies().stream()
+        List<InlineButton> buttons = FiatCurrencyUtil.getFiatCurrencies().stream()
                 .map(fiatCurrency -> InlineButton.builder()
                         .text(fiatCurrency.getCode().toUpperCase())
                         .data(CallbackQueryUtil.buildCallbackData(Command.CHOOSING_FIAT_CURRENCY.getText(), fiatCurrency.name()))

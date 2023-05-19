@@ -1,10 +1,12 @@
 package tgb.btc.rce.enums;
 
+import tgb.btc.rce.exception.BaseException;
+
 public enum FiatCurrency {
     /**
      * Бел.рубль
      */
-    BYN("byn", "рублей"),
+    BYN("byn", "бел.рублей"),
     /**
      * Рос.рубль
      */
@@ -25,5 +27,12 @@ public enum FiatCurrency {
 
     public String getCode() {
         return code;
+    }
+
+    public static FiatCurrency getByCode(String code) {
+        for (FiatCurrency fiatCurrency : FiatCurrency.values()) {
+            if (fiatCurrency.getCode().equals(code)) return fiatCurrency;
+        }
+        throw new BaseException("Фиатная валюта не найдена.");
     }
 }

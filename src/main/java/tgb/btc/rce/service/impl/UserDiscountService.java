@@ -13,7 +13,6 @@ import tgb.btc.rce.util.BulkDiscountUtil;
 import tgb.btc.rce.util.CalculateUtil;
 
 import java.math.BigDecimal;
-import java.util.Objects;
 
 @Service
 public class UserDiscountService implements IUserDiscountService {
@@ -51,7 +50,7 @@ public class UserDiscountService implements IUserDiscountService {
     public void applyBulk(Deal deal) {
         DealType dealType = deal.getDealType();
         if (!DealType.isBuy(dealType)) return;
-        BigDecimal bulkDiscount = BulkDiscountUtil.getPercentBySum(deal.getAmount());
+        BigDecimal bulkDiscount = BulkDiscountUtil.getPercentBySum(deal.getAmount(), deal.getFiatCurrency());
         if (!BigDecimalUtil.isZero(bulkDiscount))
             deal.setAmount(CalculateUtil.calculateDiscount(dealType, deal.getAmount(), bulkDiscount));
     }

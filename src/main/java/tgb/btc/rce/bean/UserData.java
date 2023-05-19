@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import tgb.btc.rce.enums.CryptoCurrency;
 import tgb.btc.rce.enums.DealType;
+import tgb.btc.rce.enums.FiatCurrency;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -30,6 +31,17 @@ public class UserData extends BasePersist {
 
     @Column(name = "CRYPTO_CURRENCY")
     private CryptoCurrency cryptoCurrency;
+
+    @Column(name = "FIAT_CURRENCY")
+    private FiatCurrency fiatCurrency;
+
+    public FiatCurrency getFiatCurrency() {
+        return fiatCurrency;
+    }
+
+    public void setFiatCurrency(FiatCurrency fiatCurrency) {
+        this.fiatCurrency = fiatCurrency;
+    }
 
     public User getUser() {
         return user;
