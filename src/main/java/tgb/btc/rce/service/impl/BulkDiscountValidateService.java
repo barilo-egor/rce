@@ -42,6 +42,8 @@ public class BulkDiscountValidateService implements IValidateService {
                             .fiatCurrency(FiatCurrency.getByCode(key.split("\\.")[0]))
                     .build());
         }
+        BULK_DISCOUNTS.sort(Comparator.comparingInt(BulkDiscount::getSum));
+        Collections.reverse(BULK_DISCOUNTS);
     }
 
     @Override
@@ -73,6 +75,8 @@ public class BulkDiscountValidateService implements IValidateService {
                     .fiatCurrency(FiatCurrency.getByCode(key.split("\\.")[0]))
                     .build());
         }
+        BULK_DISCOUNTS.sort(Comparator.comparingInt(BulkDiscount::getSum));
+        Collections.reverse(BULK_DISCOUNTS);
     }
 
 }

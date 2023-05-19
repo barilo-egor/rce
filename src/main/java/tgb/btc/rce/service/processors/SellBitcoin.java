@@ -33,7 +33,7 @@ import java.util.Objects;
 
 @CommandProcessor(command = Command.SELL_BITCOIN)
 public class SellBitcoin extends Processor {
-    
+
     private final DealService dealService;
     private final SellService sellService;
     private final PaymentReceiptRepository paymentReceiptRepository;
@@ -152,7 +152,8 @@ public class SellBitcoin extends Processor {
                     return;
                 }
                 currentDealPid = userService.getCurrentDealByChatId(chatId);
-                if (Objects.isNull(currentDealPid)) currentDealPid = dealService.createNewDeal(DealType.SELL, chatId).getPid();
+                if (Objects.isNull(currentDealPid))
+                    currentDealPid = dealService.createNewDeal(DealType.SELL, chatId).getPid();
                 if (Objects.isNull(dealRepository.getFiatCurrencyByPid(currentDealPid))) {
                     if (FiatCurrencyUtil.isFew()) {
                         responseSender.sendMessage(chatId, "Выберите валюту.", keyboardService.getFiatCurrencies());
@@ -188,9 +189,10 @@ public class SellBitcoin extends Processor {
                     DealType dealType = dealRepository.getDealTypeByPid(currentDealPid);
                     FiatCurrency fiatCurrency = dealRepository.getFiatCurrencyByPid(currentDealPid);
                     paymentTypesCount = paymentTypeRepository.countByDealTypeAndIsOnAndFiatCurrency(dealType, true, fiatCurrency);
-                    if (Objects.isNull(paymentTypesCount) || paymentTypesCount == 0) throw new BaseException("Не найден ни один тип оплаты.");
+                    if (Objects.isNull(paymentTypesCount) || paymentTypesCount == 0)
+                        throw new BaseException("Не найден ни один тип оплаты.");
                     if (paymentTypesCount > 1) {
-                        exchangeService.askForPaymentType(update);
+                        sellService.askForPaymentType(update);
                         userService.nextStep(chatId);
                         responseSender.deleteMessage(UpdateUtil.getChatId(update), UpdateUtil.getMessage(update).getMessageId());
                     } else {
@@ -213,8 +215,6 @@ public class SellBitcoin extends Processor {
                     result = true;
                 }
                 if (BooleanUtils.isTrue(result)) {
-                    responseSender.deleteMessage(UpdateUtil.getChatId(update),
-                            update.getCallbackQuery().getMessage().getMessageId());
                     sellService.askForWallet(update);
                     userService.nextStep(chatId);
                 } else if (BooleanUtils.isFalse(result)) responseSender.sendMessage(chatId, "Выберите способ оплаты.");

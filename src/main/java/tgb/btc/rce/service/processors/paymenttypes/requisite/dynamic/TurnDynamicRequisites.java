@@ -41,7 +41,7 @@ public class TurnDynamicRequisites extends Processor {
     public void run(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
         FiatCurrency fiatCurrency = FiatCurrencyUtil.isFew()
-                ? FiatCurrency.valueOf(UpdateUtil.getMessageText(update))
+                ? FiatCurrency.getByCode(UpdateUtil.getMessageText(update))
                 : FiatCurrencyUtil.getFirst();
         sendPaymentTypes(chatId, DealType.BUY, fiatCurrency);
         processToAdminMainPanel(chatId);

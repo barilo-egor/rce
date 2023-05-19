@@ -7,6 +7,7 @@ import tgb.btc.rce.bean.PaymentType;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.DealType;
+import tgb.btc.rce.repository.PaymentRequisiteRepository;
 import tgb.btc.rce.repository.PaymentTypeRepository;
 import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
@@ -19,6 +20,13 @@ public class DeletingPaymentType extends Processor {
     private PaymentTypeRepository paymentTypeRepository;
 
     private ShowPaymentTypesForDelete showPaymentTypesForDelete;
+
+    private PaymentRequisiteRepository paymentRequisiteRepository;
+
+    @Autowired
+    public void setPaymentRequisiteRepository(PaymentRequisiteRepository paymentRequisiteRepository) {
+        this.paymentRequisiteRepository = paymentRequisiteRepository;
+    }
 
     @Autowired
     public void setShowPaymentTypesForDelete(ShowPaymentTypesForDelete showPaymentTypesForDelete) {
@@ -42,10 +50,11 @@ public class DeletingPaymentType extends Processor {
         Long pid = Long.valueOf(values[1]);
         PaymentType paymentType = paymentTypeRepository.getByPid(pid);
         DealType dealType = paymentType.getDealType();
-        String message = "Тип оплаты на " + paymentType.getDealType().getDisplayName() + " \"" + paymentType.getName() + "\" удален.";
+        paymentRequisiteRepository.deleteByPaymentTypePid(paymentType.getPid());
         paymentTypeRepository.deleteById(pid);
         Long chatId = UpdateUtil.getChatId(update);
         responseSender.deleteMessage(chatId, update.getCallbackQuery().getMessage().getMessageId());
+        String message = "Тип оплаты на " + paymentType.getDealType().getDisplayName() + " \"" + paymentType.getName() + "\" удален.";
         responseSender.sendMessage(UpdateUtil.getChatId(update), message);
         showPaymentTypesForDelete.sendPaymentTypes(chatId, dealType, paymentType.getFiatCurrency());
     }

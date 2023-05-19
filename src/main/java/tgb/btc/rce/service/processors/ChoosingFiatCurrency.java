@@ -54,7 +54,10 @@ public class ChoosingFiatCurrency extends Processor {
     @Override
     public void run(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
-        if (buyBitcoin.isMainMenuCommand(update)) buyBitcoin.processCancel(chatId);
+        if (buyBitcoin.isMainMenuCommand(update)) {
+            buyBitcoin.processCancel(chatId);
+            return;
+        }
         if (!update.hasCallbackQuery()) {
             responseSender.sendMessage(chatId, "Выберите валюту.");
             return;
