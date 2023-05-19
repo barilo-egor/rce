@@ -22,6 +22,7 @@ import tgb.btc.rce.service.processors.paymenttypes.requisite.create.FiatCurrency
 import tgb.btc.rce.service.processors.paymenttypes.requisite.create.NewPaymentTypeRequisite;
 import tgb.btc.rce.service.processors.paymenttypes.requisite.create.ShowPaymentTypesForCreateRequisite;
 import tgb.btc.rce.service.processors.paymenttypes.requisite.delete.DeletingPaymentRequisite;
+import tgb.btc.rce.service.processors.paymenttypes.requisite.delete.FiatCurrenciesDeleteRequisite;
 import tgb.btc.rce.service.processors.paymenttypes.requisite.delete.ShowPaymentTypesForDeleteRequisite;
 import tgb.btc.rce.service.processors.paymenttypes.requisite.delete.ShowRequisitesForDelete;
 import tgb.btc.rce.service.processors.paymenttypes.requisite.dynamic.FiatCurrencyDynamicRequisite;
@@ -194,6 +195,7 @@ public final class CommandProcessorLoader {
         commandProcessors.add(FiatCurrencyDeletePaymentType.class);
         commandProcessors.add(SaveFiatCurrencyMinSum.class);
         commandProcessors.add(FiatCurrencyTurnPaymentType.class);
+        commandProcessors.add(FiatCurrenciesDeleteRequisite.class);
         commandProcessors.stream()
                 .filter(processor -> !extendsProcessor(processor))
                 .findFirst()

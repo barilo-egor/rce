@@ -103,7 +103,7 @@ public class BuyBitcoin extends Processor {
         }
     }
 
-    private boolean isMainMenuCommand(Update update) {
+    public boolean isMainMenuCommand(Update update) {
         try {
             return !userService.isDefaultStep(UpdateUtil.getChatId(update)) && UpdateUtil.hasMessageText(update)
                     && MAIN_MENU_COMMANDS.stream().anyMatch(command -> command.equals(Command.fromUpdate(update)));

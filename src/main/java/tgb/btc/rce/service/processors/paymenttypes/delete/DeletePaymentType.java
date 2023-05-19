@@ -31,7 +31,7 @@ public class DeletePaymentType extends Processor {
     @Override
     public void run(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
-        userDataRepository.updateFiatCurrencyByUserChatId(chatId, FiatCurrency.valueOf(UpdateUtil.getMessageText(update)));
+        userDataRepository.updateFiatCurrencyByUserChatId(chatId, FiatCurrency.getByCode(UpdateUtil.getMessageText(update)));
         responseSender.sendMessage(chatId, BotStringConstants.BUY_OR_SELL, BotKeyboard.BUY_OR_SELL);
         userService.nextStep(chatId, Command.DELETE_PAYMENT_TYPE);
     }

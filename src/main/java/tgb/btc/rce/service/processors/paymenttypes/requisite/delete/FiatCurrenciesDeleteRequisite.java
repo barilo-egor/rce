@@ -21,7 +21,7 @@ import tgb.btc.rce.vo.InlineButton;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@CommandProcessor(command = Command.CHOOSING_FIAT_CURRENCY)
+@CommandProcessor(command = Command.DELETE_PAYMENT_TYPE_REQUISITE)
 public class FiatCurrenciesDeleteRequisite extends Processor {
 
     private PaymentTypeRepository paymentTypeRepository;

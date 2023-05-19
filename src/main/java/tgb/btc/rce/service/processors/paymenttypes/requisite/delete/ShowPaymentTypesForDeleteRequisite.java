@@ -9,6 +9,7 @@ import tgb.btc.rce.enums.BotKeyboard;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.DealType;
+import tgb.btc.rce.enums.FiatCurrency;
 import tgb.btc.rce.repository.PaymentTypeRepository;
 import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
@@ -38,7 +39,8 @@ public class ShowPaymentTypesForDeleteRequisite extends Processor {
     @Override
     public void run(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
-        List<PaymentType> paymentTypes = paymentTypeRepository.getByDealType(DealType.BUY);
+        List<PaymentType> paymentTypes = paymentTypeRepository.getByDealTypeAndFiatCurrency(DealType.BUY,
+                FiatCurrency.getByCode(UpdateUtil.getMessageText(update)));
         if (CollectionUtils.isEmpty(paymentTypes)) {
             responseSender.sendMessage(chatId, "Список тип оплат на " + DealType.BUY.getDisplayName() + " пуст."); // todo добавить фиат карренси
             processToAdminMainPanel(chatId);

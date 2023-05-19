@@ -68,7 +68,7 @@ public class ShowPaymentTypesForDelete extends Processor {
     }
 
     public void sendPaymentTypes(Long chatId, DealType dealType, FiatCurrency fiatCurrency) {
-        List<PaymentType> paymentTypes = paymentTypeRepository.getByDealType(dealType);
+        List<PaymentType> paymentTypes = paymentTypeRepository.getByDealTypeAndFiatCurrency(dealType, fiatCurrency);
         if (CollectionUtils.isEmpty(paymentTypes)) {
             responseSender.sendMessage(chatId, "Список тип оплат на " + dealType.getDisplayName() + " пуст.");
             processToAdminMainPanel(chatId);

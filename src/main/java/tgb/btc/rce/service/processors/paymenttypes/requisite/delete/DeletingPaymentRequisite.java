@@ -58,6 +58,7 @@ public class DeletingPaymentRequisite extends Processor {
             requisite.setRequisiteOrder(i + 1);
             paymentRequisiteRepository.save(requisite);
         }
+        responseSender.deleteMessage(UpdateUtil.getChatId(update), update.getCallbackQuery().getMessage().getMessageId());
         showRequisitesForDelete.sendRequisites(UpdateUtil.getChatId(update), paymentType.getPid());
     }
 

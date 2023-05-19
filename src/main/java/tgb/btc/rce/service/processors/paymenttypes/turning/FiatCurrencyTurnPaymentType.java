@@ -13,7 +13,7 @@ import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.impl.UserService;
 import tgb.btc.rce.util.UpdateUtil;
 
-@CommandProcessor(command = Command.CHOOSING_FIAT_CURRENCY, step = 1)
+@CommandProcessor(command = Command.TURN_PAYMENT_TYPES, step = 1)
 public class FiatCurrencyTurnPaymentType extends Processor {
 
     private UserDataRepository userDataRepository;
@@ -33,6 +33,6 @@ public class FiatCurrencyTurnPaymentType extends Processor {
         Long chatId = UpdateUtil.getChatId(update);
         userDataRepository.updateFiatCurrencyByUserChatId(chatId, FiatCurrency.getByCode(UpdateUtil.getMessageText(update)));
         responseSender.sendMessage(chatId, BotStringConstants.BUY_OR_SELL, BotKeyboard.BUY_OR_SELL);
-        userService.nextStep(chatId, Command.CHOOSING_FIAT_CURRENCY);
+        userService.nextStep(chatId, Command.TURN_PAYMENT_TYPES);
     }
 }
