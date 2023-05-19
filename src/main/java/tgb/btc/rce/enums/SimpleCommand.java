@@ -77,4 +77,8 @@ public enum SimpleCommand {
         }
         throw new BaseException("Не найдена SimpleCommand для " + command.name());
     }
+
+    public static void run(Command command, Update update) {
+        getByCommand(command).getConsumer().accept(update);
+    }
 }

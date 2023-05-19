@@ -1,5 +1,6 @@
 package tgb.btc.rce.service.impl;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
@@ -21,7 +22,9 @@ import tgb.btc.rce.util.CommandUtil;
 import tgb.btc.rce.util.UpdateUtil;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 @Transactional
@@ -36,6 +39,8 @@ public class UserService extends BasePersistService<User> {
 
     public static final ReferralType REFERRAL_TYPE =
             ReferralType.valueOf(BotProperties.MODULES_PROPERTIES.getString("referral.type"));
+
+    private static final Map<Long, Boolean> IS_BANNED_CACHE = new ConcurrentHashMap<>();
 
     @Autowired
     public void setUserDataRepository(UserDataRepository userDataRepository) {
@@ -65,6 +70,16 @@ public class UserService extends BasePersistService<User> {
 
     public Command getCommandByChatId(Long chatId) {
         return userRepository.getCommandByChatId(chatId);
+    }
+
+    /**
+     * Регистрирует пользователя, если он не существует в базе.
+     * @return существовал ли пользователь ДО регистрации.
+     */
+    public boolean registerIfNotExists(Update update) {
+        boolean isUserExists = existByChatId(UpdateUtil.getChatId(update));
+        if (!isUserExists) register(update);
+        return isUserExists;
     }
 
     public User register(Update update) {
@@ -162,8 +177,10 @@ public class UserService extends BasePersistService<User> {
         userRepository.updateIsActiveByChatId(isActive, chatId);
     }
 
-    public Boolean getIsBannedByChatId(Long chatId) {
-        return userRepository.getIsBannedByChatId(chatId);
+    public boolean isBanned(Long chatId) {
+        Boolean isBanned = IS_BANNED_CACHE.get(chatId);
+        if (Objects.isNull(isBanned)) return BooleanUtils.isTrue(userRepository.getIsBannedByChatId(chatId));
+        else return isBanned;
     }
 
     public void updateCurrentDealByChatId(Long dealPid, Long chatId) {
@@ -199,10 +216,12 @@ public class UserService extends BasePersistService<User> {
     }
 
     public void ban(Long chatId) {
+        IS_BANNED_CACHE.remove(chatId);
         userRepository.updateIsBannedByChatId(chatId, true);
     }
 
     public void unban(Long chatId) {
+        IS_BANNED_CACHE.remove(chatId);
         userRepository.updateIsBannedByChatId(chatId, false);
     }
 }

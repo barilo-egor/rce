@@ -77,6 +77,13 @@ public interface UserRepository extends BaseRepository<User> {
     @Query("select isBanned from User where chatId=:chatId")
     Boolean getIsBannedByChatId(Long chatId);
 
+    /**
+     * use userService.ban() and userService.unban()
+     */
+    @Modifying
+    @Query("update User set isBanned=:isBanned where chatId=:chatId")
+    void updateIsBannedByChatId(Long chatId, Boolean isBanned);
+
     @Modifying
     @Query("update User set currentDeal=:dealPid where chatId=:chatId")
     void updateCurrentDealByChatId(Long dealPid, @Param("chatId") Long chatId);
@@ -101,10 +108,6 @@ public interface UserRepository extends BaseRepository<User> {
 
     @Query("select charges from User where chatId=:chatId")
     Integer getChargesByChatId(Long chatId);
-
-    @Modifying
-    @Query("update User set isBanned=:isBanned where chatId=:chatId")
-    void updateIsBannedByChatId(Long chatId, Boolean isBanned);
 
     @Query("update User set referralPercent=:referralPercent where chatId=:chatId")
     @Modifying
