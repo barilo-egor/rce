@@ -152,17 +152,17 @@ public class DealReports extends Processor {
             cell = row.createCell(3);
             cell.setCellValue(deal.getAmount().setScale(0, RoundingMode.FLOOR).toString());
             cell = row.createCell(4);
-            // getPaymentTypeEnum используется для старых сделок
-            String paymentTypeName = Objects.nonNull(deal.getPaymentTypeEnum())
-                    ? deal.getPaymentTypeEnum().getDisplayName()
-                    : deal.getPaymentType().getName();
-            cell.setCellValue(paymentTypeName);
+            cell.setCellValue(deal.getFiatCurrency().getCode());
             cell = row.createCell(5);
             cell.setCellValue(deal.getCryptoCurrency().getDisplayName());
             cell = row.createCell(6);
             cell.setCellValue(deal.getCryptoAmount().setScale(8, RoundingMode.FLOOR).stripTrailingZeros().toString());
             cell = row.createCell(7);
-            cell.setCellValue(deal.getFiatCurrency().getCode());
+            // getPaymentTypeEnum используется для старых сделок
+            String paymentTypeName = Objects.nonNull(deal.getPaymentTypeEnum())
+                    ? deal.getPaymentTypeEnum().getDisplayName()
+                    : deal.getPaymentType().getName();
+            cell.setCellValue(paymentTypeName);
             cell = row.createCell(8);
             cell.setCellValue(deal.getUser().getChatId());
             i++;
