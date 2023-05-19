@@ -8,9 +8,7 @@ import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.repository.UserDataRepository;
 import tgb.btc.rce.repository.UserRepository;
-import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.service.impl.UserService;
 import tgb.btc.rce.util.UpdateUtil;
 
 @CommandProcessor(command = Command.NEW_PAYMENT_TYPE_REQUISITE, step = 2)
@@ -29,11 +27,6 @@ public class ShowPaymentTypesForCreateRequisite extends Processor {
     @Autowired
     public void setUserDataRepository(UserDataRepository userDataRepository) {
         this.userDataRepository = userDataRepository;
-    }
-
-    @Autowired
-    public ShowPaymentTypesForCreateRequisite(IResponseSender responseSender, UserService userService) {
-        super(responseSender, userService);
     }
 
     @Override

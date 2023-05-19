@@ -8,9 +8,7 @@ import tgb.btc.rce.enums.BotKeyboard;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.FiatCurrency;
 import tgb.btc.rce.repository.UserDataRepository;
-import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.service.impl.UserService;
 import tgb.btc.rce.util.UpdateUtil;
 
 @CommandProcessor(command = Command.NEW_PAYMENT_TYPE, step = 2)
@@ -21,11 +19,6 @@ public class FiatCurrencyNewPaymentType extends Processor {
     @Autowired
     public void setUserDataRepository(UserDataRepository userDataRepository) {
         this.userDataRepository = userDataRepository;
-    }
-
-    @Autowired
-    public FiatCurrencyNewPaymentType(IResponseSender responseSender, UserService userService) {
-        super(responseSender, userService);
     }
 
     @Override

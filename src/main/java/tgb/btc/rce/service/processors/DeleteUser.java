@@ -8,9 +8,7 @@ import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.bean.User;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.repository.*;
-import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.service.impl.UserService;
 import tgb.btc.rce.util.UpdateUtil;
 
 @Slf4j
@@ -36,12 +34,11 @@ public class DeleteUser extends Processor {
     private final SpamBanRepository spamBanRepository;
 
     @Autowired
-    public DeleteUser(IResponseSender responseSender, UserService userService, UserRepository userRepository,
-                      DealRepository dealRepository, UserDiscountRepository userDiscountRepository,
-                      UserDataRepository userDataRepository, PaymentReceiptRepository paymentReceiptRepository,
+    public DeleteUser(UserRepository userRepository, DealRepository dealRepository,
+                      UserDiscountRepository userDiscountRepository, UserDataRepository userDataRepository,
+                      PaymentReceiptRepository paymentReceiptRepository,
                       WithdrawalRequestRepository withdrawalRequestRepository, LotteryWinRepository lotteryWinRepository,
                       ReferralUserRepository referralUserRepository, SpamBanRepository spamBanRepository) {
-        super(responseSender, userService);
         this.userRepository = userRepository;
         this.dealRepository = dealRepository;
         this.userDiscountRepository = userDiscountRepository;

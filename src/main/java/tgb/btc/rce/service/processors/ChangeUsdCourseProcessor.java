@@ -8,9 +8,7 @@ import tgb.btc.rce.enums.*;
 import tgb.btc.rce.exception.BaseException;
 import tgb.btc.rce.exception.EnumTypeNotFoundException;
 import tgb.btc.rce.repository.UserDataRepository;
-import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.service.impl.UserService;
 import tgb.btc.rce.util.FiatCurrencyUtil;
 import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.UpdateUtil;
@@ -28,11 +26,6 @@ public class ChangeUsdCourseProcessor extends Processor {
     @Autowired
     public void setUserDataRepository(UserDataRepository userDataRepository) {
         this.userDataRepository = userDataRepository;
-    }
-
-    @Autowired
-    public ChangeUsdCourseProcessor(IResponseSender responseSender, UserService userService) {
-        super(responseSender, userService);
     }
 
     @Override

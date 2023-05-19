@@ -6,9 +6,7 @@ import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.BotKeyboard;
 import tgb.btc.rce.enums.Command;
-import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.service.impl.UserService;
 import tgb.btc.rce.util.FiatCurrencyUtil;
 import tgb.btc.rce.util.UpdateUtil;
 
@@ -20,11 +18,6 @@ public class FiatCurrencyDynamicRequisite extends Processor {
     @Autowired
     public void setTurnDynamicRequisites(TurnDynamicRequisites turnDynamicRequisites) {
         this.turnDynamicRequisites = turnDynamicRequisites;
-    }
-
-    @Autowired
-    public FiatCurrencyDynamicRequisite(IResponseSender responseSender, UserService userService) {
-        super(responseSender, userService);
     }
 
     @Override

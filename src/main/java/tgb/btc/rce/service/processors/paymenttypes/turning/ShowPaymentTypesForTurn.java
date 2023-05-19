@@ -12,9 +12,7 @@ import tgb.btc.rce.enums.DealType;
 import tgb.btc.rce.enums.FiatCurrency;
 import tgb.btc.rce.repository.PaymentTypeRepository;
 import tgb.btc.rce.repository.UserDataRepository;
-import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.service.impl.UserService;
 import tgb.btc.rce.util.FiatCurrencyUtil;
 import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.UpdateUtil;
@@ -38,11 +36,6 @@ public class ShowPaymentTypesForTurn extends Processor {
     @Autowired
     public void setPaymentTypeRepository(PaymentTypeRepository paymentTypeRepository) {
         this.paymentTypeRepository = paymentTypeRepository;
-    }
-
-    @Autowired
-    public ShowPaymentTypesForTurn(IResponseSender responseSender, UserService userService) {
-        super(responseSender, userService);
     }
 
     @Override
