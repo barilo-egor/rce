@@ -223,10 +223,10 @@ public class BuyBitcoin extends Processor {
                 FiatCurrency fiatCurrency = dealRepository.getFiatCurrencyByPid(currentDealPid);
                 paymentTypesCount = paymentTypeRepository.countByDealTypeAndIsOnAndFiatCurrency(dealType, true, fiatCurrency);
                 if (Objects.isNull(paymentTypesCount) || paymentTypesCount == 0) throw new BaseException("Не найден ни один тип оплаты.");
+                if (update.hasCallbackQuery()) responseSender.deleteMessage(chatId, update.getCallbackQuery().getMessage().getMessageId());
                 if (paymentTypesCount > 1) {
                     exchangeService.askForPaymentType(update);
                     userService.nextStep(chatId);
-                    responseSender.deleteMessage(UpdateUtil.getChatId(update), UpdateUtil.getMessage(update).getMessageId());
                 } else {
                     userService.updateBufferVariable(chatId,
                             paymentTypeRepository.getByDealTypeAndIsOnAndFiatCurrency(dealType, true, fiatCurrency).get(0).getPid().toString());

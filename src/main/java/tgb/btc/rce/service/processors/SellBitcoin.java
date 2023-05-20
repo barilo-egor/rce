@@ -220,11 +220,10 @@ public class SellBitcoin extends Processor {
                 } else if (BooleanUtils.isFalse(result)) responseSender.sendMessage(chatId, "Выберите способ оплаты.");
                 break;
             case 4:
+                if (update.hasCallbackQuery()) responseSender.deleteMessage(chatId, update.getCallbackQuery().getMessage().getMessageId());
                 sellService.saveWallet(update);
                 sellService.buildDeal(update);
                 userService.nextStep(chatId);
-                responseSender.deleteMessage(UpdateUtil.getChatId(update), UpdateUtil.getMessage(update).getMessageId());
-                responseSender.deleteMessage(UpdateUtil.getChatId(update), Integer.parseInt(userService.getBufferVariable(chatId)));
                 break;
             case 5:
                 Long dealPid = userService.getCurrentDealByChatId(chatId);
