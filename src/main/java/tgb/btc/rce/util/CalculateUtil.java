@@ -181,11 +181,12 @@ public final class CalculateUtil {
         if (CurrencyApi.BINANCE.equals(CurrencyApi.valueOf(BotProperties.BOT_CONFIG_PROPERTIES.getString("bot.btc.api")))) {
             currency = readJsonFromUrl(CalculateUtil.BTC_USD_URL_BINANCE);
             obj = currency.get("price");
+            return parse(obj, CryptoCurrency.BITCOIN, String.class);
         } else {
             currency = readJsonFromUrl(CalculateUtil.BTC_USD_URL_BLOCKCHAIN);
             obj = currency.get("last_trade_price");
+            return parse(obj, CryptoCurrency.BITCOIN, Double.class);
         }
-        return parse(obj, CryptoCurrency.BITCOIN);
     }
 
     @SneakyThrows
@@ -196,11 +197,15 @@ public final class CalculateUtil {
     }
 
     public static BigDecimal parse(Object obj, CryptoCurrency cryptoCurrency) {
+        return parse(obj, cryptoCurrency, cryptoCurrency.getRateClass());
+    }
+
+    public static BigDecimal parse(Object obj, CryptoCurrency cryptoCurrency, Class clazz) {
         double sum;
         try {
-            if (cryptoCurrency.getRateClass().equals(String.class)) {
+            if (clazz.equals(String.class)) {
                 sum = Double.parseDouble((String) obj);
-            } else if(cryptoCurrency.getRateClass().equals(Double.class)) {
+            } else if(clazz.equals(Double.class)) {
                 sum = (Double) obj;
             } else throw new BaseException("Не найден тип курса из апи.");
         } catch (NumberFormatException ex) {
