@@ -2,10 +2,7 @@ package tgb.btc.rce.util;
 
 import lombok.SneakyThrows;
 import org.json.JSONObject;
-import tgb.btc.rce.enums.BotVariableType;
-import tgb.btc.rce.enums.CryptoCurrency;
-import tgb.btc.rce.enums.DealType;
-import tgb.btc.rce.enums.FiatCurrency;
+import tgb.btc.rce.enums.*;
 import tgb.btc.rce.exception.BaseException;
 
 import java.io.*;
@@ -179,9 +176,15 @@ public final class CalculateUtil {
 
     @SneakyThrows
     public static BigDecimal getBtcCurrency() {
-        JSONObject currency = readJsonFromUrl(CalculateUtil.BTC_USD_URL_BINANCE);
-//        Object obj = currency.get("last_trade_price"); blockchain
-        Object obj = currency.get("price");
+        Object obj;
+        JSONObject currency;
+        if (CurrencyApi.BINANCE.equals(CurrencyApi.valueOf(BotProperties.BOT_CONFIG_PROPERTIES.getString("bot.btc.api")))) {
+            currency = readJsonFromUrl(CalculateUtil.BTC_USD_URL_BINANCE);
+            obj = currency.get("price");
+        } else {
+            currency = readJsonFromUrl(CalculateUtil.BTC_USD_URL_BLOCKCHAIN);
+            obj = currency.get("last_trade_price");
+        }
         return parse(obj, CryptoCurrency.BITCOIN);
     }
 
