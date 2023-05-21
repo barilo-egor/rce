@@ -78,7 +78,7 @@ public class ExchangeServiceNew {
     public void askForSum(Long chatId, CryptoCurrency currency, DealType dealType) {
         PropertiesMessage propertiesMessage;
         if (CryptoCurrency.BITCOIN.equals(currency)) {
-            propertiesMessage = PropertiesMessage.DEAL_INPUT_SUM_CRYPTO_OR_FIAT;
+            propertiesMessage = PropertiesMessage.DEAL_INPUT_SUM_CRYPTO_OR_FIAT; // TODO сейчас хардкод на "или в рублях", надо подставлять фиатное
         } else {
             propertiesMessage = PropertiesMessage.DEAL_INPUT_SUM;
         }
