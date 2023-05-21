@@ -21,10 +21,7 @@ import tgb.btc.rce.service.impl.UserService;
 import tgb.btc.rce.service.processors.support.ExchangeService;
 import tgb.btc.rce.service.processors.support.ExchangeServiceNew;
 import tgb.btc.rce.service.schedule.DealDeleteScheduler;
-import tgb.btc.rce.util.BotImageUtil;
-import tgb.btc.rce.util.FiatCurrencyUtil;
-import tgb.btc.rce.util.MessagePropertiesUtil;
-import tgb.btc.rce.util.UpdateUtil;
+import tgb.btc.rce.util.*;
 import tgb.btc.rce.vo.InlineButton;
 
 import java.util.Arrays;
@@ -191,7 +188,7 @@ public class BuyBitcoin extends Processor {
                 }
                 if (!exchangeService.saveSum(update)) return;
                 responseSender.deleteMessage(UpdateUtil.getChatId(update), Integer.parseInt(userService.getBufferVariable(chatId)));
-                if (dealService.getDealsCountByUserChatId(chatId) < 1) {
+                if (!DealPromoUtil.isNone() && dealService.getDealsCountByUserChatId(chatId) < 1) {
                     exchangeService.askForUserPromoCode(chatId, false);
                 } else if (userService.getReferralBalanceByChatId(chatId) > 0) {
                     exchangeService.askForReferralDiscount(update);
@@ -202,7 +199,7 @@ public class BuyBitcoin extends Processor {
                 userService.nextStep(chatId);
                 break;
             case 3:
-                if (dealService.getDealsCountByUserChatId(chatId) < 1) {
+                if (!DealPromoUtil.isNone() && dealService.getDealsCountByUserChatId(chatId) < 1) {
                     exchangeService.processPromoCode(update);
                 } else if (update.hasCallbackQuery()
                         && update.getCallbackQuery().getData().equals(ExchangeService.USE_REFERRAL_DISCOUNT)){
@@ -326,7 +323,7 @@ public class BuyBitcoin extends Processor {
                         dealService.getCryptoCurrencyByPid(currentDealPid), dealService.getDealTypeByPid(currentDealPid));
                 break;
             case 3:
-                if (dealService.getDealsCountByUserChatId(chatId) < 1) {
+                if (!DealPromoUtil.isNone() && dealService.getDealsCountByUserChatId(chatId) < 1) {
                     exchangeService.askForUserPromoCode(chatId, true);
                 } else if (userService.getReferralBalanceByChatId(chatId) > 0) {
                     exchangeService.askForReferralDiscount(update);
