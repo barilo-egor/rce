@@ -1,5 +1,6 @@
 package tgb.btc.rce.service.processors.support;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -12,6 +13,7 @@ import tgb.btc.rce.repository.DealRepository;
 import tgb.btc.rce.repository.UserRepository;
 import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.IUserDiscountService;
+import tgb.btc.rce.service.impl.CalculateService;
 import tgb.btc.rce.service.impl.KeyboardService;
 import tgb.btc.rce.service.impl.MessageService;
 import tgb.btc.rce.util.BotVariablePropertiesUtil;
@@ -30,17 +32,24 @@ public class ExchangeServiceNew {
 
     private DealRepository dealRepository;
 
+    private UserRepository userRepository;
+
     private IResponseSender responseSender;
 
     private IUserDiscountService userDiscountService;
 
-    private UserRepository userRepository;
+    private CalculateService calculateService;
+
+    @Autowired
+    public void setCalculateService(CalculateService calculateService) {
+        this.calculateService = calculateService;
+    }
 
     @Autowired
     public void setUserRepository(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
-
+    
     @Autowired
     public void setUserDiscountService(IUserDiscountService userDiscountService) {
         this.userDiscountService = userDiscountService;
@@ -72,7 +81,13 @@ public class ExchangeServiceNew {
     }
 
     public void askForSum(Long chatId, CryptoCurrency currency, DealType dealType) {
-        String text = MessagePropertiesUtil.getMessage(PropertiesMessage.DEAL_INPUT_SUM,
+        PropertiesMessage propertiesMessage;
+        if (CryptoCurrency.BITCOIN.equals(currency)) {
+            propertiesMessage = PropertiesMessage.DEAL_INPUT_SUM_CRYPTO_OR_FIAT; // TODO сейчас хардкод на "или в рублях", надо подставлять фиатное
+        } else {
+            propertiesMessage = PropertiesMessage.DEAL_INPUT_SUM;
+        }
+        String text = MessagePropertiesUtil.getMessage(propertiesMessage,
                                                        dealRepository.getCryptoCurrencyByPid(userRepository.getCurrentDealByChatId(chatId)));
 
         messageService.sendMessageAndSaveMessageId(chatId, text, keyboardService.getCalculator(currency, dealType));
@@ -95,10 +110,10 @@ public class ExchangeServiceNew {
         }
 
         deal.setCryptoAmount(BigDecimal.valueOf(sum));
-        deal.setAmount(CalculateUtil.convertCryptoToRub(cryptoCurrency, sum, deal.getFiatCurrency(), dealType));
+        deal.setAmount(calculateService.convert(cryptoCurrency, sum, deal.getFiatCurrency(), dealType, true));
         userDiscountService.applyPersonal(chatId, deal);
         userDiscountService.applyBulk(deal);
-        deal.setCommission(CalculateUtil.getCommission(BigDecimal.valueOf(sum), cryptoCurrency, deal.getFiatCurrency(), dealType));
+        deal.setCommission(calculateService.getCommission(BigDecimal.valueOf(sum), cryptoCurrency, deal.getFiatCurrency(), dealType));
         dealRepository.save(deal);
         return false;
     }

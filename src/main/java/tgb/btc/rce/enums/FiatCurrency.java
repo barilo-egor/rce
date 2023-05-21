@@ -11,7 +11,7 @@ public enum FiatCurrency {
      * Рос.рубль
      */
     RUB("rub", "₽"),
-    UAD("uah", "гривен");
+    UAH("uah", "гривен");
 
     final String code;
 

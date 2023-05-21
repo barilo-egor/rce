@@ -114,7 +114,7 @@ public class BotVariablePropertiesUtil {
         return getBigDecimal(BotVariableType.TRANSACTION_COMMISSION.getKey(cryptoCurrency));
     }
 
-    private static BigDecimal getBigDecimal(String key) {
+    public static BigDecimal getBigDecimal(String key) {
         return BotProperties.BOT_VARIABLE_PROPERTIES.getBigDecimal(key);
     }
 

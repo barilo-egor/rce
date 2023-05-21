@@ -20,6 +20,7 @@ public enum PropertiesMessage {
 
     CHOOSE_CURRENCY_SELL("choose.currency.sell"),
     DEAL_INPUT_SUM("deal.input.sum"),
+    DEAL_INPUT_SUM_CRYPTO_OR_FIAT("deal.input.sum.crypto.or.fiat"),
     DEAL_CONFIRMED("deal.confirmed"),
     USER_INFORMATION_MAIN("user.information.main"),
     USER_INFORMATION_WITHOUT_REFERRAL_MAIN("user.information.without.referral.main");

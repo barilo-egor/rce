@@ -15,6 +15,7 @@ import tgb.btc.rce.enums.DealType;
 import tgb.btc.rce.enums.ReferralType;
 import tgb.btc.rce.exception.BaseException;
 import tgb.btc.rce.service.Processor;
+import tgb.btc.rce.service.impl.CalculateService;
 import tgb.btc.rce.service.impl.DealService;
 import tgb.btc.rce.service.impl.PaymentRequisiteService;
 import tgb.btc.rce.service.impl.UserService;
@@ -34,6 +35,13 @@ public class ConfirmUserDeal extends Processor {
     private DealService dealService;
 
     private PaymentRequisiteService paymentRequisiteService;
+
+    private CalculateService calculateService;
+
+    @Autowired
+    public void setCalculateService(CalculateService calculateService) {
+        this.calculateService = calculateService;
+    }
 
     @Autowired
     public void setPaymentRequisiteService(PaymentRequisiteService paymentRequisiteService) {
@@ -91,7 +99,7 @@ public class ConfirmUserDeal extends Processor {
                     ? BigDecimal.valueOf(BotVariablePropertiesUtil.getDouble(BotVariableType.REFERRAL_PERCENT))
                     : refUserReferralPercent;
             BigDecimal sumToAdd = BigDecimalUtil.multiplyHalfUp(deal.getAmount(),
-                    CalculateUtil.getPercentsFactor(referralPercent));
+                    calculateService.getPercentsFactor(referralPercent));
             Integer total = refUser.getReferralBalance() + sumToAdd.intValue();
             log.info("Подтверждение сделки, зачисление на реф баланс пользователю. Админ чат айди = "
                     + UpdateUtil.getChatId(update) + ". refUserChatId = " + refUser.getChatId() + ", sumToAdd = "

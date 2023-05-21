@@ -151,7 +151,7 @@ public class DealAutoReport {
             }
             stringBuilder.append("\n");
             for (FiatCurrency fiatCurrency : FiatCurrencyUtil.getFiatCurrencies()) {
-                stringBuilder.append("Всего получено от ").append(fiatCurrency.getCode()).append(" : ")
+                stringBuilder.append("Всего получено ").append(fiatCurrency.getCode()).append(" : ")
                         .append(totalAmounts.get(fiatCurrency).toPlainString()).append("\n");
             }
             stringBuilder.append("\n" + "Количество новых пользователей: ").append(newUsersCount).append("\n")

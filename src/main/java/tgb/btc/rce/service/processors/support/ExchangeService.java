@@ -70,6 +70,13 @@ public class ExchangeService {
 
     private ExchangeServiceNew exchangeServiceNew;
 
+    private CalculateService calculateService;
+
+    @Autowired
+    public void setCalculateService(CalculateService calculateService) {
+        this.calculateService = calculateService;
+    }
+
     @Autowired
     public void setExchangeServiceNew(ExchangeServiceNew exchangeServiceNew) {
         this.exchangeServiceNew = exchangeServiceNew;
@@ -124,22 +131,35 @@ public class ExchangeService {
         Deal deal = dealService.getByPid(userService.getCurrentDealByChatId(chatId));
         Double sum = UpdateUtil.getDoubleFromText(update);
         CryptoCurrency cryptoCurrency = deal.getCryptoCurrency();
+        BigDecimal cryptoAmount;
+        BigDecimal amount;
         Double minSum = BotVariablePropertiesUtil.getDouble(BotVariableType.MIN_SUM, DealType.BUY, cryptoCurrency);
-
-        if (sum < minSum) {
+        if (CryptoCurrency.BITCOIN.equals(cryptoCurrency)) {
+            if (sum < BotVariablePropertiesUtil.getBigDecimal(BotVariableType.DEAL_BTC_MAX_ENTERED_SUM.getKey()).doubleValue()) {
+                cryptoAmount = BigDecimal.valueOf(sum);
+                amount = calculateService.convert(cryptoCurrency, sum, deal.getFiatCurrency(), DealType.BUY, true);
+            } else {
+                amount = BigDecimal.valueOf(sum);
+                cryptoAmount = calculateService.convert(cryptoCurrency, sum, deal.getFiatCurrency(), DealType.BUY, false);;
+            }
+        } else {
+            cryptoAmount = BigDecimal.valueOf(sum);
+            amount = calculateService.convert(cryptoCurrency, sum, deal.getFiatCurrency(), DealType.BUY, true);
+        }
+        if (cryptoAmount.doubleValue() < minSum) {
             responseSender.sendMessage(chatId, "Минимальная сумма покупки " + cryptoCurrency.getDisplayName()
                     + " = " + BigDecimal.valueOf(minSum).stripTrailingZeros().toPlainString() + ".");
             return false;
         }
 
-        deal.setCryptoAmount(BigDecimal.valueOf(sum));
-        BigDecimal amount = CalculateUtil.convertCryptoToRub(cryptoCurrency, sum, deal.getFiatCurrency(), DealType.BUY);
+        deal.setOriginalPrice(amount);
+
         BigDecimal personalBuy = USERS_PERSONAL_BUY.get(chatId);
         if (BooleanUtils.isNotTrue(deal.getPersonalApplied())) {
             if (Objects.isNull(personalBuy)) {
                 personalBuy = userDiscountRepository.getPersonalBuyByChatId(chatId);
                 if (Objects.nonNull(personalBuy) && !BigDecimal.ZERO.equals(personalBuy)) {
-                    amount = amount.add(CalculateUtil.getPercentsFactor(amount).multiply(personalBuy));
+                    amount = amount.add(calculateService.getPercentsFactor(amount).multiply(personalBuy));
                     deal.setPersonalApplied(true);
                 }
                 if (Objects.nonNull(personalBuy)) {
@@ -148,16 +168,17 @@ public class ExchangeService {
                     putToUsersPersonalBuy(chatId, BigDecimal.ZERO);
                 }
             } else if (!BigDecimal.ZERO.equals(personalBuy)) {
-                amount = amount.add(CalculateUtil.getPercentsFactor(amount).multiply(personalBuy));
+                amount = amount.add(calculateService.getPercentsFactor(amount).multiply(personalBuy));
                 deal.setPersonalApplied(true);
             }
         }
         BigDecimal bulkDiscount = BulkDiscountUtil.getPercentBySum(amount, deal.getFiatCurrency());
         if (!BigDecimal.ZERO.equals(bulkDiscount)) {
-            amount = amount.subtract(CalculateUtil.getPercentsFactor(amount).multiply(bulkDiscount));
+            amount = amount.subtract(calculateService.getPercentsFactor(amount).multiply(bulkDiscount));
         }
+        deal.setCryptoAmount(cryptoAmount);
         deal.setAmount(amount);
-        deal.setCommission(CalculateUtil.getCommission(BigDecimal.valueOf(sum), cryptoCurrency, deal.getFiatCurrency(), DealType.BUY));
+        deal.setCommission(calculateService.getCommission(deal.getCryptoAmount(), cryptoCurrency, deal.getFiatCurrency(), DealType.BUY));
         dealService.save(deal);
         return true;
     }
@@ -201,16 +222,16 @@ public class ExchangeService {
         }
         sum = BigDecimalUtil.round(sum, cryptoCurrency.getScale());
         BigDecimal roundedConvertedSum = BigDecimalUtil.round(
-                CalculateUtil.convertCryptoToRub(currency, sum.doubleValue(),
-                        dealRepository.getFiatCurrencyByPid(currentDealPid), DealType.BUY), 0);
+                calculateService.convert(currency, sum.doubleValue(),
+                        dealRepository.getFiatCurrencyByPid(currentDealPid), DealType.BUY, true), 0);
         BigDecimal personalBuy = USERS_PERSONAL_BUY.get(chatId);
         if (Objects.isNull(personalBuy) || !BigDecimal.ZERO.equals(personalBuy)) {
             personalBuy = userDiscountRepository.getPersonalBuyByChatId(chatId);
             if (Objects.nonNull(personalBuy) && !BigDecimal.ZERO.equals(personalBuy)) {
                 if (BigDecimal.ZERO.compareTo(personalBuy) > 0) {
-                    roundedConvertedSum = roundedConvertedSum.add(CalculateUtil.getPercentsFactor(roundedConvertedSum).multiply(personalBuy));
+                    roundedConvertedSum = roundedConvertedSum.add(calculateService.getPercentsFactor(roundedConvertedSum).multiply(personalBuy));
                 } else {
-                    roundedConvertedSum = roundedConvertedSum.add(CalculateUtil.getPercentsFactor(roundedConvertedSum).multiply(personalBuy));
+                    roundedConvertedSum = roundedConvertedSum.add(calculateService.getPercentsFactor(roundedConvertedSum).multiply(personalBuy));
                 }
             }
             if (Objects.nonNull(personalBuy)) {
@@ -221,7 +242,7 @@ public class ExchangeService {
         }
         BigDecimal bulkDiscount = BulkDiscountUtil.getPercentBySum(roundedConvertedSum, dealRepository.getFiatCurrencyByPid(currentDealPid));
         if (!BigDecimal.ZERO.equals(bulkDiscount)) {
-            roundedConvertedSum = roundedConvertedSum.subtract(CalculateUtil.getPercentsFactor(roundedConvertedSum).multiply(personalBuy));
+            roundedConvertedSum = roundedConvertedSum.subtract(calculateService.getPercentsFactor(roundedConvertedSum).multiply(personalBuy));
         }
         String dealType = DealType.BUY.equals(dealService.getDealTypeByPid(currentDealPid))
                 ? "Покупка: "
@@ -265,10 +286,8 @@ public class ExchangeService {
 
     public void askForUserPromoCode(Long chatId, boolean back) {
         Deal deal = dealService.findById(userService.getCurrentDealByChatId(chatId));
-        double dealCryptoAmount = deal.getCryptoAmount().setScale(deal.getCryptoCurrency().getScale(),
-                        RoundingMode.HALF_UP).stripTrailingZeros()
-                .doubleValue();
-
+        String dealCryptoAmount = deal.getCryptoAmount().setScale(deal.getCryptoCurrency().getScale(),
+                        RoundingMode.HALF_UP).stripTrailingZeros().toPlainString();
         double dealAmount;
         BigDecimal discount = BigDecimal.valueOf(
                         BotVariablePropertiesUtil.getDouble(BotVariableType.PROMO_CODE_DISCOUNT))
@@ -277,22 +296,20 @@ public class ExchangeService {
         BigDecimal sumWithDiscount;
 
         if (back) {
-            sumWithDiscount = deal.getAmount().setScale(0, RoundingMode.HALF_UP).stripTrailingZeros();
+            sumWithDiscount = deal.getOriginalPrice().setScale(0, RoundingMode.HALF_UP).stripTrailingZeros();
             dealAmount = sumWithDiscount.add(dealService.getDiscountByPid(deal.getPid())).doubleValue();
         } else {
-            dealAmount = deal.getAmount().setScale(0, RoundingMode.HALF_UP).stripTrailingZeros().doubleValue();
-            sumWithDiscount = deal.getAmount().subtract(BigDecimalUtil.multiplyHalfUp(deal.getCommission(),
-                            CalculateUtil.getPercentsFactor(
+            dealAmount = deal.getOriginalPrice().setScale(0, RoundingMode.HALF_UP).stripTrailingZeros().doubleValue();
+            sumWithDiscount = deal.getOriginalPrice().subtract(BigDecimalUtil.multiplyHalfUp(deal.getCommission(),
+                            calculateService.getPercentsFactor(
                                     discount)))
                     .setScale(0, RoundingMode.HALF_UP)
                     .stripTrailingZeros();
         }
 
-        String message = "<b>Покупка " + deal.getCryptoCurrency().getDisplayName() + "</b>: " + dealCryptoAmount
-                + "\n\n"
-                + "<b>Сумма перевода</b>: <s>" + BigDecimal.valueOf(dealAmount).stripTrailingZeros()
-                .toPlainString() + "</s> " + sumWithDiscount.stripTrailingZeros().toPlainString()
-                + "\n\n"
+        String message = "<b>Покупка " + deal.getCryptoCurrency().getDisplayName() + "</b>: " + dealCryptoAmount + "\n\n"
+                + "<b>Сумма перевода</b>: <s>" + BigDecimal.valueOf(dealAmount).stripTrailingZeros().toPlainString()
+                + "</s> " + sumWithDiscount.stripTrailingZeros().toPlainString() + "\n\n"
                 + "\uD83C\uDFAB У вас есть промокод: <b>" + BotVariablePropertiesUtil.getVariable(
                 BotVariableType.PROMO_CODE_NAME)
                 + "</b>, который даёт скидку в размере " + discount.stripTrailingZeros()
@@ -357,7 +374,7 @@ public class ExchangeService {
                     BotVariablePropertiesUtil.getDouble(BotVariableType.PROMO_CODE_DISCOUNT));
             BigDecimal dealAmount = dealService.getAmountByPid(currentDealPid);
             BigDecimal totalDiscount = BigDecimalUtil.multiplyHalfUp(dealService.getCommissionByPid(currentDealPid),
-                    CalculateUtil.getPercentsFactor(discount));
+                    calculateService.getPercentsFactor(discount));
             dealService.updateDiscountByPid(totalDiscount, currentDealPid);
             BigDecimal sumWithDiscount = dealAmount.subtract(totalDiscount)
                     .setScale(0, RoundingMode.HALF_UP)
@@ -469,7 +486,7 @@ public class ExchangeService {
                 && BooleanUtils.isNotFalse(userDiscountRepository.getRankDiscountByUserChatId(chatId));
         if (!Rank.FIRST.equals(rank) && isRankDiscountOn) {
             BigDecimal commission = deal.getCommission();
-            BigDecimal rankDiscount = BigDecimalUtil.multiplyHalfUp(commission, CalculateUtil.getPercentsFactor(
+            BigDecimal rankDiscount = BigDecimalUtil.multiplyHalfUp(commission, calculateService.getPercentsFactor(
                     BigDecimal.valueOf(rank.getPercent())));
             deal.setAmount(BigDecimalUtil.subtractHalfUp(deal.getAmount(), rankDiscount));
         }
