@@ -48,6 +48,13 @@ public class SellService {
 
     private ExchangeServiceNew exchangeServiceNew;
 
+    private CalculateService calculateService;
+
+    @Autowired
+    public void setCalculateService(CalculateService calculateService) {
+        this.calculateService = calculateService;
+    }
+
     @Autowired
     public void setDealRepository(DealRepository dealRepository) {
         this.dealRepository = dealRepository;
@@ -101,13 +108,13 @@ public class SellService {
         }
 
         deal.setCryptoAmount(BigDecimal.valueOf(sum));
-        BigDecimal amount = CalculateUtil.convertCryptoToRub(cryptoCurrency, sum, deal.getFiatCurrency(), DealType.SELL);
+        BigDecimal amount = calculateService.convert(cryptoCurrency, sum, deal.getFiatCurrency(), DealType.SELL, true);
         BigDecimal personalSell = USERS_PERSONAL_SELL.get(chatId);
         if (BooleanUtils.isNotTrue(deal.getPersonalApplied())) {
             if (Objects.isNull(personalSell)) {
                 personalSell = userDiscountRepository.getPersonalSellByChatId(chatId);
                 if (Objects.nonNull(personalSell) && !(BigDecimal.ZERO.compareTo(personalSell) == 0)) {
-                    amount = amount.subtract(CalculateUtil.getPercentsFactor(amount).multiply(personalSell));
+                    amount = amount.subtract(calculateService.getPercentsFactor(amount).multiply(personalSell));
                     deal.setPersonalApplied(true);
                 }
                 if (Objects.nonNull(personalSell)) {
@@ -116,13 +123,13 @@ public class SellService {
                     putToUsersPersonalSell(chatId, BigDecimal.ZERO);
                 }
             } else if (!BigDecimal.ZERO.equals(personalSell)) {
-                amount = amount.subtract(CalculateUtil.getPercentsFactor(amount).multiply(personalSell));
+                amount = amount.subtract(calculateService.getPercentsFactor(amount).multiply(personalSell));
                 deal.setPersonalApplied(true);
             }
         }
         deal.setAmount(amount);
         dealService.save(deal);
-        dealService.updateCommissionByPid(CalculateUtil.getCommissionForSell(BigDecimal.valueOf(sum), cryptoCurrency,
+        dealService.updateCommissionByPid(calculateService.getCommissionForSell(BigDecimal.valueOf(sum), cryptoCurrency,
                 deal.getFiatCurrency(), deal.getDealType()), deal.getPid());
         return true;
     }
@@ -165,13 +172,13 @@ public class SellService {
             return;
         }
         sum = BigDecimal.valueOf(BigDecimalUtil.round(sum, cryptoCurrency.getScale()).doubleValue());
-        BigDecimal roundedConvertedSum = CalculateUtil.convertCryptoToRub(currency, sum.doubleValue(),
-                dealRepository.getFiatCurrencyByPid(currentDealPid), DealType.SELL);
+        BigDecimal roundedConvertedSum = calculateService.convert(currency, sum.doubleValue(),
+                dealRepository.getFiatCurrencyByPid(currentDealPid), DealType.SELL, true);
         BigDecimal personalSell = USERS_PERSONAL_SELL.get(chatId);
         if (Objects.isNull(personalSell) || !BigDecimal.ZERO.equals(personalSell)) {
             personalSell = userDiscountRepository.getPersonalBuyByChatId(chatId);
             if (Objects.nonNull(personalSell) && !BigDecimal.ZERO.equals(personalSell)) {
-                roundedConvertedSum = roundedConvertedSum.subtract(CalculateUtil.getPercentsFactor(roundedConvertedSum).multiply(personalSell));
+                roundedConvertedSum = roundedConvertedSum.subtract(calculateService.getPercentsFactor(roundedConvertedSum).multiply(personalSell));
             }
             if (Objects.nonNull(personalSell)) {
                 putToUsersPersonalSell(chatId, personalSell);
@@ -200,8 +207,7 @@ public class SellService {
                 ? "Нажмите сюда, чтобы отправить сумму"
                 : "Введите сумму в криптовалюте.";
         String sum = update.getInlineQuery().getQuery().contains(" ")
-                ?
-                update.getInlineQuery().getQuery().substring(update.getInlineQuery().getQuery().indexOf(" "))
+                ? update.getInlineQuery().getQuery().substring(update.getInlineQuery().getQuery().indexOf(" "))
                 : "Ошибка";
         responseSender.execute(AnswerInlineQuery.builder().inlineQueryId(update.getInlineQuery().getId())
                 .result(InlineQueryResultArticle.builder()
@@ -313,7 +319,7 @@ public class SellService {
                 && BooleanUtils.isNotFalse(userDiscountRepository.getRankDiscountByUserChatId(chatId));
         if (!Rank.FIRST.equals(rank) && isRankDiscountOn) {
             BigDecimal commission = deal.getCommission();
-            BigDecimal rankDiscount = BigDecimalUtil.multiplyHalfUp(commission, CalculateUtil.getPercentsFactor(
+            BigDecimal rankDiscount = BigDecimalUtil.multiplyHalfUp(commission, calculateService.getPercentsFactor(
                     BigDecimal.valueOf(rank.getPercent())));
             deal.setAmount(BigDecimalUtil.addHalfUp(deal.getAmount(), rankDiscount));
         }

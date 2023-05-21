@@ -22,7 +22,8 @@ public enum BotVariableType {
     CHANNEL_CHAT_ID("Айди канала", "channel.chat.id"),
     REVIEW_PRISE("Вознаграждение", "review.prise"),
     USDT_COURSE("Курс USDT", "usdt.course"),
-    DEAL_RANK_DISCOUNT_ENABLE("Ранговая скидка для всех", "deal.rank.discount.enable");
+    DEAL_RANK_DISCOUNT_ENABLE("Ранговая скидка для всех", "deal.rank.discount.enable"),
+    DEAL_BTC_MAX_ENTERED_SUM("Максимальный введенный BTC", "deal.btc.max.entered.sum");
 
     final String displayName;
     final String key;

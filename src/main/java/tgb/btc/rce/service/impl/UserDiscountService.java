@@ -10,7 +10,6 @@ import tgb.btc.rce.service.IUserDiscountService;
 import tgb.btc.rce.service.processors.support.PersonalDiscountsCache;
 import tgb.btc.rce.util.BigDecimalUtil;
 import tgb.btc.rce.util.BulkDiscountUtil;
-import tgb.btc.rce.util.CalculateUtil;
 
 import java.math.BigDecimal;
 
@@ -19,6 +18,13 @@ public class UserDiscountService implements IUserDiscountService {
     private UserDiscountRepository userDiscountRepository;
 
     private PersonalDiscountsCache personalDiscountsCache;
+
+    private CalculateService calculateService;
+
+    @Autowired
+    public void setCalculateService(CalculateService calculateService) {
+        this.calculateService = calculateService;
+    }
 
     @Autowired
     public void setPersonalDiscountsCache(PersonalDiscountsCache personalDiscountsCache) {
@@ -41,7 +47,7 @@ public class UserDiscountService implements IUserDiscountService {
         DealType dealType = deal.getDealType();
         BigDecimal personalDiscount = personalDiscountsCache.getDiscount(chatId, dealType);
         if (!BigDecimalUtil.isZero(personalDiscount)) {
-            deal.setAmount(CalculateUtil.calculateDiscount(dealType, deal.getAmount(), personalDiscount));
+            deal.setAmount(calculateService.calculateDiscount(dealType, deal.getAmount(), personalDiscount));
             deal.setPersonalApplied(true);
         }
     }
@@ -52,6 +58,6 @@ public class UserDiscountService implements IUserDiscountService {
         if (!DealType.isBuy(dealType)) return;
         BigDecimal bulkDiscount = BulkDiscountUtil.getPercentBySum(deal.getAmount(), deal.getFiatCurrency());
         if (!BigDecimalUtil.isZero(bulkDiscount))
-            deal.setAmount(CalculateUtil.calculateDiscount(dealType, deal.getAmount(), bulkDiscount));
+            deal.setAmount(calculateService.calculateDiscount(dealType, deal.getAmount(), bulkDiscount));
     }
 }
