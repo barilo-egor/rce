@@ -42,7 +42,7 @@ public class KeyboardService {
                                 .build(),
                         KeyboardUtil.INLINE_BACK_BUTTON), 1);
             default:
-                return null;
+                return KeyboardUtil.buildInline(List.of(KeyboardUtil.INLINE_BACK_BUTTON), 1);
         }
     }
 
