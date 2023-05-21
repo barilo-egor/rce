@@ -101,14 +101,28 @@ public class SellService {
         CryptoCurrency cryptoCurrency = deal.getCryptoCurrency();
         Double minSum = BotVariablePropertiesUtil.getDouble(BotVariableType.MIN_SUM, DealType.SELL, cryptoCurrency);
 
-        if (sum < minSum) {
+        BigDecimal cryptoAmount;
+        BigDecimal amount;
+        if (CryptoCurrency.BITCOIN.equals(cryptoCurrency)) {
+            if (sum < BotVariablePropertiesUtil.getBigDecimal(BotVariableType.DEAL_BTC_MAX_ENTERED_SUM.getKey()).doubleValue()) {
+                cryptoAmount = BigDecimal.valueOf(sum);
+                amount = calculateService.convert(cryptoCurrency, sum, deal.getFiatCurrency(), DealType.BUY, true);
+            } else {
+                amount = BigDecimal.valueOf(sum);
+                cryptoAmount = calculateService.convert(cryptoCurrency, sum, deal.getFiatCurrency(), DealType.BUY, false);;
+            }
+        } else {
+            cryptoAmount = BigDecimal.valueOf(sum);
+            amount = calculateService.convert(cryptoCurrency, sum, deal.getFiatCurrency(), DealType.BUY, true);
+        }
+        deal.setOriginalPrice(amount);
+
+        if (cryptoAmount.doubleValue() < minSum) {
             responseSender.sendMessage(chatId, "Минимальная сумма продажи " + cryptoCurrency.getDisplayName()
                     + " = " + BigDecimal.valueOf(minSum).stripTrailingZeros().toPlainString() + ".");
             return false;
         }
 
-        deal.setCryptoAmount(BigDecimal.valueOf(sum));
-        BigDecimal amount = calculateService.convert(cryptoCurrency, sum, deal.getFiatCurrency(), DealType.SELL, true);
         BigDecimal personalSell = USERS_PERSONAL_SELL.get(chatId);
         if (BooleanUtils.isNotTrue(deal.getPersonalApplied())) {
             if (Objects.isNull(personalSell)) {
@@ -128,8 +142,9 @@ public class SellService {
             }
         }
         deal.setAmount(amount);
+        deal.setCryptoAmount(cryptoAmount);
         dealService.save(deal);
-        dealService.updateCommissionByPid(calculateService.getCommissionForSell(BigDecimal.valueOf(sum), cryptoCurrency,
+        dealService.updateCommissionByPid(calculateService.getCommissionForSell(deal.getCryptoAmount(), cryptoCurrency,
                 deal.getFiatCurrency(), deal.getDealType()), deal.getPid());
         return true;
     }
