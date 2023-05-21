@@ -1,6 +1,5 @@
 package tgb.btc.rce.service.processors.support;
 
-import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -17,7 +16,6 @@ import tgb.btc.rce.service.impl.CalculateService;
 import tgb.btc.rce.service.impl.KeyboardService;
 import tgb.btc.rce.service.impl.MessageService;
 import tgb.btc.rce.util.BotVariablePropertiesUtil;
-import tgb.btc.rce.util.CalculateUtil;
 import tgb.btc.rce.util.MessagePropertiesUtil;
 import tgb.btc.rce.util.UpdateUtil;
 
