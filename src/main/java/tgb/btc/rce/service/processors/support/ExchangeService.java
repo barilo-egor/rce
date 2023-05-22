@@ -623,7 +623,7 @@ public class ExchangeService {
     }
 
     public void askForReceipts(Update update) {
-        responseSender.sendMessage(UpdateUtil.getChatId(update), "Отправьте скрин перевода.",
+        responseSender.sendMessage(UpdateUtil.getChatId(update), "Отправьте скрин перевода, либо чек оплаты..",
                 KeyboardUtil.buildReply(
                         List.of(ReplyButton.builder().text(Command.RECEIPTS_CANCEL_DEAL.getText())
                                 .build())));

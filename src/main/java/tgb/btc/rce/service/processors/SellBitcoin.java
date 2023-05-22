@@ -246,14 +246,14 @@ public class SellBitcoin extends Processor {
                 if (update.hasMessage() && Command.RECEIPTS_CANCEL_DEAL.getText().equals(UpdateUtil.getMessageText(update))) {
                     dealPid = userService.getCurrentDealByChatId(chatId);
                     DealDeleteScheduler.deleteCryptoDeal(dealPid);
-                    responseSender.deleteMessage(chatId, update.getCallbackQuery().getMessage().getMessageId());
+                    if (update.hasCallbackQuery()) responseSender.deleteMessage(chatId, update.getCallbackQuery().getMessage().getMessageId());
                     dealService.delete(dealService.findById(dealPid));
                     userService.updateCurrentDealByChatId(null, chatId);
                     responseSender.sendMessage(chatId, "Заявка отменена.");
                     processToMainMenu(chatId);
                 }
                 if (!update.hasMessage() || (!update.getMessage().hasPhoto() && !update.getMessage().hasDocument())) {
-                    responseSender.sendMessage(chatId, "Отправьте скрин перевода.");
+                    responseSender.sendMessage(chatId, "Отправьте скрин перевода, либо чек оплаты..");
                     return;
                 }
                 if (update.hasMessage() && update.getMessage().hasPhoto()) {
