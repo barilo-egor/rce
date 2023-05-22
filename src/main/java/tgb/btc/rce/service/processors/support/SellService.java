@@ -106,14 +106,14 @@ public class SellService {
         if (CryptoCurrency.BITCOIN.equals(cryptoCurrency)) {
             if (sum < BotVariablePropertiesUtil.getBigDecimal(BotVariableType.DEAL_BTC_MAX_ENTERED_SUM.getKey()).doubleValue()) {
                 cryptoAmount = BigDecimal.valueOf(sum);
-                amount = calculateService.convert(cryptoCurrency, sum, deal.getFiatCurrency(), DealType.BUY, true);
+                amount = calculateService.convert(cryptoCurrency, sum, deal.getFiatCurrency(), DealType.SELL, true);
             } else {
                 amount = BigDecimal.valueOf(sum);
-                cryptoAmount = calculateService.convert(cryptoCurrency, sum, deal.getFiatCurrency(), DealType.BUY, false);;
+                cryptoAmount = calculateService.convert(cryptoCurrency, sum, deal.getFiatCurrency(), DealType.SELL, false);;
             }
         } else {
             cryptoAmount = BigDecimal.valueOf(sum);
-            amount = calculateService.convert(cryptoCurrency, sum, deal.getFiatCurrency(), DealType.BUY, true);
+            amount = calculateService.convert(cryptoCurrency, sum, deal.getFiatCurrency(), DealType.SELL, true);
         }
         deal.setOriginalPrice(amount);
 
