@@ -47,7 +47,7 @@ public class ExchangeServiceNew {
     public void setUserRepository(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
-    
+
     @Autowired
     public void setUserDiscountService(IUserDiscountService userDiscountService) {
         this.userDiscountService = userDiscountService;
@@ -80,13 +80,10 @@ public class ExchangeServiceNew {
 
     public void askForSum(Long chatId, CryptoCurrency currency, DealType dealType) {
         PropertiesMessage propertiesMessage;
-        if (CryptoCurrency.BITCOIN.equals(currency)) {
-            propertiesMessage = PropertiesMessage.DEAL_INPUT_SUM_CRYPTO_OR_FIAT; // TODO сейчас хардкод на "или в рублях", надо подставлять фиатное
-        } else {
-            propertiesMessage = PropertiesMessage.DEAL_INPUT_SUM;
-        }
+        if (CryptoCurrency.BITCOIN.equals(currency)) propertiesMessage = PropertiesMessage.DEAL_INPUT_SUM_CRYPTO_OR_FIAT; // TODO сейчас хардкод на "или в рублях", надо подставлять фиатное
+        else propertiesMessage = PropertiesMessage.DEAL_INPUT_SUM;
         String text = MessagePropertiesUtil.getMessage(propertiesMessage,
-                                                       dealRepository.getCryptoCurrencyByPid(userRepository.getCurrentDealByChatId(chatId)));
+                dealRepository.getCryptoCurrencyByPid(userRepository.getCurrentDealByChatId(chatId)));
 
         messageService.sendMessageAndSaveMessageId(chatId, text, keyboardService.getCalculator(currency, dealType));
     }
@@ -95,24 +92,43 @@ public class ExchangeServiceNew {
         Long chatId = UpdateUtil.getChatId(update);
         Deal deal = dealRepository.getById(userRepository.getCurrentDealByChatId(chatId));
         CryptoCurrency cryptoCurrency = deal.getCryptoCurrency();
-        Double sum = UpdateUtil.getDoubleFromText(update);
+        double enteredAmount = UpdateUtil.getDoubleFromText(update);
         DealType dealType = deal.getDealType();
-        boolean isBuyDealType = DealType.isBuy(dealType);
+        boolean isEnteredInCrypto = isEnteredInCrypto(cryptoCurrency, enteredAmount);
+        BigDecimal cryptoAmount = isEnteredInCrypto
+                ? BigDecimal.valueOf(enteredAmount)
+                : calculateService.convert(cryptoCurrency, enteredAmount, deal.getFiatCurrency(), DealType.BUY, false);
+        if (isLessThanMin(chatId, deal, cryptoAmount)) return false;
 
-        Double minSum = BotVariablePropertiesUtil.getDouble(BotVariableType.MIN_SUM, dealType, cryptoCurrency);
-        if (sum < minSum) {
-            String dealTypeString = isBuyDealType ? "покупки" : "продажи";
-            responseSender.sendMessage(chatId, "Минимальная сумма " + dealTypeString + " " + cryptoCurrency.getDisplayName()
-                    + " = " + BigDecimal.valueOf(minSum).stripTrailingZeros().toPlainString() + ".");
-            return false;
-        }
-
-        deal.setCryptoAmount(BigDecimal.valueOf(sum));
-        deal.setAmount(calculateService.convert(cryptoCurrency, sum, deal.getFiatCurrency(), dealType, true));
+        BigDecimal amount = isEnteredInCrypto
+                ? calculateService.convert(cryptoCurrency, enteredAmount, deal.getFiatCurrency(), DealType.BUY, true)
+                : BigDecimal.valueOf(enteredAmount);
+        deal.setCryptoAmount(cryptoAmount);
+        deal.setAmount(amount);
+        deal.setOriginalPrice(amount);
+        if (DealType.isBuy(dealType))
+            deal.setCommission(calculateService.getCommission(deal.getAmount(), cryptoCurrency, deal.getFiatCurrency(), dealType));
         userDiscountService.applyPersonal(chatId, deal);
         userDiscountService.applyBulk(deal);
-        deal.setCommission(calculateService.getCommission(BigDecimal.valueOf(sum), cryptoCurrency, deal.getFiatCurrency(), dealType));
         dealRepository.save(deal);
         return false;
+    }
+
+    private boolean isLessThanMin(Long chatId, Deal deal, BigDecimal cryptoAmount) {
+        DealType dealType = deal.getDealType();
+        CryptoCurrency cryptoCurrency = deal.getCryptoCurrency();
+        double minSum = BotVariablePropertiesUtil.getDouble(BotVariableType.MIN_SUM, dealType, cryptoCurrency);
+        if (cryptoAmount.doubleValue() < minSum) {
+            String dealTypeString = DealType.isBuy(dealType) ? "покупки" : "продажи";
+            responseSender.sendMessage(chatId, "Минимальная сумма " + dealTypeString + " " + cryptoCurrency.getDisplayName()
+                    + " = " + BigDecimal.valueOf(minSum).stripTrailingZeros().toPlainString() + ".");
+            return true;
+        }
+        return false;
+    }
+
+    private boolean isEnteredInCrypto(CryptoCurrency cryptoCurrency, Double enteredAmount) {
+        return !CryptoCurrency.BITCOIN.equals(cryptoCurrency)
+                || enteredAmount < BotVariablePropertiesUtil.getDouble(BotVariableType.DEAL_BTC_MAX_ENTERED_SUM.getKey());
     }
 }

@@ -8,6 +8,7 @@ import tgb.btc.rce.enums.DealType;
 import tgb.btc.rce.enums.FiatCurrency;
 import tgb.btc.rce.util.BigDecimalUtil;
 import tgb.btc.rce.util.BotVariablePropertiesUtil;
+import tgb.btc.rce.vo.DealAmount;
 
 import java.math.BigDecimal;
 import java.util.Objects;
@@ -20,6 +21,34 @@ public class CalculateService {
     @Autowired
     public void setCryptoCurrencyService(CryptoCurrencyService cryptoCurrencyService) {
         this.cryptoCurrencyService = cryptoCurrencyService;
+    }
+
+    public DealAmount convertNew(CryptoCurrency cryptoCurrency, Double enteredAmount, FiatCurrency fiatCurrency,
+                                 DealType dealType, boolean isEnteredCrypto) {
+        BigDecimal fix = BotVariablePropertiesUtil.getBigDecimal(BotVariableType.FIX, fiatCurrency, dealType, cryptoCurrency);
+        BigDecimal usdCourse = BotVariablePropertiesUtil.getBigDecimal(BotVariableType.USD_COURSE, fiatCurrency, dealType, cryptoCurrency);
+        BigDecimal commission = BotVariablePropertiesUtil.getBigDecimal(BotVariableType.COMMISSION, fiatCurrency, dealType, cryptoCurrency);
+        BigDecimal fixCommission = BotVariablePropertiesUtil.getBigDecimal(BotVariableType.FIX_COMMISSION, fiatCurrency, dealType, cryptoCurrency);
+        BigDecimal transactionalCommission = BotVariablePropertiesUtil.getTransactionCommission(cryptoCurrency);
+
+        BigDecimal currency = cryptoCurrencyService.getCurrency(cryptoCurrency);
+        DealAmount dealAmount = new DealAmount();
+        BigDecimal amount;
+        BigDecimal cryptoAmount;
+        if (isEnteredCrypto) {
+            cryptoAmount = BigDecimal.valueOf(enteredAmount);
+            if (DealType.isBuy(dealType)) amount = getAmount(BigDecimal.valueOf(enteredAmount), usdCourse, fix, commission,
+                    fixCommission, transactionalCommission, currency);
+            else amount = getAmountForSell(BigDecimal.valueOf(enteredAmount), usdCourse, fix, commission, fixCommission, currency);
+        } else {
+            amount = BigDecimal.valueOf(enteredAmount);
+            if (DealType.isBuy(dealType)) cryptoAmount = getCryptoAmount(BigDecimal.valueOf(enteredAmount), usdCourse, fix, commission,
+                    fixCommission, transactionalCommission, currency);
+            else cryptoAmount = getCryptoAmountForSell(BigDecimal.valueOf(enteredAmount), usdCourse, fix, commission, fixCommission, currency);
+        }
+        dealAmount.setAmount(amount);
+        dealAmount.setCryptoAmount(cryptoAmount);
+        return null;
     }
 
     public BigDecimal convert(CryptoCurrency cryptoCurrency, Double sum, FiatCurrency fiatCurrency,

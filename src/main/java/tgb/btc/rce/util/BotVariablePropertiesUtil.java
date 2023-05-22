@@ -118,6 +118,10 @@ public class BotVariablePropertiesUtil {
         return BotProperties.BOT_VARIABLE_PROPERTIES.getBigDecimal(key);
     }
 
+    public static Double getDouble(String key) {
+        return BotProperties.BOT_VARIABLE_PROPERTIES.getDouble(key);
+    }
+
     public static String getWallet(CryptoCurrency cryptoCurrency) {
         return BotProperties.BOT_VARIABLE_PROPERTIES.getString(BotVariableType.WALLET.getKey(cryptoCurrency));
     }
