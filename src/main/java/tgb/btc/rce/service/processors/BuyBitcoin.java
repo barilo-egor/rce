@@ -277,7 +277,7 @@ public class BuyBitcoin extends Processor {
                     processToMainMenu(chatId);
                 }
                 if (!update.hasMessage() || (!update.getMessage().hasPhoto() && !update.getMessage().hasDocument())) {
-                    responseSender.sendMessage(chatId, "Отправьте скрин перевода.");
+                    responseSender.sendMessage(chatId, "Отправьте скрин перевода, либо чек оплаты..");
                     return;
                 }
                 if (update.hasMessage() && update.getMessage().hasPhoto()) {
