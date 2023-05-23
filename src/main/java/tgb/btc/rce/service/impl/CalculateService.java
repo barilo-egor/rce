@@ -24,8 +24,8 @@ public class CalculateService {
         this.cryptoCurrencyService = cryptoCurrencyService;
     }
 
-    public DealAmount convert(CryptoCurrency cryptoCurrency, BigDecimal enteredAmount, FiatCurrency fiatCurrency,
-                              DealType dealType) {
+    public DealAmount calculate(BigDecimal enteredAmount, CryptoCurrency cryptoCurrency, FiatCurrency fiatCurrency,
+                                DealType dealType) {
         CalculateData calculateData =
                 new CalculateData(fiatCurrency, dealType, cryptoCurrency, cryptoCurrencyService.getCurrency(cryptoCurrency));
 
@@ -49,34 +49,34 @@ public class CalculateService {
 
     private void calculateCryptoAmount(DealAmount dealAmount, CalculateData calculateData) {
         BigDecimal amount = dealAmount.getAmount();
-        BigDecimal transactionCommission = calculateData.getTransactionalCommission();
-        BigDecimal usdCourse = calculateData.getUsdCourse();
-        if (Objects.nonNull(transactionCommission))
-            amount = BigDecimalUtil.subtractHalfUp(amount, BigDecimalUtil.multiplyHalfUp(transactionCommission, usdCourse));
-        dealAmount.setOriginalPrice(amount);
         BigDecimal commission = amount.compareTo(calculateData.getFix()) < 0
                                 ? calculateData.getFixCommission()
                                 : BigDecimalUtil.multiplyHalfUp(amount, getPercentsFactor(calculateData.getCommission()));
-        amount = amount.subtract(commission);
-        BigDecimal usd = BigDecimalUtil.divideHalfUp(amount, usdCourse);
         dealAmount.setCommission(commission);
+        amount = amount.subtract(commission);
+        BigDecimal usdCourse = calculateData.getUsdCourse();
+        BigDecimal transactionCommission = calculateData.getTransactionalCommission();
+        if (Objects.nonNull(transactionCommission)) {
+            amount = BigDecimalUtil.subtractHalfUp(amount, BigDecimalUtil.multiplyHalfUp(transactionCommission, usdCourse));
+        }
+        BigDecimal usd = BigDecimalUtil.divideHalfUp(amount, usdCourse);
+        dealAmount.setAmount(amount);
         dealAmount.setCryptoAmount(BigDecimalUtil.divideHalfUp(usd, calculateData.getCryptoCourse()));
     }
 
     private void calculateAmount(DealAmount dealAmount, CalculateData calculateData) {
         BigDecimal cryptoCourse = calculateData.getCryptoCourse();
-        BigDecimal transactionCommission = calculateData.getTransactionalCommission();
         BigDecimal course = calculateData.getUsdCourse();
         BigDecimal usd = BigDecimalUtil.multiplyHalfUp(dealAmount.getCryptoAmount(), cryptoCourse);
         BigDecimal rub = BigDecimalUtil.multiplyHalfUp(usd, course);
-        if (Objects.nonNull(transactionCommission)) {
-            rub = BigDecimalUtil.addHalfUp(rub, BigDecimalUtil.multiplyHalfUp(transactionCommission, course));
-        }
         BigDecimal commission = rub.compareTo(calculateData.getFix()) < 0
                                 ? calculateData.getFixCommission()
                                 : getCommission(dealAmount.getCryptoAmount(), cryptoCourse, calculateData.getCommission(), course);
-        dealAmount.setOriginalPrice(rub);
         dealAmount.setCommission(commission);
+        BigDecimal transactionCommission = calculateData.getTransactionalCommission();
+        if (Objects.nonNull(transactionCommission)) {
+            rub = BigDecimalUtil.addHalfUp(rub, BigDecimalUtil.multiplyHalfUp(transactionCommission, course));
+        }
         dealAmount.setAmount(BigDecimalUtil.addHalfUp(rub, commission));
     }
 
@@ -87,6 +87,7 @@ public class CalculateService {
                                 : getCommissionForSell(amount, calculateData.getCommission());
         amount = amount.add(commission);
         BigDecimal usd = BigDecimalUtil.divideHalfUp(amount, calculateData.getUsdCourse());
+        dealAmount.setAmount(amount);
         dealAmount.setCommission(commission);
         dealAmount.setCryptoAmount(BigDecimalUtil.divideHalfUp(usd, calculateData.getCryptoCourse()));
     }
@@ -94,7 +95,6 @@ public class CalculateService {
     private void calculateAmountForSell(DealAmount dealAmount, CalculateData calculateData) {
         BigDecimal usd = BigDecimalUtil.multiplyHalfUp(dealAmount.getCryptoAmount(), calculateData.getCryptoCourse());
         BigDecimal rub = BigDecimalUtil.multiplyHalfUp(usd, calculateData.getUsdCourse());
-        dealAmount.setOriginalPrice(rub);
         BigDecimal commission = rub.compareTo(calculateData.getFix()) < 0
                                ? calculateData.getFixCommission()
                                : getCommissionForSell(rub, calculateData.getCommission());

@@ -100,6 +100,7 @@ public enum Command {
     PAYMENT_TYPES("Типы оплаты", true, false),
 
     /** DEAL */
+    DEAL("deal_proc", false, false),
     PAID("Я оплатил(а)", false, false),
     CANCEL_DEAL("Отменить заявку", false, false),
     DELETE_DEAL("Удалить заявку", false, false),

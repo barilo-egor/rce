@@ -20,7 +20,6 @@ import tgb.btc.rce.service.processors.support.ExchangeService;
 import tgb.btc.rce.service.processors.support.ExchangeServiceNew;
 import tgb.btc.rce.service.schedule.DealDeleteScheduler;
 import tgb.btc.rce.util.*;
-import tgb.btc.rce.vo.InlineButton;
 
 import java.util.Arrays;
 import java.util.List;
@@ -148,15 +147,7 @@ public class BuyBitcoin extends Processor {
         Integer paymentTypesCount;
         switch (userService.getStepByChatId(chatId)) {
             case 0:
-                if (dealService.getActiveDealsCountByUserChatId(chatId) > 0) {
-                    responseSender.sendMessage(chatId, "У вас уже есть активная заявка.",
-                            InlineButton.buildData("Удалить", Command.DELETE_DEAL.getText()));
-                    return;
-                }
-                if (update.hasCallbackQuery() && Command.BACK.getText().equals(update.getCallbackQuery().getData())) {
-                    processCancel(chatId);
-                    return;
-                }
+                if (exchangeServiceNew.alreadyHasDeal(chatId)) return;
                 currentDealPid = userService.getCurrentDealByChatId(chatId);
                 if (Objects.isNull(currentDealPid)) currentDealPid = dealService.createNewDeal(DEAL_TYPE, chatId).getPid();
                 if (Objects.isNull(dealRepository.getFiatCurrencyByPid(currentDealPid))) {
@@ -190,7 +181,7 @@ public class BuyBitcoin extends Processor {
                             userService.getCurrentDealByChatId(UpdateUtil.getChatId(update)));
                     return;
                 }
-                if (!exchangeServiceNew.saveSum(update)) return;
+                if (!exchangeServiceNew.calculateDealAmount(update)) return;
                 responseSender.deleteMessage(UpdateUtil.getChatId(update), Integer.parseInt(userService.getBufferVariable(chatId)));
                 if (!DealPromoUtil.isNone() && dealService.getDealsCountByUserChatId(chatId) < 1) {
                     exchangeService.askForUserPromoCode(chatId, false);

@@ -22,9 +22,7 @@ import tgb.btc.rce.service.processors.support.SellService;
 import tgb.btc.rce.service.schedule.DealDeleteScheduler;
 import tgb.btc.rce.util.BotImageUtil;
 import tgb.btc.rce.util.FiatCurrencyUtil;
-import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.UpdateUtil;
-import tgb.btc.rce.vo.InlineButton;
 
 import java.util.List;
 import java.util.Objects;
@@ -147,15 +145,7 @@ public class SellBitcoin extends Processor {
         Integer paymentTypesCount;
         switch (userService.getStepByChatId(chatId)) {
             case 0:
-                if (dealService.getActiveDealsCountByUserChatId(chatId) > 0) {
-                    responseSender.sendMessage(chatId, "У вас уже есть активная заявка.",
-                            KeyboardUtil.buildInline(List.of(InlineButton.builder()
-                                    .inlineType(InlineType.CALLBACK_DATA)
-                                    .text("Удалить")
-                                    .data(Command.DELETE_DEAL.getText())
-                                    .build())));
-                    return;
-                }
+                if (exchangeServiceNew.alreadyHasDeal(chatId)) return;
                 if (update.hasCallbackQuery() && Command.BACK.getText().equals(update.getCallbackQuery().getData())) {
                     processCancel(chatId);
                     return;
@@ -193,7 +183,7 @@ public class SellBitcoin extends Processor {
                             userService.getCurrentDealByChatId(UpdateUtil.getChatId(update)));
                     return;
                 }
-                if (exchangeServiceNew.saveSum(update)) {
+                if (exchangeServiceNew.calculateDealAmount(update)) {
                     currentDealPid = userService.getCurrentDealByChatId(chatId);
                     DealType dealType = dealRepository.getDealTypeByPid(currentDealPid);
                     FiatCurrency fiatCurrency = dealRepository.getFiatCurrencyByPid(currentDealPid);

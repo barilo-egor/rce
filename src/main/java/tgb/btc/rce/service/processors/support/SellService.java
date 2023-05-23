@@ -126,14 +126,14 @@ public class SellService {
         );
 
         if (sum.doubleValue() < minSum.doubleValue()) {
-            sendInlineAnswer(update, "Минимальная сумма покупки " + cryptoCurrency.getDisplayName()
+            sendInlineAnswer(update, "Минимальная сумма продажи " + cryptoCurrency.getDisplayName()
                     + " = " + minSum.stripTrailingZeros().toPlainString() + ".", false);
             return;
         }
         sum = BigDecimal.valueOf(BigDecimalUtil.round(sum, cryptoCurrency.getScale()).doubleValue());
         BigDecimal roundedConvertedSum =
-                calculateService.convert(
-                        cryptoCurrency, sum, dealRepository.getFiatCurrencyByPid(currentDealPid), dealRepository.getDealTypeByPid(currentDealPid)
+                calculateService.calculate(
+                        sum, cryptoCurrency, dealRepository.getFiatCurrencyByPid(currentDealPid), dealRepository.getDealTypeByPid(currentDealPid)
                 ).getAmount();
         BigDecimal personalSell = USERS_PERSONAL_SELL.get(chatId);
         if (Objects.isNull(personalSell) || !BigDecimal.ZERO.equals(personalSell)) {

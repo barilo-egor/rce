@@ -3,6 +3,7 @@ package tgb.btc.rce.service.impl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.enums.Command;
@@ -41,6 +42,7 @@ public class UpdateDispatcher implements IUpdateDispatcher {
         runProcessor(getCommand(update, chatId), chatId, update);
     }
 
+    @Async
     public void runProcessor(Command command, Long chatId, Update update) {
         if (!command.isSimple())
             ((Processor) applicationContext

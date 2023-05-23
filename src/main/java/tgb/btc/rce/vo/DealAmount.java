@@ -18,8 +18,6 @@ public class DealAmount {
 
     private BigDecimal commission;
 
-    private BigDecimal originalPrice;
-
     public BigDecimal getAmount() {
         return amount;
     }
@@ -44,18 +42,10 @@ public class DealAmount {
         this.commission = commission;
     }
 
-    public BigDecimal getOriginalPrice() {
-        return originalPrice;
-    }
-
-    public void setOriginalPrice(BigDecimal originalPrice) {
-        this.originalPrice = originalPrice;
-    }
-
     public void updateDeal(Deal deal) {
         deal.setAmount(amount);
         deal.setCryptoAmount(cryptoAmount);
         deal.setCommission(commission);
-        deal.setOriginalPrice(originalPrice);
+        deal.setOriginalPrice(amount);
     }
 }

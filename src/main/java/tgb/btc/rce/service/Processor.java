@@ -45,8 +45,7 @@ public abstract class Processor {
                 (isCommand(update, Command.ADMIN_BACK)) || isCommand(update, Command.CANCEL)) {
             processToAdminMainPanel(chatId);
             return true;
-        } else if (User.DEFAULT_STEP != userService.getStepByChatId(chatId)
-                && UpdateType.MESSAGE.equals(UpdateType.fromUpdate(update))
+        } else if (UpdateType.MESSAGE.equals(UpdateType.fromUpdate(update))
                 && isCommand(update, Command.CANCEL)) {
             processToMainMenu(chatId);
             return true;
