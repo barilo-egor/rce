@@ -18,6 +18,7 @@ import tgb.btc.rce.service.impl.MessageService;
 import tgb.btc.rce.util.BotVariablePropertiesUtil;
 import tgb.btc.rce.util.MessagePropertiesUtil;
 import tgb.btc.rce.util.UpdateUtil;
+import tgb.btc.rce.vo.DealAmount;
 
 import java.math.BigDecimal;
 
@@ -92,26 +93,16 @@ public class ExchangeServiceNew {
         Long chatId = UpdateUtil.getChatId(update);
         Deal deal = dealRepository.getById(userRepository.getCurrentDealByChatId(chatId));
         CryptoCurrency cryptoCurrency = deal.getCryptoCurrency();
-        double enteredAmount = UpdateUtil.getDoubleFromText(update);
         DealType dealType = deal.getDealType();
-        boolean isEnteredInCrypto = isEnteredInCrypto(cryptoCurrency, enteredAmount);
-        BigDecimal cryptoAmount = isEnteredInCrypto
-                ? BigDecimal.valueOf(enteredAmount)
-                : calculateService.convert(cryptoCurrency, enteredAmount, deal.getFiatCurrency(), DealType.BUY, false);
-        if (isLessThanMin(chatId, deal, cryptoAmount)) return false;
-
-        BigDecimal amount = isEnteredInCrypto
-                ? calculateService.convert(cryptoCurrency, enteredAmount, deal.getFiatCurrency(), DealType.BUY, true)
-                : BigDecimal.valueOf(enteredAmount);
-        deal.setCryptoAmount(cryptoAmount);
-        deal.setAmount(amount);
-        deal.setOriginalPrice(amount);
-        if (DealType.isBuy(dealType))
-            deal.setCommission(calculateService.getCommission(deal.getAmount(), cryptoCurrency, deal.getFiatCurrency(), dealType));
+        DealAmount dealAmount = calculateService.convertNew(
+                cryptoCurrency, UpdateUtil.getBigDecimalFromText(update), deal.getFiatCurrency(), dealType
+        );
+        if (isLessThanMin(chatId, deal, dealAmount.getCryptoAmount())) return false;
+        dealAmount.updateDeal(deal);
         userDiscountService.applyPersonal(chatId, deal);
         userDiscountService.applyBulk(deal);
         dealRepository.save(deal);
-        return false;
+        return true;
     }
 
     private boolean isLessThanMin(Long chatId, Deal deal, BigDecimal cryptoAmount) {

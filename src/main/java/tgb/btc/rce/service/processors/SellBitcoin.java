@@ -193,7 +193,7 @@ public class SellBitcoin extends Processor {
                             userService.getCurrentDealByChatId(UpdateUtil.getChatId(update)));
                     return;
                 }
-                if (sellService.saveSum(update)) {
+                if (exchangeServiceNew.saveSum(update)) {
                     currentDealPid = userService.getCurrentDealByChatId(chatId);
                     DealType dealType = dealRepository.getDealTypeByPid(currentDealPid);
                     FiatCurrency fiatCurrency = dealRepository.getFiatCurrencyByPid(currentDealPid);

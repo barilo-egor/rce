@@ -3,6 +3,7 @@ package tgb.btc.rce.vo;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
+import tgb.btc.rce.bean.Deal;
 
 import java.math.BigDecimal;
 
@@ -16,6 +17,8 @@ public class DealAmount {
     private BigDecimal cryptoAmount;
 
     private BigDecimal commission;
+
+    private BigDecimal originalPrice;
 
     public BigDecimal getAmount() {
         return amount;
@@ -39,5 +42,20 @@ public class DealAmount {
 
     public void setCommission(BigDecimal commission) {
         this.commission = commission;
+    }
+
+    public BigDecimal getOriginalPrice() {
+        return originalPrice;
+    }
+
+    public void setOriginalPrice(BigDecimal originalPrice) {
+        this.originalPrice = originalPrice;
+    }
+
+    public void updateDeal(Deal deal) {
+        deal.setAmount(amount);
+        deal.setCryptoAmount(cryptoAmount);
+        deal.setCommission(commission);
+        deal.setOriginalPrice(originalPrice);
     }
 }

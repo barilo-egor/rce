@@ -105,14 +105,14 @@ public class SellService {
         if (CryptoCurrency.BITCOIN.equals(cryptoCurrency)) {
             if (sum < BotVariablePropertiesUtil.getBigDecimal(BotVariableType.DEAL_BTC_MAX_ENTERED_SUM.getKey()).doubleValue()) {
                 cryptoAmount = BigDecimal.valueOf(sum);
-                amount = calculateService.convert(cryptoCurrency, sum, deal.getFiatCurrency(), DealType.SELL, true);
+                amount = calculateService.convert(cryptoCurrency, sum, deal.getFiatCurrency(), DealType.SELL);
             } else {
                 amount = BigDecimal.valueOf(sum);
-                cryptoAmount = calculateService.convert(cryptoCurrency, sum, deal.getFiatCurrency(), DealType.SELL, false);;
+                cryptoAmount = calculateService.convert(cryptoCurrency, sum, deal.getFiatCurrency(), DealType.SELL);;
             }
         } else {
             cryptoAmount = BigDecimal.valueOf(sum);
-            amount = calculateService.convert(cryptoCurrency, sum, deal.getFiatCurrency(), DealType.SELL, true);
+            amount = calculateService.convert(cryptoCurrency, sum, deal.getFiatCurrency(), DealType.SELL);
         }
         deal.setOriginalPrice(amount);
 
@@ -187,7 +187,7 @@ public class SellService {
         }
         sum = BigDecimal.valueOf(BigDecimalUtil.round(sum, cryptoCurrency.getScale()).doubleValue());
         BigDecimal roundedConvertedSum = calculateService.convert(currency, sum.doubleValue(),
-                dealRepository.getFiatCurrencyByPid(currentDealPid), DealType.SELL, true);
+                dealRepository.getFiatCurrencyByPid(currentDealPid), DealType.SELL);
         BigDecimal personalSell = USERS_PERSONAL_SELL.get(chatId);
         if (Objects.isNull(personalSell) || !BigDecimal.ZERO.equals(personalSell)) {
             personalSell = userDiscountRepository.getPersonalBuyByChatId(chatId);

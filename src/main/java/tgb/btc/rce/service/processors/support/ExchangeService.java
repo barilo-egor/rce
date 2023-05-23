@@ -126,63 +126,6 @@ public class ExchangeService {
         this.botMessageService = botMessageService;
     }
 
-    public boolean saveSum(Update update) {
-        Long chatId = UpdateUtil.getChatId(update);
-        Deal deal = dealService.getByPid(userService.getCurrentDealByChatId(chatId));
-        Double sum = UpdateUtil.getDoubleFromText(update);
-        CryptoCurrency cryptoCurrency = deal.getCryptoCurrency();
-        BigDecimal cryptoAmount;
-        BigDecimal amount;
-        Double minSum = BotVariablePropertiesUtil.getDouble(BotVariableType.MIN_SUM, DealType.BUY, cryptoCurrency);
-        if (CryptoCurrency.BITCOIN.equals(cryptoCurrency)) {
-            if (sum < BotVariablePropertiesUtil.getBigDecimal(BotVariableType.DEAL_BTC_MAX_ENTERED_SUM.getKey()).doubleValue()) {
-                cryptoAmount = BigDecimal.valueOf(sum);
-                amount = calculateService.convert(cryptoCurrency, sum, deal.getFiatCurrency(), DealType.BUY, true);
-            } else {
-                amount = BigDecimal.valueOf(sum);
-                cryptoAmount = calculateService.convert(cryptoCurrency, sum, deal.getFiatCurrency(), DealType.BUY, false);;
-            }
-        } else {
-            cryptoAmount = BigDecimal.valueOf(sum);
-            amount = calculateService.convert(cryptoCurrency, sum, deal.getFiatCurrency(), DealType.BUY, true);
-        }
-        if (cryptoAmount.doubleValue() < minSum) {
-            responseSender.sendMessage(chatId, "Минимальная сумма покупки " + cryptoCurrency.getDisplayName()
-                    + " = " + BigDecimal.valueOf(minSum).stripTrailingZeros().toPlainString() + ".");
-            return false;
-        }
-
-        deal.setOriginalPrice(amount);
-
-        BigDecimal personalBuy = USERS_PERSONAL_BUY.get(chatId);
-        if (BooleanUtils.isNotTrue(deal.getPersonalApplied())) {
-            if (Objects.isNull(personalBuy)) {
-                personalBuy = userDiscountRepository.getPersonalBuyByChatId(chatId);
-                if (Objects.nonNull(personalBuy) && !BigDecimal.ZERO.equals(personalBuy)) {
-                    amount = amount.add(calculateService.getPercentsFactor(amount).multiply(personalBuy));
-                    deal.setPersonalApplied(true);
-                }
-                if (Objects.nonNull(personalBuy)) {
-                    putToUsersPersonalBuy(chatId, personalBuy);
-                } else {
-                    putToUsersPersonalBuy(chatId, BigDecimal.ZERO);
-                }
-            } else if (!BigDecimal.ZERO.equals(personalBuy)) {
-                amount = amount.add(calculateService.getPercentsFactor(amount).multiply(personalBuy));
-                deal.setPersonalApplied(true);
-            }
-        }
-        BigDecimal bulkDiscount = BulkDiscountUtil.getPercentBySum(amount, deal.getFiatCurrency());
-        if (!BigDecimal.ZERO.equals(bulkDiscount)) {
-            amount = amount.subtract(calculateService.getPercentsFactor(amount).multiply(bulkDiscount));
-        }
-        deal.setCryptoAmount(cryptoAmount);
-        deal.setAmount(amount);
-        deal.setCommission(calculateService.getCommission(deal.getCryptoAmount(), cryptoCurrency, deal.getFiatCurrency(), DealType.BUY));
-        dealService.save(deal);
-        return true;
-    }
-
     public void convertToRub(Update update, Long currentDealPid) {
         Long chatId = UpdateUtil.getChatId(update);
         System.out.println();
@@ -223,7 +166,7 @@ public class ExchangeService {
         sum = BigDecimalUtil.round(sum, cryptoCurrency.getScale());
         BigDecimal roundedConvertedSum = BigDecimalUtil.round(
                 calculateService.convert(currency, sum.doubleValue(),
-                        dealRepository.getFiatCurrencyByPid(currentDealPid), DealType.BUY, true), 0);
+                        dealRepository.getFiatCurrencyByPid(currentDealPid), DealType.BUY), 0);
         BigDecimal personalBuy = USERS_PERSONAL_BUY.get(chatId);
         if (Objects.isNull(personalBuy) || !BigDecimal.ZERO.equals(personalBuy)) {
             personalBuy = userDiscountRepository.getPersonalBuyByChatId(chatId);
