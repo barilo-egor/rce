@@ -94,7 +94,7 @@ public class ExchangeServiceNew {
         Deal deal = dealRepository.getById(userRepository.getCurrentDealByChatId(chatId));
         CryptoCurrency cryptoCurrency = deal.getCryptoCurrency();
         DealType dealType = deal.getDealType();
-        DealAmount dealAmount = calculateService.convertNew(
+        DealAmount dealAmount = calculateService.convert(
                 cryptoCurrency, UpdateUtil.getBigDecimalFromText(update), deal.getFiatCurrency(), dealType
         );
         if (isLessThanMin(chatId, deal, dealAmount.getCryptoAmount())) return false;

@@ -164,9 +164,10 @@ public class ExchangeService {
             return;
         }
         sum = BigDecimalUtil.round(sum, cryptoCurrency.getScale());
-        BigDecimal roundedConvertedSum = BigDecimalUtil.round(
-                calculateService.convert(currency, sum.doubleValue(),
-                        dealRepository.getFiatCurrencyByPid(currentDealPid), DealType.BUY), 0);
+        BigDecimal roundedConvertedSum =
+                calculateService.convert(
+                        cryptoCurrency, sum, dealRepository.getFiatCurrencyByPid(currentDealPid), dealRepository.getDealTypeByPid(currentDealPid)
+                ).getAmount();
         BigDecimal personalBuy = USERS_PERSONAL_BUY.get(chatId);
         if (Objects.isNull(personalBuy) || !BigDecimal.ZERO.equals(personalBuy)) {
             personalBuy = userDiscountRepository.getPersonalBuyByChatId(chatId);
