@@ -59,7 +59,7 @@ public class ShowTypesForMinSum extends Processor {
                 : FiatCurrencyUtil.getFirst();
         List<PaymentType> paymentTypes = paymentTypeRepository.getByDealTypeAndFiatCurrency(dealType, fiatCurrency);
         if (CollectionUtils.isEmpty(paymentTypes)) {
-            responseSender.sendMessage(chatId, "Список тип оплат на " + dealType.getDisplayName() + " пуст."); //todo add fiat
+            responseSender.sendMessage(chatId, "Список тип оплат на " + dealType.getAccusative() + " пуст."); //todo add fiat
             processToAdminMainPanel(chatId);
             return;
         }

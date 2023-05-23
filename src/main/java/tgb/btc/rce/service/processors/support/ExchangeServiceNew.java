@@ -2,26 +2,22 @@ package tgb.btc.rce.service.processors.support;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.telegram.telegrambots.meta.api.methods.AnswerInlineQuery;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.inlinequery.inputmessagecontent.InputTextMessageContent;
-import org.telegram.telegrambots.meta.api.objects.inlinequery.result.InlineQueryResultArticle;
 import tgb.btc.rce.bean.Deal;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.*;
 import tgb.btc.rce.exception.BaseException;
-import tgb.btc.rce.exception.EnumTypeNotFoundException;
-import tgb.btc.rce.exception.NumberParseException;
+import tgb.btc.rce.exception.CalculatorQueryException;
 import tgb.btc.rce.repository.DealRepository;
 import tgb.btc.rce.repository.UserDiscountRepository;
 import tgb.btc.rce.repository.UserRepository;
 import tgb.btc.rce.service.IResponseSender;
-import tgb.btc.rce.service.IUserDiscountService;
-import tgb.btc.rce.service.impl.CalculateService;
-import tgb.btc.rce.service.impl.InlineQueryCalculatorService;
-import tgb.btc.rce.service.impl.KeyboardService;
-import tgb.btc.rce.service.impl.MessageService;
-import tgb.btc.rce.util.*;
+import tgb.btc.rce.service.impl.*;
+import tgb.btc.rce.util.BigDecimalUtil;
+import tgb.btc.rce.util.BotVariablePropertiesUtil;
+import tgb.btc.rce.util.MessagePropertiesUtil;
+import tgb.btc.rce.util.UpdateUtil;
+import tgb.btc.rce.vo.CalculatorQuery;
 import tgb.btc.rce.vo.DealAmount;
 import tgb.btc.rce.vo.InlineButton;
 
@@ -43,7 +39,7 @@ public class ExchangeServiceNew {
 
     private IResponseSender responseSender;
 
-    private IUserDiscountService userDiscountService;
+    private UserDiscountService userDiscountService;
 
     private CalculateService calculateService;
 
@@ -72,7 +68,7 @@ public class ExchangeServiceNew {
     }
 
     @Autowired
-    public void setUserDiscountService(IUserDiscountService userDiscountService) {
+    public void setUserDiscountService(UserDiscountService userDiscountService) {
         this.userDiscountService = userDiscountService;
     }
 
@@ -128,14 +124,14 @@ public class ExchangeServiceNew {
         return false;
     }
 
-    public void askForSum(Long chatId, CryptoCurrency currency, DealType dealType) {
+    public void askForSum(Long chatId, FiatCurrency fiatCurrency, CryptoCurrency currency, DealType dealType) {
         PropertiesMessage propertiesMessage;
         if (CryptoCurrency.BITCOIN.equals(currency)) propertiesMessage = PropertiesMessage.DEAL_INPUT_SUM_CRYPTO_OR_FIAT; // TODO сейчас хардкод на "или в рублях", надо подставлять фиатное
         else propertiesMessage = PropertiesMessage.DEAL_INPUT_SUM;
         String text = MessagePropertiesUtil.getMessage(propertiesMessage,
                 dealRepository.getCryptoCurrencyByPid(userRepository.getCurrentDealByChatId(chatId)));
 
-        messageService.sendMessageAndSaveMessageId(chatId, text, keyboardService.getCalculator(currency, dealType));
+        messageService.sendMessageAndSaveMessageId(chatId, text, keyboardService.getCalculator(fiatCurrency, currency, dealType));
     }
 
     public boolean calculateDealAmount(Update update) {
@@ -166,61 +162,27 @@ public class ExchangeServiceNew {
 
     public void calculateForInlineQuery(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
-        Long currentDealPid = userRepository.getCurrentDealByChatId(chatId);
-        String query = queryCalculatorService.getQueryWithPoints(update);
-        BigDecimal enteredAmount;
-        CryptoCurrency currency = null;
-
-        if (queryCalculatorService.hasEnteredAmount(query)) {
-            askForCryptoSum(update);
-            return;
-        }
-
+        String inlineQueryId = update.getInlineQuery().getId();
+        CalculatorQuery calculatorQuery;
         try {
-            currency = CryptoCurrency.fromShortName(query.substring(0, query.indexOf("-")));
-            enteredAmount = BigDecimal.valueOf(NumberUtil.getInputDouble(query.substring(query.indexOf(" ") + 1)));
-        } catch (EnumTypeNotFoundException e) {
-            askForCryptoSum(update);
-            return;
-        } catch (NumberParseException e) {
-            if (hasInputSum(currency, query)) {
-                sendInlineAnswer(update, e.getMessage(), false);
-            } else {
-                askForCryptoSum(update);
-            }
+            calculatorQuery = new CalculatorQuery(queryCalculatorService.getQueryWithPoints(update));
+        } catch (CalculatorQueryException e) {
+            responseSender.sendAnswerInlineQuery(inlineQueryId, "Введите сумму.");
             return;
         }
 
-        CryptoCurrency cryptoCurrency = dealRepository.getCryptoCurrencyByPid(currentDealPid);
-        BigDecimal minSum = BigDecimalUtil.round(
-                BotVariablePropertiesUtil.getDouble(BotVariableType.MIN_SUM, DealType.SELL, cryptoCurrency),
-                cryptoCurrency.getScale()
-        );
-
-        if (enteredAmount.doubleValue() < minSum.doubleValue()) {
-            sendInlineAnswer(update, "Минимальная сумма продажи " + cryptoCurrency.getDisplayName()
-                    + " = " + minSum.stripTrailingZeros().toPlainString() + ".", false);
-            return;
-        }
-        enteredAmount = BigDecimal.valueOf(BigDecimalUtil.round(enteredAmount, cryptoCurrency.getScale()).doubleValue());
-        BigDecimal roundedConvertedSum =
-                calculateService.calculate(
-                        enteredAmount, cryptoCurrency, dealRepository.getFiatCurrencyByPid(currentDealPid), dealRepository.getDealTypeByPid(currentDealPid)
-                ).getAmount();
-        BigDecimal personalSell = USERS_PERSONAL_SELL.get(chatId);
-        if (Objects.isNull(personalSell) || !BigDecimal.ZERO.equals(personalSell)) {
-            personalSell = userDiscountRepository.getPersonalBuyByChatId(chatId);
-            if (Objects.nonNull(personalSell) && !BigDecimal.ZERO.equals(personalSell)) {
-                roundedConvertedSum = roundedConvertedSum.subtract(calculateService.getPercentsFactor(roundedConvertedSum).multiply(personalSell));
-            }
-            if (Objects.nonNull(personalSell)) {
-                putToUsersPersonalSell(chatId, personalSell);
-            } else {
-                putToUsersPersonalSell(chatId, BigDecimal.ZERO);
-            }
-        }
-        sendInlineAnswer(update, enteredAmount.stripTrailingZeros().toPlainString() + " " + currency.getDisplayName() + " ~ " +
-                BigDecimalUtil.round(roundedConvertedSum, 0).toPlainString(), true);
+        DealAmount dealAmount = calculateService.calculate(calculatorQuery.getEnteredAmount(), calculatorQuery.getCurrency(),
+                calculatorQuery.getFiatCurrency(), calculatorQuery.getDealType());
+        BigDecimal totalAmount = dealAmount.getAmount();
+        totalAmount = calculateService.calculateDiscount(calculatorQuery.getDealType(), totalAmount,
+                userDiscountService.getPersonal(chatId, calculatorQuery.getDealType()));
+        totalAmount = calculateService.calculateDiscount(calculatorQuery.getDealType(), totalAmount,
+                userDiscountService.getBulk(totalAmount, calculatorQuery.getFiatCurrency()));
+        String resultText = calculatorQuery.getDealType().getNominative() + ": "
+                + BigDecimalUtil.round(dealAmount.getCryptoAmount(), calculatorQuery.getCurrency().getScale())
+                + " ~ " + BigDecimalUtil.round(totalAmount, 0);
+        responseSender.sendAnswerInlineQuery(inlineQueryId, resultText, "Нажмите сюда, чтобы отправить сумму.",
+                BigDecimalUtil.toPlainString(calculatorQuery.getEnteredAmount()));
     }
 
 
@@ -243,15 +205,6 @@ public class ExchangeServiceNew {
         String sum = update.getInlineQuery().getQuery().contains(" ")
                 ? update.getInlineQuery().getQuery().substring(update.getInlineQuery().getQuery().indexOf(" "))
                 : "Ошибка";
-        responseSender.execute(AnswerInlineQuery.builder().inlineQueryId(update.getInlineQuery().getId())
-                .result(InlineQueryResultArticle.builder()
-                        .id(update.getInlineQuery().getId())
-                        .title(answer)
-                        .inputMessageContent(InputTextMessageContent.builder()
-                                .messageText(sum)
-                                .build())
-                        .description(text)
-                        .build())
-                .build());
+        responseSender.sendAnswerInlineQuery(update.getInlineQuery().getId(), answer, text, sum);
     }
 }

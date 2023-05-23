@@ -253,7 +253,7 @@ public class SellService {
             userService.previousStep(chatId);
             currentDealPid = userService.getCurrentDealByChatId(chatId);
             dealRepository.updateIsPersonalAppliedByPid(currentDealPid, false);
-            exchangeServiceNew.askForSum(chatId,
+            exchangeServiceNew.askForSum(chatId, dealRepository.getFiatCurrencyByPid(currentDealPid),
                     dealService.getCryptoCurrencyByPid(currentDealPid), DealType.SELL);
             return null;
         }

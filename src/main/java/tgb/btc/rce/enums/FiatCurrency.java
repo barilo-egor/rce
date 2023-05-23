@@ -1,6 +1,6 @@
 package tgb.btc.rce.enums;
 
-import tgb.btc.rce.exception.BaseException;
+import tgb.btc.rce.exception.EnumTypeNotFoundException;
 
 public enum FiatCurrency {
     /**
@@ -34,6 +34,6 @@ public enum FiatCurrency {
         for (FiatCurrency fiatCurrency : FiatCurrency.values()) {
             if (fiatCurrency.getCode().equals(code)) return fiatCurrency;
         }
-        throw new BaseException("Фиатная валюта не найдена.");
+        throw new EnumTypeNotFoundException("Фиатная валюта не найдена.");
     }
 }

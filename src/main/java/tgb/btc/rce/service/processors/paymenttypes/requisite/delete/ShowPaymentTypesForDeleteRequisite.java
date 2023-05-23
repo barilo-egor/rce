@@ -35,7 +35,7 @@ public class ShowPaymentTypesForDeleteRequisite extends Processor {
         List<PaymentType> paymentTypes = paymentTypeRepository.getByDealTypeAndFiatCurrency(DealType.BUY,
                 FiatCurrency.getByCode(UpdateUtil.getMessageText(update)));
         if (CollectionUtils.isEmpty(paymentTypes)) {
-            responseSender.sendMessage(chatId, "Список тип оплат на " + DealType.BUY.getDisplayName() + " пуст."); // todo добавить фиат карренси
+            responseSender.sendMessage(chatId, "Список тип оплат на " + DealType.BUY.getAccusative() + " пуст."); // todo добавить фиат карренси
             processToAdminMainPanel(chatId);
             return;
         }

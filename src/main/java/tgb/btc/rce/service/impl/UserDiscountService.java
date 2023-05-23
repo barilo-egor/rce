@@ -5,8 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tgb.btc.rce.bean.Deal;
 import tgb.btc.rce.enums.DealType;
+import tgb.btc.rce.enums.FiatCurrency;
 import tgb.btc.rce.repository.UserDiscountRepository;
-import tgb.btc.rce.service.IUserDiscountService;
 import tgb.btc.rce.service.processors.support.PersonalDiscountsCache;
 import tgb.btc.rce.util.BigDecimalUtil;
 import tgb.btc.rce.util.BulkDiscountUtil;
@@ -14,7 +14,7 @@ import tgb.btc.rce.util.BulkDiscountUtil;
 import java.math.BigDecimal;
 
 @Service
-public class UserDiscountService implements IUserDiscountService {
+public class UserDiscountService {
     private UserDiscountRepository userDiscountRepository;
 
     private PersonalDiscountsCache personalDiscountsCache;
@@ -36,12 +36,10 @@ public class UserDiscountService implements IUserDiscountService {
         this.userDiscountRepository = userDiscountRepository;
     }
 
-    @Override
     public boolean isExistByUserPid(Long userPid) {
         return userDiscountRepository.countByUserPid(userPid) > 0;
     }
 
-    @Override
     public void applyPersonal(Long chatId, Deal deal) {
         if (BooleanUtils.isTrue(deal.getPersonalApplied())) return;
         DealType dealType = deal.getDealType();
@@ -52,12 +50,19 @@ public class UserDiscountService implements IUserDiscountService {
         }
     }
 
-    @Override
+    public BigDecimal getPersonal(Long chatId, DealType dealType) {
+        return personalDiscountsCache.getDiscount(chatId, dealType);
+    }
+
     public void applyBulk(Deal deal) {
         DealType dealType = deal.getDealType();
         if (!DealType.isBuy(dealType)) return;
         BigDecimal bulkDiscount = BulkDiscountUtil.getPercentBySum(deal.getAmount(), deal.getFiatCurrency());
         if (!BigDecimalUtil.isZero(bulkDiscount))
             deal.setAmount(calculateService.calculateDiscount(dealType, deal.getAmount(), bulkDiscount));
+    }
+
+    public BigDecimal getBulk(BigDecimal amount, FiatCurrency fiatCurrency) {
+        return BulkDiscountUtil.getPercentBySum(amount, fiatCurrency);
     }
 }

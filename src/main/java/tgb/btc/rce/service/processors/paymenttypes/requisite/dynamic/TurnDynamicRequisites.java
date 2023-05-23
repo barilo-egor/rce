@@ -43,7 +43,7 @@ public class TurnDynamicRequisites extends Processor {
     public void sendPaymentTypes(Long chatId, DealType dealType, FiatCurrency fiatCurrency) {
         List<PaymentType> paymentTypes = paymentTypeRepository.getByDealTypeAndFiatCurrency(dealType, fiatCurrency);
         if (CollectionUtils.isEmpty(paymentTypes)) {
-            responseSender.sendMessage(chatId, "Список тип оплат на " + dealType.getDisplayName() + " пуст."); // TODO добавить фиат
+            responseSender.sendMessage(chatId, "Список тип оплат на " + dealType.getAccusative() + " пуст."); // TODO добавить фиат
             processToAdminMainPanel(chatId);
             return;
         }

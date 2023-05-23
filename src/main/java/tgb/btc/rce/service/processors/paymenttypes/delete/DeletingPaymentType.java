@@ -47,7 +47,7 @@ public class DeletingPaymentType extends Processor {
         paymentTypeRepository.deleteById(pid);
         Long chatId = UpdateUtil.getChatId(update);
         responseSender.deleteMessage(chatId, update.getCallbackQuery().getMessage().getMessageId());
-        String message = "Тип оплаты на " + paymentType.getDealType().getDisplayName() + " \"" + paymentType.getName() + "\" удален.";
+        String message = "Тип оплаты на " + paymentType.getDealType().getAccusative() + " \"" + paymentType.getName() + "\" удален.";
         responseSender.sendMessage(UpdateUtil.getChatId(update), message);
         showPaymentTypesForDelete.sendPaymentTypes(chatId, dealType, paymentType.getFiatCurrency());
     }

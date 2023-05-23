@@ -7,8 +7,8 @@ import tgb.btc.rce.bean.User;
 import tgb.btc.rce.bean.UserDiscount;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.repository.UserDiscountRepository;
-import tgb.btc.rce.service.IUserDiscountService;
 import tgb.btc.rce.service.Processor;
+import tgb.btc.rce.service.impl.UserDiscountService;
 import tgb.btc.rce.service.processors.support.SellService;
 import tgb.btc.rce.util.UpdateUtil;
 
@@ -19,7 +19,7 @@ public class SavePersonalSellDiscountProcessor extends Processor {
 
     private UserDiscountRepository userDiscountRepository;
 
-    private IUserDiscountService userDiscountService;
+    private UserDiscountService userDiscountService;
 
     @Autowired
     public void setUserDiscountRepository(UserDiscountRepository userDiscountRepository) {
@@ -27,7 +27,7 @@ public class SavePersonalSellDiscountProcessor extends Processor {
     }
 
     @Autowired
-    public void setUserDiscountService(IUserDiscountService userDiscountService) {
+    public void setUserDiscountService(UserDiscountService userDiscountService) {
         this.userDiscountService = userDiscountService;
     }
 

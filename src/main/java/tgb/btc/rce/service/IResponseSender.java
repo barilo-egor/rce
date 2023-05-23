@@ -71,4 +71,8 @@ public interface IResponseSender {
     void sendInputFile(Long chatId, InputFile inputFile);
 
     Optional<Message> sendMessage(Long chatId, MessageTemplate messageTemplate);
+
+    boolean sendAnswerInlineQuery(String inlineQueryId, String title, String description, String messageText);
+
+    boolean sendAnswerInlineQuery(String inlineQueryId, String title);
 }

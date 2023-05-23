@@ -172,7 +172,7 @@ public class BuyBitcoin extends Processor {
                 CryptoCurrency currency = CryptoCurrency.valueOf(update.getCallbackQuery().getData());
                 currentDealPid = userService.getCurrentDealByChatId(chatId);
                 dealService.updateCryptoCurrencyByPid(currentDealPid, currency);
-                exchangeServiceNew.askForSum(chatId, currency, dealService.getDealTypeByPid(currentDealPid));
+                exchangeServiceNew.askForSum(chatId, dealRepository.getFiatCurrencyByPid(currentDealPid), currency, dealService.getDealTypeByPid(currentDealPid));
                 userService.nextStep(chatId);
                 break;
             case 2:
@@ -314,7 +314,7 @@ public class BuyBitcoin extends Processor {
             case 2:
                 currentDealPid = userService.getCurrentDealByChatId(chatId);
                 dealRepository.updateIsPersonalAppliedByPid(currentDealPid, false);
-                exchangeServiceNew.askForSum(chatId,
+                exchangeServiceNew.askForSum(chatId, dealRepository.getFiatCurrencyByPid(currentDealPid),
                         dealService.getCryptoCurrencyByPid(currentDealPid), dealService.getDealTypeByPid(currentDealPid));
                 break;
             case 3:
@@ -325,7 +325,7 @@ public class BuyBitcoin extends Processor {
                 } else {
                     currentDealPid = userService.getCurrentDealByChatId(chatId);
                     dealRepository.updateIsPersonalAppliedByPid(currentDealPid, false);
-                    exchangeServiceNew.askForSum(chatId,
+                    exchangeServiceNew.askForSum(chatId, dealRepository.getFiatCurrencyByPid(currentDealPid),
                             dealService.getCryptoCurrencyByPid(currentDealPid), dealService.getDealTypeByPid(currentDealPid));
                     userService.previousStep(chatId);
                 }

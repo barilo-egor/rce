@@ -28,7 +28,7 @@ public class KeyboardService {
         return KeyboardUtil.buildInline(currencies);
     }
 
-    public ReplyKeyboard getCalculator(CryptoCurrency currency, DealType dealType) {
+    public ReplyKeyboard getCalculator(FiatCurrency fiatCurrency, CryptoCurrency currency, DealType dealType) {
         switch (CALCULATOR_TYPE) {
             case INLINE_QUERY:
                 String operation = DealType.BUY.equals(dealType)
@@ -38,7 +38,7 @@ public class KeyboardService {
                         InlineButton.builder()
                                 .inlineType(InlineType.SWITCH_INLINE_QUERY_CURRENT_CHAT)
                                 .text("Калькулятор")
-                                .data(currency.getShortName() + operation + " ")
+                                .data(fiatCurrency.getCode() + "-" + dealType.getKey() + "-" + currency.getShortName())
                                 .build(),
                         KeyboardUtil.INLINE_BACK_BUTTON), 1);
             default:

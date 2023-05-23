@@ -35,7 +35,7 @@ public class NewPaymentTypeRequisite extends Processor {
         FiatCurrency fiatCurrency = FiatCurrency.getByCode(UpdateUtil.getMessageText(update));
         List<PaymentType> paymentTypes = paymentTypeRepository.getByDealTypeAndFiatCurrency(DealType.BUY, fiatCurrency);
         if (CollectionUtils.isEmpty(paymentTypes)) {
-            responseSender.sendMessage(chatId, "Список тип оплат на " + DealType.BUY.getDisplayName() + "-" + fiatCurrency.getCode() + " пуст.");
+            responseSender.sendMessage(chatId, "Список тип оплат на " + DealType.BUY.getAccusative() + "-" + fiatCurrency.getCode() + " пуст.");
             processToAdminMainPanel(chatId);
             return;
         }

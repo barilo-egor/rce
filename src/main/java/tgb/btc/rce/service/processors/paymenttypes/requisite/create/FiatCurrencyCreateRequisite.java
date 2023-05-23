@@ -37,7 +37,7 @@ public class FiatCurrencyCreateRequisite extends Processor {
         } else {
             List<PaymentType> paymentTypes = paymentTypeRepository.getByDealTypeAndFiatCurrency(DealType.BUY, FiatCurrencyUtil.getFirst());
             if (CollectionUtils.isEmpty(paymentTypes)) {
-                responseSender.sendMessage(chatId, "Список тип оплат на " + DealType.BUY.getDisplayName() + "-" + FiatCurrencyUtil.getFirst().getCode() + " пуст.");
+                responseSender.sendMessage(chatId, "Список тип оплат на " + DealType.BUY.getAccusative() + "-" + FiatCurrencyUtil.getFirst().getCode() + " пуст.");
                 processToAdminMainPanel(chatId);
                 return;
             }

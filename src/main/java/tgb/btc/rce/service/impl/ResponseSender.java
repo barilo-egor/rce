@@ -13,6 +13,8 @@ import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageTe
 import org.telegram.telegrambots.meta.api.objects.Document;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Message;
+import org.telegram.telegrambots.meta.api.objects.inlinequery.inputmessagecontent.InputTextMessageContent;
+import org.telegram.telegrambots.meta.api.objects.inlinequery.result.InlineQueryResultArticle;
 import org.telegram.telegrambots.meta.api.objects.media.InputMedia;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
@@ -298,5 +300,29 @@ public class ResponseSender implements IResponseSender {
     @Override
     public Optional<Message> sendMessage(Long chatId, MessageTemplate messageTemplate) {
         return sendMessage(chatId, messageTemplate.getMessage(), messageTemplate.getBotKeyboard());
+    }
+
+    @Override
+    public boolean sendAnswerInlineQuery(String inlineQueryId, String title, String description, String messageText) {
+        try {
+            return bot.execute(AnswerInlineQuery.builder().inlineQueryId(inlineQueryId)
+                    .result(InlineQueryResultArticle.builder()
+                            .id(inlineQueryId)
+                            .title(title)
+                            .inputMessageContent(InputTextMessageContent.builder()
+                                    .messageText(messageText)
+                                    .build())
+                            .description(description)
+                            .build())
+                    .build());
+        } catch (TelegramApiException e) {
+            log.trace("Не получилось отправить inlineQuery.");
+            return false;
+        }
+    }
+
+    @Override
+    public boolean sendAnswerInlineQuery(String inlineQueryId, String title) {
+        return sendAnswerInlineQuery(inlineQueryId, title, null, null);
     }
 }

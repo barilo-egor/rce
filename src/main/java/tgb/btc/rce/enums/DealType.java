@@ -1,19 +1,37 @@
 package tgb.btc.rce.enums;
 
-public enum DealType {
-    BUY("покупку", "buy"),
-    SELL("продажу", "sell");
+import tgb.btc.rce.exception.EnumTypeNotFoundException;
 
-    final String displayName;
+import java.util.Arrays;
+
+public enum DealType {
+    BUY("покупка", "покупку", "buy"),
+    SELL("продажа", "продажу", "sell");
+
+    /**
+     * Именительный
+     */
+    final String nominative;
+    /**
+     * Винительный
+     */
+    final String accusative;
+
+
     final String key;
 
-    DealType(String displayName, String key) {
-        this.displayName = displayName;
+    DealType(String nominative, String accusative, String key) {
+        this.nominative = nominative;
+        this.accusative = accusative;
         this.key = key;
     }
 
-    public String getDisplayName() {
-        return displayName;
+    public String getNominative() {
+        return nominative;
+    }
+
+    public String getAccusative() {
+        return accusative;
     }
 
     public String getKey() {
@@ -22,5 +40,12 @@ public enum DealType {
 
     public static boolean isBuy(DealType dealType) {
         return DealType.BUY.equals(dealType);
+    }
+
+    public static DealType findByKey(String key) {
+        return Arrays.stream(DealType.values())
+                .filter(dealType -> dealType.getKey().equals(key))
+                .findFirst()
+                .orElseThrow(EnumTypeNotFoundException::new);
     }
 }
