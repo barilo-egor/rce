@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.bean.Deal;
-import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.*;
 import tgb.btc.rce.exception.BaseException;
 import tgb.btc.rce.exception.CalculatorQueryException;
@@ -183,28 +182,5 @@ public class ExchangeServiceNew {
                 + " ~ " + BigDecimalUtil.round(totalAmount, 0);
         responseSender.sendAnswerInlineQuery(inlineQueryId, resultText, "Нажмите сюда, чтобы отправить сумму.",
                 BigDecimalUtil.toPlainString(calculatorQuery.getEnteredAmount()));
-    }
-
-
-    private boolean hasInputSum(CryptoCurrency currency, String query) {
-        return currency != null && query.length() > currency.getShortName().length() + 1;
-    }
-
-    private boolean hasInputSum(String query) {
-        return query.contains(" ");
-    }
-
-    private void askForCryptoSum(Update update) {
-        sendInlineAnswer(update, BotStringConstants.ENTER_CRYPTO_SUM, false);
-    }
-
-    private void sendInlineAnswer(Update update, String answer, boolean textPushButton) {
-        String text = textPushButton
-                ? "Нажмите сюда, чтобы отправить сумму"
-                : "Введите сумму в криптовалюте.";
-        String sum = update.getInlineQuery().getQuery().contains(" ")
-                ? update.getInlineQuery().getQuery().substring(update.getInlineQuery().getQuery().indexOf(" "))
-                : "Ошибка";
-        responseSender.sendAnswerInlineQuery(update.getInlineQuery().getId(), answer, text, sum);
     }
 }
