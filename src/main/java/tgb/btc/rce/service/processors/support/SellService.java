@@ -93,61 +93,6 @@ public class SellService {
         this.botMessageService = botMessageService;
     }
 
-    public boolean saveSum(Update update) {
-        Long chatId = UpdateUtil.getChatId(update);
-        Deal deal = dealService.findById(userService.getCurrentDealByChatId(chatId));
-        Double sum = UpdateUtil.getDoubleFromText(update);
-        CryptoCurrency cryptoCurrency = deal.getCryptoCurrency();
-        Double minSum = BotVariablePropertiesUtil.getDouble(BotVariableType.MIN_SUM, DealType.SELL, cryptoCurrency);
-
-        BigDecimal cryptoAmount;
-        BigDecimal amount;
-        if (CryptoCurrency.BITCOIN.equals(cryptoCurrency)) {
-            if (sum < BotVariablePropertiesUtil.getBigDecimal(BotVariableType.DEAL_BTC_MAX_ENTERED_SUM.getKey()).doubleValue()) {
-                cryptoAmount = BigDecimal.valueOf(sum);
-                amount = calculateService.convert(cryptoCurrency, sum, deal.getFiatCurrency(), DealType.SELL);
-            } else {
-                amount = BigDecimal.valueOf(sum);
-                cryptoAmount = calculateService.convert(cryptoCurrency, sum, deal.getFiatCurrency(), DealType.SELL);;
-            }
-        } else {
-            cryptoAmount = BigDecimal.valueOf(sum);
-            amount = calculateService.convert(cryptoCurrency, sum, deal.getFiatCurrency(), DealType.SELL);
-        }
-        deal.setOriginalPrice(amount);
-
-        if (cryptoAmount.doubleValue() < minSum) {
-            responseSender.sendMessage(chatId, "Минимальная сумма продажи " + cryptoCurrency.getDisplayName()
-                    + " = " + BigDecimal.valueOf(minSum).stripTrailingZeros().toPlainString() + ".");
-            return false;
-        }
-
-        BigDecimal personalSell = USERS_PERSONAL_SELL.get(chatId);
-        if (BooleanUtils.isNotTrue(deal.getPersonalApplied())) {
-            if (Objects.isNull(personalSell)) {
-                personalSell = userDiscountRepository.getPersonalSellByChatId(chatId);
-                if (Objects.nonNull(personalSell) && !(BigDecimal.ZERO.compareTo(personalSell) == 0)) {
-                    amount = amount.subtract(calculateService.getPercentsFactor(amount).multiply(personalSell));
-                    deal.setPersonalApplied(true);
-                }
-                if (Objects.nonNull(personalSell)) {
-                    putToUsersPersonalSell(chatId, personalSell);
-                } else {
-                    putToUsersPersonalSell(chatId, BigDecimal.ZERO);
-                }
-            } else if (!BigDecimal.ZERO.equals(personalSell)) {
-                amount = amount.subtract(calculateService.getPercentsFactor(amount).multiply(personalSell));
-                deal.setPersonalApplied(true);
-            }
-        }
-        deal.setAmount(amount);
-        deal.setCryptoAmount(cryptoAmount);
-        dealService.save(deal);
-        dealService.updateCommissionByPid(calculateService.getCommissionForSell(deal.getCryptoAmount(), cryptoCurrency,
-                deal.getFiatCurrency(), deal.getDealType()), deal.getPid());
-        return true;
-    }
-
     public void convertToRub(Update update, Long currentDealPid) {
         Long chatId = UpdateUtil.getChatId(update);
         String query = update.getInlineQuery().getQuery().replaceAll(",", ".");
