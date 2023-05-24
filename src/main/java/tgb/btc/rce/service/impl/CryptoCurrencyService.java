@@ -1,6 +1,7 @@
 package tgb.btc.rce.service.impl;
 
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 import tgb.btc.rce.enums.BotProperties;
@@ -16,6 +17,7 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
 @Service
+@Slf4j
 public class CryptoCurrencyService {
 
     // в комментарии проперти джсона с курсом
@@ -106,6 +108,7 @@ public class CryptoCurrencyService {
             String jsonText = readAll(rd);
             return new JSONObject(jsonText);
         } catch (Exception ex) {
+            log.error("Ошика при получении курса по url=" + url, ex);
             throw new BaseException("Проблема при получении курса. Создание заявки для этой валюты пока что невозможно.");
         }
     }
