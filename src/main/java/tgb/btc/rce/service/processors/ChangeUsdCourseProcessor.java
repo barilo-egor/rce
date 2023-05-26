@@ -68,7 +68,7 @@ public class ChangeUsdCourseProcessor extends Processor {
                 }
                 userDataRepository.updateCryptoCurrencyByChatId(chatId, cryptoCurrency);
                 if (!FiatCurrencyUtil.isFew()) {
-                    responseSender.sendMessage(chatId, BotStringConstants.ENTER_NEW_COURSE, BotKeyboard.CANCEL);
+                    responseSender.sendMessage(chatId, BotStringConstants.ENTER_NEW_COURSE, BotKeyboard.REPLY_CANCEL);
                     userService.nextStep(chatId);
                 } else {
                     List<ReplyButton> buttons = Arrays.stream(FiatCurrency.values())
@@ -92,7 +92,7 @@ public class ChangeUsdCourseProcessor extends Processor {
                     return;
                 }
                 userDataRepository.updateStringByUserChatId(chatId, fiatCurrency.name());
-                responseSender.sendMessage(chatId, BotStringConstants.ENTER_NEW_COURSE, BotKeyboard.CANCEL);
+                responseSender.sendMessage(chatId, BotStringConstants.ENTER_NEW_COURSE, BotKeyboard.REPLY_CANCEL);
                 userService.nextStep(chatId);
                 break;
             case 4:

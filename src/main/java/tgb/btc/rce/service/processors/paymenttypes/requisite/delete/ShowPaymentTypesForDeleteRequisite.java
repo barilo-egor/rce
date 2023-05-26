@@ -49,7 +49,7 @@ public class ShowPaymentTypesForDeleteRequisite extends Processor {
                 .collect(Collectors.toList());
         responseSender.sendMessage(chatId, "Выберите тип оплаты для удаления реквизита.",
                                    KeyboardUtil.buildInline(buttons));
-        responseSender.sendMessage(chatId, "Для возвращения в меню нажмите \"Отмена\".", BotKeyboard.CANCEL);
+        responseSender.sendMessage(chatId, "Для возвращения в меню нажмите \"Отмена\".", BotKeyboard.REPLY_CANCEL);
         userService.nextStep(chatId, Command.DELETE_PAYMENT_TYPE_REQUISITE);
     }
 

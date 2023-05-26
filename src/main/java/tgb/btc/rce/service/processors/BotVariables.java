@@ -27,13 +27,13 @@ public class BotVariables extends Processor {
         switch (userService.getStepByChatId(chatId)) {
             case 0:
                 responseSender.sendMessage(chatId, "Измените нужные значения и отправьте исправленный файл. " +
-                        "Обязательно закройте файл, перед тем как отправлять.", BotKeyboard.CANCEL);
+                        "Обязательно закройте файл, перед тем как отправлять.", BotKeyboard.REPLY_CANCEL);
                 responseSender.sendFile(chatId, new File(FilePaths.BOT_VARIABLE_PROPERTIES));
                 userService.nextStep(chatId, Command.BOT_VARIABLES);
                 break;
             case 1:
                 if (!update.hasMessage() || !update.getMessage().hasDocument()) {
-                    responseSender.sendMessage(chatId, "Отправьте файл или вернитесь в главное меню.", BotKeyboard.CANCEL);
+                    responseSender.sendMessage(chatId, "Отправьте файл или вернитесь в главное меню.", BotKeyboard.REPLY_CANCEL);
                     return;
                 }
                 updateProperties(update);

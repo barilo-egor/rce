@@ -73,7 +73,7 @@ public class ShowTypesForMinSum extends Processor {
                 .collect(Collectors.toList());
         responseSender.sendMessage(chatId, "Выберите тип оплаты для изменения минимальной суммы.",
                 KeyboardUtil.buildInline(buttons));
-        responseSender.sendMessage(chatId, "Для возвращения в меню нажмите \"Отмена\".", BotKeyboard.CANCEL);
+        responseSender.sendMessage(chatId, "Для возвращения в меню нажмите \"Отмена\".", BotKeyboard.REPLY_CANCEL);
         userService.nextStep(chatId);
     }
 }

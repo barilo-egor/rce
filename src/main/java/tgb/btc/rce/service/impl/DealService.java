@@ -153,7 +153,7 @@ public class DealService extends BasePersistService<Deal> {
     }
 
     public String getWalletFromLastNotCurrentByChatId(Long chatId, DealType dealType) {
-        return dealRepository.getWalletFromLastPassedByChatId(chatId, dealType);
+        return dealRepository.getWalletFromLastPassedByChatIdAndDealType(chatId, dealType);
     }
 
     public DealType getDealTypeByPid(Long pid) {

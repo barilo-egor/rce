@@ -15,7 +15,7 @@ public class NewPaymentType extends Processor {
     @Override
     public void run(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
-        responseSender.sendMessage(chatId, ENTER_NAME, BotKeyboard.CANCEL);
+        responseSender.sendMessage(chatId, ENTER_NAME, BotKeyboard.REPLY_CANCEL);
         userService.nextStep(chatId, Command.NEW_PAYMENT_TYPE);
     }
 

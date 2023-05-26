@@ -35,6 +35,10 @@ public final class BigDecimalUtil {
         return num.setScale(scale, RoundingMode.HALF_UP).stripTrailingZeros();
     }
 
+    public static String roundToPlainString(BigDecimal num, int scale) {
+        return toPlainString(round(num, scale));
+    }
+
     public static String toPlainString(BigDecimal num) {
         return num.stripTrailingZeros().toPlainString();
     }

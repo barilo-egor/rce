@@ -13,7 +13,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public enum BotKeyboard {
-    CANCEL(KeyboardUtil.buildReply(List.of(BotReplyButton.CANCEL.getButton()))),
+    REPLY_CANCEL(KeyboardUtil.buildReply(List.of(BotReplyButton.CANCEL.getButton()))),
+    INLINE_CANCEL(KeyboardUtil.buildInline(List.of(BotInlineButton.CANCEL.getButton()))),
     BUY_OR_SELL(KeyboardUtil.buildReply(List.of(
             ReplyButton.builder()
                     .text(BotStringConstants.BUY)

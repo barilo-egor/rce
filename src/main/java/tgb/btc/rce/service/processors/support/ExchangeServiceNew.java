@@ -3,27 +3,22 @@ package tgb.btc.rce.service.processors.support;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import tgb.btc.rce.bean.Deal;
 import tgb.btc.rce.enums.*;
-import tgb.btc.rce.exception.BaseException;
 import tgb.btc.rce.exception.CalculatorQueryException;
 import tgb.btc.rce.repository.DealRepository;
 import tgb.btc.rce.repository.UserDiscountRepository;
 import tgb.btc.rce.repository.UserRepository;
 import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.impl.*;
-import tgb.btc.rce.util.BigDecimalUtil;
-import tgb.btc.rce.util.BotVariablePropertiesUtil;
-import tgb.btc.rce.util.MessagePropertiesUtil;
-import tgb.btc.rce.util.UpdateUtil;
+import tgb.btc.rce.util.*;
 import tgb.btc.rce.vo.CalculatorQuery;
 import tgb.btc.rce.vo.DealAmount;
 import tgb.btc.rce.vo.InlineButton;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 @Service
 public class ExchangeServiceNew {
@@ -92,32 +87,15 @@ public class ExchangeServiceNew {
         this.keyboardService = keyboardService;
     }
 
-    private final static Map<Long, BigDecimal> USERS_PERSONAL_SELL = new HashMap<>();
-
-    private static final Map<Long, BigDecimal> USERS_PERSONAL_BUY = new HashMap<>();
-
-    public static void putToUsersPersonalSell(Long userChatId, BigDecimal personalSell) {
-        if (Objects.isNull(personalSell)) {
-            throw new BaseException("Персональная скидка на продажу не может быть null.");
-        }
-        USERS_PERSONAL_SELL.put(userChatId, personalSell);
-    }
-
-    public static void putToUsersPersonalBuy(Long userChatId, BigDecimal personalBuy) {
-        if (Objects.isNull(personalBuy)) {
-            throw new BaseException("Персональная скидка на покупку не может быть null.");
-        }
-        USERS_PERSONAL_BUY.put(userChatId, personalBuy);
-    }
-
     public void askForCurrency(Long chatId, DealType dealType) {
-        messageService.sendMessageAndSaveMessageId(chatId, MessagePropertiesUtil.getChooseCurrency(dealType), keyboardService.getCurrencies(dealType));
+        messageService.sendMessageAndSaveMessageId(chatId, MessagePropertiesUtil.getChooseCurrency(dealType),
+                                                   keyboardService.getCurrencies(dealType));
     }
 
     public boolean alreadyHasDeal(Long chatId) {
         if (dealRepository.getActiveDealsCountByUserChatId(chatId) > 0) {
             responseSender.sendMessage(chatId, "У вас уже есть активная заявка.",
-                    InlineButton.buildData("Удалить", Command.DELETE_DEAL.getText()));
+                                       InlineButton.buildData("Удалить", Command.DELETE_DEAL.getText()));
             return true;
         }
         return false;
@@ -125,21 +103,29 @@ public class ExchangeServiceNew {
 
     public void askForSum(Long chatId, FiatCurrency fiatCurrency, CryptoCurrency currency, DealType dealType) {
         PropertiesMessage propertiesMessage;
-        if (CryptoCurrency.BITCOIN.equals(currency)) propertiesMessage = PropertiesMessage.DEAL_INPUT_SUM_CRYPTO_OR_FIAT; // TODO сейчас хардкод на "или в рублях", надо подставлять фиатное
-        else propertiesMessage = PropertiesMessage.DEAL_INPUT_SUM;
+        if (CryptoCurrency.BITCOIN.equals(currency)) {
+            propertiesMessage = PropertiesMessage.DEAL_INPUT_SUM_CRYPTO_OR_FIAT; // TODO сейчас хардкод на "или в рублях", надо подставлять фиатное
+        } else {
+            propertiesMessage = PropertiesMessage.DEAL_INPUT_SUM;
+        }
         String text = MessagePropertiesUtil.getMessage(propertiesMessage,
-                dealRepository.getCryptoCurrencyByPid(userRepository.getCurrentDealByChatId(chatId)));
+                                                       dealRepository.getCryptoCurrencyByPid(
+                                                               userRepository.getCurrentDealByChatId(chatId)));
 
-        messageService.sendMessageAndSaveMessageId(chatId, text, keyboardService.getCalculator(fiatCurrency, currency, dealType));
+        messageService.sendMessageAndSaveMessageId(chatId, text,
+                                                   keyboardService.getCalculator(fiatCurrency, currency, dealType));
     }
 
     public boolean calculateDealAmount(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
         Deal deal = dealRepository.getById(userRepository.getCurrentDealByChatId(chatId));
         DealAmount dealAmount = calculateService.calculate(UpdateUtil.getBigDecimalFromText(update),
-                deal.getCryptoCurrency(), deal.getFiatCurrency(), deal.getDealType());
+                                                           deal.getCryptoCurrency(), deal.getFiatCurrency(),
+                                                           deal.getDealType());
         dealAmount.updateDeal(deal);
-        if (isLessThanMin(chatId, deal)) return false;
+        if (isLessThanMin(chatId, deal)) {
+            return false;
+        }
         userDiscountService.applyPersonal(chatId, deal);
         userDiscountService.applyBulk(deal);
         dealRepository.save(deal);
@@ -151,7 +137,9 @@ public class ExchangeServiceNew {
         CryptoCurrency cryptoCurrency = deal.getCryptoCurrency();
         BigDecimal minSum = BotVariablePropertiesUtil.getBigDecimal(BotVariableType.MIN_SUM, dealType, cryptoCurrency);
         if (deal.getCryptoAmount().compareTo(minSum) < 0) {
-            responseSender.sendMessage(chatId, "Минимальная сумма " + (DealType.isBuy(dealType) ? "покупки" : "продажи")
+            responseSender.sendMessage(chatId, "Минимальная сумма " + (DealType.isBuy(dealType)
+                                                                       ? "покупки"
+                                                                       : "продажи")
                     + " " + cryptoCurrency.getDisplayName()
                     + " = " + minSum.stripTrailingZeros().toPlainString() + ".");
             return true;
@@ -170,17 +158,52 @@ public class ExchangeServiceNew {
             return;
         }
 
-        DealAmount dealAmount = calculateService.calculate(calculatorQuery.getEnteredAmount(), calculatorQuery.getCurrency(),
-                calculatorQuery.getFiatCurrency(), calculatorQuery.getDealType());
+        DealAmount dealAmount = calculateService.calculate(calculatorQuery.getEnteredAmount(),
+                                                           calculatorQuery.getCurrency(),
+                                                           calculatorQuery.getFiatCurrency(),
+                                                           calculatorQuery.getDealType());
         BigDecimal totalAmount = dealAmount.getAmount();
         totalAmount = calculateService.calculateDiscount(calculatorQuery.getDealType(), totalAmount,
-                userDiscountService.getPersonal(chatId, calculatorQuery.getDealType()));
+                                                         userDiscountService.getPersonal(chatId,
+                                                                                         calculatorQuery.getDealType()));
         totalAmount = calculateService.calculateDiscount(calculatorQuery.getDealType(), totalAmount,
-                userDiscountService.getBulk(totalAmount, calculatorQuery.getFiatCurrency()));
+                                                         userDiscountService.getBulk(totalAmount,
+                                                                                     calculatorQuery.getFiatCurrency()));
         String resultText = calculatorQuery.getDealType().getNominative() + ": "
                 + BigDecimalUtil.round(dealAmount.getCryptoAmount(), calculatorQuery.getCurrency().getScale())
                 + " ~ " + BigDecimalUtil.round(totalAmount, 0);
         responseSender.sendAnswerInlineQuery(inlineQueryId, resultText, "Нажмите сюда, чтобы отправить сумму.",
-                BigDecimalUtil.toPlainString(calculatorQuery.getEnteredAmount()));
+                                             BigDecimalUtil.toPlainString(calculatorQuery.getEnteredAmount()));
     }
+
+    public void askForUserRequisites(Update update) {
+        Long chatId = UpdateUtil.getChatId(update);
+        Deal deal = dealRepository.getById(userRepository.getCurrentDealByChatId(chatId));
+        CryptoCurrency cryptoCurrency = deal.getCryptoCurrency();
+        ReplyKeyboard keyboard;
+        String message;
+        if (DealType.isBuy(deal.getDealType())) {
+            message = "\uD83D\uDCDDВведите " + cryptoCurrency.getDisplayName()
+                    + "-адрес кошелька, куда вы хотите отправить "
+                    + BigDecimalUtil.roundToPlainString(deal.getCryptoAmount(), cryptoCurrency.getScale())
+                    + " " + deal.getCryptoCurrency().getShortName();
+            List<InlineButton> buttons = new ArrayList<>();
+
+            if (dealRepository.getPassedDealsCountByUserChatIdAndDealTypeAndCryptoCurrency(chatId, DealType.BUY, cryptoCurrency) > 0) {
+                String wallet = dealRepository.getWalletFromLastPassedByChatIdAndDealTypeAndCryptoCurrency(chatId, DealType.BUY, cryptoCurrency);
+                message = message.concat("\n\nВы можете использовать ваш сохраненный адрес:\n" + wallet);
+                buttons.add(BotInlineButton.USE_SAVED_WALLET.getButton());
+            }
+            buttons.add(BotInlineButton.CANCEL.getButton());
+            keyboard = KeyboardUtil.buildInline(buttons);
+        } else {
+            message = "Введите " + deal.getPaymentType().getName() + " реквизиты, куда вы хотите получить "
+                    + BigDecimalUtil.roundToPlainString(deal.getAmount(), 0) + " "
+                    + deal.getFiatCurrency().getDisplayName();
+            keyboard = BotKeyboard.INLINE_CANCEL.getKeyboard();
+        }
+        responseSender.sendMessage(chatId, message, keyboard, "HTML")
+                .ifPresent(sentMessage -> userRepository.updateBufferVariable(chatId, sentMessage.getMessageId().toString()));
+    }
+
 }

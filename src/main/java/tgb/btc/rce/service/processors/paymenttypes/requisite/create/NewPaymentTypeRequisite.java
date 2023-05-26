@@ -49,7 +49,7 @@ public class NewPaymentTypeRequisite extends Processor {
                 .collect(Collectors.toList());
         responseSender.sendMessage(chatId, "Выберите тип оплаты для добавления реквизита.",
                 KeyboardUtil.buildInline(buttons));
-        responseSender.sendMessage(chatId, "Для возвращения в меню нажмите \"Отмена\".", BotKeyboard.CANCEL);
+        responseSender.sendMessage(chatId, "Для возвращения в меню нажмите \"Отмена\".", BotKeyboard.REPLY_CANCEL);
         userService.nextStep(chatId, Command.NEW_PAYMENT_TYPE_REQUISITE);
     }
 

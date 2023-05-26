@@ -29,4 +29,6 @@ public interface BotStringConstants {
     String ENTER_NEW_COURSE = "Введите новый курс.";
     String SUCCESSFUL_COURSE_CHANGE = "Курс обновлен.";
     String INCORRECT_VALUE = "Не корректное значение. Введите значение еще раз.";
+
+    String USE_SAVED_WALLET = "use_saved";
 }
