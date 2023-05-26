@@ -187,7 +187,7 @@ public class BuyBitcoin extends Processor {
                 } else if (userService.getReferralBalanceByChatId(chatId) > 0) {
                     exchangeService.askForReferralDiscount(update);
                 } else {
-                    exchangeService.askForWallet(update);
+                    exchangeServiceNew.askForUserRequisites(update);
                     userService.nextStep(chatId);
                 }
                 userService.nextStep(chatId);
@@ -200,7 +200,7 @@ public class BuyBitcoin extends Processor {
                     exchangeService.processReferralDiscount(update);
                 }
                 userService.nextStep(chatId);
-                exchangeService.askForWallet(update);
+                exchangeServiceNew.askForUserRequisites(update);
                 break;
             case 4:
                 try {
@@ -330,7 +330,7 @@ public class BuyBitcoin extends Processor {
                 }
                 break;
             case 4:
-                exchangeService.askForWallet(update);
+                exchangeServiceNew.askForUserRequisites(update);
                 break;
             case 5:
                 currentDealPid = userService.getCurrentDealByChatId(chatId);

@@ -170,36 +170,6 @@ public class ExchangeService {
         responseSender.sendMessage(chatId, message, keyboard, "HTML");
     }
 
-    public void askForWallet(Update update) {
-        Long chatId = UpdateUtil.getChatId(update);
-        try {
-            responseSender.deleteMessage(chatId, UpdateUtil.getMessage(update).getMessageId());
-        } catch (Exception ignored) {
-        }
-        Deal deal = dealService.findById(userService.getCurrentDealByChatId(chatId));
-        String message = "\uD83D\uDCDDВведите " + deal.getCryptoCurrency()
-                .getDisplayName() + "-адрес кошелька, куда вы "
-                + "хотите отправить " + BigDecimalUtil.round(deal.getCryptoAmount(),
-                deal.getCryptoCurrency().getScale()).toPlainString()
-                + " " + deal.getCryptoCurrency().getShortName();
-        List<InlineButton> buttons = new ArrayList<>();
-
-        if (dealService.getNotCurrentDealsCountByUserChatId(chatId, deal.getDealType()) > 0) {
-            String wallet = dealService.getWalletFromLastNotCurrentByChatId(chatId, deal.getDealType());
-            message = message.concat("\n\nВы можете использовать ваш сохраненный адрес:\n" + wallet);
-            buttons.add(InlineButton.builder()
-                    .text("Использовать сохраненный адрес")
-                    .data(USE_SAVED_WALLET)
-                    .build());
-        }
-        buttons.add(KeyboardUtil.INLINE_BACK_BUTTON);
-
-        Optional<Message> optionalMessage = responseSender.sendMessage(chatId, message,
-                KeyboardUtil.buildInline(buttons), "HTML");
-        optionalMessage.ifPresent(
-                sentMessage -> userService.updateBufferVariable(chatId, sentMessage.getMessageId().toString()));
-    }
-
     public void processPromoCode(Update update) {
         if (!update.hasCallbackQuery()) {
             return;

@@ -87,20 +87,6 @@ public class SellService {
         this.botMessageService = botMessageService;
     }
 
-    public void askForWallet(Update update) {
-        Long chatId = UpdateUtil.getChatId(update);
-        Deal deal = dealService.findById(userService.getCurrentDealByChatId(chatId));
-        String message = "Введите " + deal.getPaymentType().getName() + " реквизиты, куда вы "
-                + "хотите получить "
-                + BigDecimalUtil.round(deal.getAmount(), 0).stripTrailingZeros().toPlainString() + " " + deal.getFiatCurrency().getDisplayName();
-
-        Optional<Message> optionalMessage = responseSender.sendMessage(chatId, message,
-                KeyboardUtil.buildInline(
-                        List.of(KeyboardUtil.INLINE_BACK_BUTTON)));
-        optionalMessage.ifPresent(
-                sentMessage -> userService.updateBufferVariable(chatId, sentMessage.getMessageId().toString()));
-    }
-
     public void saveWallet(Update update) {
         if (!update.hasMessage() || !update.getMessage().hasText()) {
             return;

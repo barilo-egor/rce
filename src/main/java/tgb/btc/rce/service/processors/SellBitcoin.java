@@ -213,7 +213,7 @@ public class SellBitcoin extends Processor {
                     result = true;
                 }
                 if (BooleanUtils.isTrue(result)) {
-                    sellService.askForWallet(update);
+                    exchangeServiceNew.askForUserRequisites(update);
                     userService.nextStep(chatId);
                 } else if (BooleanUtils.isFalse(result)) responseSender.sendMessage(chatId, "Выберите способ оплаты.");
                 break;
@@ -309,7 +309,7 @@ public class SellBitcoin extends Processor {
                 }
                 break;
             case 4:
-                sellService.askForWallet(update);
+                exchangeServiceNew.askForUserRequisites(update);
                 break;
         }
     }
