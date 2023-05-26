@@ -7,6 +7,7 @@ import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.Menu;
 import tgb.btc.rce.service.Processor;
+import tgb.btc.rce.service.impl.BannedUserCache;
 import tgb.btc.rce.service.processors.support.MessagesService;
 import tgb.btc.rce.util.MenuFactory;
 import tgb.btc.rce.util.NumberUtil;
@@ -17,6 +18,13 @@ import tgb.btc.rce.util.UpdateUtil;
 public class BanUnban extends Processor {
 
     private MessagesService messagesService;
+
+    private BannedUserCache bannedUserCache;
+
+    @Autowired
+    public void setBannedUserCache(BannedUserCache bannedUserCache) {
+        this.bannedUserCache = bannedUserCache;
+    }
 
     @Autowired
     public void setMessagesService(MessagesService messagesService) {
@@ -46,7 +54,7 @@ public class BanUnban extends Processor {
                     MenuFactory.build(Menu.ADMIN_BACK, userService.isAdminByChatId(chatId)));
             return;
         }
-        if(!userService.isBanned(inputChatId)) {
+        if(!bannedUserCache.get(chatId)) {
             userService.ban(inputChatId);
             responseSender.sendMessage(chatId,
                     "Пользователь заблокирован.");

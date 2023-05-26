@@ -1,6 +1,5 @@
 package tgb.btc.rce.service.impl;
 
-import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
@@ -37,10 +36,17 @@ public class UserService extends BasePersistService<User> {
 
     private UserDataRepository userDataRepository;
 
+    private BannedUserCache bannedUserCache;
+
     public static final ReferralType REFERRAL_TYPE =
             ReferralType.valueOf(BotProperties.MODULES_PROPERTIES.getString("referral.type"));
 
     private static final Map<Long, Boolean> IS_BANNED_CACHE = new ConcurrentHashMap<>();
+
+    @Autowired
+    public void setBannedUserCache(BannedUserCache bannedUserCache) {
+        this.bannedUserCache = bannedUserCache;
+    }
 
     @Autowired
     public void setUserDataRepository(UserDataRepository userDataRepository) {
@@ -177,12 +183,6 @@ public class UserService extends BasePersistService<User> {
         userRepository.updateIsActiveByChatId(isActive, chatId);
     }
 
-    public boolean isBanned(Long chatId) {
-        Boolean isBanned = IS_BANNED_CACHE.get(chatId);
-        if (Objects.isNull(isBanned)) return BooleanUtils.isTrue(userRepository.getIsBannedByChatId(chatId));
-        else return isBanned;
-    }
-
     public void updateCurrentDealByChatId(Long dealPid, Long chatId) {
         userRepository.updateCurrentDealByChatId(dealPid, chatId);
     }
@@ -216,12 +216,12 @@ public class UserService extends BasePersistService<User> {
     }
 
     public void ban(Long chatId) {
-        IS_BANNED_CACHE.remove(chatId);
+        bannedUserCache.remove(chatId);
         userRepository.updateIsBannedByChatId(chatId, true);
     }
 
     public void unban(Long chatId) {
-        IS_BANNED_CACHE.remove(chatId);
+        bannedUserCache.remove(chatId);
         userRepository.updateIsBannedByChatId(chatId, false);
     }
 }
