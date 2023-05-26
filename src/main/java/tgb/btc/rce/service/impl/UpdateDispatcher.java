@@ -26,7 +26,14 @@ public class UpdateDispatcher implements IUpdateDispatcher {
 
     private final UserService userService;
 
+    private BannedUserCache bannedUserCache;
+
     private AntiSpam antiSpam;
+
+    @Autowired
+    public void setBannedUserCache(BannedUserCache bannedUserCache) {
+        this.bannedUserCache = bannedUserCache;
+    }
 
     @Autowired
     public void setAntiSpam(AntiSpam antiSpam) {
@@ -41,7 +48,7 @@ public class UpdateDispatcher implements IUpdateDispatcher {
     public void dispatch(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
         antiSpam.saveTime(chatId);
-        if (BooleanUtils.isTrue(userService.getIsBannedByChatId(chatId))) return;
+        if (BooleanUtils.isTrue(bannedUserCache.get(chatId))) return;
         Command command = getCommand(update);
         int step = userService.getStepByChatId(chatId);
         ((Processor) applicationContext.getBean(CommandProcessorLoader.getByCommand(command, step))).process(update);

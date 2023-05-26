@@ -34,8 +34,16 @@ public class UserService extends BasePersistService<User> {
 
     private UserDataRepository userDataRepository;
 
+    private BannedUserCache bannedUserCache;
+
     public static final ReferralType REFERRAL_TYPE =
             ReferralType.valueOf(BotProperties.MODULES_PROPERTIES.getString("referral.type"));
+
+
+    @Autowired
+    public void setBannedUserCache(BannedUserCache bannedUserCache) {
+        this.bannedUserCache = bannedUserCache;
+    }
 
     @Autowired
     public void setUserDataRepository(UserDataRepository userDataRepository) {
@@ -200,9 +208,11 @@ public class UserService extends BasePersistService<User> {
 
     public void ban(Long chatId) {
         userRepository.updateIsBannedByChatId(chatId, true);
+        bannedUserCache.remove(chatId);
     }
 
     public void unban(Long chatId) {
         userRepository.updateIsBannedByChatId(chatId, false);
+        bannedUserCache.remove(chatId);
     }
 }
