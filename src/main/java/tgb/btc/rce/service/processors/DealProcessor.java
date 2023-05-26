@@ -6,8 +6,8 @@ import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.bean.User;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.Menu;
+import tgb.btc.rce.service.IUpdateDispatcher;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.service.impl.UpdateDispatcher;
 import tgb.btc.rce.util.UpdateUtil;
 
 import java.util.Objects;
@@ -15,10 +15,10 @@ import java.util.Objects;
 @CommandProcessor(command = Command.DEAL)
 public class DealProcessor extends Processor {
 
-    private UpdateDispatcher updateDispatcher;
+    private IUpdateDispatcher updateDispatcher;
 
     @Autowired
-    public void setUpdateDispatcher(UpdateDispatcher updateDispatcher) {
+    public void setUpdateDispatcher(IUpdateDispatcher updateDispatcher) {
         this.updateDispatcher = updateDispatcher;
     }
 
