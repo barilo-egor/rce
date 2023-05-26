@@ -6,11 +6,8 @@ import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.telegram.telegrambots.meta.api.methods.AnswerInlineQuery;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.inlinequery.inputmessagecontent.InputTextMessageContent;
-import org.telegram.telegrambots.meta.api.objects.inlinequery.result.InlineQueryResultArticle;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import tgb.btc.rce.bean.Deal;
 import tgb.btc.rce.bean.PaymentRequisite;
@@ -18,8 +15,6 @@ import tgb.btc.rce.bean.PaymentType;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.*;
 import tgb.btc.rce.exception.BaseException;
-import tgb.btc.rce.exception.EnumTypeNotFoundException;
-import tgb.btc.rce.exception.NumberParseException;
 import tgb.btc.rce.repository.DealRepository;
 import tgb.btc.rce.repository.PaymentRequisiteRepository;
 import tgb.btc.rce.repository.PaymentTypeRepository;
@@ -124,108 +119,6 @@ public class ExchangeService {
         this.dealService = dealService;
         this.paymentConfigService = paymentConfigService;
         this.botMessageService = botMessageService;
-    }
-
-    public void convertToRub(Update update, Long currentDealPid) {
-        Long chatId = UpdateUtil.getChatId(update);
-        System.out.println();
-        String query = update.getInlineQuery().getQuery().replaceAll(",", ".");
-        BigDecimal sum;
-        CryptoCurrency currency = null;
-
-        if (!hasInputSum(query)) {
-            askForCryptoSum(update);
-            return;
-        }
-
-        try {
-            currency = CryptoCurrency.fromShortName(query.substring(0, query.indexOf("-")));
-            sum = BigDecimal.valueOf(NumberUtil.getInputDouble(query.substring(query.indexOf(" ") + 1)));
-        } catch (EnumTypeNotFoundException e) {
-            askForCryptoSum(update);
-            return;
-        } catch (NumberParseException e) {
-            if (hasInputSum(currency, query)) {
-                sendInlineAnswer(update, e.getMessage(), false);
-            } else {
-                askForCryptoSum(update);
-            }
-            return;
-        }
-
-        CryptoCurrency cryptoCurrency = dealService.getCryptoCurrencyByPid(currentDealPid);
-        double minSum = BigDecimalUtil.round(BotVariablePropertiesUtil.getDouble(BotVariableType.MIN_SUM, DealType.BUY, cryptoCurrency),
-                        cryptoCurrency.getScale())
-                .doubleValue();
-
-        if (sum.doubleValue() < minSum) {
-            sendInlineAnswer(update, "Минимальная сумма покупки " + cryptoCurrency.getDisplayName()
-                    + " = " + BigDecimal.valueOf(minSum).stripTrailingZeros().toPlainString() + ".", false);
-            return;
-        }
-        sum = BigDecimalUtil.round(sum, cryptoCurrency.getScale());
-        BigDecimal roundedConvertedSum =
-                calculateService.calculate(sum,
-                        cryptoCurrency, dealRepository.getFiatCurrencyByPid(currentDealPid), dealRepository.getDealTypeByPid(currentDealPid)
-                ).getAmount();
-        BigDecimal personalBuy = USERS_PERSONAL_BUY.get(chatId);
-        if (Objects.isNull(personalBuy) || !BigDecimal.ZERO.equals(personalBuy)) {
-            personalBuy = userDiscountRepository.getPersonalBuyByChatId(chatId);
-            if (Objects.nonNull(personalBuy) && !BigDecimal.ZERO.equals(personalBuy)) {
-                if (BigDecimal.ZERO.compareTo(personalBuy) > 0) {
-                    roundedConvertedSum = roundedConvertedSum.add(calculateService.getPercentsFactor(roundedConvertedSum).multiply(personalBuy));
-                } else {
-                    roundedConvertedSum = roundedConvertedSum.add(calculateService.getPercentsFactor(roundedConvertedSum).multiply(personalBuy));
-                }
-            }
-            if (Objects.nonNull(personalBuy)) {
-                putToUsersPersonalBuy(chatId, personalBuy);
-            } else {
-                putToUsersPersonalBuy(chatId, BigDecimal.ZERO);
-            }
-        }
-        BigDecimal bulkDiscount = BulkDiscountUtil.getPercentBySum(roundedConvertedSum, dealRepository.getFiatCurrencyByPid(currentDealPid));
-        if (!BigDecimal.ZERO.equals(bulkDiscount)) {
-            roundedConvertedSum = roundedConvertedSum.subtract(calculateService.getPercentsFactor(roundedConvertedSum).multiply(personalBuy));
-        }
-        String dealType = DealType.BUY.equals(dealService.getDealTypeByPid(currentDealPid))
-                ? "Покупка: "
-                : "Продажа: ";
-        sendInlineAnswer(update,
-                dealType + sum.stripTrailingZeros().toPlainString() + " " + currency.getDisplayName() + " ~ " +
-                        roundedConvertedSum.stripTrailingZeros().toPlainString(), true);
-    }
-
-    private boolean hasInputSum(CryptoCurrency currency, String query) {
-        return currency != null && query.length() > currency.getShortName().length() + 1;
-    }
-
-    private boolean hasInputSum(String query) {
-        return query.contains(" ");
-    }
-
-    private void askForCryptoSum(Update update) {
-        sendInlineAnswer(update, BotStringConstants.ENTER_CRYPTO_SUM, false);
-    }
-
-    private void sendInlineAnswer(Update update, String answer, boolean textPushButton) {
-        String text = textPushButton
-                ? "Нажмите сюда, чтобы отправить сумму"
-                : "Введите сумму в криптовалюте.";
-        String sum = update.getInlineQuery().getQuery().contains(" ")
-                ?
-                update.getInlineQuery().getQuery().substring(update.getInlineQuery().getQuery().indexOf(" "))
-                : "Ошибка";
-        responseSender.execute(AnswerInlineQuery.builder().inlineQueryId(update.getInlineQuery().getId())
-                .result(InlineQueryResultArticle.builder()
-                        .id(update.getInlineQuery().getId())
-                        .title(answer)
-                        .inputMessageContent(InputTextMessageContent.builder()
-                                .messageText(sum)
-                                .build())
-                        .description(text)
-                        .build())
-                .build());
     }
 
     public void askForUserPromoCode(Long chatId, boolean back) {

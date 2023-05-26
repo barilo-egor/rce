@@ -179,8 +179,7 @@ public class SellBitcoin extends Processor {
                 break;
             case 2:
                 if (UpdateType.INLINE_QUERY.equals(UpdateType.fromUpdate(update))) {
-                    sellService.convertToRub(update,
-                            userService.getCurrentDealByChatId(UpdateUtil.getChatId(update)));
+                    exchangeServiceNew.calculateForInlineQuery(update);
                     return;
                 }
                 if (exchangeServiceNew.calculateDealAmount(update)) {

@@ -4,20 +4,14 @@ import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.telegram.telegrambots.meta.api.methods.AnswerInlineQuery;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.inlinequery.inputmessagecontent.InputTextMessageContent;
-import org.telegram.telegrambots.meta.api.objects.inlinequery.result.InlineQueryResultArticle;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import tgb.btc.rce.bean.Deal;
 import tgb.btc.rce.bean.PaymentType;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.*;
-import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.exception.BaseException;
-import tgb.btc.rce.exception.EnumTypeNotFoundException;
-import tgb.btc.rce.exception.NumberParseException;
 import tgb.btc.rce.repository.DealRepository;
 import tgb.btc.rce.repository.PaymentTypeRepository;
 import tgb.btc.rce.repository.UserDiscountRepository;
@@ -91,95 +85,6 @@ public class SellService {
         this.userService = userService;
         this.dealService = dealService;
         this.botMessageService = botMessageService;
-    }
-
-    public void convertToRub(Update update, Long currentDealPid) {
-        Long chatId = UpdateUtil.getChatId(update);
-        String query = update.getInlineQuery().getQuery().replaceAll(",", ".");
-        BigDecimal sum;
-        CryptoCurrency currency = null;
-
-        if (!hasInputSum(query)) {
-            askForCryptoSum(update);
-            return;
-        }
-
-        try {
-            currency = CryptoCurrency.fromShortName(query.substring(0, query.indexOf("-")));
-            sum = BigDecimal.valueOf(NumberUtil.getInputDouble(query.substring(query.indexOf(" ") + 1)));
-        } catch (EnumTypeNotFoundException e) {
-            askForCryptoSum(update);
-            return;
-        } catch (NumberParseException e) {
-            if (hasInputSum(currency, query)) {
-                sendInlineAnswer(update, e.getMessage(), false);
-            } else {
-                askForCryptoSum(update);
-            }
-            return;
-        }
-
-        CryptoCurrency cryptoCurrency = dealService.getCryptoCurrencyByPid(currentDealPid);
-        BigDecimal minSum = BigDecimalUtil.round(
-                BotVariablePropertiesUtil.getDouble(BotVariableType.MIN_SUM, DealType.SELL, cryptoCurrency),
-                cryptoCurrency.getScale()
-        );
-
-        if (sum.doubleValue() < minSum.doubleValue()) {
-            sendInlineAnswer(update, "Минимальная сумма продажи " + cryptoCurrency.getDisplayName()
-                    + " = " + minSum.stripTrailingZeros().toPlainString() + ".", false);
-            return;
-        }
-        sum = BigDecimal.valueOf(BigDecimalUtil.round(sum, cryptoCurrency.getScale()).doubleValue());
-        BigDecimal roundedConvertedSum =
-                calculateService.calculate(
-                        sum, cryptoCurrency, dealRepository.getFiatCurrencyByPid(currentDealPid), dealRepository.getDealTypeByPid(currentDealPid)
-                ).getAmount();
-        BigDecimal personalSell = USERS_PERSONAL_SELL.get(chatId);
-        if (Objects.isNull(personalSell) || !BigDecimal.ZERO.equals(personalSell)) {
-            personalSell = userDiscountRepository.getPersonalBuyByChatId(chatId);
-            if (Objects.nonNull(personalSell) && !BigDecimal.ZERO.equals(personalSell)) {
-                roundedConvertedSum = roundedConvertedSum.subtract(calculateService.getPercentsFactor(roundedConvertedSum).multiply(personalSell));
-            }
-            if (Objects.nonNull(personalSell)) {
-                putToUsersPersonalSell(chatId, personalSell);
-            } else {
-                putToUsersPersonalSell(chatId, BigDecimal.ZERO);
-            }
-        }
-        sendInlineAnswer(update, sum.stripTrailingZeros().toPlainString() + " " + currency.getDisplayName() + " ~ " +
-                BigDecimalUtil.round(roundedConvertedSum, 0).toPlainString(), true);
-    }
-
-    private boolean hasInputSum(CryptoCurrency currency, String query) {
-        return currency != null && query.length() > currency.getShortName().length() + 1;
-    }
-
-    private boolean hasInputSum(String query) {
-        return query.contains(" ");
-    }
-
-    private void askForCryptoSum(Update update) {
-        sendInlineAnswer(update, BotStringConstants.ENTER_CRYPTO_SUM, false);
-    }
-
-    private void sendInlineAnswer(Update update, String answer, boolean textPushButton) {
-        String text = textPushButton
-                ? "Нажмите сюда, чтобы отправить сумму"
-                : "Введите сумму в криптовалюте.";
-        String sum = update.getInlineQuery().getQuery().contains(" ")
-                ? update.getInlineQuery().getQuery().substring(update.getInlineQuery().getQuery().indexOf(" "))
-                : "Ошибка";
-        responseSender.execute(AnswerInlineQuery.builder().inlineQueryId(update.getInlineQuery().getId())
-                .result(InlineQueryResultArticle.builder()
-                        .id(update.getInlineQuery().getId())
-                        .title(answer)
-                        .inputMessageContent(InputTextMessageContent.builder()
-                                .messageText(sum)
-                                .build())
-                        .description(text)
-                        .build())
-                .build());
     }
 
     public void askForWallet(Update update) {
