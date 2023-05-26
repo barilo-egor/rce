@@ -28,7 +28,7 @@ import java.util.Objects;
 @CommandProcessor(command = Command.BUY_BITCOIN)
 public class BuyBitcoin extends Processor {
 
-    private static DealType DEAL_TYPE = DealType.BUY;
+    private static final DealType DEAL_TYPE = DealType.BUY;
 
     private ExchangeService exchangeService;
 
@@ -180,7 +180,7 @@ public class BuyBitcoin extends Processor {
                     exchangeServiceNew.calculateForInlineQuery(update);
                     return;
                 }
-                if (!exchangeServiceNew.calculateDealAmount(update)) return;
+                if (!exchangeServiceNew.calculateDealAmount(chatId, UpdateUtil.getBigDecimalFromText(update))) return;
                 responseSender.deleteMessage(UpdateUtil.getChatId(update), Integer.parseInt(userService.getBufferVariable(chatId)));
                 if (!DealPromoUtil.isNone() && dealService.getDealsCountByUserChatId(chatId) < 1) {
                     exchangeService.askForUserPromoCode(chatId, false);

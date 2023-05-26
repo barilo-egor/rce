@@ -8,7 +8,6 @@ import tgb.btc.rce.bean.Deal;
 import tgb.btc.rce.enums.*;
 import tgb.btc.rce.exception.CalculatorQueryException;
 import tgb.btc.rce.repository.DealRepository;
-import tgb.btc.rce.repository.UserDiscountRepository;
 import tgb.btc.rce.repository.UserRepository;
 import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.impl.*;
@@ -18,7 +17,8 @@ import tgb.btc.rce.vo.DealAmount;
 import tgb.btc.rce.vo.InlineButton;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class ExchangeServiceNew {
@@ -37,18 +37,11 @@ public class ExchangeServiceNew {
 
     private CalculateService calculateService;
 
-    private UserDiscountRepository userDiscountRepository;
-
     private InlineQueryCalculatorService queryCalculatorService;
 
     @Autowired
     public void setQueryCalculatorService(InlineQueryCalculatorService queryCalculatorService) {
         this.queryCalculatorService = queryCalculatorService;
-    }
-
-    @Autowired
-    public void setUserDiscountRepository(UserDiscountRepository userDiscountRepository) {
-        this.userDiscountRepository = userDiscountRepository;
     }
 
     @Autowired
@@ -116,18 +109,15 @@ public class ExchangeServiceNew {
                                                    keyboardService.getCalculator(fiatCurrency, currency, dealType));
     }
 
-    public boolean calculateDealAmount(Update update) {
-        Long chatId = UpdateUtil.getChatId(update);
+    public boolean calculateDealAmount(Long chatId, BigDecimal enteredAmount) {
         Deal deal = dealRepository.getById(userRepository.getCurrentDealByChatId(chatId));
-        DealAmount dealAmount = calculateService.calculate(UpdateUtil.getBigDecimalFromText(update),
+        DealAmount dealAmount = calculateService.calculate(enteredAmount,
                                                            deal.getCryptoCurrency(), deal.getFiatCurrency(),
                                                            deal.getDealType());
+        if (isLessThanMin(chatId, deal)) return false;
+        userDiscountService.applyPersonal(chatId, deal.getDealType(), dealAmount);
+        userDiscountService.applyBulk(deal.getFiatCurrency(), deal.getDealType(), dealAmount);
         dealAmount.updateDeal(deal);
-        if (isLessThanMin(chatId, deal)) {
-            return false;
-        }
-        userDiscountService.applyPersonal(chatId, deal);
-        userDiscountService.applyBulk(deal);
         dealRepository.save(deal);
         return true;
     }
@@ -162,16 +152,12 @@ public class ExchangeServiceNew {
                                                            calculatorQuery.getCurrency(),
                                                            calculatorQuery.getFiatCurrency(),
                                                            calculatorQuery.getDealType());
-        BigDecimal totalAmount = dealAmount.getAmount();
-        totalAmount = calculateService.calculateDiscount(calculatorQuery.getDealType(), totalAmount,
-                                                         userDiscountService.getPersonal(chatId,
-                                                                                         calculatorQuery.getDealType()));
-        totalAmount = calculateService.calculateDiscount(calculatorQuery.getDealType(), totalAmount,
-                                                         userDiscountService.getBulk(totalAmount,
-                                                                                     calculatorQuery.getFiatCurrency()));
+        userDiscountService.applyPersonal(chatId, calculatorQuery.getDealType(), dealAmount);
+        userDiscountService.applyBulk(calculatorQuery.getFiatCurrency(), calculatorQuery.getDealType(), dealAmount);
+
         String resultText = calculatorQuery.getDealType().getNominative() + ": "
                 + BigDecimalUtil.round(dealAmount.getCryptoAmount(), calculatorQuery.getCurrency().getScale())
-                + " ~ " + BigDecimalUtil.round(totalAmount, 0);
+                + " ~ " + BigDecimalUtil.round(dealAmount.getAmount(), 0);
         responseSender.sendAnswerInlineQuery(inlineQueryId, resultText, "Нажмите сюда, чтобы отправить сумму.",
                                              BigDecimalUtil.toPlainString(calculatorQuery.getEnteredAmount()));
     }

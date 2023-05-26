@@ -30,7 +30,9 @@ public class CalculateService {
                 new CalculateData(fiatCurrency, dealType, cryptoCurrency, cryptoCurrencyService.getCurrency(cryptoCurrency));
 
         DealAmount dealAmount = new DealAmount();
-        if (isEnteredInCrypto(cryptoCurrency, enteredAmount)) {
+        dealAmount.setEnteredInCrypto(isEnteredInCrypto(cryptoCurrency, enteredAmount));
+        dealAmount.setCalculateData(calculateData);
+        if (dealAmount.isEnteredInCrypto()) {
             dealAmount.setCryptoAmount(enteredAmount);
             if (DealType.isBuy(dealType)) calculateAmount(dealAmount, calculateData);
             else calculateAmountForSell(dealAmount, calculateData);
@@ -117,10 +119,15 @@ public class CalculateService {
         return BigDecimalUtil.divideHalfUp(sum, BigDecimal.valueOf(100));
     }
 
-    public BigDecimal calculateDiscount(DealType dealType, BigDecimal amount, BigDecimal discount) {
+    public BigDecimal calculateDiscountInFiat(DealType dealType, BigDecimal amount, BigDecimal discount) {
         BigDecimal totalDiscount = getPercentsFactor(amount).multiply(discount);
         return DealType.BUY.equals(dealType)
                 ? amount.add(totalDiscount)
                 : amount.subtract(totalDiscount);
+    }
+
+    public BigDecimal calculateDiscountInCrypto(CalculateData calculateData, BigDecimal discountInFiat) {
+        BigDecimal usd = BigDecimalUtil.divideHalfUp(discountInFiat, calculateData.getUsdCourse());
+        return BigDecimalUtil.divideHalfUp(usd, calculateData.getCryptoCourse());
     }
 }

@@ -1,6 +1,5 @@
 package tgb.btc.rce.vo;
 
-import lombok.Builder;
 import tgb.btc.rce.enums.BotVariableType;
 import tgb.btc.rce.enums.CryptoCurrency;
 import tgb.btc.rce.enums.DealType;
@@ -10,17 +9,17 @@ import tgb.btc.rce.util.BotVariablePropertiesUtil;
 import java.math.BigDecimal;
 
 public class CalculateData {
-    private BigDecimal fix;
+    private final BigDecimal fix;
 
-    private BigDecimal usdCourse;
+    private final BigDecimal usdCourse;
 
-    private BigDecimal commission;
+    private final BigDecimal commission;
 
-    private BigDecimal fixCommission;
+    private final BigDecimal fixCommission;
 
-    private BigDecimal transactionalCommission;
+    private final BigDecimal transactionalCommission;
 
-    private BigDecimal cryptoCourse;
+    private final BigDecimal cryptoCourse;
 
     public CalculateData(FiatCurrency fiatCurrency, DealType dealType, CryptoCurrency cryptoCurrency, BigDecimal cryptoCourse) {
         this.fix = BotVariablePropertiesUtil.getBigDecimal(BotVariableType.FIX, fiatCurrency, dealType, cryptoCurrency);

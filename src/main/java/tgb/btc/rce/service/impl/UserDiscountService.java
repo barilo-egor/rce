@@ -1,15 +1,14 @@
 package tgb.btc.rce.service.impl;
 
-import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import tgb.btc.rce.bean.Deal;
 import tgb.btc.rce.enums.DealType;
 import tgb.btc.rce.enums.FiatCurrency;
 import tgb.btc.rce.repository.UserDiscountRepository;
 import tgb.btc.rce.service.processors.support.PersonalDiscountsCache;
 import tgb.btc.rce.util.BigDecimalUtil;
 import tgb.btc.rce.util.BulkDiscountUtil;
+import tgb.btc.rce.vo.DealAmount;
 
 import java.math.BigDecimal;
 
@@ -40,29 +39,32 @@ public class UserDiscountService {
         return userDiscountRepository.countByUserPid(userPid) > 0;
     }
 
-    public void applyPersonal(Long chatId, Deal deal) {
-        if (BooleanUtils.isTrue(deal.getPersonalApplied())) return;
-        DealType dealType = deal.getDealType();
+    public void applyPersonal(Long chatId, DealType dealType, DealAmount dealAmount) {
         BigDecimal personalDiscount = personalDiscountsCache.getDiscount(chatId, dealType);
-        if (!BigDecimalUtil.isZero(personalDiscount)) {
-            deal.setAmount(calculateService.calculateDiscount(dealType, deal.getAmount(), personalDiscount));
-            deal.setPersonalApplied(true);
-        }
+        if (BigDecimal.ZERO.compareTo(personalDiscount) == 0) return;
+        applyDiscount(dealType, dealAmount, personalDiscount);
     }
 
-    public BigDecimal getPersonal(Long chatId, DealType dealType) {
-        return personalDiscountsCache.getDiscount(chatId, dealType);
-    }
-
-    public void applyBulk(Deal deal) {
-        DealType dealType = deal.getDealType();
+    public void applyBulk(FiatCurrency fiatCurrency, DealType dealType, DealAmount dealAmount) {
         if (!DealType.isBuy(dealType)) return;
-        BigDecimal bulkDiscount = BulkDiscountUtil.getPercentBySum(deal.getAmount(), deal.getFiatCurrency());
-        if (!BigDecimalUtil.isZero(bulkDiscount))
-            deal.setAmount(calculateService.calculateDiscount(dealType, deal.getAmount(), bulkDiscount));
+        BigDecimal bulkDiscount = BulkDiscountUtil.getPercentBySum(dealAmount.getAmount(), fiatCurrency);
+        if (BigDecimalUtil.isZero(bulkDiscount)) return;
+        applyDiscount(dealType, dealAmount, bulkDiscount);
     }
 
-    public BigDecimal getBulk(BigDecimal amount, FiatCurrency fiatCurrency) {
-        return BulkDiscountUtil.getPercentBySum(amount, fiatCurrency);
+    private void applyDiscount(DealType dealType, DealAmount dealAmount, BigDecimal discount) {
+        BigDecimal totalDiscount = calculateService.calculateDiscountInFiat(dealType, dealAmount.getAmount(), discount);
+        if (dealAmount.isEnteredInCrypto()) {
+            BigDecimal newAmount = DealType.isBuy(dealType)
+                    ? dealAmount.getAmount().subtract(totalDiscount)
+                    : dealAmount.getAmount().add(totalDiscount);
+            dealAmount.setAmount(newAmount);
+        } else {
+            BigDecimal discountInCrypto = calculateService.calculateDiscountInCrypto(dealAmount.getCalculateData(), totalDiscount);
+            BigDecimal newCryptoAmount = DealType.isBuy(dealType)
+                    ? dealAmount.getCryptoAmount().add(discountInCrypto)
+                    : dealAmount.getCryptoAmount().subtract(discountInCrypto);
+            dealAmount.setCryptoAmount(newCryptoAmount);
+        }
     }
 }

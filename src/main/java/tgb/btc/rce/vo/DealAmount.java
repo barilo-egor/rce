@@ -12,11 +12,31 @@ import java.math.BigDecimal;
 @Builder
 public class DealAmount {
 
+    private CalculateData calculateData;
+
     private BigDecimal amount;
 
     private BigDecimal cryptoAmount;
 
     private BigDecimal commission;
+
+    private boolean isEnteredInCrypto;
+
+    public boolean isEnteredInCrypto() {
+        return isEnteredInCrypto;
+    }
+
+    public void setEnteredInCrypto(boolean enteredInCrypto) {
+        isEnteredInCrypto = enteredInCrypto;
+    }
+
+    public CalculateData getCalculateData() {
+        return calculateData;
+    }
+
+    public void setCalculateData(CalculateData calculateData) {
+        this.calculateData = calculateData;
+    }
 
     public BigDecimal getAmount() {
         return amount;
