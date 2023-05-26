@@ -39,6 +39,11 @@ public final class BigDecimalUtil {
         return toPlainString(round(num, scale));
     }
 
+    public static String roundToPlainString(BigDecimal num) {
+        return roundToPlainString(num, 0);
+    }
+
+
     public static String toPlainString(BigDecimal num) {
         return num.stripTrailingZeros().toPlainString();
     }

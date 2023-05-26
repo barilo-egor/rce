@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import tgb.btc.rce.bean.Deal;
+import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.*;
 import tgb.btc.rce.exception.CalculatorQueryException;
 import tgb.btc.rce.repository.DealRepository;
@@ -13,7 +14,7 @@ import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.impl.*;
 import tgb.btc.rce.util.*;
 import tgb.btc.rce.vo.CalculatorQuery;
-import tgb.btc.rce.vo.DealAmount;
+import tgb.btc.rce.vo.calculate.DealAmount;
 import tgb.btc.rce.vo.InlineButton;
 
 import java.math.BigDecimal;
@@ -190,6 +191,40 @@ public class ExchangeServiceNew {
         }
         responseSender.sendMessage(chatId, message, keyboard, "HTML")
                 .ifPresent(sentMessage -> userRepository.updateBufferVariable(chatId, sentMessage.getMessageId().toString()));
+    }
+
+    public void askForUserPromoCode(Long chatId) {
+        Deal deal = dealRepository.getById(userRepository.getCurrentDealByChatId(chatId));
+        CryptoCurrency cryptoCurrency = deal.getCryptoCurrency();
+        BigDecimal dealAmount = deal.getAmount();
+        BigDecimal promoCodeDiscount = BotVariablePropertiesUtil.getBigDecimal(BotVariableType.PROMO_CODE_DISCOUNT.getKey());
+        BigDecimal discount = BigDecimalUtil.multiplyHalfUp(deal.getCommission(), calculateService.getPercentsFactor(promoCodeDiscount));
+        BigDecimal sumWithDiscount = dealAmount.subtract(discount);
+        String sumWithDiscountString = BigDecimalUtil.roundToPlainString(sumWithDiscount);
+
+        String message = "<b>Покупка " + cryptoCurrency.getDisplayName() + "</b>: "
+                + BigDecimalUtil.roundToPlainString(deal.getCryptoAmount(), cryptoCurrency.getScale()) + "\n\n"
+                + "<b>Сумма перевода</b>: <s>" + BigDecimalUtil.roundToPlainString(dealAmount)
+                + "</s> " + sumWithDiscountString + "\n\n"
+                + "\uD83C\uDFAB У вас есть промокод: <b>" + BotVariablePropertiesUtil.getVariable(BotVariableType.PROMO_CODE_NAME)
+                + "</b>, который даёт скидку в размере " + BigDecimalUtil.roundToPlainString(promoCodeDiscount) + "% от комиссии"
+                + "\n\n"
+                + "✅ <b>Использовать промокод</b> как скидку?";
+        ReplyKeyboard keyboard = KeyboardUtil.buildInline(List.of(
+                InlineButton.builder()
+                        .text("Использовать, " + sumWithDiscountString)
+                        .data(BotStringConstants.USE_PROMO)
+                        .inlineType(InlineType.CALLBACK_DATA)
+                        .build(),
+                InlineButton.builder()
+                        .text("Без промокода, " + dealAmount)
+                        .data(BotStringConstants.DONT_USE_PROMO)
+                        .inlineType(InlineType.CALLBACK_DATA)
+                        .build(),
+                KeyboardUtil.INLINE_BACK_BUTTON
+        ));
+
+        responseSender.sendMessage(chatId, message, keyboard, "HTML");
     }
 
 }

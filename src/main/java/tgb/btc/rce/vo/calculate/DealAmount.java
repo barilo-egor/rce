@@ -1,4 +1,4 @@
-package tgb.btc.rce.vo;
+package tgb.btc.rce.vo.calculate;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

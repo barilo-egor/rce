@@ -8,7 +8,7 @@ import tgb.btc.rce.repository.UserDiscountRepository;
 import tgb.btc.rce.service.processors.support.PersonalDiscountsCache;
 import tgb.btc.rce.util.BigDecimalUtil;
 import tgb.btc.rce.util.BulkDiscountUtil;
-import tgb.btc.rce.vo.DealAmount;
+import tgb.btc.rce.vo.calculate.DealAmount;
 
 import java.math.BigDecimal;
 

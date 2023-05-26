@@ -8,8 +8,8 @@ import tgb.btc.rce.enums.DealType;
 import tgb.btc.rce.enums.FiatCurrency;
 import tgb.btc.rce.util.BigDecimalUtil;
 import tgb.btc.rce.util.BotVariablePropertiesUtil;
-import tgb.btc.rce.vo.CalculateData;
-import tgb.btc.rce.vo.DealAmount;
+import tgb.btc.rce.vo.calculate.CalculateData;
+import tgb.btc.rce.vo.calculate.DealAmount;
 
 import java.math.BigDecimal;
 import java.util.Objects;

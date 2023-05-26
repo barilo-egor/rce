@@ -1,4 +1,4 @@
-package tgb.btc.rce.vo;
+package tgb.btc.rce.vo.calculate;
 
 import tgb.btc.rce.enums.BotVariableType;
 import tgb.btc.rce.enums.CryptoCurrency;
