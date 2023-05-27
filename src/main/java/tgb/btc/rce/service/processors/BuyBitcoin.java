@@ -183,7 +183,7 @@ public class BuyBitcoin extends Processor {
                 if (!exchangeServiceNew.calculateDealAmount(chatId, UpdateUtil.getBigDecimalFromText(update))) return;
                 responseSender.deleteMessage(UpdateUtil.getChatId(update), Integer.parseInt(userService.getBufferVariable(chatId)));
                 if (!DealPromoUtil.isNone() && dealService.getDealsCountByUserChatId(chatId) < 1) {
-                    exchangeService.askForUserPromoCode(chatId, false);
+                    exchangeServiceNew.askForUserPromoCode(chatId);
                 } else if (userService.getReferralBalanceByChatId(chatId) > 0) {
                     exchangeService.askForReferralDiscount(update);
                 } else {
@@ -194,7 +194,7 @@ public class BuyBitcoin extends Processor {
                 break;
             case 3:
                 if (!DealPromoUtil.isNone() && dealService.getDealsCountByUserChatId(chatId) < 1) {
-                    exchangeService.processPromoCode(update);
+                    exchangeServiceNew.processPromoCode(update);
                 } else if (update.hasCallbackQuery()
                         && update.getCallbackQuery().getData().equals(ExchangeService.USE_REFERRAL_DISCOUNT)){
                     exchangeService.processReferralDiscount(update);
@@ -204,7 +204,7 @@ public class BuyBitcoin extends Processor {
                 break;
             case 4:
                 try {
-                    exchangeService.saveWallet(update);
+                    exchangeServiceNew.saveRequisites(update);
                 } catch (BaseException e) {
                     responseSender.sendMessage(chatId, e.getMessage());
                     return;
@@ -216,7 +216,7 @@ public class BuyBitcoin extends Processor {
                 if (Objects.isNull(paymentTypesCount) || paymentTypesCount == 0) throw new BaseException("Не найден ни один тип оплаты.");
                 if (update.hasCallbackQuery()) responseSender.deleteMessage(chatId, update.getCallbackQuery().getMessage().getMessageId());
                 if (paymentTypesCount > 1) {
-                    exchangeService.askForPaymentType(update);
+                    exchangeServiceNew.askForPaymentType(update);
                     userService.nextStep(chatId);
                 } else {
                     userService.updateBufferVariable(chatId,
@@ -318,7 +318,7 @@ public class BuyBitcoin extends Processor {
                 break;
             case 3:
                 if (!DealPromoUtil.isNone() && dealService.getDealsCountByUserChatId(chatId) < 1) {
-                    exchangeService.askForUserPromoCode(chatId, true);
+                    exchangeServiceNew.askForUserPromoCode(chatId);
                 } else if (userService.getReferralBalanceByChatId(chatId) > 0) {
                     exchangeService.askForReferralDiscount(update);
                 } else {
@@ -337,7 +337,7 @@ public class BuyBitcoin extends Processor {
                 paymentTypesCount = paymentTypeRepository.countByDealTypeAndIsOnAndFiatCurrency(dealRepository.getDealTypeByPid(currentDealPid),
                         true, dealRepository.getFiatCurrencyByPid(currentDealPid));
                 if (paymentTypesCount > 1) {
-                    exchangeService.askForPaymentType(update);
+                    exchangeServiceNew.askForPaymentType(update);
                 } else {
                     userService.previousStep(chatId);
                     previousStep(update);

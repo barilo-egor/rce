@@ -1,7 +1,6 @@
 package tgb.btc.rce.service.processors.support;
 
 import org.apache.commons.lang.BooleanUtils;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Message;
@@ -20,10 +19,8 @@ import tgb.btc.rce.util.*;
 import tgb.btc.rce.vo.InlineButton;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class SellService {
@@ -85,50 +82,6 @@ public class SellService {
         this.userService = userService;
         this.dealService = dealService;
         this.botMessageService = botMessageService;
-    }
-
-    public void saveWallet(Update update) {
-        if (!update.hasMessage() || !update.getMessage().hasText()) {
-            return;
-        }
-        String wallet = UpdateUtil.getMessageText(update);
-        dealService.updateWalletByPid(wallet, userService.getCurrentDealByChatId(UpdateUtil.getChatId(update)));
-    }
-
-    public void askForPaymentType(Update update) {
-        Long chatId = UpdateUtil.getChatId(update);
-        Deal deal = dealService.getByPid(userService.getCurrentDealByChatId(chatId));
-        BigDecimal dealCryptoAmount = deal.getCryptoAmount().setScale(deal.getCryptoCurrency().getScale(),
-                RoundingMode.HALF_UP).stripTrailingZeros();
-        BigDecimal dealAmount = deal.getAmount().setScale(0, RoundingMode.HALF_UP).stripTrailingZeros();
-        String displayCurrencyName = deal.getCryptoCurrency().getDisplayName();
-        String additionalText;
-        try {
-            additionalText = botMessageService.findByTypeThrows(BotMessageType.ADDITIONAL_DEAL_TEXT).getText() + "\n\n";
-        } catch (BaseException e) {
-            additionalText = StringUtils.EMPTY;
-        }
-        String message = "<b>Информация по заявке</b>\n"
-                + "\uD83D\uDCAC<b>Продажа " + displayCurrencyName + "</b>: " + dealCryptoAmount.stripTrailingZeros()
-                .toPlainString()
-                + "\n\n"
-                + "\uD83D\uDCB5<b>Сумма перевода</b>: " + dealAmount.stripTrailingZeros().toPlainString() + " " + deal.getFiatCurrency().getDisplayName()
-                + "\n\n"
-                + additionalText
-                + "<b>Выберите способ получения перевода:</b>";
-
-
-        List<InlineButton> buttons = paymentTypeRepository.getByDealTypeAndIsOnAndFiatCurrency(DealType.SELL, Boolean.TRUE, deal.getFiatCurrency()).stream()
-                .map(paymentType -> InlineButton.builder()
-                        .text(paymentType.getName())
-                        .data(paymentType.getPid().toString())
-                        .inlineType(InlineType.CALLBACK_DATA)
-                        .build())
-                .collect(Collectors.toList());
-        buttons.add(KeyboardUtil.INLINE_BACK_BUTTON);
-
-        ReplyKeyboard keyboard = KeyboardUtil.buildInline(buttons);
-        responseSender.sendMessage(chatId, message, keyboard, "HTML");
     }
 
     public Boolean savePaymentType(Update update) {

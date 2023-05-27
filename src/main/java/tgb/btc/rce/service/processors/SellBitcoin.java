@@ -190,7 +190,7 @@ public class SellBitcoin extends Processor {
                     if (Objects.isNull(paymentTypesCount) || paymentTypesCount == 0)
                         throw new BaseException("Не найден ни один тип оплаты.");
                     if (paymentTypesCount > 1) {
-                        sellService.askForPaymentType(update);
+                        exchangeServiceNew.askForPaymentType(update);
                         userService.nextStep(chatId);
                         responseSender.deleteMessage(UpdateUtil.getChatId(update), UpdateUtil.getMessage(update).getMessageId());
                     } else {
@@ -219,7 +219,7 @@ public class SellBitcoin extends Processor {
                 break;
             case 4:
                 if (update.hasCallbackQuery()) responseSender.deleteMessage(chatId, update.getCallbackQuery().getMessage().getMessageId());
-                sellService.saveWallet(update);
+                exchangeServiceNew.saveRequisites(update);
                 sellService.buildDeal(update);
                 userService.nextStep(chatId);
                 break;
@@ -302,7 +302,7 @@ public class SellBitcoin extends Processor {
                 paymentTypesCount = paymentTypeRepository.countByDealTypeAndIsOnAndFiatCurrency(dealRepository.getDealTypeByPid(currentDealPid),
                         true, dealRepository.getFiatCurrencyByPid(currentDealPid));
                 if (paymentTypesCount > 1) {
-                    exchangeService.askForPaymentType(update);
+                    exchangeServiceNew.askForPaymentType(update);
                 } else {
                     userService.previousStep(chatId);
                     previousStep(update);

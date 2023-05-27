@@ -30,6 +30,11 @@ public enum DealType {
         return nominative;
     }
 
+    public String getNominativeFirstLetterToUpper() {
+        String firstLetter = nominative.substring(0, 1).toUpperCase();
+        return firstLetter + nominative.substring(1);
+    }
+
     public String getAccusative() {
         return accusative;
     }
