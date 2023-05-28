@@ -282,7 +282,6 @@ public class ExchangeServiceNew {
     public void askForPaymentType(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
         Deal deal = dealRepository.getById(userRepository.getCurrentDealByChatId(chatId));
-        BigDecimal dealCryptoAmount = deal.getCryptoAmount();
         BigDecimal dealAmount = deal.getAmount();
         String displayCurrencyName = deal.getCryptoCurrency().getDisplayName();
         String additionalText;
@@ -294,7 +293,8 @@ public class ExchangeServiceNew {
         StringBuilder messageNew = new StringBuilder();
         messageNew.append("\uD83D\uDCAC<b>Информация по заявке</b>\n" + "\uD83D\uDCAC<b>")
                 .append(deal.getDealType().getNominativeFirstLetterToUpper()).append(" ")
-                .append(displayCurrencyName).append("</b>: ").append(dealCryptoAmount.stripTrailingZeros());
+                .append(displayCurrencyName).append("</b>: ")
+                .append(BigDecimalUtil.roundToPlainString(deal.getCryptoAmount(), deal.getCryptoCurrency().getScale()));
         if (DealType.isBuy(deal.getDealType())) {
             if (BooleanUtils.isTrue(deal.getUsedPromo())) {
                 dealAmount = dealAmount.subtract(deal.getDiscount());
@@ -308,11 +308,11 @@ public class ExchangeServiceNew {
             messageNew.append("\n" + "<b>").append(displayCurrencyName).append("-адрес</b>:")
                     .append("<code>").append(deal.getWallet()).append("</code>").append("\n\n")
                     .append("\uD83D\uDCB5<b>Сумма перевода</b>: ")
-                    .append(dealAmount.stripTrailingZeros().toPlainString())
+                    .append(BigDecimalUtil.toPlainString(dealAmount))
                     .append(" ").append(deal.getFiatCurrency().getDisplayName()).append("\n\n")
                     .append(additionalText).append("<b>Выберите способ оплаты:</b>");
         } else messageNew.append("\n\n" + "\uD83D\uDCB5<b>Сумма перевода</b>: ")
-                    .append(dealAmount.stripTrailingZeros().toPlainString()).append(" ")
+                    .append(BigDecimalUtil.roundToPlainString(dealAmount)).append(" ")
                     .append(deal.getFiatCurrency().getDisplayName()).append("\n\n")
                     .append(additionalText).append("<b>Выберите способ получения перевода:</b>");
 
