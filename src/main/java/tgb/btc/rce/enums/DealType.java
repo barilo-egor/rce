@@ -5,13 +5,17 @@ import tgb.btc.rce.exception.EnumTypeNotFoundException;
 import java.util.Arrays;
 
 public enum DealType {
-    BUY("покупка", "покупку", "buy"),
-    SELL("продажа", "продажу", "sell");
+    BUY("покупка", "покупку", "покупки", "buy"),
+    SELL("продажа", "продажу", "продажи", "sell");
 
     /**
      * Именительный
      */
     final String nominative;
+    /**
+     * Родительный
+     */
+    final String genitive;
     /**
      * Винительный
      */
@@ -20,14 +24,19 @@ public enum DealType {
 
     final String key;
 
-    DealType(String nominative, String accusative, String key) {
+    DealType(String nominative, String genitive, String accusative, String key) {
         this.nominative = nominative;
+        this.genitive = genitive;
         this.accusative = accusative;
         this.key = key;
     }
 
     public String getNominative() {
         return nominative;
+    }
+
+    public String getGenitive() {
+        return genitive;
     }
 
     public String getNominativeFirstLetterToUpper() {

@@ -1,12 +1,12 @@
 package tgb.btc.rce.service.processors.support;
 
-import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import tgb.btc.rce.bean.Deal;
+import tgb.btc.rce.bean.PaymentType;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.*;
 import tgb.btc.rce.exception.BaseException;
@@ -296,15 +296,7 @@ public class ExchangeServiceNew {
                 .append(displayCurrencyName).append("</b>: ")
                 .append(BigDecimalUtil.roundToPlainString(deal.getCryptoAmount(), deal.getCryptoCurrency().getScale()));
         if (DealType.isBuy(deal.getDealType())) {
-            if (BooleanUtils.isTrue(deal.getUsedPromo())) {
-                dealAmount = dealAmount.subtract(deal.getDiscount());
-            }
-            if (BooleanUtils.isTrue(deal.getUsedReferralDiscount())) {
-                Integer referralBalance = userRepository.getReferralBalanceByChatId(UpdateUtil.getChatId(update));
-                if (referralBalance <= deal.getAmount().intValue())
-                    dealAmount = dealAmount.subtract(BigDecimal.valueOf(referralBalance));
-                else dealAmount = BigDecimal.ZERO;
-            }
+            dealAmount = userDiscountService.applyDealDiscounts(deal);
             messageNew.append("\n" + "<b>").append(displayCurrencyName).append("-адрес</b>:")
                     .append("<code>").append(deal.getWallet()).append("</code>").append("\n\n")
                     .append("\uD83D\uDCB5<b>Сумма перевода</b>: ")
@@ -312,11 +304,31 @@ public class ExchangeServiceNew {
                     .append(" ").append(deal.getFiatCurrency().getDisplayName()).append("\n\n")
                     .append(additionalText).append("<b>Выберите способ оплаты:</b>");
         } else messageNew.append("\n\n" + "\uD83D\uDCB5<b>Сумма перевода</b>: ")
-                    .append(BigDecimalUtil.roundToPlainString(dealAmount)).append(" ")
-                    .append(deal.getFiatCurrency().getDisplayName()).append("\n\n")
-                    .append(additionalText).append("<b>Выберите способ получения перевода:</b>");
+                .append(BigDecimalUtil.roundToPlainString(dealAmount)).append(" ")
+                .append(deal.getFiatCurrency().getDisplayName()).append("\n\n")
+                .append(additionalText).append("<b>Выберите способ получения перевода:</b>");
 
         responseSender.sendMessage(chatId, messageNew.toString(),
                 keyboardService.getPaymentTypes(deal.getDealType(), deal.getFiatCurrency()), "HTML");
+    }
+
+    public Boolean savePaymentTypeNew(Update update) {
+        if (!update.hasCallbackQuery()) {
+            return false;
+        }
+        Long chatId = UpdateUtil.getChatId(update);
+        Long currentDealPid = userRepository.getCurrentDealByChatId(chatId);
+        DealType dealType = dealRepository.getDealTypeByPid(currentDealPid);
+        PaymentType paymentType = paymentTypeRepository.getByPid(Long.parseLong(update.getCallbackQuery().getData()));
+        if (paymentType.getMinSum().compareTo(dealRepository.getAmountByPid(currentDealPid)) > 0) {
+            responseSender.sendMessage(chatId, "Минимальная сумма для " + dealType.getGenitive() + " через "
+                    + paymentType.getName() + " равна " + paymentType.getMinSum().toPlainString());
+            userRepository.updateStepByChatId(chatId, 2);
+            askForSum(chatId, dealRepository.getFiatCurrencyByPid(currentDealPid),
+                    dealRepository.getCryptoCurrencyByPid(currentDealPid), DealType.BUY);
+            return null;
+        }
+        dealRepository.updatePaymentTypeByPid(paymentType, currentDealPid);
+        return true;
     }
 }
