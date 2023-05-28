@@ -231,13 +231,13 @@ public class BuyBitcoin extends Processor {
                         true, dealRepository.getFiatCurrencyByPid(currentDealPid));
                 Boolean result;
                 if (paymentTypesCount > 1) {
-                    result = exchangeService.savePaymentType(update);
+                    result = exchangeServiceNew.savePaymentType(update);
                 } else {
                     dealService.updatePaymentTypeByPid(paymentTypeRepository.getByPid(Long.parseLong(userService.getBufferVariable(chatId))), currentDealPid);
                     result = true;
                 }
                 if (BooleanUtils.isTrue(result)) {
-                    exchangeService.buildDeal(update);
+                    exchangeServiceNew.buildDeal(update);
                     userService.nextStep(chatId);
                 } else if (BooleanUtils.isFalse(result)) responseSender.sendMessage(chatId, "Выберите способ оплаты.");
                 break;

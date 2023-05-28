@@ -9,7 +9,7 @@ import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.repository.UserDiscountRepository;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.impl.UserDiscountService;
-import tgb.btc.rce.service.processors.support.ExchangeService;
+import tgb.btc.rce.service.processors.support.PersonalDiscountsCache;
 import tgb.btc.rce.util.UpdateUtil;
 
 import java.math.BigDecimal;
@@ -20,6 +20,13 @@ public class SavePersonalBuyDiscountProcessor extends Processor {
     private UserDiscountRepository userDiscountRepository;
 
     private UserDiscountService userDiscountService;
+
+    private PersonalDiscountsCache personalDiscountsCache;
+
+    @Autowired
+    public void setPersonalDiscountsCache(PersonalDiscountsCache personalDiscountsCache) {
+        this.personalDiscountsCache = personalDiscountsCache;
+    }
 
     @Autowired
     public void setUserDiscountRepository(UserDiscountRepository userDiscountRepository) {
@@ -44,7 +51,7 @@ public class SavePersonalBuyDiscountProcessor extends Processor {
             userDiscount.setPersonalBuy(newPersonalBuy);
             userDiscountRepository.save(userDiscount);
         } else userDiscountRepository.updatePersonalBuyByUserPid(newPersonalBuy, userPid);
-        ExchangeService.putToUsersPersonalBuy(userChatId, newPersonalBuy);
+        personalDiscountsCache.putToBuy(userChatId, newPersonalBuy);
         responseSender.sendMessage(chatId, "Персональная скидка на покупку обновлена.");
         processToAdminMainPanel(chatId);
     }

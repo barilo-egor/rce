@@ -32,7 +32,19 @@ public enum BotKeyboard {
                     .build()
     ))),
     CRYPTO_CURRENCIES(getCryptoCurrencyKeyboard()),
-    FIAT_CURRENCIES(getFiatCurrenciesKeyboard());
+    FIAT_CURRENCIES(getFiatCurrenciesKeyboard()),
+    BUILD_DEAL(KeyboardUtil.buildInline(List.of(
+            InlineButton.builder()
+                    .text(Command.PAID.getText())
+                    .data(Command.PAID.name())
+                    .inlineType(InlineType.CALLBACK_DATA)
+                    .build(),
+            InlineButton.builder()
+                    .text(Command.CANCEL.getText())
+                    .data(Command.CANCEL_DEAL.name())
+                    .inlineType(InlineType.CALLBACK_DATA)
+                    .build()
+    )));
 
     final ReplyKeyboard keyboard;
 

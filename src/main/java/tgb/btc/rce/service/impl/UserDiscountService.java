@@ -4,13 +4,16 @@ import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tgb.btc.rce.bean.Deal;
+import tgb.btc.rce.enums.BotVariableType;
 import tgb.btc.rce.enums.DealType;
 import tgb.btc.rce.enums.FiatCurrency;
+import tgb.btc.rce.enums.Rank;
 import tgb.btc.rce.repository.DealRepository;
 import tgb.btc.rce.repository.UserDiscountRepository;
 import tgb.btc.rce.repository.UserRepository;
 import tgb.btc.rce.service.processors.support.PersonalDiscountsCache;
 import tgb.btc.rce.util.BigDecimalUtil;
+import tgb.btc.rce.util.BotVariablePropertiesUtil;
 import tgb.btc.rce.util.BulkDiscountUtil;
 import tgb.btc.rce.vo.calculate.DealAmount;
 
@@ -86,15 +89,16 @@ public class UserDiscountService {
         }
     }
 
-    public BigDecimal applyDealDiscounts(Deal deal) {
-        BigDecimal dealAmount = applyPromoCodeDiscount(deal.getAmount(), deal);
-        dealAmount = applyReferralDiscount(dealRepository.getUserChatIdByDealPid(deal.getPid()), dealAmount, deal.getUsedReferralDiscount());
-        return dealAmount;
+    public BigDecimal applyDealDiscounts(Long chatId, BigDecimal dealAmount, Boolean isUsedPromo,
+                                         Boolean isUserReferralDiscount, BigDecimal discount) {
+        BigDecimal newDealAmount = applyPromoCodeDiscount(dealAmount, isUsedPromo, discount);
+        newDealAmount = applyReferralDiscount(chatId, newDealAmount, isUserReferralDiscount);
+        return newDealAmount;
     }
 
-    private BigDecimal applyPromoCodeDiscount(BigDecimal dealAmount, Deal deal) {
-        if (BooleanUtils.isTrue(deal.getUsedPromo())) {
-            dealAmount = dealAmount.subtract(deal.getDiscount());
+    private BigDecimal applyPromoCodeDiscount(BigDecimal dealAmount, Boolean isUsedPromo, BigDecimal discount) {
+        if (BooleanUtils.isTrue(isUsedPromo)) {
+            dealAmount = dealAmount.subtract(discount);
         }
         return dealAmount;
     }
@@ -107,5 +111,22 @@ public class UserDiscountService {
             else dealAmount = BigDecimal.ZERO;
         }
         return dealAmount;
+    }
+
+    public BigDecimal applyRank(Rank rank, Deal deal) {
+        BigDecimal newAmount = deal.getAmount();
+        boolean isRankDiscountOn = BooleanUtils.isTrue(
+                BotVariablePropertiesUtil.getBoolean(BotVariableType.DEAL_RANK_DISCOUNT_ENABLE))
+                && BooleanUtils.isNotFalse(userDiscountRepository.getRankDiscountByUserChatId(
+                        dealRepository.getUserChatIdByDealPid(deal.getPid())));
+        if (!Rank.FIRST.equals(rank) && isRankDiscountOn) {
+            BigDecimal commission = deal.getCommission();
+            BigDecimal rankDiscount = BigDecimalUtil.multiplyHalfUp(commission, calculateService.getPercentsFactor(
+                    BigDecimal.valueOf(rank.getPercent())));
+            newAmount = DealType.isBuy(deal.getDealType())
+                    ? BigDecimalUtil.subtractHalfUp(deal.getAmount(), rankDiscount)
+                    : BigDecimalUtil.addHalfUp(deal.getAmount(), rankDiscount);
+        }
+        return newAmount;
     }
 }

@@ -207,7 +207,7 @@ public class SellBitcoin extends Processor {
                         true, dealRepository.getFiatCurrencyByPid(currentDealPid));
                 Boolean result;
                 if (paymentTypesCount > 1) {
-                    result = sellService.savePaymentType(update);
+                    result = exchangeServiceNew.savePaymentType(update);
                 } else {
                     dealService.updatePaymentTypeByPid(paymentTypeRepository.getByPid(Long.parseLong(userService.getBufferVariable(chatId))), currentDealPid);
                     result = true;
@@ -220,7 +220,7 @@ public class SellBitcoin extends Processor {
             case 4:
                 if (update.hasCallbackQuery()) responseSender.deleteMessage(chatId, update.getCallbackQuery().getMessage().getMessageId());
                 exchangeServiceNew.saveRequisites(update);
-                sellService.buildDeal(update);
+                exchangeServiceNew.buildDeal(update);
                 userService.nextStep(chatId);
                 break;
             case 5:
