@@ -44,7 +44,11 @@ public enum BotKeyboard {
                     .data(Command.CANCEL_DEAL.name())
                     .inlineType(InlineType.CALLBACK_DATA)
                     .build()
-    )));
+    ))),
+    CANCEL_DEAL(KeyboardUtil.buildReply(List.of(
+            ReplyButton.builder()
+                    .text(Command.RECEIPTS_CANCEL_DEAL.getText())
+                    .build())));
 
     final ReplyKeyboard keyboard;
 

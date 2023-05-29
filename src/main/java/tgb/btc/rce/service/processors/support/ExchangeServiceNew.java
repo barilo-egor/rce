@@ -19,6 +19,7 @@ import tgb.btc.rce.service.schedule.DealDeleteScheduler;
 import tgb.btc.rce.util.*;
 import tgb.btc.rce.vo.CalculatorQuery;
 import tgb.btc.rce.vo.InlineButton;
+import tgb.btc.rce.vo.ReplyButton;
 import tgb.btc.rce.vo.calculate.DealAmount;
 
 import java.math.BigDecimal;
@@ -51,6 +52,13 @@ public class ExchangeServiceNew {
     private PaymentTypeRepository paymentTypeRepository;
 
     private PaymentRequisiteService paymentRequisiteService;
+
+    private AdminService adminService;
+
+    @Autowired
+    public void setAdminService(AdminService adminService) {
+        this.adminService = adminService;
+    }
 
     @Autowired
     public void setPaymentRequisiteService(PaymentRequisiteService paymentRequisiteService) {
@@ -397,5 +405,41 @@ public class ExchangeServiceNew {
         Optional<Message> optionalMessage = responseSender.sendMessage(chatId, message, BotKeyboard.BUILD_DEAL.getKeyboard(), "HTML");
         if (DealType.isBuy(deal.getDealType())) DealDeleteScheduler.addNewCryptoDeal(deal.getPid(),
                     optionalMessage.map(Message::getMessageId).orElseThrow(() -> new BaseException("Ошибка при получении messageId.")));
+    }
+
+    public void confirmDeal(Update update) {
+        Long chatId = UpdateUtil.getChatId(update);
+        Long currentDealPid = userRepository.getCurrentDealByChatId(chatId);
+        DealType dealType = dealRepository.getDealTypeByPid(currentDealPid);
+        dealRepository.updateIsActiveByPid(true, currentDealPid);
+        userRepository.setDefaultValues(chatId);
+        responseSender.sendMessage(chatId, MessagePropertiesUtil.getMessage(PropertiesMessage.DEAL_CONFIRMED));
+        adminService.notify("Поступила новая заявка на " + dealType.getGenitive() + ".",
+                            keyboardService.getShowDeal(currentDealPid));
+    }
+
+    public void askForReferralDiscount(Update update) {
+        Long chatId = UpdateUtil.getChatId(update);
+        BigDecimal dealAmount = dealRepository.getAmountByPid(userRepository.getCurrentDealByChatId(chatId));
+        Integer referralBalance = userRepository.getReferralBalanceByChatId(chatId);
+
+        BigDecimal sumWithDiscount;
+        if (referralBalance <= dealAmount.intValue())
+            sumWithDiscount = dealAmount.subtract(BigDecimal.valueOf(referralBalance));
+        else sumWithDiscount = BigDecimal.ZERO;
+
+        String message = "\uD83E\uDD11У вас есть " + referralBalance + "₽ на реферальном балансе. Использовать их в качестве скидки?";
+        responseSender.sendMessage(chatId, message,
+                                   keyboardService.getUseReferralDiscount(sumWithDiscount, dealAmount), "HTML");
+    }
+
+    public void processReferralDiscount(Update update) {
+        Long chatId = UpdateUtil.getChatId(update);
+        dealRepository.updateUsedReferralDiscountByPid(true, userRepository.getCurrentDealByChatId(chatId));
+    }
+
+    public void askForReceipts(Update update) {
+        responseSender.sendMessage(UpdateUtil.getChatId(update),
+                                   "Отправьте скрин перевода, либо чек оплаты..", BotKeyboard.CANCEL_DEAL);
     }
 }

@@ -35,4 +35,8 @@ public interface BotStringConstants {
     String USE_PROMO = "use_promo";
 
     String DONT_USE_PROMO = "dont_use_promo";
+
+    String USE_REFERRAL_DISCOUNT = "use_discount";
+
+    String DONT_USE_REFERRAL_DISCOUNT = "dont_use_discount";
 }

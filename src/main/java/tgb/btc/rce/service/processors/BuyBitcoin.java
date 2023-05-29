@@ -6,6 +6,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.bean.Deal;
 import tgb.btc.rce.bean.PaymentReceipt;
+import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.*;
 import tgb.btc.rce.exception.BaseException;
 import tgb.btc.rce.exception.NumberParseException;
@@ -16,7 +17,6 @@ import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.impl.DealService;
 import tgb.btc.rce.service.impl.KeyboardService;
 import tgb.btc.rce.service.impl.MessageService;
-import tgb.btc.rce.service.processors.support.ExchangeService;
 import tgb.btc.rce.service.processors.support.ExchangeServiceNew;
 import tgb.btc.rce.service.schedule.DealDeleteScheduler;
 import tgb.btc.rce.util.*;
@@ -29,8 +29,6 @@ import java.util.Objects;
 public class BuyBitcoin extends Processor {
 
     private static final DealType DEAL_TYPE = DealType.BUY;
-
-    private ExchangeService exchangeService;
 
     private DealService dealService;
 
@@ -69,11 +67,6 @@ public class BuyBitcoin extends Processor {
     @Autowired
     public void setExchangeServiceNew(ExchangeServiceNew exchangeServiceNew) {
         this.exchangeServiceNew = exchangeServiceNew;
-    }
-
-    @Autowired
-    public void setExchangeService(ExchangeService exchangeService) {
-        this.exchangeService = exchangeService;
     }
 
     @Autowired
@@ -185,7 +178,7 @@ public class BuyBitcoin extends Processor {
                 if (!DealPromoUtil.isNone() && dealService.getDealsCountByUserChatId(chatId) < 1) {
                     exchangeServiceNew.askForUserPromoCode(chatId);
                 } else if (userService.getReferralBalanceByChatId(chatId) > 0) {
-                    exchangeService.askForReferralDiscount(update);
+                    exchangeServiceNew.askForReferralDiscount(update);
                 } else {
                     exchangeServiceNew.askForUserRequisites(update);
                     userService.nextStep(chatId);
@@ -196,8 +189,8 @@ public class BuyBitcoin extends Processor {
                 if (!DealPromoUtil.isNone() && dealService.getDealsCountByUserChatId(chatId) < 1) {
                     exchangeServiceNew.processPromoCode(update);
                 } else if (update.hasCallbackQuery()
-                        && update.getCallbackQuery().getData().equals(ExchangeService.USE_REFERRAL_DISCOUNT)){
-                    exchangeService.processReferralDiscount(update);
+                        && update.getCallbackQuery().getData().equals(BotStringConstants.USE_REFERRAL_DISCOUNT)){
+                    exchangeServiceNew.processReferralDiscount(update);
                 }
                 userService.nextStep(chatId);
                 exchangeServiceNew.askForUserRequisites(update);
@@ -252,7 +245,7 @@ public class BuyBitcoin extends Processor {
                     processToMainMenu(chatId);
                 } else if (update.hasCallbackQuery() && Command.PAID.name().equals(update.getCallbackQuery().getData())) {
                     responseSender.deleteMessage(chatId, update.getCallbackQuery().getMessage().getMessageId());
-                    exchangeService.askForReceipts(update);
+                    exchangeServiceNew.askForReceipts(update);
                     userService.nextStep(chatId);
                 }
                 DealDeleteScheduler.deleteCryptoDeal(dealPid);
@@ -293,7 +286,7 @@ public class BuyBitcoin extends Processor {
                     dealService.save(deal);
                     DealDeleteScheduler.deleteCryptoDeal(deal.getPid());
                 }
-                exchangeService.confirmDeal(update);
+                exchangeServiceNew.confirmDeal(update);
                 processToMainMenu(chatId);
                 break;
         }
@@ -320,7 +313,7 @@ public class BuyBitcoin extends Processor {
                 if (!DealPromoUtil.isNone() && dealService.getDealsCountByUserChatId(chatId) < 1) {
                     exchangeServiceNew.askForUserPromoCode(chatId);
                 } else if (userService.getReferralBalanceByChatId(chatId) > 0) {
-                    exchangeService.askForReferralDiscount(update);
+                    exchangeServiceNew.askForReferralDiscount(update);
                 } else {
                     currentDealPid = userService.getCurrentDealByChatId(chatId);
                     dealRepository.updateIsPersonalAppliedByPid(currentDealPid, false);

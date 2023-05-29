@@ -16,9 +16,7 @@ import tgb.btc.rce.repository.PaymentTypeRepository;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.impl.DealService;
 import tgb.btc.rce.service.impl.KeyboardService;
-import tgb.btc.rce.service.processors.support.ExchangeService;
 import tgb.btc.rce.service.processors.support.ExchangeServiceNew;
-import tgb.btc.rce.service.processors.support.SellService;
 import tgb.btc.rce.service.schedule.DealDeleteScheduler;
 import tgb.btc.rce.util.BotImageUtil;
 import tgb.btc.rce.util.FiatCurrencyUtil;
@@ -31,9 +29,7 @@ import java.util.Objects;
 public class SellBitcoin extends Processor {
 
     private DealService dealService;
-    private SellService sellService;
     private PaymentReceiptRepository paymentReceiptRepository;
-    private ExchangeService exchangeService;
 
     private DealRepository dealRepository;
 
@@ -59,18 +55,8 @@ public class SellBitcoin extends Processor {
     }
 
     @Autowired
-    public void setSellService(SellService sellService) {
-        this.sellService = sellService;
-    }
-
-    @Autowired
     public void setPaymentReceiptRepository(PaymentReceiptRepository paymentReceiptRepository) {
         this.paymentReceiptRepository = paymentReceiptRepository;
-    }
-
-    @Autowired
-    public void setExchangeService(ExchangeService exchangeService) {
-        this.exchangeService = exchangeService;
     }
 
     @Autowired
@@ -234,7 +220,7 @@ public class SellBitcoin extends Processor {
                     return;
                 } else if (update.hasCallbackQuery() && Command.PAID.name().equals(update.getCallbackQuery().getData())) {
                     responseSender.deleteMessage(chatId, update.getCallbackQuery().getMessage().getMessageId());
-                    exchangeService.askForReceipts(update);
+                    exchangeServiceNew.askForReceipts(update);
                     userService.nextStep(chatId);
                     DealDeleteScheduler.deleteCryptoDeal(dealPid);
                     break;
@@ -276,7 +262,7 @@ public class SellBitcoin extends Processor {
                     deal.setPaymentReceipts(paymentReceipts);
                     dealService.save(deal);
                 }
-                sellService.confirmDeal(update);
+                exchangeServiceNew.confirmDeal(update);
                 processToMainMenu(chatId);
                 break;
         }
