@@ -17,7 +17,7 @@ import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.impl.DealService;
 import tgb.btc.rce.service.impl.KeyboardService;
 import tgb.btc.rce.service.impl.MessageService;
-import tgb.btc.rce.service.processors.support.ExchangeServiceNew;
+import tgb.btc.rce.service.processors.support.ExchangeService;
 import tgb.btc.rce.service.schedule.DealDeleteScheduler;
 import tgb.btc.rce.util.*;
 
@@ -34,7 +34,7 @@ public class BuyBitcoin extends Processor {
 
     private PaymentReceiptRepository paymentReceiptRepository;
 
-    private ExchangeServiceNew exchangeServiceNew;
+    private ExchangeService exchangeService;
 
     private KeyboardService keyboardService;
 
@@ -65,8 +65,8 @@ public class BuyBitcoin extends Processor {
     }
 
     @Autowired
-    public void setExchangeServiceNew(ExchangeServiceNew exchangeServiceNew) {
-        this.exchangeServiceNew = exchangeServiceNew;
+    public void setExchangeServiceNew(ExchangeService exchangeService) {
+        this.exchangeService = exchangeService;
     }
 
     @Autowired
@@ -140,7 +140,7 @@ public class BuyBitcoin extends Processor {
         Integer paymentTypesCount;
         switch (userService.getStepByChatId(chatId)) {
             case 0:
-                if (exchangeServiceNew.alreadyHasDeal(chatId)) return;
+                if (exchangeService.alreadyHasDeal(chatId)) return;
                 currentDealPid = userService.getCurrentDealByChatId(chatId);
                 if (Objects.isNull(currentDealPid)) currentDealPid = dealService.createNewDeal(DEAL_TYPE, chatId).getPid();
                 if (Objects.isNull(dealRepository.getFiatCurrencyByPid(currentDealPid))) {
@@ -165,39 +165,39 @@ public class BuyBitcoin extends Processor {
                 CryptoCurrency currency = CryptoCurrency.valueOf(update.getCallbackQuery().getData());
                 currentDealPid = userService.getCurrentDealByChatId(chatId);
                 dealService.updateCryptoCurrencyByPid(currentDealPid, currency);
-                exchangeServiceNew.askForSum(chatId, dealRepository.getFiatCurrencyByPid(currentDealPid), currency, dealService.getDealTypeByPid(currentDealPid));
+                exchangeService.askForSum(chatId, dealRepository.getFiatCurrencyByPid(currentDealPid), currency, dealService.getDealTypeByPid(currentDealPid));
                 userService.nextStep(chatId);
                 break;
             case 2:
                 if (UpdateType.INLINE_QUERY.equals(UpdateType.fromUpdate(update))) {
-                    exchangeServiceNew.calculateForInlineQuery(update);
+                    exchangeService.calculateForInlineQuery(update);
                     return;
                 }
-                if (!exchangeServiceNew.calculateDealAmount(chatId, UpdateUtil.getBigDecimalFromText(update))) return;
+                if (!exchangeService.calculateDealAmount(chatId, UpdateUtil.getBigDecimalFromText(update))) return;
                 responseSender.deleteMessage(UpdateUtil.getChatId(update), Integer.parseInt(userService.getBufferVariable(chatId)));
                 if (!DealPromoUtil.isNone() && dealService.getDealsCountByUserChatId(chatId) < 1) {
-                    exchangeServiceNew.askForUserPromoCode(chatId);
+                    exchangeService.askForUserPromoCode(chatId);
                 } else if (userService.getReferralBalanceByChatId(chatId) > 0) {
-                    exchangeServiceNew.askForReferralDiscount(update);
+                    exchangeService.askForReferralDiscount(update);
                 } else {
-                    exchangeServiceNew.askForUserRequisites(update);
+                    exchangeService.askForUserRequisites(update);
                     userService.nextStep(chatId);
                 }
                 userService.nextStep(chatId);
                 break;
             case 3:
                 if (!DealPromoUtil.isNone() && dealService.getDealsCountByUserChatId(chatId) < 1) {
-                    exchangeServiceNew.processPromoCode(update);
+                    exchangeService.processPromoCode(update);
                 } else if (update.hasCallbackQuery()
                         && update.getCallbackQuery().getData().equals(BotStringConstants.USE_REFERRAL_DISCOUNT)){
-                    exchangeServiceNew.processReferralDiscount(update);
+                    exchangeService.processReferralDiscount(update);
                 }
                 userService.nextStep(chatId);
-                exchangeServiceNew.askForUserRequisites(update);
+                exchangeService.askForUserRequisites(update);
                 break;
             case 4:
                 try {
-                    exchangeServiceNew.saveRequisites(update);
+                    exchangeService.saveRequisites(update);
                 } catch (BaseException e) {
                     responseSender.sendMessage(chatId, e.getMessage());
                     return;
@@ -209,7 +209,7 @@ public class BuyBitcoin extends Processor {
                 if (Objects.isNull(paymentTypesCount) || paymentTypesCount == 0) throw new BaseException("Не найден ни один тип оплаты.");
                 if (update.hasCallbackQuery()) responseSender.deleteMessage(chatId, update.getCallbackQuery().getMessage().getMessageId());
                 if (paymentTypesCount > 1) {
-                    exchangeServiceNew.askForPaymentType(update);
+                    exchangeService.askForPaymentType(update);
                     userService.nextStep(chatId);
                 } else {
                     userService.updateBufferVariable(chatId,
@@ -224,13 +224,13 @@ public class BuyBitcoin extends Processor {
                         true, dealRepository.getFiatCurrencyByPid(currentDealPid));
                 Boolean result;
                 if (paymentTypesCount > 1) {
-                    result = exchangeServiceNew.savePaymentType(update);
+                    result = exchangeService.savePaymentType(update);
                 } else {
                     dealService.updatePaymentTypeByPid(paymentTypeRepository.getByPid(Long.parseLong(userService.getBufferVariable(chatId))), currentDealPid);
                     result = true;
                 }
                 if (BooleanUtils.isTrue(result)) {
-                    exchangeServiceNew.buildDeal(update);
+                    exchangeService.buildDeal(update);
                     userService.nextStep(chatId);
                 } else if (BooleanUtils.isFalse(result)) responseSender.sendMessage(chatId, "Выберите способ оплаты.");
                 break;
@@ -245,7 +245,7 @@ public class BuyBitcoin extends Processor {
                     processToMainMenu(chatId);
                 } else if (update.hasCallbackQuery() && Command.PAID.name().equals(update.getCallbackQuery().getData())) {
                     responseSender.deleteMessage(chatId, update.getCallbackQuery().getMessage().getMessageId());
-                    exchangeServiceNew.askForReceipts(update);
+                    exchangeService.askForReceipts(update);
                     userService.nextStep(chatId);
                 }
                 DealDeleteScheduler.deleteCryptoDeal(dealPid);
@@ -286,7 +286,7 @@ public class BuyBitcoin extends Processor {
                     dealService.save(deal);
                     DealDeleteScheduler.deleteCryptoDeal(deal.getPid());
                 }
-                exchangeServiceNew.confirmDeal(update);
+                exchangeService.confirmDeal(update);
                 processToMainMenu(chatId);
                 break;
         }
@@ -306,31 +306,31 @@ public class BuyBitcoin extends Processor {
             case 2:
                 currentDealPid = userService.getCurrentDealByChatId(chatId);
                 dealRepository.updateIsPersonalAppliedByPid(currentDealPid, false);
-                exchangeServiceNew.askForSum(chatId, dealRepository.getFiatCurrencyByPid(currentDealPid),
-                        dealService.getCryptoCurrencyByPid(currentDealPid), dealService.getDealTypeByPid(currentDealPid));
+                exchangeService.askForSum(chatId, dealRepository.getFiatCurrencyByPid(currentDealPid),
+                                          dealService.getCryptoCurrencyByPid(currentDealPid), dealService.getDealTypeByPid(currentDealPid));
                 break;
             case 3:
                 if (!DealPromoUtil.isNone() && dealService.getDealsCountByUserChatId(chatId) < 1) {
-                    exchangeServiceNew.askForUserPromoCode(chatId);
+                    exchangeService.askForUserPromoCode(chatId);
                 } else if (userService.getReferralBalanceByChatId(chatId) > 0) {
-                    exchangeServiceNew.askForReferralDiscount(update);
+                    exchangeService.askForReferralDiscount(update);
                 } else {
                     currentDealPid = userService.getCurrentDealByChatId(chatId);
                     dealRepository.updateIsPersonalAppliedByPid(currentDealPid, false);
-                    exchangeServiceNew.askForSum(chatId, dealRepository.getFiatCurrencyByPid(currentDealPid),
-                            dealService.getCryptoCurrencyByPid(currentDealPid), dealService.getDealTypeByPid(currentDealPid));
+                    exchangeService.askForSum(chatId, dealRepository.getFiatCurrencyByPid(currentDealPid),
+                                              dealService.getCryptoCurrencyByPid(currentDealPid), dealService.getDealTypeByPid(currentDealPid));
                     userService.previousStep(chatId);
                 }
                 break;
             case 4:
-                exchangeServiceNew.askForUserRequisites(update);
+                exchangeService.askForUserRequisites(update);
                 break;
             case 5:
                 currentDealPid = userService.getCurrentDealByChatId(chatId);
                 paymentTypesCount = paymentTypeRepository.countByDealTypeAndIsOnAndFiatCurrency(dealRepository.getDealTypeByPid(currentDealPid),
                         true, dealRepository.getFiatCurrencyByPid(currentDealPid));
                 if (paymentTypesCount > 1) {
-                    exchangeServiceNew.askForPaymentType(update);
+                    exchangeService.askForPaymentType(update);
                 } else {
                     userService.previousStep(chatId);
                     previousStep(update);

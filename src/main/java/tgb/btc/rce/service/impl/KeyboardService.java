@@ -101,4 +101,20 @@ public class KeyboardService {
                 KeyboardUtil.INLINE_BACK_BUTTON
         ));
     }
+
+    public ReplyKeyboard getPromoCode(BigDecimal sumWithDiscount, BigDecimal dealAmount) {
+        return KeyboardUtil.buildInline(List.of(
+                InlineButton.builder()
+                        .text("Использовать, " + BigDecimalUtil.roundToPlainString(sumWithDiscount))
+                        .data(BotStringConstants.USE_PROMO)
+                        .inlineType(InlineType.CALLBACK_DATA)
+                        .build(),
+                InlineButton.builder()
+                        .text("Без промокода, " + BigDecimalUtil.roundToPlainString(dealAmount))
+                        .data(BotStringConstants.DONT_USE_PROMO)
+                        .inlineType(InlineType.CALLBACK_DATA)
+                        .build(),
+                KeyboardUtil.INLINE_BACK_BUTTON
+        ));
+    }
 }

@@ -8,6 +8,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import tgb.btc.rce.bean.Deal;
 import tgb.btc.rce.bean.PaymentType;
+import tgb.btc.rce.bean.User;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.*;
 import tgb.btc.rce.exception.BaseException;
@@ -19,7 +20,6 @@ import tgb.btc.rce.service.schedule.DealDeleteScheduler;
 import tgb.btc.rce.util.*;
 import tgb.btc.rce.vo.CalculatorQuery;
 import tgb.btc.rce.vo.InlineButton;
-import tgb.btc.rce.vo.ReplyButton;
 import tgb.btc.rce.vo.calculate.DealAmount;
 
 import java.math.BigDecimal;
@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class ExchangeServiceNew {
+public class ExchangeService {
 
     private KeyboardService keyboardService;
 
@@ -116,7 +116,8 @@ public class ExchangeServiceNew {
         this.keyboardService = keyboardService;
     }
 
-    public void askForCurrency(Long chatId, DealType dealType) {
+    public void askForCurrency(Long chatId) {
+        DealType dealType = dealRepository.getDealTypeByPid(userRepository.getCurrentDealByChatId(chatId));
         messageService.sendMessageAndSaveMessageId(chatId, MessagePropertiesUtil.getChooseCurrency(dealType),
                 keyboardService.getCurrencies(dealType));
     }
@@ -236,31 +237,16 @@ public class ExchangeServiceNew {
         BigDecimal discount = BigDecimalUtil.multiplyHalfUp(deal.getCommission(), calculateService.getPercentsFactor(promoCodeDiscount));
         dealRepository.updateDiscountByPid(discount, deal.getPid());
         BigDecimal sumWithDiscount = dealAmount.subtract(discount);
-        String sumWithDiscountString = BigDecimalUtil.roundToPlainString(sumWithDiscount);
 
         String message = "<b>Покупка " + cryptoCurrency.getDisplayName() + "</b>: "
                 + BigDecimalUtil.roundToPlainString(deal.getCryptoAmount(), cryptoCurrency.getScale()) + "\n\n"
                 + "<b>Сумма перевода</b>: <s>" + BigDecimalUtil.roundToPlainString(dealAmount)
-                + "</s> " + sumWithDiscountString + "\n\n"
+                + "</s> " + BigDecimalUtil.roundToPlainString(sumWithDiscount) + "\n\n"
                 + "\uD83C\uDFAB У вас есть промокод: <b>" + BotVariablePropertiesUtil.getVariable(BotVariableType.PROMO_CODE_NAME)
                 + "</b>, который даёт скидку в размере " + BigDecimalUtil.roundToPlainString(promoCodeDiscount) + "% от комиссии"
                 + "\n\n"
                 + "✅ <b>Использовать промокод</b> как скидку?";
-        ReplyKeyboard keyboard = KeyboardUtil.buildInline(List.of(
-                InlineButton.builder()
-                        .text("Использовать, " + sumWithDiscountString)
-                        .data(BotStringConstants.USE_PROMO)
-                        .inlineType(InlineType.CALLBACK_DATA)
-                        .build(),
-                InlineButton.builder()
-                        .text("Без промокода, " + dealAmount)
-                        .data(BotStringConstants.DONT_USE_PROMO)
-                        .inlineType(InlineType.CALLBACK_DATA)
-                        .build(),
-                KeyboardUtil.INLINE_BACK_BUTTON
-        ));
-
-        responseSender.sendMessage(chatId, message, keyboard, "HTML");
+        responseSender.sendMessage(chatId, message, keyboardService.getPromoCode(sumWithDiscount, dealAmount), "HTML");
     }
 
     public void processPromoCode(Update update) {
@@ -441,5 +427,15 @@ public class ExchangeServiceNew {
     public void askForReceipts(Update update) {
         responseSender.sendMessage(UpdateUtil.getChatId(update),
                                    "Отправьте скрин перевода, либо чек оплаты..", BotKeyboard.CANCEL_DEAL);
+    }
+
+    public void askForFiatCurrency(Long chatId) {
+        responseSender.sendMessage(chatId, "Выберите валюту.", keyboardService.getFiatCurrencies());
+        userRepository.nextStep(chatId);
+    }
+
+    public void saveFiatCurrency(Long chatId, FiatCurrency fiatCurrency) {
+        dealRepository.updateFiatCurrencyByPid(userRepository.getCurrentDealByChatId(chatId), fiatCurrency);
+        userRepository.nextStep(chatId);
     }
 }
