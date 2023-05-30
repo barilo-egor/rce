@@ -148,7 +148,7 @@ public class SellBitcoin extends Processor {
                         dealRepository.updateFiatCurrencyByPid(currentDealPid, FiatCurrencyUtil.getFirst());
                     }
                 }
-                exchangeService.askForCurrency(chatId);
+                exchangeService.askForCryptoCurrency(chatId);
                 userService.nextStep(chatId, Command.SELL_BITCOIN);
                 break;
             case 1:
@@ -275,7 +275,7 @@ public class SellBitcoin extends Processor {
         Integer paymentTypesCount;
         switch (userService.getStepByChatId(chatId)) {
             case 1:
-                exchangeService.askForCurrency(chatId);
+                exchangeService.askForCryptoCurrency(chatId);
                 break;
             case 2:
                 Long currentDealPid = userService.getCurrentDealByChatId(chatId);

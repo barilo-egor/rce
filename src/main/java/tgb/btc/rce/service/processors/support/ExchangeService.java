@@ -8,12 +8,13 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import tgb.btc.rce.bean.Deal;
 import tgb.btc.rce.bean.PaymentType;
-import tgb.btc.rce.bean.User;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.*;
 import tgb.btc.rce.exception.BaseException;
 import tgb.btc.rce.exception.CalculatorQueryException;
-import tgb.btc.rce.repository.*;
+import tgb.btc.rce.repository.DealRepository;
+import tgb.btc.rce.repository.PaymentTypeRepository;
+import tgb.btc.rce.repository.UserRepository;
 import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.impl.*;
 import tgb.btc.rce.service.schedule.DealDeleteScheduler;
@@ -116,10 +117,14 @@ public class ExchangeService {
         this.keyboardService = keyboardService;
     }
 
-    public void askForCurrency(Long chatId) {
+    public void askForCryptoCurrency(Long chatId) {
         DealType dealType = dealRepository.getDealTypeByPid(userRepository.getCurrentDealByChatId(chatId));
         messageService.sendMessageAndSaveMessageId(chatId, MessagePropertiesUtil.getChooseCurrency(dealType),
                 keyboardService.getCurrencies(dealType));
+    }
+
+    public void saveCryptoCurrency(Update update) {
+
     }
 
     public boolean alreadyHasDeal(Long chatId) {
@@ -434,7 +439,11 @@ public class ExchangeService {
         userRepository.nextStep(chatId);
     }
 
-    public void saveFiatCurrency(Long chatId, FiatCurrency fiatCurrency) {
+    public void saveFiatCurrency(Update update) {
+        Long chatId = UpdateUtil.getChatId(update);
+        FiatCurrency fiatCurrency;
+        if (FiatCurrencyUtil.isFew()) fiatCurrency = FiatCurrency.fromCallbackQuery(update.getCallbackQuery());
+        else fiatCurrency = FiatCurrencyUtil.getFirst();
         dealRepository.updateFiatCurrencyByPid(userRepository.getCurrentDealByChatId(chatId), fiatCurrency);
         userRepository.nextStep(chatId);
     }
