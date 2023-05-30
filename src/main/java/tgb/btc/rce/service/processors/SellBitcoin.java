@@ -25,7 +25,7 @@ import tgb.btc.rce.util.UpdateUtil;
 import java.util.List;
 import java.util.Objects;
 
-@CommandProcessor(command = Command.SELL_BITCOIN)
+@CommandProcessor(command = Command.NONE)
 public class SellBitcoin extends Processor {
 
     private DealService dealService;

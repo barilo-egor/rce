@@ -25,7 +25,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-@CommandProcessor(command = Command.BUY_BITCOIN)
+@CommandProcessor(command = Command.NONE)
 public class BuyBitcoin extends Processor {
 
     private static final DealType DEAL_TYPE = DealType.BUY;

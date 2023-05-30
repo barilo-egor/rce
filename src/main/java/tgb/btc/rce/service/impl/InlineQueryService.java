@@ -4,7 +4,7 @@ import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 @Service
-public class InlineQueryCalculatorService {
+public class InlineQueryService {
 
     public String getQueryWithPoints(Update update) {
         return update.getInlineQuery().getQuery().replaceAll(",", ".");

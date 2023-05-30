@@ -4,6 +4,7 @@ import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.exception.BaseException;
 import tgb.btc.rce.service.Processor;
+import tgb.btc.rce.service.SellBitcoinNew;
 import tgb.btc.rce.service.processors.*;
 import tgb.btc.rce.service.processors.bulkdiscounts.BulkDiscounts;
 import tgb.btc.rce.service.processors.bulkdiscounts.UpdateBulkDiscounts;
@@ -181,6 +182,9 @@ public final class CommandProcessorLoader {
         commandProcessors.add(SaveFiatCurrencyMinSum.class);
         commandProcessors.add(FiatCurrencyTurnPaymentType.class);
         commandProcessors.add(FiatCurrenciesDeleteRequisite.class);
+        commandProcessors.add(BuyBitcoinNew.class);
+        commandProcessors.add(SellBitcoinNew.class);
+        commandProcessors.add(DealProcessor.class);
         commandProcessors.stream()
                 .filter(processor -> !extendsProcessor(processor))
                 .findFirst()

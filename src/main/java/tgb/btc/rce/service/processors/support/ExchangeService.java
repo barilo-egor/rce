@@ -16,6 +16,7 @@ import tgb.btc.rce.repository.DealRepository;
 import tgb.btc.rce.repository.PaymentTypeRepository;
 import tgb.btc.rce.repository.UserRepository;
 import tgb.btc.rce.service.IResponseSender;
+import tgb.btc.rce.service.IUpdateDispatcher;
 import tgb.btc.rce.service.impl.*;
 import tgb.btc.rce.service.schedule.DealDeleteScheduler;
 import tgb.btc.rce.util.*;
@@ -46,7 +47,7 @@ public class ExchangeService {
 
     private CalculateService calculateService;
 
-    private InlineQueryCalculatorService queryCalculatorService;
+    private InlineQueryService queryCalculatorService;
 
     private BotMessageService botMessageService;
 
@@ -55,6 +56,13 @@ public class ExchangeService {
     private PaymentRequisiteService paymentRequisiteService;
 
     private AdminService adminService;
+
+    private IUpdateDispatcher updateDispatcher;
+
+    @Autowired
+    public void setUpdateDispatcher(IUpdateDispatcher updateDispatcher) {
+        this.updateDispatcher = updateDispatcher;
+    }
 
     @Autowired
     public void setAdminService(AdminService adminService) {
@@ -77,7 +85,7 @@ public class ExchangeService {
     }
 
     @Autowired
-    public void setQueryCalculatorService(InlineQueryCalculatorService queryCalculatorService) {
+    public void setQueryCalculatorService(InlineQueryService queryCalculatorService) {
         this.queryCalculatorService = queryCalculatorService;
     }
 
@@ -117,6 +125,20 @@ public class ExchangeService {
         this.keyboardService = keyboardService;
     }
 
+    public void askForFiatCurrency(Long chatId) {
+        responseSender.sendMessage(chatId, "Выберите валюту.", keyboardService.getFiatCurrencies());
+    }
+
+    public void saveFiatCurrency(Update update) {
+        Long chatId = UpdateUtil.getChatId(update);
+        FiatCurrency fiatCurrency;
+        if (FiatCurrencyUtil.isFew()) {
+            fiatCurrency = FiatCurrency.fromCallbackQuery(update.getCallbackQuery());
+        }
+        else fiatCurrency = FiatCurrencyUtil.getFirst();
+        dealRepository.updateFiatCurrencyByPid(userRepository.getCurrentDealByChatId(chatId), fiatCurrency);
+    }
+
     public void askForCryptoCurrency(Long chatId) {
         DealType dealType = dealRepository.getDealTypeByPid(userRepository.getCurrentDealByChatId(chatId));
         messageService.sendMessageAndSaveMessageId(chatId, MessagePropertiesUtil.getChooseCurrency(dealType),
@@ -124,7 +146,9 @@ public class ExchangeService {
     }
 
     public void saveCryptoCurrency(Update update) {
-
+        CryptoCurrency currency = CryptoCurrency.valueOf(update.getCallbackQuery().getData());
+        Long currentDealPid = userRepository.getCurrentDealByChatId(UpdateUtil.getChatId(update));
+        dealRepository.updateCryptoCurrencyByPid(currentDealPid, currency);
     }
 
     public boolean alreadyHasDeal(Long chatId) {
@@ -137,8 +161,10 @@ public class ExchangeService {
     }
 
     public void askForSum(Long chatId, FiatCurrency fiatCurrency, CryptoCurrency currency, DealType dealType) {
+        Long currentDealPid = userRepository.getCurrentDealByChatId(chatId);
+        CryptoCurrency cryptoCurrency = dealRepository.getCryptoCurrencyByPid(currentDealPid);
         PropertiesMessage propertiesMessage;
-        if (CryptoCurrency.BITCOIN.equals(currency)) {
+        if (CryptoCurrency.BITCOIN.equals(cryptoCurrency)) {
             propertiesMessage = PropertiesMessage.DEAL_INPUT_SUM_CRYPTO_OR_FIAT; // TODO сейчас хардкод на "или в рублях", надо подставлять фиатное
         } else {
             propertiesMessage = PropertiesMessage.DEAL_INPUT_SUM;
@@ -333,8 +359,7 @@ public class ExchangeService {
             responseSender.sendMessage(chatId, "Минимальная сумма для " + dealType.getGenitive() + " через "
                     + paymentType.getName() + " равна " + paymentType.getMinSum().toPlainString());
             userRepository.updateStepByChatId(chatId, 2);
-            askForSum(chatId, dealRepository.getFiatCurrencyByPid(currentDealPid),
-                    dealRepository.getCryptoCurrencyByPid(currentDealPid), DealType.BUY);
+            updateDispatcher.runProcessor(Command.DEAL, chatId, update);
             return null;
         }
         dealRepository.updatePaymentTypeByPid(paymentType, currentDealPid);
@@ -432,19 +457,5 @@ public class ExchangeService {
     public void askForReceipts(Update update) {
         responseSender.sendMessage(UpdateUtil.getChatId(update),
                                    "Отправьте скрин перевода, либо чек оплаты..", BotKeyboard.CANCEL_DEAL);
-    }
-
-    public void askForFiatCurrency(Long chatId) {
-        responseSender.sendMessage(chatId, "Выберите валюту.", keyboardService.getFiatCurrencies());
-        userRepository.nextStep(chatId);
-    }
-
-    public void saveFiatCurrency(Update update) {
-        Long chatId = UpdateUtil.getChatId(update);
-        FiatCurrency fiatCurrency;
-        if (FiatCurrencyUtil.isFew()) fiatCurrency = FiatCurrency.fromCallbackQuery(update.getCallbackQuery());
-        else fiatCurrency = FiatCurrencyUtil.getFirst();
-        dealRepository.updateFiatCurrencyByPid(userRepository.getCurrentDealByChatId(chatId), fiatCurrency);
-        userRepository.nextStep(chatId);
     }
 }

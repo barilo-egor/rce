@@ -3,9 +3,15 @@ package tgb.btc.rce.util;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.constants.BotStringConstants;
+import tgb.btc.rce.exception.BaseException;
 
 public final class CallbackQueryUtil {
     private CallbackQueryUtil() {
+    }
+
+    public static Integer messageId(Update update) {
+        if (!update.hasCallbackQuery()) throw new BaseException("В update отсутствует CallbackQuery.");
+        return update.getCallbackQuery().getMessage().getMessageId();
     }
 
     public static String getSplitData(Update update, int index) {

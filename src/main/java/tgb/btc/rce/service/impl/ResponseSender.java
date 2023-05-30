@@ -13,6 +13,7 @@ import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageTe
 import org.telegram.telegrambots.meta.api.objects.Document;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Message;
+import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.inlinequery.inputmessagecontent.InputTextMessageContent;
 import org.telegram.telegrambots.meta.api.objects.inlinequery.result.InlineQueryResultArticle;
 import org.telegram.telegrambots.meta.api.objects.media.InputMedia;
@@ -24,9 +25,7 @@ import tgb.btc.rce.bot.RceBot;
 import tgb.btc.rce.enums.*;
 import tgb.btc.rce.repository.UserRepository;
 import tgb.btc.rce.service.IResponseSender;
-import tgb.btc.rce.util.KeyboardUtil;
-import tgb.btc.rce.util.MenuFactory;
-import tgb.btc.rce.util.MessagePropertiesUtil;
+import tgb.btc.rce.util.*;
 import tgb.btc.rce.vo.InlineButton;
 
 import java.io.File;
@@ -324,5 +323,10 @@ public class ResponseSender implements IResponseSender {
     @Override
     public boolean sendAnswerInlineQuery(String inlineQueryId, String title) {
         return sendAnswerInlineQuery(inlineQueryId, title, null, null);
+    }
+
+    @Override
+    public void deleteCallbackMessageIfExists(Update update) {
+        if (update.hasCallbackQuery()) deleteMessage(UpdateUtil.getChatId(update), CallbackQueryUtil.messageId(update));
     }
 }

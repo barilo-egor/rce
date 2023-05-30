@@ -4,14 +4,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.bean.User;
+import tgb.btc.rce.enums.BotProperties;
+import tgb.btc.rce.enums.CalculatorType;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.Menu;
+import tgb.btc.rce.exception.BaseException;
+import tgb.btc.rce.service.ICalculatorTypeService;
 import tgb.btc.rce.service.IUpdateDispatcher;
 import tgb.btc.rce.service.Processor;
+import tgb.btc.rce.service.impl.UpdateDispatcher;
 import tgb.btc.rce.service.processors.support.ExchangeService;
 import tgb.btc.rce.util.FiatCurrencyUtil;
 import tgb.btc.rce.util.UpdateUtil;
 
+import javax.annotation.PostConstruct;
 import java.util.Objects;
 
 @CommandProcessor(command = Command.DEAL)
@@ -20,6 +26,13 @@ public class DealProcessor extends Processor {
     private IUpdateDispatcher updateDispatcher;
 
     private ExchangeService exchangeService;
+
+    private ICalculatorTypeService calculatorTypeService;
+
+    @Autowired
+    public void setCalculatorTypeService(ICalculatorTypeService calculatorTypeService) {
+        this.calculatorTypeService = calculatorTypeService;
+    }
 
     @Autowired
     public void setExchangeService(ExchangeService exchangeService) {
@@ -34,9 +47,9 @@ public class DealProcessor extends Processor {
     @Override
     public void run(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
-        if (isMainMenuCommand(update)) return;
         Integer userStep = userRepository.getStepByChatId(chatId);
         boolean isDefaultStep = User.DEFAULT_STEP == userStep;
+        if (!isDefaultStep && isMainMenuCommand(update)) return;
         if (!isDefaultStep && isBack(update)) userRepository.previousStep(chatId);
         else if (isDefaultStep && isBack(update)) updateDispatcher.runProcessor(Command.START, chatId, update);
         switch (userStep) {
@@ -50,12 +63,16 @@ public class DealProcessor extends Processor {
                 exchangeService.askForFiatCurrency(chatId);
                 break;
             case 1:
+                responseSender.deleteCallbackMessageIfExists(update);
                 exchangeService.saveFiatCurrency(update);
                 exchangeService.askForCryptoCurrency(chatId);
                 userRepository.nextStep(chatId);
                 break;
             case 2:
-
+                responseSender.deleteCallbackMessageIfExists(update);
+                exchangeService.saveCryptoCurrency(update);
+                calculatorTypeService.run(update);
+                break;
         }
     }
 
