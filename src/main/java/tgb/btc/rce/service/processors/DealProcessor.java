@@ -6,24 +6,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.bean.User;
-import tgb.btc.rce.enums.BotProperties;
-import tgb.btc.rce.enums.CalculatorType;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.Menu;
-import tgb.btc.rce.exception.BaseException;
 import tgb.btc.rce.service.ICalculatorTypeService;
 import tgb.btc.rce.service.IUpdateDispatcher;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.impl.DealService;
 import tgb.btc.rce.service.impl.PaymentTypeService;
-import tgb.btc.rce.service.impl.UpdateDispatcher;
 import tgb.btc.rce.service.processors.support.ExchangeService;
 import tgb.btc.rce.util.CallbackQueryUtil;
-import tgb.btc.rce.util.DealPromoUtil;
 import tgb.btc.rce.util.FiatCurrencyUtil;
 import tgb.btc.rce.util.UpdateUtil;
 
-import javax.annotation.PostConstruct;
 import java.util.Objects;
 
 @CommandProcessor(command = Command.DEAL)
@@ -165,8 +159,29 @@ public class DealProcessor extends Processor {
                 Boolean result = exchangeService.isPaid(update);
                 if (Objects.isNull(result)) return;
                 if (BooleanUtils.isFalse(result)) processToStart(chatId, update);
-
+                break;
+            case 9:
+                if (!hasCheck(update)) {
+                    exchangeService.askForReceipts(update);
+                    return;
+                }
+                if (isReceiptsCancel(update)) {
+                    exchangeService.cancelDeal(null, chatId, userService.getCurrentDealByChatId(chatId));
+                    return;
+                }
+                exchangeService.saveReceipts(update);
+                exchangeService.confirmDeal(update);
+                processToStart(chatId, update);
+                break;
         }
+    }
+
+    private boolean isReceiptsCancel(Update update) {
+        return update.hasMessage() && Command.RECEIPTS_CANCEL_DEAL.getText().equals(UpdateUtil.getMessageText(update));
+    }
+
+    private boolean hasCheck(Update update) {
+        return !update.hasMessage() || (!update.getMessage().hasPhoto() && !update.getMessage().hasDocument());
     }
 
     private boolean isFewPaymentTypes(Long chatId) {

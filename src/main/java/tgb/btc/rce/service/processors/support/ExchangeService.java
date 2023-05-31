@@ -7,12 +7,14 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import tgb.btc.rce.bean.Deal;
+import tgb.btc.rce.bean.PaymentReceipt;
 import tgb.btc.rce.bean.PaymentType;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.*;
 import tgb.btc.rce.exception.BaseException;
 import tgb.btc.rce.exception.CalculatorQueryException;
 import tgb.btc.rce.repository.DealRepository;
+import tgb.btc.rce.repository.PaymentReceiptRepository;
 import tgb.btc.rce.repository.PaymentTypeRepository;
 import tgb.btc.rce.repository.UserRepository;
 import tgb.btc.rce.service.IResponseSender;
@@ -60,6 +62,20 @@ public class ExchangeService {
     private AdminService adminService;
 
     private IUpdateDispatcher updateDispatcher;
+
+    private PaymentReceiptRepository paymentReceiptRepository;
+
+    private DealService dealService;
+
+    @Autowired
+    public void setDealService(DealService dealService) {
+        this.dealService = dealService;
+    }
+
+    @Autowired
+    public void setPaymentReceiptRepository(PaymentReceiptRepository paymentReceiptRepository) {
+        this.paymentReceiptRepository = paymentReceiptRepository;
+    }
 
     @Autowired
     public void setPaymentTypeService(PaymentTypeService paymentTypeService) {
@@ -475,12 +491,16 @@ public class ExchangeService {
             userRepository.nextStep(chatId);
             return true;
         } else {
-            responseSender.deleteMessage(chatId, update.getCallbackQuery().getMessage().getMessageId());
-            dealRepository.deleteById(dealPid);
-            userRepository.updateCurrentDealByChatId(null, chatId);
-            responseSender.sendMessage(chatId, "Заявка отменена.");
+            cancelDeal(update.getCallbackQuery().getMessage().getMessageId(), chatId, dealPid);
             return false;
         }
+    }
+
+    public void cancelDeal(Integer messageId, Long chatId, Long dealPid) {
+        responseSender.deleteMessage(chatId, messageId);
+        dealRepository.deleteById(dealPid);
+        userRepository.updateCurrentDealByChatId(null, chatId);
+        responseSender.sendMessage(chatId, "Заявка отменена.");
     }
 
     public void confirmDeal(Update update) {
@@ -518,7 +538,19 @@ public class ExchangeService {
 
     public void askForReceipts(Update update) {
         responseSender.sendMessage(UpdateUtil.getChatId(update),
-                                   "Отправьте скрин перевода, либо чек оплаты..", BotKeyboard.CANCEL_DEAL);
+                                   "Отправьте скрин перевода, либо чек оплаты.", BotKeyboard.CANCEL_DEAL);
     }
 
+    public void saveReceipts(Update update) {
+        Long chatId = UpdateUtil.getChatId(update);
+        Deal deal = dealRepository.findByPid(userRepository.getCurrentDealByChatId(chatId));
+        PaymentReceipt paymentReceipt = paymentReceiptRepository.save(PaymentReceipt.builder()
+                .receipt(update.getMessage().getDocument().getFileId())
+                .receiptFormat(ReceiptFormat.PDF)
+                .build());
+        List<PaymentReceipt> paymentReceipts = dealService.getPaymentReceipts(deal.getPid());
+        paymentReceipts.add(paymentReceipt);
+        deal.setPaymentReceipts(paymentReceipts);
+        dealService.save(deal);
+    }
 }
