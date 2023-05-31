@@ -17,16 +17,9 @@ public class Start extends Processor {
 
     private BotMessageService botMessageService;
 
-    private DealService dealService;
-
     @Autowired
     public void setBotMessageService(BotMessageService botMessageService) {
         this.botMessageService = botMessageService;
-    }
-
-    @Autowired
-    public void setDealService(DealService dealService) {
-        this.dealService = dealService;
     }
 
     @Override
@@ -37,13 +30,7 @@ public class Start extends Processor {
 
     public void run(Long chatId) {
         userService.updateIsActiveByChatId(true, chatId);
-        Long currentDealPid = userService.getCurrentDealByChatId(chatId);
-        if (Objects.nonNull(currentDealPid)) {
-            if (dealService.existByPid(currentDealPid)) {
-                dealService.deleteById(currentDealPid);
-            }
-            userService.updateCurrentDealByChatId(null, chatId);
-        }
+        userService.deleteCurrentDeal(chatId);
         responseSender.sendBotMessage(botMessageService.findByType(BotMessageType.START), chatId);
         processToMainMenu(chatId);
     }

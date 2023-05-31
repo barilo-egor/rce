@@ -132,9 +132,7 @@ public class ExchangeService {
     public void saveFiatCurrency(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
         FiatCurrency fiatCurrency;
-        if (FiatCurrencyUtil.isFew()) {
-            fiatCurrency = FiatCurrency.fromCallbackQuery(update.getCallbackQuery());
-        }
+        if (FiatCurrencyUtil.isFew()) fiatCurrency = FiatCurrency.fromCallbackQuery(update.getCallbackQuery());
         else fiatCurrency = FiatCurrencyUtil.getFirst();
         dealRepository.updateFiatCurrencyByPid(userRepository.getCurrentDealByChatId(chatId), fiatCurrency);
     }

@@ -3,6 +3,7 @@ package tgb.btc.rce.util;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.constants.BotStringConstants;
+import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.exception.BaseException;
 
 public final class CallbackQueryUtil {
@@ -29,4 +30,9 @@ public final class CallbackQueryUtil {
     public static String buildCallbackData(String... variables) {
         return String.join(BotStringConstants.CALLBACK_DATA_SPLITTER, variables);
     }
+
+    public static boolean isBack(Update update) {
+        return update.hasCallbackQuery() && Command.BACK.getText().equals(update.getCallbackQuery().getData());
+    }
+
 }

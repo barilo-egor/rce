@@ -162,7 +162,9 @@ public enum Command {
     /**
      * USERS STATES
      */
-    CHOOSING_FIAT_CURRENCY("chs_fc", false, false)
+    CHOOSING_FIAT_CURRENCY("chs_fc", false, false),
+    NONE_CALCULATOR("none_calc", false, false),
+    INLINE_QUERY_CALCULATOR("inline_q_calc", false, false);
     ;
 
     final String text;

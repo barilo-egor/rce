@@ -8,6 +8,8 @@ import tgb.btc.rce.service.SellBitcoinNew;
 import tgb.btc.rce.service.processors.*;
 import tgb.btc.rce.service.processors.bulkdiscounts.BulkDiscounts;
 import tgb.btc.rce.service.processors.bulkdiscounts.UpdateBulkDiscounts;
+import tgb.btc.rce.service.processors.calculator.InlineQueryCalculator;
+import tgb.btc.rce.service.processors.calculator.NoneCalculator;
 import tgb.btc.rce.service.processors.paymenttypes.PaymentsTypes;
 import tgb.btc.rce.service.processors.paymenttypes.create.CreateNewPaymentType;
 import tgb.btc.rce.service.processors.paymenttypes.create.FiatCurrencyNewPaymentType;
@@ -70,7 +72,9 @@ public final class CommandProcessorLoader {
             Command.TURN_PAYMENT_TYPES,
             Command.CHANGE_MIN_SUM,
             Command.TURN_DYNAMIC_REQUISITES,
-            Command.CHOOSING_FIAT_CURRENCY
+            Command.CHOOSING_FIAT_CURRENCY,
+            Command.NONE_CALCULATOR,
+            Command.INLINE_QUERY_CALCULATOR
     );
 
 
@@ -185,6 +189,8 @@ public final class CommandProcessorLoader {
         commandProcessors.add(BuyBitcoinNew.class);
         commandProcessors.add(SellBitcoinNew.class);
         commandProcessors.add(DealProcessor.class);
+        commandProcessors.add(NoneCalculator.class);
+        commandProcessors.add(InlineQueryCalculator.class);
         commandProcessors.stream()
                 .filter(processor -> !extendsProcessor(processor))
                 .findFirst()

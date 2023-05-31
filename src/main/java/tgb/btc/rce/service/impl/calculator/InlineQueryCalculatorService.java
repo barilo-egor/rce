@@ -28,4 +28,10 @@ public class InlineQueryCalculatorService extends SimpleCalculatorService {
                         .build(),
                 KeyboardUtil.INLINE_BACK_BUTTON), 1));
     }
+
+    @Override
+    public void setCommand(Long chatId) {
+        userRepository.updateStepAndCommandByChatId(chatId, Command.INLINE_QUERY_CALCULATOR, 1);
+    }
+
 }

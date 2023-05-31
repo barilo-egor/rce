@@ -51,85 +51,19 @@ public class DealService extends BasePersistService<Deal> {
         return dealRepository.existsById(pid);
     }
 
-    public void updateCryptoAmountByPid(BigDecimal cryptoAmount, Long pid) {
-        dealRepository.updateCryptoAmountByPid(cryptoAmount, pid);
-    }
-
-    public void updateAmountByPid(BigDecimal amount, Long pid) {
-        dealRepository.updateAmountByPid(amount, pid);
-    }
-
-    public void updateDiscountByPid(BigDecimal discount, Long pid) {
-        dealRepository.updateDiscountByPid(discount, pid);
-    }
-
-    public void updateCommissionByPid(BigDecimal commission, Long pid) {
-        dealRepository.updateCommissionByPid(commission, pid);
-    }
-
-    public BigDecimal getCommissionByPid(Long pid) {
-        return dealRepository.getCommissionByPid(pid);
-    }
-
-    public void updateUsedReferralDiscountByPid(Boolean isUsedReferralDiscount, Long pid) {
-        dealRepository.updateUsedReferralDiscountByPid(isUsedReferralDiscount, pid);
-    }
-
     public Long getDealsCountByUserChatId(Long chatId) {
         return dealRepository.getPassedDealsCountByUserChatId(chatId);
-    }
-
-    public Long getNotCurrentDealsCountByUserChatId(Long chatId, DealType dealType) {
-        return dealRepository.getPassedDealsCountByUserChatId(chatId, dealType);
     }
 
     public Deal getByPid(Long pid) {
         return dealRepository.findByPid(pid);
     }
 
-    public BigDecimal getAmountByPid(Long pid) {
-        return dealRepository.getAmountByPid(pid);
-    }
-
-    public BigDecimal getDiscountByPid(Long pid) {
-        return dealRepository.getDiscountByPid(pid);
-    }
-
-    public BigDecimal getRoundedAmountByPid(Long pid) {
-        return dealRepository.getAmountByPid(pid).setScale(0, RoundingMode.HALF_UP).stripTrailingZeros();
-    }
-
-    public void updateWalletByPid(String wallet, Long pid) {
-        dealRepository.updateWalletByPid(wallet, pid);
-    }
-
-    public void updatePaymentTypeEnumByPid(PaymentTypeEnum paymentTypeEnum, Long pid) {
-        dealRepository.updatePaymentTypeEnumByPid(paymentTypeEnum, pid);
-    }
-
     public void updatePaymentTypeByPid(PaymentType paymentType, Long pid) {
         dealRepository.updatePaymentTypeByPid(paymentType, pid);
     }
-
-
-    public void updateIsUsedPromoByPid(Boolean isUsedPromo, Long pid) {
-        dealRepository.updateIsUsedPromoByPid(isUsedPromo, pid);
-    }
-
-    public void updateIsActivePromoByPid(Boolean isActive, Long pid) {
-        dealRepository.updateIsUsedPromoByPid(isActive, pid);
-    }
-
-    public Long getActiveDealsCountByUserChatId(Long chatId) {
-        return dealRepository.getActiveDealsCountByUserChatId(chatId);
-    }
-
     public Long getPidActiveDealByChatId(Long chatId) {
         return dealRepository.getPidActiveDealByChatId(chatId);
-    }
-
-    public void updateIsActiveByPid(Boolean isActive, Long pid) {
-        dealRepository.updateIsActiveByPid(isActive, pid);
     }
 
     public Long getCountPassedByUserChatId(Long chatId) {
@@ -150,10 +84,6 @@ public class DealService extends BasePersistService<Deal> {
 
     public List<Deal> getByDate(LocalDate dateTime) {
         return dealRepository.getPassedByDate(dateTime);
-    }
-
-    public String getWalletFromLastNotCurrentByChatId(Long chatId, DealType dealType) {
-        return dealRepository.getWalletFromLastPassedByChatIdAndDealType(chatId, dealType);
     }
 
     public DealType getDealTypeByPid(Long pid) {
@@ -177,5 +107,9 @@ public class DealService extends BasePersistService<Deal> {
         Deal savedDeal = save(deal);
         userRepository.updateCurrentDealByChatId(savedDeal.getPid(), chatId);
         return savedDeal;
+    }
+
+    public boolean isFirstDeal(Long chatId) {
+        return getDealsCountByUserChatId(chatId) < 1;
     }
 }

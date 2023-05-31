@@ -124,7 +124,7 @@ public interface UserRepository extends BaseRepository<User> {
     void updateStepAndCommandByChatId(Long chatId, Command command, Integer step);
 
     @Modifying
-    @Query("update User set step=:stepwhere where chatId=:chatId")
+    @Query("update User set step=:step where chatId=:chatId")
     void updateStepByChatId(Long chatId, Integer step);
 
     /**

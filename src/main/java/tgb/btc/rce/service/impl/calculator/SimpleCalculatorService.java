@@ -4,13 +4,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import tgb.btc.rce.enums.CalculatorType;
+import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.CryptoCurrency;
 import tgb.btc.rce.enums.PropertiesMessage;
 import tgb.btc.rce.repository.DealRepository;
 import tgb.btc.rce.repository.UserRepository;
 import tgb.btc.rce.service.ICalculatorTypeService;
 import tgb.btc.rce.service.IResponseSender;
+import tgb.btc.rce.service.IUpdateDispatcher;
 import tgb.btc.rce.service.impl.KeyboardService;
 import tgb.btc.rce.util.MessagePropertiesUtil;
 import tgb.btc.rce.util.UpdateUtil;
@@ -30,6 +31,9 @@ public abstract class SimpleCalculatorService implements ICalculatorTypeService 
     @Autowired
     protected KeyboardService keyboardService;
 
+    @Autowired
+    protected IUpdateDispatcher updateDispatcher;
+
     @Override
     public void run(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
@@ -46,8 +50,11 @@ public abstract class SimpleCalculatorService implements ICalculatorTypeService 
         sendMessage.setChatId(chatId.toString());
         sendMessage.setText(text);
         addKeyboard(sendMessage);
+        setCommand(chatId);
         responseSender.sendMessage(sendMessage);
     }
 
     public abstract void addKeyboard(SendMessage sendMessage);
+
+    public abstract void setCommand(Long chatId);
 }

@@ -13,10 +13,7 @@ import tgb.btc.rce.enums.BotProperties;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.ReferralType;
 import tgb.btc.rce.exception.BaseException;
-import tgb.btc.rce.repository.BaseRepository;
-import tgb.btc.rce.repository.UserDataRepository;
-import tgb.btc.rce.repository.UserDiscountRepository;
-import tgb.btc.rce.repository.UserRepository;
+import tgb.btc.rce.repository.*;
 import tgb.btc.rce.util.CommandUtil;
 import tgb.btc.rce.util.UpdateUtil;
 
@@ -38,10 +35,15 @@ public class UserService extends BasePersistService<User> {
 
     private BannedUserCache bannedUserCache;
 
+    private DealRepository dealRepository;
+
     public static final ReferralType REFERRAL_TYPE =
             ReferralType.valueOf(BotProperties.MODULES_PROPERTIES.getString("referral.type"));
 
-    private static final Map<Long, Boolean> IS_BANNED_CACHE = new ConcurrentHashMap<>();
+    @Autowired
+    public void setDealRepository(DealRepository dealRepository) {
+        this.dealRepository = dealRepository;
+    }
 
     @Autowired
     public void setBannedUserCache(BannedUserCache bannedUserCache) {
@@ -223,5 +225,15 @@ public class UserService extends BasePersistService<User> {
     public void unban(Long chatId) {
         bannedUserCache.remove(chatId);
         userRepository.updateIsBannedByChatId(chatId, false);
+    }
+
+    public void deleteCurrentDeal(Long chatId) {
+        Long currentDealPid = getCurrentDealByChatId(chatId);
+        if (Objects.nonNull(currentDealPid)) {
+            if (dealRepository.existsById(currentDealPid)) {
+                dealRepository.deleteById(currentDealPid);
+            }
+            updateCurrentDealByChatId(null, chatId);
+        }
     }
 }
