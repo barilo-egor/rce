@@ -53,11 +53,18 @@ public class ExchangeService {
 
     private PaymentTypeRepository paymentTypeRepository;
 
+    private PaymentTypeService paymentTypeService;
+
     private PaymentRequisiteService paymentRequisiteService;
 
     private AdminService adminService;
 
     private IUpdateDispatcher updateDispatcher;
+
+    @Autowired
+    public void setPaymentTypeService(PaymentTypeService paymentTypeService) {
+        this.paymentTypeService = paymentTypeService;
+    }
 
     @Autowired
     public void setUpdateDispatcher(IUpdateDispatcher updateDispatcher) {
@@ -132,15 +139,18 @@ public class ExchangeService {
     public void saveFiatCurrency(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
         FiatCurrency fiatCurrency;
-        if (FiatCurrencyUtil.isFew()) fiatCurrency = FiatCurrency.fromCallbackQuery(update.getCallbackQuery());
-        else fiatCurrency = FiatCurrencyUtil.getFirst();
+        if (FiatCurrencyUtil.isFew()) {
+            fiatCurrency = FiatCurrency.fromCallbackQuery(update.getCallbackQuery());
+        } else {
+            fiatCurrency = FiatCurrencyUtil.getFirst();
+        }
         dealRepository.updateFiatCurrencyByPid(userRepository.getCurrentDealByChatId(chatId), fiatCurrency);
     }
 
     public void askForCryptoCurrency(Long chatId) {
         DealType dealType = dealRepository.getDealTypeByPid(userRepository.getCurrentDealByChatId(chatId));
         messageService.sendMessageAndSaveMessageId(chatId, MessagePropertiesUtil.getChooseCurrency(dealType),
-                keyboardService.getCurrencies(dealType));
+                                                   keyboardService.getCurrencies(dealType));
     }
 
     public void saveCryptoCurrency(Update update) {
@@ -152,7 +162,7 @@ public class ExchangeService {
     public boolean alreadyHasDeal(Long chatId) {
         if (dealRepository.getActiveDealsCountByUserChatId(chatId) > 0) {
             responseSender.sendMessage(chatId, "У вас уже есть активная заявка.",
-                    InlineButton.buildData("Удалить", Command.DELETE_DEAL.getText()));
+                                       InlineButton.buildData("Удалить", Command.DELETE_DEAL.getText()));
             return true;
         }
         return false;
@@ -168,19 +178,21 @@ public class ExchangeService {
             propertiesMessage = PropertiesMessage.DEAL_INPUT_SUM;
         }
         String text = MessagePropertiesUtil.getMessage(propertiesMessage,
-                dealRepository.getCryptoCurrencyByPid(
-                        userRepository.getCurrentDealByChatId(chatId)));
+                                                       dealRepository.getCryptoCurrencyByPid(
+                                                               userRepository.getCurrentDealByChatId(chatId)));
 
         messageService.sendMessageAndSaveMessageId(chatId, text,
-                keyboardService.getCalculator(fiatCurrency, currency, dealType));
+                                                   keyboardService.getCalculator(fiatCurrency, currency, dealType));
     }
 
     public boolean calculateDealAmount(Long chatId, BigDecimal enteredAmount) {
         Deal deal = dealRepository.getById(userRepository.getCurrentDealByChatId(chatId));
         DealAmount dealAmount = calculateService.calculate(enteredAmount,
-                deal.getCryptoCurrency(), deal.getFiatCurrency(),
-                deal.getDealType());
-        if (isLessThanMin(chatId, deal)) return false;
+                                                           deal.getCryptoCurrency(), deal.getFiatCurrency(),
+                                                           deal.getDealType());
+        if (isLessThanMin(chatId, deal)) {
+            return false;
+        }
         userDiscountService.applyPersonal(chatId, deal.getDealType(), dealAmount);
         userDiscountService.applyBulk(deal.getFiatCurrency(), deal.getDealType(), dealAmount);
         dealAmount.updateDeal(deal);
@@ -194,8 +206,8 @@ public class ExchangeService {
         BigDecimal minSum = BotVariablePropertiesUtil.getBigDecimal(BotVariableType.MIN_SUM, dealType, cryptoCurrency);
         if (deal.getCryptoAmount().compareTo(minSum) < 0) {
             responseSender.sendMessage(chatId, "Минимальная сумма " + (DealType.isBuy(dealType)
-                    ? "покупки"
-                    : "продажи")
+                                                                       ? "покупки"
+                                                                       : "продажи")
                     + " " + cryptoCurrency.getDisplayName()
                     + " = " + minSum.stripTrailingZeros().toPlainString() + ".");
             return true;
@@ -215,9 +227,9 @@ public class ExchangeService {
         }
 
         DealAmount dealAmount = calculateService.calculate(calculatorQuery.getEnteredAmount(),
-                calculatorQuery.getCurrency(),
-                calculatorQuery.getFiatCurrency(),
-                calculatorQuery.getDealType());
+                                                           calculatorQuery.getCurrency(),
+                                                           calculatorQuery.getFiatCurrency(),
+                                                           calculatorQuery.getDealType());
         userDiscountService.applyPersonal(chatId, calculatorQuery.getDealType(), dealAmount);
         userDiscountService.applyBulk(calculatorQuery.getFiatCurrency(), calculatorQuery.getDealType(), dealAmount);
 
@@ -225,7 +237,7 @@ public class ExchangeService {
                 + BigDecimalUtil.round(dealAmount.getCryptoAmount(), calculatorQuery.getCurrency().getScale())
                 + " ~ " + BigDecimalUtil.round(dealAmount.getAmount(), 0);
         responseSender.sendAnswerInlineQuery(inlineQueryId, resultText, "Нажмите сюда, чтобы отправить сумму.",
-                BigDecimalUtil.toPlainString(calculatorQuery.getEnteredAmount()));
+                                             BigDecimalUtil.toPlainString(calculatorQuery.getEnteredAmount()));
     }
 
     public void askForUserRequisites(Update update) {
@@ -241,8 +253,11 @@ public class ExchangeService {
                     + " " + cryptoCurrency.getShortName();
             List<InlineButton> buttons = new ArrayList<>();
 
-            if (dealRepository.getPassedDealsCountByUserChatIdAndDealTypeAndCryptoCurrency(chatId, DealType.BUY, cryptoCurrency) > 0) {
-                String wallet = dealRepository.getWalletFromLastPassedByChatIdAndDealTypeAndCryptoCurrency(chatId, DealType.BUY, cryptoCurrency);
+            if (dealRepository.getPassedDealsCountByUserChatIdAndDealTypeAndCryptoCurrency(chatId, DealType.BUY,
+                                                                                           cryptoCurrency) > 0) {
+                String wallet = dealRepository.getWalletFromLastPassedByChatIdAndDealTypeAndCryptoCurrency(chatId,
+                                                                                                           DealType.BUY,
+                                                                                                           cryptoCurrency);
                 message = message.concat("\n\nВы можете использовать ваш сохраненный адрес:\n" + wallet);
                 buttons.add(BotInlineButton.USE_SAVED_WALLET.getButton());
             }
@@ -255,15 +270,18 @@ public class ExchangeService {
             keyboard = BotKeyboard.INLINE_CANCEL.getKeyboard();
         }
         responseSender.sendMessage(chatId, message, keyboard, "HTML")
-                .ifPresent(sentMessage -> userRepository.updateBufferVariable(chatId, sentMessage.getMessageId().toString()));
+                .ifPresent(sentMessage -> userRepository.updateBufferVariable(chatId,
+                                                                              sentMessage.getMessageId().toString()));
     }
 
     public void askForUserPromoCode(Long chatId) {
         Deal deal = dealRepository.getById(userRepository.getCurrentDealByChatId(chatId));
         CryptoCurrency cryptoCurrency = deal.getCryptoCurrency();
         BigDecimal dealAmount = deal.getAmount();
-        BigDecimal promoCodeDiscount = BotVariablePropertiesUtil.getBigDecimal(BotVariableType.PROMO_CODE_DISCOUNT.getKey());
-        BigDecimal discount = BigDecimalUtil.multiplyHalfUp(deal.getCommission(), calculateService.getPercentsFactor(promoCodeDiscount));
+        BigDecimal promoCodeDiscount = BotVariablePropertiesUtil.getBigDecimal(
+                BotVariableType.PROMO_CODE_DISCOUNT.getKey());
+        BigDecimal discount = BigDecimalUtil.multiplyHalfUp(deal.getCommission(),
+                                                            calculateService.getPercentsFactor(promoCodeDiscount));
         dealRepository.updateDiscountByPid(discount, deal.getPid());
         BigDecimal sumWithDiscount = dealAmount.subtract(discount);
 
@@ -271,18 +289,21 @@ public class ExchangeService {
                 + BigDecimalUtil.roundToPlainString(deal.getCryptoAmount(), cryptoCurrency.getScale()) + "\n\n"
                 + "<b>Сумма перевода</b>: <s>" + BigDecimalUtil.roundToPlainString(dealAmount)
                 + "</s> " + BigDecimalUtil.roundToPlainString(sumWithDiscount) + "\n\n"
-                + "\uD83C\uDFAB У вас есть промокод: <b>" + BotVariablePropertiesUtil.getVariable(BotVariableType.PROMO_CODE_NAME)
-                + "</b>, который даёт скидку в размере " + BigDecimalUtil.roundToPlainString(promoCodeDiscount) + "% от комиссии"
+                + "\uD83C\uDFAB У вас есть промокод: <b>" + BotVariablePropertiesUtil.getVariable(
+                BotVariableType.PROMO_CODE_NAME)
+                + "</b>, который даёт скидку в размере " + BigDecimalUtil.roundToPlainString(
+                promoCodeDiscount) + "% от комиссии"
                 + "\n\n"
                 + "✅ <b>Использовать промокод</b> как скидку?";
         responseSender.sendMessage(chatId, message, keyboardService.getPromoCode(sumWithDiscount, dealAmount), "HTML");
     }
 
     public void processPromoCode(Update update) {
-        if (!update.hasCallbackQuery() || !isUsePromoData(update.getCallbackQuery().getData()))
+        if (!update.hasCallbackQuery() || !isUsePromoData(update.getCallbackQuery().getData())) {
             throw new BaseException("Ожидался CallbackQuery с USE_PROMO.");
+        }
         dealRepository.updateIsUsedPromoByPid(true,
-                userRepository.getCurrentDealByChatId(UpdateUtil.getChatId(update)));
+                                              userRepository.getCurrentDealByChatId(UpdateUtil.getChatId(update)));
     }
 
     private boolean isUsePromoData(String data) {
@@ -298,9 +319,13 @@ public class ExchangeService {
             if (update.hasMessage()) {
                 wallet = UpdateUtil.getMessageText(update);
                 validateWallet(wallet);
-            } else wallet = dealRepository.getWalletFromLastPassedByChatIdAndDealTypeAndCryptoCurrency(
-                    chatId, dealType, dealRepository.getCryptoCurrencyByPid(currentDealPid));
-        } else wallet = UpdateUtil.getMessageText(update);
+            } else {
+                wallet = dealRepository.getWalletFromLastPassedByChatIdAndDealTypeAndCryptoCurrency(
+                        chatId, dealType, dealRepository.getCryptoCurrencyByPid(currentDealPid));
+            }
+        } else {
+            wallet = UpdateUtil.getMessageText(update);
+        }
         dealRepository.updateWalletByPid(wallet, currentDealPid);
     }
 
@@ -329,30 +354,34 @@ public class ExchangeService {
                 .append(BigDecimalUtil.roundToPlainString(deal.getCryptoAmount(), deal.getCryptoCurrency().getScale()));
         if (DealType.isBuy(deal.getDealType())) {
             dealAmount = userDiscountService.applyDealDiscounts(chatId, dealAmount, deal.getUsedPromo(),
-                    deal.getUsedReferralDiscount(), deal.getDiscount());
+                                                                deal.getUsedReferralDiscount(), deal.getDiscount());
             messageNew.append("\n" + "<b>").append(displayCurrencyName).append("-адрес</b>:")
                     .append("<code>").append(deal.getWallet()).append("</code>").append("\n\n")
                     .append("\uD83D\uDCB5<b>Сумма перевода</b>: ")
                     .append(BigDecimalUtil.toPlainString(dealAmount))
                     .append(" ").append(deal.getFiatCurrency().getDisplayName()).append("\n\n")
                     .append(additionalText).append("<b>Выберите способ оплаты:</b>");
-        } else messageNew.append("\n\n" + "\uD83D\uDCB5<b>Сумма перевода</b>: ")
-                .append(BigDecimalUtil.roundToPlainString(dealAmount)).append(" ")
-                .append(deal.getFiatCurrency().getDisplayName()).append("\n\n")
-                .append(additionalText).append("<b>Выберите способ получения перевода:</b>");
+        } else {
+            messageNew.append("\n\n" + "\uD83D\uDCB5<b>Сумма перевода</b>: ")
+                    .append(BigDecimalUtil.roundToPlainString(dealAmount)).append(" ")
+                    .append(deal.getFiatCurrency().getDisplayName()).append("\n\n")
+                    .append(additionalText).append("<b>Выберите способ получения перевода:</b>");
+        }
 
         responseSender.sendMessage(chatId, messageNew.toString(),
-                keyboardService.getPaymentTypes(deal.getDealType(), deal.getFiatCurrency()), "HTML");
+                                   keyboardService.getPaymentTypes(deal.getDealType(), deal.getFiatCurrency()), "HTML");
     }
 
-    public Boolean savePaymentType(Update update) {
+    public Boolean savePaymentType(Update update, boolean isFirst) {
         if (!update.hasCallbackQuery()) {
             return false;
         }
         Long chatId = UpdateUtil.getChatId(update);
         Long currentDealPid = userRepository.getCurrentDealByChatId(chatId);
         DealType dealType = dealRepository.getDealTypeByPid(currentDealPid);
-        PaymentType paymentType = paymentTypeRepository.getByPid(Long.parseLong(update.getCallbackQuery().getData()));
+        PaymentType paymentType = isFirst
+                                  ? paymentTypeService.getFirstTurned(userRepository.getCurrentDealByChatId(chatId))
+                                  : paymentTypeRepository.getByPid(Long.parseLong(update.getCallbackQuery().getData()));
         if (paymentType.getMinSum().compareTo(dealRepository.getAmountByPid(currentDealPid)) > 0) {
             responseSender.sendMessage(chatId, "Минимальная сумма для " + dealType.getGenitive() + " через "
                     + paymentType.getName() + " равна " + paymentType.getMinSum().toPlainString());
@@ -373,10 +402,10 @@ public class ExchangeService {
         BigDecimal dealAmount = userDiscountService.applyRank(rank, deal);
 
         String promoCodeText = Boolean.TRUE.equals(deal.getUsedPromo())
-                ?
-                "\n\n<b> Использован скидочный промокод</b>: "
-                        + BotVariablePropertiesUtil.getVariable(BotVariableType.PROMO_CODE_NAME) + "\n\n"
-                : "\n\n";
+                               ?
+                               "\n\n<b> Использован скидочный промокод</b>: "
+                                       + BotVariablePropertiesUtil.getVariable(BotVariableType.PROMO_CODE_NAME) + "\n\n"
+                               : "\n\n";
 
         PaymentType paymentType = deal.getPaymentType();
         deal.setDateTime(LocalDateTime.now());
@@ -384,18 +413,21 @@ public class ExchangeService {
         dealRepository.save(deal);
         if (DealType.isBuy(deal.getDealType())) {
             dealAmount = userDiscountService.applyDealDiscounts(chatId, dealAmount, deal.getUsedPromo(),
-                    deal.getUsedReferralDiscount(), deal.getDiscount());
+                                                                deal.getUsedReferralDiscount(), deal.getDiscount());
 
             message = "✅<b>Заявка №</b><code>" + deal.getPid() + "</code> успешно создана." + "\n\n"
-                    + "<b>Получаете</b>: " + BigDecimalUtil.roundToPlainString(deal.getCryptoAmount(), currency.getScale())
+                    + "<b>Получаете</b>: " + BigDecimalUtil.roundToPlainString(deal.getCryptoAmount(),
+                                                                               currency.getScale())
                     + " " + currency.getShortName() + "\n"
-                    + "<b>" + deal.getCryptoCurrency().getDisplayName() + "-адрес</b>:" + "<code>" + deal.getWallet() + "</code>" + "\n\n"
+                    + "<b>" + deal.getCryptoCurrency()
+                    .getDisplayName() + "-адрес</b>:" + "<code>" + deal.getWallet() + "</code>" + "\n\n"
                     + "Ваш ранг: " + rank.getSmile() + ", скидка " + rank.getPercent() + "%" + "\n\n"
                     + "<b>\uD83D\uDCB5Сумма к оплате</b>: <code>" + BigDecimalUtil.roundToPlainString(dealAmount, 0)
                     + " " + deal.getFiatCurrency().getDisplayName() + "</code>" + "\n"
                     + "<b>Резквизиты для оплаты:</b>" + "\n\n"
                     + "<code>" + paymentRequisiteService.getRequisite(paymentType) + "</code>" + "\n\n"
-                    + "<b>⏳Заявка действительна</b>: " + BotVariablePropertiesUtil.getVariable(BotVariableType.DEAL_ACTIVE_TIME) + " минут" + "\n\n"
+                    + "<b>⏳Заявка действительна</b>: " + BotVariablePropertiesUtil.getVariable(
+                    BotVariableType.DEAL_ACTIVE_TIME) + " минут" + "\n\n"
                     + "☑️После успешного перевода денег по указанным реквизитам нажмите на кнопку <b>\""
                     + Command.PAID.getText() + "\"</b> или же вы можете отменить данную заявку, нажав на кнопку <b>\""
                     + Command.CANCEL_DEAL.getText() + "\"</b>."
@@ -403,22 +435,52 @@ public class ExchangeService {
         } else {
             message = "✅<b>Заявка №</b><code>" + deal.getPid() + "</code> успешно создана." + "\n\n"
                     + "<b>Продаете</b>: "
-                    + BigDecimalUtil.roundToPlainString(deal.getCryptoAmount(), currency.getScale()) + " " + currency.getShortName() + "\n"
+                    + BigDecimalUtil.roundToPlainString(deal.getCryptoAmount(),
+                                                        currency.getScale()) + " " + currency.getShortName() + "\n"
                     + "<b>" + paymentType.getName() + " реквизиты</b>:" + "<code>" + deal.getWallet() + "</code>" + "\n\n"
                     + "Ваш ранг: " + rank.getSmile() + ", скидка " + rank.getPercent() + "%" + "\n\n"
                     + "\uD83D\uDCB5<b>Получаете</b>: <code>" + BigDecimalUtil.roundToPlainString(dealAmount)
                     + " " + deal.getFiatCurrency().getDisplayName() + "</code>" + "\n"
                     + "<b>Реквизиты для перевода " + currency.getShortName() + ":</b>" + "\n\n"
                     + "<code>" + BotVariablePropertiesUtil.getWallet(currency) + "</code>" + "\n\n"
-                    + "⏳<b>Заявка действительна</b>: " + BotVariablePropertiesUtil.getVariable(BotVariableType.DEAL_ACTIVE_TIME) + " минут" + "\n\n"
+                    + "⏳<b>Заявка действительна</b>: " + BotVariablePropertiesUtil.getVariable(
+                    BotVariableType.DEAL_ACTIVE_TIME) + " минут" + "\n\n"
                     + "☑️После успешного перевода денег по указанному кошельку нажмите на кнопку <b>\""
                     + Command.PAID.getText() + "\"</b> или же вы можете отменить данную заявку, нажав на кнопку <b>\""
                     + Command.CANCEL_DEAL.getText() + "\"</b>."
                     + promoCodeText;
         }
-        Optional<Message> optionalMessage = responseSender.sendMessage(chatId, message, BotKeyboard.BUILD_DEAL.getKeyboard(), "HTML");
-        if (DealType.isBuy(deal.getDealType())) DealDeleteScheduler.addNewCryptoDeal(deal.getPid(),
-                    optionalMessage.map(Message::getMessageId).orElseThrow(() -> new BaseException("Ошибка при получении messageId.")));
+        Optional<Message> optionalMessage = responseSender.sendMessage(chatId, message,
+                                                                       BotKeyboard.BUILD_DEAL.getKeyboard(), "HTML");
+        if (DealType.isBuy(deal.getDealType())) {
+            DealDeleteScheduler.addNewCryptoDeal(deal.getPid(),
+                                                 optionalMessage.map(
+                                                                 Message::getMessageId)
+                                                         .orElseThrow(
+                                                                 () -> new BaseException(
+                                                                         "Ошибка при получении messageId.")));
+        }
+    }
+
+    public Boolean isPaid(Update update) {
+        if (!update.hasCallbackQuery()) {
+            return null;
+        }
+        Long chatId = UpdateUtil.getChatId(update);
+        Long dealPid = userRepository.getCurrentDealByChatId(chatId);
+        DealDeleteScheduler.deleteCryptoDeal(dealPid);
+        if (Command.PAID.name().equals(update.getCallbackQuery().getData())) {
+            responseSender.deleteMessage(chatId, update.getCallbackQuery().getMessage().getMessageId());
+            askForReceipts(update);
+            userRepository.nextStep(chatId);
+            return true;
+        } else {
+            responseSender.deleteMessage(chatId, update.getCallbackQuery().getMessage().getMessageId());
+            dealRepository.deleteById(dealPid);
+            userRepository.updateCurrentDealByChatId(null, chatId);
+            responseSender.sendMessage(chatId, "Заявка отменена.");
+            return false;
+        }
     }
 
     public void confirmDeal(Update update) {
@@ -438,9 +500,11 @@ public class ExchangeService {
         Integer referralBalance = userRepository.getReferralBalanceByChatId(chatId);
 
         BigDecimal sumWithDiscount;
-        if (referralBalance <= dealAmount.intValue())
+        if (referralBalance <= dealAmount.intValue()) {
             sumWithDiscount = dealAmount.subtract(BigDecimal.valueOf(referralBalance));
-        else sumWithDiscount = BigDecimal.ZERO;
+        } else {
+            sumWithDiscount = BigDecimal.ZERO;
+        }
 
         String message = "\uD83E\uDD11У вас есть " + referralBalance + "₽ на реферальном балансе. Использовать их в качестве скидки?";
         responseSender.sendMessage(chatId, message,
@@ -456,4 +520,5 @@ public class ExchangeService {
         responseSender.sendMessage(UpdateUtil.getChatId(update),
                                    "Отправьте скрин перевода, либо чек оплаты..", BotKeyboard.CANCEL_DEAL);
     }
+
 }

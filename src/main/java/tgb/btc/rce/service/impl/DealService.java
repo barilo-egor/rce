@@ -13,6 +13,7 @@ import tgb.btc.rce.enums.PaymentTypeEnum;
 import tgb.btc.rce.repository.BaseRepository;
 import tgb.btc.rce.repository.DealRepository;
 import tgb.btc.rce.repository.UserRepository;
+import tgb.btc.rce.util.DealPromoUtil;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -111,5 +112,9 @@ public class DealService extends BasePersistService<Deal> {
 
     public boolean isFirstDeal(Long chatId) {
         return getDealsCountByUserChatId(chatId) < 1;
+    }
+
+    public boolean isAvailableForPromo(Long chatId) {
+        return !DealPromoUtil.isNone() && isFirstDeal(chatId);
     }
 }

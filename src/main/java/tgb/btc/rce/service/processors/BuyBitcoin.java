@@ -224,7 +224,7 @@ public class BuyBitcoin extends Processor {
                         true, dealRepository.getFiatCurrencyByPid(currentDealPid));
                 Boolean result;
                 if (paymentTypesCount > 1) {
-                    result = exchangeService.savePaymentType(update);
+                    result = exchangeService.savePaymentType(update, false);
                 } else {
                     dealService.updatePaymentTypeByPid(paymentTypeRepository.getByPid(Long.parseLong(userService.getBufferVariable(chatId))), currentDealPid);
                     result = true;

@@ -1,6 +1,7 @@
 package tgb.btc.rce.service.processors;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.annotation.CommandProcessor;
@@ -14,6 +15,7 @@ import tgb.btc.rce.service.ICalculatorTypeService;
 import tgb.btc.rce.service.IUpdateDispatcher;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.impl.DealService;
+import tgb.btc.rce.service.impl.PaymentTypeService;
 import tgb.btc.rce.service.impl.UpdateDispatcher;
 import tgb.btc.rce.service.processors.support.ExchangeService;
 import tgb.btc.rce.util.CallbackQueryUtil;
@@ -37,6 +39,13 @@ public class DealProcessor extends Processor {
     private ICalculatorTypeService calculatorTypeService;
 
     private DealService dealService;
+
+    private PaymentTypeService paymentTypeService;
+
+    @Autowired
+    public void setPaymentTypeService(PaymentTypeService paymentTypeService) {
+        this.paymentTypeService = paymentTypeService;
+    }
 
     @Autowired
     public void setDealService(DealService dealService) {
@@ -111,7 +120,7 @@ public class DealProcessor extends Processor {
                 calculatorTypeService.run(update);
                 break;
             case 3:
-                if (DealPromoUtil.isNone() && dealService.isFirstDeal(chatId)) {
+                if (!dealService.isAvailableForPromo(chatId)) {
                     if (isBack) userRepository.previousStep(chatId);
                     else userRepository.nextStep(chatId);
                     switchByStep(update, chatId, userStep, isBack);
@@ -119,7 +128,49 @@ public class DealProcessor extends Processor {
                 }
                 exchangeService.askForUserPromoCode(chatId);
                 break;
+            case 4:
+                if (!isBack && dealService.isAvailableForPromo(chatId)) {
+                    responseSender.deleteCallbackMessageIfExists(update);
+                    exchangeService.processPromoCode(update);
+                }
+                if (userService.isReferralBalanceEmpty(chatId)) {
+                    if (isBack) userRepository.previousStep(chatId);
+                    else userRepository.nextStep(chatId);
+                    switchByStep(update, chatId, userStep, isBack);
+                    break;
+                }
+                exchangeService.askForReferralDiscount(update);
+                break;
+            case 5:
+                if (!isBack && !userService.isReferralBalanceEmpty(chatId))
+                    exchangeService.processReferralDiscount(update);
+                exchangeService.askForUserRequisites(update);
+                break;
+            case 6:
+                if (!isBack) exchangeService.saveRequisites(update);
+                userRepository.nextStep(chatId);
+                if (isFewPaymentTypes(chatId)) {
+                    exchangeService.askForPaymentType(update);
+                    break;
+                }
+                userRepository.nextStep(chatId);
+                switchByStep(update, chatId, userStep, isBack);
+                break;
+            case 7:
+                if (!isBack) exchangeService.savePaymentType(update, !isFewPaymentTypes(chatId));
+                userRepository.nextStep(chatId);
+                exchangeService.buildDeal(update);
+                break;
+            case 8:
+                Boolean result = exchangeService.isPaid(update);
+                if (Objects.isNull(result)) return;
+                if (BooleanUtils.isFalse(result)) processToStart(chatId, update);
+
         }
+    }
+
+    private boolean isFewPaymentTypes(Long chatId) {
+        return paymentTypeService.getTurnedCountByDeal(chatId) > 1;
     }
 
     private void processToStart(Long chatId, Update update) {

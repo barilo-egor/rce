@@ -236,4 +236,9 @@ public class UserService extends BasePersistService<User> {
             updateCurrentDealByChatId(null, chatId);
         }
     }
+
+    public boolean isReferralBalanceEmpty(Long chatId) {
+        Integer referralBalance = userRepository.getReferralBalanceByChatId(chatId);
+        return Objects.nonNull(referralBalance) && referralBalance > 0;
+    }
 }
