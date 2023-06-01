@@ -118,9 +118,7 @@ public class DealProcessor extends Processor {
             case 3:
                 dealType = dealService.getDealTypeByPid(userRepository.getCurrentDealByChatId(chatId));
                 if (!DealType.isBuy(dealType) && !dealService.isAvailableForPromo(chatId)) {
-                    if (isBack) userRepository.previousStep(chatId);
-                    else userRepository.nextStep(chatId);
-                    switchByStep(update, chatId, userStep, isBack);
+                    recursiveSwitch(update, chatId, userStep, isBack);
                     break;
                 }
                 exchangeService.askForUserPromoCode(chatId);
@@ -133,9 +131,7 @@ public class DealProcessor extends Processor {
                     exchangeService.processPromoCode(update);
                 }
                 if (!DealType.isBuy(dealType) && userService.isReferralBalanceEmpty(chatId)) {
-                    if (isBack) userRepository.previousStep(chatId);
-                    else userRepository.nextStep(chatId);
-                    switchByStep(update, chatId, userStep, isBack);
+                    recursiveSwitch(update, chatId, userStep, isBack);
                     break;
                 }
                 exchangeService.askForReferralDiscount(update);
@@ -180,6 +176,12 @@ public class DealProcessor extends Processor {
                 processToStart(chatId, update);
                 break;
         }
+    }
+
+    private void recursiveSwitch(Update update, Long chatId, Integer userStep, boolean isBack) {
+        if (isBack) userRepository.previousStep(chatId);
+        else userRepository.nextStep(chatId);
+        switchByStep(update, chatId, userStep, isBack);
     }
 
     private boolean isReceiptsCancel(Update update) {
