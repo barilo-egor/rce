@@ -209,8 +209,8 @@ public class ExchangeService {
         if (isLessThanMin(chatId, deal)) {
             return false;
         }
-        userDiscountService.applyPersonal(chatId, deal.getDealType(), dealAmount);
         userDiscountService.applyBulk(deal.getFiatCurrency(), deal.getDealType(), dealAmount);
+        userDiscountService.applyPersonal(chatId, deal.getDealType(), dealAmount);
         dealAmount.updateDeal(deal);
         dealRepository.save(deal);
         return true;
