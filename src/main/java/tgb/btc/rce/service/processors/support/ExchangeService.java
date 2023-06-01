@@ -184,21 +184,18 @@ public class ExchangeService {
         return false;
     }
 
-    public void askForSum(Long chatId, FiatCurrency fiatCurrency, CryptoCurrency currency, DealType dealType) {
+    public void sendTotalDealAmount(Long chatId, DealType dealType) {
         Long currentDealPid = userRepository.getCurrentDealByChatId(chatId);
-        CryptoCurrency cryptoCurrency = dealRepository.getCryptoCurrencyByPid(currentDealPid);
-        PropertiesMessage propertiesMessage;
-        if (CryptoCurrency.BITCOIN.equals(cryptoCurrency)) {
-            propertiesMessage = PropertiesMessage.DEAL_INPUT_SUM_CRYPTO_OR_FIAT; // TODO сейчас хардкод на "или в рублях", надо подставлять фиатное
-        } else {
-            propertiesMessage = PropertiesMessage.DEAL_INPUT_SUM;
-        }
-        String text = MessagePropertiesUtil.getMessage(propertiesMessage,
-                                                       dealRepository.getCryptoCurrencyByPid(
-                                                               userRepository.getCurrentDealByChatId(chatId)));
-
-        messageService.sendMessageAndSaveMessageId(chatId, text,
-                                                   keyboardService.getCalculator(fiatCurrency, currency, dealType));
+        BigDecimal dealAmount = dealRepository.getAmountByPid(currentDealPid);
+        BigDecimal cryptoAmount = dealRepository.getCryptoAmountByPid(currentDealPid);
+        String message = "Сумма к получению: " + cryptoAmount + "\n"
+                + "Сумма к оплате: " + dealAmount + "\n"
+                + "Сумма к зачислению: "
+                + calculateService.convertToFiat(dealType,
+                dealRepository.getCryptoCurrencyByPid(currentDealPid),
+                dealRepository.getFiatCurrencyByPid(currentDealPid),
+                cryptoAmount);
+        responseSender.sendMessage(chatId, message);
     }
 
     public boolean calculateDealAmount(Long chatId, BigDecimal enteredAmount) {

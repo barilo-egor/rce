@@ -35,7 +35,7 @@ public class NoneCalculator extends Processor {
             dealProcessor.run(update);
             return;
         }
-        exchangeService.calculateDealAmount(chatId, UpdateUtil.getBigDecimalFromText(update));
+        if (!exchangeService.calculateDealAmount(chatId, UpdateUtil.getBigDecimalFromText(update))) return;
         userRepository.updateStepAndCommandByChatId(chatId, Command.DEAL, DealProcessor.AFTER_CALCULATOR_STEP);
     }
 }

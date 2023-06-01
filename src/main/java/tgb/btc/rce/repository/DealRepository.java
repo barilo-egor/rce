@@ -72,6 +72,9 @@ public interface DealRepository extends BaseRepository<Deal> {
     @Query("select amount from Deal where pid=:pid")
     BigDecimal getAmountByPid(Long pid);
 
+    @Query("select cryptoAmount from Deal where pid=:pid")
+    BigDecimal getCryptoAmountByPid(Long pid);
+
     @Query("select discount from Deal where pid=:pid")
     BigDecimal getDiscountByPid(Long pid);
 

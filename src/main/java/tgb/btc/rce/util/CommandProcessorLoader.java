@@ -4,7 +4,7 @@ import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.exception.BaseException;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.service.SellBitcoinNew;
+import tgb.btc.rce.service.processors.SellBitcoin;
 import tgb.btc.rce.service.processors.*;
 import tgb.btc.rce.service.processors.bulkdiscounts.BulkDiscounts;
 import tgb.btc.rce.service.processors.bulkdiscounts.UpdateBulkDiscounts;
@@ -88,7 +88,6 @@ public final class CommandProcessorLoader {
         commandProcessors.add(BanUnban.class);
         commandProcessors.add(BotMessages.class);
         commandProcessors.add(BotVariables.class);
-        commandProcessors.add(BuyBitcoin.class);
         commandProcessors.add(ChangeReferralBalance.class);
         commandProcessors.add(ConfirmUserDeal.class);
         commandProcessors.add(CurrentData.class);
@@ -110,7 +109,6 @@ public final class CommandProcessorLoader {
         commandProcessors.add(PublishReview.class);
         commandProcessors.add(QuitAdminPanel.class);
         commandProcessors.add(Referral.class);
-        commandProcessors.add(SellBitcoin.class);
         commandProcessors.add(SendLink.class);
         commandProcessors.add(SendMessageToUser.class);
         commandProcessors.add(ShareReview.class);
@@ -186,8 +184,8 @@ public final class CommandProcessorLoader {
         commandProcessors.add(SaveFiatCurrencyMinSum.class);
         commandProcessors.add(FiatCurrencyTurnPaymentType.class);
         commandProcessors.add(FiatCurrenciesDeleteRequisite.class);
-        commandProcessors.add(BuyBitcoinNew.class);
-        commandProcessors.add(SellBitcoinNew.class);
+        commandProcessors.add(BuyBitcoin.class);
+        commandProcessors.add(SellBitcoin.class);
         commandProcessors.add(DealProcessor.class);
         commandProcessors.add(NoneCalculator.class);
         commandProcessors.add(InlineQueryCalculator.class);

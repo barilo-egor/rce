@@ -7,6 +7,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.bean.User;
 import tgb.btc.rce.enums.Command;
+import tgb.btc.rce.enums.DealType;
 import tgb.btc.rce.enums.Menu;
 import tgb.btc.rce.service.ICalculatorTypeService;
 import tgb.btc.rce.service.IUpdateDispatcher;
@@ -87,6 +88,7 @@ public class DealProcessor extends Processor {
     }
 
     private void switchByStep(Update update, Long chatId, Integer userStep, boolean isBack) {
+        DealType dealType;
         switch (userStep) {
             case 0:
                 if (!isBack) userRepository.updateCommandByChatId(Command.DEAL, chatId);
@@ -114,7 +116,8 @@ public class DealProcessor extends Processor {
                 calculatorTypeService.run(update);
                 break;
             case 3:
-                if (!dealService.isAvailableForPromo(chatId)) {
+                dealType = dealService.getDealTypeByPid(userRepository.getCurrentDealByChatId(chatId));
+                if (!DealType.isBuy(dealType) && !dealService.isAvailableForPromo(chatId)) {
                     if (isBack) userRepository.previousStep(chatId);
                     else userRepository.nextStep(chatId);
                     switchByStep(update, chatId, userStep, isBack);
@@ -123,11 +126,13 @@ public class DealProcessor extends Processor {
                 exchangeService.askForUserPromoCode(chatId);
                 break;
             case 4:
-                if (!isBack && dealService.isAvailableForPromo(chatId)) {
+                dealType = dealService.getDealTypeByPid(userRepository.getCurrentDealByChatId(chatId));
+                exchangeService.sendTotalDealAmount(chatId, dealType);
+                if (!isBack && DealType.isBuy(dealType) && dealService.isAvailableForPromo(chatId)) {
                     responseSender.deleteCallbackMessageIfExists(update);
                     exchangeService.processPromoCode(update);
                 }
-                if (userService.isReferralBalanceEmpty(chatId)) {
+                if (!DealType.isBuy(dealType) && userService.isReferralBalanceEmpty(chatId)) {
                     if (isBack) userRepository.previousStep(chatId);
                     else userRepository.nextStep(chatId);
                     switchByStep(update, chatId, userStep, isBack);
@@ -136,7 +141,8 @@ public class DealProcessor extends Processor {
                 exchangeService.askForReferralDiscount(update);
                 break;
             case 5:
-                if (!isBack && !userService.isReferralBalanceEmpty(chatId))
+                dealType = dealService.getDealTypeByPid(userRepository.getCurrentDealByChatId(chatId));
+                if (!isBack && !DealType.isBuy(dealType) && !userService.isReferralBalanceEmpty(chatId))
                     exchangeService.processReferralDiscount(update);
                 exchangeService.askForUserRequisites(update);
                 break;
