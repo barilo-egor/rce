@@ -11,9 +11,11 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.bean.Deal;
 import tgb.btc.rce.enums.Command;
+import tgb.btc.rce.enums.CryptoCurrency;
 import tgb.btc.rce.exception.BaseException;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.impl.DealService;
+import tgb.btc.rce.util.BigDecimalUtil;
 import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.MessageTextUtil;
 import tgb.btc.rce.util.UpdateUtil;
@@ -22,11 +24,11 @@ import tgb.btc.rce.vo.ReplyButton;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @CommandProcessor(command = Command.DEAL_REPORTS)
 @Slf4j
@@ -138,6 +140,10 @@ public class DealReports extends Processor {
         headCell.setCellValue("ID");
 
         int i = 2;
+        BigDecimal totalFiatAmount = BigDecimal.ZERO;
+        Map<CryptoCurrency, BigDecimal> totalCryptoAmountMap = new HashMap<>();
+        Arrays.stream(CryptoCurrency.values())
+                .forEach(cryptoCurrency -> totalCryptoAmountMap.put(cryptoCurrency, BigDecimal.ZERO));
         for (Deal deal : deals) {
             Row row = sheet.createRow(i);
             Cell cell = row.createCell(0);
@@ -148,12 +154,14 @@ public class DealReports extends Processor {
             cell.setCellValue(deal.getDateTime().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")));
             cell = row.createCell(3);
             cell.setCellValue(deal.getAmount().setScale(0, RoundingMode.FLOOR).toString());
+            totalFiatAmount = totalFiatAmount.add(deal.getAmount());
             cell = row.createCell(4);
             cell.setCellValue(deal.getFiatCurrency().getCode());
             cell = row.createCell(5);
             cell.setCellValue(deal.getCryptoCurrency().getDisplayName());
             cell = row.createCell(6);
             cell.setCellValue(deal.getCryptoAmount().setScale(8, RoundingMode.FLOOR).stripTrailingZeros().toString());
+            totalCryptoAmountMap.put(deal.getCryptoCurrency(), totalCryptoAmountMap.get(deal.getCryptoCurrency()).add(deal.getCryptoAmount()));
             cell = row.createCell(7);
             // getPaymentTypeEnum используется для старых сделок
             String paymentTypeName = Objects.nonNull(deal.getPaymentTypeEnum())
@@ -164,6 +172,19 @@ public class DealReports extends Processor {
             cell.setCellValue(deal.getUser().getChatId());
             i++;
         }
+        i++;
+
+        Row row = sheet.createRow(i);
+        Cell cell = row.createCell(3);
+        cell.setCellValue(BigDecimalUtil.roundToPlainString(totalFiatAmount));
+
+        for (Map.Entry<CryptoCurrency, BigDecimal> entry : totalCryptoAmountMap.entrySet()) {
+            Cell cryptoCell = row.createCell(5);
+            cryptoCell.setCellValue(entry.getKey().getDisplayName());
+            cryptoCell = row.createCell(6);
+            cryptoCell.setCellValue(BigDecimalUtil.roundToPlainString(entry.getValue()));
+        }
+
         String fileName = period + ".xlsx";
         try {
             FileOutputStream outputStream = new FileOutputStream(fileName);
