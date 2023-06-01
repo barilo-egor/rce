@@ -111,6 +111,7 @@ public enum Command {
     ADDITIONAL_VERIFICATION("add_verification", true, false),
     USER_ADDITIONAL_VERIFICATION("user_verification", false, false),
     SHARE_REVIEW("share_review", false, false),
+    CHOOSING_FIAT_CURRENCY("chs_fc", false, false),
 
     /** REQUESTS */
     NEW_DEALS("Новые заявки", true, false),
@@ -162,7 +163,6 @@ public enum Command {
     /**
      * USERS STATES
      */
-    CHOOSING_FIAT_CURRENCY("chs_fc", false, false),
     NONE_CALCULATOR("none_calc", false, false),
     INLINE_QUERY_CALCULATOR("inline_q_calc", false, false);
     ;

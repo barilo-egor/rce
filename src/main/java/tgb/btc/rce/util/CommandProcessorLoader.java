@@ -175,7 +175,6 @@ public final class CommandProcessorLoader {
         commandProcessors.add(KeepSpamBan.class);
         commandProcessors.add(SpamUnban.class);
         commandProcessors.add(NewSpamBans.class);
-        commandProcessors.add(ChoosingFiatCurrency.class);
         commandProcessors.add(MakeAdmin.class);
         commandProcessors.add(FiatCurrencyNewPaymentType.class);
         commandProcessors.add(FiatCurrencyCreateRequisite.class);
