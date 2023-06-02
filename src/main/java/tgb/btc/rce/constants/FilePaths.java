@@ -26,6 +26,8 @@ public interface FilePaths {
 
     String MODULES_PROPERTIES = "config/bot/modules.properties";
 
+    String FUNCTIONS_PROPERTIES = "config/bot/functions.properties";
+
     /**
      * PICTURES
      */

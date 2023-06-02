@@ -35,6 +35,8 @@ import java.util.Optional;
 @Service
 public class ExchangeService {
 
+    private static final boolean IS_SUM_TO_RECEIVE_ON = BotProperties.FUNCTIONS_PROPERTIES.getBoolean("sum.to.receive", true);
+
     private KeyboardService keyboardService;
 
     private MessageService messageService;
@@ -193,19 +195,19 @@ public class ExchangeService {
             message = "Сумма к получению: " + BigDecimalUtil.roundToPlainString(cryptoAmount, cryptoCurrency.getScale())
                     + " " + fiatCurrency.getDisplayName() + "\n"
                     + "Сумма к оплате: " + BigDecimalUtil.roundToPlainString(dealAmount) + " "
-                    + cryptoCurrency.getShortName() + "\n"
-                    + "Сумма к зачислению: "
-                    + BigDecimalUtil.roundToPlainString(calculateService.convertToFiat(dealType,
-                    dealRepository.getCryptoCurrencyByPid(currentDealPid),
-                    dealRepository.getFiatCurrencyByPid(currentDealPid),
-                    cryptoAmount))
-                    + " " + fiatCurrency.getDisplayName();
-        } else {
-            message = "Сумма к получению: " + BigDecimalUtil.roundToPlainString(dealAmount) + " "
+                    + cryptoCurrency.getShortName() + "\n";
+            if (IS_SUM_TO_RECEIVE_ON) {
+                message = message.concat("Сумма к зачислению: "
+                        + BigDecimalUtil.roundToPlainString(calculateService.convertToFiat(dealType,
+                        dealRepository.getCryptoCurrencyByPid(currentDealPid),
+                        dealRepository.getFiatCurrencyByPid(currentDealPid),
+                        cryptoAmount))
+                        + " " + fiatCurrency.getDisplayName());
+            }
+        } else message = "Сумма к получению: " + BigDecimalUtil.roundToPlainString(dealAmount) + " "
                     + fiatCurrency.getDisplayName() + "\n"
                     + "Сумма к оплате: " + BigDecimalUtil.roundToPlainString(cryptoAmount, cryptoCurrency.getScale())
                     + " " + cryptoCurrency.getShortName();
-        }
         responseSender.sendMessage(chatId, message);
     }
 

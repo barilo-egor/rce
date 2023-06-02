@@ -22,7 +22,10 @@ public enum BotProperties implements PropertiesReader {
     MESSAGE_PROPERTIES(FilePaths.MESSAGE_PROPERTIES, ',', null, false),
     MESSAGE_BUFFER_PROPERTIES(FilePaths.MESSAGE_BUFFER_PROPERTIES, ',', null, true),
     TURNING_CURRENCIES_PROPERTIES(FilePaths.CURRENCIES_TURNING, ',', new CurrenciesTurningValidateService(), false),
-    MODULES_PROPERTIES(FilePaths.MODULES_PROPERTIES, ',', null, false);
+    MODULES_PROPERTIES(FilePaths.MODULES_PROPERTIES, ',', null, false),
+
+    FUNCTIONS_PROPERTIES(FilePaths.MODULES_PROPERTIES, ',', null, false),
+    ;
 
     private final String fileName;
     private final char listDelimiter;
