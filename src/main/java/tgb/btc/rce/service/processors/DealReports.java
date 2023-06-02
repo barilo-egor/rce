@@ -12,13 +12,11 @@ import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.bean.Deal;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.CryptoCurrency;
+import tgb.btc.rce.enums.FiatCurrency;
 import tgb.btc.rce.exception.BaseException;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.impl.DealService;
-import tgb.btc.rce.util.BigDecimalUtil;
-import tgb.btc.rce.util.KeyboardUtil;
-import tgb.btc.rce.util.MessageTextUtil;
-import tgb.btc.rce.util.UpdateUtil;
+import tgb.btc.rce.util.*;
 import tgb.btc.rce.vo.ReplyButton;
 
 import java.io.File;
@@ -140,10 +138,13 @@ public class DealReports extends Processor {
         headCell.setCellValue("ID");
 
         int i = 2;
-        BigDecimal totalFiatAmount = BigDecimal.ZERO;
         Map<CryptoCurrency, BigDecimal> totalCryptoAmountMap = new HashMap<>();
         Arrays.stream(CryptoCurrency.values())
                 .forEach(cryptoCurrency -> totalCryptoAmountMap.put(cryptoCurrency, BigDecimal.ZERO));
+
+        Map<FiatCurrency, BigDecimal> totalFiatAmountMap = new HashMap<>();
+        Arrays.stream(FiatCurrency.values())
+                .forEach(fiatCurrency -> totalFiatAmountMap.put(fiatCurrency, BigDecimal.ZERO));
         for (Deal deal : deals) {
             Row row = sheet.createRow(i);
             Cell cell = row.createCell(0);
@@ -154,7 +155,7 @@ public class DealReports extends Processor {
             cell.setCellValue(deal.getDateTime().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")));
             cell = row.createCell(3);
             cell.setCellValue(deal.getAmount().setScale(0, RoundingMode.FLOOR).toString());
-            totalFiatAmount = totalFiatAmount.add(deal.getAmount());
+            totalFiatAmountMap.put(deal.getFiatCurrency(), totalFiatAmountMap.get(deal.getFiatCurrency()).add(deal.getAmount()));
             cell = row.createCell(4);
             cell.setCellValue(deal.getFiatCurrency().getCode());
             cell = row.createCell(5);
@@ -174,15 +175,25 @@ public class DealReports extends Processor {
         }
         i++;
 
-        Row row = sheet.createRow(i);
-        Cell cell = row.createCell(3);
-        cell.setCellValue(BigDecimalUtil.roundToPlainString(totalFiatAmount));
+        int totalRowIndex = i + 1;
+
+        for (FiatCurrency fiatCurrency : FiatCurrency.values()) {
+            Row row = sheet.createRow(totalRowIndex);
+            Cell cell = row.createCell(3);
+            cell.setCellValue(BigDecimalUtil.roundToPlainString(totalFiatAmountMap.get(fiatCurrency)));
+            cell = row.createCell(4);
+            cell.setCellValue(fiatCurrency.getDisplayName());
+            totalRowIndex++;
+        }
+        totalRowIndex = i + 1;
 
         for (Map.Entry<CryptoCurrency, BigDecimal> entry : totalCryptoAmountMap.entrySet()) {
+            Row row = sheet.createRow(totalRowIndex);
             Cell cryptoCell = row.createCell(5);
             cryptoCell.setCellValue(entry.getKey().getDisplayName());
             cryptoCell = row.createCell(6);
-            cryptoCell.setCellValue(BigDecimalUtil.roundToPlainString(entry.getValue()));
+            cryptoCell.setCellValue(BigDecimalUtil.roundToPlainString(entry.getValue(), entry.getKey().getScale()));
+            totalRowIndex++;
         }
 
         String fileName = period + ".xlsx";
