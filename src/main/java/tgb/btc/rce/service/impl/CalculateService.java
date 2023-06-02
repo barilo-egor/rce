@@ -120,10 +120,7 @@ public class CalculateService {
     }
 
     public BigDecimal calculateDiscountInFiat(DealType dealType, BigDecimal amount, BigDecimal discount) {
-        BigDecimal totalDiscount = getPercentsFactor(amount).multiply(discount);
-        return DealType.BUY.equals(dealType)
-                ? amount.add(totalDiscount)
-                : amount.subtract(totalDiscount);
+        return getPercentsFactor(amount).multiply(discount);
     }
 
     public BigDecimal calculateDiscountInCrypto(CalculateData calculateData, BigDecimal discountInFiat) {

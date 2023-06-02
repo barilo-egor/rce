@@ -209,9 +209,7 @@ public class ResponseSender implements IResponseSender {
                     .chatId(chatId.toString())
                     .messageId(messageId)
                     .build());
-        } catch (TelegramApiException e) {
-            log.debug("Не получилось отправить измененное сообщение : chatId=" + chatId
-                    + ", messageId=" + messageId, e);
+        } catch (TelegramApiException ignored) {
         }
     }
 

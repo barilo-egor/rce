@@ -9,6 +9,7 @@ import tgb.btc.rce.bean.User;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.DealType;
 import tgb.btc.rce.enums.Menu;
+import tgb.btc.rce.repository.DealRepository;
 import tgb.btc.rce.service.ICalculatorTypeService;
 import tgb.btc.rce.service.IUpdateDispatcher;
 import tgb.btc.rce.service.Processor;
@@ -36,6 +37,13 @@ public class DealProcessor extends Processor {
     private DealService dealService;
 
     private PaymentTypeService paymentTypeService;
+
+    private DealRepository dealRepository;
+
+    @Autowired
+    public void setDealRepository(DealRepository dealRepository) {
+        this.dealRepository = dealRepository;
+    }
 
     @Autowired
     public void setPaymentTypeService(PaymentTypeService paymentTypeService) {
@@ -116,31 +124,37 @@ public class DealProcessor extends Processor {
                 calculatorTypeService.run(update);
                 break;
             case 3:
+                Long currentDealPid = userRepository.getCurrentDealByChatId(chatId);
                 dealType = dealService.getDealTypeByPid(userRepository.getCurrentDealByChatId(chatId));
+                exchangeService.sendTotalDealAmount(chatId, dealType, dealService.getCryptoCurrencyByPid(currentDealPid),
+                        dealRepository.getFiatCurrencyByPid(currentDealPid));
                 if (!DealType.isBuy(dealType) && !dealService.isAvailableForPromo(chatId)) {
-                    recursiveSwitch(update, chatId, userStep, isBack);
+                    recursiveSwitch(update, chatId, isBack);
                     break;
                 }
                 exchangeService.askForUserPromoCode(chatId);
+                userRepository.nextStep(chatId);
                 break;
             case 4:
                 dealType = dealService.getDealTypeByPid(userRepository.getCurrentDealByChatId(chatId));
-                exchangeService.sendTotalDealAmount(chatId, dealType);
                 if (!isBack && DealType.isBuy(dealType) && dealService.isAvailableForPromo(chatId)) {
                     responseSender.deleteCallbackMessageIfExists(update);
                     exchangeService.processPromoCode(update);
                 }
-                if (!DealType.isBuy(dealType) && userService.isReferralBalanceEmpty(chatId)) {
-                    recursiveSwitch(update, chatId, userStep, isBack);
+                if (!DealType.isBuy(dealType) || userService.isReferralBalanceEmpty(chatId)) {
+                    recursiveSwitch(update, chatId, isBack);
                     break;
                 }
                 exchangeService.askForReferralDiscount(update);
                 break;
             case 5:
                 dealType = dealService.getDealTypeByPid(userRepository.getCurrentDealByChatId(chatId));
-                if (!isBack && !DealType.isBuy(dealType) && !userService.isReferralBalanceEmpty(chatId))
+                if (!isBack && !DealType.isBuy(dealType) && !userService.isReferralBalanceEmpty(chatId)) {
                     exchangeService.processReferralDiscount(update);
+                }
+                responseSender.deleteCallbackMessageIfExists(update);
                 exchangeService.askForUserRequisites(update);
+                userRepository.nextStep(chatId);
                 break;
             case 6:
                 if (!isBack) exchangeService.saveRequisites(update);
@@ -178,10 +192,10 @@ public class DealProcessor extends Processor {
         }
     }
 
-    private void recursiveSwitch(Update update, Long chatId, Integer userStep, boolean isBack) {
+    private void recursiveSwitch(Update update, Long chatId, boolean isBack) {
         if (isBack) userRepository.previousStep(chatId);
         else userRepository.nextStep(chatId);
-        switchByStep(update, chatId, userStep, isBack);
+        switchByStep(update, chatId, userService.getStepByChatId(chatId), isBack);
     }
 
     private boolean isReceiptsCancel(Update update) {
