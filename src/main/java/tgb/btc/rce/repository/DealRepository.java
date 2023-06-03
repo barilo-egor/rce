@@ -180,4 +180,7 @@ public interface DealRepository extends BaseRepository<Deal> {
 
     @Query(value = "from Deal where user.pid in (select pid from User where chatId=:chatId)")
     List<Deal> getByChatId(Long chatId);
+
+    @Query(value = "select isActive from Deal where pid=:pid")
+    Boolean getIsActiveByPid(Long pid);
 }

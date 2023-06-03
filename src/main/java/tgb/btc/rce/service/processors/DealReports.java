@@ -16,7 +16,10 @@ import tgb.btc.rce.enums.FiatCurrency;
 import tgb.btc.rce.exception.BaseException;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.impl.DealService;
-import tgb.btc.rce.util.*;
+import tgb.btc.rce.util.BigDecimalUtil;
+import tgb.btc.rce.util.KeyboardUtil;
+import tgb.btc.rce.util.MessageTextUtil;
+import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.ReplyButton;
 
 import java.io.File;
@@ -129,9 +132,9 @@ public class DealReports extends Processor {
         headCell = headRow.createCell(4);
         headCell.setCellValue("Фиатная валюта");
         headCell = headRow.createCell(5);
-        headCell.setCellValue("Крипто валюта");
-        headCell = headRow.createCell(6);
         headCell.setCellValue("Сумма крипты");
+        headCell = headRow.createCell(6);
+        headCell.setCellValue("Крипто валюта");
         headCell = headRow.createCell(7);
         headCell.setCellValue("Оплата");
         headCell = headRow.createCell(8);
@@ -161,13 +164,13 @@ public class DealReports extends Processor {
             cell = row.createCell(5);
             cell.setCellValue(deal.getCryptoCurrency().getDisplayName());
             cell = row.createCell(6);
-            cell.setCellValue(deal.getCryptoAmount().setScale(8, RoundingMode.FLOOR).stripTrailingZeros().toString());
-            totalCryptoAmountMap.put(deal.getCryptoCurrency(), totalCryptoAmountMap.get(deal.getCryptoCurrency()).add(deal.getCryptoAmount()));
-            cell = row.createCell(7);
             // getPaymentTypeEnum используется для старых сделок
             String paymentTypeName = Objects.nonNull(deal.getPaymentTypeEnum())
                     ? deal.getPaymentTypeEnum().getDisplayName()
                     : deal.getPaymentType().getName();
+            cell = row.createCell(7);
+            cell.setCellValue(deal.getCryptoAmount().setScale(8, RoundingMode.FLOOR).stripTrailingZeros().toString());
+            totalCryptoAmountMap.put(deal.getCryptoCurrency(), totalCryptoAmountMap.get(deal.getCryptoCurrency()).add(deal.getCryptoAmount()));
             cell.setCellValue(paymentTypeName);
             cell = row.createCell(8);
             cell.setCellValue(deal.getUser().getChatId());
@@ -177,22 +180,29 @@ public class DealReports extends Processor {
 
         int totalRowIndex = i + 1;
 
-        for (FiatCurrency fiatCurrency : FiatCurrency.values()) {
-            Row row = sheet.createRow(totalRowIndex);
-            Cell cell = row.createCell(3);
-            cell.setCellValue(BigDecimalUtil.roundToPlainString(totalFiatAmountMap.get(fiatCurrency)));
-            cell = row.createCell(4);
-            cell.setCellValue(fiatCurrency.getDisplayName());
-            totalRowIndex++;
-        }
-        totalRowIndex = i + 1;
+        FiatCurrency[] fiatCurrencies = FiatCurrency.values();
+        CryptoCurrency[] cryptoCurrencies = CryptoCurrency.values();
+        int fiatCurrenciesLength = fiatCurrencies.length;
+        int cryptoCurrencyLength = cryptoCurrencies.length;
+        int maxLength = Math.max(fiatCurrenciesLength, cryptoCurrencyLength);
 
-        for (Map.Entry<CryptoCurrency, BigDecimal> entry : totalCryptoAmountMap.entrySet()) {
+        for (int j = 0; j < maxLength; j++) {
             Row row = sheet.createRow(totalRowIndex);
-            Cell cryptoCell = row.createCell(5);
-            cryptoCell.setCellValue(entry.getKey().getDisplayName());
-            cryptoCell = row.createCell(6);
-            cryptoCell.setCellValue(BigDecimalUtil.roundToPlainString(entry.getValue(), entry.getKey().getScale()));
+            if (j < fiatCurrenciesLength) {
+                FiatCurrency fiatCurrency = fiatCurrencies[j];
+                Cell cell = row.createCell(3);
+                cell.setCellValue(BigDecimalUtil.roundToPlainString(totalFiatAmountMap.get(fiatCurrency)));
+                cell = row.createCell(4);
+                cell.setCellValue(fiatCurrency.getDisplayName());
+            }
+            if (j < cryptoCurrencyLength) {
+                CryptoCurrency cryptoCurrency = cryptoCurrencies[j];
+                Cell cryptoCell = row.createCell(5);
+                cryptoCell.setCellValue(cryptoCurrency.getDisplayName());
+                cryptoCell = row.createCell(6);
+                cryptoCell.setCellValue(BigDecimalUtil.roundToPlainString(totalCryptoAmountMap.get(cryptoCurrency),
+                        cryptoCurrency.getScale()));
+            }
             totalRowIndex++;
         }
 

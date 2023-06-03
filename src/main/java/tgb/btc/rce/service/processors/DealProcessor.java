@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.bean.User;
+import tgb.btc.rce.enums.BotMessageType;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.DealType;
 import tgb.btc.rce.enums.Menu;
@@ -13,6 +14,7 @@ import tgb.btc.rce.repository.DealRepository;
 import tgb.btc.rce.service.ICalculatorTypeService;
 import tgb.btc.rce.service.IUpdateDispatcher;
 import tgb.btc.rce.service.Processor;
+import tgb.btc.rce.service.impl.BotMessageService;
 import tgb.btc.rce.service.impl.DealService;
 import tgb.btc.rce.service.impl.PaymentTypeService;
 import tgb.btc.rce.service.processors.support.ExchangeService;
@@ -41,6 +43,13 @@ public class DealProcessor extends Processor {
     private PaymentTypeService paymentTypeService;
 
     private DealRepository dealRepository;
+
+    private BotMessageService botMessageService;
+
+    @Autowired
+    public void setBotMessageService(BotMessageService botMessageService) {
+        this.botMessageService = botMessageService;
+    }
 
     @Autowired
     public void setDealRepository(DealRepository dealRepository) {
@@ -163,7 +172,9 @@ public class DealProcessor extends Processor {
                 recursiveSwitch(update, chatId, isBack);
                 break;
             case 6:
-                if (!isBack) exchangeService.savePaymentType(update);
+                if (!isBack) {
+                    if (!exchangeService.savePaymentType(update)) return;
+                }
                 exchangeService.askForUserRequisites(update);
                 userRepository.nextStep(chatId);
                 break;
@@ -190,7 +201,8 @@ public class DealProcessor extends Processor {
                 }
                 exchangeService.saveReceipts(update);
                 exchangeService.confirmDeal(update);
-                processToStart(chatId, update);
+                responseSender.sendBotMessage(botMessageService.findByType(BotMessageType.START), chatId);
+                processToMainMenu(chatId);
                 break;
         }
     }
@@ -206,7 +218,7 @@ public class DealProcessor extends Processor {
     }
 
     private boolean hasCheck(Update update) {
-        return !update.hasMessage() || (!update.getMessage().hasPhoto() && !update.getMessage().hasDocument());
+        return !update.hasMessage() || (!update.getMessage().hasPhoto() || !update.getMessage().hasDocument());
     }
 
     private boolean isFewPaymentTypes(Long chatId) {
@@ -219,6 +231,7 @@ public class DealProcessor extends Processor {
     }
 
     public boolean isMainMenuCommand(Update update) {
+        if (!update.hasMessage() || !update.getMessage().hasText()) return false;
         Long chatId = UpdateUtil.getChatId(update);
         Command commandFromUpdate = Command.fromUpdate(update);
         Command mainMenuCommand = null;

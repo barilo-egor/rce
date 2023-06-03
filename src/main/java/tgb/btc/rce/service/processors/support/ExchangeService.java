@@ -17,6 +17,7 @@ import tgb.btc.rce.repository.DealRepository;
 import tgb.btc.rce.repository.PaymentReceiptRepository;
 import tgb.btc.rce.repository.PaymentTypeRepository;
 import tgb.btc.rce.repository.UserRepository;
+import tgb.btc.rce.service.ICalculatorTypeService;
 import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.IUpdateDispatcher;
 import tgb.btc.rce.service.impl.*;
@@ -68,6 +69,13 @@ public class ExchangeService {
     private PaymentReceiptRepository paymentReceiptRepository;
 
     private DealService dealService;
+
+    private ICalculatorTypeService calculatorTypeService;
+
+    @Autowired
+    public void setCalculatorTypeService(ICalculatorTypeService calculatorTypeService) {
+        this.calculatorTypeService = calculatorTypeService;
+    }
 
     @Autowired
     public void setDealService(DealService dealService) {
@@ -420,8 +428,8 @@ public class ExchangeService {
             responseSender.sendMessage(chatId, "Минимальная сумма для " + dealType.getGenitive() + " через "
                     + paymentType.getName() + " равна " + paymentType.getMinSum().toPlainString());
             userRepository.updateStepByChatId(chatId, 2);
-            updateDispatcher.runProcessor(Command.DEAL, chatId, update);
-            return null;
+            calculatorTypeService.run(update);
+            return false;
         }
         dealRepository.updatePaymentTypeByPid(paymentType, currentDealPid);
         return true;
@@ -563,10 +571,18 @@ public class ExchangeService {
     public void saveReceipts(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
         Deal deal = dealRepository.findByPid(userRepository.getCurrentDealByChatId(chatId));
-        PaymentReceipt paymentReceipt = paymentReceiptRepository.save(PaymentReceipt.builder()
-                .receipt(update.getMessage().getDocument().getFileId())
-                .receiptFormat(ReceiptFormat.PDF)
-                .build());
+        PaymentReceipt paymentReceipt;
+        if (update.getMessage().hasDocument()) {
+            paymentReceipt = paymentReceiptRepository.save(PaymentReceipt.builder()
+                    .receipt(update.getMessage().getDocument().getFileId())
+                    .receiptFormat(ReceiptFormat.PDF)
+                    .build());
+        } else if (update.getMessage().hasPhoto()) {
+            paymentReceipt = paymentReceiptRepository.save(PaymentReceipt.builder()
+                    .receipt(update.getMessage().getPhoto().get(0).getFileId())
+                    .receiptFormat(ReceiptFormat.PICTURE)
+                    .build());
+        } else throw new BaseException("Не определен формат чека.");
         List<PaymentReceipt> paymentReceipts = dealService.getPaymentReceipts(deal.getPid());
         paymentReceipts.add(paymentReceipt);
         deal.setPaymentReceipts(paymentReceipts);
