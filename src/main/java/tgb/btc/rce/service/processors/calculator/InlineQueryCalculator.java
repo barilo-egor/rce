@@ -29,6 +29,7 @@ public class InlineQueryCalculator extends Processor {
 
     @Override
     public void run(Update update) {
+        if (dealProcessor.isMainMenuCommand(update)) return;
         Long chatId = UpdateUtil.getChatId(update);
         if (CallbackQueryUtil.isBack(update)) {
             userRepository.updateStepAndCommandByChatId(chatId, Command.DEAL, DealProcessor.AFTER_CALCULATOR_STEP);
@@ -38,6 +39,7 @@ public class InlineQueryCalculator extends Processor {
         if (update.hasMessage()) {
             if (!exchangeService.calculateDealAmount(chatId, UpdateUtil.getBigDecimalFromText(update))) return;
             userRepository.updateStepAndCommandByChatId(chatId, Command.DEAL, DealProcessor.AFTER_CALCULATOR_STEP);
+            dealProcessor.run(update);
         } else if (update.hasInlineQuery()) exchangeService.calculateForInlineQuery(update);
     }
 }

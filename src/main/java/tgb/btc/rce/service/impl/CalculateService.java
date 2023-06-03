@@ -62,7 +62,6 @@ public class CalculateService {
             amount = BigDecimalUtil.subtractHalfUp(amount, BigDecimalUtil.multiplyHalfUp(transactionCommission, usdCourse));
         }
         BigDecimal usd = BigDecimalUtil.divideHalfUp(amount, usdCourse);
-        dealAmount.setAmount(amount);
         dealAmount.setCryptoAmount(BigDecimalUtil.divideHalfUp(usd, calculateData.getCryptoCourse()));
     }
 
@@ -89,7 +88,6 @@ public class CalculateService {
                 : getCommissionForSell(amount, calculateData.getCommission());
         amount = amount.add(commission);
         BigDecimal usd = BigDecimalUtil.divideHalfUp(amount, calculateData.getUsdCourse());
-        dealAmount.setAmount(amount);
         dealAmount.setCommission(commission);
         dealAmount.setCryptoAmount(BigDecimalUtil.divideHalfUp(usd, calculateData.getCryptoCourse()));
     }

@@ -20,6 +20,7 @@ public class NoneCalculator extends Processor {
 
     private IUpdateDispatcher updateDispatcher;
 
+
     @Autowired
     public void setUpdateDispatcher(IUpdateDispatcher updateDispatcher) {
         this.updateDispatcher = updateDispatcher;
@@ -37,6 +38,7 @@ public class NoneCalculator extends Processor {
 
     @Override
     public void run(Update update) {
+        if (dealProcessor.isMainMenuCommand(update)) return;
         Long chatId = UpdateUtil.getChatId(update);
         if (CallbackQueryUtil.isBack(update)) {
             userRepository.updateStepAndCommandByChatId(chatId, Command.DEAL, DealProcessor.AFTER_CALCULATOR_STEP);

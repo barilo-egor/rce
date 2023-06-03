@@ -20,6 +20,8 @@ import tgb.btc.rce.util.CallbackQueryUtil;
 import tgb.btc.rce.util.FiatCurrencyUtil;
 import tgb.btc.rce.util.UpdateUtil;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @CommandProcessor(command = Command.DEAL)
@@ -128,7 +130,7 @@ public class DealProcessor extends Processor {
                 dealType = dealService.getDealTypeByPid(userRepository.getCurrentDealByChatId(chatId));
                 exchangeService.sendTotalDealAmount(chatId, dealType, dealService.getCryptoCurrencyByPid(currentDealPid),
                         dealRepository.getFiatCurrencyByPid(currentDealPid));
-                if (!DealType.isBuy(dealType) && !dealService.isAvailableForPromo(chatId)) {
+                if (!DealType.isBuy(dealType) || !dealService.isAvailableForPromo(chatId)) {
                     recursiveSwitch(update, chatId, isBack);
                     break;
                 }
@@ -153,21 +155,20 @@ public class DealProcessor extends Processor {
                     exchangeService.processReferralDiscount(update);
                 }
                 responseSender.deleteCallbackMessageIfExists(update);
-                exchangeService.askForUserRequisites(update);
-                userRepository.nextStep(chatId);
-                break;
-            case 6:
-                if (!isBack) exchangeService.saveRequisites(update);
-                userRepository.nextStep(chatId);
                 if (isFewPaymentTypes(chatId)) {
+                    userRepository.nextStep(chatId);
                     exchangeService.askForPaymentType(update);
                     break;
                 }
+                recursiveSwitch(update, chatId, isBack);
+                break;
+            case 6:
+                if (!isBack) exchangeService.savePaymentType(update);
+                exchangeService.askForUserRequisites(update);
                 userRepository.nextStep(chatId);
-                switchByStep(update, chatId, userStep, isBack);
                 break;
             case 7:
-                if (!isBack) exchangeService.savePaymentType(update, !isFewPaymentTypes(chatId));
+                if (!isBack) exchangeService.saveRequisites(update);
                 userRepository.nextStep(chatId);
                 exchangeService.buildDeal(update);
                 break;
@@ -182,7 +183,9 @@ public class DealProcessor extends Processor {
                     return;
                 }
                 if (isReceiptsCancel(update)) {
-                    exchangeService.cancelDeal(null, chatId, userService.getCurrentDealByChatId(chatId));
+                    exchangeService.cancelDeal(update.getMessage().getMessageId(), chatId,
+                            userService.getCurrentDealByChatId(chatId));
+                    updateDispatcher.runProcessor(Command.START, chatId, update);
                     return;
                 }
                 exchangeService.saveReceipts(update);
@@ -215,11 +218,13 @@ public class DealProcessor extends Processor {
         updateDispatcher.runProcessor(Command.START, chatId, update);
     }
 
-    private boolean isMainMenuCommand(Update update) {
+    public boolean isMainMenuCommand(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
         Command commandFromUpdate = Command.fromUpdate(update);
         Command mainMenuCommand = null;
-        for (Command command : Menu.MAIN.getCommands()) {
+        List<Command> commands = new ArrayList<>(Menu.MAIN.getCommands());
+        commands.add(Command.ADMIN_PANEL);
+        for (Command command : commands) {
             if (command.equals(commandFromUpdate)) mainMenuCommand = command;
         }
         if (Objects.isNull(mainMenuCommand)) return false;

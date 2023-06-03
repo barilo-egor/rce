@@ -24,7 +24,7 @@ public class InlineQueryCalculatorService extends SimpleCalculatorService {
                 InlineButton.builder()
                         .inlineType(InlineType.SWITCH_INLINE_QUERY_CURRENT_CHAT)
                         .text("Калькулятор")
-                        .data(fiatCurrency.getCode() + "-" + dealType.getKey() + "-" + currency.getShortName())
+                        .data(fiatCurrency.getCode() + "-" + dealType.getKey() + "-" + currency.getShortName() + " ")
                         .build(),
                 KeyboardUtil.INLINE_BACK_BUTTON), 1));
     }

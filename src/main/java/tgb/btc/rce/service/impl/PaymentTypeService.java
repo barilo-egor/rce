@@ -39,7 +39,8 @@ public class PaymentTypeService {
         return turnedCount;
     }
 
-    public Integer getTurnedCountByDeal(Long dealPid) {
+    public Integer getTurnedCountByDeal(Long chatId) {
+        Long dealPid = userRepository.getCurrentDealByChatId(chatId);
         return paymentTypeRepository.countByDealTypeAndIsOnAndFiatCurrency(
                 dealRepository.getDealTypeByPid(dealPid), true, dealRepository.getFiatCurrencyByPid(dealPid));
     }

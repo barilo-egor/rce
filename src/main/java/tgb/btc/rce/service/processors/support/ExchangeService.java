@@ -193,9 +193,9 @@ public class ExchangeService {
         String message;
         if (DealType.isBuy(dealType)) {
             message = "Сумма к получению: " + BigDecimalUtil.roundToPlainString(cryptoAmount, cryptoCurrency.getScale())
-                    + " " + fiatCurrency.getDisplayName() + "\n"
+                    + " " + cryptoCurrency.getDisplayName() + "\n"
                     + "Сумма к оплате: " + BigDecimalUtil.roundToPlainString(dealAmount) + " "
-                    + cryptoCurrency.getShortName() + "\n";
+                    + fiatCurrency.getDisplayName() + "\n";
             if (IS_SUM_TO_RECEIVE_ON) {
                 message = message.concat("Сумма к зачислению: "
                         + BigDecimalUtil.roundToPlainString(calculateService.convertToFiat(dealType,
@@ -246,20 +246,32 @@ public class ExchangeService {
         try {
             calculatorQuery = new CalculatorQuery(queryCalculatorService.getQueryWithPoints(update));
         } catch (CalculatorQueryException e) {
-            responseSender.sendAnswerInlineQuery(inlineQueryId, "Введите сумму.");
+            responseSender.sendAnswerInlineQuery(inlineQueryId, "Введите сумму.", null, "Ошибка");
             return;
         }
+        BigDecimal enteredAmount = calculatorQuery.getEnteredAmount();
 
-        DealAmount dealAmount = calculateService.calculate(calculatorQuery.getEnteredAmount(),
+        DealAmount dealAmount = calculateService.calculate(enteredAmount,
                 calculatorQuery.getCurrency(),
                 calculatorQuery.getFiatCurrency(),
                 calculatorQuery.getDealType());
+        Long currentDealPid = userRepository.getCurrentDealByChatId(chatId);
+        DealType dealType = dealRepository.getDealTypeByPid(currentDealPid);
+        CryptoCurrency cryptoCurrency = dealRepository.getCryptoCurrencyByPid(currentDealPid);
+        BigDecimal minSum = BotVariablePropertiesUtil.getBigDecimal(BotVariableType.MIN_SUM,
+                dealType, cryptoCurrency);
+        if (dealAmount.getCryptoAmount().compareTo(minSum) < 0) {
+            responseSender.sendAnswerInlineQuery(inlineQueryId, "Минимальная сумма " + dealType.getAccusative()
+                    + " равна " + BigDecimalUtil.roundToPlainString(minSum, cryptoCurrency.getScale()), null,
+                    "Ошибка");
+            return;
+        }
         userDiscountService.applyPersonal(chatId, calculatorQuery.getDealType(), dealAmount);
         userDiscountService.applyBulk(calculatorQuery.getFiatCurrency(), calculatorQuery.getDealType(), dealAmount);
 
         String resultText = calculatorQuery.getDealType().getNominative() + ": "
-                + BigDecimalUtil.round(dealAmount.getCryptoAmount(), calculatorQuery.getCurrency().getScale())
-                + " ~ " + BigDecimalUtil.round(dealAmount.getAmount(), 0);
+                + BigDecimalUtil.roundToPlainString(dealAmount.getCryptoAmount(), calculatorQuery.getCurrency().getScale())
+                + " ~ " + BigDecimalUtil.roundToPlainString(dealAmount.getAmount(), 0);
         responseSender.sendAnswerInlineQuery(inlineQueryId, resultText, "Нажмите сюда, чтобы отправить сумму.",
                 BigDecimalUtil.toPlainString(calculatorQuery.getEnteredAmount()));
     }
@@ -379,9 +391,7 @@ public class ExchangeService {
         if (DealType.isBuy(deal.getDealType())) {
             dealAmount = userDiscountService.applyDealDiscounts(chatId, dealAmount, deal.getUsedPromo(),
                     deal.getUsedReferralDiscount(), deal.getDiscount());
-            messageNew.append("\n" + "<b>").append(displayCurrencyName).append("-адрес</b>:")
-                    .append("<code>").append(deal.getWallet()).append("</code>").append("\n\n")
-                    .append("\uD83D\uDCB5<b>Сумма перевода</b>: ")
+            messageNew.append("\uD83D\uDCB5<b>Сумма перевода</b>: ")
                     .append(BigDecimalUtil.toPlainString(dealAmount))
                     .append(" ").append(deal.getFiatCurrency().getDisplayName()).append("\n\n")
                     .append(additionalText).append("<b>Выберите способ оплаты:</b>");
@@ -396,16 +406,16 @@ public class ExchangeService {
                 keyboardService.getPaymentTypes(deal.getDealType(), deal.getFiatCurrency()), "HTML");
     }
 
-    public Boolean savePaymentType(Update update, boolean isFirst) {
-        if (!update.hasCallbackQuery()) {
-            return false;
-        }
+    public Boolean savePaymentType(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
+        PaymentType paymentType;
+        if (!update.hasCallbackQuery()) {
+            paymentType = paymentTypeService.getFirstTurned(userRepository.getCurrentDealByChatId(chatId));
+        } else {
+            paymentType = paymentTypeRepository.getByPid(Long.parseLong(update.getCallbackQuery().getData()));
+        }
         Long currentDealPid = userRepository.getCurrentDealByChatId(chatId);
         DealType dealType = dealRepository.getDealTypeByPid(currentDealPid);
-        PaymentType paymentType = isFirst
-                ? paymentTypeService.getFirstTurned(userRepository.getCurrentDealByChatId(chatId))
-                : paymentTypeRepository.getByPid(Long.parseLong(update.getCallbackQuery().getData()));
         if (paymentType.getMinSum().compareTo(dealRepository.getAmountByPid(currentDealPid)) > 0) {
             responseSender.sendMessage(chatId, "Минимальная сумма для " + dealType.getGenitive() + " через "
                     + paymentType.getName() + " равна " + paymentType.getMinSum().toPlainString());
@@ -499,7 +509,8 @@ public class ExchangeService {
             userRepository.nextStep(chatId);
             return true;
         } else {
-            cancelDeal(update.getCallbackQuery().getMessage().getMessageId(), chatId, dealPid);
+            cancelDeal(CallbackQueryUtil.messageId(update), chatId, dealPid);
+            updateDispatcher.runProcessor(Command.START, chatId, update);
             return false;
         }
     }
