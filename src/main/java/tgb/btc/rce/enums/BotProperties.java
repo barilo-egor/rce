@@ -24,7 +24,7 @@ public enum BotProperties implements PropertiesReader {
     TURNING_CURRENCIES_PROPERTIES(FilePaths.CURRENCIES_TURNING, ',', new CurrenciesTurningValidateService(), false),
     MODULES_PROPERTIES(FilePaths.MODULES_PROPERTIES, ',', null, false),
 
-    FUNCTIONS_PROPERTIES(FilePaths.MODULES_PROPERTIES, ',', null, false),
+    FUNCTIONS_PROPERTIES(FilePaths.FUNCTIONS_PROPERTIES, ',', null, false),
     ;
 
     private final String fileName;

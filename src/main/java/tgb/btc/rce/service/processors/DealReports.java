@@ -162,15 +162,15 @@ public class DealReports extends Processor {
             cell = row.createCell(4);
             cell.setCellValue(deal.getFiatCurrency().getCode());
             cell = row.createCell(5);
-            cell.setCellValue(deal.getCryptoCurrency().getDisplayName());
+            cell.setCellValue(deal.getCryptoAmount().setScale(8, RoundingMode.FLOOR).stripTrailingZeros().toString());
+            totalCryptoAmountMap.put(deal.getCryptoCurrency(), totalCryptoAmountMap.get(deal.getCryptoCurrency()).add(deal.getCryptoAmount()));
             cell = row.createCell(6);
+            cell.setCellValue(deal.getCryptoCurrency().getDisplayName());
+            cell = row.createCell(7);
             // getPaymentTypeEnum используется для старых сделок
             String paymentTypeName = Objects.nonNull(deal.getPaymentTypeEnum())
                     ? deal.getPaymentTypeEnum().getDisplayName()
                     : deal.getPaymentType().getName();
-            cell = row.createCell(7);
-            cell.setCellValue(deal.getCryptoAmount().setScale(8, RoundingMode.FLOOR).stripTrailingZeros().toString());
-            totalCryptoAmountMap.put(deal.getCryptoCurrency(), totalCryptoAmountMap.get(deal.getCryptoCurrency()).add(deal.getCryptoAmount()));
             cell.setCellValue(paymentTypeName);
             cell = row.createCell(8);
             cell.setCellValue(deal.getUser().getChatId());
@@ -198,10 +198,10 @@ public class DealReports extends Processor {
             if (j < cryptoCurrencyLength) {
                 CryptoCurrency cryptoCurrency = cryptoCurrencies[j];
                 Cell cryptoCell = row.createCell(5);
-                cryptoCell.setCellValue(cryptoCurrency.getDisplayName());
-                cryptoCell = row.createCell(6);
                 cryptoCell.setCellValue(BigDecimalUtil.roundToPlainString(totalCryptoAmountMap.get(cryptoCurrency),
                         cryptoCurrency.getScale()));
+                cryptoCell = row.createCell(6);
+                cryptoCell.setCellValue(cryptoCurrency.getDisplayName());
             }
             totalRowIndex++;
         }

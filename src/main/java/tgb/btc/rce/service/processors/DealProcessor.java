@@ -137,7 +137,7 @@ public class DealProcessor extends Processor {
             case 3:
                 Long currentDealPid = userRepository.getCurrentDealByChatId(chatId);
                 dealType = dealService.getDealTypeByPid(userRepository.getCurrentDealByChatId(chatId));
-                exchangeService.sendTotalDealAmount(chatId, dealType, dealService.getCryptoCurrencyByPid(currentDealPid),
+                if (!isBack) exchangeService.sendTotalDealAmount(chatId, dealType, dealService.getCryptoCurrencyByPid(currentDealPid),
                         dealRepository.getFiatCurrencyByPid(currentDealPid));
                 if (!DealType.isBuy(dealType) || !dealService.isAvailableForPromo(chatId)) {
                     recursiveSwitch(update, chatId, isBack);
@@ -164,7 +164,7 @@ public class DealProcessor extends Processor {
                     exchangeService.processReferralDiscount(update);
                 }
                 responseSender.deleteCallbackMessageIfExists(update);
-                if (isFewPaymentTypes(chatId)) {
+                if (exchangeService.isFewPaymentTypes(chatId)) {
                     userRepository.nextStep(chatId);
                     exchangeService.askForPaymentType(update);
                     break;
@@ -179,7 +179,9 @@ public class DealProcessor extends Processor {
                 userRepository.nextStep(chatId);
                 break;
             case 7:
-                if (!isBack) exchangeService.saveRequisites(update);
+                if (!isBack) {
+                    if (!exchangeService.saveRequisites(update)) return;
+                }
                 userRepository.nextStep(chatId);
                 exchangeService.buildDeal(update);
                 break;
@@ -199,7 +201,7 @@ public class DealProcessor extends Processor {
                     updateDispatcher.runProcessor(Command.START, chatId, update);
                     return;
                 }
-                exchangeService.saveReceipts(update);
+                if (!exchangeService.saveReceipts(update)) return;
                 exchangeService.confirmDeal(update);
                 responseSender.sendBotMessage(botMessageService.findByType(BotMessageType.START), chatId);
                 processToMainMenu(chatId);
@@ -219,10 +221,6 @@ public class DealProcessor extends Processor {
 
     private boolean hasCheck(Update update) {
         return !update.hasMessage() || (!update.getMessage().hasPhoto() || !update.getMessage().hasDocument());
-    }
-
-    private boolean isFewPaymentTypes(Long chatId) {
-        return paymentTypeService.getTurnedCountByDeal(chatId) > 1;
     }
 
     private void processToStart(Long chatId, Update update) {
