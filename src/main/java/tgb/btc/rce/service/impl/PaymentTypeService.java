@@ -1,12 +1,17 @@
 package tgb.btc.rce.service.impl;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tgb.btc.rce.bean.PaymentType;
+import tgb.btc.rce.enums.DealType;
+import tgb.btc.rce.enums.FiatCurrency;
 import tgb.btc.rce.exception.BaseException;
 import tgb.btc.rce.repository.DealRepository;
 import tgb.btc.rce.repository.PaymentTypeRepository;
 import tgb.btc.rce.repository.UserRepository;
+
+import java.util.List;
 
 @Service
 public class PaymentTypeService {
@@ -46,7 +51,12 @@ public class PaymentTypeService {
     }
 
     public PaymentType getFirstTurned(Long dealPid) {
-        return paymentTypeRepository.getByDealTypeAndIsOnAndFiatCurrency(
-                dealRepository.getDealTypeByPid(dealPid), true, dealRepository.getFiatCurrencyByPid(dealPid)).get(0);
+        DealType dealType = dealRepository.getDealTypeByPid(dealPid);
+        FiatCurrency fiatCurrency = dealRepository.getFiatCurrencyByPid(dealPid);
+        List<PaymentType> paymentTypeList = paymentTypeRepository.getByDealTypeAndIsOnAndFiatCurrency(
+                dealType, true, fiatCurrency);
+        if (CollectionUtils.isEmpty(paymentTypeList))
+            throw new BaseException("Не найден ни один тип оплаты для " + dealType.name() + " " + fiatCurrency.name());
+        return paymentTypeList.get(0);
     }
 }

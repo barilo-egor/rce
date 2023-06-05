@@ -428,7 +428,12 @@ public class ExchangeService {
         Long chatId = UpdateUtil.getChatId(update);
         PaymentType paymentType;
         if (!isFewPaymentTypes(chatId)) {
-            paymentType = paymentTypeService.getFirstTurned(userRepository.getCurrentDealByChatId(chatId));
+            try {
+                paymentType = paymentTypeService.getFirstTurned(userRepository.getCurrentDealByChatId(chatId));
+            } catch (BaseException e) {
+                responseSender.sendMessage(chatId, e.getMessage());
+                return false;
+            }
         } else {
             responseSender.deleteCallbackMessageIfExists(update);
             paymentType = paymentTypeRepository.getByPid(Long.parseLong(update.getCallbackQuery().getData()));
