@@ -183,4 +183,7 @@ public interface DealRepository extends BaseRepository<Deal> {
 
     @Query(value = "select isActive from Deal where pid=:pid")
     Boolean getIsActiveByPid(Long pid);
+
+    @Query(value = "select isUsedPromo from Deal where pid=:pid")
+    Boolean getIsUsedPromoByPid(Long pid);
 }

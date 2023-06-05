@@ -435,6 +435,10 @@ public class ExchangeService {
                 return false;
             }
         } else {
+            if (!update.hasCallbackQuery()) {
+                responseSender.sendMessage(chatId, "Выберите способ оплаты.");
+                return false;
+            }
             responseSender.deleteCallbackMessageIfExists(update);
             paymentType = paymentTypeRepository.getByPid(Long.parseLong(update.getCallbackQuery().getData()));
         }
@@ -471,8 +475,6 @@ public class ExchangeService {
 
         PaymentType paymentType = deal.getPaymentType();
         deal.setDateTime(LocalDateTime.now());
-        deal.setAmount(dealAmount);
-        dealRepository.save(deal);
         if (DealType.isBuy(deal.getDealType())) {
             dealAmount = userDiscountService.applyDealDiscounts(chatId, dealAmount, deal.getUsedPromo(),
                     deal.getUsedReferralDiscount(), deal.getDiscount());
@@ -520,6 +522,9 @@ public class ExchangeService {
                     + Command.CANCEL_DEAL.getText() + "\"</b>."
                     + promoCodeText;
         }
+        deal.setAmount(dealAmount);
+        dealRepository.save(deal);
+
         Optional<Message> optionalMessage = responseSender.sendMessage(chatId, message,
                 BotKeyboard.BUILD_DEAL.getKeyboard(), "HTML");
         if (DealType.isBuy(deal.getDealType())) {
@@ -571,7 +576,11 @@ public class ExchangeService {
 
     public void askForReferralDiscount(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
-        BigDecimal dealAmount = dealRepository.getAmountByPid(userRepository.getCurrentDealByChatId(chatId));
+        Long currentDealPid = userRepository.getCurrentDealByChatId(chatId);
+        BigDecimal dealAmount = dealRepository.getAmountByPid(currentDealPid);
+        if (dealRepository.getIsUsedPromoByPid(currentDealPid)) {
+            dealAmount = dealAmount.subtract(dealRepository.getDiscountByPid(currentDealPid));
+        }
         Integer referralBalance = userRepository.getReferralBalanceByChatId(chatId);
 
         BigDecimal sumWithDiscount;

@@ -128,7 +128,6 @@ public final class CommandProcessorLoader {
         commandProcessors.add(TurningCurrencyProcessor.class);
         commandProcessors.add(TurnOnCurrencyProcessor.class);
         commandProcessors.add(TurnOffCurrencyProcessor.class);
-        commandProcessors.add(DiscountsProcessor.class);
         commandProcessors.add(RankDiscountProcessor.class);
         commandProcessors.add(ChangeRankDiscountProcessor.class);
         commandProcessors.add(SavePersonalBuyDiscountProcessor.class);

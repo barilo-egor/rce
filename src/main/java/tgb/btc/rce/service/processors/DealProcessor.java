@@ -156,11 +156,12 @@ public class DealProcessor extends Processor {
                     recursiveSwitch(update, chatId, isBack);
                     break;
                 }
+                userRepository.nextStep(chatId);
                 exchangeService.askForReferralDiscount(update);
                 break;
             case 5:
                 dealType = dealService.getDealTypeByPid(userRepository.getCurrentDealByChatId(chatId));
-                if (!isBack && !DealType.isBuy(dealType) && !userService.isReferralBalanceEmpty(chatId)) {
+                if (!isBack && DealType.isBuy(dealType) && !userService.isReferralBalanceEmpty(chatId)) {
                     exchangeService.processReferralDiscount(update);
                 }
                 responseSender.deleteCallbackMessageIfExists(update);

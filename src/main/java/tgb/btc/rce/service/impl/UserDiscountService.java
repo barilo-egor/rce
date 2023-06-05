@@ -77,14 +77,14 @@ public class UserDiscountService {
         BigDecimal totalDiscount = calculateService.calculateDiscountInFiat(dealType, dealAmount.getAmount(), discount);
         if (dealAmount.isEnteredInCrypto()) {
             BigDecimal newAmount = DealType.isBuy(dealType)
-                    ? dealAmount.getAmount().subtract(totalDiscount)
-                    : dealAmount.getAmount().add(totalDiscount);
+                    ? dealAmount.getAmount().add(totalDiscount)
+                    : dealAmount.getAmount().subtract(totalDiscount);
             dealAmount.setAmount(newAmount);
         } else {
             BigDecimal discountInCrypto = calculateService.calculateDiscountInCrypto(dealAmount.getCalculateData(), totalDiscount);
             BigDecimal newCryptoAmount = DealType.isBuy(dealType)
-                    ? dealAmount.getCryptoAmount().add(discountInCrypto)
-                    : dealAmount.getCryptoAmount().subtract(discountInCrypto);
+                    ? dealAmount.getCryptoAmount().subtract(discountInCrypto)
+                    : dealAmount.getCryptoAmount().add(discountInCrypto);
             dealAmount.setCryptoAmount(newCryptoAmount);
         }
     }

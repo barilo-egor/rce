@@ -64,7 +64,7 @@ public enum Command {
     USER_REFERRAL_BALANCE("Реф.баланс юзера", true, false),
     CHANGE_USD_COURSE("Курс доллара", true, false),
     TURNING_CURRENCY("Включение криптовалют", true, false),
-    DISCOUNTS("Скидки", true, false),
+    DISCOUNTS("Скидки", true, true),
     USERS("Пользователи", true, true),
     QUIT_ADMIN_PANEL("Выйти", true, false),
 

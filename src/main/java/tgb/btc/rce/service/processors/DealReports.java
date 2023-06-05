@@ -173,7 +173,7 @@ public class DealReports extends Processor {
             cell = row.createCell(4);
             cell.setCellValue(deal.getFiatCurrency().getCode());
             cell = row.createCell(5);
-            cell.setCellValue(deal.getCryptoAmount().setScale(8, RoundingMode.FLOOR).stripTrailingZeros().toString());
+            cell.setCellValue(BigDecimalUtil.roundToPlainString(deal.getCryptoAmount(), deal.getCryptoCurrency().getScale()));
             Map<CryptoCurrency, BigDecimal> totalCryptoAmountMap = isBuy
                     ? totalBuyCryptoAmountMap : totalSellCryptoAmountMap;
             totalCryptoAmountMap.put(deal.getCryptoCurrency(), totalCryptoAmountMap.get(deal.getCryptoCurrency()).add(deal.getCryptoAmount()));
