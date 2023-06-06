@@ -1,0 +1,49 @@
+package tgb.btc.lib.service.schedule;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import tgb.btc.lib.repository.UserDataRepository;
+import tgb.btc.lib.repository.UserRepository;
+import tgb.btc.lib.service.AntiSpam;
+import tgb.btc.lib.service.impl.CaptchaService;
+import tgb.btc.lib.service.impl.ResponseSender;
+import tgb.btc.lib.vo.Captcha;
+
+@Service
+public class CaptchaSender {
+
+    private CaptchaService captchaService;
+
+    private UserRepository userRepository;
+
+    private UserDataRepository userDataRepository;
+
+    private ResponseSender responseSender;
+
+    @Autowired
+    public void setUserDataRepository(UserDataRepository userDataRepository) {
+        this.userDataRepository = userDataRepository;
+    }
+
+    @Autowired
+    public void setResponseSender(ResponseSender responseSender) {
+        this.responseSender = responseSender;
+    }
+
+    @Autowired
+    public void setUserRepository(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
+    @Autowired
+    public void setCaptchaService(CaptchaService captchaService) {
+        this.captchaService = captchaService;
+    }
+
+    public void sendCaptcha(Long chatId) {
+        Captcha captcha = captchaService.getRandomCaptcha();
+        responseSender.sendPhoto(chatId, "Сработала антиспам система. Введите капчу, чтобы продолжить.",
+                captcha.getImage());
+        AntiSpam.CAPTCHA_CASH.put(chatId, captcha.getStr());
+    }
+}
