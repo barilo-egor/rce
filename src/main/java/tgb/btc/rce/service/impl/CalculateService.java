@@ -25,12 +25,14 @@ public class CalculateService {
     }
 
     public DealAmount calculate(BigDecimal enteredAmount, CryptoCurrency cryptoCurrency, FiatCurrency fiatCurrency,
-                                DealType dealType) {
+                                DealType dealType, Boolean isEnteredInCrypto) {
         CalculateData calculateData =
                 new CalculateData(fiatCurrency, dealType, cryptoCurrency, cryptoCurrencyService.getCurrency(cryptoCurrency));
 
         DealAmount dealAmount = new DealAmount();
-        dealAmount.setEnteredInCrypto(isEnteredInCrypto(cryptoCurrency, enteredAmount));
+        dealAmount.setDealType(dealType);
+        if (Objects.nonNull(isEnteredInCrypto)) dealAmount.setEnteredInCrypto(isEnteredInCrypto);
+        else dealAmount.setEnteredInCrypto(isEnteredInCrypto(cryptoCurrency, enteredAmount));
         dealAmount.setCalculateData(calculateData);
         if (dealAmount.isEnteredInCrypto()) {
             dealAmount.setCryptoAmount(enteredAmount);
@@ -42,6 +44,11 @@ public class CalculateService {
             else calculateCryptoAmountForSell(dealAmount, calculateData);
         }
         return dealAmount;
+    }
+
+    public DealAmount calculate(BigDecimal enteredAmount, CryptoCurrency cryptoCurrency, FiatCurrency fiatCurrency,
+                                DealType dealType) {
+        return calculate(enteredAmount, cryptoCurrency, fiatCurrency, dealType, null);
     }
 
     private boolean isEnteredInCrypto(CryptoCurrency cryptoCurrency, BigDecimal enteredAmount) {

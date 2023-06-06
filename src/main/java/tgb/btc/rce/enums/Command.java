@@ -164,7 +164,8 @@ public enum Command {
      * USERS STATES
      */
     NONE_CALCULATOR("none_calc", false, false),
-    INLINE_QUERY_CALCULATOR("inline_q_calc", false, false);
+    INLINE_QUERY_CALCULATOR("inline_q_calc", false, false),
+    INLINE_CALCULATOR("inline_calculator", false, false)
     ;
 
     final String text;

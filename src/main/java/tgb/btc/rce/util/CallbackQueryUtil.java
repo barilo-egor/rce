@@ -31,6 +31,10 @@ public final class CallbackQueryUtil {
         return String.join(BotStringConstants.CALLBACK_DATA_SPLITTER, variables);
     }
 
+    public static String buildCallbackData(Command command, String... variables) {
+        return command.getText().concat(BotStringConstants.CALLBACK_DATA_SPLITTER).concat(String.join(BotStringConstants.CALLBACK_DATA_SPLITTER, variables));
+    }
+
     public static boolean isBack(Update update) {
         return update.hasCallbackQuery() && Command.BACK.getText().equals(update.getCallbackQuery().getData());
     }

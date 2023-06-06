@@ -78,4 +78,6 @@ public interface IResponseSender {
     boolean sendAnswerInlineQuery(String inlineQueryId, String title);
 
     void deleteCallbackMessageIfExists(Update update);
+
+    void sendEditedMessageText(Long chatId, Integer messageId, String text, ReplyKeyboard replyKeyboard);
 }
