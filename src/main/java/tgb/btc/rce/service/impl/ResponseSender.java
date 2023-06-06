@@ -13,16 +13,19 @@ import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageTe
 import org.telegram.telegrambots.meta.api.objects.Document;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Message;
+import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.inlinequery.inputmessagecontent.InputTextMessageContent;
+import org.telegram.telegrambots.meta.api.objects.inlinequery.result.InlineQueryResultArticle;
 import org.telegram.telegrambots.meta.api.objects.media.InputMedia;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import tgb.btc.rce.bean.BotMessage;
 import tgb.btc.rce.bot.RceBot;
-import tgb.btc.rce.enums.BotKeyboard;
-import tgb.btc.rce.enums.MessageTemplate;
+import tgb.btc.rce.enums.*;
+import tgb.btc.rce.repository.UserRepository;
 import tgb.btc.rce.service.IResponseSender;
-import tgb.btc.rce.util.KeyboardUtil;
+import tgb.btc.rce.util.*;
 import tgb.btc.rce.vo.InlineButton;
 
 import java.io.File;
@@ -37,6 +40,20 @@ import java.util.Optional;
 public class ResponseSender implements IResponseSender {
 
     private RceBot bot;
+
+    private BotMessageService botMessageService;
+
+    private UserRepository userRepository;
+
+    @Autowired
+    public void setUserRepository(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
+    @Autowired
+    public void setBotMessageService(BotMessageService botMessageService) {
+        this.botMessageService = botMessageService;
+    }
 
     @Autowired
     public void setBot(RceBot bot) {
@@ -56,6 +73,14 @@ public class ResponseSender implements IResponseSender {
                 .chatId(chatId.toString())
                 .text(text)
                 .build()));
+    }
+
+    public Optional<Message> sendMessage(Long chatId, String text, Menu menu) {
+        return sendMessage(chatId, text, MenuFactory.build(menu, userRepository.isAdminByChatId(chatId)), null);
+    }
+
+    public Optional<Message> sendMessage(Long chatId, PropertiesMessage propertiesMessage, Menu menu) {
+        return sendMessage(chatId, MessagePropertiesUtil.getMessage(propertiesMessage), menu);
     }
 
     public Optional<Message> sendMessage(Long chatId, String text, ReplyKeyboard replyKeyboard) {
@@ -103,8 +128,21 @@ public class ResponseSender implements IResponseSender {
         return bot.execute(sendMessage);
     }
 
+    public Optional<Message> sendBotMessage(BotMessageType botMessageType, Long chatId) {
+        return sendBotMessage(botMessageService.findByType(botMessageType), chatId, null);
+    }
+
     public Optional<Message> sendBotMessage(BotMessage botMessage, Long chatId) {
         return sendBotMessage(botMessage, chatId, null);
+    }
+
+    public Optional<Message> sendBotMessage(BotMessageType botMessageType, Long chatId, Menu menu) {
+        return sendBotMessage(botMessageType, chatId, MenuFactory.build(menu, userRepository.isAdminByChatId(chatId)));
+    }
+
+    public Optional<Message> sendBotMessage(BotMessageType botMessageType, Long chatId, ReplyKeyboard replyKeyboard) {
+        BotMessage botMessage = botMessageService.findByType(botMessageType);
+        return sendBotMessage(botMessage, chatId, replyKeyboard);
     }
 
     public Optional<Message> sendBotMessage(BotMessage botMessage, Long chatId, ReplyKeyboard replyKeyboard) {
@@ -171,9 +209,7 @@ public class ResponseSender implements IResponseSender {
                     .chatId(chatId.toString())
                     .messageId(messageId)
                     .build());
-        } catch (TelegramApiException e) {
-            log.debug("Не получилось отправить измененное сообщение : chatId=" + chatId
-                    + ", messageId=" + messageId, e);
+        } catch (TelegramApiException ignored) {
         }
     }
 
@@ -184,6 +220,19 @@ public class ResponseSender implements IResponseSender {
                     .messageId(messageId)
                     .text(text)
                     .replyMarkup(keyboard)
+                    .build());
+        } catch (TelegramApiException e) {
+            log.debug("Не получилось отправить измененное сообщение: chatId" + chatId + ", text=" + text, e);
+        }
+    }
+
+    public void sendEditedMessageText(Long chatId, Integer messageId, String text, ReplyKeyboard replyKeyboard) {
+        try {
+            bot.execute(EditMessageText.builder()
+                    .chatId(chatId.toString())
+                    .messageId(messageId)
+                    .text(text)
+                    .replyMarkup((InlineKeyboardMarkup) replyKeyboard)
                     .build());
         } catch (TelegramApiException e) {
             log.debug("Не получилось отправить измененное сообщение: chatId" + chatId + ", text=" + text, e);
@@ -261,5 +310,34 @@ public class ResponseSender implements IResponseSender {
     @Override
     public Optional<Message> sendMessage(Long chatId, MessageTemplate messageTemplate) {
         return sendMessage(chatId, messageTemplate.getMessage(), messageTemplate.getBotKeyboard());
+    }
+
+    @Override
+    public boolean sendAnswerInlineQuery(String inlineQueryId, String title, String description, String messageText) {
+        try {
+            return bot.execute(AnswerInlineQuery.builder().inlineQueryId(inlineQueryId)
+                    .result(InlineQueryResultArticle.builder()
+                            .id(inlineQueryId)
+                            .title(title)
+                            .inputMessageContent(InputTextMessageContent.builder()
+                                    .messageText(messageText)
+                                    .build())
+                            .description(description)
+                            .build())
+                    .build());
+        } catch (TelegramApiException e) {
+            log.trace("Не получилось отправить inlineQuery.");
+            return false;
+        }
+    }
+
+    @Override
+    public boolean sendAnswerInlineQuery(String inlineQueryId, String title) {
+        return sendAnswerInlineQuery(inlineQueryId, title, null, null);
+    }
+
+    @Override
+    public void deleteCallbackMessageIfExists(Update update) {
+        if (update.hasCallbackQuery()) deleteMessage(UpdateUtil.getChatId(update), CallbackQueryUtil.messageId(update));
     }
 }

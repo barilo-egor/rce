@@ -10,9 +10,7 @@ import tgb.btc.rce.enums.BotKeyboard;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.DealType;
 import tgb.btc.rce.repository.PaymentTypeRepository;
-import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.service.impl.UserService;
 import tgb.btc.rce.util.FiatCurrencyUtil;
 import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.UpdateUtil;
@@ -31,11 +29,6 @@ public class FiatCurrenciesDeleteRequisite extends Processor {
         this.paymentTypeRepository = paymentTypeRepository;
     }
 
-    @Autowired
-    public FiatCurrenciesDeleteRequisite(IResponseSender responseSender, UserService userService) {
-        super(responseSender, userService);
-    }
-
     @Override
     public void run(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
@@ -44,7 +37,7 @@ public class FiatCurrenciesDeleteRequisite extends Processor {
         } else {
             List<PaymentType> paymentTypes = paymentTypeRepository.getByDealTypeAndFiatCurrency(DealType.BUY, FiatCurrencyUtil.getFirst());  // todo рефактор
             if (CollectionUtils.isEmpty(paymentTypes)) {
-                responseSender.sendMessage(chatId, "Список тип оплат на " + DealType.BUY.getDisplayName() + "-" + FiatCurrencyUtil.getFirst().getCode() + " пуст.");
+                responseSender.sendMessage(chatId, "Список тип оплат на " + DealType.BUY.getAccusative() + "-" + FiatCurrencyUtil.getFirst().getCode() + " пуст.");
                 processToAdminMainPanel(chatId);
                 return;
             }
@@ -58,7 +51,7 @@ public class FiatCurrenciesDeleteRequisite extends Processor {
                     .collect(Collectors.toList());
             responseSender.sendMessage(chatId, "Выберите тип оплаты для удаления реквизита.",
                     KeyboardUtil.buildInline(buttons));
-            responseSender.sendMessage(chatId, "Для возвращения в меню нажмите \"Отмена\".", BotKeyboard.CANCEL);
+            responseSender.sendMessage(chatId, "Для возвращения в меню нажмите \"Отмена\".", BotKeyboard.REPLY_CANCEL);
             userService.nextStep(chatId, Command.DELETE_PAYMENT_TYPE_REQUISITE);
         }
         userService.nextStep(chatId, Command.DELETE_PAYMENT_TYPE_REQUISITE);

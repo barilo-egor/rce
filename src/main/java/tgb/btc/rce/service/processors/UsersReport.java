@@ -17,9 +17,7 @@ import tgb.btc.rce.enums.DealType;
 import tgb.btc.rce.enums.FiatCurrency;
 import tgb.btc.rce.exception.BaseException;
 import tgb.btc.rce.repository.DealRepository;
-import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.service.impl.UserService;
 import tgb.btc.rce.util.BigDecimalUtil;
 import tgb.btc.rce.util.FiatCurrencyUtil;
 import tgb.btc.rce.util.UpdateUtil;
@@ -39,11 +37,6 @@ public class UsersReport extends Processor {
     @Autowired
     public void setDealRepository(DealRepository dealRepository) {
         this.dealRepository = dealRepository;
-    }
-
-    @Autowired
-    public UsersReport(IResponseSender responseSender, UserService userService) {
-        super(responseSender, userService);
     }
 
     @Override

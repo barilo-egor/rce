@@ -35,6 +35,19 @@ public final class BigDecimalUtil {
         return num.setScale(scale, RoundingMode.HALF_UP).stripTrailingZeros();
     }
 
+    public static String roundToPlainString(BigDecimal num, int scale) {
+        return toPlainString(round(num, scale));
+    }
+
+    public static String roundToPlainString(BigDecimal num) {
+        return roundToPlainString(num, 0);
+    }
+
+
+    public static String toPlainString(BigDecimal num) {
+        return num.stripTrailingZeros().toPlainString();
+    }
+
     public static BigDecimal round(Double num, int scale) {
         return BigDecimal.valueOf(num).setScale(scale, RoundingMode.HALF_UP).stripTrailingZeros();
     }

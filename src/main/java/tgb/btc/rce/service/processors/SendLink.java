@@ -6,15 +6,10 @@ import org.telegram.telegrambots.meta.api.objects.inlinequery.inputmessageconten
 import org.telegram.telegrambots.meta.api.objects.inlinequery.result.InlineQueryResultArticle;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
-import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.service.impl.UserService;
 
 @CommandProcessor(command = Command.SEND_LINK)
 public class SendLink extends Processor {
-    public SendLink(IResponseSender responseSender, UserService userService) {
-        super(responseSender, userService);
-    }
 
     @Override
     public void run(Update update) {

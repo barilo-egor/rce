@@ -1,13 +1,13 @@
 package tgb.btc.rce.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import tgb.btc.rce.bean.User;
 import tgb.btc.rce.enums.Command;
+import tgb.btc.rce.enums.SimpleCommand;
 import tgb.btc.rce.service.AntiSpam;
 import tgb.btc.rce.service.IUpdateDispatcher;
 import tgb.btc.rce.service.Processor;
@@ -23,12 +23,10 @@ public class UpdateDispatcher implements IUpdateDispatcher {
 
     public static ApplicationContext applicationContext;
     private static boolean IS_ON = false; // TODO
-
     private final UserService userService;
+    private AntiSpam antiSpam;
 
     private BannedUserCache bannedUserCache;
-
-    private AntiSpam antiSpam;
 
     @Autowired
     public void setBannedUserCache(BannedUserCache bannedUserCache) {
@@ -47,31 +45,37 @@ public class UpdateDispatcher implements IUpdateDispatcher {
 
     public void dispatch(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
-        antiSpam.saveTime(chatId);
-        if (BooleanUtils.isTrue(bannedUserCache.get(chatId))) return;
-        Command command = getCommand(update);
-        int step = userService.getStepByChatId(chatId);
-        ((Processor) applicationContext.getBean(CommandProcessorLoader.getByCommand(command, step))).process(update);
+        if (bannedUserCache.get(chatId)) return;
+        runProcessor(getCommand(update, chatId), chatId, update);
     }
 
-    private Command getCommand(Update update) {
-        Long chatId = UpdateUtil.getChatId(update);
-        boolean isUserExists = userService.existByChatId(chatId);
-        if (!isUserExists || antiSpam.isSpamUser(chatId)) {
-            if (!isUserExists) {
-                userService.register(update);
-                antiSpam.addUser(chatId);
-            }
-            return Command.CAPTCHA;
-        }
+    @Async
+    public void runProcessor(Command command, Long chatId, Update update) {
+        if (!command.isSimple())
+            ((Processor) applicationContext
+                    .getBean(CommandProcessorLoader.getByCommand(command, userService.getStepByChatId(chatId))))
+                    .process(update);
+        else SimpleCommand.run(command, update);
+    }
+
+    private Command getCommand(Update update, Long chatId) {
+        if (isCaptcha(update)) return Command.CAPTCHA;
+        antiSpam.saveTime(chatId);
+        if (isOffed(chatId)) return Command.BOT_OFFED;
+        if (CommandUtil.isStartCommand(update)) return Command.START;
         Command command;
-        if (!isOn() && !userService.isAdminByChatId(chatId)) return Command.BOT_OFFED;
-        if (userService.getStepByChatId(chatId).equals(User.DEFAULT_STEP) || CommandUtil.isStartCommand(update))
-            command = Command.fromUpdate(update);
+        if (userService.isDefaultStep(chatId)) command = Command.fromUpdate(update);
         else command = userService.getCommandByChatId(chatId);
-        if (Objects.isNull(command)) return Command.START;
-        if (!hasAccess(command, chatId)) return Command.START;
+        if (Objects.isNull(command) || !hasAccess(command, chatId)) return Command.START;
         else return command;
+    }
+
+    private boolean isCaptcha(Update update) {
+        return !userService.registerIfNotExists(update) || antiSpam.isSpamUser(UpdateUtil.getChatId(update));
+    }
+
+    private boolean isOffed(Long chatId) {
+        return !isOn() && !userService.isAdminByChatId(chatId);
     }
 
     private boolean hasAccess(Command command, Long chatId) {

@@ -13,7 +13,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public enum BotKeyboard {
-    CANCEL(KeyboardUtil.buildReply(List.of(BotReplyButton.CANCEL.getButton()))),
+    REPLY_CANCEL(KeyboardUtil.buildReply(List.of(BotReplyButton.CANCEL.getButton()))),
+    INLINE_CANCEL(KeyboardUtil.buildInline(List.of(BotInlineButton.CANCEL.getButton()))),
     BUY_OR_SELL(KeyboardUtil.buildReply(List.of(
             ReplyButton.builder()
                     .text(BotStringConstants.BUY)
@@ -31,7 +32,23 @@ public enum BotKeyboard {
                     .build()
     ))),
     CRYPTO_CURRENCIES(getCryptoCurrencyKeyboard()),
-    FIAT_CURRENCIES(getFiatCurrenciesKeyboard());
+    FIAT_CURRENCIES(getFiatCurrenciesKeyboard()),
+    BUILD_DEAL(KeyboardUtil.buildInline(List.of(
+            InlineButton.builder()
+                    .text(Command.PAID.getText())
+                    .data(Command.PAID.name())
+                    .inlineType(InlineType.CALLBACK_DATA)
+                    .build(),
+            InlineButton.builder()
+                    .text(Command.CANCEL.getText())
+                    .data(Command.CANCEL_DEAL.name())
+                    .inlineType(InlineType.CALLBACK_DATA)
+                    .build()
+    ))),
+    CANCEL_DEAL(KeyboardUtil.buildReply(List.of(
+            ReplyButton.builder()
+                    .text(Command.RECEIPTS_CANCEL_DEAL.getText())
+                    .build())));
 
     final ReplyKeyboard keyboard;
 

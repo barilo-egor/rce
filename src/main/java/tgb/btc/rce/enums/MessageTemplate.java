@@ -1,7 +1,7 @@
 package tgb.btc.rce.enums;
 
 public enum MessageTemplate {
-    ASK_CHAT_ID("Введите чат айди пользователя.", BotKeyboard.CANCEL);
+    ASK_CHAT_ID("Введите чат айди пользователя.", BotKeyboard.REPLY_CANCEL);
 
     final String message;
 

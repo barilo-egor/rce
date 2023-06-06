@@ -13,15 +13,14 @@ import tgb.btc.rce.enums.BotProperties;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.ReferralType;
 import tgb.btc.rce.exception.BaseException;
-import tgb.btc.rce.repository.BaseRepository;
-import tgb.btc.rce.repository.UserDataRepository;
-import tgb.btc.rce.repository.UserDiscountRepository;
-import tgb.btc.rce.repository.UserRepository;
+import tgb.btc.rce.repository.*;
 import tgb.btc.rce.util.CommandUtil;
 import tgb.btc.rce.util.UpdateUtil;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 @Transactional
@@ -36,9 +35,15 @@ public class UserService extends BasePersistService<User> {
 
     private BannedUserCache bannedUserCache;
 
+    private DealRepository dealRepository;
+
     public static final ReferralType REFERRAL_TYPE =
             ReferralType.valueOf(BotProperties.MODULES_PROPERTIES.getString("referral.type"));
 
+    @Autowired
+    public void setDealRepository(DealRepository dealRepository) {
+        this.dealRepository = dealRepository;
+    }
 
     @Autowired
     public void setBannedUserCache(BannedUserCache bannedUserCache) {
@@ -73,6 +78,16 @@ public class UserService extends BasePersistService<User> {
 
     public Command getCommandByChatId(Long chatId) {
         return userRepository.getCommandByChatId(chatId);
+    }
+
+    /**
+     * Регистрирует пользователя, если он не существует в базе.
+     * @return существовал ли пользователь ДО регистрации.
+     */
+    public boolean registerIfNotExists(Update update) {
+        boolean isUserExists = existByChatId(UpdateUtil.getChatId(update));
+        if (!isUserExists) register(update);
+        return isUserExists;
     }
 
     public User register(Update update) {
@@ -170,10 +185,6 @@ public class UserService extends BasePersistService<User> {
         userRepository.updateIsActiveByChatId(isActive, chatId);
     }
 
-    public Boolean getIsBannedByChatId(Long chatId) {
-        return userRepository.getIsBannedByChatId(chatId);
-    }
-
     public void updateCurrentDealByChatId(Long dealPid, Long chatId) {
         userRepository.updateCurrentDealByChatId(dealPid, chatId);
     }
@@ -207,12 +218,27 @@ public class UserService extends BasePersistService<User> {
     }
 
     public void ban(Long chatId) {
-        userRepository.updateIsBannedByChatId(chatId, true);
         bannedUserCache.remove(chatId);
+        userRepository.updateIsBannedByChatId(chatId, true);
     }
 
     public void unban(Long chatId) {
-        userRepository.updateIsBannedByChatId(chatId, false);
         bannedUserCache.remove(chatId);
+        userRepository.updateIsBannedByChatId(chatId, false);
+    }
+
+    public void deleteCurrentDeal(Long chatId) {
+        Long currentDealPid = getCurrentDealByChatId(chatId);
+        if (Objects.nonNull(currentDealPid)) {
+            if (dealRepository.existsById(currentDealPid)) {
+                dealRepository.deleteById(currentDealPid);
+            }
+            updateCurrentDealByChatId(null, chatId);
+        }
+    }
+
+    public boolean isReferralBalanceEmpty(Long chatId) {
+        Integer referralBalance = userRepository.getReferralBalanceByChatId(chatId);
+        return Objects.nonNull(referralBalance) && referralBalance == 0;
     }
 }

@@ -9,10 +9,7 @@ import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.repository.PaymentRequisiteRepository;
 import tgb.btc.rce.repository.PaymentTypeRepository;
 import tgb.btc.rce.repository.UserDataRepository;
-import tgb.btc.rce.repository.UserRepository;
-import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.service.impl.UserService;
 import tgb.btc.rce.util.UpdateUtil;
 
 import java.util.Objects;
@@ -25,13 +22,6 @@ public class AskForNewRequisite extends Processor {
     private UserDataRepository userDataRepository;
 
     private PaymentRequisiteRepository paymentRequisiteRepository;
-
-    private UserRepository userRepository;
-
-    @Autowired
-    public void setUserRepository(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
 
     @Autowired
     public void setPaymentTypeRepository(PaymentTypeRepository paymentTypeRepository) {
@@ -46,11 +36,6 @@ public class AskForNewRequisite extends Processor {
     @Autowired
     public void setPaymentRequisiteRepository(PaymentRequisiteRepository paymentRequisiteRepository) {
         this.paymentRequisiteRepository = paymentRequisiteRepository;
-    }
-
-    @Autowired
-    public AskForNewRequisite(IResponseSender responseSender, UserService userService) {
-        super(responseSender, userService);
     }
 
     @Override

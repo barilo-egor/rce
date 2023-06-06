@@ -1,10 +1,16 @@
 package tgb.btc.rce.service.impl;
 
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import tgb.btc.rce.bean.PaymentRequisite;
+import tgb.btc.rce.bean.PaymentType;
+import tgb.btc.rce.exception.BaseException;
 import tgb.btc.rce.repository.PaymentRequisiteRepository;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -20,7 +26,7 @@ public class PaymentRequisiteService {
         this.paymentRequisiteRepository = paymentRequisiteRepository;
     }
 
-    public Integer getOrder(Long paymentTypePid) {
+    private Integer getOrder(Long paymentTypePid) {
         synchronized (this) {
             Integer order = PAYMENT_REQUISITE_ORDER.get(paymentTypePid);
             if (Objects.isNull(order)) {
@@ -43,5 +49,21 @@ public class PaymentRequisiteService {
                 else PAYMENT_REQUISITE_ORDER.put(paymentTypePid, order + 1);
             }
         }
+    }
+
+    public String getRequisite(PaymentType paymentType) {
+        String requisites;
+
+        List<PaymentRequisite> paymentRequisite = paymentRequisiteRepository.getByPaymentTypePid(paymentType.getPid());
+        if (CollectionUtils.isEmpty(paymentRequisite)) {
+            throw new BaseException("Не установлены реквизиты для " + paymentType.getName() + ".");
+        }
+        if (BooleanUtils.isNotTrue(paymentType.getDynamicOn()) || paymentRequisite.size() == 1) {
+            requisites = paymentRequisite.get(0).getRequisite();
+        } else if (paymentRequisite.size() > 0){
+            Integer order = getOrder(paymentType.getPid());
+            requisites = paymentRequisiteRepository.getRequisiteByPaymentTypePidAndOrder(paymentType.getPid(), order);
+        } else throw new BaseException("Не найдены реквизиты для " + paymentType.getName() + ".");
+        return requisites;
     }
 }

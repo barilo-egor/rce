@@ -10,10 +10,8 @@ import tgb.btc.rce.bean.PaymentReceipt;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.ReceiptFormat;
 import tgb.btc.rce.repository.DealRepository;
-import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.impl.DealService;
-import tgb.btc.rce.service.impl.UserService;
 import tgb.btc.rce.util.UpdateUtil;
 
 import java.time.LocalDate;
@@ -34,11 +32,6 @@ public class SendChecksForDate extends Processor {
     @Autowired
     public void setDealRepository(DealRepository dealRepository) {
         this.dealRepository = dealRepository;
-    }
-
-    @Autowired
-    public SendChecksForDate(IResponseSender responseSender, UserService userService) {
-        super(responseSender, userService);
     }
 
     @Override

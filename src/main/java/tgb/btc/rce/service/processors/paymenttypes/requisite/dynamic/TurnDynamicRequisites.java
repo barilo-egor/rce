@@ -11,9 +11,7 @@ import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.DealType;
 import tgb.btc.rce.enums.FiatCurrency;
 import tgb.btc.rce.repository.PaymentTypeRepository;
-import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.service.impl.UserService;
 import tgb.btc.rce.util.FiatCurrencyUtil;
 import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.UpdateUtil;
@@ -32,11 +30,6 @@ public class TurnDynamicRequisites extends Processor {
         this.paymentTypeRepository = paymentTypeRepository;
     }
 
-    @Autowired
-    public TurnDynamicRequisites(IResponseSender responseSender, UserService userService) {
-        super(responseSender, userService);
-    }
-
     @Override
     public void run(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
@@ -50,7 +43,7 @@ public class TurnDynamicRequisites extends Processor {
     public void sendPaymentTypes(Long chatId, DealType dealType, FiatCurrency fiatCurrency) {
         List<PaymentType> paymentTypes = paymentTypeRepository.getByDealTypeAndFiatCurrency(dealType, fiatCurrency);
         if (CollectionUtils.isEmpty(paymentTypes)) {
-            responseSender.sendMessage(chatId, "Список тип оплат на " + dealType.getDisplayName() + " пуст."); // TODO добавить фиат
+            responseSender.sendMessage(chatId, "Список тип оплат на " + dealType.getAccusative() + " пуст."); // TODO добавить фиат
             processToAdminMainPanel(chatId);
             return;
         }

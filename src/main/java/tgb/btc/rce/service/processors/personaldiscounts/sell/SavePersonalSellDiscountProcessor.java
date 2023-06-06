@@ -7,12 +7,9 @@ import tgb.btc.rce.bean.User;
 import tgb.btc.rce.bean.UserDiscount;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.repository.UserDiscountRepository;
-import tgb.btc.rce.repository.UserRepository;
-import tgb.btc.rce.service.IResponseSender;
-import tgb.btc.rce.service.IUserDiscountService;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.service.impl.UserService;
-import tgb.btc.rce.service.processors.support.SellService;
+import tgb.btc.rce.service.impl.UserDiscountService;
+import tgb.btc.rce.service.processors.support.PersonalDiscountsCache;
 import tgb.btc.rce.util.UpdateUtil;
 
 import java.math.BigDecimal;
@@ -20,11 +17,16 @@ import java.math.BigDecimal;
 @CommandProcessor(command = Command.PERSONAL_SELL_DISCOUNT, step = 2)
 public class SavePersonalSellDiscountProcessor extends Processor {
 
-    private UserRepository userRepository;
-
     private UserDiscountRepository userDiscountRepository;
 
-    private IUserDiscountService userDiscountService;
+    private UserDiscountService userDiscountService;
+
+    private PersonalDiscountsCache personalDiscountsCache;
+
+    @Autowired
+    public void setPersonalDiscountsCache(PersonalDiscountsCache personalDiscountsCache) {
+        this.personalDiscountsCache = personalDiscountsCache;
+    }
 
     @Autowired
     public void setUserDiscountRepository(UserDiscountRepository userDiscountRepository) {
@@ -32,18 +34,8 @@ public class SavePersonalSellDiscountProcessor extends Processor {
     }
 
     @Autowired
-    public void setUserDiscountService(IUserDiscountService userDiscountService) {
+    public void setUserDiscountService(UserDiscountService userDiscountService) {
         this.userDiscountService = userDiscountService;
-    }
-
-    @Autowired
-    public void setUserRepository(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
-
-    @Autowired
-    public SavePersonalSellDiscountProcessor(IResponseSender responseSender, UserService userService) {
-        super(responseSender, userService);
     }
 
     @Override
@@ -59,7 +51,7 @@ public class SavePersonalSellDiscountProcessor extends Processor {
             userDiscount.setPersonalSell(newPersonalSell);
             userDiscountRepository.save(userDiscount);
         } else userDiscountRepository.updatePersonalSellByUserPid(newPersonalSell, userPid);
-        SellService.putToUsersPersonalSell(userChatId, newPersonalSell);
+        personalDiscountsCache.putToSell(userChatId, newPersonalSell);
         responseSender.sendMessage(chatId, "Персональная скидка на продажу обновлена.");
         processToAdminMainPanel(chatId);
     }

@@ -8,9 +8,7 @@ import tgb.btc.rce.enums.BotKeyboard;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.FiatCurrency;
 import tgb.btc.rce.repository.UserDataRepository;
-import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.service.impl.UserService;
 import tgb.btc.rce.util.UpdateUtil;
 
 @CommandProcessor(command = Command.CHANGE_MIN_SUM, step = 1)
@@ -21,11 +19,6 @@ public class SaveFiatCurrencyMinSum extends Processor {
     @Autowired
     public void setUserDataRepository(UserDataRepository userDataRepository) {
         this.userDataRepository = userDataRepository;
-    }
-
-    @Autowired
-    public SaveFiatCurrencyMinSum(IResponseSender responseSender, UserService userService) {
-        super(responseSender, userService);
     }
 
     @Override

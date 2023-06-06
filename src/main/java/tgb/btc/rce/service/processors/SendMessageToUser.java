@@ -4,20 +4,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
-import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.service.impl.UserService;
 import tgb.btc.rce.service.processors.support.MessagesService;
 import tgb.btc.rce.util.UpdateUtil;
 
 @CommandProcessor(command = Command.SEND_MESSAGE_TO_USER)
 public class SendMessageToUser extends Processor {
 
-    private final MessagesService messagesService;
+    private MessagesService messagesService;
 
     @Autowired
-    public SendMessageToUser(IResponseSender responseSender, UserService userService, MessagesService messagesService) {
-        super(responseSender, userService);
+    public void setMessagesService(MessagesService messagesService) {
         this.messagesService = messagesService;
     }
 

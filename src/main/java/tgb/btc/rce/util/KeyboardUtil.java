@@ -1,20 +1,20 @@
 package tgb.btc.rce.util;
 
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
-import tgb.btc.rce.enums.BotReplyButton;
-import tgb.btc.rce.enums.Command;
-import tgb.btc.rce.enums.CryptoCurrency;
-import tgb.btc.rce.enums.InlineType;
+import tgb.btc.rce.bean.Contact;
+import tgb.btc.rce.enums.*;
 import tgb.btc.rce.vo.InlineButton;
 import tgb.btc.rce.vo.ReplyButton;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public final class KeyboardUtil {
     private KeyboardUtil() {
@@ -30,6 +30,20 @@ public final class KeyboardUtil {
     }
 
     public static InlineKeyboardMarkup buildInline(List<InlineButton> buttons, int numberOfColumns) {
+
+        return InlineKeyboardMarkup.builder()
+                .keyboard(buildInlineRows(buttons, numberOfColumns))
+                .build();
+    }
+
+    public static InlineKeyboardMarkup buildInlineByRows(List<List<InlineKeyboardButton>> rows) {
+
+        return InlineKeyboardMarkup.builder()
+                .keyboard(rows)
+                .build();
+    }
+
+    public static List<List<InlineKeyboardButton>> buildInlineRows(List<InlineButton> buttons, int numberOfColumns) {
         List<List<InlineKeyboardButton>> rows = new ArrayList<>();
         List<InlineKeyboardButton> row = new ArrayList<>();
         int j = 0;
@@ -61,9 +75,7 @@ public final class KeyboardUtil {
                 j = 0;
             }
         }
-        return InlineKeyboardMarkup.builder()
-                .keyboard(rows)
-                .build();
+        return rows;
     }
 
     public static ReplyKeyboardMarkup buildReply(List<ReplyButton> buttons) {
@@ -122,4 +134,26 @@ public final class KeyboardUtil {
         return replyButtons;
     }
 
+    public static ReplyKeyboard buildContacts(List<Contact> contacts) {
+        return KeyboardUtil.buildInline(
+                contacts.stream()
+                        .map(contact -> InlineButton.builder()
+                                .text(contact.getLabel())
+                                .data(contact.getUrl())
+                                .inlineType(InlineType.URL)
+                                .build())
+                        .collect(Collectors.toList()));
+    }
+
+   public static InlineButton createCallBackDataButton(String text, Command command, String... string) {
+        return InlineButton.builder()
+                .inlineType(InlineType.CALLBACK_DATA)
+                .text(text)
+                .data(CallbackQueryUtil.buildCallbackData(command, string))
+                .build();
+   }
+
+    public static InlineButton createCallBackDataButton (InlineCalculatorButton inlineCalculatorButton) {
+        return KeyboardUtil.createCallBackDataButton(inlineCalculatorButton.getData(), Command.INLINE_CALCULATOR, inlineCalculatorButton.getData());
+    }
 }

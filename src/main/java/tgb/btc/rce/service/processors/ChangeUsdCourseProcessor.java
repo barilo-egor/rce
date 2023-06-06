@@ -8,9 +8,7 @@ import tgb.btc.rce.enums.*;
 import tgb.btc.rce.exception.BaseException;
 import tgb.btc.rce.exception.EnumTypeNotFoundException;
 import tgb.btc.rce.repository.UserDataRepository;
-import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.service.impl.UserService;
 import tgb.btc.rce.util.FiatCurrencyUtil;
 import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.UpdateUtil;
@@ -28,11 +26,6 @@ public class ChangeUsdCourseProcessor extends Processor {
     @Autowired
     public void setUserDataRepository(UserDataRepository userDataRepository) {
         this.userDataRepository = userDataRepository;
-    }
-
-    @Autowired
-    public ChangeUsdCourseProcessor(IResponseSender responseSender, UserService userService) {
-        super(responseSender, userService);
     }
 
     @Override
@@ -75,7 +68,7 @@ public class ChangeUsdCourseProcessor extends Processor {
                 }
                 userDataRepository.updateCryptoCurrencyByChatId(chatId, cryptoCurrency);
                 if (!FiatCurrencyUtil.isFew()) {
-                    responseSender.sendMessage(chatId, BotStringConstants.ENTER_NEW_COURSE, BotKeyboard.CANCEL);
+                    responseSender.sendMessage(chatId, BotStringConstants.ENTER_NEW_COURSE, BotKeyboard.REPLY_CANCEL);
                     userService.nextStep(chatId);
                 } else {
                     List<ReplyButton> buttons = Arrays.stream(FiatCurrency.values())
@@ -99,7 +92,7 @@ public class ChangeUsdCourseProcessor extends Processor {
                     return;
                 }
                 userDataRepository.updateStringByUserChatId(chatId, fiatCurrency.name());
-                responseSender.sendMessage(chatId, BotStringConstants.ENTER_NEW_COURSE, BotKeyboard.CANCEL);
+                responseSender.sendMessage(chatId, BotStringConstants.ENTER_NEW_COURSE, BotKeyboard.REPLY_CANCEL);
                 userService.nextStep(chatId);
                 break;
             case 4:

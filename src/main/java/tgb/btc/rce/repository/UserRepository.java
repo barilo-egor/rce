@@ -20,102 +20,101 @@ public interface UserRepository extends BaseRepository<User> {
     User findByChatId(Long chatId);
 
     @Query("select pid from User where chatId=:chatId")
-    Long getPidByChatId(@Param("chatId") Long chatId);
-
-    @Modifying
-    @Query("update User set step=:step where chatId=:chatId")
-    void updateStepByChatId(@Param("step") int step,@Param("chatId") Long chatId);
+    Long getPidByChatId(Long chatId);
 
     @Query("select step from User where chatId=:chatId")
-    Integer getStepByChatId(@Param("chatId") Long chatId);
+    Integer getStepByChatId(Long chatId);
 
     @Query("select command from User where chatId=:chatId")
-    Command getCommandByChatId(@Param("chatId") Long chatId);
+    Command getCommandByChatId(Long chatId);
 
     boolean existsByChatId(Long chatId);
 
     @Modifying
     @Query("update User set step=" + User.DEFAULT_STEP + ", command = 'START' where chatId=:chatId")
-    void setDefaultValues(@Param("chatId") Long chatId);
+    void setDefaultValues(Long chatId);
 
     @Query("select isAdmin from User where chatId=:chatId")
-    boolean isAdminByChatId(@Param("chatId") Long chatId);
+    boolean isAdminByChatId(Long chatId);
 
     @Query("select referralBalance from User where chatId=:chatId")
-    Integer getReferralBalanceByChatId(@Param("chatId") Long chatId);
+    Integer getReferralBalanceByChatId(Long chatId);
 
     @Query("select u.referralUsers from User u where u.chatId=:chatId")
-    List<ReferralUser> getUserReferralsByChatId(@Param("chatId") Long chatId);
+    List<ReferralUser> getUserReferralsByChatId(Long chatId);
 
     User getByChatId(Long chatId);
 
     @Modifying
     @Query("update User set step=step + 1, command=:command where chatId=:chatId")
-    void nextStep(@Param("chatId") Long chatId, @Param("command") Command command);
+    void nextStep(Long chatId, Command command);
 
     @Modifying
     @Query("update User set step=step + 1 where chatId=:chatId")
-    void nextStep(@Param("chatId") Long chatId);
+    void nextStep(Long chatId);
 
     @Modifying
     @Query("update User set step=step - 1 where chatId=:chatId")
-    void previousStep(@Param("chatId") Long chatId);
+    void previousStep(Long chatId);
 
     @Query("select chatId from User where isAdmin=true")
     List<Long> getAdminsChatIds();
 
     @Modifying
     @Query("update User set bufferVariable=:bufferVariable where chatId=:chatId")
-    void updateBufferVariable(@Param("chatId") Long chatId, @Param("bufferVariable") String bufferVariable);
+    void updateBufferVariable(Long chatId, String bufferVariable);
 
     @Query("select bufferVariable from User where chatId=:chatId")
-    String getBufferVariable(@Param("chatId") Long chatId);
+    String getBufferVariable(Long chatId);
 
     @Query("select chatId from User where isAdmin=false and isActive=true and isBanned=false")
     List<Long> getChatIdsNotAdminsAndIsActiveAndNotBanned();
 
     @Modifying
     @Query("update User set isActive=:isActive where chatId=:chatId")
-    void updateIsActiveByChatId(@Param("isActive") boolean isActive, @Param("chatId") Long chatId);
+    void updateIsActiveByChatId(boolean isActive, @Param("chatId") Long chatId);
 
     @Query("select isBanned from User where chatId=:chatId")
-    Boolean getIsBannedByChatId(@Param("chatId") Long chatId);
+    Boolean getIsBannedByChatId(Long chatId);
+
+    /**
+     * use userService.ban() and userService.unban()
+     */
+    @Modifying
+    @Query("update User set isBanned=:isBanned where chatId=:chatId")
+    void updateIsBannedByChatId(Long chatId, Boolean isBanned);
 
     @Modifying
-    @Query("update User set currentDeal=:currentDeal where chatId=:chatId")
-    void updateCurrentDealByChatId(@Param("currentDeal") Long dealPid, @Param("chatId") Long chatId);
+    @Query("update User set currentDeal=:dealPid where chatId=:chatId")
+    void updateCurrentDealByChatId(Long dealPid, @Param("chatId") Long chatId);
 
     @Query("select currentDeal from User where chatId=:chatId")
-    Long getCurrentDealByChatId(@Param("chatId") Long chatId);
+    Long getCurrentDealByChatId(Long chatId);
 
     @Query("select username from User where chatId=:chatId")
-    String getUsernameByChatId(@Param("chatId") Long chatId);
+    String getUsernameByChatId(Long chatId);
 
     @Modifying
     @Query("update User set command=:command where chatId=:chatId")
-    void updateCommandByChatId(@Param("command") Command command, @Param("chatId") Long chatId);
+    void updateCommandByChatId(Command command, @Param("chatId") Long chatId);
 
     @Modifying
     @Query("update User set referralBalance=:referralBalance where chatId=:chatId")
-    void updateReferralBalanceByChatId(@Param("referralBalance") Integer referralBalance, @Param("chatId") Long chatId);
+    void updateReferralBalanceByChatId(Integer referralBalance, @Param("chatId") Long chatId);
 
     @Modifying
     @Query("update User set charges=:charges where chatId=:chatId")
-    void updateChargesByChatId(@Param("charges") Integer charges, @Param("chatId") Long chatId);
+    void updateChargesByChatId(Integer charges, @Param("chatId") Long chatId);
 
     @Query("select charges from User where chatId=:chatId")
-    Integer getChargesByChatId(@Param("chatId") Long chatId);
-
-    @Modifying
-    @Query("update User set isBanned=:isBanned where chatId=:chatId")
-    void updateIsBannedByChatId(@Param("chatId") Long chatId, @Param("isBanned") Boolean isBanned);
+    Integer getChargesByChatId(Long chatId);
 
     @Query("update User set referralPercent=:referralPercent where chatId=:chatId")
     @Modifying
-    void updateReferralPercent(@Param("referralPercent") BigDecimal referralPercent, @Param("chatId") Long chatId);
+    void updateReferralPercent(BigDecimal referralPercent, Long chatId);
 
     @Query("select referralPercent from User where chatId=:chatId")
-    BigDecimal getReferralPercentByChatId(@Param("chatId") Long chatId);
+    BigDecimal getReferralPercentByChatId(Long chatId);
 
     @Query("select pid from User ")
     List<Long> getPids();
@@ -123,6 +122,10 @@ public interface UserRepository extends BaseRepository<User> {
     @Modifying
     @Query("update User set step=:step, command=:command where chatId=:chatId")
     void updateStepAndCommandByChatId(Long chatId, Command command, Integer step);
+
+    @Modifying
+    @Query("update User set step=:step where chatId=:chatId")
+    void updateStepByChatId(Long chatId, Integer step);
 
     /**
      * Reports
@@ -139,6 +142,6 @@ public interface UserRepository extends BaseRepository<User> {
 
     @Modifying
     @Query("update User set isAdmin=:isAdmin where chatId=:chatId")
-    void updateIsAdminByChatId(@Param("chatId") Long chatId, @Param("isAdmin") Boolean isAdmin);
+    void updateIsAdminByChatId(Long chatId, Boolean isAdmin);
 
 }
