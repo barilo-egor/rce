@@ -24,10 +24,5 @@
             <artifactId>rce-lib</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <dependency>
-            <groupId>tgb.btc</groupId>
-            <artifactId>rce-updatedispatcher</artifactId>
-            <version>${project.version}</version>
-        </dependency>
     </dependencies>
 </project>
