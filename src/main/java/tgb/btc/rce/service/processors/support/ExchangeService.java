@@ -220,10 +220,14 @@ public class ExchangeService {
     }
 
     public boolean calculateDealAmount(Long chatId, BigDecimal enteredAmount) {
+        return calculateDealAmount(chatId, enteredAmount, null);
+    }
+
+    public boolean calculateDealAmount(Long chatId, BigDecimal enteredAmount, Boolean isEnteredInCrypto) {
         Deal deal = dealRepository.findByPid(userRepository.getCurrentDealByChatId(chatId));
         DealAmount dealAmount = calculateService.calculate(enteredAmount,
                 deal.getCryptoCurrency(), deal.getFiatCurrency(),
-                deal.getDealType());
+                deal.getDealType(), isEnteredInCrypto);
         if (isLessThanMin(chatId, deal.getDealType(), deal.getCryptoCurrency(), dealAmount.getCryptoAmount())) {
             return false;
         }
@@ -629,4 +633,5 @@ public class ExchangeService {
         dealService.save(deal);
         return true;
     }
+
 }

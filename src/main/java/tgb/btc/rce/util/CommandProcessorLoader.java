@@ -4,7 +4,6 @@ import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.exception.BaseException;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.service.processors.SellBitcoin;
 import tgb.btc.rce.service.processors.*;
 import tgb.btc.rce.service.processors.bulkdiscounts.BulkDiscounts;
 import tgb.btc.rce.service.processors.bulkdiscounts.UpdateBulkDiscounts;
@@ -74,7 +73,8 @@ public final class CommandProcessorLoader {
             Command.TURN_DYNAMIC_REQUISITES,
             Command.CHOOSING_FIAT_CURRENCY,
             Command.NONE_CALCULATOR,
-            Command.INLINE_QUERY_CALCULATOR
+            Command.INLINE_QUERY_CALCULATOR,
+            Command.INLINE_CALCULATOR
     );
 
 
@@ -187,6 +187,7 @@ public final class CommandProcessorLoader {
         commandProcessors.add(DealProcessor.class);
         commandProcessors.add(NoneCalculator.class);
         commandProcessors.add(InlineQueryCalculator.class);
+        commandProcessors.add(InlineCalculator.class);
         commandProcessors.stream()
                 .filter(processor -> !extendsProcessor(processor))
                 .findFirst()

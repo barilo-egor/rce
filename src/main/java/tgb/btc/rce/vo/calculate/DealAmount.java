@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
 import tgb.btc.rce.bean.Deal;
+import tgb.btc.rce.enums.DealType;
 
 import java.math.BigDecimal;
 
@@ -21,6 +22,8 @@ public class DealAmount {
     private BigDecimal commission;
 
     private boolean isEnteredInCrypto;
+
+    private DealType dealType;
 
     public boolean isEnteredInCrypto() {
         return isEnteredInCrypto;
@@ -62,10 +65,19 @@ public class DealAmount {
         this.commission = commission;
     }
 
+    public void setDealType(DealType dealType) {
+        this.dealType = dealType;
+    }
+
     public void updateDeal(Deal deal) {
         deal.setAmount(amount);
         deal.setCryptoAmount(cryptoAmount);
         deal.setCommission(commission);
         deal.setOriginalPrice(amount);
+    }
+
+    public BigDecimal getAmountWithoutCommission() {
+        if (DealType.BUY.equals(dealType)) return amount.subtract(commission);
+        else return amount.add(commission);
     }
 }

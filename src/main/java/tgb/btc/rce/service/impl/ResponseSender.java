@@ -226,6 +226,19 @@ public class ResponseSender implements IResponseSender {
         }
     }
 
+    public void sendEditedMessageText(Long chatId, Integer messageId, String text, ReplyKeyboard replyKeyboard) {
+        try {
+            bot.execute(EditMessageText.builder()
+                    .chatId(chatId.toString())
+                    .messageId(messageId)
+                    .text(text)
+                    .replyMarkup((InlineKeyboardMarkup) replyKeyboard)
+                    .build());
+        } catch (TelegramApiException e) {
+            log.debug("Не получилось отправить измененное сообщение: chatId" + chatId + ", text=" + text, e);
+        }
+    }
+
     public void sendFile(Long chatId, File file) {
         try {
             bot.execute(SendDocument.builder()

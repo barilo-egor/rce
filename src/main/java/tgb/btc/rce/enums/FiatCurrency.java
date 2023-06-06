@@ -8,20 +8,23 @@ public enum FiatCurrency {
     /**
      * Бел.рубль
      */
-    BYN("byn", "бел.рублей"),
+    BYN("byn", "бел.рублей", "\uD83C\uDDE7\uD83C\uDDFE"),
     /**
      * Рос.рубль
      */
-    RUB("rub", "₽"),
-    UAH("uah", "гривен");
+    RUB("rub", "₽", "\uD83C\uDDF7\uD83C\uDDFA"),
+    UAH("uah", "гривен", "\uD83C\uDDFA\uD83C\uDDE6");
 
     final String code;
 
     final String displayName;
 
-    FiatCurrency(String code, String displayName) {
+    final String flag;
+
+    FiatCurrency(String code, String displayName, String flag) {
         this.code = code;
         this.displayName = displayName;
+        this.flag = flag;
     }
 
     public String getDisplayName() {
@@ -30,6 +33,10 @@ public enum FiatCurrency {
 
     public String getCode() {
         return code;
+    }
+
+    public String getFlag() {
+        return flag;
     }
 
     public static FiatCurrency getByCode(String code) {

@@ -3,17 +3,22 @@ package tgb.btc.rce.service.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.*;
-import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.repository.PaymentTypeRepository;
+import tgb.btc.rce.service.processors.InlineCalculator;
 import tgb.btc.rce.util.*;
 import tgb.btc.rce.vo.InlineButton;
+import tgb.btc.rce.vo.InlineCalculatorVO;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static tgb.btc.rce.enums.InlineCalculatorButton.*;
 
 @Service
 public class KeyboardService {
@@ -116,5 +121,53 @@ public class KeyboardService {
                         .build(),
                 KeyboardUtil.INLINE_BACK_BUTTON
         ));
+    }
+
+    public ReplyKeyboard getCalculator(Long chaId) {
+        List<InlineButton> inlineButtons = new ArrayList<>();
+        List<InlineButton> currencySwitcher = null;
+        for (InlineCalculatorButton button : InlineCalculatorButton.values()) {
+            switch (button) {
+                case NUMBER:
+                    String[] strings = new String[]{"7", "8", "9", "4", "5", "6", "1", "2", "3", "0"};
+                    for (String string : strings) {
+                        inlineButtons.add(KeyboardUtil.createCallBackDataButton(string, Command.INLINE_CALCULATOR, NUMBER.getData(), string));
+                    }
+                    break;
+                case CURRENCY_SWITCHER:
+                    InlineCalculatorVO calculator = InlineCalculator.cache.get(chaId);
+                    String text;
+                    if (!calculator.getSwitched()) {
+                        String flag = FiatCurrency.RUB.equals(calculator.getFiatCurrency())
+                                ? "\uD83C\uDDF7\uD83C\uDDFA"
+                                : "\uD83C\uDDE7\uD83C\uDDFE";
+                        text = flag + "Ввод суммы в " + calculator.getFiatCurrency().getCode().toUpperCase();
+                    } else {
+                        text = "\uD83D\uDD38Ввод суммы в " + calculator.getCryptoCurrency().getShortName().toUpperCase();
+                    }
+                    currencySwitcher = Collections.singletonList(KeyboardUtil.createCallBackDataButton(text,
+                            Command.INLINE_CALCULATOR, CURRENCY_SWITCHER.getData()));
+                    break;
+                case CANCEL:
+                    InlineButton backButton = BotInlineButton.CANCEL.getButton();
+                    backButton.setText(CANCEL.getData());
+                    inlineButtons.add(backButton);
+                    break;
+                case SWITCH_TO_MAIN_CALCULATOR:
+                    break;
+                default:
+                    inlineButtons.add(KeyboardUtil.createCallBackDataButton(button));
+            }
+        }
+        List<List<InlineKeyboardButton>> rows = KeyboardUtil.buildInlineRows(inlineButtons, 3);
+        rows.add(4, KeyboardUtil.buildInlineRows(currencySwitcher,1).get(0));
+        return KeyboardUtil.buildInlineByRows(rows);
+    }
+
+    public ReplyKeyboard getInlineCalculatorSwitcher() {
+        List<InlineButton> buttons = new ArrayList<>();
+        buttons.add(KeyboardUtil.createCallBackDataButton(SWITCH_TO_MAIN_CALCULATOR));
+        buttons.add(KeyboardUtil.INLINE_BACK_BUTTON);
+        return KeyboardUtil.buildInline(buttons);
     }
 }
