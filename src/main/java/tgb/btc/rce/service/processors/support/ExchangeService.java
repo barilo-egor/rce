@@ -472,8 +472,7 @@ public class ExchangeService {
         BigDecimal dealAmount = userDiscountService.applyRank(rank, deal);
 
         String promoCodeText = Boolean.TRUE.equals(deal.getUsedPromo())
-                ?
-                "\n\n<b> Использован скидочный промокод</b>: "
+                ? "\n\n<b> Использован скидочный промокод</b>: "
                         + BotVariablePropertiesUtil.getVariable(BotVariableType.PROMO_CODE_NAME) + "\n\n"
                 : "\n\n";
 
@@ -555,7 +554,6 @@ public class ExchangeService {
             return true;
         } else {
             cancelDeal(CallbackQueryUtil.messageId(update), chatId, dealPid);
-            updateDispatcher.runProcessor(Command.START, chatId, update);
             return false;
         }
     }
