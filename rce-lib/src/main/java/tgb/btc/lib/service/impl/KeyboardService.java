@@ -138,10 +138,7 @@ public class KeyboardService {
                     InlineCalculatorVO calculator = InlineCalculator.cache.get(chaId);
                     String text;
                     if (!calculator.getSwitched()) {
-                        String flag = FiatCurrency.RUB.equals(calculator.getFiatCurrency())
-                                ? "\uD83C\uDDF7\uD83C\uDDFA"
-                                : "\uD83C\uDDE7\uD83C\uDDFE";
-                        text = flag + "Ввод суммы в " + calculator.getFiatCurrency().getCode().toUpperCase();
+                        text = calculator.getFiatCurrency().getFlag() + "Ввод суммы в " + calculator.getFiatCurrency().getCode().toUpperCase();
                     } else {
                         text = "\uD83D\uDD38Ввод суммы в " + calculator.getCryptoCurrency().getShortName().toUpperCase();
                     }
