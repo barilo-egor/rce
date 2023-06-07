@@ -5,6 +5,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>rce-lib</module>
+        <module>rce-updatedispatcher</module>
         <module>rce-application</module>
     </modules>
     <parent>
