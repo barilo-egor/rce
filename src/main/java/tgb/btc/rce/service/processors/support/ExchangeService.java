@@ -31,6 +31,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -468,7 +469,10 @@ public class ExchangeService {
         Deal deal = dealRepository.findByPid(userRepository.getCurrentDealByChatId(chatId));
         CryptoCurrency currency = deal.getCryptoCurrency();
         String message;
-        Rank rank = Rank.getByDealsNumber(dealRepository.getCountPassedByUserChatId(chatId).intValue());
+        Long countPassed = dealRepository.getCountPassedByUserChatId(chatId);
+        Rank rank = Objects.nonNull(countPassed)
+                ? Rank.getByDealsNumber(countPassed.intValue())
+                : Rank.FIRST;
         BigDecimal dealAmount = userDiscountService.applyRank(rank, deal);
 
         String promoCodeText = Boolean.TRUE.equals(deal.getUsedPromo())

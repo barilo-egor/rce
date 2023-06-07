@@ -88,6 +88,9 @@ public class CalculateService {
             BigDecimal currentPercents = BigDecimalUtil.subtractHalfUp(BigDecimal.valueOf(100), calculateData.getCommission());
             BigDecimal onePercent = BigDecimalUtil.divideHalfUp(dealAmount.getCryptoAmount(), currentPercents);
             BigDecimal totalCommission = BigDecimalUtil.multiplyHalfUp(onePercent, calculateData.getCommission());
+            BigDecimal usdTotalCommission = BigDecimalUtil.multiplyHalfUp(totalCommission, cryptoCourse);
+            BigDecimal rubTotalCommission = BigDecimalUtil.multiplyHalfUp(usdTotalCommission, course);
+            dealAmount.setCommission(rubTotalCommission);
             BigDecimal totalCryptoAmount = BigDecimalUtil.addHalfUp(dealAmount.getCryptoAmount(), totalCommission);
             usd = BigDecimalUtil.multiplyHalfUp(totalCryptoAmount, cryptoCourse);
             amount = BigDecimalUtil.multiplyHalfUp(usd, course);
