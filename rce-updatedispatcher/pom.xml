@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>rce-application</artifactId>
+    <artifactId>rce-updatedispatcher</artifactId>
 
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
@@ -22,11 +22,6 @@
         <dependency>
             <groupId>tgb.btc</groupId>
             <artifactId>rce-lib</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>tgb.btc</groupId>
-            <artifactId>rce-updatedispatcher</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>
