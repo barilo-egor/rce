@@ -67,7 +67,7 @@ public class InlineCalculatorService implements ICalculatorTypeService {
         inlineCalculatorVO.setOn(true);
         InlineCalculator.cache.put(chatId, inlineCalculatorVO);
         responseSender.sendMessage(chatId, messageService.getInlineCalculatorMessage(dealType, inlineCalculatorVO),
-                keyboardService.getCalculator(chatId));
+                keyboardService.getInlineCalculator(chatId));
         userRepository.updateStepAndCommandByChatId(chatId, Command.INLINE_CALCULATOR, 1);
     }
 
