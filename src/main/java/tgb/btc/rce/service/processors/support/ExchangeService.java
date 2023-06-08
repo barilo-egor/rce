@@ -1,5 +1,6 @@
 package tgb.btc.rce.service.processors.support;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,6 +32,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -468,7 +470,10 @@ public class ExchangeService {
         Deal deal = dealRepository.findByPid(userRepository.getCurrentDealByChatId(chatId));
         CryptoCurrency currency = deal.getCryptoCurrency();
         String message;
-        Rank rank = Rank.getByDealsNumber(dealRepository.getCountPassedByUserChatId(chatId).intValue());
+        Long countPassed = dealRepository.getCountPassedByUserChatId(chatId);
+        Rank rank = Objects.nonNull(countPassed)
+                ? Rank.getByDealsNumber(countPassed.intValue())
+                : Rank.FIRST;
         BigDecimal dealAmount = userDiscountService.applyRank(rank, deal);
 
         String promoCodeText = Boolean.TRUE.equals(deal.getUsedPromo())
@@ -580,7 +585,7 @@ public class ExchangeService {
         Long chatId = UpdateUtil.getChatId(update);
         Long currentDealPid = userRepository.getCurrentDealByChatId(chatId);
         BigDecimal dealAmount = dealRepository.getAmountByPid(currentDealPid);
-        if (dealRepository.getIsUsedPromoByPid(currentDealPid)) {
+        if (BooleanUtils.isTrue(dealRepository.getIsUsedPromoByPid(currentDealPid))) {
             dealAmount = dealAmount.subtract(dealRepository.getDiscountByPid(currentDealPid));
         }
         Integer referralBalance = userRepository.getReferralBalanceByChatId(chatId);

@@ -41,21 +41,6 @@ public class KeyboardService {
         return KeyboardUtil.buildInline(currencies);
     }
 
-    public ReplyKeyboard getCalculator(FiatCurrency fiatCurrency, CryptoCurrency currency, DealType dealType) {
-        switch (CALCULATOR_TYPE) {
-            case INLINE_QUERY:
-                return KeyboardUtil.buildInline(List.of(
-                        InlineButton.builder()
-                                .inlineType(InlineType.SWITCH_INLINE_QUERY_CURRENT_CHAT)
-                                .text("Калькулятор")
-                                .data(fiatCurrency.getCode() + "-" + dealType.getKey() + "-" + currency.getShortName())
-                                .build(),
-                        KeyboardUtil.INLINE_BACK_BUTTON), 1);
-            default:
-                return KeyboardUtil.buildInline(List.of(KeyboardUtil.INLINE_BACK_BUTTON), 1);
-        }
-    }
-
     public ReplyKeyboard getFiatCurrencies() {
         List<InlineButton> buttons = FiatCurrencyUtil.getFiatCurrencies().stream()
                 .map(fiatCurrency -> InlineButton.builder()
@@ -123,10 +108,11 @@ public class KeyboardService {
         ));
     }
 
-    public ReplyKeyboard getCalculator(Long chaId) {
+    public ReplyKeyboard getInlineCalculator(Long chaId) {
         List<InlineButton> inlineButtons = new ArrayList<>();
         List<InlineButton> currencySwitcher = null;
-        for (InlineCalculatorButton button : InlineCalculatorButton.values()) {
+        for (InlineCalculatorButton button : InlineCalculatorButton.values()) { // TODO если я поменяю порядок в енамке, то всё по пизде пойдет
+            // TODO просто создаешь лист кнопок,и поочереди,как тебе надо,добавляешь нужные элементы,без прохода по енамке,вручную
             switch (button) {
                 case NUMBER:
                     String[] strings = new String[]{"7", "8", "9", "4", "5", "6", "1", "2", "3", "0"};
@@ -138,10 +124,8 @@ public class KeyboardService {
                     InlineCalculatorVO calculator = InlineCalculator.cache.get(chaId);
                     String text;
                     if (!calculator.getSwitched()) {
-                        String flag = FiatCurrency.RUB.equals(calculator.getFiatCurrency())
-                                ? "\uD83C\uDDF7\uD83C\uDDFA"
-                                : "\uD83C\uDDE7\uD83C\uDDFE";
-                        text = flag + "Ввод суммы в " + calculator.getFiatCurrency().getCode().toUpperCase();
+                        FiatCurrency fiatCurrency = calculator.getFiatCurrency();
+                        text = fiatCurrency.getFlag() + "Ввод суммы в " + fiatCurrency.getCode().toUpperCase();
                     } else {
                         text = "\uD83D\uDD38Ввод суммы в " + calculator.getCryptoCurrency().getShortName().toUpperCase();
                     }
