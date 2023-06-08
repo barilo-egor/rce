@@ -8,7 +8,7 @@ public final class BigDecimalUtil {
     private BigDecimalUtil() {
     }
 
-    public static final int scale = 10;
+    public static final int scale = 20;
 
     public static BigDecimal divideHalfUp(BigDecimal a, BigDecimal b) {
         return a.setScale(scale, RoundingMode.HALF_UP).divide(b, RoundingMode.HALF_UP);

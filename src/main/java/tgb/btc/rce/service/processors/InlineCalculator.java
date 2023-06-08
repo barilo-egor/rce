@@ -15,7 +15,6 @@ import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.impl.CalculateService;
 import tgb.btc.rce.service.impl.KeyboardService;
 import tgb.btc.rce.service.impl.MessageService;
-import tgb.btc.rce.service.impl.UserDiscountService;
 import tgb.btc.rce.service.processors.support.ExchangeService;
 import tgb.btc.rce.util.CallbackQueryUtil;
 import tgb.btc.rce.util.MessagePropertiesUtil;
@@ -24,7 +23,6 @@ import tgb.btc.rce.vo.InlineCalculatorVO;
 import tgb.btc.rce.vo.calculate.DealAmount;
 
 import java.math.BigDecimal;
-import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static tgb.btc.rce.enums.InlineCalculatorButton.COMMA;
@@ -36,8 +34,6 @@ public class InlineCalculator extends Processor {
     private DealRepository dealRepository;
 
     private ExchangeService exchangeService;
-
-    private UserDiscountService userDiscountService;
 
     private CalculateService calculateService;
 
@@ -54,11 +50,6 @@ public class InlineCalculator extends Processor {
     @Autowired
     public void setDealProcessor(DealProcessor dealProcessor) {
         this.dealProcessor = dealProcessor;
-    }
-
-    @Autowired
-    public void setUserDiscountService(UserDiscountService userDiscountService) {
-        this.userDiscountService = userDiscountService;
     }
 
     @Autowired
@@ -105,13 +96,13 @@ public class InlineCalculator extends Processor {
             userRepository.updateStepAndCommandByChatId(chatId, Command.DEAL, DealProcessor.AFTER_CALCULATOR_STEP);
             updateDispatcher.runProcessor(Command.DEAL, chatId, update);
             return;
-        } else if (update.hasMessage()) return;
+        } else if (update.hasMessage()) return; // TODO: "Для ввода суммы вручную нажмите "Переключить калькулятор"" или как там кнопка называется
         CallbackQuery callbackQuery = update.getCallbackQuery();
-        String[] data = callbackQuery.getData().split(BotStringConstants.CALLBACK_DATA_SPLITTER);
+        String[] data = callbackQuery.getData().split(BotStringConstants.CALLBACK_DATA_SPLITTER); // TODO сделай VO по примеру CalculatorQuery,чтобы не было data[0] data[1], а геттеры с понятным значением
         String sum = calculator.getSum();
         Boolean isSwitched = calculator.getSwitched();
         Integer messageId = callbackQuery.getMessage().getMessageId();
-        switch (getByData(data[1])) {
+        switch (getByData(data[1])) { //  TODO используй без статик импорта, чтобы было понятно гет что
             case NUMBER:
                 if (StringUtils.isNotBlank(sum)) {
                     if (!sum.equals("0")) sum = sum.concat(data[2]);
@@ -159,12 +150,8 @@ public class InlineCalculator extends Processor {
         DealAmount dealAmount = StringUtils.isNotEmpty(sum)
                 ? calculateService.calculate(new BigDecimal(sum), calculator.getCryptoCurrency(), calculator.getFiatCurrency(), dealType, !isSwitched)
                 : null;
-        if (Objects.nonNull(dealAmount)) {
-            userDiscountService.applyPersonal(chatId, dealType, dealAmount);
-            userDiscountService.applyBulk(calculator.getFiatCurrency(), dealType, dealAmount);
-        }
         responseSender.sendEditedMessageText(chatId, messageId,
                 messageService.getInlineCalculatorMessage(dealType, calculator, dealAmount),
-                keyboardService.getCalculator(chatId));
+                keyboardService.getInlineCalculator(chatId));
     }
 }
