@@ -1,5 +1,6 @@
 package tgb.btc.rce.service.processors.support;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -584,7 +585,7 @@ public class ExchangeService {
         Long chatId = UpdateUtil.getChatId(update);
         Long currentDealPid = userRepository.getCurrentDealByChatId(chatId);
         BigDecimal dealAmount = dealRepository.getAmountByPid(currentDealPid);
-        if (dealRepository.getIsUsedPromoByPid(currentDealPid)) {
+        if (BooleanUtils.isTrue(dealRepository.getIsUsedPromoByPid(currentDealPid))) {
             dealAmount = dealAmount.subtract(dealRepository.getDiscountByPid(currentDealPid));
         }
         Integer referralBalance = userRepository.getReferralBalanceByChatId(chatId);
