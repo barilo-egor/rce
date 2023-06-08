@@ -111,12 +111,11 @@ public class DealProcessor extends Processor {
         switch (userStep) {
             case 0:
                 if (!isBack) userRepository.updateCommandByChatId(Command.DEAL, chatId);
-                userRepository.nextStep(chatId);
                 if (!FiatCurrencyUtil.isFew()) {
-                    userRepository.nextStep(chatId);
-                    run(update);
+                    recursiveSwitch(update, chatId, isBack);
                     break;
                 }
+                userRepository.nextStep(chatId);
                 exchangeService.askForFiatCurrency(chatId);
                 break;
             case 1:
