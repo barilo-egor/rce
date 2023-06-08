@@ -604,7 +604,8 @@ public class ExchangeService {
 
     public void processReferralDiscount(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
-        dealRepository.updateUsedReferralDiscountByPid(true, userRepository.getCurrentDealByChatId(chatId));
+        Boolean isUsedReferralDiscount = update.getCallbackQuery().getData().equals(BotStringConstants.USE_REFERRAL_DISCOUNT);
+        dealRepository.updateUsedReferralDiscountByPid(isUsedReferralDiscount, userRepository.getCurrentDealByChatId(chatId));
     }
 
     public void askForReceipts(Update update) {
