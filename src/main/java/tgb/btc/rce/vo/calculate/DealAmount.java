@@ -13,6 +13,8 @@ import java.math.BigDecimal;
 @Builder
 public class DealAmount {
 
+    private Long chatId;
+
     private CalculateData calculateData;
 
     private BigDecimal amount;
@@ -24,6 +26,14 @@ public class DealAmount {
     private boolean isEnteredInCrypto;
 
     private DealType dealType;
+
+    public Long getChatId() {
+        return chatId;
+    }
+
+    public void setChatId(Long chatId) {
+        this.chatId = chatId;
+    }
 
     public boolean isEnteredInCrypto() {
         return isEnteredInCrypto;
