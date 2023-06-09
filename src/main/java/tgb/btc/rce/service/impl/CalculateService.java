@@ -162,10 +162,8 @@ public class CalculateService {
         return BigDecimalUtil.divideHalfUp(usd, calculateData.getCryptoCourse());
     }
 
-    public BigDecimal convertToFiat(DealType dealType, CryptoCurrency cryptoCurrency, FiatCurrency fiatCurrency,
+    public BigDecimal convertToFiat(CryptoCurrency cryptoCurrency, FiatCurrency fiatCurrency,
                                     BigDecimal cryptoAmount) {
-        BigDecimal usd = BigDecimalUtil.multiplyHalfUp(cryptoAmount, cryptoCurrencyService.getCurrency(cryptoCurrency));
-        return BigDecimalUtil.multiplyHalfUp(usd,
-                BotVariablePropertiesUtil.getBigDecimal(BotVariableType.USD_COURSE, fiatCurrency, dealType, cryptoCurrency));
+        return BigDecimalUtil.multiplyHalfUp(cryptoAmount, cryptoCurrencyService.getCurrencyToFiat(fiatCurrency, cryptoCurrency));
     }
 }

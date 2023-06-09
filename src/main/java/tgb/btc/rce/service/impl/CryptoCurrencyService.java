@@ -4,10 +4,7 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
 import org.springframework.stereotype.Service;
-import tgb.btc.rce.enums.BotProperties;
-import tgb.btc.rce.enums.BotVariableType;
-import tgb.btc.rce.enums.CryptoCurrency;
-import tgb.btc.rce.enums.CurrencyApi;
+import tgb.btc.rce.enums.*;
 import tgb.btc.rce.exception.BaseException;
 import tgb.btc.rce.util.BotVariablePropertiesUtil;
 
@@ -23,7 +20,11 @@ public class CryptoCurrencyService {
     // в комментарии проперти джсона с курсом
     public static final String BTC_USD_URL_BINANCE = "https://api1.binance.com/api/v3/avgPrice?symbol=BTCUSDT";
 
+    public static final String BTC_RUB_URL_BINANCE = "https://api1.binance.com/api/v3/avgPrice?symbol=BTCRUB";
+
     public static final String LTC_USD_URL_BINANCE = "https://api1.binance.com/api/v3/avgPrice?symbol=LTCUSDT"; // price
+
+    public static final String LTC_RUB_URL_BINANCE = "https://api1.binance.com/api/v3/avgPrice?symbol=LTCRUB";
 
     public static final String USDT_USD_RATE = "https://www.bitstamp.net/api/v2/ticker/usdtusd/"; // last
 
@@ -45,6 +46,25 @@ public class CryptoCurrencyService {
                 return getXmrCurrency();
             default:
                 throw new BaseException("Не определена крипто валюта.");
+        }
+    }
+
+    public BigDecimal getCurrencyToFiat(FiatCurrency fiatCurrency, CryptoCurrency cryptoCurrency) {
+        if (!FiatCurrency.RUB.equals(fiatCurrency))
+            throw new BaseException("Реализация предусмотрена только для " + FiatCurrency.RUB.name());
+        Object obj;
+        JSONObject currency;
+        switch (cryptoCurrency) {
+            case BITCOIN:
+                currency = readJsonFromUrl(BTC_RUB_URL_BINANCE);
+                obj = currency.get("price");
+                return parse(obj, CryptoCurrency.BITCOIN, String.class);
+            case LITECOIN:
+                currency = readJsonFromUrl(LTC_RUB_URL_BINANCE);
+                obj = currency.get("price");
+                return parse(obj, CryptoCurrency.LITECOIN);
+            default:
+                throw new BaseException("Для данной криптовалюты не предусмотрена реализация.");
         }
     }
 
@@ -79,7 +99,7 @@ public class CryptoCurrencyService {
     @SneakyThrows
     private BigDecimal getXmrCurrency() {
         JSONObject currency = readJsonFromUrl(MONERO_URL_COINREMITTER);
-        Object obj = ((JSONObject) ((JSONObject) readJsonFromUrl(MONERO_URL_COINREMITTER).get("data")).get("XMR")).get("price");
+        Object obj = ((JSONObject) ((JSONObject) currency.get("data")).get("XMR")).get("price");
         return parse(obj, CryptoCurrency.MONERO);
     }
 

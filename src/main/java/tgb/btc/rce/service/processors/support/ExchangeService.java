@@ -37,9 +37,6 @@ import java.util.Optional;
 
 @Service
 public class ExchangeService {
-
-    private static final boolean IS_SUM_TO_RECEIVE_ON = BotProperties.FUNCTIONS_PROPERTIES.getBoolean("sum.to.receive", true);
-
     private KeyboardService keyboardService;
 
     private MessageService messageService;
@@ -164,15 +161,20 @@ public class ExchangeService {
         responseSender.sendMessage(chatId, "Выберите валюту.", keyboardService.getFiatCurrencies());
     }
 
-    public void saveFiatCurrency(Update update) {
+    public boolean saveFiatCurrency(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
         FiatCurrency fiatCurrency;
         if (FiatCurrencyUtil.isFew()) {
+            if (!update.hasCallbackQuery()) {
+                responseSender.sendMessage(chatId, "Выберите валюту.");
+                return false;
+            }
             fiatCurrency = FiatCurrency.fromCallbackQuery(update.getCallbackQuery());
         } else {
             fiatCurrency = FiatCurrencyUtil.getFirst();
         }
         dealRepository.updateFiatCurrencyByPid(userRepository.getCurrentDealByChatId(chatId), fiatCurrency);
+        return true;
     }
 
     public void askForCryptoCurrency(Long chatId) {
@@ -181,10 +183,16 @@ public class ExchangeService {
                 keyboardService.getCurrencies(dealType));
     }
 
-    public void saveCryptoCurrency(Update update) {
+    public boolean saveCryptoCurrency(Update update) {
+        Long chatId = UpdateUtil.getChatId(update);
+        if (!update.hasCallbackQuery()) {
+            responseSender.sendMessage(chatId, "Выберите валюту.");
+            return false;
+        }
         CryptoCurrency currency = CryptoCurrency.valueOf(update.getCallbackQuery().getData());
-        Long currentDealPid = userRepository.getCurrentDealByChatId(UpdateUtil.getChatId(update));
+        Long currentDealPid = userRepository.getCurrentDealByChatId(chatId);
         dealRepository.updateCryptoCurrencyByPid(currentDealPid, currency);
+        return true;
     }
 
     public boolean alreadyHasDeal(Long chatId) {
@@ -206,9 +214,9 @@ public class ExchangeService {
                     + " " + cryptoCurrency.getDisplayName() + "\n"
                     + "Сумма к оплате: " + BigDecimalUtil.roundToPlainString(dealAmount) + " "
                     + fiatCurrency.getDisplayName() + "\n";
-            if (IS_SUM_TO_RECEIVE_ON) {
+            if (BooleanUtils.isTrue(FunctionPropertiesUtil.getSumToReceive(cryptoCurrency))) {
                 message = message.concat("Сумма к зачислению: "
-                        + BigDecimalUtil.roundToPlainString(calculateService.convertToFiat(dealType,
+                        + BigDecimalUtil.roundToPlainString(calculateService.convertToFiat(
                         dealRepository.getCryptoCurrencyByPid(currentDealPid),
                         dealRepository.getFiatCurrencyByPid(currentDealPid),
                         cryptoAmount))
@@ -416,7 +424,7 @@ public class ExchangeService {
             dealAmount = userDiscountService.applyDealDiscounts(chatId, dealAmount, deal.getUsedPromo(),
                     deal.getUsedReferralDiscount(), deal.getDiscount());
             messageNew.append("\uD83D\uDCB5<b>Сумма перевода</b>: ")
-                    .append(BigDecimalUtil.toPlainString(dealAmount))
+                    .append(BigDecimalUtil.roundToPlainString(dealAmount))
                     .append(" ").append(deal.getFiatCurrency().getDisplayName()).append("\n\n")
                     .append(additionalText).append("<b>Выберите способ оплаты:</b>");
         } else {
@@ -546,10 +554,11 @@ public class ExchangeService {
     }
 
     public Boolean isPaid(Update update) {
+        Long chatId = UpdateUtil.getChatId(update);
         if (!update.hasCallbackQuery()) {
+            responseSender.sendMessage(chatId, "Для отмены сделки нажми \"Отменить сделку\".");
             return null;
         }
-        Long chatId = UpdateUtil.getChatId(update);
         Long dealPid = userRepository.getCurrentDealByChatId(chatId);
         DealDeleteScheduler.deleteCryptoDeal(dealPid);
         if (Command.PAID.name().equals(update.getCallbackQuery().getData())) {
@@ -602,10 +611,16 @@ public class ExchangeService {
                 keyboardService.getUseReferralDiscount(sumWithDiscount, dealAmount), "HTML");
     }
 
-    public void processReferralDiscount(Update update) {
+    public boolean processReferralDiscount(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
+        if (!update.hasCallbackQuery()) {
+            responseSender.sendMessage(chatId, "Выбери использовать со скидкой или без, либо нажми \"Назад\" " +
+                    "для возвращения в предыдущее меню.");
+            return false;
+        }
         Boolean isUsedReferralDiscount = update.getCallbackQuery().getData().equals(BotStringConstants.USE_REFERRAL_DISCOUNT);
         dealRepository.updateUsedReferralDiscountByPid(isUsedReferralDiscount, userRepository.getCurrentDealByChatId(chatId));
+        return true;
     }
 
     public void askForReceipts(Update update) {
