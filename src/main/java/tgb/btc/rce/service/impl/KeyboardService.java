@@ -110,39 +110,23 @@ public class KeyboardService {
 
     public ReplyKeyboard getInlineCalculator(Long chaId) {
         List<InlineButton> inlineButtons = new ArrayList<>();
-        List<InlineButton> currencySwitcher = null;
-        for (InlineCalculatorButton button : InlineCalculatorButton.values()) { // TODO если я поменяю порядок в енамке, то всё по пизде пойдет
-            // TODO просто создаешь лист кнопок,и поочереди,как тебе надо,добавляешь нужные элементы,без прохода по енамке,вручную
-            switch (button) {
-                case NUMBER:
-                    String[] strings = new String[]{"7", "8", "9", "4", "5", "6", "1", "2", "3", "0"};
-                    for (String string : strings) {
-                        inlineButtons.add(KeyboardUtil.createCallBackDataButton(string, Command.INLINE_CALCULATOR, NUMBER.getData(), string));
-                    }
-                    break;
-                case CURRENCY_SWITCHER:
-                    InlineCalculatorVO calculator = InlineCalculator.cache.get(chaId);
-                    String text;
-                    if (!calculator.getSwitched()) {
-                        FiatCurrency fiatCurrency = calculator.getFiatCurrency();
-                        text = fiatCurrency.getFlag() + "Ввод суммы в " + fiatCurrency.getCode().toUpperCase();
-                    } else {
-                        text = "\uD83D\uDD38Ввод суммы в " + calculator.getCryptoCurrency().getShortName().toUpperCase();
-                    }
-                    currencySwitcher = Collections.singletonList(KeyboardUtil.createCallBackDataButton(text,
-                            Command.INLINE_CALCULATOR, CURRENCY_SWITCHER.getData()));
-                    break;
-                case CANCEL:
-                    InlineButton backButton = BotInlineButton.CANCEL.getButton();
-                    backButton.setText(CANCEL.getData());
-                    inlineButtons.add(backButton);
-                    break;
-                case SWITCH_TO_MAIN_CALCULATOR:
-                    break;
-                default:
-                    inlineButtons.add(KeyboardUtil.createCallBackDataButton(button));
-            }
+        String[] strings = new String[]{"7", "8", "9", "4", "5", "6", "1", "2", "3", "0"};
+        for (String string : strings) {
+            inlineButtons.add(KeyboardUtil.createCallBackDataButton(string, Command.INLINE_CALCULATOR, NUMBER.getData(), string));
         }
+        inlineButtons.add(KeyboardUtil.createCallBackDataButton(COMMA));
+        inlineButtons.add(KeyboardUtil.createCallBackDataButton(DEL));
+        InlineButton backButton = BotInlineButton.CANCEL.getButton();
+        backButton.setText(CANCEL.getData());
+        inlineButtons.add(backButton);
+        inlineButtons.add(KeyboardUtil.createCallBackDataButton(SWITCH_CALCULATOR));
+        inlineButtons.add(KeyboardUtil.createCallBackDataButton(READY));
+        InlineCalculatorVO calculator = InlineCalculator.cache.get(chaId);
+        String text = !calculator.getSwitched()
+               ? calculator.getFiatCurrency().getFlag() + "Ввод суммы в " + calculator.getFiatCurrency().getCode().toUpperCase()
+               : "\uD83D\uDD38Ввод суммы в " + calculator.getCryptoCurrency().getShortName().toUpperCase();
+        List<InlineButton> currencySwitcher = Collections.singletonList(KeyboardUtil.createCallBackDataButton(text,
+                           Command.INLINE_CALCULATOR, CURRENCY_SWITCHER.getData()));
         List<List<InlineKeyboardButton>> rows = KeyboardUtil.buildInlineRows(inlineButtons, 3);
         rows.add(4, KeyboardUtil.buildInlineRows(currencySwitcher,1).get(0));
         return KeyboardUtil.buildInlineByRows(rows);
