@@ -413,7 +413,7 @@ public class ExchangeService {
             dealAmount = userDiscountService.applyDealDiscounts(chatId, dealAmount, deal.getUsedPromo(),
                     deal.getUsedReferralDiscount(), deal.getDiscount());
             messageNew.append("\uD83D\uDCB5<b>Сумма перевода</b>: ")
-                    .append(BigDecimalUtil.toPlainString(dealAmount))
+                    .append(BigDecimalUtil.roundToPlainString(dealAmount))
                     .append(" ").append(deal.getFiatCurrency().getDisplayName()).append("\n\n")
                     .append(additionalText).append("<b>Выберите способ оплаты:</b>");
         } else {
