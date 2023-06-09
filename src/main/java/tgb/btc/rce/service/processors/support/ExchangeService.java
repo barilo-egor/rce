@@ -161,15 +161,20 @@ public class ExchangeService {
         responseSender.sendMessage(chatId, "Выберите валюту.", keyboardService.getFiatCurrencies());
     }
 
-    public void saveFiatCurrency(Update update) {
+    public boolean saveFiatCurrency(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
         FiatCurrency fiatCurrency;
         if (FiatCurrencyUtil.isFew()) {
+            if (!update.hasCallbackQuery()) {
+                responseSender.sendMessage(chatId, "Выберите валюту.");
+                return false;
+            }
             fiatCurrency = FiatCurrency.fromCallbackQuery(update.getCallbackQuery());
         } else {
             fiatCurrency = FiatCurrencyUtil.getFirst();
         }
         dealRepository.updateFiatCurrencyByPid(userRepository.getCurrentDealByChatId(chatId), fiatCurrency);
+        return true;
     }
 
     public void askForCryptoCurrency(Long chatId) {
@@ -178,10 +183,16 @@ public class ExchangeService {
                 keyboardService.getCurrencies(dealType));
     }
 
-    public void saveCryptoCurrency(Update update) {
+    public boolean saveCryptoCurrency(Update update) {
+        Long chatId = UpdateUtil.getChatId(update);
+        if (!update.hasCallbackQuery()) {
+            responseSender.sendMessage(chatId, "Выберите валюту.");
+            return false;
+        }
         CryptoCurrency currency = CryptoCurrency.valueOf(update.getCallbackQuery().getData());
-        Long currentDealPid = userRepository.getCurrentDealByChatId(UpdateUtil.getChatId(update));
+        Long currentDealPid = userRepository.getCurrentDealByChatId(chatId);
         dealRepository.updateCryptoCurrencyByPid(currentDealPid, currency);
+        return true;
     }
 
     public boolean alreadyHasDeal(Long chatId) {

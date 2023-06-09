@@ -121,7 +121,7 @@ public class DealProcessor extends Processor {
             case 1:
                 if (!isBack) {
                     responseSender.deleteCallbackMessageIfExists(update);
-                    exchangeService.saveFiatCurrency(update);
+                    if (!exchangeService.saveFiatCurrency(update)) return;
                 }
                 exchangeService.askForCryptoCurrency(chatId);
                 userRepository.nextStep(chatId);
@@ -129,7 +129,7 @@ public class DealProcessor extends Processor {
             case 2:
                 if (!isBack) {
                     responseSender.deleteCallbackMessageIfExists(update);
-                    exchangeService.saveCryptoCurrency(update);
+                    if (!exchangeService.saveCryptoCurrency(update)) return;
                 }
                 calculatorTypeService.run(update);
                 break;
