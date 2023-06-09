@@ -161,7 +161,7 @@ public class DealProcessor extends Processor {
             case 5:
                 dealType = dealService.getDealTypeByPid(userRepository.getCurrentDealByChatId(chatId));
                 if (!isBack && DealType.isBuy(dealType) && !userService.isReferralBalanceEmpty(chatId)) {
-                    exchangeService.processReferralDiscount(update);
+                    if (!exchangeService.processReferralDiscount(update)) return;
                 }
                 responseSender.deleteCallbackMessageIfExists(update);
                 if (exchangeService.isFewPaymentTypes(chatId)) {

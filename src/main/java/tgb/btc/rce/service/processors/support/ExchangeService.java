@@ -600,15 +600,16 @@ public class ExchangeService {
                 keyboardService.getUseReferralDiscount(sumWithDiscount, dealAmount), "HTML");
     }
 
-    public void processReferralDiscount(Update update) {
+    public boolean processReferralDiscount(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
         if (!update.hasCallbackQuery()) {
             responseSender.sendMessage(chatId, "Выбери использовать со скидкой или без, либо нажми \"Назад\" " +
                     "для возвращения в предыдущее меню.");
-            return;
+            return false;
         }
         Boolean isUsedReferralDiscount = update.getCallbackQuery().getData().equals(BotStringConstants.USE_REFERRAL_DISCOUNT);
         dealRepository.updateUsedReferralDiscountByPid(isUsedReferralDiscount, userRepository.getCurrentDealByChatId(chatId));
+        return true;
     }
 
     public void askForReceipts(Update update) {
