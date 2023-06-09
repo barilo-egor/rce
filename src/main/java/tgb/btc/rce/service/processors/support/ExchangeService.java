@@ -37,9 +37,6 @@ import java.util.Optional;
 
 @Service
 public class ExchangeService {
-
-    private static final boolean IS_SUM_TO_RECEIVE_ON = BotProperties.FUNCTIONS_PROPERTIES.getBoolean("sum.to.receive", true);
-
     private KeyboardService keyboardService;
 
     private MessageService messageService;
@@ -206,9 +203,9 @@ public class ExchangeService {
                     + " " + cryptoCurrency.getDisplayName() + "\n"
                     + "Сумма к оплате: " + BigDecimalUtil.roundToPlainString(dealAmount) + " "
                     + fiatCurrency.getDisplayName() + "\n";
-            if (IS_SUM_TO_RECEIVE_ON) {
+            if (BooleanUtils.isTrue(FunctionPropertiesUtil.getSumToReceive(cryptoCurrency))) {
                 message = message.concat("Сумма к зачислению: "
-                        + BigDecimalUtil.roundToPlainString(calculateService.convertToFiat(dealType,
+                        + BigDecimalUtil.roundToPlainString(calculateService.convertToFiat(
                         dealRepository.getCryptoCurrencyByPid(currentDealPid),
                         dealRepository.getFiatCurrencyByPid(currentDealPid),
                         cryptoAmount))
