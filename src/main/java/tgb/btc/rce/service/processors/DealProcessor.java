@@ -187,7 +187,9 @@ public class DealProcessor extends Processor {
                 break;
             case 8:
                 Boolean result = exchangeService.isPaid(update);
-                if (Objects.isNull(result)) return;
+                if (Objects.isNull(result)) {
+                    return;
+                }
                 if (BooleanUtils.isFalse(result)) processToStart(chatId, update);
                 break;
             case 9:

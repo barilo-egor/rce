@@ -543,10 +543,11 @@ public class ExchangeService {
     }
 
     public Boolean isPaid(Update update) {
+        Long chatId = UpdateUtil.getChatId(update);
         if (!update.hasCallbackQuery()) {
+            responseSender.sendMessage(chatId, "Для отмены сделки нажми \"Отменить сделку\".");
             return null;
         }
-        Long chatId = UpdateUtil.getChatId(update);
         Long dealPid = userRepository.getCurrentDealByChatId(chatId);
         DealDeleteScheduler.deleteCryptoDeal(dealPid);
         if (Command.PAID.name().equals(update.getCallbackQuery().getData())) {
@@ -601,6 +602,11 @@ public class ExchangeService {
 
     public void processReferralDiscount(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
+        if (!update.hasCallbackQuery()) {
+            responseSender.sendMessage(chatId, "Выбери использовать со скидкой или без, либо нажми \"Назад\" " +
+                    "для возвращения в предыдущее меню.");
+            return;
+        }
         Boolean isUsedReferralDiscount = update.getCallbackQuery().getData().equals(BotStringConstants.USE_REFERRAL_DISCOUNT);
         dealRepository.updateUsedReferralDiscountByPid(isUsedReferralDiscount, userRepository.getCurrentDealByChatId(chatId));
     }
