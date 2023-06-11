@@ -54,7 +54,7 @@ public class BanUnban extends Processor {
                     MenuFactory.build(Menu.ADMIN_BACK, userService.isAdminByChatId(chatId)));
             return;
         }
-        if(!bannedUserCache.get(chatId)) {
+        if(!bannedUserCache.get(inputChatId)) {
             userService.ban(inputChatId);
             responseSender.sendMessage(chatId,
                     "Пользователь заблокирован.");
