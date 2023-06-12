@@ -25,7 +25,7 @@ public class UpdateDispatcher implements IUpdateDispatcher {
     public static ApplicationContext applicationContext;
     private static boolean IS_ON = false; // TODO
 
-    private static boolean IS_LOG_UDPATES = BotProperties.FUNCTIONS_PROPERTIES.getBoolean("log.updates", false);
+    private static final boolean IS_LOG_UDPATES = BotProperties.FUNCTIONS_PROPERTIES.getBoolean("log.updates", false);
     private final UserService userService;
     private AntiSpam antiSpam;
 
