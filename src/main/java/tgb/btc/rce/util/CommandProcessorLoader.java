@@ -188,6 +188,7 @@ public final class CommandProcessorLoader {
         commandProcessors.add(NoneCalculator.class);
         commandProcessors.add(InlineQueryCalculator.class);
         commandProcessors.add(InlineCalculator.class);
+        commandProcessors.add(Help.class);
         commandProcessors.stream()
                 .filter(processor -> !extendsProcessor(processor))
                 .findFirst()
