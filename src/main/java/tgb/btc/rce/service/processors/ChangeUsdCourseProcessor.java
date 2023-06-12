@@ -112,6 +112,7 @@ public class ChangeUsdCourseProcessor extends Processor {
                         + fiatCurrency.getCode() + "."
                         + userDataRepository.getDealTypeByChatId(chatId).getKey() + "."
                         + userDataRepository.getCryptoCurrencyByChatId(chatId).getShortName(), newCourse);
+                BotProperties.BOT_VARIABLE_PROPERTIES.reload();
                 responseSender.sendMessage(chatId, BotStringConstants.SUCCESSFUL_COURSE_CHANGE);
                 processToAdminMainPanel(chatId);
                 break;
