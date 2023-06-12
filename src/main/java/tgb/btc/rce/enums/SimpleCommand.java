@@ -15,7 +15,7 @@ public enum SimpleCommand {
             BeanHolder.RESPONSE_SENDER.sendBotMessage(BotMessageType.BOT_OFF, UpdateUtil.getChatId(update))),
 
     ADMIN_PANEL(Command.ADMIN_PANEL, update ->
-            BeanHolder.RESPONSE_SENDER.sendMessage(UpdateUtil.getChatId(update), PropertiesMessage.MENU_MAIN, Menu.ADMIN_PANEL)),
+            BeanHolder.RESPONSE_SENDER.sendMessage(UpdateUtil.getChatId(update), PropertiesMessage.MENU_MAIN_ADMIN_MESSAGE, Menu.ADMIN_PANEL)),
 
     BACK(Command.BACK, update ->
             BeanHolder.RESPONSE_SENDER.sendBotMessage(BotMessageType.START, UpdateUtil.getChatId(update), Menu.MAIN)),
