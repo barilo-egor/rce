@@ -5,9 +5,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.annotation.CommandProcessor;
-import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.DealType;
+import tgb.btc.rce.enums.InlineCalculatorButton;
 import tgb.btc.rce.enums.PropertiesMessage;
 import tgb.btc.rce.repository.DealRepository;
 import tgb.btc.rce.service.IUpdateDispatcher;
@@ -19,6 +19,7 @@ import tgb.btc.rce.service.processors.support.ExchangeService;
 import tgb.btc.rce.util.CallbackQueryUtil;
 import tgb.btc.rce.util.MessagePropertiesUtil;
 import tgb.btc.rce.util.UpdateUtil;
+import tgb.btc.rce.vo.InlineCalculatorData;
 import tgb.btc.rce.vo.InlineCalculatorVO;
 import tgb.btc.rce.vo.calculate.DealAmount;
 
@@ -26,7 +27,7 @@ import java.math.BigDecimal;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static tgb.btc.rce.enums.InlineCalculatorButton.COMMA;
-import static tgb.btc.rce.enums.InlineCalculatorButton.getByData;
+import static tgb.btc.rce.enums.InlineCalculatorButton.SWITCH_CALCULATOR;
 
 @CommandProcessor(command = Command.INLINE_CALCULATOR, step = 1)
 public class InlineCalculator extends Processor {
@@ -96,27 +97,30 @@ public class InlineCalculator extends Processor {
             userRepository.updateStepAndCommandByChatId(chatId, Command.DEAL, DealProcessor.AFTER_CALCULATOR_STEP);
             updateDispatcher.runProcessor(Command.DEAL, chatId, update);
             return;
-        } else if (update.hasMessage()) return; // TODO: "Для ввода суммы вручную нажмите "Переключить калькулятор"" или как там кнопка называется
+        } else if (update.hasMessage()) {
+            responseSender.sendMessage(chatId, "Для ручного ввода суммы нажмите \""+ SWITCH_CALCULATOR.getData() + "\".");
+            return;
+        }
         CallbackQuery callbackQuery = update.getCallbackQuery();
-        String[] data = callbackQuery.getData().split(BotStringConstants.CALLBACK_DATA_SPLITTER); // TODO сделай VO по примеру CalculatorQuery,чтобы не было data[0] data[1], а геттеры с понятным значением
+        InlineCalculatorData data = new InlineCalculatorData(callbackQuery.getData());
         String sum = calculator.getSum();
         Boolean isSwitched = calculator.getSwitched();
         Integer messageId = callbackQuery.getMessage().getMessageId();
-        switch (getByData(data[1])) { //  TODO используй без статик импорта, чтобы было понятно гет что
+        switch (InlineCalculatorButton.getByData(data.getButtonData())) {
             case NUMBER:
                 if (StringUtils.isNotBlank(sum)) {
-                    if (!sum.equals("0")) sum = sum.concat(data[2]);
-                    else if (data[2].equals("0")) return;
-                    else sum = data[2];
+                    if (!sum.equals("0")) sum = sum.concat(data.getNumber());
+                    else if (data.getNumber().equals("0")) return;
+                    else sum = data.getNumber();
                 }
-                else sum = data[2];
+                else sum = data.getNumber();
                 calculator.setSum(sum);
                 break;
             case COMMA:
                 if (StringUtils.isBlank(sum) || sum.contains(COMMA.getData())) return;
-                else sum = sum.concat(data[1]);
+                else sum = sum.concat(data.getButtonData());
                 calculator.setSum(sum);
-                break;
+                return;
             case DEL:
                 if (StringUtils.isNotBlank(sum)) sum = StringUtils.chop(sum);
                 else return;

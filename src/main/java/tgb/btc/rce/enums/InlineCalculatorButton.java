@@ -27,7 +27,9 @@ public enum InlineCalculatorButton {
     }
 
     public static InlineCalculatorButton getByData(String data) {
-        return Arrays.stream(InlineCalculatorButton.values()).filter(t -> t.getData().equals(data)).findFirst() // TODO стримы с каждой новой строки
+        return Arrays.stream(InlineCalculatorButton.values())
+                .filter(t -> t.getData().equals(data))
+                .findFirst()
                 .orElseThrow(() -> new BaseException("Не найдена кнопка калькулятора: " + data));
     }
 }

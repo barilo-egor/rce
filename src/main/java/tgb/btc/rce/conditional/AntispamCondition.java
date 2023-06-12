@@ -3,12 +3,12 @@ package tgb.btc.rce.conditional;
 import org.springframework.context.annotation.Condition;
 import org.springframework.context.annotation.ConditionContext;
 import org.springframework.core.type.AnnotatedTypeMetadata;
-import tgb.btc.rce.enums.CalculatorType;
+import tgb.btc.rce.enums.AntiSpamType;
+import tgb.btc.rce.enums.BotProperties;
 
-public class InlineQueryCalculatorCondition implements Condition {
-
+public class AntispamCondition implements Condition {
     @Override
     public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
-        return CalculatorType.INLINE_QUERY.isCurrent();
+        return !BotProperties.MODULES_PROPERTIES.getString("anti.spam").equals(AntiSpamType.NONE.name());
     }
 }
