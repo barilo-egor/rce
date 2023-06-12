@@ -127,6 +127,10 @@ public interface UserRepository extends BaseRepository<User> {
     @Query("update User set step=:step where chatId=:chatId")
     void updateStepByChatId(Long chatId, Integer step);
 
+    @Modifying
+    @Query("update User set isAdmin=:isAdmin where chatId=:chatId")
+    void updateIsAdminByChatId(Long chatId, Boolean isAdmin);
+
     /**
      * Reports
      */
@@ -140,8 +144,6 @@ public interface UserRepository extends BaseRepository<User> {
     @Query("select chatId from User where pid=:pid")
     Long getChatIdByPid(Long pid);
 
-    @Modifying
-    @Query("update User set isAdmin=:isAdmin where chatId=:chatId")
-    void updateIsAdminByChatId(Long chatId, Boolean isAdmin);
-
+    @Query("from User where isBanned=false")
+    List<User> getAllForUserReport();
 }

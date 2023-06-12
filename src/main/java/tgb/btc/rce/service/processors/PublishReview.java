@@ -44,8 +44,7 @@ public class PublishReview extends Processor {
         int total = referralBalance + reviewPrise;
         log.info("Обновление реф баланса за отзыв : chatId = " + review.getChatId() + "; reviewPrise = "
                 + reviewPrise + "; referralBalance = " + referralBalance + "; total = " + total);
-        userService.updateReferralBalanceByChatId(userService.getReferralBalanceByChatId(review.getChatId())
-                + reviewPrise, review.getChatId());
+        userService.updateReferralBalanceByChatId(total, review.getChatId());
         responseSender.sendMessage(review.getChatId(), "Ваш отзыв опубликован.\n\nНа ваш реферальный баланс зачислено "
                 + reviewPrise + "₽.");
     }
