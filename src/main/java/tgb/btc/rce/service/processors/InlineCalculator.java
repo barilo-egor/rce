@@ -152,7 +152,7 @@ public class InlineCalculator extends Processor {
         Long currentDealPid = userService.getCurrentDealByChatId(chatId);
         DealType dealType = dealRepository.getDealTypeByPid(currentDealPid);
         DealAmount dealAmount = StringUtils.isNotEmpty(sum)
-                ? calculateService.calculate(chatId, new BigDecimal(sum), calculator.getCryptoCurrency(), calculator.getFiatCurrency(), dealType, !isSwitched)
+                ? calculateService.calculate(new BigDecimal(sum), calculator.getCryptoCurrency(), calculator.getFiatCurrency(), dealType, !isSwitched)
                 : null;
         responseSender.sendEditedMessageText(chatId, messageId,
                 messageService.getInlineCalculatorMessage(dealType, calculator, dealAmount),

@@ -235,7 +235,7 @@ public class ExchangeService {
 
     public boolean calculateDealAmount(Long chatId, BigDecimal enteredAmount, Boolean isEnteredInCrypto) {
         Deal deal = dealRepository.findByPid(userRepository.getCurrentDealByChatId(chatId));
-        DealAmount dealAmount = calculateService.calculate(chatId, enteredAmount,
+        DealAmount dealAmount = calculateService.calculate(enteredAmount,
                 deal.getCryptoCurrency(), deal.getFiatCurrency(),
                 deal.getDealType(), isEnteredInCrypto);
         if (isLessThanMin(chatId, deal.getDealType(), deal.getCryptoCurrency(), dealAmount.getCryptoAmount())) {
@@ -273,7 +273,7 @@ public class ExchangeService {
         }
         BigDecimal enteredAmount = calculatorQuery.getEnteredAmount();
 
-        DealAmount dealAmount = calculateService.calculate(chatId, enteredAmount,
+        DealAmount dealAmount = calculateService.calculate(enteredAmount,
                 calculatorQuery.getCurrency(),
                 calculatorQuery.getFiatCurrency(),
                 calculatorQuery.getDealType());
