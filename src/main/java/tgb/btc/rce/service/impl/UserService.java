@@ -18,9 +18,7 @@ import tgb.btc.rce.util.CommandUtil;
 import tgb.btc.rce.util.UpdateUtil;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 @Transactional
@@ -225,16 +223,6 @@ public class UserService extends BasePersistService<User> {
     public void unban(Long chatId) {
         bannedUserCache.remove(chatId);
         userRepository.updateIsBannedByChatId(chatId, false);
-    }
-
-    public void deleteCurrentDeal(Long chatId) {
-        Long currentDealPid = getCurrentDealByChatId(chatId);
-        if (Objects.nonNull(currentDealPid)) {
-            if (dealRepository.existsById(currentDealPid)) {
-                dealRepository.deleteById(currentDealPid);
-            }
-            updateCurrentDealByChatId(null, chatId);
-        }
     }
 
     public boolean isReferralBalanceEmpty(Long chatId) {
