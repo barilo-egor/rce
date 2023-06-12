@@ -1,8 +1,10 @@
 package tgb.btc.rce.service;
 
+import org.springframework.context.annotation.Conditional;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import tgb.btc.rce.conditional.AntispamCondition;
 import tgb.btc.rce.enums.BotProperties;
 
 import java.util.ArrayList;
@@ -12,6 +14,7 @@ import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Service
+@Conditional(AntispamCondition.class)
 public class AntiSpam {
 
     private static final List<Long> SPAM_USERS = new ArrayList<>();

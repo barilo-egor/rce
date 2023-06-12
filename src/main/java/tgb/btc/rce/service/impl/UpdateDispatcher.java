@@ -1,6 +1,7 @@
 package tgb.btc.rce.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.scheduling.annotation.Async;
@@ -25,7 +26,7 @@ public class UpdateDispatcher implements IUpdateDispatcher {
     public static ApplicationContext applicationContext;
     private static boolean IS_ON = false; // TODO
 
-    private static boolean IS_LOG_UDPATES = BotProperties.FUNCTIONS_PROPERTIES.getBoolean("log.updates", false);
+    private static final boolean IS_LOG_UDPATES = BotProperties.FUNCTIONS_PROPERTIES.getBoolean("log.updates", false);
     private final UserService userService;
     private AntiSpam antiSpam;
 
@@ -36,7 +37,7 @@ public class UpdateDispatcher implements IUpdateDispatcher {
         this.bannedUserCache = bannedUserCache;
     }
 
-    @Autowired
+    @Autowired(required = false)
     public void setAntiSpam(AntiSpam antiSpam) {
         this.antiSpam = antiSpam;
     }
@@ -63,8 +64,10 @@ public class UpdateDispatcher implements IUpdateDispatcher {
     }
 
     private Command getCommand(Update update, Long chatId) {
-        if (isCaptcha(update)) return Command.CAPTCHA;
-        antiSpam.saveTime(chatId);
+        if (Objects.nonNull(antiSpam)) {
+            if (isCaptcha(update)) return Command.CAPTCHA;
+            antiSpam.saveTime(chatId);
+        } else userService.registerIfNotExists(update);
         if (isOffed(chatId)) return Command.BOT_OFFED;
         if (CommandUtil.isStartCommand(update)) return Command.START;
         Command command;
@@ -79,7 +82,7 @@ public class UpdateDispatcher implements IUpdateDispatcher {
     }
 
     private boolean isOffed(Long chatId) {
-        return !isOn() && !userService.isAdminByChatId(chatId);
+        return !isOn() && BooleanUtils.isNotTrue(userService.isAdminByChatId(chatId));
     }
 
     private boolean hasAccess(Command command, Long chatId) {

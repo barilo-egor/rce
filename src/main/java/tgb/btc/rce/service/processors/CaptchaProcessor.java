@@ -2,8 +2,10 @@ package tgb.btc.rce.service.processors;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Conditional;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.annotation.CommandProcessor;
+import tgb.btc.rce.conditional.AntispamCondition;
 import tgb.btc.rce.enums.BotKeyboard;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.exception.BaseException;
@@ -14,6 +16,7 @@ import tgb.btc.rce.service.schedule.CaptchaSender;
 import tgb.btc.rce.util.UpdateUtil;
 
 @CommandProcessor(command = Command.CAPTCHA)
+@Conditional(AntispamCondition.class)
 public class CaptchaProcessor extends Processor {
 
     private CaptchaSender captchaSender;

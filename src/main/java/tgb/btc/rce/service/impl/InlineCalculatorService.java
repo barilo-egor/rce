@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import tgb.btc.rce.conditional.InlineCalculatorCondition;
+import tgb.btc.rce.conditional.calculkator.InlineCalculatorCondition;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.DealType;
 import tgb.btc.rce.repository.DealRepository;
