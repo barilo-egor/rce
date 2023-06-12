@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.annotation.CommandProcessor;
+import tgb.btc.rce.bean.Deal;
 import tgb.btc.rce.bean.User;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.CryptoCurrency;
@@ -25,8 +26,12 @@ import tgb.btc.rce.util.UpdateUtil;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @CommandProcessor(command = Command.USERS_REPORT)
 @Slf4j
@@ -52,8 +57,8 @@ public class UsersReport extends Processor {
             Row headRow = sheet.createRow(0);
             sheet.setDefaultColumnWidth(30);
             List<String> cellHeaders = new ArrayList<>(List.of("Chat ID", "Username", "Куплено BTC", "Куплено LTC", "Куплено USDT",
-                                                               "Куплено MONERO", "Продано BTC", "Продано LTC", "Продано USDT",
-                                                               "Продано MONERO"));
+                    "Куплено MONERO", "Продано BTC", "Продано LTC", "Продано USDT",
+                    "Продано MONERO"));
             for (FiatCurrency fiatCurrency : FiatCurrencyUtil.getFiatCurrencies()) {
                 cellHeaders.add("Потрачено " + fiatCurrency.getCode());
             }
@@ -64,27 +69,51 @@ public class UsersReport extends Processor {
             }
 
             int i = 2;
-            for (User user : userService.findAll()) {
+            List<User> users = userRepository.getAllForUserReport();
+            List<Deal> deals = dealRepository.findAll();
+            Map<Long, List<Deal>> usersDeals = new HashMap<>();
+            for (User user : users) {
+                usersDeals.put(user.getChatId(), deals.stream()
+                        .filter(deal -> deal.getUser().getPid().equals(user.getPid()))
+                        .collect(Collectors.toList())
+                );
+            }
+            for (User user : users) {
                 int cellCount = 0;
                 Row row = sheet.createRow(i);
                 Cell cell1 = row.createCell(cellCount);
                 cell1.setCellValue(user.getChatId());
                 Cell cell2 = row.createCell(++cellCount);
                 cell2.setCellValue(StringUtils.defaultIfEmpty(user.getUsername(), "скрыт"));
-                for (int j = 0; j < CryptoCurrency.values().length; j++) {
+                List<CryptoCurrency> cryptoCurrencies = List.of(CryptoCurrency.values());
+                List<Deal> userDeals = usersDeals.get(user.getChatId());
+                for (CryptoCurrency cryptoCurrency : cryptoCurrencies) {
                     Cell cell = row.createCell(++cellCount);
-                    setUserCryptoAmount(cell, user.getChatId(), CryptoCurrency.values()[j], DealType.BUY);
+                    BigDecimal cryptoAmount = BigDecimal.ZERO;
+                    for (Deal deal : userDeals) {
+                        if (DealType.BUY.equals(deal.getDealType()) && cryptoCurrency.equals(deal.getCryptoCurrency()))
+                            cryptoAmount = cryptoAmount.add(deal.getCryptoAmount());
+                    }
+                    setUserCryptoAmount(cell, cryptoAmount, cryptoCurrency);
                 }
-                for (int j = 0; j < CryptoCurrency.values().length; j++) {
+                for (CryptoCurrency cryptoCurrency : cryptoCurrencies) {
                     Cell cell = row.createCell(++cellCount);
-                    setUserCryptoAmount(cell, user.getChatId(), CryptoCurrency.values()[j], DealType.SELL);
+                    BigDecimal cryptoAmount = BigDecimal.ZERO;
+                    for (Deal deal : userDeals) {
+                        if (DealType.SELL.equals(deal.getDealType()) && cryptoCurrency.equals(deal.getCryptoCurrency()))
+                            cryptoAmount = cryptoAmount.add(deal.getCryptoAmount());
+                    }
+                    setUserCryptoAmount(cell, cryptoAmount, cryptoCurrency);
                 }
                 for (FiatCurrency fiatCurrency : FiatCurrencyUtil.getFiatCurrencies()) {
                     cellHeaders.add("Потрачено " + fiatCurrency.getCode());
                     Cell cell = row.createCell(++cellCount);
-                    cell.setCellValue(BigDecimalUtil.roundNullSafe(
-                            dealRepository.getUserAmountSumByDealTypeAndFiatCurrency(user.getChatId(), DealType.BUY, fiatCurrency), 0).toPlainString()
-                    );
+                    BigDecimal userAmount = BigDecimal.ZERO;
+                    for (Deal deal : userDeals) {
+                        if (DealType.BUY.equals(deal.getDealType()) && fiatCurrency.equals(deal.getFiatCurrency()))
+                            userAmount = userAmount.add(deal.getAmount());
+                    }
+                    cell.setCellValue(BigDecimalUtil.roundNullSafe(userAmount, 0).toPlainString());
                 }
                 i++;
             }
@@ -102,6 +131,13 @@ public class UsersReport extends Processor {
             log.error("Ошибка при выгрузке файла " + this.getClass().getSimpleName(), e);
             throw new BaseException("Ошибка при выгрузке файла: " + e.getMessage());
         }
+    }
+
+    public void setUserCryptoAmount(Cell cell, BigDecimal cryptoAmount, CryptoCurrency cryptoCurrency) {
+        cell.setCellValue(BigDecimalUtil.roundNullSafe(
+                cryptoAmount,
+                cryptoCurrency.getScale()).toPlainString()
+        );
     }
 
     public void setUserCryptoAmount(Cell cell, Long chatId, CryptoCurrency cryptoCurrency, DealType dealType) {
