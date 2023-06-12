@@ -79,12 +79,12 @@ public class KeyboardService {
     public ReplyKeyboard getUseReferralDiscount(BigDecimal sumWithDiscount, BigDecimal dealAmount) {
         return KeyboardUtil.buildInline(List.of(
                 InlineButton.builder()
-                        .text("Со скидкой, " + BigDecimalUtil.toPlainString(sumWithDiscount))
+                        .text("Со скидкой, " + BigDecimalUtil.roundToPlainString(sumWithDiscount))
                         .data(BotStringConstants.USE_REFERRAL_DISCOUNT)
                         .inlineType(InlineType.CALLBACK_DATA)
                         .build(),
                 InlineButton.builder()
-                        .text("Без скидки, " + BigDecimalUtil.toPlainString(dealAmount))
+                        .text("Без скидки, " + BigDecimalUtil.roundToPlainString(dealAmount))
                         .data(BotStringConstants.DONT_USE_REFERRAL_DISCOUNT)
                         .inlineType(InlineType.CALLBACK_DATA)
                         .build(),

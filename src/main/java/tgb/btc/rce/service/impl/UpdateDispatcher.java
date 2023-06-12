@@ -6,6 +6,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import tgb.btc.rce.enums.BotProperties;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.SimpleCommand;
 import tgb.btc.rce.service.AntiSpam;
@@ -23,6 +24,8 @@ public class UpdateDispatcher implements IUpdateDispatcher {
 
     public static ApplicationContext applicationContext;
     private static boolean IS_ON = false; // TODO
+
+    private static boolean IS_LOG_UDPATES = BotProperties.FUNCTIONS_PROPERTIES.getBoolean("log.updates", false);
     private final UserService userService;
     private AntiSpam antiSpam;
 
@@ -45,6 +48,7 @@ public class UpdateDispatcher implements IUpdateDispatcher {
 
     public void dispatch(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
+        if (IS_LOG_UDPATES) log.info(chatId.toString());
         if (bannedUserCache.get(chatId)) return;
         runProcessor(getCommand(update, chatId), chatId, update);
     }

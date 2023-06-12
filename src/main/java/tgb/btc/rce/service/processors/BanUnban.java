@@ -1,6 +1,7 @@
 package tgb.btc.rce.service.processors;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.annotation.CommandProcessor;
@@ -54,7 +55,7 @@ public class BanUnban extends Processor {
                     MenuFactory.build(Menu.ADMIN_BACK, userService.isAdminByChatId(chatId)));
             return;
         }
-        if(!bannedUserCache.get(chatId)) {
+        if(!BooleanUtils.isNotTrue(bannedUserCache.get(inputChatId))) {
             userService.ban(inputChatId);
             responseSender.sendMessage(chatId,
                     "Пользователь заблокирован.");

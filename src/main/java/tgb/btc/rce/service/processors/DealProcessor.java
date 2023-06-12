@@ -121,7 +121,7 @@ public class DealProcessor extends Processor {
             case 1:
                 if (!isBack) {
                     responseSender.deleteCallbackMessageIfExists(update);
-                    exchangeService.saveFiatCurrency(update);
+                    if (!exchangeService.saveFiatCurrency(update)) return;
                 }
                 exchangeService.askForCryptoCurrency(chatId);
                 userRepository.nextStep(chatId);
@@ -129,7 +129,7 @@ public class DealProcessor extends Processor {
             case 2:
                 if (!isBack) {
                     responseSender.deleteCallbackMessageIfExists(update);
-                    exchangeService.saveCryptoCurrency(update);
+                    if (!exchangeService.saveCryptoCurrency(update)) return;
                 }
                 calculatorTypeService.run(update);
                 break;
@@ -161,7 +161,7 @@ public class DealProcessor extends Processor {
             case 5:
                 dealType = dealService.getDealTypeByPid(userRepository.getCurrentDealByChatId(chatId));
                 if (!isBack && DealType.isBuy(dealType) && !userService.isReferralBalanceEmpty(chatId)) {
-                    exchangeService.processReferralDiscount(update);
+                    if (!exchangeService.processReferralDiscount(update)) return;
                 }
                 responseSender.deleteCallbackMessageIfExists(update);
                 if (exchangeService.isFewPaymentTypes(chatId)) {
@@ -187,7 +187,9 @@ public class DealProcessor extends Processor {
                 break;
             case 8:
                 Boolean result = exchangeService.isPaid(update);
-                if (Objects.isNull(result)) return;
+                if (Objects.isNull(result)) {
+                    return;
+                }
                 if (BooleanUtils.isFalse(result)) processToStart(chatId, update);
                 break;
             case 9:
