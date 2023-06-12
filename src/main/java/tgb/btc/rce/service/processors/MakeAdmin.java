@@ -1,6 +1,7 @@
 package tgb.btc.rce.service.processors;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.BooleanUtils;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
@@ -19,7 +20,7 @@ public class MakeAdmin extends Processor {
             responseSender.sendMessage(chatId, "Пользователь с таким ID не найден.");
             return;
         }
-        if (userRepository.isAdminByChatId(userChatId)) {
+        if (BooleanUtils.isTrue(userRepository.isAdminByChatId(userChatId))) {
             responseSender.sendMessage(chatId, "Пользователь " + userChatId + " уже является админом.");
             return;
         }
