@@ -1,5 +1,6 @@
 package tgb.btc.rce.util;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import tgb.btc.rce.enums.BotProperties;
 import tgb.btc.rce.enums.FiatCurrency;
@@ -10,6 +11,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 public final class FiatCurrencyUtil {
     private FiatCurrencyUtil() {
     }
@@ -22,6 +24,10 @@ public final class FiatCurrencyUtil {
         FIAT_CURRENCIES = Arrays.stream(BotProperties.BOT_CONFIG.getStringArray("bot.fiat.currencies"))
                 .map(FiatCurrency::valueOf)
                 .collect(Collectors.toList());
+        log.info("Загружено " + FIAT_CURRENCIES.size() + " фиатных валют: "
+                + FIAT_CURRENCIES.stream()
+                .map(FiatCurrency::getDisplayName)
+                .collect(Collectors.joining(", ")));
         if (CollectionUtils.isEmpty(FIAT_CURRENCIES)) throw new BaseException("Не найдена ни одна фиатная валюта");
         IS_FEW = FIAT_CURRENCIES.size() > 1;
     }
