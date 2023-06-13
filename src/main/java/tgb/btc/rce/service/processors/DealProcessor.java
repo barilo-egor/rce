@@ -237,12 +237,19 @@ public class DealProcessor extends Processor {
         Command mainMenuCommand = null;
         List<Command> commands = new ArrayList<>(Menu.MAIN.getCommands());
         commands.add(Command.ADMIN_PANEL);
+        commands.add(Command.START);
         for (Command command : commands) {
             if (command.equals(commandFromUpdate)) mainMenuCommand = command;
         }
         if (Objects.isNull(mainMenuCommand)) return false;
         userRepository.setDefaultValues(chatId);
-        userService.deleteCurrentDeal(chatId);
+        Long currentDealPid = userRepository.getCurrentDealByChatId(chatId);
+        if (Objects.nonNull(currentDealPid) && !dealRepository.getIsActiveByPid(currentDealPid)) {
+            if (dealRepository.existsById(currentDealPid)) {
+                dealRepository.deleteById(currentDealPid);
+            }
+            userRepository.updateCurrentDealByChatId(null, chatId);
+        }
         responseSender.deleteCallbackMessageIfExists(update);
         updateDispatcher.runProcessor(mainMenuCommand, chatId, update);
         return true;

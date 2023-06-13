@@ -12,6 +12,7 @@ import tgb.btc.rce.repository.DealRepository;
 import tgb.btc.rce.repository.UserRepository;
 import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.impl.AdminService;
+import tgb.btc.rce.util.BigDecimalUtil;
 import tgb.btc.rce.util.FiatCurrencyUtil;
 import tgb.btc.rce.vo.DealReportData;
 
@@ -136,7 +137,8 @@ public class DealAutoReport {
                                                            fiatCurrency);
                     totalSum = totalSum.add(cryptoAmount);
                     stringBuilder.append("Получено ").append(fiatCurrency.getCode()).append(" от ")
-                            .append(cryptoCurrency.getDisplayName()).append(": ").append(cryptoAmount).append("\n");
+                            .append(cryptoCurrency.getDisplayName()).append(": ")
+                            .append(BigDecimalUtil.roundToPlainString(cryptoAmount, cryptoCurrency.getScale())).append("\n");
                 }
                 totalAmounts.put(fiatCurrency, totalSum);
                 stringBuilder.append("\n");

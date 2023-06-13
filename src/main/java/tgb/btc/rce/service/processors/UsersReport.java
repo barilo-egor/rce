@@ -47,6 +47,7 @@ public class UsersReport extends Processor {
     @Override
     @Async
     public void run(Update update) {
+        log.info("Старт отчета по пользователям.");
         Long chatId = UpdateUtil.getChatId(update);
         responseSender.sendMessage(chatId, "Формирование отчета запущено.");
         responseSender.sendMessage(chatId, "Отчет придет после того, как сформируется. Это может занять некоторое время.");
@@ -69,15 +70,20 @@ public class UsersReport extends Processor {
             }
 
             int i = 2;
+            log.info("Загрузка пользователей");
             List<User> users = userRepository.getAllForUserReport();
+            log.info("Загрузка сделок.");
             List<Deal> deals = dealRepository.findAll();
             Map<Long, List<Deal>> usersDeals = new HashMap<>();
+            log.info("Сортировка сделок по пользователям.");
             for (User user : users) {
                 usersDeals.put(user.getChatId(), deals.stream()
                         .filter(deal -> deal.getUser().getPid().equals(user.getPid()))
                         .collect(Collectors.toList())
                 );
             }
+            log.info("Начало заполнения данных.");
+            int j = 0;
             for (User user : users) {
                 int cellCount = 0;
                 Row row = sheet.createRow(i);
@@ -116,33 +122,32 @@ public class UsersReport extends Processor {
                     cell.setCellValue(BigDecimalUtil.roundNullSafe(userAmount, 0).toPlainString());
                 }
                 i++;
+                j++;
+                if (j == 1) log.info("Первый пользователь обработан.");
+                if (j % 100 == 0) log.info(j + "-я сотня пользователей обработана.");
             }
+            log.info("Данные заполнены.");
             String fileName = "users.xlsx";
             FileOutputStream outputStream = new FileOutputStream(fileName);
             book.write(outputStream);
             book.close();
             outputStream.close();
             File file = new File(fileName);
+            log.info("Файл создан.");
             responseSender.sendFile(chatId, file);
             log.debug("Админ " + chatId + " выгрузил отчет по пользователям.");
             if (file.delete()) log.trace("Файл успешно удален.");
             else log.trace("Файл не удален.");
         } catch (IOException e) {
-            log.error("Ошибка при выгрузке файла " + this.getClass().getSimpleName(), e);
+            log.error("Ошибка при выгрузке отчета по пользователям. " + this.getClass().getSimpleName(), e);
             throw new BaseException("Ошибка при выгрузке файла: " + e.getMessage());
         }
+        log.info("Конец отчета по пользователям.");
     }
 
     public void setUserCryptoAmount(Cell cell, BigDecimal cryptoAmount, CryptoCurrency cryptoCurrency) {
         cell.setCellValue(BigDecimalUtil.roundNullSafe(
                 cryptoAmount,
-                cryptoCurrency.getScale()).toPlainString()
-        );
-    }
-
-    public void setUserCryptoAmount(Cell cell, Long chatId, CryptoCurrency cryptoCurrency, DealType dealType) {
-        cell.setCellValue(BigDecimalUtil.roundNullSafe(
-                dealRepository.getUserCryptoAmountSum(chatId, cryptoCurrency, dealType),
                 cryptoCurrency.getScale()).toPlainString()
         );
     }

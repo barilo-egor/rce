@@ -27,7 +27,6 @@ public class Start extends Processor {
 
     public void run(Long chatId) {
         userService.updateIsActiveByChatId(true, chatId);
-        userService.deleteCurrentDeal(chatId);
         responseSender.sendBotMessage(botMessageService.findByType(BotMessageType.START), chatId);
         processToMainMenu(chatId);
     }
