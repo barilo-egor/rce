@@ -278,8 +278,6 @@ public class ExchangeService {
                     "Ошибка");
             return;
         }
-        userDiscountService.applyPersonal(chatId, calculatorQuery.getDealType(), dealAmount);
-        userDiscountService.applyBulk(calculatorQuery.getFiatCurrency(), calculatorQuery.getDealType(), dealAmount);
 
         String resultText = calculatorQuery.getDealType().getNominative() + ": "
                 + BigDecimalUtil.roundToPlainString(dealAmount.getCryptoAmount(), calculatorQuery.getCurrency().getScale())
