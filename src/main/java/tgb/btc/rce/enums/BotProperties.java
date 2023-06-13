@@ -25,6 +25,7 @@ public enum BotProperties implements PropertiesReader {
     MODULES_PROPERTIES(FilePaths.MODULES_PROPERTIES, ',', null, false),
 
     FUNCTIONS_PROPERTIES(FilePaths.FUNCTIONS_PROPERTIES, ',', null, false),
+    BUTTONS(FilePaths.BUTTONS_PROPERTIES, ',', null, false)
     ;
 
     private final String fileName;
