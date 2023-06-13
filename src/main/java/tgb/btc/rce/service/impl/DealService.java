@@ -1,5 +1,6 @@
 package tgb.btc.rce.service.impl;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
@@ -9,17 +10,21 @@ import tgb.btc.rce.bean.PaymentReceipt;
 import tgb.btc.rce.bean.PaymentType;
 import tgb.btc.rce.enums.CryptoCurrency;
 import tgb.btc.rce.enums.DealType;
+import tgb.btc.rce.enums.FiatCurrency;
 import tgb.btc.rce.repository.BaseRepository;
 import tgb.btc.rce.repository.DealRepository;
 import tgb.btc.rce.repository.UserRepository;
 import tgb.btc.rce.util.DealPromoUtil;
+import tgb.btc.rce.vo.ReportDealVO;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@Slf4j
 public class DealService extends BasePersistService<Deal> {
 
     private final DealRepository dealRepository;
@@ -60,6 +65,7 @@ public class DealService extends BasePersistService<Deal> {
     public void updatePaymentTypeByPid(PaymentType paymentType, Long pid) {
         dealRepository.updatePaymentTypeByPid(paymentType, pid);
     }
+
     public Long getPidActiveDealByChatId(Long chatId) {
         return dealRepository.getPidActiveDealByChatId(chatId);
     }
@@ -113,5 +119,23 @@ public class DealService extends BasePersistService<Deal> {
 
     public boolean isAvailableForPromo(Long chatId) {
         return !DealPromoUtil.isNone() && isFirstDeal(chatId);
+    }
+
+    public List<ReportDealVO> findAllForUsersReport() {
+        List<Object[]> raws = dealRepository.findAllForUsersReport();
+        List<ReportDealVO> deals = new ArrayList<>();
+        log.info("Маппинг сделок.");
+        for (Object[] raw : raws) {
+            deals.add(ReportDealVO.builder()
+                    .pid((Long) raw[0])
+                    .userPid((Long) raw[1])
+                    .dealType((DealType) raw[2])
+                    .cryptoCurrency((CryptoCurrency) raw[3])
+                    .cryptoAmount((BigDecimal) raw[4])
+                    .fiatCurrency((FiatCurrency) raw[5])
+                    .amount((BigDecimal) raw[6])
+                    .build());
+        }
+        return deals;
     }
 }
