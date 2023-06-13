@@ -10,6 +10,8 @@ public final class BigDecimalUtil {
 
     public static final int scale = 20;
 
+    public static final BigDecimal HUNDRED = BigDecimal.valueOf(100);
+
     public static BigDecimal divideHalfUp(BigDecimal a, BigDecimal b) {
         return a.setScale(scale, RoundingMode.HALF_UP).divide(b, RoundingMode.HALF_UP);
     }
