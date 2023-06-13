@@ -25,6 +25,20 @@ public class DealAmount {
 
     private DealType dealType;
 
+    private Long chatId;
+
+    public DealType getDealType() {
+        return dealType;
+    }
+
+    public Long getChatId() {
+        return chatId;
+    }
+
+    public void setChatId(Long chatId) {
+        this.chatId = chatId;
+    }
+
     public boolean isEnteredInCrypto() {
         return isEnteredInCrypto;
     }
