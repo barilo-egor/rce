@@ -21,11 +21,12 @@ public enum BotProperties implements PropertiesReader {
                                     true),
     MESSAGE(FilePaths.MESSAGE_PROPERTIES, ',', null, false),
     MESSAGE_BUFFER(FilePaths.MESSAGE_BUFFER_PROPERTIES, ',', null, true),
-    TURNING_CURRENCIES(FilePaths.CURRENCIES_TURNING, ',', new CurrenciesTurningValidateService(), false),
+    TURNING_CURRENCIES(FilePaths.CURRENCIES_TURNING_PROPERTIES, ',', new CurrenciesTurningValidateService(), false),
     MODULES(FilePaths.MODULES_PROPERTIES, ',', null, false),
 
     FUNCTIONS(FilePaths.FUNCTIONS_PROPERTIES, ',', null, false),
-    BUTTONS(FilePaths.BUTTONS_PROPERTIES, ',', null, false)
+    BUTTONS_DESIGN(FilePaths.BUTTONS_DESIGN_PROPERTIES, ',', null, false),
+    CRYPTO_CURRENCIES_DESIGN(FilePaths.CRYPTO_CURRENCIES_DESIGN_PROPERTIES, ',', null, false)
     ;
 
     private final String fileName;

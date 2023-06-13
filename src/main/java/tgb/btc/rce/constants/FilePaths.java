@@ -16,7 +16,7 @@ public interface FilePaths {
 
     String BOT_VARIABLE_BUFFER_PROPERTIES = "config/buffer/variables.properties";
 
-    String CURRENCIES_TURNING = "config/currencies_turning.properties";
+    String CURRENCIES_TURNING_PROPERTIES = "config/currencies_turning.properties";
 
     String BULK_DISCOUNT_PROPERTIES = "config/bulk_discount.properties";
 
@@ -28,7 +28,9 @@ public interface FilePaths {
 
     String FUNCTIONS_PROPERTIES = "config/bot/functions.properties";
 
-    String BUTTONS_PROPERTIES = "config/design/buttons.properties";
+    String BUTTONS_DESIGN_PROPERTIES = "config/design/buttons.properties";
+
+    String CRYPTO_CURRENCIES_DESIGN_PROPERTIES = "config/design/crypto_currencies.properties";
 
     /**
      * PICTURES
