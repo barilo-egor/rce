@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.annotation.CommandProcessor;
-import tgb.btc.rce.bean.Deal;
 import tgb.btc.rce.bean.User;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.CryptoCurrency;
@@ -19,18 +18,17 @@ import tgb.btc.rce.enums.FiatCurrency;
 import tgb.btc.rce.exception.BaseException;
 import tgb.btc.rce.repository.DealRepository;
 import tgb.btc.rce.service.Processor;
+import tgb.btc.rce.service.impl.DealService;
 import tgb.btc.rce.util.BigDecimalUtil;
 import tgb.btc.rce.util.FiatCurrencyUtil;
 import tgb.btc.rce.util.UpdateUtil;
+import tgb.btc.rce.vo.ReportDealVO;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @CommandProcessor(command = Command.USERS_REPORT)
@@ -38,6 +36,13 @@ import java.util.stream.Collectors;
 public class UsersReport extends Processor {
 
     private DealRepository dealRepository;
+
+    private DealService dealService;
+
+    @Autowired
+    public void setDealService(DealService dealService) {
+        this.dealService = dealService;
+    }
 
     @Autowired
     public void setDealRepository(DealRepository dealRepository) {
@@ -73,12 +78,12 @@ public class UsersReport extends Processor {
             log.info("Загрузка пользователей");
             List<User> users = userRepository.getAllForUserReport();
             log.info("Загрузка сделок.");
-            List<Deal> deals = dealRepository.findAll();
-            Map<Long, List<Deal>> usersDeals = new HashMap<>();
+            List<ReportDealVO> deals = dealService.findAllForUsersReport();
+            Map<Long, List<ReportDealVO>> usersDeals = new HashMap<>();
             log.info("Сортировка сделок по пользователям.");
             for (User user : users) {
                 usersDeals.put(user.getChatId(), deals.stream()
-                        .filter(deal -> deal.getUser().getPid().equals(user.getPid()))
+                        .filter(deal -> deal.getUserPid().equals(user.getPid()))
                         .collect(Collectors.toList())
                 );
             }
@@ -92,11 +97,12 @@ public class UsersReport extends Processor {
                 Cell cell2 = row.createCell(++cellCount);
                 cell2.setCellValue(StringUtils.defaultIfEmpty(user.getUsername(), "скрыт"));
                 List<CryptoCurrency> cryptoCurrencies = List.of(CryptoCurrency.values());
-                List<Deal> userDeals = usersDeals.get(user.getChatId());
+                List<ReportDealVO> userDeals = usersDeals.get(user.getChatId());
                 for (CryptoCurrency cryptoCurrency : cryptoCurrencies) {
                     Cell cell = row.createCell(++cellCount);
                     BigDecimal cryptoAmount = BigDecimal.ZERO;
-                    for (Deal deal : userDeals) {
+                    for (ReportDealVO deal : userDeals) {
+                        if (isErrorDeal(deal)) continue;
                         if (DealType.BUY.equals(deal.getDealType()) && cryptoCurrency.equals(deal.getCryptoCurrency()))
                             cryptoAmount = cryptoAmount.add(deal.getCryptoAmount());
                     }
@@ -105,7 +111,8 @@ public class UsersReport extends Processor {
                 for (CryptoCurrency cryptoCurrency : cryptoCurrencies) {
                     Cell cell = row.createCell(++cellCount);
                     BigDecimal cryptoAmount = BigDecimal.ZERO;
-                    for (Deal deal : userDeals) {
+                    for (ReportDealVO deal : userDeals) {
+                        if (isErrorDeal(deal)) continue;
                         if (DealType.SELL.equals(deal.getDealType()) && cryptoCurrency.equals(deal.getCryptoCurrency()))
                             cryptoAmount = cryptoAmount.add(deal.getCryptoAmount());
                     }
@@ -115,7 +122,8 @@ public class UsersReport extends Processor {
                     cellHeaders.add("Потрачено " + fiatCurrency.getCode());
                     Cell cell = row.createCell(++cellCount);
                     BigDecimal userAmount = BigDecimal.ZERO;
-                    for (Deal deal : userDeals) {
+                    for (ReportDealVO deal : userDeals) {
+                        if (isErrorDeal(deal)) continue;
                         if (DealType.BUY.equals(deal.getDealType()) && fiatCurrency.equals(deal.getFiatCurrency()))
                             userAmount = userAmount.add(deal.getAmount());
                     }
@@ -143,6 +151,12 @@ public class UsersReport extends Processor {
             throw new BaseException("Ошибка при выгрузке файла: " + e.getMessage());
         }
         log.info("Конец отчета по пользователям.");
+    }
+
+    private boolean isErrorDeal(ReportDealVO reportDealVO) {
+        return Objects.isNull(reportDealVO.getAmount()) || Objects.isNull(reportDealVO.getCryptoAmount())
+                || Objects.isNull(reportDealVO.getDealType()) || Objects.isNull(reportDealVO.getCryptoCurrency())
+                || Objects.isNull(reportDealVO.getFiatCurrency());
     }
 
     public void setUserCryptoAmount(Cell cell, BigDecimal cryptoAmount, CryptoCurrency cryptoCurrency) {

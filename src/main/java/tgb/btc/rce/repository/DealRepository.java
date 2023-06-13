@@ -186,4 +186,7 @@ public interface DealRepository extends BaseRepository<Deal> {
 
     @Query(value = "select isUsedPromo from Deal where pid=:pid")
     Boolean getIsUsedPromoByPid(Long pid);
+
+    @Query(value = "select pid,user.pid,dealType,cryptoCurrency,cryptoAmount,fiatCurrency,amount from Deal where isPassed=true")
+    List<Object[]> findAllForUsersReport();
 }
