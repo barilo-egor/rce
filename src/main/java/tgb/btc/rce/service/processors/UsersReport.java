@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.annotation.CommandProcessor;
-import tgb.btc.rce.bean.User;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.CryptoCurrency;
 import tgb.btc.rce.enums.DealType;
@@ -22,7 +21,8 @@ import tgb.btc.rce.service.impl.DealService;
 import tgb.btc.rce.util.BigDecimalUtil;
 import tgb.btc.rce.util.FiatCurrencyUtil;
 import tgb.btc.rce.util.UpdateUtil;
-import tgb.btc.rce.vo.ReportDealVO;
+import tgb.btc.rce.vo.report.ReportDealVO;
+import tgb.btc.rce.vo.report.ReportUserVO;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -76,20 +76,19 @@ public class UsersReport extends Processor {
 
             int i = 2;
             log.info("Загрузка пользователей");
-            List<User> users = userRepository.getAllForUserReport();
+            List<ReportUserVO> users = userService.findAllForUsersReport();
             log.info("Загрузка сделок.");
             List<ReportDealVO> deals = dealService.findAllForUsersReport();
             Map<Long, List<ReportDealVO>> usersDeals = new HashMap<>();
             log.info("Сортировка сделок по пользователям.");
-            for (User user : users) {
+            for (ReportUserVO user : users) {
                 usersDeals.put(user.getChatId(), deals.stream()
                         .filter(deal -> deal.getUserPid().equals(user.getPid()))
                         .collect(Collectors.toList())
                 );
             }
             log.info("Начало заполнения данных.");
-            int j = 0;
-            for (User user : users) {
+            for (ReportUserVO user : users) {
                 int cellCount = 0;
                 Row row = sheet.createRow(i);
                 Cell cell1 = row.createCell(cellCount);
@@ -130,9 +129,6 @@ public class UsersReport extends Processor {
                     cell.setCellValue(BigDecimalUtil.roundNullSafe(userAmount, 0).toPlainString());
                 }
                 i++;
-                j++;
-                if (j == 1) log.info("Первый пользователь обработан.");
-                if (j % 100 == 0) log.info(j + "-я сотня пользователей обработана.");
             }
             log.info("Данные заполнены.");
             String fileName = "users.xlsx";

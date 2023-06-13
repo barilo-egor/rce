@@ -144,6 +144,6 @@ public interface UserRepository extends BaseRepository<User> {
     @Query("select chatId from User where pid=:pid")
     Long getChatIdByPid(Long pid);
 
-    @Query("from User where isBanned=false")
-    List<User> getAllForUserReport();
+    @Query("select pid,chatId,username from User where isBanned=false")
+    List<Object[]> findAllForUsersReport();
 }

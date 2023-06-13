@@ -16,7 +16,9 @@ import tgb.btc.rce.exception.BaseException;
 import tgb.btc.rce.repository.*;
 import tgb.btc.rce.util.CommandUtil;
 import tgb.btc.rce.util.UpdateUtil;
+import tgb.btc.rce.vo.report.ReportUserVO;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -80,6 +82,7 @@ public class UserService extends BasePersistService<User> {
 
     /**
      * Регистрирует пользователя, если он не существует в базе.
+     *
      * @return существовал ли пользователь ДО регистрации.
      */
     public boolean registerIfNotExists(Update update) {
@@ -228,5 +231,18 @@ public class UserService extends BasePersistService<User> {
     public boolean isReferralBalanceEmpty(Long chatId) {
         Integer referralBalance = userRepository.getReferralBalanceByChatId(chatId);
         return Objects.nonNull(referralBalance) && referralBalance == 0;
+    }
+
+    public List<ReportUserVO> findAllForUsersReport() {
+        List<Object[]> raws = userRepository.findAllForUsersReport();
+        List<ReportUserVO> users = new ArrayList<>();
+        for (Object[] raw : raws) {
+            users.add(ReportUserVO.builder()
+                    .pid((Long) raw[0])
+                    .chatId((Long) raw[1])
+                    .username((String) raw[2])
+                    .build());
+        }
+        return users;
     }
 }

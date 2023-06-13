@@ -15,7 +15,7 @@ import tgb.btc.rce.repository.BaseRepository;
 import tgb.btc.rce.repository.DealRepository;
 import tgb.btc.rce.repository.UserRepository;
 import tgb.btc.rce.util.DealPromoUtil;
-import tgb.btc.rce.vo.ReportDealVO;
+import tgb.btc.rce.vo.report.ReportDealVO;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
