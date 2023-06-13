@@ -28,6 +28,8 @@ public interface FilePaths {
 
     String FUNCTIONS_PROPERTIES = "config/bot/functions.properties";
 
+    String BUTTONS_PROPERTIES = "config/design/buttons.properties";
+
     /**
      * PICTURES
      */

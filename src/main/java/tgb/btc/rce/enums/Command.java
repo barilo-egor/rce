@@ -19,7 +19,7 @@ public enum Command {
      */
 
     /** UTIL */
-    BACK("◀️ Назад", false, true, false),
+    BACK(BotProperties.BUTTONS.getString("BACK"), false, true, false),
     ADMIN_BACK("Назад", true, false, false),
     CANCEL("Отмена", false, false, false),
     SHARE_CONTACT("Поделиться контактом", false, false, false),
@@ -36,16 +36,16 @@ public enum Command {
     HELP("/help", true, false, true),
 
     /** MAIN */
-    BUY_BITCOIN("\uD83D\uDCB0 Купить", false, false, false),
-    SELL_BITCOIN("\uD83D\uDCC8 Продать", false, false, false),
-    CONTACTS("\uD83D\uDEC3 Контакты", false, true, false),
-    DRAWS("\uD83C\uDFB0 Розыгрыши", false, true, false),
-    REFERRAL("\uD83E\uDD1D Реферальная программа", false, false, false),
+    BUY_BITCOIN(BotProperties.BUTTONS.getString("BUY_BITCOIN"), false, false, false),
+    SELL_BITCOIN(BotProperties.BUTTONS.getString("SELL_BITCOIN"), false, false, false),
+    CONTACTS(BotProperties.BUTTONS.getString("CONTACTS"), false, true, false),
+    DRAWS(BotProperties.BUTTONS.getString("DRAWS"), false, true, false),
+    REFERRAL(BotProperties.BUTTONS.getString("REFERRAL"), false, false, false),
     ADMIN_PANEL("Админ панель", true, true, false),
 
     /** DRAWS */
-    LOTTERY("\uD83C\uDFB0 Лотерея", false, false, false),
-    ROULETTE("\uD83C\uDFB0 Рулетка", false, true, false),
+    LOTTERY(BotProperties.BUTTONS.getString("LOTTERY"), false, false, false),
+    ROULETTE(BotProperties.BUTTONS.getString("ROULETTE"), false, true, false),
 
     /** REFERRAL */
     WITHDRAWAL_OF_FUNDS("withdrawal", false, false, false),
