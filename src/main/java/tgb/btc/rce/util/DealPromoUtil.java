@@ -9,6 +9,6 @@ public final class DealPromoUtil {
 
     public static boolean isNone() {
         return FirstDealPromoType.NONE.equals(FirstDealPromoType.valueOf(
-                BotProperties.MODULES_PROPERTIES.getString("first.deal.promo.type")));
+                BotProperties.MODULES.getString("first.deal.promo.type")));
     }
 }

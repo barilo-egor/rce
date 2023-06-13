@@ -9,6 +9,6 @@ import tgb.btc.rce.enums.BotProperties;
 public class AntispamCondition implements Condition {
     @Override
     public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
-        return !BotProperties.MODULES_PROPERTIES.getString("anti.spam").equals(AntiSpamType.NONE.name());
+        return !BotProperties.MODULES.getString("anti.spam").equals(AntiSpamType.NONE.name());
     }
 }

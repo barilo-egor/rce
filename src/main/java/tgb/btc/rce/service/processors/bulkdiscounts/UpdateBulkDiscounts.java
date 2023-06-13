@@ -39,12 +39,12 @@ public class UpdateBulkDiscounts extends Processor {
             return;
         }
         try {
-            BotProperties.BULK_DISCOUNT_BUFFER_PROPERTIES.validate();
+            BotProperties.BULK_DISCOUNT_BUFFER.validate();
         } catch (PropertyValueNotFoundException e) {
             log.error(e.getMessage(), e);
             responseSender.sendMessage(chatId, e.getMessage());
             try {
-                FileUtils.delete(BotProperties.BULK_DISCOUNT_BUFFER_PROPERTIES.getFile());
+                FileUtils.delete(BotProperties.BULK_DISCOUNT_BUFFER.getFile());
             } catch (IOException ex) {
                 log.error("Ошибки при удалении " + FilePaths.BULK_DISCOUNT_BUFFER_PROPERTIES, e);
                 responseSender.sendMessage(chatId, "Ошибки при удалении " + FilePaths.BULK_DISCOUNT_BUFFER_PROPERTIES + ":"
@@ -53,7 +53,7 @@ public class UpdateBulkDiscounts extends Processor {
             return;
         }
         try {
-            FileUtils.delete(BotProperties.BULK_DISCOUNT_PROPERTIES.getFile());
+            FileUtils.delete(BotProperties.BULK_DISCOUNT.getFile());
         } catch (IOException e) {
             log.error("Ошибки при удалении " + FilePaths.BULK_DISCOUNT_PROPERTIES, e);
             responseSender.sendMessage(chatId, "Ошибки при удалении " + FilePaths.BULK_DISCOUNT_PROPERTIES + ":"
@@ -61,7 +61,7 @@ public class UpdateBulkDiscounts extends Processor {
             return;
         }
         try {
-            FileUtils.moveFile(BotProperties.BULK_DISCOUNT_BUFFER_PROPERTIES.getFile(), BotProperties.BULK_DISCOUNT_PROPERTIES.getFile());
+            FileUtils.moveFile(BotProperties.BULK_DISCOUNT_BUFFER.getFile(), BotProperties.BULK_DISCOUNT.getFile());
         } catch (IOException e) {
             log.error("Ошибки при перемещении файла + " + FilePaths.BULK_DISCOUNT_BUFFER_PROPERTIES
                     + " в " + FilePaths.BULK_DISCOUNT_PROPERTIES, e);
@@ -69,8 +69,8 @@ public class UpdateBulkDiscounts extends Processor {
                     + FilePaths.BULK_DISCOUNT_BUFFER_PROPERTIES + " в " + FilePaths.BULK_DISCOUNT_PROPERTIES);
             return;
         }
-        BotProperties.BULK_DISCOUNT_PROPERTIES.reload();
-        BotProperties.BULK_DISCOUNT_PROPERTIES.load();
+        BotProperties.BULK_DISCOUNT.reload();
+        BotProperties.BULK_DISCOUNT.load();
         responseSender.sendMessage(chatId, "Оптовые скидки обновлены.");
     }
 }

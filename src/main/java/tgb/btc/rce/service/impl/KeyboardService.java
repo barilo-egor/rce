@@ -24,7 +24,7 @@ import static tgb.btc.rce.enums.InlineCalculatorButton.*;
 public class KeyboardService {
 
     private static final CalculatorType CALCULATOR_TYPE =
-            CalculatorType.valueOf(BotProperties.MODULES_PROPERTIES.getString("calculator.type"));
+            CalculatorType.valueOf(BotProperties.MODULES.getString("calculator.type"));
 
     private PaymentTypeRepository paymentTypeRepository;
 

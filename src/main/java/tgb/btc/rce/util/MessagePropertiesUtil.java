@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import tgb.btc.rce.enums.BotProperties;
 import tgb.btc.rce.enums.DealType;
 import tgb.btc.rce.enums.PropertiesMessage;
-import tgb.btc.rce.exception.PropertyValueNotFoundException;
 
 import java.util.Objects;
 
@@ -16,7 +15,7 @@ public class MessagePropertiesUtil {
     public static String getMessage(PropertiesMessage message) {
         String text;
         try {
-            text = BotProperties.MESSAGE_PROPERTIES.getString(message.getKey()).replaceAll("<ln>", "\n");
+            text = BotProperties.MESSAGE.getString(message.getKey()).replaceAll("<ln>", "\n");
         } catch (Exception e) {
             text = getErrorText(message.getKey());
         }
@@ -31,7 +30,7 @@ public class MessagePropertiesUtil {
     public static String getMessage(String key) {
         String text;
         try {
-            text = BotProperties.MESSAGE_PROPERTIES.getString(key).replaceAll("<ln>", "\n");
+            text = BotProperties.MESSAGE.getString(key).replaceAll("<ln>", "\n");
         } catch (Exception e) {
             text = getErrorText(key);
         }

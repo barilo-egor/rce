@@ -52,12 +52,12 @@ public class BotVariables extends Processor {
             return;
         }
         try {
-            BotProperties.BOT_VARIABLE_BUFFER_PROPERTIES.validate();
+            BotProperties.BOT_VARIABLE_BUFFER.validate();
         } catch (PropertyValueNotFoundException e) {
             log.error(e.getMessage(),e);
             responseSender.sendMessage(chatId,e.getMessage());
             try {
-                FileUtils.delete(BotProperties.BOT_VARIABLE_BUFFER_PROPERTIES.getFile());
+                FileUtils.delete(BotProperties.BOT_VARIABLE_BUFFER.getFile());
             } catch (IOException ex) {
                 log.error("Ошибки при удалении " + FilePaths.BOT_VARIABLE_BUFFER_PROPERTIES, ex);
                 responseSender.sendMessage(chatId, "Ошибки при удалении " + FilePaths.BOT_VARIABLE_BUFFER_PROPERTIES + ":"
@@ -66,7 +66,7 @@ public class BotVariables extends Processor {
             return;
         }
         try {
-            FileUtils.delete(BotProperties.BOT_VARIABLE_PROPERTIES.getFile());
+            FileUtils.delete(BotProperties.BOT_VARIABLE.getFile());
         } catch (IOException e) {
             log.error("Ошибки при удалении " + FilePaths.BOT_VARIABLE_PROPERTIES, e);
             responseSender.sendMessage(chatId, "Ошибки при удалении " + FilePaths.BOT_VARIABLE_PROPERTIES + ":"
@@ -74,7 +74,7 @@ public class BotVariables extends Processor {
             return;
         }
         try {
-            FileUtils.moveFile(BotProperties.BOT_VARIABLE_BUFFER_PROPERTIES.getFile(), BotProperties.BOT_VARIABLE_PROPERTIES.getFile());
+            FileUtils.moveFile(BotProperties.BOT_VARIABLE_BUFFER.getFile(), BotProperties.BOT_VARIABLE.getFile());
         } catch (IOException e) {
             log.error("Ошибки при перемещении файла + " + FilePaths.BOT_VARIABLE_BUFFER_PROPERTIES
                     + " в " + FilePaths.BOT_VARIABLE_PROPERTIES, e);
@@ -82,7 +82,7 @@ public class BotVariables extends Processor {
                     + FilePaths.BOT_VARIABLE_BUFFER_PROPERTIES + " в " + FilePaths.BOT_VARIABLE_PROPERTIES);
             return;
         }
-        BotProperties.BOT_VARIABLE_PROPERTIES.reload();
+        BotProperties.BOT_VARIABLE.reload();
         responseSender.sendMessage(chatId, "Переменные обновлены.");
     }
 }

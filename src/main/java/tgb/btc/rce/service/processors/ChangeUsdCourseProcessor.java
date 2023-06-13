@@ -108,11 +108,11 @@ public class ChangeUsdCourseProcessor extends Processor {
                 fiatCurrency = FiatCurrencyUtil.isFew()
                         ? FiatCurrency.valueOf(userDataRepository.getStringByUserChatId(chatId))
                         : FiatCurrencyUtil.getFirst();
-                BotProperties.BOT_VARIABLE_PROPERTIES.setProperty(BotVariableType.USD_COURSE.getKey() + "."
+                BotProperties.BOT_VARIABLE.setProperty(BotVariableType.USD_COURSE.getKey() + "."
                         + fiatCurrency.getCode() + "."
                         + userDataRepository.getDealTypeByChatId(chatId).getKey() + "."
                         + userDataRepository.getCryptoCurrencyByChatId(chatId).getShortName(), newCourse);
-                BotProperties.BOT_VARIABLE_PROPERTIES.reload();
+                BotProperties.BOT_VARIABLE.reload();
                 responseSender.sendMessage(chatId, BotStringConstants.SUCCESSFUL_COURSE_CHANGE);
                 processToAdminMainPanel(chatId);
                 break;

@@ -51,12 +51,12 @@ public class SystemMessages extends Processor {
             return;
         }
         try {
-            BotProperties.MESSAGE_BUFFER_PROPERTIES.validate();
+            BotProperties.MESSAGE_BUFFER.validate();
         } catch (PropertyValueNotFoundException e) {
             log.error(e.getMessage(), e);
             responseSender.sendMessage(chatId, e.getMessage());
             try {
-                FileUtils.delete(BotProperties.MESSAGE_BUFFER_PROPERTIES.getFile());
+                FileUtils.delete(BotProperties.MESSAGE_BUFFER.getFile());
             } catch (IOException ex) {
                 log.error("Ошибки при удалении " + FilePaths.MESSAGE_BUFFER_PROPERTIES, ex);
                 responseSender.sendMessage(chatId, "Ошибки при удалении " + FilePaths.MESSAGE_BUFFER_PROPERTIES + ":"
@@ -73,7 +73,7 @@ public class SystemMessages extends Processor {
             return;
         }
         try {
-            FileUtils.moveFile(BotProperties.MESSAGE_BUFFER_PROPERTIES.getFile(), BotProperties.MESSAGE_PROPERTIES.getFile());
+            FileUtils.moveFile(BotProperties.MESSAGE_BUFFER.getFile(), BotProperties.MESSAGE.getFile());
         } catch (IOException e) {
             log.error("Ошибки при перемещении файла + " + FilePaths.MESSAGE_BUFFER_PROPERTIES
                     + " в " + FilePaths.MESSAGE_PROPERTIES, e);
@@ -81,7 +81,7 @@ public class SystemMessages extends Processor {
                     + FilePaths.MESSAGE_BUFFER_PROPERTIES + " в " + FilePaths.MESSAGE_PROPERTIES);
             return;
         }
-        BotProperties.MESSAGE_PROPERTIES.reload();
+        BotProperties.MESSAGE.reload();
         responseSender.sendMessage(chatId, "Переменные обновлены.");
     }
 }

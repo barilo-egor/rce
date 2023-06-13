@@ -85,7 +85,7 @@ public class CryptoCurrencyService {
     private BigDecimal getBtcCurrency() {
         Object obj;
         JSONObject currency;
-        if (CurrencyApi.BINANCE.equals(CurrencyApi.valueOf(BotProperties.BOT_CONFIG_PROPERTIES.getString("bot.btc.api")))) {
+        if (CurrencyApi.BINANCE.equals(CurrencyApi.valueOf(BotProperties.BOT_CONFIG.getString("bot.btc.api")))) {
             currency = readJsonFromUrl(BTC_USD_URL_BINANCE);
             obj = currency.get("price");
             return parse(obj, CryptoCurrency.BITCOIN, String.class);

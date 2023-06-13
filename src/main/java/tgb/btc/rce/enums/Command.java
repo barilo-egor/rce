@@ -50,7 +50,7 @@ public enum Command {
     /** REFERRAL */
     WITHDRAWAL_OF_FUNDS("withdrawal", false, false, false),
     SHOW_WITHDRAWAL_REQUEST("show_withdrawal", false, false, false),
-    SEND_LINK(BotProperties.BOT_CONFIG_PROPERTIES.getString("bot.link"), false, false, false),
+    SEND_LINK(BotProperties.BOT_CONFIG.getString("bot.link"), false, false, false),
     HIDE_WITHDRAWAL("hide_withdrawal", true, false, false),
     CHANGE_REFERRAL_BALANCE("change_ref", true, false, false),
     DELETE_WITHDRAWAL_REQUEST("withdrawal_delete", false, false, false),

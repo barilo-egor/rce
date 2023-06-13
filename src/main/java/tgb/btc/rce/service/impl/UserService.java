@@ -36,7 +36,7 @@ public class UserService extends BasePersistService<User> {
     private DealRepository dealRepository;
 
     public static final ReferralType REFERRAL_TYPE =
-            ReferralType.valueOf(BotProperties.MODULES_PROPERTIES.getString("referral.type"));
+            ReferralType.valueOf(BotProperties.MODULES.getString("referral.type"));
 
     @Autowired
     public void setDealRepository(DealRepository dealRepository) {

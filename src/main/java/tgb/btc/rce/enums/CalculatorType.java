@@ -8,7 +8,7 @@ public enum CalculatorType implements Module {
     INLINE;
 
     public static final CalculatorType CURRENT =
-            CalculatorType.valueOf(BotProperties.MODULES_PROPERTIES.getString("calculator.type"));
+            CalculatorType.valueOf(BotProperties.MODULES.getString("calculator.type"));
 
     public boolean isCurrent() {
         return this.equals(CURRENT);

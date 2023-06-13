@@ -8,7 +8,7 @@ public enum AntiSpamType implements Module {
     EMOJI;
 
     public static final AntiSpamType CURRENT =
-            AntiSpamType.valueOf(BotProperties.MODULES_PROPERTIES.getString("anti.spam"));
+            AntiSpamType.valueOf(BotProperties.MODULES.getString("anti.spam"));
 
     @Override
     public boolean isCurrent() {

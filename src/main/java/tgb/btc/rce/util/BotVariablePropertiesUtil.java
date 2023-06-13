@@ -16,7 +16,7 @@ public class BotVariablePropertiesUtil {
     public static String getVariable(BotVariableType botVariableType) {
         String text;
         try {
-            text = BotProperties.BOT_VARIABLE_PROPERTIES.getString(botVariableType.getKey());
+            text = BotProperties.BOT_VARIABLE.getString(botVariableType.getKey());
         } catch (Exception e) {
             throw new BaseException("Переменная по ключу " + botVariableType.getKey() + " не найдена.");
         }
@@ -33,7 +33,7 @@ public class BotVariablePropertiesUtil {
                 + dealType.getKey() + "."
                 + cryptoCurrency.getShortName();
         try {
-            text = BotProperties.BOT_VARIABLE_PROPERTIES.getString(botVariableType.getKey() + "."
+            text = BotProperties.BOT_VARIABLE.getString(botVariableType.getKey() + "."
                     + fiatCurrency.getCode() + "."
                     + dealType.getKey() + "."
                     + cryptoCurrency.getShortName());
@@ -51,7 +51,7 @@ public class BotVariablePropertiesUtil {
                 + dealType.getKey() + "."
                 + cryptoCurrency.getShortName();
         try {
-            text = BotProperties.BOT_VARIABLE_PROPERTIES.getString(key);
+            text = BotProperties.BOT_VARIABLE.getString(key);
         } catch (Exception e) {
             throw new BaseException("Переменная по ключу " + key + " не найдена.");
         }
@@ -115,14 +115,14 @@ public class BotVariablePropertiesUtil {
     }
 
     public static BigDecimal getBigDecimal(String key) {
-        return BotProperties.BOT_VARIABLE_PROPERTIES.getBigDecimal(key);
+        return BotProperties.BOT_VARIABLE.getBigDecimal(key);
     }
 
     public static Double getDouble(String key) {
-        return BotProperties.BOT_VARIABLE_PROPERTIES.getDouble(key);
+        return BotProperties.BOT_VARIABLE.getDouble(key);
     }
 
     public static String getWallet(CryptoCurrency cryptoCurrency) {
-        return BotProperties.BOT_VARIABLE_PROPERTIES.getString(BotVariableType.WALLET.getKey(cryptoCurrency));
+        return BotProperties.BOT_VARIABLE.getString(BotVariableType.WALLET.getKey(cryptoCurrency));
     }
 }

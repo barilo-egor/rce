@@ -11,20 +11,20 @@ import java.util.Objects;
 
 public enum BotProperties implements PropertiesReader {
 
-    ANTI_SPAM_PROPERTIES(FilePaths.ANTI_SPAM_PROPERTIES, ',', null, false),
-    BOT_CONFIG_PROPERTIES(FilePaths.BOT_PROPERTIES, ',', null, false),
-    BOT_VARIABLE_PROPERTIES(FilePaths.BOT_VARIABLE_PROPERTIES, ',', null, false),
-    BOT_VARIABLE_BUFFER_PROPERTIES(FilePaths.BOT_VARIABLE_BUFFER_PROPERTIES, ',', null, true),
-    BULK_DISCOUNT_PROPERTIES(FilePaths.BULK_DISCOUNT_PROPERTIES, ',', new BulkDiscountValidateService(),
+    ANTI_SPAM(FilePaths.ANTI_SPAM_PROPERTIES, ',', null, false),
+    BOT_CONFIG(FilePaths.BOT_PROPERTIES, ',', null, false),
+    BOT_VARIABLE(FilePaths.BOT_VARIABLE_PROPERTIES, ',', null, false),
+    BOT_VARIABLE_BUFFER(FilePaths.BOT_VARIABLE_BUFFER_PROPERTIES, ',', null, true),
+    BULK_DISCOUNT(FilePaths.BULK_DISCOUNT_PROPERTIES, ',', new BulkDiscountValidateService(),
                              false),
-    BULK_DISCOUNT_BUFFER_PROPERTIES(FilePaths.BULK_DISCOUNT_BUFFER_PROPERTIES, ',', new BulkDiscountValidateService(),
+    BULK_DISCOUNT_BUFFER(FilePaths.BULK_DISCOUNT_BUFFER_PROPERTIES, ',', new BulkDiscountValidateService(),
                                     true),
-    MESSAGE_PROPERTIES(FilePaths.MESSAGE_PROPERTIES, ',', null, false),
-    MESSAGE_BUFFER_PROPERTIES(FilePaths.MESSAGE_BUFFER_PROPERTIES, ',', null, true),
-    TURNING_CURRENCIES_PROPERTIES(FilePaths.CURRENCIES_TURNING, ',', new CurrenciesTurningValidateService(), false),
-    MODULES_PROPERTIES(FilePaths.MODULES_PROPERTIES, ',', null, false),
+    MESSAGE(FilePaths.MESSAGE_PROPERTIES, ',', null, false),
+    MESSAGE_BUFFER(FilePaths.MESSAGE_BUFFER_PROPERTIES, ',', null, true),
+    TURNING_CURRENCIES(FilePaths.CURRENCIES_TURNING, ',', new CurrenciesTurningValidateService(), false),
+    MODULES(FilePaths.MODULES_PROPERTIES, ',', null, false),
 
-    FUNCTIONS_PROPERTIES(FilePaths.FUNCTIONS_PROPERTIES, ',', null, false),
+    FUNCTIONS(FilePaths.FUNCTIONS_PROPERTIES, ',', null, false),
     BUTTONS(FilePaths.BUTTONS_PROPERTIES, ',', null, false)
     ;
 

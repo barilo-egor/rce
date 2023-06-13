@@ -19,7 +19,7 @@ public final class FiatCurrencyUtil {
     private static final boolean IS_FEW;
 
     static {
-        FIAT_CURRENCIES = Arrays.stream(BotProperties.BOT_CONFIG_PROPERTIES.getStringArray("bot.fiat.currencies"))
+        FIAT_CURRENCIES = Arrays.stream(BotProperties.BOT_CONFIG.getStringArray("bot.fiat.currencies"))
                 .map(FiatCurrency::valueOf)
                 .collect(Collectors.toList());
         if (CollectionUtils.isEmpty(FIAT_CURRENCIES)) throw new BaseException("Не найдена ни одна фиатная валюта");

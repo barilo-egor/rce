@@ -30,10 +30,10 @@ public class TurnOnCurrencyProcessor extends Processor {
 
         if (DealType.BUY.equals(dealType)) {
             TurningCurrenciesUtil.BUY_TURNING.put(currency, true);
-            BotProperties.TURNING_CURRENCIES_PROPERTIES.setProperty("buy." + currency.name(), true);
+            BotProperties.TURNING_CURRENCIES.setProperty("buy." + currency.name(), true);
         } else {
             TurningCurrenciesUtil.SELL_TURNING.put(currency, true);
-            BotProperties.TURNING_CURRENCIES_PROPERTIES.setProperty("sell." + currency.name(), true);
+            BotProperties.TURNING_CURRENCIES.setProperty("sell." + currency.name(), true);
         }
         responseSender.deleteMessage(UpdateUtil.getChatId(update), update.getCallbackQuery().getMessage().getMessageId());
         turningCurrencyProcessor.run(update);

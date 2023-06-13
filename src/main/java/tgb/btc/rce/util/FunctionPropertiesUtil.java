@@ -8,6 +8,6 @@ public final class FunctionPropertiesUtil {
     }
 
     public static Boolean getSumToReceive(CryptoCurrency cryptoCurrency) {
-        return BotProperties.FUNCTIONS_PROPERTIES.getBoolean("sum.to.receive." + cryptoCurrency.getShortName());
+        return BotProperties.FUNCTIONS.getBoolean("sum.to.receive." + cryptoCurrency.getShortName());
     }
 }

@@ -49,7 +49,7 @@ public class BulkDiscountValidateService implements IValidateService {
     @Override
     public void load() {
         BULK_DISCOUNTS.clear();
-        for (String key : BotProperties.BULK_DISCOUNT_PROPERTIES.getKeys()) {
+        for (String key : BotProperties.BULK_DISCOUNT.getKeys()) {
             int sum;
             if (StringUtils.isBlank(key)) {
                 throw new PropertyValueNotFoundException("Не указано название для одного из ключей" + key + ".");
@@ -59,7 +59,7 @@ public class BulkDiscountValidateService implements IValidateService {
             } catch (NumberFormatException e) {
                 throw new PropertyValueNotFoundException("Не корректное название для ключа " + key + ".");
             }
-            String value =  BotProperties.BULK_DISCOUNT_PROPERTIES.getString(key);
+            String value =  BotProperties.BULK_DISCOUNT.getString(key);
             if (StringUtils.isBlank(value)) {
                 throw new PropertyValueNotFoundException("Не указано значение для ключа " + key + ".");
             }

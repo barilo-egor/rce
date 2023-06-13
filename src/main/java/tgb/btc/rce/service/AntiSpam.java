@@ -46,7 +46,7 @@ public class AntiSpam {
     @Async
     public void check() {
         synchronized (this) {
-            int allowedCount = BotProperties.ANTI_SPAM_PROPERTIES.getInteger("allowed.count",20);
+            int allowedCount = BotProperties.ANTI_SPAM.getInteger("allowed.count",20);
             for (Map.Entry<Long, Integer> entry : MESSAGES_COUNTER.entrySet()) {
                 if (entry.getValue() > allowedCount) addUser(entry.getKey());
             }
