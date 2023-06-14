@@ -6,6 +6,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.annotation.CommandProcessor;
@@ -26,6 +27,11 @@ import java.util.stream.Collectors;
 @Slf4j
 public class UsersDealsReport extends Processor {
     private DealService dealService;
+
+    @Autowired
+    public void setDealService(DealService dealService) {
+        this.dealService = dealService;
+    }
 
     @Async
     @Override
@@ -49,6 +55,7 @@ public class UsersDealsReport extends Processor {
             Map<Long, Long> map = new HashMap<>();
             users.forEach(user -> {
                 Long count = dealService.getCountPassedByUserChatId(user.getChatId());
+                if (Objects.isNull(count)) map.put(user.getChatId(), 0L);
                 if (count != 0) map.put(user.getChatId(), count);
             });
 
