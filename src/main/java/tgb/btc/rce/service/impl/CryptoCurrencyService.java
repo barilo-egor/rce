@@ -45,7 +45,9 @@ public class CryptoCurrencyService {
                 try {
                     return CURRENT_BTC_USD_API.getCourse();
                 } catch (ReadFromUrlException e) {
-                    CURRENT_BTC_USD_API = getAvailable();
+                    synchronized (this) {
+                        CURRENT_BTC_USD_API = getAvailable();
+                    }
                     return CURRENT_BTC_USD_API.getCourse();
                 }
             case LITECOIN:
