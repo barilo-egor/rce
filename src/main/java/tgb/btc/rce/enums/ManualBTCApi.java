@@ -1,6 +1,6 @@
 package tgb.btc.rce.enums;
 
-public enum CurrencyApi {
+public enum ManualBTCApi {
     BINANCE,
     BLOCKCHAIN;
 }
