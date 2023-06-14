@@ -119,7 +119,7 @@ public class ResponseSender implements IResponseSender {
         try {
             return bot.execute(sendMessage);
         } catch (TelegramApiException e) {
-            log.warn("Не получилось отправить sendMessage: " + sendMessage);
+            log.warn("Не получилось отправить sendMessage: " + sendMessage, e);
             return null;
         }
     }

@@ -6,6 +6,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMar
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
+import org.telegram.telegrambots.meta.api.objects.webapp.WebAppInfo;
 import tgb.btc.rce.bean.Contact;
 import tgb.btc.rce.enums.*;
 import tgb.btc.rce.vo.InlineButton;
@@ -65,6 +66,9 @@ public final class KeyboardUtil {
                     break;
                 case SWITCH_INLINE_QUERY_CURRENT_CHAT:
                     inlineKeyboardButton.setSwitchInlineQueryCurrentChat(data);
+                    break;
+                case WEB_APP:
+                    inlineKeyboardButton.setWebApp(WebAppInfo.builder().url(data).build());
                     break;
             }
             row.add(inlineKeyboardButton);
