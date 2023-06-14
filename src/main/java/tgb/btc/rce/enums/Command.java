@@ -166,7 +166,9 @@ public enum Command {
      */
     NONE_CALCULATOR("none_calc", false, false, false),
     INLINE_QUERY_CALCULATOR("inline_q_calc", false, false, false),
-    INLINE_CALCULATOR("inline_calculator", false, false, false)
+    INLINE_CALCULATOR("inline_calculator", false, false, false),
+
+    WEB_ADMIN_PANEL("Веб админ-панель", true, true, false)
     ;
 
     final String text;
