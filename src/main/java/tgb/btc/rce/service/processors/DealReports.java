@@ -11,11 +11,13 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.bean.Deal;
 import tgb.btc.rce.enums.Command;
+import tgb.btc.rce.enums.CryptoCurrency;
+import tgb.btc.rce.enums.DealType;
+import tgb.btc.rce.enums.FiatCurrency;
 import tgb.btc.rce.exception.BaseException;
-import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.impl.DealService;
-import tgb.btc.rce.service.impl.UserService;
+import tgb.btc.rce.util.BigDecimalUtil;
 import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.MessageTextUtil;
 import tgb.btc.rce.util.UpdateUtil;
@@ -24,11 +26,11 @@ import tgb.btc.rce.vo.ReplyButton;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @CommandProcessor(command = Command.DEAL_REPORTS)
 @Slf4j
@@ -39,11 +41,10 @@ public class DealReports extends Processor {
     private final static String MONTH = "За месяц";
     private final static String DATE = "За дату";
 
-    private final DealService dealService;
+    private DealService dealService;
 
     @Autowired
-    public DealReports(IResponseSender responseSender, UserService userService, DealService dealService) {
-        super(responseSender, userService);
+    public void setDealService(DealService dealService) {
         this.dealService = dealService;
     }
 
@@ -128,21 +129,35 @@ public class DealReports extends Processor {
         headCell = headRow.createCell(2);
         headCell.setCellValue("Дата, время");
         headCell = headRow.createCell(3);
-        headCell.setCellValue("Сум.руб.");
+        headCell.setCellValue("Фиатная сумма");
         headCell = headRow.createCell(4);
-        headCell.setCellValue("Крипто валюта");
+        headCell.setCellValue("Фиатная валюта");
         headCell = headRow.createCell(5);
         headCell.setCellValue("Сумма крипты");
         headCell = headRow.createCell(6);
-        headCell.setCellValue("Фиатная валюта");
+        headCell.setCellValue("Крипто валюта");
         headCell = headRow.createCell(7);
         headCell.setCellValue("Оплата");
         headCell = headRow.createCell(8);
         headCell.setCellValue("ID");
 
         int i = 2;
+        Map<CryptoCurrency, BigDecimal> totalBuyCryptoAmountMap = new HashMap<>();
+        Arrays.stream(CryptoCurrency.values())
+                .forEach(cryptoCurrency -> totalBuyCryptoAmountMap.put(cryptoCurrency, BigDecimal.ZERO));
+        Map<CryptoCurrency, BigDecimal> totalSellCryptoAmountMap = new HashMap<>();
+        Arrays.stream(CryptoCurrency.values())
+                .forEach(cryptoCurrency -> totalSellCryptoAmountMap.put(cryptoCurrency, BigDecimal.ZERO));
+
+        Map<FiatCurrency, BigDecimal> totalBuyFiatAmountMap = new HashMap<>();
+        Arrays.stream(FiatCurrency.values())
+                .forEach(fiatCurrency -> totalBuyFiatAmountMap.put(fiatCurrency, BigDecimal.ZERO));
+        Map<FiatCurrency, BigDecimal> totalSellFiatAmountMap = new HashMap<>();
+        Arrays.stream(FiatCurrency.values())
+                .forEach(fiatCurrency -> totalSellFiatAmountMap.put(fiatCurrency, BigDecimal.ZERO));
         for (Deal deal : deals) {
             Row row = sheet.createRow(i);
+            boolean isBuy = DealType.isBuy(deal.getDealType());
             Cell cell = row.createCell(0);
             cell.setCellValue(deal.getDealType().name());
             cell = row.createCell(1);
@@ -151,22 +166,51 @@ public class DealReports extends Processor {
             cell.setCellValue(deal.getDateTime().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")));
             cell = row.createCell(3);
             cell.setCellValue(deal.getAmount().setScale(0, RoundingMode.FLOOR).toString());
+            Map<FiatCurrency, BigDecimal> totalFiatAmountMap = isBuy
+                    ? totalBuyFiatAmountMap
+                    : totalSellFiatAmountMap;
+            totalFiatAmountMap.put(deal.getFiatCurrency(), totalFiatAmountMap.get(deal.getFiatCurrency()).add(deal.getAmount()));
             cell = row.createCell(4);
-            cell.setCellValue(deal.getCryptoCurrency().getDisplayName());
-            cell = row.createCell(5);
-            cell.setCellValue(deal.getCryptoAmount().setScale(8, RoundingMode.FLOOR).stripTrailingZeros().toString());
-            cell = row.createCell(6);
             cell.setCellValue(deal.getFiatCurrency().getCode());
+            cell = row.createCell(5);
+            cell.setCellValue(BigDecimalUtil.roundToPlainString(deal.getCryptoAmount(), deal.getCryptoCurrency().getScale()));
+            Map<CryptoCurrency, BigDecimal> totalCryptoAmountMap = isBuy
+                    ? totalBuyCryptoAmountMap : totalSellCryptoAmountMap;
+            totalCryptoAmountMap.put(deal.getCryptoCurrency(), totalCryptoAmountMap.get(deal.getCryptoCurrency()).add(deal.getCryptoAmount()));
+            cell = row.createCell(6);
+            cell.setCellValue(deal.getCryptoCurrency().getDisplayName());
             cell = row.createCell(7);
             // getPaymentTypeEnum используется для старых сделок
             String paymentTypeName = Objects.nonNull(deal.getPaymentTypeEnum())
                     ? deal.getPaymentTypeEnum().getDisplayName()
                     : deal.getPaymentType().getName();
             cell.setCellValue(paymentTypeName);
-            cell = row.createCell(7);
+            cell = row.createCell(8);
             cell.setCellValue(deal.getUser().getChatId());
             i++;
         }
+        i++;
+
+        i += 1;
+
+        FiatCurrency[] fiatCurrencies = FiatCurrency.values();
+        CryptoCurrency[] cryptoCurrencies = CryptoCurrency.values();
+        int fiatCurrenciesLength = fiatCurrencies.length;
+        int cryptoCurrencyLength = cryptoCurrencies.length;
+        int maxLength = Math.max(fiatCurrenciesLength, cryptoCurrencyLength);
+
+        Row row = sheet.createRow(i);
+        Cell cell = row.createCell(3);
+        cell.setCellValue("Покупка");
+        i = printTotal(sheet, i, totalBuyCryptoAmountMap, totalBuyFiatAmountMap, fiatCurrencies, cryptoCurrencies,
+                fiatCurrenciesLength, cryptoCurrencyLength, maxLength);
+        i++;
+        row = sheet.createRow(i);
+        cell = row.createCell(3);
+        cell.setCellValue("Продажа");
+        printTotal(sheet, i, totalSellCryptoAmountMap, totalSellFiatAmountMap, fiatCurrencies, cryptoCurrencies,
+                fiatCurrenciesLength, cryptoCurrencyLength, maxLength);
+
         String fileName = period + ".xlsx";
         try {
             FileOutputStream outputStream = new FileOutputStream(fileName);
@@ -182,5 +226,36 @@ public class DealReports extends Processor {
             log.error("Ошибка при выгрузке файла. " + this.getClass().getSimpleName(), t);
             throw new BaseException();
         }
+    }
+
+    private int printTotal(Sheet sheet, int i, Map<CryptoCurrency, BigDecimal> totalBuyCryptoAmountMap,
+                           Map<FiatCurrency, BigDecimal> totalBuyFiatAmountMap, FiatCurrency[] fiatCurrencies,
+                           CryptoCurrency[] cryptoCurrencies, int fiatCurrenciesLength, int cryptoCurrencyLength,
+                           int maxLength) {
+        Row row;
+        i++;
+        for (int j = 0; j < maxLength; j++) {
+            row = sheet.createRow(i);
+            if (j < fiatCurrenciesLength) printFiatTotal(row, fiatCurrencies[j], totalBuyFiatAmountMap);
+            if (j < cryptoCurrencyLength) printCryptoTotal(row, cryptoCurrencies[j], totalBuyCryptoAmountMap);
+            i++;
+        }
+        return i;
+    }
+
+    private void printFiatTotal(Row row, FiatCurrency fiatCurrency, Map<FiatCurrency, BigDecimal> totalFiatAmountMap) {
+        Cell cell = row.createCell(3);
+        cell.setCellValue(BigDecimalUtil.roundToPlainString(totalFiatAmountMap.get(fiatCurrency)));
+        cell = row.createCell(4);
+        cell.setCellValue(fiatCurrency.getDisplayName());
+    }
+
+
+    private void printCryptoTotal(Row row, CryptoCurrency cryptoCurrency, Map<CryptoCurrency, BigDecimal> totalFiatAmountMap) {
+        Cell cell = row.createCell(5);
+        cell.setCellValue(BigDecimalUtil.roundToPlainString(totalFiatAmountMap.get(cryptoCurrency),
+                cryptoCurrency.getScale()));
+        cell = row.createCell(6);
+        cell.setCellValue(cryptoCurrency.getDisplayName());
     }
 }

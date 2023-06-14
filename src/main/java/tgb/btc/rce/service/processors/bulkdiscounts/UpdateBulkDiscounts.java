@@ -9,22 +9,14 @@ import tgb.btc.rce.constants.FilePaths;
 import tgb.btc.rce.enums.BotProperties;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.exception.PropertyValueNotFoundException;
-import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.service.impl.UserService;
-import tgb.btc.rce.util.BulkDiscountUtil;
 import tgb.btc.rce.util.UpdateUtil;
 
 import java.io.IOException;
-import java.util.Map;
 
 @CommandProcessor(command = Command.BULK_DISCOUNTS, step = 1)
 @Slf4j
 public class UpdateBulkDiscounts extends Processor {
-
-    public UpdateBulkDiscounts(IResponseSender responseSender, UserService userService) {
-        super(responseSender, userService);
-    }
 
     @Override
     public void run(Update update) {
@@ -46,14 +38,13 @@ public class UpdateBulkDiscounts extends Processor {
             responseSender.sendMessage(chatId, "Ошибка при скачивании оптовых скидок: " + e.getMessage());
             return;
         }
-        Map<Integer, Double> discounts;
         try {
-            discounts = BulkDiscountUtil.validate(BotProperties.BULK_DISCOUNT_BUFFER_PROPERTIES);
+            BotProperties.BULK_DISCOUNT_BUFFER.validate();
         } catch (PropertyValueNotFoundException e) {
             log.error(e.getMessage(), e);
             responseSender.sendMessage(chatId, e.getMessage());
             try {
-                FileUtils.delete(BotProperties.BULK_DISCOUNT_BUFFER_PROPERTIES.getFile());
+                FileUtils.delete(BotProperties.BULK_DISCOUNT_BUFFER.getFile());
             } catch (IOException ex) {
                 log.error("Ошибки при удалении " + FilePaths.BULK_DISCOUNT_BUFFER_PROPERTIES, e);
                 responseSender.sendMessage(chatId, "Ошибки при удалении " + FilePaths.BULK_DISCOUNT_BUFFER_PROPERTIES + ":"
@@ -62,7 +53,7 @@ public class UpdateBulkDiscounts extends Processor {
             return;
         }
         try {
-            FileUtils.delete(BotProperties.BULK_DISCOUNT_PROPERTIES.getFile());
+            FileUtils.delete(BotProperties.BULK_DISCOUNT.getFile());
         } catch (IOException e) {
             log.error("Ошибки при удалении " + FilePaths.BULK_DISCOUNT_PROPERTIES, e);
             responseSender.sendMessage(chatId, "Ошибки при удалении " + FilePaths.BULK_DISCOUNT_PROPERTIES + ":"
@@ -70,7 +61,7 @@ public class UpdateBulkDiscounts extends Processor {
             return;
         }
         try {
-            FileUtils.moveFile(BotProperties.BULK_DISCOUNT_BUFFER_PROPERTIES.getFile(), BotProperties.BULK_DISCOUNT_PROPERTIES.getFile());
+            FileUtils.moveFile(BotProperties.BULK_DISCOUNT_BUFFER.getFile(), BotProperties.BULK_DISCOUNT.getFile());
         } catch (IOException e) {
             log.error("Ошибки при перемещении файла + " + FilePaths.BULK_DISCOUNT_BUFFER_PROPERTIES
                     + " в " + FilePaths.BULK_DISCOUNT_PROPERTIES, e);
@@ -78,8 +69,8 @@ public class UpdateBulkDiscounts extends Processor {
                     + FilePaths.BULK_DISCOUNT_BUFFER_PROPERTIES + " в " + FilePaths.BULK_DISCOUNT_PROPERTIES);
             return;
         }
-        BotProperties.BULK_DISCOUNT_PROPERTIES.reload();
-        BulkDiscountUtil.load(discounts);
+        BotProperties.BULK_DISCOUNT.reload();
+        BotProperties.BULK_DISCOUNT.load();
         responseSender.sendMessage(chatId, "Оптовые скидки обновлены.");
     }
 }

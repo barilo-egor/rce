@@ -2,7 +2,6 @@ package tgb.btc.rce.service.processors;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import tgb.btc.rce.annotation.CommandProcessor;
@@ -10,10 +9,7 @@ import tgb.btc.rce.constants.FilePaths;
 import tgb.btc.rce.enums.BotProperties;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.exception.PropertyValueNotFoundException;
-import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.service.impl.UserService;
-import tgb.btc.rce.util.MessagePropertiesUtil;
 import tgb.btc.rce.util.UpdateUtil;
 
 import java.io.File;
@@ -22,11 +18,6 @@ import java.io.IOException;
 @CommandProcessor(command = Command.SYSTEM_MESSAGES)
 @Slf4j
 public class SystemMessages extends Processor {
-
-    @Autowired
-    public SystemMessages(IResponseSender responseSender, UserService userService) {
-        super(responseSender, userService);
-    }
 
     @Override
     public void run(Update update) {
@@ -60,12 +51,12 @@ public class SystemMessages extends Processor {
             return;
         }
         try {
-            MessagePropertiesUtil.validate(BotProperties.MESSAGE_BUFFER_PROPERTIES);
+            BotProperties.MESSAGE_BUFFER.validate();
         } catch (PropertyValueNotFoundException e) {
             log.error(e.getMessage(), e);
             responseSender.sendMessage(chatId, e.getMessage());
             try {
-                FileUtils.delete(BotProperties.MESSAGE_BUFFER_PROPERTIES.getFile());
+                FileUtils.delete(BotProperties.MESSAGE_BUFFER.getFile());
             } catch (IOException ex) {
                 log.error("Ошибки при удалении " + FilePaths.MESSAGE_BUFFER_PROPERTIES, ex);
                 responseSender.sendMessage(chatId, "Ошибки при удалении " + FilePaths.MESSAGE_BUFFER_PROPERTIES + ":"
@@ -82,7 +73,7 @@ public class SystemMessages extends Processor {
             return;
         }
         try {
-            FileUtils.moveFile(BotProperties.MESSAGE_BUFFER_PROPERTIES.getFile(), BotProperties.MESSAGE_PROPERTIES.getFile());
+            FileUtils.moveFile(BotProperties.MESSAGE_BUFFER.getFile(), BotProperties.MESSAGE.getFile());
         } catch (IOException e) {
             log.error("Ошибки при перемещении файла + " + FilePaths.MESSAGE_BUFFER_PROPERTIES
                     + " в " + FilePaths.MESSAGE_PROPERTIES, e);
@@ -90,7 +81,7 @@ public class SystemMessages extends Processor {
                     + FilePaths.MESSAGE_BUFFER_PROPERTIES + " в " + FilePaths.MESSAGE_PROPERTIES);
             return;
         }
-        BotProperties.MESSAGE_PROPERTIES.reload();
+        BotProperties.MESSAGE.reload();
         responseSender.sendMessage(chatId, "Переменные обновлены.");
     }
 }

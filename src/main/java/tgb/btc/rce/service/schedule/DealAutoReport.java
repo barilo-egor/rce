@@ -12,7 +12,8 @@ import tgb.btc.rce.repository.DealRepository;
 import tgb.btc.rce.repository.UserRepository;
 import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.impl.AdminService;
-import tgb.btc.rce.util.FiatCurrenciesUtil;
+import tgb.btc.rce.util.BigDecimalUtil;
+import tgb.btc.rce.util.FiatCurrencyUtil;
 import tgb.btc.rce.vo.DealReportData;
 
 import java.math.BigDecimal;
@@ -57,7 +58,7 @@ public class DealAutoReport {
         this.userRepository = userRepository;
     }
 
-    @Scheduled(cron = "0 50 23 * * *")
+    @Scheduled(cron = "0 5 0 * * *")
     @Async
     public void everyDay() {
         YESTERDAY = LocalDate.now().minusDays(1);
@@ -129,14 +130,15 @@ public class DealAutoReport {
             }
             stringBuilder.append("\n");
             Map<FiatCurrency, BigDecimal> totalAmounts = new HashMap<>();
-            for (FiatCurrency fiatCurrency : FiatCurrenciesUtil.getFiatCurrencies()) {
+            for (FiatCurrency fiatCurrency : FiatCurrencyUtil.getFiatCurrencies()) {
                 BigDecimal totalSum = BigDecimal.ZERO;
                 for (CryptoCurrency cryptoCurrency : CryptoCurrency.values()) {
                     BigDecimal cryptoAmount = getBuyAmount(cryptoCurrency, dateTimeBegin, dateTimeEnd,
                                                            fiatCurrency);
                     totalSum = totalSum.add(cryptoAmount);
                     stringBuilder.append("Получено ").append(fiatCurrency.getCode()).append(" от ")
-                            .append(cryptoCurrency.getDisplayName()).append(": ").append(cryptoAmount).append("\n");
+                            .append(cryptoCurrency.getDisplayName()).append(": ")
+                            .append(BigDecimalUtil.roundToPlainString(cryptoAmount, cryptoCurrency.getScale())).append("\n");
                 }
                 totalAmounts.put(fiatCurrency, totalSum);
                 stringBuilder.append("\n");
@@ -150,8 +152,8 @@ public class DealAutoReport {
                         .append("\n");
             }
             stringBuilder.append("\n");
-            for (FiatCurrency fiatCurrency : FiatCurrenciesUtil.getFiatCurrencies()) {
-                stringBuilder.append("Всего получено от ").append(fiatCurrency.getCode()).append(" : ")
+            for (FiatCurrency fiatCurrency : FiatCurrencyUtil.getFiatCurrencies()) {
+                stringBuilder.append("Всего получено ").append(fiatCurrency.getCode()).append(" : ")
                         .append(totalAmounts.get(fiatCurrency).toPlainString()).append("\n");
             }
             stringBuilder.append("\n" + "Количество новых пользователей: ").append(newUsersCount).append("\n")

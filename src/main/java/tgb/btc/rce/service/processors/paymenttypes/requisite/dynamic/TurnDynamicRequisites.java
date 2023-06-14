@@ -6,14 +6,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.bean.PaymentType;
-import tgb.btc.rce.enums.BotKeyboard;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.DealType;
+import tgb.btc.rce.enums.FiatCurrency;
 import tgb.btc.rce.repository.PaymentTypeRepository;
-import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.service.impl.UserService;
+import tgb.btc.rce.util.FiatCurrencyUtil;
 import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.InlineButton;
@@ -21,7 +20,7 @@ import tgb.btc.rce.vo.InlineButton;
 import java.util.ArrayList;
 import java.util.List;
 
-@CommandProcessor(command = Command.TURN_DYNAMIC_REQUISITES)
+@CommandProcessor(command = Command.TURN_DYNAMIC_REQUISITES, step = 1)
 public class TurnDynamicRequisites extends Processor {
 
     private PaymentTypeRepository paymentTypeRepository;
@@ -31,22 +30,20 @@ public class TurnDynamicRequisites extends Processor {
         this.paymentTypeRepository = paymentTypeRepository;
     }
 
-    @Autowired
-    public TurnDynamicRequisites(IResponseSender responseSender, UserService userService) {
-        super(responseSender, userService);
-    }
-
     @Override
     public void run(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
-        sendPaymentTypes(chatId, DealType.BUY);
+        FiatCurrency fiatCurrency = FiatCurrencyUtil.isFew()
+                ? FiatCurrency.getByCode(UpdateUtil.getMessageText(update))
+                : FiatCurrencyUtil.getFirst();
+        sendPaymentTypes(chatId, DealType.BUY, fiatCurrency);
         processToAdminMainPanel(chatId);
     }
 
-    public void sendPaymentTypes(Long chatId, DealType dealType) {
-        List<PaymentType> paymentTypes = paymentTypeRepository.getByDealType(dealType);
+    public void sendPaymentTypes(Long chatId, DealType dealType, FiatCurrency fiatCurrency) {
+        List<PaymentType> paymentTypes = paymentTypeRepository.getByDealTypeAndFiatCurrency(dealType, fiatCurrency);
         if (CollectionUtils.isEmpty(paymentTypes)) {
-            responseSender.sendMessage(chatId, "Список тип оплат на " + dealType.getDisplayName() + " пуст.");
+            responseSender.sendMessage(chatId, "Список тип оплат на " + dealType.getAccusative() + " пуст."); // TODO добавить фиат
             processToAdminMainPanel(chatId);
             return;
         }

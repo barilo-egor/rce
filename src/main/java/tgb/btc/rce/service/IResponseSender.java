@@ -6,12 +6,12 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Document;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Message;
+import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.media.InputMedia;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import tgb.btc.rce.bean.BotMessage;
-import tgb.btc.rce.enums.BotKeyboard;
-import tgb.btc.rce.enums.MessageTemplate;
+import tgb.btc.rce.enums.*;
 import tgb.btc.rce.vo.InlineButton;
 
 import java.io.File;
@@ -24,6 +24,11 @@ public interface IResponseSender {
     Optional<Message> sendMessage(Long chatId, String text);
 
     Optional<Message> sendMessage(Long chatId, String text, ReplyKeyboard replyKeyboard);
+
+    Optional<Message> sendMessage(Long chatId, String text, Menu menu);
+
+    Optional<Message> sendMessage(Long chatId, PropertiesMessage propertiesMessage, Menu menu);
+
     Optional<Message> sendMessage(Long chatId, String text, String parseMode);
 
     Optional<Message> sendMessage(Long chatId, String text, ReplyKeyboard replyKeyboard, String parseMode);
@@ -42,7 +47,13 @@ public interface IResponseSender {
 
     Optional<Message> sendAnimation(Long chatId, String caption, String animation, ReplyKeyboard replyKeyboard);
 
+    Optional<Message> sendBotMessage(BotMessageType botMessageType, Long chatId, Menu menu);
+
+    Optional<Message> sendBotMessage(BotMessageType botMessageType, Long chatId, ReplyKeyboard replyKeyboard);
+
     Optional<Message> sendBotMessage(BotMessage botMessage, Long chatId, ReplyKeyboard replyKeyboard);
+
+    Optional<Message> sendBotMessage(BotMessageType botMessageType, Long chatId);
 
     Optional<Message> sendBotMessage(BotMessage botMessage, Long chatId);
 
@@ -61,4 +72,12 @@ public interface IResponseSender {
     void sendInputFile(Long chatId, InputFile inputFile);
 
     Optional<Message> sendMessage(Long chatId, MessageTemplate messageTemplate);
+
+    boolean sendAnswerInlineQuery(String inlineQueryId, String title, String description, String messageText);
+
+    boolean sendAnswerInlineQuery(String inlineQueryId, String title);
+
+    void deleteCallbackMessageIfExists(Update update);
+
+    void sendEditedMessageText(Long chatId, Integer messageId, String text, ReplyKeyboard replyKeyboard);
 }

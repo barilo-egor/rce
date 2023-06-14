@@ -2,7 +2,6 @@ package tgb.btc.rce.service.processors;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.math3.util.MathUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.annotation.CommandProcessor;
@@ -14,11 +13,8 @@ import tgb.btc.rce.enums.BotVariableType;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.PropertiesMessage;
 import tgb.btc.rce.repository.LotteryWinRepository;
-import tgb.btc.rce.repository.UserRepository;
-import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.impl.BotMessageService;
-import tgb.btc.rce.service.impl.UserService;
 import tgb.btc.rce.util.BotVariablePropertiesUtil;
 import tgb.btc.rce.util.MenuFactory;
 import tgb.btc.rce.util.MessagePropertiesUtil;
@@ -32,9 +28,7 @@ import java.util.Random;
 @Slf4j
 public class Lottery extends Processor {
 
-    private final BotMessageService botMessageService;
-
-    private UserRepository userRepository;
+    private BotMessageService botMessageService;
 
     private LotteryWinRepository lotteryWinRepository;
 
@@ -44,13 +38,7 @@ public class Lottery extends Processor {
     }
 
     @Autowired
-    public void setUserRepository(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
-
-    @Autowired
-    public Lottery(IResponseSender responseSender, UserService userService, BotMessageService botMessageService) {
-        super(responseSender, userService);
+    public void setBotMessageService(BotMessageService botMessageService) {
         this.botMessageService = botMessageService;
     }
 

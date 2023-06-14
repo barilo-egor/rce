@@ -1,5 +1,6 @@
 package tgb.btc.rce.service.impl;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
@@ -9,19 +10,21 @@ import tgb.btc.rce.bean.PaymentReceipt;
 import tgb.btc.rce.bean.PaymentType;
 import tgb.btc.rce.enums.CryptoCurrency;
 import tgb.btc.rce.enums.DealType;
-import tgb.btc.rce.enums.PaymentTypeEnum;
+import tgb.btc.rce.enums.FiatCurrency;
 import tgb.btc.rce.repository.BaseRepository;
 import tgb.btc.rce.repository.DealRepository;
 import tgb.btc.rce.repository.UserRepository;
+import tgb.btc.rce.util.DealPromoUtil;
+import tgb.btc.rce.vo.report.ReportDealVO;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@Slf4j
 public class DealService extends BasePersistService<Deal> {
 
     private final DealRepository dealRepository;
@@ -51,85 +54,20 @@ public class DealService extends BasePersistService<Deal> {
         return dealRepository.existsById(pid);
     }
 
-    public void updateCryptoAmountByPid(BigDecimal cryptoAmount, Long pid) {
-        dealRepository.updateCryptoAmountByPid(cryptoAmount, pid);
-    }
-
-    public void updateAmountByPid(BigDecimal amount, Long pid) {
-        dealRepository.updateAmountByPid(amount, pid);
-    }
-
-    public void updateDiscountByPid(BigDecimal discount, Long pid) {
-        dealRepository.updateDiscountByPid(discount, pid);
-    }
-
-    public void updateCommissionByPid(BigDecimal commission, Long pid) {
-        dealRepository.updateCommissionByPid(commission, pid);
-    }
-
-    public BigDecimal getCommissionByPid(Long pid) {
-        return dealRepository.getCommissionByPid(pid);
-    }
-
-    public void updateUsedReferralDiscountByPid(Boolean isUsedReferralDiscount, Long pid) {
-        dealRepository.updateUsedReferralDiscountByPid(isUsedReferralDiscount, pid);
-    }
-
     public Long getDealsCountByUserChatId(Long chatId) {
         return dealRepository.getPassedDealsCountByUserChatId(chatId);
-    }
-
-    public Long getNotCurrentDealsCountByUserChatId(Long chatId, DealType dealType) {
-        return dealRepository.getPassedDealsCountByUserChatId(chatId, dealType);
     }
 
     public Deal getByPid(Long pid) {
         return dealRepository.findByPid(pid);
     }
 
-    public BigDecimal getAmountByPid(Long pid) {
-        return dealRepository.getAmountByPid(pid);
-    }
-
-    public BigDecimal getDiscountByPid(Long pid) {
-        return dealRepository.getDiscountByPid(pid);
-    }
-
-    public BigDecimal getRoundedAmountByPid(Long pid) {
-        return dealRepository.getAmountByPid(pid).setScale(0, RoundingMode.HALF_UP).stripTrailingZeros();
-    }
-
-    public void updateWalletByPid(String wallet, Long pid) {
-        dealRepository.updateWalletByPid(wallet, pid);
-    }
-
-    public void updatePaymentTypeEnumByPid(PaymentTypeEnum paymentTypeEnum, Long pid) {
-        dealRepository.updatePaymentTypeEnumByPid(paymentTypeEnum, pid);
-    }
-
     public void updatePaymentTypeByPid(PaymentType paymentType, Long pid) {
         dealRepository.updatePaymentTypeByPid(paymentType, pid);
     }
 
-
-    public void updateIsUsedPromoByPid(Boolean isUsedPromo, Long pid) {
-        dealRepository.updateIsUsedPromoByPid(isUsedPromo, pid);
-    }
-
-    public void updateIsActivePromoByPid(Boolean isActive, Long pid) {
-        dealRepository.updateIsUsedPromoByPid(isActive, pid);
-    }
-
-    public Long getActiveDealsCountByUserChatId(Long chatId) {
-        return dealRepository.getActiveDealsCountByUserChatId(chatId);
-    }
-
     public Long getPidActiveDealByChatId(Long chatId) {
         return dealRepository.getPidActiveDealByChatId(chatId);
-    }
-
-    public void updateIsActiveByPid(Boolean isActive, Long pid) {
-        dealRepository.updateIsActiveByPid(isActive, pid);
     }
 
     public Long getCountPassedByUserChatId(Long chatId) {
@@ -150,10 +88,6 @@ public class DealService extends BasePersistService<Deal> {
 
     public List<Deal> getByDate(LocalDate dateTime) {
         return dealRepository.getPassedByDate(dateTime);
-    }
-
-    public String getWalletFromLastNotCurrentByChatId(Long chatId, DealType dealType) {
-        return dealRepository.getWalletFromLastPassedByChatId(chatId, dealType);
     }
 
     public DealType getDealTypeByPid(Long pid) {
@@ -177,5 +111,31 @@ public class DealService extends BasePersistService<Deal> {
         Deal savedDeal = save(deal);
         userRepository.updateCurrentDealByChatId(savedDeal.getPid(), chatId);
         return savedDeal;
+    }
+
+    public boolean isFirstDeal(Long chatId) {
+        return getDealsCountByUserChatId(chatId) < 1;
+    }
+
+    public boolean isAvailableForPromo(Long chatId) {
+        return !DealPromoUtil.isNone() && isFirstDeal(chatId);
+    }
+
+    public List<ReportDealVO> findAllForUsersReport() {
+        List<Object[]> raws = dealRepository.findAllForUsersReport();
+        List<ReportDealVO> deals = new ArrayList<>();
+        log.info("Маппинг сделок.");
+        for (Object[] raw : raws) {
+            deals.add(ReportDealVO.builder()
+                    .pid((Long) raw[0])
+                    .userPid((Long) raw[1])
+                    .dealType((DealType) raw[2])
+                    .cryptoCurrency((CryptoCurrency) raw[3])
+                    .cryptoAmount((BigDecimal) raw[4])
+                    .fiatCurrency((FiatCurrency) raw[5])
+                    .amount((BigDecimal) raw[6])
+                    .build());
+        }
+        return deals;
     }
 }

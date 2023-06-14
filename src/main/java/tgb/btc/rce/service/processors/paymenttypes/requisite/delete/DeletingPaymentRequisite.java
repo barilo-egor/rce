@@ -9,9 +9,7 @@ import tgb.btc.rce.bean.PaymentType;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.repository.PaymentRequisiteRepository;
-import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.service.impl.UserService;
 import tgb.btc.rce.util.UpdateUtil;
 
 import java.util.Comparator;
@@ -35,11 +33,6 @@ public class DeletingPaymentRequisite extends Processor {
         this.paymentRequisiteRepository = paymentRequisiteRepository;
     }
 
-    @Autowired
-    public DeletingPaymentRequisite(IResponseSender responseSender, UserService userService) {
-        super(responseSender, userService);
-    }
-
     @Override
     public void run(Update update) {
         if (!update.hasCallbackQuery()) {
@@ -58,6 +51,7 @@ public class DeletingPaymentRequisite extends Processor {
             requisite.setRequisiteOrder(i + 1);
             paymentRequisiteRepository.save(requisite);
         }
+        responseSender.deleteMessage(UpdateUtil.getChatId(update), update.getCallbackQuery().getMessage().getMessageId());
         showRequisitesForDelete.sendRequisites(UpdateUtil.getChatId(update), paymentType.getPid());
     }
 

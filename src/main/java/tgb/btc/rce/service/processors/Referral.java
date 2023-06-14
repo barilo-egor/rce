@@ -1,19 +1,13 @@
 package tgb.btc.rce.service.processors;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.StringUtils;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.bean.ReferralUser;
-import tgb.btc.rce.bean.WithdrawalRequest;
 import tgb.btc.rce.enums.*;
+import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.repository.DealRepository;
-import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.service.impl.DealService;
-import tgb.btc.rce.service.impl.UserService;
-import tgb.btc.rce.service.impl.WithdrawalRequestService;
-import tgb.btc.rce.util.BotPropertiesUtil;
 import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.MessagePropertiesUtil;
 import tgb.btc.rce.util.UpdateUtil;
@@ -24,8 +18,6 @@ import java.util.List;
 @CommandProcessor(command = Command.REFERRAL)
 public class Referral extends Processor {
 
-    private final DealService dealService;
-
     private DealRepository dealRepository;
 
     @Autowired
@@ -33,24 +25,18 @@ public class Referral extends Processor {
         this.dealRepository = dealRepository;
     }
 
-    @Autowired
-    public Referral(IResponseSender responseSender, UserService userService, DealService dealService) {
-        super(responseSender, userService);
-        this.dealService = dealService;
-    }
-
     @Override
     public void run(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
         String startParameter = "?start=" + chatId;
-        String refLink = BotProperties.BOT_CONFIG_PROPERTIES.getString("bot.link").concat(startParameter);
+        String refLink = BotProperties.BOT_CONFIG.getString("bot.link").concat(startParameter);
         String currentBalance = userService.getReferralBalanceByChatId(chatId).toString();
         List<ReferralUser> referralUsers = userService.getUserReferralsByChatId(chatId);
         String numberOfReferrals = String.valueOf(referralUsers.size());
         int numberOfActiveReferrals = (int) referralUsers.stream()
                 .filter(usr -> dealRepository.getCountPassedByUserChatId(usr.getChatId()) > 0).count();
 
-        Long dealsCount = dealService.getCountPassedByUserChatId(chatId);
+        Long dealsCount = dealRepository.getCountPassedByUserChatId(chatId);
         Rank rank = Rank.getByDealsNumber(dealsCount.intValue());
         String resultMessage = String.format(MessagePropertiesUtil.getMessage(PropertiesMessage.REFERRAL_MAIN),
                 refLink, currentBalance, numberOfReferrals, numberOfActiveReferrals,

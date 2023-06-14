@@ -7,25 +7,30 @@ import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.processors.*;
 import tgb.btc.rce.service.processors.bulkdiscounts.BulkDiscounts;
 import tgb.btc.rce.service.processors.bulkdiscounts.UpdateBulkDiscounts;
+import tgb.btc.rce.service.processors.calculator.InlineQueryCalculator;
+import tgb.btc.rce.service.processors.calculator.NoneCalculator;
 import tgb.btc.rce.service.processors.paymenttypes.PaymentsTypes;
 import tgb.btc.rce.service.processors.paymenttypes.create.CreateNewPaymentType;
+import tgb.btc.rce.service.processors.paymenttypes.create.FiatCurrencyNewPaymentType;
 import tgb.btc.rce.service.processors.paymenttypes.create.NewPaymentType;
 import tgb.btc.rce.service.processors.paymenttypes.create.SaveNamePaymentType;
 import tgb.btc.rce.service.processors.paymenttypes.delete.DeletePaymentType;
 import tgb.btc.rce.service.processors.paymenttypes.delete.DeletingPaymentType;
+import tgb.btc.rce.service.processors.paymenttypes.delete.FiatCurrencyDeletePaymentType;
 import tgb.btc.rce.service.processors.paymenttypes.delete.ShowPaymentTypesForDelete;
-import tgb.btc.rce.service.processors.paymenttypes.minsum.AskForMinSum;
-import tgb.btc.rce.service.processors.paymenttypes.minsum.ChangeMinSum;
-import tgb.btc.rce.service.processors.paymenttypes.minsum.SaveMinSum;
-import tgb.btc.rce.service.processors.paymenttypes.minsum.ShowTypesForMinSum;
+import tgb.btc.rce.service.processors.paymenttypes.minsum.*;
 import tgb.btc.rce.service.processors.paymenttypes.requisite.create.AskForNewRequisite;
+import tgb.btc.rce.service.processors.paymenttypes.requisite.create.FiatCurrencyCreateRequisite;
 import tgb.btc.rce.service.processors.paymenttypes.requisite.create.NewPaymentTypeRequisite;
 import tgb.btc.rce.service.processors.paymenttypes.requisite.create.ShowPaymentTypesForCreateRequisite;
 import tgb.btc.rce.service.processors.paymenttypes.requisite.delete.DeletingPaymentRequisite;
+import tgb.btc.rce.service.processors.paymenttypes.requisite.delete.FiatCurrenciesDeleteRequisite;
 import tgb.btc.rce.service.processors.paymenttypes.requisite.delete.ShowPaymentTypesForDeleteRequisite;
 import tgb.btc.rce.service.processors.paymenttypes.requisite.delete.ShowRequisitesForDelete;
+import tgb.btc.rce.service.processors.paymenttypes.requisite.dynamic.FiatCurrencyDynamicRequisite;
 import tgb.btc.rce.service.processors.paymenttypes.requisite.dynamic.TurnDynamicRequisites;
 import tgb.btc.rce.service.processors.paymenttypes.requisite.dynamic.TurningDynamic;
+import tgb.btc.rce.service.processors.paymenttypes.turning.FiatCurrencyTurnPaymentType;
 import tgb.btc.rce.service.processors.paymenttypes.turning.ShowPaymentTypesForTurn;
 import tgb.btc.rce.service.processors.paymenttypes.turning.TurnPaymentTypes;
 import tgb.btc.rce.service.processors.paymenttypes.turning.TurningPaymentType;
@@ -66,7 +71,10 @@ public final class CommandProcessorLoader {
             Command.TURN_PAYMENT_TYPES,
             Command.CHANGE_MIN_SUM,
             Command.TURN_DYNAMIC_REQUISITES,
-            Command.CHOOSING_FIAT_CURRENCY
+            Command.CHOOSING_FIAT_CURRENCY,
+            Command.NONE_CALCULATOR,
+            Command.INLINE_QUERY_CALCULATOR,
+            Command.INLINE_CALCULATOR
     );
 
 
@@ -76,17 +84,12 @@ public final class CommandProcessorLoader {
         commandProcessors.add(AddContact.class);
         commandProcessors.add(AdditionalVerification.class);
         commandProcessors.add(AdminBack.class);
-        commandProcessors.add(AdminPanel.class);
         commandProcessors.add(Back.class);
         commandProcessors.add(BanUnban.class);
         commandProcessors.add(BotMessages.class);
-        commandProcessors.add(BotOffed.class);
-        commandProcessors.add(BotSettings.class);
         commandProcessors.add(BotVariables.class);
-        commandProcessors.add(BuyBitcoin.class);
         commandProcessors.add(ChangeReferralBalance.class);
         commandProcessors.add(ConfirmUserDeal.class);
-        commandProcessors.add(Contacts.class);
         commandProcessors.add(CurrentData.class);
         commandProcessors.add(DealReports.class);
         commandProcessors.add(DeleteContact.class);
@@ -94,8 +97,6 @@ public final class CommandProcessorLoader {
         commandProcessors.add(DeleteReview.class);
         commandProcessors.add(DeleteUserDeal.class);
         commandProcessors.add(DeleteWithdrawalRequest.class);
-        commandProcessors.add(Draws.class);
-        commandProcessors.add(EditContacts.class);
         commandProcessors.add(HideWithdrawal.class);
         commandProcessors.add(Lottery.class);
         commandProcessors.add(MailingList.class);
@@ -105,17 +106,10 @@ public final class CommandProcessorLoader {
         commandProcessors.add(OffBot.class);
         commandProcessors.add(OnBot.class);
         commandProcessors.add(PartnersReport.class);
-        commandProcessors.add(PaymentRequisites.class);
-        commandProcessors.add(PaymentTypesOld.class);
         commandProcessors.add(PublishReview.class);
         commandProcessors.add(QuitAdminPanel.class);
         commandProcessors.add(Referral.class);
-        commandProcessors.add(Reports.class);
-        commandProcessors.add(Requests.class);
-        commandProcessors.add(Roulette.class);
-        commandProcessors.add(SellBitcoin.class);
         commandProcessors.add(SendLink.class);
-        commandProcessors.add(SendMessages.class);
         commandProcessors.add(SendMessageToUser.class);
         commandProcessors.add(ShareReview.class);
         commandProcessors.add(ShowDeal.class);
@@ -134,8 +128,6 @@ public final class CommandProcessorLoader {
         commandProcessors.add(TurningCurrencyProcessor.class);
         commandProcessors.add(TurnOnCurrencyProcessor.class);
         commandProcessors.add(TurnOffCurrencyProcessor.class);
-        commandProcessors.add(DiscountsProcessor.class);
-        commandProcessors.add(Users.class);
         commandProcessors.add(RankDiscountProcessor.class);
         commandProcessors.add(ChangeRankDiscountProcessor.class);
         commandProcessors.add(SavePersonalBuyDiscountProcessor.class);
@@ -156,8 +148,6 @@ public final class CommandProcessorLoader {
         commandProcessors.add(DeletePaymentType.class);
         commandProcessors.add(DeletingPaymentType.class);
         commandProcessors.add(ShowPaymentTypesForDelete.class);
-        commandProcessors.add(InlineDelete.class);
-        commandProcessors.add(None.class);
         commandProcessors.add(AskForNewRequisite.class);
         commandProcessors.add(NewPaymentTypeRequisite.class);
         commandProcessors.add(ShowPaymentTypesForCreateRequisite.class);
@@ -184,8 +174,21 @@ public final class CommandProcessorLoader {
         commandProcessors.add(KeepSpamBan.class);
         commandProcessors.add(SpamUnban.class);
         commandProcessors.add(NewSpamBans.class);
-        commandProcessors.add(ChoosingFiatCurrency.class);
         commandProcessors.add(MakeAdmin.class);
+        commandProcessors.add(FiatCurrencyNewPaymentType.class);
+        commandProcessors.add(FiatCurrencyCreateRequisite.class);
+        commandProcessors.add(FiatCurrencyDynamicRequisite.class);
+        commandProcessors.add(FiatCurrencyDeletePaymentType.class);
+        commandProcessors.add(SaveFiatCurrencyMinSum.class);
+        commandProcessors.add(FiatCurrencyTurnPaymentType.class);
+        commandProcessors.add(FiatCurrenciesDeleteRequisite.class);
+        commandProcessors.add(BuyBitcoin.class);
+        commandProcessors.add(SellBitcoin.class);
+        commandProcessors.add(DealProcessor.class);
+        commandProcessors.add(NoneCalculator.class);
+        commandProcessors.add(InlineQueryCalculator.class);
+        commandProcessors.add(InlineCalculator.class);
+        commandProcessors.add(Help.class);
         commandProcessors.stream()
                 .filter(processor -> !extendsProcessor(processor))
                 .findFirst()
@@ -207,6 +210,6 @@ public final class CommandProcessorLoader {
                     return annotation.command().equals(command) && (!COMMANDS_WITH_STEP.contains(command) || annotation.step() == step);
                 })
                 .findFirst()
-                .orElseThrow(() -> new BaseException("Не найден процессор для команты " + command.name()));
+                .orElseThrow(() -> new BaseException("Не найден процессор для команды " + command.name()));
     }
 }

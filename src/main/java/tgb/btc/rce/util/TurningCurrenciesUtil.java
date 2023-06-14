@@ -19,8 +19,8 @@ public class TurningCurrenciesUtil {
 
     static {
             for (CryptoCurrency currency : CryptoCurrency.values()) {
-                BUY_TURNING.put(currency, BotProperties.TURNING_CURRENCIES_PROPERTIES.getBoolean("buy." + currency.name()));
-                SELL_TURNING.put(currency, BotProperties.TURNING_CURRENCIES_PROPERTIES.getBoolean("sell." + currency.name()));
+                BUY_TURNING.put(currency, BotProperties.TURNING_CURRENCIES.getBoolean("buy." + currency.name()));
+                SELL_TURNING.put(currency, BotProperties.TURNING_CURRENCIES.getBoolean("sell." + currency.name()));
             }
     }
 

@@ -6,6 +6,7 @@ import org.telegram.telegrambots.meta.api.objects.User;
 import tgb.btc.rce.enums.UpdateType;
 import tgb.btc.rce.exception.BaseException;
 
+import java.math.BigDecimal;
 import java.util.Objects;
 
 public class UpdateUtil {
@@ -57,6 +58,10 @@ public class UpdateUtil {
 
     public static Double getDoubleFromText(Update update) {
         return NumberUtil.getInputDouble(getMessageText(update).replaceAll(",", "."));
+    }
+
+    public static BigDecimal getBigDecimalFromText(Update update) {
+        return BigDecimal.valueOf(NumberUtil.getInputDouble(getMessageText(update).replaceAll(",", ".")));
     }
 
     public static Message getMessage(Update update) {

@@ -3,12 +3,11 @@ package tgb.btc.rce.service.processors.paymenttypes.turning;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.annotation.CommandProcessor;
+import tgb.btc.rce.bean.PaymentType;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.repository.PaymentTypeRepository;
-import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.service.impl.UserService;
 import tgb.btc.rce.util.UpdateUtil;
 
 @CommandProcessor(command = Command.TURNING_PAYMENT_TYPES)
@@ -28,11 +27,6 @@ public class TurningPaymentType extends Processor {
         this.paymentTypeRepository = paymentTypeRepository;
     }
 
-    @Autowired
-    public TurningPaymentType(IResponseSender responseSender, UserService userService) {
-        super(responseSender, userService);
-    }
-
     @Override
     public void run(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
@@ -43,7 +37,8 @@ public class TurningPaymentType extends Processor {
         Long paymentTypePid = Long.parseLong(values[1]);
         paymentTypeRepository.updateIsOnByPid(Boolean.valueOf(values[2]), paymentTypePid);
         responseSender.deleteMessage(chatId, update.getCallbackQuery().getMessage().getMessageId());
-        showPaymentTypesForTurn.sendPaymentTypes(chatId, paymentTypeRepository.getDealTypeByPid(paymentTypePid));
+        PaymentType paymentType = paymentTypeRepository.getByPid(paymentTypePid);
+        showPaymentTypesForTurn.sendPaymentTypes(chatId, paymentType.getDealType(), paymentType.getFiatCurrency());
     }
 
 }

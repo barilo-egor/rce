@@ -219,4 +219,8 @@ public class User extends BasePersist {
     public void setReferralPercent(BigDecimal referralPercent) {
         this.referralPercent = referralPercent;
     }
+
+    public static boolean isDefault(int step) {
+        return step == DEFAULT_STEP;
+    }
 }

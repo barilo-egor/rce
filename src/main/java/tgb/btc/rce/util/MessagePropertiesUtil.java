@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import tgb.btc.rce.enums.BotProperties;
 import tgb.btc.rce.enums.DealType;
 import tgb.btc.rce.enums.PropertiesMessage;
-import tgb.btc.rce.exception.PropertyValueNotFoundException;
 
 import java.util.Objects;
 
@@ -16,7 +15,7 @@ public class MessagePropertiesUtil {
     public static String getMessage(PropertiesMessage message) {
         String text;
         try {
-            text = BotProperties.MESSAGE_PROPERTIES.getString(message.getKey()).replaceAll("<ln>", "\n");
+            text = BotProperties.MESSAGE.getString(message.getKey()).replaceAll("<ln>", "\n");
         } catch (Exception e) {
             text = getErrorText(message.getKey());
         }
@@ -31,7 +30,7 @@ public class MessagePropertiesUtil {
     public static String getMessage(String key) {
         String text;
         try {
-            text = BotProperties.MESSAGE_PROPERTIES.getString(key).replaceAll("<ln>", "\n");
+            text = BotProperties.MESSAGE.getString(key).replaceAll("<ln>", "\n");
         } catch (Exception e) {
             text = getErrorText(key);
         }
@@ -41,14 +40,6 @@ public class MessagePropertiesUtil {
 
     private static String getErrorText(String key) {
         return String.format(errorMessage, key);
-    }
-
-    public static void validate(BotProperties botProperties) throws PropertyValueNotFoundException {
-        for (String key : botProperties.getKeys()) {
-            if (Objects.isNull(botProperties.getString(key))) {
-                throw new PropertyValueNotFoundException("Не указано сообщение для ключа " + key + ".");
-            }
-        }
     }
 
     public static String getChooseCurrency(DealType dealType) {

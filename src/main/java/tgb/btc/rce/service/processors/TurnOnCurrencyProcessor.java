@@ -8,9 +8,7 @@ import tgb.btc.rce.enums.BotProperties;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.CryptoCurrency;
 import tgb.btc.rce.enums.DealType;
-import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.service.impl.UserService;
 import tgb.btc.rce.util.TurningCurrenciesUtil;
 import tgb.btc.rce.util.UpdateUtil;
 
@@ -24,11 +22,6 @@ public class TurnOnCurrencyProcessor extends Processor {
         this.turningCurrencyProcessor = turningCurrencyProcessor;
     }
 
-    @Autowired
-    public TurnOnCurrencyProcessor(IResponseSender responseSender, UserService userService) {
-        super(responseSender, userService);
-    }
-
     @Override
     public void run(Update update) {
         String[] values = update.getCallbackQuery().getData().split(BotStringConstants.CALLBACK_DATA_SPLITTER);
@@ -37,10 +30,10 @@ public class TurnOnCurrencyProcessor extends Processor {
 
         if (DealType.BUY.equals(dealType)) {
             TurningCurrenciesUtil.BUY_TURNING.put(currency, true);
-            BotProperties.TURNING_CURRENCIES_PROPERTIES.setProperty("buy." + currency.name(), true);
+            BotProperties.TURNING_CURRENCIES.setProperty("buy." + currency.name(), true);
         } else {
             TurningCurrenciesUtil.SELL_TURNING.put(currency, true);
-            BotProperties.TURNING_CURRENCIES_PROPERTIES.setProperty("sell." + currency.name(), true);
+            BotProperties.TURNING_CURRENCIES.setProperty("sell." + currency.name(), true);
         }
         responseSender.deleteMessage(UpdateUtil.getChatId(update), update.getCallbackQuery().getMessage().getMessageId());
         turningCurrencyProcessor.run(update);

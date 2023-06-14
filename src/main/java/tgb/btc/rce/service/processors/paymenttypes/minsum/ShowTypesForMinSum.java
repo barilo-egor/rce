@@ -5,14 +5,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.bean.PaymentType;
-import tgb.btc.rce.enums.BotKeyboard;
 import tgb.btc.rce.constants.BotStringConstants;
+import tgb.btc.rce.enums.BotKeyboard;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.DealType;
+import tgb.btc.rce.enums.FiatCurrency;
 import tgb.btc.rce.repository.PaymentTypeRepository;
-import tgb.btc.rce.service.IResponseSender;
+import tgb.btc.rce.repository.UserDataRepository;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.service.impl.UserService;
+import tgb.btc.rce.util.FiatCurrencyUtil;
 import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.InlineButton;
@@ -20,19 +21,21 @@ import tgb.btc.rce.vo.InlineButton;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@CommandProcessor(command = Command.CHANGE_MIN_SUM, step = 1)
+@CommandProcessor(command = Command.CHANGE_MIN_SUM, step = 2)
 public class ShowTypesForMinSum extends Processor {
 
     private PaymentTypeRepository paymentTypeRepository;
 
+    private UserDataRepository userDataRepository;
+
     @Autowired
-    public void setPaymentTypeRepository(PaymentTypeRepository paymentTypeRepository) {
-        this.paymentTypeRepository = paymentTypeRepository;
+    public void setUserDataRepository(UserDataRepository userDataRepository) {
+        this.userDataRepository = userDataRepository;
     }
 
     @Autowired
-    public ShowTypesForMinSum(IResponseSender responseSender, UserService userService) {
-        super(responseSender, userService);
+    public void setPaymentTypeRepository(PaymentTypeRepository paymentTypeRepository) {
+        this.paymentTypeRepository = paymentTypeRepository;
     }
 
     @Override
@@ -51,9 +54,12 @@ public class ShowTypesForMinSum extends Processor {
             responseSender.sendMessage(chatId, BotStringConstants.BUY_OR_SELL);
             return;
         }
-        List<PaymentType> paymentTypes = paymentTypeRepository.getByDealType(dealType);
+        FiatCurrency fiatCurrency = FiatCurrencyUtil.isFew()
+                ? userDataRepository.getFiatCurrencyByChatId(chatId)
+                : FiatCurrencyUtil.getFirst();
+        List<PaymentType> paymentTypes = paymentTypeRepository.getByDealTypeAndFiatCurrency(dealType, fiatCurrency);
         if (CollectionUtils.isEmpty(paymentTypes)) {
-            responseSender.sendMessage(chatId, "Список тип оплат на " + dealType.getDisplayName() + " пуст.");
+            responseSender.sendMessage(chatId, "Список тип оплат на " + dealType.getAccusative() + " пуст."); //todo add fiat
             processToAdminMainPanel(chatId);
             return;
         }
@@ -67,7 +73,7 @@ public class ShowTypesForMinSum extends Processor {
                 .collect(Collectors.toList());
         responseSender.sendMessage(chatId, "Выберите тип оплаты для изменения минимальной суммы.",
                 KeyboardUtil.buildInline(buttons));
-        responseSender.sendMessage(chatId, "Для возвращения в меню нажмите \"Отмена\".", BotKeyboard.CANCEL);
+        responseSender.sendMessage(chatId, "Для возвращения в меню нажмите \"Отмена\".", BotKeyboard.REPLY_CANCEL);
         userService.nextStep(chatId);
     }
 }

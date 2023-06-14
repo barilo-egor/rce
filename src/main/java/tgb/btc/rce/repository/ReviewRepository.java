@@ -9,6 +9,5 @@ import java.util.List;
 @Repository
 @Transactional
 public interface ReviewRepository extends BaseRepository<Review> {
-
     List<Review> findAllByIsPublished(Boolean isPublished);
 }

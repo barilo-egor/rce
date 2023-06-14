@@ -12,6 +12,7 @@ public enum PropertiesMessage {
     WITHDRAWAL_TO_STRING("withdrawal.to.string"),
     CONTACT_ASK_INPUT("contact.ask.input"),
     MENU_MAIN_ADMIN("menu.main.admin"),
+    MENU_MAIN_ADMIN_MESSAGE("menu.main.admin.message"),
     CONTACT_ASK_DELETE("contact.ask.delete"),
     SEND_MESSAGES_MENU("send.messages.menu"),
     EDIT_CONTACTS_MENU("edit.contacts.menu"),
@@ -20,6 +21,9 @@ public enum PropertiesMessage {
 
     CHOOSE_CURRENCY_SELL("choose.currency.sell"),
     DEAL_INPUT_SUM("deal.input.sum"),
+    DEAL_INPUT_SUM_CRYPTO_OR_FIAT("deal.input.sum.crypto.or.fiat"),
+    DEAL_INPUT_SUM_TO_BUY("deal.input.sum.to.buy"),
+    DEAL_INPUT_SUM_TO_SELL("deal.input.sum.to.sell"),
     DEAL_CONFIRMED("deal.confirmed"),
     USER_INFORMATION_MAIN("user.information.main"),
     USER_INFORMATION_WITHOUT_REFERRAL_MAIN("user.information.without.referral.main");

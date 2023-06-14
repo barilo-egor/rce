@@ -8,9 +8,7 @@ import tgb.btc.rce.bean.PaymentRequisite;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.repository.PaymentRequisiteRepository;
-import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.service.impl.UserService;
 import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.InlineButton;
@@ -18,7 +16,7 @@ import tgb.btc.rce.vo.InlineButton;
 import java.util.ArrayList;
 import java.util.List;
 
-@CommandProcessor(command = Command.DELETE_PAYMENT_TYPE_REQUISITE, step = 1)
+@CommandProcessor(command = Command.DELETE_PAYMENT_TYPE_REQUISITE, step = 2)
 public class ShowRequisitesForDelete extends Processor {
 
     private PaymentRequisiteRepository paymentRequisiteRepository;
@@ -26,11 +24,6 @@ public class ShowRequisitesForDelete extends Processor {
     @Autowired
     public void setPaymentRequisiteRepository(PaymentRequisiteRepository paymentRequisiteRepository) {
         this.paymentRequisiteRepository = paymentRequisiteRepository;
-    }
-
-    @Autowired
-    public ShowRequisitesForDelete(IResponseSender responseSender, UserService userService) {
-        super(responseSender, userService);
     }
 
     @Override
@@ -49,7 +42,7 @@ public class ShowRequisitesForDelete extends Processor {
     public void sendRequisites(Long chatId, Long paymentTypePid) {
         List<PaymentRequisite> paymentRequisites = paymentRequisiteRepository.getByPaymentTypePid(paymentTypePid);
         if (CollectionUtils.isEmpty(paymentRequisites)) {
-            responseSender.sendMessage(chatId, "Реквизиты отсутствуют.");
+            responseSender.sendMessage(chatId, "Реквизиты в этом типе оплаты отсутствуют.");
             processToAdminMainPanel(chatId);
             return;
         }

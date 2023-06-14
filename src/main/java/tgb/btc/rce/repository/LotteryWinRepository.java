@@ -10,10 +10,10 @@ import tgb.btc.rce.bean.LotteryWin;
 @Repository
 @Transactional
 public interface LotteryWinRepository extends BaseRepository<LotteryWin> {
-    @Query("select count(l) from LotteryWin l where l.user.pid in (select pid from User where chatId=:userChatId)")
-    Long getLotteryWinCount(@Param("userChatId") Long userChatId);
+    @Query("select count(l) from LotteryWin l where l.user.pid in (select pid from User where chatId=:chatId)")
+    Long getLotteryWinCount(Long chatId);
 
     @Modifying
-    @Query("delete from LotteryWin where user.pid in (select pid from User where chatId=:userChatId)")
-    void deleteByUserChatId(@Param("userChatId") Long userChatId);
+    @Query("delete from LotteryWin where user.pid in (select pid from User where chatId=:chatId)")
+    void deleteByUserChatId(@Param("chatId") Long chatId);
 }

@@ -9,9 +9,7 @@ import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.repository.PaymentRequisiteRepository;
 import tgb.btc.rce.repository.PaymentTypeRepository;
-import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.service.impl.UserService;
 import tgb.btc.rce.util.UpdateUtil;
 
 import java.util.List;
@@ -40,11 +38,6 @@ public class TurningDynamic extends Processor {
         this.paymentTypeRepository = paymentTypeRepository;
     }
 
-    @Autowired
-    public TurningDynamic(IResponseSender responseSender, UserService userService) {
-        super(responseSender, userService);
-    }
-
     @Override
     public void run(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
@@ -59,7 +52,7 @@ public class TurningDynamic extends Processor {
             paymentTypeRepository.updateIsDynamicOnByPid(false, pid);
             responseSender.deleteMessage(chatId, update.getCallbackQuery().getMessage().getMessageId());
             responseSender.sendMessage(chatId, "Динамические реквизиты для " + paymentType.getName() + " выключены.");
-            turnDynamicRequisites.sendPaymentTypes(chatId, paymentType.getDealType());
+            turnDynamicRequisites.sendPaymentTypes(chatId, paymentType.getDealType(), paymentType.getFiatCurrency());
         } else {
             List<PaymentRequisite> paymentRequisites = paymentRequisiteRepository.getByPaymentTypePid(pid);
             if (paymentRequisites.size() <= 1) {
@@ -70,7 +63,7 @@ public class TurningDynamic extends Processor {
             paymentTypeRepository.updateIsDynamicOnByPid(true, pid);
             responseSender.deleteMessage(chatId, update.getCallbackQuery().getMessage().getMessageId());
             responseSender.sendMessage(chatId, "Динамические реквизиты для " + paymentType.getName() + " включены.");
-            turnDynamicRequisites.sendPaymentTypes(chatId, paymentType.getDealType());
+            turnDynamicRequisites.sendPaymentTypes(chatId, paymentType.getDealType(), paymentType.getFiatCurrency());
         }
     }
 

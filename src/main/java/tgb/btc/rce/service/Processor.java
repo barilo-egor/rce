@@ -1,5 +1,6 @@
 package tgb.btc.rce.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import tgb.btc.rce.annotation.CommandProcessor;
@@ -9,19 +10,19 @@ import tgb.btc.rce.enums.Menu;
 import tgb.btc.rce.enums.PropertiesMessage;
 import tgb.btc.rce.enums.UpdateType;
 import tgb.btc.rce.exception.BaseException;
+import tgb.btc.rce.repository.UserRepository;
 import tgb.btc.rce.service.impl.UserService;
 import tgb.btc.rce.util.MenuFactory;
 import tgb.btc.rce.util.MessagePropertiesUtil;
 import tgb.btc.rce.util.UpdateUtil;
 
 public abstract class Processor {
+    @Autowired
     protected IResponseSender responseSender;
+    @Autowired
     protected UserService userService;
-
-    public Processor(IResponseSender responseSender, UserService userService) {
-        this.responseSender = responseSender;
-        this.userService = userService;
-    }
+    @Autowired
+    protected UserRepository userRepository;
 
     public void process(Update update) {
         if (checkForCancel(update)) {
@@ -44,8 +45,7 @@ public abstract class Processor {
                 (isCommand(update, Command.ADMIN_BACK)) || isCommand(update, Command.CANCEL)) {
             processToAdminMainPanel(chatId);
             return true;
-        } else if (User.DEFAULT_STEP != userService.getStepByChatId(chatId)
-                && UpdateType.MESSAGE.equals(UpdateType.fromUpdate(update))
+        } else if (UpdateType.MESSAGE.equals(UpdateType.fromUpdate(update))
                 && isCommand(update, Command.CANCEL)) {
             processToMainMenu(chatId);
             return true;

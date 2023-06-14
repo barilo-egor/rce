@@ -8,6 +8,7 @@ import tgb.btc.rce.bean.Deal;
 import tgb.btc.rce.bean.User;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
+import tgb.btc.rce.enums.FiatCurrency;
 import tgb.btc.rce.enums.PaymentTypeEnum;
 import tgb.btc.rce.service.impl.DealService;
 import tgb.btc.rce.service.impl.UserService;
@@ -39,8 +40,9 @@ public class DealSupportService {
         String paymentTypeName = Objects.nonNull(paymentTypeEnum)
                                  ? paymentTypeEnum.getDisplayName()
                                  : Objects.nonNull(deal.getPaymentType()) ? deal.getPaymentType().getName() : "Не установлен тип оплаты.";
+        FiatCurrency fiatCurrency = deal.getFiatCurrency();
         return String.format(
-                BotStringConstants.DEAL_INFO, deal.getDealType().getDisplayName(), deal.getPid(),
+                BotStringConstants.DEAL_INFO, deal.getDealType().getAccusative(), deal.getPid(),
                 deal.getDateTime().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")),
                 paymentTypeName,
                 deal.getWallet(),
@@ -51,7 +53,7 @@ public class DealSupportService {
                 deal.getCryptoAmount().setScale(8, RoundingMode.FLOOR).stripTrailingZeros()
                         .toPlainString(),
                 deal.getAmount().setScale(0, RoundingMode.HALF_UP).stripTrailingZeros().toPlainString(),
-                deal.getFiatCurrency().getDisplayName()
+                Objects.nonNull(fiatCurrency) ? fiatCurrency.getDisplayName() : "отсутствует"
         );
     }
 

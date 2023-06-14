@@ -8,7 +8,9 @@ public final class BigDecimalUtil {
     private BigDecimalUtil() {
     }
 
-    public static final int scale = 10;
+    public static final int scale = 20;
+
+    public static final BigDecimal HUNDRED = BigDecimal.valueOf(100);
 
     public static BigDecimal divideHalfUp(BigDecimal a, BigDecimal b) {
         return a.setScale(scale, RoundingMode.HALF_UP).divide(b, RoundingMode.HALF_UP);
@@ -33,6 +35,19 @@ public final class BigDecimalUtil {
 
     public static BigDecimal round(BigDecimal num, int scale) {
         return num.setScale(scale, RoundingMode.HALF_UP).stripTrailingZeros();
+    }
+
+    public static String roundToPlainString(BigDecimal num, int scale) {
+        return toPlainString(round(num, scale));
+    }
+
+    public static String roundToPlainString(BigDecimal num) {
+        return roundToPlainString(num, 0);
+    }
+
+
+    public static String toPlainString(BigDecimal num) {
+        return num.stripTrailingZeros().toPlainString();
     }
 
     public static BigDecimal round(Double num, int scale) {

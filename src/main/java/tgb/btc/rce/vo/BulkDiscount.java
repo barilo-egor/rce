@@ -3,6 +3,7 @@ package tgb.btc.rce.vo;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
+import tgb.btc.rce.enums.FiatCurrency;
 
 @Builder
 @AllArgsConstructor
@@ -12,6 +13,16 @@ public class BulkDiscount {
     private int sum;
 
     private double percent;
+
+    private FiatCurrency fiatCurrency;
+
+    public FiatCurrency getFiatCurrency() {
+        return fiatCurrency;
+    }
+
+    public void setFiatCurrency(FiatCurrency fiatCurrency) {
+        this.fiatCurrency = fiatCurrency;
+    }
 
     public int getSum() {
         return sum;

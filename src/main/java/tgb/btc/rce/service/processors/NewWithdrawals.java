@@ -7,9 +7,7 @@ import tgb.btc.rce.bean.WithdrawalRequest;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.InlineType;
-import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.service.impl.UserService;
 import tgb.btc.rce.service.impl.WithdrawalRequestService;
 import tgb.btc.rce.service.processors.support.WithdrawalOfFundsService;
 import tgb.btc.rce.util.KeyboardUtil;
@@ -21,15 +19,17 @@ import java.util.List;
 @CommandProcessor(command = Command.NEW_WITHDRAWALS)
 public class NewWithdrawals extends Processor {
 
-    private final WithdrawalRequestService withdrawalRequestService;
-    private final WithdrawalOfFundsService withdrawalOfFundsService;
+    private WithdrawalRequestService withdrawalRequestService;
+
+    private WithdrawalOfFundsService withdrawalOfFundsService;
 
     @Autowired
-    public NewWithdrawals(IResponseSender responseSender, UserService userService,
-                          WithdrawalRequestService withdrawalRequestService,
-                          WithdrawalOfFundsService withdrawalOfFundsService) {
-        super(responseSender, userService);
+    public void setWithdrawalRequestService(WithdrawalRequestService withdrawalRequestService) {
         this.withdrawalRequestService = withdrawalRequestService;
+    }
+
+    @Autowired
+    public void setWithdrawalOfFundsService(WithdrawalOfFundsService withdrawalOfFundsService) {
         this.withdrawalOfFundsService = withdrawalOfFundsService;
     }
 
