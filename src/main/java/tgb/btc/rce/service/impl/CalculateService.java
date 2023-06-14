@@ -87,7 +87,7 @@ public class CalculateService {
             amount = BigDecimalUtil.subtractHalfUp(amount, BigDecimalUtil.multiplyHalfUp(transactionCommission, usdCourse));
         }
         BigDecimal usd = BigDecimalUtil.divideHalfUp(amount, usdCourse);
-        dealAmount.setCryptoAmount(BigDecimalUtil.divideHalfUp(usd, calculateData.getCryptoCourse()));
+        dealAmount.setCryptoAmount(BigDecimalUtil.round(BigDecimalUtil.divideHalfUp(usd, calculateData.getCryptoCourse()), 5));
     }
 
     private void calculateAmount(DealAmount dealAmount, CalculateData calculateData, FiatCurrency fiatCurrency) {
