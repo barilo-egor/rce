@@ -49,6 +49,7 @@ public class UsersDealsReport extends Processor {
             Map<Long, Long> map = new HashMap<>();
             users.forEach(user -> {
                 Long count = dealService.getCountPassedByUserChatId(user.getChatId());
+                if (Objects.isNull(count)) map.put(user.getChatId(), 0L);
                 if (count != 0) map.put(user.getChatId(), count);
             });
 
