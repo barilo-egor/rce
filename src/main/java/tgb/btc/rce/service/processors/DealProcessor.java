@@ -119,10 +119,14 @@ public class DealProcessor extends Processor {
                 exchangeService.askForFiatCurrency(chatId);
                 break;
             case 1:
+                log.debug(chatId + " заход в первый шаг, isBack=" + isBack);
                 if (!isBack) {
+                    log.debug("удаление сообщения");
                     responseSender.deleteCallbackMessageIfExists(update);
+                    log.debug("сохранение фиата");
                     if (!exchangeService.saveFiatCurrency(update)) return;
                 }
+                log.debug("запрос крипто валюты");
                 exchangeService.askForCryptoCurrency(chatId);
                 userRepository.nextStep(chatId);
                 break;
