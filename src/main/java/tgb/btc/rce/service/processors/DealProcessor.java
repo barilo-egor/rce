@@ -10,7 +10,6 @@ import tgb.btc.rce.enums.BotMessageType;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.DealType;
 import tgb.btc.rce.enums.Menu;
-import tgb.btc.rce.exception.BaseException;
 import tgb.btc.rce.repository.DealRepository;
 import tgb.btc.rce.service.ICalculatorTypeService;
 import tgb.btc.rce.service.IUpdateDispatcher;
@@ -128,12 +127,6 @@ public class DealProcessor extends Processor {
                 userRepository.nextStep(chatId);
                 break;
             case 2:
-                if (Objects.isNull(dealRepository.getFiatCurrencyByPid(userRepository.getPidByChatId(chatId)))) {
-                    responseSender.sendMessage(chatId, "У сделки отсутствует фиатная валюта. " +
-                            "Сделайте, пожалуйста, скриншоты последних сообщений создания сделки и обратитесь к оператору.");
-                    log.error("Отсутствует фиатная валюта у сделки. update=" + update.toString());
-                    throw new BaseException("Отсутствует фиатная валюта у сделки.");
-                }
                 if (!isBack) {
                     responseSender.deleteCallbackMessageIfExists(update);
                     if (!exchangeService.saveCryptoCurrency(update)) return;
