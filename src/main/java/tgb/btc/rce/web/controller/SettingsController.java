@@ -30,14 +30,17 @@ public class SettingsController {
         ArrayNode fiatCurrencies = objectMapper.createArrayNode();
         for (FiatCurrency fiatCurrencyEnum : FiatCurrencyUtil.getFiatCurrencies()) {
             ObjectNode fiatCurrency = objectMapper.createObjectNode();
+            fiatCurrency.put("displayName", fiatCurrencyEnum.name());
             fiatCurrency.put("name", fiatCurrencyEnum.name());
             ArrayNode dealTypes = objectMapper.createArrayNode();
             for (DealType dealTypeEnum : DealType.values()) {
                 ObjectNode dealType = objectMapper.createObjectNode();
-                dealType.put("name", dealTypeEnum.getNominativeFirstLetterToUpper());
+                dealType.put("displayName", dealTypeEnum.getNominativeFirstLetterToUpper());
+                dealType.put("name", dealTypeEnum.name());
                 ArrayNode cryptoCurrencies = objectMapper.createArrayNode();
                 for (CryptoCurrency cryptoCurrencyEnum : CryptoCurrency.values()) {
                     ObjectNode cryptoCurrency = objectMapper.createObjectNode();
+                    cryptoCurrency.put("displayName", cryptoCurrencyEnum.name());
                     cryptoCurrency.put("name", cryptoCurrencyEnum.name());
                     cryptoCurrency.put("value",
                             BotVariablePropertiesUtil.getBigDecimal(BotVariableType.USD_COURSE, fiatCurrencyEnum, dealTypeEnum, cryptoCurrencyEnum));

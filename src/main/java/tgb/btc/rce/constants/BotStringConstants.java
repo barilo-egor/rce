@@ -42,5 +42,5 @@ public interface BotStringConstants {
 
     String DONT_USE_REFERRAL_DISCOUNT = "dont_use_discount";
 
-    String MAIN_URL = BotProperties.BOT_CONFIG.getString("main.url");
+    String MAIN_URL = BotProperties.SERVER.getString("main.url");
 }
