@@ -38,7 +38,7 @@ public class SettingsController {
                 ArrayNode cryptoCurrencies = objectMapper.createArrayNode();
                 for (CryptoCurrency cryptoCurrencyEnum : CryptoCurrency.values()) {
                     ObjectNode cryptoCurrency = objectMapper.createObjectNode();
-                    cryptoCurrency.put("name", cryptoCurrencyEnum.getDisplayName());
+                    cryptoCurrency.put("name", cryptoCurrencyEnum.name());
                     cryptoCurrency.put("value",
                             BotVariablePropertiesUtil.getBigDecimal(BotVariableType.USD_COURSE, fiatCurrencyEnum, dealTypeEnum, cryptoCurrencyEnum));
                     cryptoCurrencies.add(cryptoCurrency);

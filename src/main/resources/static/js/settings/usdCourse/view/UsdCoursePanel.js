@@ -2,7 +2,7 @@ Ext.define('UsdCourse.view.UsdCoursePanel', {
     xtype: 'usdcoursepanel',
     extend: 'Ext.form.Panel',
     alias: 'widget.UsdCourse-panel',
-    title: 'Замена курса USD',
+    title: 'Курса USD',
     header: {
         titleAlign: 'center'
     },
@@ -10,7 +10,7 @@ Ext.define('UsdCourse.view.UsdCoursePanel', {
     region: 'center',
     layout: {
         type: 'vbox',
-        align: 'center'
+        align: 'stretch'
     },
     items: [
         {
@@ -38,6 +38,7 @@ Ext.define('UsdCourse.view.UsdCoursePanel', {
                                             name: cryptoCurrency.name,
                                             fieldLabel: cryptoCurrency.name,
                                             value: cryptoCurrency.value,
+                                            layout: 'anchor',
                                             msgTarget: 'side',
                                             allowBlank: false
                                         }
@@ -47,7 +48,10 @@ Ext.define('UsdCourse.view.UsdCoursePanel', {
                                         xtype: 'fieldset',
                                         title: dealType.name,
                                         collapsible: true,
-                                        layout: 'vbox',
+                                        layout: {
+                                            type: 'vbox',
+                                            align: 'stretch'
+                                        },
                                         defaults: {
                                             labelWidth: 90,
                                         },
@@ -60,6 +64,7 @@ Ext.define('UsdCourse.view.UsdCoursePanel', {
                                     xtype: 'fieldset',
                                     title: fiatCurrency.name,
                                     collapsible: true,
+                                    layout: 'anchor',
                                     defaults: {
                                         labelWidth: 90,
                                         anchor: '100%',
@@ -73,6 +78,7 @@ Ext.define('UsdCourse.view.UsdCoursePanel', {
                     })
                 }
             },
+            buttonAlign: 'center',
             buttons: [
                 {
                     text: 'Сохранить',
