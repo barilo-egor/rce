@@ -48,19 +48,34 @@ Ext.define('UsdCourse.view.UsdCoursePanel', {
                                             flex: 1,
                                             msgTarget: 'side',
                                             emptyText: 'Введите значение.',
+                                            // hideTrigger: true,
                                             allowBlank: false,
                                             triggers: {
                                                 reset: {
-                                                    iconCls: 'x-fa fa-home',
-                                                    handler: function () {
-                                                        console.log('123')
+                                                    tooltip: 'Вернуть значение',
+                                                    cls: 'x-form-clear-trigger',
+                                                    hidden: true,
+                                                    handler: function (me) {
+                                                        me.setValue(me.defaultValue)
                                                     }
                                                 }
                                             },
                                             listeners: {
+                                                beforerender: function (me) {
+                                                    me.getTriggers().spinner.hide();
+                                                },
                                                 change: function(me) {
-                                                    if (me.value !== me.defaultValue) me.setFieldStyle('color:#157fcc; font-weight: bold;');
-                                                    else me.setFieldStyle('color:black; font-weight: normal;')
+                                                    if (me.value !== me.defaultValue) {
+                                                        me.getTriggers().reset.show()
+                                                        me.setFieldStyle('color:#157fcc; font-weight: bold;')
+                                                    } else {
+                                                        me.getTriggers().reset.hide()
+                                                        me.setFieldStyle('color: #404040;\n' +
+                                                            'padding: 5px 10px 4px;\n' +
+                                                            'background-color: #fff;\n' +
+                                                            'font: 300 13px/21px \'Open Sans\', \'Helvetica Neue\', helvetica, arial, verdana, sans-serif;\n' +
+                                                            'min-height: 30px;')
+                                                    }
                                                 }
                                             }
                                         }
@@ -104,7 +119,16 @@ Ext.define('UsdCourse.view.UsdCoursePanel', {
                 {
                   text: 'Восстановить значения',
                   handler: function () {
-                      console.log('123');
+                      let fiatCurrencies = Ext.ComponentQuery.query('[id=coursesForm]')[0].items.items
+                      for (let fiatCurrency of fiatCurrencies) {
+                          let dealTypes = fiatCurrency.items.items
+                          for (let dealType of dealTypes) {
+                              let cryptoCurrencies = dealType.items.items
+                              for (let cryptoCurrency of cryptoCurrencies) {
+                                  cryptoCurrency.setValue(cryptoCurrency.defaultValue)
+                              }
+                          }
+                      }
                   }
                 },
                 {
