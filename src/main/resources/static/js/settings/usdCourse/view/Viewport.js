@@ -4,7 +4,7 @@ Ext.define('UsdCourse.view.Viewport', {
         'UsdCourse.view.UsdCoursePanel'
     ],
     alias: 'widget.UsdCoursePanel-vp',
-    layout: 'anchor',
+    layout: 'fit',
     viewModel: true,
     items: [
         {

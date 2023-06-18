@@ -9,19 +9,18 @@ Ext.define('UsdCourse.view.UsdCoursePanel', {
     region: 'center',
     scrollable: true,
     layout: {
-        type: 'fit'
+        type: 'vbox',
+        align: 'stretch'
     },
     items: [
         {
             xtype: 'form',
             id: 'coursesForm',
-            bodyStyle: 'padding:10px 40px 0px 20px',
             scrollable: true,
             layout: {
                 type: 'vbox',
                 align: 'stretch'
             },
-            flex: 1,
             listeners: {
                 afterrender: function (form) {
                     let me = form;
@@ -46,10 +45,18 @@ Ext.define('UsdCourse.view.UsdCoursePanel', {
                                             fieldLabel: cryptoCurrency.name,
                                             value: cryptoCurrency.value,
                                             defaultValue: cryptoCurrency.value,
-                                            layout: 'anchor',
+                                            flex: 1,
                                             msgTarget: 'side',
                                             emptyText: 'Введите значение.',
                                             allowBlank: false,
+                                            triggers: {
+                                                reset: {
+                                                    iconCls: 'x-fa fa-home',
+                                                    handler: function () {
+                                                        console.log('123')
+                                                    }
+                                                }
+                                            },
                                             listeners: {
                                                 change: function(me) {
                                                     if (me.value !== me.defaultValue) me.setFieldStyle('color:#157fcc; font-weight: bold;');
@@ -79,7 +86,6 @@ Ext.define('UsdCourse.view.UsdCoursePanel', {
                                     xtype: 'fieldset',
                                     title: fiatCurrency.displayName,
                                     collapsible: true,
-                                    layout: 'anchor',
                                     defaults: {
                                         labelWidth: 90,
                                         anchor: '100%',
