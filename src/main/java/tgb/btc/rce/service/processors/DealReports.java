@@ -2,6 +2,7 @@ package tgb.btc.rce.service.processors;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -79,13 +80,25 @@ public class DealReports extends Processor {
                 String period = UpdateUtil.getMessageText(update);
                 switch (period) {
                     case TODAY:
-                        loadReport(dealService.getByDate(LocalDate.now()), chatId, period);
+                        try {
+                            loadReport(dealService.getByDate(LocalDate.now()), chatId, period);
+                        } catch (Exception e) {
+                            log.error("ОШибка при выгрузке отчета.", e);
+                        }
                         break;
                     case TEN_DAYS:
-                        loadReport(dealService.getByDateBetween(LocalDate.now().minusDays(10), LocalDate.now()), chatId, period);
+                        try {
+                            loadReport(dealService.getByDateBetween(LocalDate.now().minusDays(10), LocalDate.now()), chatId, period);
+                        } catch (Exception e) {
+                            log.error("ОШибка при выгрузке отчета.", e);
+                        }
                         break;
                     case MONTH:
-                        loadReport(dealService.getByDateBetween(LocalDate.now().minusDays(30), LocalDate.now()), chatId, period);
+                        try {
+                            loadReport(dealService.getByDateBetween(LocalDate.now().minusDays(30), LocalDate.now()), chatId, period);
+                        } catch (Exception e) {
+                            log.error("ОШибка при выгрузке отчета.", e);
+                        }
                         break;
                     case DATE:
                         responseSender.sendMessage(chatId, "Введите дату в формате дд.мм.гггг");
@@ -183,7 +196,9 @@ public class DealReports extends Processor {
             // getPaymentTypeEnum используется для старых сделок
             String paymentTypeName = Objects.nonNull(deal.getPaymentTypeEnum())
                     ? deal.getPaymentTypeEnum().getDisplayName()
-                    : deal.getPaymentType().getName();
+                    : Objects.nonNull(deal.getPaymentType())
+                    ? deal.getPaymentType().getName()
+                    : StringUtils.EMPTY;
             cell.setCellValue(paymentTypeName);
             cell = row.createCell(8);
             cell.setCellValue(deal.getUser().getChatId());
