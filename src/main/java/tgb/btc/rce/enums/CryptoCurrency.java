@@ -5,21 +5,27 @@ import tgb.btc.rce.exception.EnumTypeNotFoundException;
 import java.util.Arrays;
 
 public enum CryptoCurrency {
-    BITCOIN(BotProperties.CRYPTO_CURRENCIES_DESIGN.getString("BITCOIN"), "btc", String.class, 8),
-    LITECOIN(BotProperties.CRYPTO_CURRENCIES_DESIGN.getString("LITECOIN"), "ltc", String.class, 8),
-    USDT(BotProperties.CRYPTO_CURRENCIES_DESIGN.getString("USDT"), "usdt", String.class, 1),
-    MONERO(BotProperties.CRYPTO_CURRENCIES_DESIGN.getString("MONERO"), "xmr", Double.class, 8);
+    BITCOIN(BotProperties.CRYPTO_CURRENCIES_DESIGN.getString("BITCOIN"), "btc", String.class, 8, 0.004),
+    LITECOIN(BotProperties.CRYPTO_CURRENCIES_DESIGN.getString("LITECOIN"), "ltc", String.class, 8, 0.7),
+    USDT(BotProperties.CRYPTO_CURRENCIES_DESIGN.getString("USDT"), "usdt", String.class, 1, 50.0),
+    MONERO(BotProperties.CRYPTO_CURRENCIES_DESIGN.getString("MONERO"), "xmr", Double.class, 8, 0.5);
 
     final String displayName;
     final String shortName;
     final Class rateClass;
     final int scale;
+    final Double defaultCheckValue;
 
-    CryptoCurrency(String displayName, String shortName, Class rateClass, int scale) {
+    CryptoCurrency(String displayName, String shortName, Class rateClass, int scale, Double defaultCheckValue) {
         this.displayName = displayName;
         this.shortName = shortName;
         this.rateClass = rateClass;
         this.scale = scale;
+        this.defaultCheckValue = defaultCheckValue;
+    }
+
+    public Double getDefaultCheckValue() {
+        return defaultCheckValue;
     }
 
     public int getScale() {

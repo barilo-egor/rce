@@ -1,9 +1,27 @@
 .saveBtn {
-    background-color: #56E0AC !important;
+    background-color: #9FEFD1 !important;
     border-color: #1C9165 !important;
+    background-image: none;
+}
+.returnValuesBtn {
+    background-color: #A3CBEE !important;
+    border-color: #1F5A90 !important;
+    background-image: none;
+}
+.returnValueBtn {
+    background-color: #ffffff !important;
+    border-color: #919191 !important;
+    border-width: 1px;
+    box-shadow: none;
     background-image: none;
 }
 .x-btn-inner {
     color: #404040;
-font: 300 13px/21px \'Open Sans\', \'Helvetica Neue\', helvetica, arial, verdana, sans-serif;
+    font: 300 13px/21px \'Open Sans\', \'Helvetica Neue\', helvetica, arial, verdana, sans-serif;
+}
+.fa-floppy-disk {
+    color: #404040;
+}
+.fa-rotate-right {
+    color: #404040;
 }

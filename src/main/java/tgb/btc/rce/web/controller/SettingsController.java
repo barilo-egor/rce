@@ -13,6 +13,7 @@ import tgb.btc.rce.enums.DealType;
 import tgb.btc.rce.enums.FiatCurrency;
 import tgb.btc.rce.util.BotVariablePropertiesUtil;
 import tgb.btc.rce.util.FiatCurrencyUtil;
+import tgb.btc.rce.vo.web.CalculateDataForm;
 
 @Controller
 @RequestMapping("/settings")
@@ -40,6 +41,7 @@ public class SettingsController {
                 ArrayNode cryptoCurrencies = objectMapper.createArrayNode();
                 for (CryptoCurrency cryptoCurrencyEnum : CryptoCurrency.values()) {
                     ObjectNode cryptoCurrency = objectMapper.createObjectNode();
+                    cryptoCurrency.put("defaultCheckValue", cryptoCurrencyEnum.getDefaultCheckValue());
                     cryptoCurrency.put("displayName", cryptoCurrencyEnum.name());
                     cryptoCurrency.put("name", cryptoCurrencyEnum.name());
                     cryptoCurrency.put("value",
@@ -56,5 +58,11 @@ public class SettingsController {
         result.put("success", true);
         result.set("data", fiatCurrencies);
         return result;
+    }
+
+    @GetMapping(value = "/calculate")
+    @ResponseBody
+    public ObjectNode calculate(CalculateDataForm calculateDataForm) {
+        return null;
     }
 }
