@@ -1,0 +1,9 @@
+.saveBtn {
+    background-color: #56E0AC !important;
+    border-color: #1C9165 !important;
+    background-image: none;
+}
+.x-btn-inner {
+    color: #404040;
+font: 300 13px/21px \'Open Sans\', \'Helvetica Neue\', helvetica, arial, verdana, sans-serif;
+}

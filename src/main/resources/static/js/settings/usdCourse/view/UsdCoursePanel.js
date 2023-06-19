@@ -64,7 +64,7 @@ Ext.define('UsdCourse.view.UsdCoursePanel', {
                                                 beforerender: function (me) {
                                                     me.getTriggers().spinner.hide();
                                                 },
-                                                change: function(me) {
+                                                change: function (me) {
                                                     if (me.value !== me.defaultValue) {
                                                         me.getTriggers().reset.show()
                                                         me.setFieldStyle('color:#157fcc; font-weight: bold;')
@@ -117,22 +117,25 @@ Ext.define('UsdCourse.view.UsdCoursePanel', {
             buttonAlign: 'center',
             buttons: [
                 {
-                  text: 'Восстановить значения',
-                  handler: function () {
-                      let fiatCurrencies = Ext.ComponentQuery.query('[id=coursesForm]')[0].items.items
-                      for (let fiatCurrency of fiatCurrencies) {
-                          let dealTypes = fiatCurrency.items.items
-                          for (let dealType of dealTypes) {
-                              let cryptoCurrencies = dealType.items.items
-                              for (let cryptoCurrency of cryptoCurrencies) {
-                                  cryptoCurrency.setValue(cryptoCurrency.defaultValue)
-                              }
-                          }
-                      }
-                  }
+                    text: 'Восстановить значения',
+                    iconCls: 'fa-solid fa-rotate-right',
+                    handler: function () {
+                        let fiatCurrencies = Ext.ComponentQuery.query('[id=coursesForm]')[0].items.items
+                        for (let fiatCurrency of fiatCurrencies) {
+                            let dealTypes = fiatCurrency.items.items
+                            for (let dealType of dealTypes) {
+                                let cryptoCurrencies = dealType.items.items
+                                for (let cryptoCurrency of cryptoCurrencies) {
+                                    cryptoCurrency.setValue(cryptoCurrency.defaultValue)
+                                }
+                            }
+                        }
+                    }
                 },
                 {
                     text: 'Сохранить',
+                    iconCls: 'fa-regular fa-floppy-disk',
+                    cls: 'saveBtn',
                     handler: function () {
                         let values = Ext.ComponentQuery.query('[id=coursesForm]')[0].getValues()
                         let courses = []
