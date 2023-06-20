@@ -7,16 +7,18 @@ import tgb.btc.rce.enums.CryptoCurrency;
 import tgb.btc.rce.enums.DealType;
 import tgb.btc.rce.enums.FiatCurrency;
 
+import java.math.BigDecimal;
+
 @Data
 public class CalculateDataForm {
 
     @Getter
     @Setter
-    private Double course;
+    private BigDecimal usdCourse;
 
     @Getter
     @Setter
-    private Double value;
+    private BigDecimal cryptoAmount;
 
     @Getter
     @Setter
@@ -29,4 +31,12 @@ public class CalculateDataForm {
     @Getter
     @Setter
     private DealType dealType;
+
+    @Getter
+    @Setter
+    private BigDecimal personalDiscount;
+
+    @Getter
+    @Setter
+    private BigDecimal bulkDiscount;
 }

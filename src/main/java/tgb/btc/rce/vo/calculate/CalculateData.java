@@ -30,6 +30,16 @@ public class CalculateData {
         this.cryptoCourse = cryptoCourse;
     }
 
+    public CalculateData(FiatCurrency fiatCurrency, DealType dealType, CryptoCurrency cryptoCurrency, BigDecimal cryptoCourse,
+                         BigDecimal usdCourse) {
+        this.fix = BotVariablePropertiesUtil.getBigDecimal(BotVariableType.FIX, fiatCurrency, dealType, cryptoCurrency);
+        this.usdCourse = usdCourse;
+        this.commission = BotVariablePropertiesUtil.getBigDecimal(BotVariableType.COMMISSION, fiatCurrency, dealType, cryptoCurrency);
+        this.fixCommission = BotVariablePropertiesUtil.getBigDecimal(BotVariableType.FIX_COMMISSION, fiatCurrency, dealType, cryptoCurrency);
+        this.transactionalCommission = BotVariablePropertiesUtil.getTransactionCommission(cryptoCurrency);
+        this.cryptoCourse = cryptoCourse;
+    }
+
     public BigDecimal getFix() {
         return fix;
     }

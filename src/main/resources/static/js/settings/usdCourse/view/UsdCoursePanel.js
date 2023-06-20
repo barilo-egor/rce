@@ -1,7 +1,7 @@
 Ext.define('UsdCourse.view.UsdCoursePanel', {
     xtype: 'usdcoursepanel',
     extend: 'Ext.form.Panel',
-    alias: 'widget.UsdCourse-panel',
+    controller: 'usdCourseController',
     title: 'Курс USD',
     header: {
         titleAlign: 'center'
@@ -21,6 +21,45 @@ Ext.define('UsdCourse.view.UsdCoursePanel', {
                 type: 'vbox',
                 align: 'stretch'
             },
+            items: [
+                {
+                    xtype: 'fieldset',
+                    title: 'Расчетные данные',
+                    collapsible: true,
+                    layout: {
+                        type: 'vbox',
+                        align: 'stretch'
+                    },
+                    items: {
+                        xtype: 'container',
+                        listeners: {
+                            afterrender: function (me) {
+                                me.setLoading("Загрузка")
+                                Ext.Ajax.request({
+                                    url: '/settings/cryptoCourses',
+                                    method: 'GET',
+                                    success: function (rs) {
+                                        let response = Ext.JSON.decode(rs.responseText)
+                                        let currencies = response.currencies
+
+                                        for (let cryptoCurrency of currencies) {
+                                            me.insert({
+                                                xtype: 'numberfield',
+                                                fieldLabel: cryptoCurrency.name,
+                                                value: cryptoCurrency.currency,
+                                                padding: '0 0 5 0',
+                                                editable: false,
+                                                hideTrigger: true
+                                            })
+                                        }
+                                        me.setLoading(false)
+                                    }
+                                })
+                            }
+                        }
+                    }
+                }
+            ],
             listeners: {
                 afterrender: function (form) {
                     let me = form;
@@ -38,6 +77,7 @@ Ext.define('UsdCourse.view.UsdCoursePanel', {
                                     for (let cryptoCurrency of dealType.cryptoCurrencies) {
                                         let cryptoCurrencyInput = {
                                             xtype: 'container',
+                                            controller: 'usdCourseController',
                                             layout: {
                                                 type: 'hbox',
                                                 align: 'stretch'
@@ -50,11 +90,9 @@ Ext.define('UsdCourse.view.UsdCoursePanel', {
                                                     step: 0.1,
                                                     name: (fiatCurrency.name + "." + dealType.name + "."
                                                         + cryptoCurrency.name).toLowerCase(),
-                                                    data: {
-                                                        fiatCurrency: fiatCurrency.name,
-                                                        dealType: dealType.name,
-                                                        cryptoCurrency: cryptoCurrency.name
-                                                    },
+                                                    fiatCurrency: fiatCurrency.name,
+                                                    dealType: dealType.name,
+                                                    cryptoCurrency: cryptoCurrency.name,
                                                     fieldLabel: cryptoCurrency.name,
                                                     value: cryptoCurrency.value,
                                                     defaultValue: cryptoCurrency.value,
@@ -103,27 +141,8 @@ Ext.define('UsdCourse.view.UsdCoursePanel', {
                                                     flex: 0.15,
                                                     padding: '0 2 0 2',
                                                     listeners: {
-                                                        change: function (me) {
-                                                            let container = me.up('container')
-                                                            let usdCourseField = container.items.items[0]
-                                                            let usdCourse = usdCourseField.value
-                                                            let resultInput = container.items.items[3]
-                                                            let params = {
-                                                                cryptoAmount: me.value,
-                                                                usdCourse: usdCourse,
-                                                                fiatCurrency: usdCourseField.data.fiatCurrency,
-                                                                cryptoCurrency: usdCourseField.data.cryptoCurrency,
-                                                                dealType: usdCourseField.data.dealType
-                                                            }
-                                                            Ext.Ajax.request({
-                                                                url: '',
-                                                                method: 'GET',
-                                                                params: params,
-                                                                success: function (response) {
-
-                                                                }
-                                                            })
-                                                        }
+                                                        change: 'calculate',
+                                                        boxready: 'calculate'
                                                     }
                                                 },
                                                 {

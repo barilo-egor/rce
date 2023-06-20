@@ -12,6 +12,7 @@ import tgb.btc.rce.util.BotVariablePropertiesUtil;
 import tgb.btc.rce.util.BulkDiscountUtil;
 import tgb.btc.rce.vo.calculate.CalculateData;
 import tgb.btc.rce.vo.calculate.DealAmount;
+import tgb.btc.rce.vo.web.CalculateDataForm;
 
 import java.math.BigDecimal;
 import java.util.Objects;
@@ -53,6 +54,23 @@ public class CalculateService {
             if (DealType.isBuy(dealType)) calculateCryptoAmount(dealAmount, calculateData, fiatCurrency);
             else calculateCryptoAmountForSell(dealAmount, calculateData, fiatCurrency);
         }
+        return dealAmount;
+    }
+
+    public DealAmount calculate(CalculateDataForm calculateDataForm) {
+        FiatCurrency fiatCurrency = calculateDataForm.getFiatCurrency();
+        CryptoCurrency cryptoCurrency = calculateDataForm.getCryptoCurrency();
+        DealType dealType = calculateDataForm.getDealType();
+        CalculateData calculateData = new CalculateData(fiatCurrency, dealType, cryptoCurrency,
+                cryptoCurrencyService.getCurrency(cryptoCurrency), calculateDataForm.getUsdCourse());
+
+        DealAmount dealAmount = new DealAmount();
+        dealAmount.setDealType(dealType);
+        dealAmount.setEnteredInCrypto(true);
+        dealAmount.setCalculateData(calculateData);
+        dealAmount.setCryptoAmount(calculateDataForm.getCryptoAmount());
+        if (DealType.isBuy(dealType)) calculateAmount(dealAmount, calculateData, fiatCurrency);
+        else calculateAmountForSell(dealAmount, calculateData, fiatCurrency);
         return dealAmount;
     }
 

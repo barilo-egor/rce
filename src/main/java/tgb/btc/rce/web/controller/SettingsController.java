@@ -3,6 +3,7 @@ package tgb.btc.rce.web.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,13 +12,34 @@ import tgb.btc.rce.enums.BotVariableType;
 import tgb.btc.rce.enums.CryptoCurrency;
 import tgb.btc.rce.enums.DealType;
 import tgb.btc.rce.enums.FiatCurrency;
+import tgb.btc.rce.service.impl.CalculateService;
+import tgb.btc.rce.service.impl.CryptoCurrencyService;
 import tgb.btc.rce.util.BotVariablePropertiesUtil;
 import tgb.btc.rce.util.FiatCurrencyUtil;
+import tgb.btc.rce.vo.calculate.DealAmount;
 import tgb.btc.rce.vo.web.CalculateDataForm;
+
+import java.math.RoundingMode;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/settings")
 public class SettingsController {
+
+    private CalculateService calculateService;
+
+    private CryptoCurrencyService cryptoCurrencyService;
+
+    @Autowired
+    public void setCryptoCurrencyService(CryptoCurrencyService cryptoCurrencyService) {
+        this.cryptoCurrencyService = cryptoCurrencyService;
+    }
+
+    @Autowired
+    public void setCalculateService(CalculateService calculateService) {
+        this.calculateService = calculateService;
+    }
 
     @GetMapping(value = "/usdCourse")
     public String get() {
@@ -60,9 +82,28 @@ public class SettingsController {
         return result;
     }
 
+    @GetMapping(value = "/cryptoCourses")
+    @ResponseBody
+    public ObjectNode cryptoCourses() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        ArrayNode arrayNode = objectMapper.createArrayNode().addAll(Arrays.stream(CryptoCurrency.values())
+                .map(cryptoCurrency -> objectMapper.createObjectNode()
+                        .put("name", cryptoCurrency.name())
+                        .put("currency", cryptoCurrencyService.getCurrency(cryptoCurrency)))
+                .collect(Collectors.toList()));
+        ObjectNode objectNode = objectMapper.createObjectNode();
+        objectNode.put("success", true);
+        objectNode.put("currencies", arrayNode);
+        return objectNode;
+    }
+
     @GetMapping(value = "/calculate")
     @ResponseBody
     public ObjectNode calculate(CalculateDataForm calculateDataForm) {
-        return null;
+        DealAmount dealAmount = calculateService.calculate(calculateDataForm);
+        ObjectNode objectNode = new ObjectMapper().createObjectNode();
+        objectNode.put("success", true);
+        objectNode.put("amount", dealAmount.getAmount().setScale(0, RoundingMode.CEILING).toPlainString());
+        return objectNode;
     }
 }
