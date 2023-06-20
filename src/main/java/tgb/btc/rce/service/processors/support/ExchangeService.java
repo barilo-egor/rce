@@ -1,5 +1,6 @@
 package tgb.btc.rce.service.processors.support;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 @Service
+@Slf4j
 public class ExchangeService {
     private KeyboardService keyboardService;
 
@@ -156,7 +158,9 @@ public class ExchangeService {
     public boolean saveFiatCurrency(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
         FiatCurrency fiatCurrency;
-        if (FiatCurrencyUtil.isFew()) {
+        boolean isFew = FiatCurrencyUtil.isFew();
+        log.debug("isFew = " + isFew);
+        if (isFew) {
             if (!update.hasCallbackQuery()) {
                 responseSender.sendMessage(chatId, "Выберите валюту.");
                 return false;
@@ -164,8 +168,13 @@ public class ExchangeService {
             fiatCurrency = FiatCurrency.fromCallbackQuery(update.getCallbackQuery());
         } else {
             fiatCurrency = FiatCurrencyUtil.getFirst();
+            if (Objects.isNull(fiatCurrency)) log.debug("FiatCurrencyUtil.getFirst() == null");
+            else log.debug("fiatCurrency = " + fiatCurrency.name());
         }
-        dealRepository.updateFiatCurrencyByPid(userRepository.getCurrentDealByChatId(chatId), fiatCurrency);
+        Long currentDealPid = userRepository.getCurrentDealByChatId(chatId);
+        log.debug("currentDealPid=" + currentDealPid);
+        dealRepository.updateFiatCurrencyByPid(currentDealPid, fiatCurrency);
+        log.debug("сохранен фиат");
         return true;
     }
 
