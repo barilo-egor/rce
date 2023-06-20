@@ -21,6 +21,10 @@ public class CalculateData {
 
     private final BigDecimal cryptoCourse;
 
+    private BigDecimal personalDiscount;
+
+    private BigDecimal bulkDiscount;
+
     public CalculateData(FiatCurrency fiatCurrency, DealType dealType, CryptoCurrency cryptoCurrency, BigDecimal cryptoCourse) {
         this.fix = BotVariablePropertiesUtil.getBigDecimal(BotVariableType.FIX, fiatCurrency, dealType, cryptoCurrency);
         this.usdCourse = BotVariablePropertiesUtil.getBigDecimal(BotVariableType.USD_COURSE, fiatCurrency, dealType, cryptoCurrency);
@@ -31,13 +35,15 @@ public class CalculateData {
     }
 
     public CalculateData(FiatCurrency fiatCurrency, DealType dealType, CryptoCurrency cryptoCurrency, BigDecimal cryptoCourse,
-                         BigDecimal usdCourse) {
+                         BigDecimal usdCourse, BigDecimal personalDiscount, BigDecimal bulkDiscount) {
         this.fix = BotVariablePropertiesUtil.getBigDecimal(BotVariableType.FIX, fiatCurrency, dealType, cryptoCurrency);
         this.usdCourse = usdCourse;
         this.commission = BotVariablePropertiesUtil.getBigDecimal(BotVariableType.COMMISSION, fiatCurrency, dealType, cryptoCurrency);
         this.fixCommission = BotVariablePropertiesUtil.getBigDecimal(BotVariableType.FIX_COMMISSION, fiatCurrency, dealType, cryptoCurrency);
         this.transactionalCommission = BotVariablePropertiesUtil.getTransactionCommission(cryptoCurrency);
         this.cryptoCourse = cryptoCourse;
+        this.personalDiscount = personalDiscount;
+        this.bulkDiscount = bulkDiscount;
     }
 
     public BigDecimal getFix() {
@@ -64,4 +70,11 @@ public class CalculateData {
         return cryptoCourse;
     }
 
+    public BigDecimal getPersonalDiscount() {
+        return personalDiscount;
+    }
+
+    public BigDecimal getBulkDiscount() {
+        return bulkDiscount;
+    }
 }

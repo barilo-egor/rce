@@ -3,18 +3,38 @@ Ext.define('UsdCourse.view.UsdCourseController', {
     alias: 'controller.usdCourseController',
 
     calculate: function (me) {
+        let cryptoCoursesFieldSet = Ext.ComponentQuery.query('[id=cryptoCourses]')[0]
+        let cryptoCoursesInputs = cryptoCoursesFieldSet.items.items
         let container = me.up('container')
-        let resultInput = container.items.items[3]
-        resultInput.setLoading('Загрузка')
-        let usdCourseField = container.items.items[0]
-        let usdCourse = usdCourseField.value
         let cryptoAmount = container.items.items[2].value
+        if (!cryptoAmount || cryptoAmount === 0) return;
+        let usdCourseField = container.items.items[0]
+        let cryptoCourse
+        for (let cryptoCourseInput of cryptoCoursesInputs) {
+            if (cryptoCourseInput.fieldLabel === usdCourseField.cryptoCurrency) {
+                cryptoCourse = cryptoCourseInput.value
+            }
+        }
+        let resultInput = container.items.items[3]
+        let usdCourse = usdCourseField.value
+        let discountsFieldSetItems = Ext.ComponentQuery.query('[id=discountsFieldSet]')[0].items.items
+        let personalDiscount = null
+        let bulkDiscount = null
+        if (discountsFieldSetItems[0].value) {
+            let personalValue = discountsFieldSetItems[1].value
+            if (personalValue !== 0) personalDiscount = personalValue
+            let bulkValue = discountsFieldSetItems[2].value
+            if (bulkValue !== 0) bulkDiscount = bulkValue
+        }
         let params = {
             cryptoAmount: cryptoAmount,
             usdCourse: usdCourse,
             fiatCurrency: usdCourseField.fiatCurrency,
             cryptoCurrency: usdCourseField.cryptoCurrency,
-            dealType: usdCourseField.dealType
+            dealType: usdCourseField.dealType,
+            cryptoCourse: cryptoCourse,
+            personalDiscount: personalDiscount,
+            bulkDiscount: bulkDiscount
         }
         Ext.Ajax.request({
             url: '/settings/calculate',
@@ -26,5 +46,193 @@ Ext.define('UsdCourse.view.UsdCourseController', {
                 resultInput.setLoading(false)
             }
         })
+    },
+
+    usdCourseChange: function (me) {
+        let button = me.up('container').items.items[1]
+        button.setDisabled(false)
+        if (me.value !== me.defaultValue) {
+            button.setDisabled(false)
+            me.setFieldStyle('color:#157fcc; font-weight: bold;')
+        } else {
+            button.setDisabled(true)
+            me.setFieldStyle('color: #404040;\n' +
+                'padding: 5px 10px 4px;\n' +
+                'background-color: #fff;\n' +
+                'font: 300 13px/21px \'Open Sans\', \'Helvetica Neue\', helvetica, arial, verdana, sans-serif;\n' +
+                'min-height: 30px;')
+        }
+        this.calculate(me)
+    },
+
+    returnValue: function (btn) {
+        let input = btn.up('container').items.items[0]
+        input.setValue(input.defaultValue)
+        let cryptoAmountField = btn.up('fieldset').items.items[3]
+        cryptoAmountField.fireEvent('valuechanged')
+        this.calculate(btn)
+    },
+
+    returnValues: function () {
+        let fiatCurrencies = Ext.ComponentQuery.query('[id=coursesForm]')[0].items.items
+        for (let fiatCurrency of fiatCurrencies) {
+            let dealTypes = fiatCurrency.items.items
+            for (let dealType of dealTypes) {
+                let containers = dealType.items.items
+                for (let container of containers) {
+                    let courseField = container.items.items[0]
+                    courseField.setValue(courseField.defaultValue)
+                }
+            }
+        }
+    },
+
+    cryptoCoursesAfterRender: function (me) {
+        Ext.Ajax.request({
+            url: '/settings/cryptoCourses',
+            method: 'GET',
+            async: false,
+            success: function (rs) {
+                let response = Ext.JSON.decode(rs.responseText)
+                let currencies = response.currencies
+                let cryptoCoursesFieldSet = Ext.ComponentQuery.query('[id=cryptoCourses]')[0]
+
+                for (let cryptoCurrency of currencies) {
+                    cryptoCoursesFieldSet.insert({
+                        xtype: 'numberfield',
+                        fieldLabel: cryptoCurrency.name,
+                        value: cryptoCurrency.currency,
+                        decimalSeparator: '.',
+                        padding: '0 0 2 0',
+                        labelWidth: 70,
+                        width: 170,
+                        editable: false,
+                        hideTrigger: true
+                    })
+                }
+            }
+        })
+
+        let coursesForm = Ext.ComponentQuery.query('[id=coursesForm]')[0];
+        Ext.Ajax.request({
+            url: '/settings/getUsdCourses',
+            method: 'GET',
+            async: false,
+            success: function (rs) {
+                let response = Ext.JSON.decode(rs.responseText)
+                let data = response.data
+
+                for (let fiatCurrency of data) {
+                    let fiatCurrencyItems = []
+                    for (let dealType of fiatCurrency.dealTypes) {
+                        let dealTypesItems = []
+                        let i = 0;
+                        for (let cryptoCurrency of dealType.cryptoCurrencies) {
+                            let cryptoCurrencyInput = {
+                                xtype: 'container',
+                                controller: 'usdCourseController',
+                                layout: {
+                                    type: 'hbox',
+                                    align: 'stretch'
+                                },
+                                padding: '0 0 5 0',
+                                items: [
+                                    {
+                                        xtype: 'numberfield',
+                                        decimalSeparator: '.',
+                                        step: 0.1,
+                                        name: (fiatCurrency.name + "." + dealType.name + "."
+                                            + cryptoCurrency.name).toLowerCase(),
+                                        fiatCurrency: fiatCurrency.name,
+                                        dealType: dealType.name,
+                                        cryptoCurrency: cryptoCurrency.name,
+                                        fieldLabel: cryptoCurrency.name,
+                                        value: cryptoCurrency.value,
+                                        defaultValue: cryptoCurrency.value,
+                                        flex: 0.4,
+                                        padding: '0 2 0 0',
+                                        msgTarget: 'side',
+                                        emptyText: 'Введите значение.',
+                                        allowBlank: false,
+                                        hideTrigger: true,
+                                        listeners: {
+                                            change: 'usdCourseChange'
+                                        }
+                                    },
+                                    {
+                                        xtype: 'button',
+                                        weight: 50,
+                                        tooltip: 'Восстановить значение',
+                                        iconCls: 'fa-solid fa-rotate-right',
+                                        disabled: true,
+                                        cls: 'returnValueBtn',
+                                        handler: 'returnValue'
+                                    },
+                                    {
+                                        xtype: 'numberfield',
+                                        decimalSeparator: '.',
+                                        flex: 0.4,
+                                        decimalPrecision: 8,
+                                        value: cryptoCurrency.defaultCheckValue,
+                                        hideTrigger: true,
+                                        padding: '0 2 0 2',
+                                        listeners: {
+                                            afterrender: 'calculate',
+                                            change: 'calculate',
+                                        }
+                                    },
+                                    {
+                                        xtype: 'numberfield',
+                                        editable: false,
+                                        decimalSeparator: '.',
+                                        decimalPrecision: 8,
+                                        hideTrigger: true,
+                                        flex: 0.2,
+                                        padding: '0 2 0 0',
+                                    }
+                                ]
+                            }
+                            dealTypesItems.push(cryptoCurrencyInput)
+                            i++
+                        }
+                        let dealTypeFieldSet = {
+                            xtype: 'fieldset',
+                            title: dealType.displayName,
+                            collapsible: false,
+                            layout: {
+                                type: 'vbox',
+                                align: 'stretch'
+                            },
+                            defaults: {
+                                labelWidth: 90,
+                            },
+                            items: dealTypesItems
+                        }
+                        fiatCurrencyItems.push(dealTypeFieldSet)
+                    }
+
+                    let fiatCurrencyFieldSet = {
+                        xtype: 'fieldset',
+                        title: fiatCurrency.displayName,
+                        collapsible: true,
+                        defaults: {
+                            labelWidth: 90,
+                            anchor: '100%',
+                            layout: 'hbox'
+                        },
+                        items: fiatCurrencyItems
+                    }
+                    coursesForm.insert(fiatCurrencyFieldSet)
+                }
+            }
+        })
+    },
+
+    turnDiscounts: function (me, newValue) {
+        let fieldSetItems = me.up('fieldset').items.items
+        fieldSetItems[1].setDisabled(!newValue)
+        fieldSetItems[2].setDisabled(!newValue)
+        if (newValue) fieldSetItems[3].show()
+        else fieldSetItems[3].hide()
     }
 })

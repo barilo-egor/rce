@@ -39,4 +39,8 @@ public class CalculateDataForm {
     @Getter
     @Setter
     private BigDecimal bulkDiscount;
+
+    @Getter
+    @Setter
+    private BigDecimal cryptoCourse;
 }

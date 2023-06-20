@@ -25,7 +25,6 @@
 .fa-rotate-right {
     color: #404040;
 }
-.only-text-mask .x-mask-msg-text {
-    background: transparent !important;
-    padding: 5px !important
+.color-for-panel {
+    background-color: #f6f6f6;
 }

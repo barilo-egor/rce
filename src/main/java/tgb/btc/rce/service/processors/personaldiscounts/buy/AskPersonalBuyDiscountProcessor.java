@@ -35,7 +35,7 @@ public class AskPersonalBuyDiscountProcessor extends Processor {
 
         responseSender.sendMessage(chatId, "У пользователя " + userChatId + " текущее значение скидки на покупку = "
                 + personalBuy.stripTrailingZeros().toPlainString());
-        responseSender.sendMessage(chatId, "Введите отрицательное значение для скидки, либо положительное для надбавки.");
+        responseSender.sendMessage(chatId, "Введите положительное значение для скидки, либо отрицательное для надбавки.");
         userRepository.nextStep(chatId);
     }
 

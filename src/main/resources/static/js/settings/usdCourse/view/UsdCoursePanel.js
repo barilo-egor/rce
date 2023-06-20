@@ -15,7 +15,6 @@ Ext.define('UsdCourse.view.UsdCoursePanel', {
     items: [
         {
             xtype: 'form',
-            id: 'coursesForm',
             scrollable: true,
             layout: {
                 type: 'vbox',
@@ -26,170 +25,81 @@ Ext.define('UsdCourse.view.UsdCoursePanel', {
                     xtype: 'fieldset',
                     title: 'Расчетные данные',
                     collapsible: true,
+                    minHeight: 200,
                     layout: {
-                        type: 'vbox',
+                        type: 'hbox',
                         align: 'stretch'
                     },
-                    items: {
-                        xtype: 'container',
-                        listeners: {
-                            afterrender: function (me) {
-                                me.setLoading("Загрузка")
-                                Ext.Ajax.request({
-                                    url: '/settings/cryptoCourses',
-                                    method: 'GET',
-                                    success: function (rs) {
-                                        let response = Ext.JSON.decode(rs.responseText)
-                                        let currencies = response.currencies
-
-                                        for (let cryptoCurrency of currencies) {
-                                            me.insert({
-                                                xtype: 'numberfield',
-                                                fieldLabel: cryptoCurrency.name,
-                                                value: cryptoCurrency.currency,
-                                                padding: '0 0 5 0',
-                                                editable: false,
-                                                hideTrigger: true
-                                            })
-                                        }
-                                        me.setLoading(false)
+                    items: [
+                        {
+                            xtype: 'fieldset',
+                            id: 'cryptoCourses',
+                            collapsible: false,
+                            title: 'Крипто курсы',
+                            minWidth: 220,
+                            flex: 0.35
+                        },
+                        {
+                            xtype: 'fieldset',
+                            id: 'discountsFieldSet',
+                            collapsible: false,
+                            title: 'Скидки',
+                            flex: 0.65,
+                            items: [
+                                {
+                                    xtype: 'checkbox',
+                                    boxLabel: 'Учитывать скидки',
+                                    listeners: {
+                                        change: 'turnDiscounts'
                                     }
-                                })
-                            }
-                        }
-                    }
+                                },
+                                {
+                                    xtype: 'numberfield',
+                                    fieldLabel: "Персональная скидка",
+                                    value: 0,
+                                    decimalSeparator: '.',
+                                    width: 200,
+                                    padding: '0 0 2 0',
+                                    disabled: true,
+                                    hideTrigger: true
+                                },
+                                {
+                                    xtype: 'numberfield',
+                                    fieldLabel: "Оптовая скидка",
+                                    value: 0,
+                                    decimalSeparator: '.',
+                                    width: 200,
+                                    padding: '0 0 2 0',
+                                    disabled: true,
+                                    hideTrigger: true
+                                },
+                                {
+                                    xtype: 'panel',
+                                    frame: true,
+                                    hidden: true,
+                                    padding: '5 5 5 5',
+                                    style: {
+                                        borderColor: '#919191',
+                                        borderWidth: '1px'
+                                    },
+                                    html: 'Введите положительное значение для скидки, либо отрицательное для надбавки.'
+                                }
+                            ]
+                        },
+                    ]
                 }
             ],
             listeners: {
-                afterrender: function (form) {
-                    let me = form;
-                    Ext.Ajax.request({
-                        url: '/settings/getUsdCourses',
-                        method: 'GET',
-                        success: function (rs) {
-                            let response = Ext.JSON.decode(rs.responseText)
-                            let data = response.data
-
-                            for (let fiatCurrency of data) {
-                                let fiatCurrencyItems = []
-                                for (let dealType of fiatCurrency.dealTypes) {
-                                    let dealTypesItems = []
-                                    for (let cryptoCurrency of dealType.cryptoCurrencies) {
-                                        let cryptoCurrencyInput = {
-                                            xtype: 'container',
-                                            controller: 'usdCourseController',
-                                            layout: {
-                                                type: 'hbox',
-                                                align: 'stretch'
-                                            },
-                                            padding: '0 0 5 0',
-                                            items: [
-                                                {
-                                                    xtype: 'numberfield',
-                                                    decimalSeparator: '.',
-                                                    step: 0.1,
-                                                    name: (fiatCurrency.name + "." + dealType.name + "."
-                                                        + cryptoCurrency.name).toLowerCase(),
-                                                    fiatCurrency: fiatCurrency.name,
-                                                    dealType: dealType.name,
-                                                    cryptoCurrency: cryptoCurrency.name,
-                                                    fieldLabel: cryptoCurrency.name,
-                                                    value: cryptoCurrency.value,
-                                                    defaultValue: cryptoCurrency.value,
-                                                    flex: 0.55,
-                                                    padding: '0 2 0 0',
-                                                    msgTarget: 'side',
-                                                    emptyText: 'Введите значение.',
-                                                    allowBlank: false,
-                                                    hideTrigger: true,
-                                                    listeners: {
-                                                        change: function (me) {
-                                                            let button = me.up('container').items.items[1]
-                                                            button.setDisabled(false)
-                                                            if (me.value !== me.defaultValue) {
-                                                                button.setDisabled(false)
-                                                                me.setFieldStyle('color:#157fcc; font-weight: bold;')
-                                                            } else {
-                                                                button.setDisabled(true)
-                                                                me.setFieldStyle('color: #404040;\n' +
-                                                                    'padding: 5px 10px 4px;\n' +
-                                                                    'background-color: #fff;\n' +
-                                                                    'font: 300 13px/21px \'Open Sans\', \'Helvetica Neue\', helvetica, arial, verdana, sans-serif;\n' +
-                                                                    'min-height: 30px;')
-                                                            }
-                                                        }
-                                                    }
-                                                },
-                                                {
-                                                    xtype: 'button',
-                                                    flex: 0.05,
-                                                    tooltip: 'Восстановить значение',
-                                                    iconCls: 'fa-solid fa-rotate-right',
-                                                    disabled: true,
-                                                    cls: 'returnValueBtn',
-                                                    handler: function (btn) {
-                                                        let input = btn.up('container').items.items[0]
-                                                        input.setValue(input.defaultValue)
-                                                    }
-                                                },
-                                                {
-                                                    xtype: 'numberfield',
-                                                    decimalSeparator: '.',
-                                                    decimalPrecision: 8,
-                                                    value: cryptoCurrency.defaultCheckValue,
-                                                    hideTrigger: true,
-                                                    flex: 0.15,
-                                                    padding: '0 2 0 2',
-                                                    listeners: {
-                                                        change: 'calculate',
-                                                        boxready: 'calculate'
-                                                    }
-                                                },
-                                                {
-                                                    xtype: 'numberfield',
-                                                    editable: false,
-                                                    decimalSeparator: '.',
-                                                    decimalPrecision: 8,
-                                                    hideTrigger: true,
-                                                    flex: 0.25,
-                                                    padding: '0 2 0 0',
-                                                }
-                                            ]
-                                        }
-                                        dealTypesItems.push(cryptoCurrencyInput)
-                                    }
-                                    let dealTypeFieldSet = {
-                                        xtype: 'fieldset',
-                                        title: dealType.displayName,
-                                        collapsible: true,
-                                        layout: {
-                                            type: 'vbox',
-                                            align: 'stretch'
-                                        },
-                                        defaults: {
-                                            labelWidth: 90,
-                                        },
-                                        items: dealTypesItems
-                                    }
-                                    fiatCurrencyItems.push(dealTypeFieldSet)
-                                }
-
-                                let fiatCurrencyFieldSet = {
-                                    xtype: 'fieldset',
-                                    title: fiatCurrency.displayName,
-                                    collapsible: true,
-                                    defaults: {
-                                        labelWidth: 90,
-                                        anchor: '100%',
-                                        layout: 'hbox'
-                                    },
-                                    items: fiatCurrencyItems
-                                }
-                                me.insert(fiatCurrencyFieldSet)
-                            }
-                        }
-                    })
-                }
+                afterrender: 'cryptoCoursesAfterRender'
+            }
+        },
+        {
+            xtype: 'form',
+            id: 'coursesForm',
+            scrollable: true,
+            layout: {
+                type: 'vbox',
+                align: 'stretch'
             },
             buttonAlign: 'center',
             buttons: [
@@ -213,18 +123,7 @@ Ext.define('UsdCourse.view.UsdCoursePanel', {
                     text: 'Восстановить значения',
                     iconCls: 'fa-solid fa-rotate-right',
                     cls: 'returnValuesBtn',
-                    handler: function () {
-                        let fiatCurrencies = Ext.ComponentQuery.query('[id=coursesForm]')[0].items.items
-                        for (let fiatCurrency of fiatCurrencies) {
-                            let dealTypes = fiatCurrency.items.items
-                            for (let dealType of dealTypes) {
-                                let cryptoCurrencies = dealType.items.items
-                                for (let cryptoCurrency of cryptoCurrencies) {
-                                    cryptoCurrency.setValue(cryptoCurrency.defaultValue)
-                                }
-                            }
-                        }
-                    }
+                    handler: 'returnValues'
                 }
             ]
         }
