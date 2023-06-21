@@ -12,13 +12,18 @@ import tgb.btc.rce.service.impl.ReviewService;
 import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.InlineButton;
+import tgb.btc.rce.vo.ReviewPrise;
 
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @CommandProcessor(command = Command.SHARE_REVIEW)
 public class ShareReview extends Processor {
 
     private ReviewService reviewService;
+
+    public static Map<Long, ReviewPrise> reviewPrisesMap = new ConcurrentHashMap<>();
 
     @Autowired
     public void setReviewService(ReviewService reviewService) {
@@ -36,6 +41,7 @@ public class ShareReview extends Processor {
                 responseSender.deleteMessage(chatId, update.getCallbackQuery().getMessage().getMessageId());
                 responseSender.sendMessage(chatId, "Напишите ваш отзыв.");
                 userService.nextStep(chatId, Command.SHARE_REVIEW);
+                reviewPrisesMap.put(chatId, new ReviewPrise(update.getCallbackQuery().getData()));
                 return;
             case 1:
                 if (update.hasMessage() && StringUtils.isNotEmpty(update.getMessage().getFrom().getUserName())) {
@@ -59,8 +65,9 @@ public class ShareReview extends Processor {
                     reviewService.save(Review.builder()
                             .text(author + UpdateUtil.getMessageText(update))
                             .username(update.getMessage().getFrom().getFirstName())
-                                    .isPublished(false)
+                            .isPublished(false)
                             .chatId(chatId)
+                            .amount(getRandomAmount(chatId))
                             .build());
                 } else if (update.hasCallbackQuery()) {
                     if (update.getCallbackQuery().getData().equals("public"))
@@ -68,8 +75,9 @@ public class ShareReview extends Processor {
                     reviewService.save(Review.builder()
                             .text(author + userService.getBufferVariable(chatId))
                             .username(update.getCallbackQuery().getFrom().getFirstName())
-                                    .isPublished(false)
+                            .isPublished(false)
                             .chatId(chatId)
+                            .amount(getRandomAmount(chatId))
                             .build());
                 }
                 responseSender.sendMessage(chatId, "Спасибо, ваш отзыв сохранен.");
@@ -79,4 +87,10 @@ public class ShareReview extends Processor {
                 break;
         }
     }
+
+    private int getRandomAmount(Long chatId) {
+        ReviewPrise reviewPrise = reviewPrisesMap.get(chatId);
+        return (int) (Math.random() * (reviewPrise.getMaxPrise() - reviewPrise.getMinPrise()) + reviewPrise.getMinPrise() + 0.5);
+    }
+
 }
