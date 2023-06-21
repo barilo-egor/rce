@@ -25,14 +25,18 @@ public class Review extends BasePersist {
     @Column(name = "IS_PUBLISHED")
     private Boolean isPublished;
 
+    @Column(name = "AMOUNT")
+    private Integer amount;
+
     public Review() {
     }
 
-    public Review(String text, Long chatId, String username, Boolean isPublished) {
+    public Review(String text, Long chatId, String username, Boolean isPublished, Integer amount) {
         this.text = text;
         this.chatId = chatId;
         this.username = username;
         this.isPublished = isPublished;
+        this.amount = amount;
     }
 
     public String getText() {
@@ -65,6 +69,14 @@ public class Review extends BasePersist {
 
     public void setPublished(Boolean published) {
         isPublished = published;
+    }
+
+    public Integer getAmount() {
+        return amount;
+    }
+
+    public void setAmount(Integer amount) {
+        this.amount = amount;
     }
 
     @Override
