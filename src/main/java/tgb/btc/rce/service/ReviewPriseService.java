@@ -28,14 +28,13 @@ public class ReviewPriseService implements IValidateService{
             } catch (NumberFormatException e) {
                 throw new PropertyValueNotFoundException("Не корректное название для ключа " + key + ".");
             }
-            String value =  BotProperties.REVIEW_PRISE.getString(key);
-            if (StringUtils.isBlank(value)) {
+            String[] priseValues =  BotProperties.REVIEW_PRISE.getStringArray(key);
+            if (priseValues.length == 0) {
                 throw new PropertyValueNotFoundException("Не указано значение для ключа " + key + ".");
             }
             int minPrise;
             int maxPrise;
             try {
-                String[] priseValues = StringUtils.split(value, ';');
                 minPrise = Integer.parseInt(priseValues[0]);
                 maxPrise = Integer.parseInt(priseValues[1]);
             } catch (NumberFormatException e) {
