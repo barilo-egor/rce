@@ -3,7 +3,7 @@
     border-color: #1C9165 !important;
     background-image: none;
 }
-.returnValuesBtn {
+.blueButton {
     background-color: #A3CBEE !important;
     border-color: #1F5A90 !important;
     background-image: none;
@@ -23,6 +23,9 @@
     color: #404040;
 }
 .fa-rotate-right {
+    color: #404040;
+}
+.fa-xmark {
     color: #404040;
 }
 .color-for-panel {

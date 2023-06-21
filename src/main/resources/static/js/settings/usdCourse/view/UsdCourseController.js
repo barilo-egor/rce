@@ -12,8 +12,10 @@ Ext.define('UsdCourse.view.UsdCourseController', {
         if (!usdCourseField.value || usdCourseField.value === '0' || usdCourseField.value === 0) return;
         let cryptoCourse
         for (let cryptoCourseInput of cryptoCoursesInputs) {
+            if (cryptoCourseInput.xtype !== 'numberfield') return;
             if (cryptoCourseInput.fieldLabel === usdCourseField.cryptoCurrency) {
                 cryptoCourse = cryptoCourseInput.value
+                break
             }
         }
         let resultInput = container.items.items[3]
@@ -23,9 +25,14 @@ Ext.define('UsdCourse.view.UsdCourseController', {
         let bulkDiscount = null
         if (discountsFieldSetItems[0].value) {
             let personalValue = discountsFieldSetItems[1].value
-            if (!personalValue || personalValue > 99  || personalValue < -99) return;
             let bulkValue = discountsFieldSetItems[2].value
-            if (!bulkValue || bulkValue > 99 || bulkValue < -99) return;
+            if (personalValue > 99  || personalValue < -99) return;
+            if (bulkValue > 99 || bulkValue < -99) return;
+            personalDiscount = personalValue
+            bulkDiscount = bulkValue
+        } else {
+            personalDiscount = 0
+            bulkDiscount = 0
         }
         let params = {
             cryptoAmount: cryptoAmount,
@@ -88,6 +95,31 @@ Ext.define('UsdCourse.view.UsdCourseController', {
         }
     },
 
+    updateCourses: function (component) {
+        let me = this
+        component.up('fieldset').setLoading('Загрузка')
+        Ext.Ajax.request({
+            url: '/settings/cryptoCourses',
+            method: 'GET',
+            success: function (rs) {
+                let response = Ext.JSON.decode(rs.responseText)
+                let currencies = response.currencies
+                let cryptoCoursesFieldSetItems = Ext.ComponentQuery.query('[id=cryptoCourses]')[0].items.items
+
+                for (let cryptoCurrency of currencies) {
+                    for (let item of cryptoCoursesFieldSetItems) {
+                        if (item.fieldLabel === cryptoCurrency.name) {
+                            item.setValue(cryptoCurrency.currency)
+                            break
+                        }
+                    }
+                }
+                me.updateResultAmounts()
+                component.up('fieldset').setLoading(false)
+            }
+        })
+    },
+
     cryptoCoursesAfterRender: function (me) {
         Ext.Ajax.request({
             url: '/settings/cryptoCourses',
@@ -105,12 +137,27 @@ Ext.define('UsdCourse.view.UsdCourseController', {
                         value: cryptoCurrency.currency,
                         decimalSeparator: '.',
                         padding: '0 0 2 0',
-                        labelWidth: 70,
-                        width: 170,
                         editable: false,
                         hideTrigger: true
                     })
                 }
+                cryptoCoursesFieldSet.insert({
+                    xtype: 'container',
+                    layout: {
+                        type: 'vbox',
+                        align: 'center'
+                    },
+                    items: [
+                        {
+                            xtype: 'button',
+                            text: 'Обновить курсы',
+                            handler: 'updateCourses',
+                            cls: 'blueButton',
+                            iconCls: 'fa-solid fa-rotate-right',
+                            width: 200
+                        }
+                    ]
+                })
             }
         })
 
@@ -156,18 +203,22 @@ Ext.define('UsdCourse.view.UsdCourseController', {
                                         flex: 0.5,
                                         padding: '0 2 0 0',
                                         msgTarget: 'side',
-                                        emptyText: 'Введите значение.',
                                         allowBlank: false,
                                         hideTrigger: true,
                                         listeners: {
                                             change: 'usdCourseChange'
+                                        },
+                                        validator: function (value) {
+                                            if (!value) return 'Введите значение.'
+                                            if (value === 0 || value === '0' || value < 0) return 'Введите значение больше 0.'
+                                            return true
                                         }
                                     },
                                     {
                                         xtype: 'button',
                                         weight: 50,
                                         tooltip: 'Восстановить значение',
-                                        iconCls: 'fa-solid fa-rotate-right',
+                                        iconCls: 'fa-solid fa-xmark',
                                         disabled: true,
                                         cls: 'returnValueBtn',
                                         handler: 'returnValue'
@@ -175,7 +226,7 @@ Ext.define('UsdCourse.view.UsdCourseController', {
                                     {
                                         xtype: 'numberfield',
                                         decimalSeparator: '.',
-                                        flex: 0.3,
+                                        flex: 0.25,
                                         decimalPrecision: 8,
                                         value: cryptoCurrency.defaultCheckValue,
                                         hideTrigger: true,
@@ -183,6 +234,11 @@ Ext.define('UsdCourse.view.UsdCourseController', {
                                         listeners: {
                                             afterrender: 'calculate',
                                             change: 'calculate',
+                                        },
+                                        validator: function (value) {
+                                            if (!value) return 'Введите значение.'
+                                            if (value === 0 || value === '0' || value < 0) return 'Введите значение больше 0.'
+                                            return true
                                         }
                                     },
                                     {
@@ -191,7 +247,7 @@ Ext.define('UsdCourse.view.UsdCourseController', {
                                         decimalSeparator: '.',
                                         decimalPrecision: 8,
                                         hideTrigger: true,
-                                        flex: 0.2,
+                                        flex: 0.25,
                                         padding: '0 2 0 0',
                                     }
                                 ]
@@ -238,10 +294,10 @@ Ext.define('UsdCourse.view.UsdCourseController', {
         fieldSetItems[2].setDisabled(!newValue)
         if (newValue) fieldSetItems[3].show()
         else fieldSetItems[3].hide()
-        this.onDiscountChange()
+        this.updateResultAmounts()
     },
 
-    onDiscountChange: function () {
+    updateResultAmounts: function () {
         let fiatCurrencies = Ext.ComponentQuery.query('[id=coursesForm]')[0].items.items
         for (let fiatCurrency of fiatCurrencies) {
             let dealTypes = fiatCurrency.items.items

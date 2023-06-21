@@ -69,10 +69,11 @@ Ext.define('UsdCourse.view.UsdCoursePanel', {
                                     disabled: true,
                                     hideTrigger: true,
                                     listeners: {
-                                        change: 'onDiscountChange'
+                                        change: 'updateResultAmounts'
                                     },
                                     msgTarget: 'under',
                                     validator: function (val) {
+                                        if (!val) return 'Введите значение.'
                                         if (val < -99 || val > 99) {
                                             return 'Значение должно быть >-99 и <99.'
                                         } else return true
@@ -87,10 +88,11 @@ Ext.define('UsdCourse.view.UsdCoursePanel', {
                                     disabled: true,
                                     hideTrigger: true,
                                     listeners: {
-                                        change: 'onDiscountChange'
+                                        change: 'updateResultAmounts'
                                     },
                                     msgTarget: 'under',
                                     validator: function (val) {
+                                        if (!val) return 'Введите значение.'
                                         if (val < -99 || val > 99) {
                                             return 'Значение должно быть >-99 и <99.'
                                         } else return true
@@ -139,13 +141,12 @@ Ext.define('UsdCourse.view.UsdCoursePanel', {
                                 value: values[key]
                             })
                         }
-
                     }
                 },
                 {
                     text: 'Восстановить значения',
-                    iconCls: 'fa-solid fa-rotate-right',
-                    cls: 'returnValuesBtn',
+                    iconCls: 'fa-solid fa-xmark',
+                    cls: 'blueButton',
                     handler: 'returnValues'
                 }
             ]
