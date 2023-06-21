@@ -7,8 +7,9 @@ Ext.define('UsdCourse.view.UsdCourseController', {
         let cryptoCoursesInputs = cryptoCoursesFieldSet.items.items
         let container = me.up('container')
         let cryptoAmount = container.items.items[2].value
-        if (!cryptoAmount || cryptoAmount === 0) return;
+        if (!cryptoAmount || cryptoAmount === '0' || cryptoAmount === 0) return;
         let usdCourseField = container.items.items[0]
+        if (!usdCourseField.value || usdCourseField.value === '0' || usdCourseField.value === 0) return;
         let cryptoCourse
         for (let cryptoCourseInput of cryptoCoursesInputs) {
             if (cryptoCourseInput.fieldLabel === usdCourseField.cryptoCurrency) {
@@ -22,9 +23,9 @@ Ext.define('UsdCourse.view.UsdCourseController', {
         let bulkDiscount = null
         if (discountsFieldSetItems[0].value) {
             let personalValue = discountsFieldSetItems[1].value
-            if (personalValue !== 0) personalDiscount = personalValue
+            if (!personalValue || personalValue > 99  || personalValue < -99) return;
             let bulkValue = discountsFieldSetItems[2].value
-            if (bulkValue !== 0) bulkDiscount = bulkValue
+            if (!bulkValue || bulkValue > 99 || bulkValue < -99) return;
         }
         let params = {
             cryptoAmount: cryptoAmount,
@@ -135,6 +136,9 @@ Ext.define('UsdCourse.view.UsdCourseController', {
                                     type: 'hbox',
                                     align: 'stretch'
                                 },
+                                defaults: {
+                                    labelWidth: 70
+                                },
                                 padding: '0 0 5 0',
                                 items: [
                                     {
@@ -149,7 +153,7 @@ Ext.define('UsdCourse.view.UsdCourseController', {
                                         fieldLabel: cryptoCurrency.name,
                                         value: cryptoCurrency.value,
                                         defaultValue: cryptoCurrency.value,
-                                        flex: 0.4,
+                                        flex: 0.5,
                                         padding: '0 2 0 0',
                                         msgTarget: 'side',
                                         emptyText: 'Введите значение.',
@@ -171,7 +175,7 @@ Ext.define('UsdCourse.view.UsdCourseController', {
                                     {
                                         xtype: 'numberfield',
                                         decimalSeparator: '.',
-                                        flex: 0.4,
+                                        flex: 0.3,
                                         decimalPrecision: 8,
                                         value: cryptoCurrency.defaultCheckValue,
                                         hideTrigger: true,
@@ -234,5 +238,20 @@ Ext.define('UsdCourse.view.UsdCourseController', {
         fieldSetItems[2].setDisabled(!newValue)
         if (newValue) fieldSetItems[3].show()
         else fieldSetItems[3].hide()
+        this.onDiscountChange()
+    },
+
+    onDiscountChange: function () {
+        let fiatCurrencies = Ext.ComponentQuery.query('[id=coursesForm]')[0].items.items
+        for (let fiatCurrency of fiatCurrencies) {
+            let dealTypes = fiatCurrency.items.items
+            for (let dealType of dealTypes) {
+                let containers = dealType.items.items
+                for (let container of containers) {
+                    let resultAmountField = container.items.items[3]
+                    this.calculate(resultAmountField)
+                }
+            }
+        }
     }
 })
