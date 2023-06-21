@@ -34,6 +34,8 @@ public interface FilePaths {
 
     String SERVER_PROPERTIES = "config/bot/server.properties";
 
+    String REVIEW_PRISE_PROPERTIES = "config/review_prise.properties";
+
     /**
      * PICTURES
      */
