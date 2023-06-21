@@ -25,9 +25,9 @@ Ext.define('UsdCourse.view.UsdCoursePanel', {
                     xtype: 'fieldset',
                     title: 'Расчетные данные',
                     collapsible: true,
-                    minHeight: 200,
+                    collapsed: true,
                     layout: {
-                        type: 'hbox',
+                        type: 'vbox',
                         align: 'stretch'
                     },
                     items: [
@@ -36,7 +36,10 @@ Ext.define('UsdCourse.view.UsdCoursePanel', {
                             id: 'cryptoCourses',
                             collapsible: false,
                             title: 'Крипто курсы',
-                            minWidth: 220,
+                            layout: {
+                                type: 'vbox',
+                                align: 'stretch'
+                            },
                             flex: 0.35
                         },
                         {
@@ -45,6 +48,10 @@ Ext.define('UsdCourse.view.UsdCoursePanel', {
                             collapsible: false,
                             title: 'Скидки',
                             flex: 0.65,
+                            layout: {
+                                type: 'vbox',
+                                align: 'stretch'
+                            },
                             items: [
                                 {
                                     xtype: 'checkbox',
@@ -58,20 +65,36 @@ Ext.define('UsdCourse.view.UsdCoursePanel', {
                                     fieldLabel: "Персональная скидка",
                                     value: 0,
                                     decimalSeparator: '.',
-                                    width: 200,
                                     padding: '0 0 2 0',
                                     disabled: true,
-                                    hideTrigger: true
+                                    hideTrigger: true,
+                                    listeners: {
+                                        change: 'onDiscountChange'
+                                    },
+                                    msgTarget: 'under',
+                                    validator: function (val) {
+                                        if (val < -99 || val > 99) {
+                                            return 'Значение должно быть >-99 и <99.'
+                                        } else return true
+                                    }
                                 },
                                 {
                                     xtype: 'numberfield',
                                     fieldLabel: "Оптовая скидка",
                                     value: 0,
                                     decimalSeparator: '.',
-                                    width: 200,
                                     padding: '0 0 2 0',
                                     disabled: true,
-                                    hideTrigger: true
+                                    hideTrigger: true,
+                                    listeners: {
+                                        change: 'onDiscountChange'
+                                    },
+                                    msgTarget: 'under',
+                                    validator: function (val) {
+                                        if (val < -99 || val > 99) {
+                                            return 'Значение должно быть >-99 и <99.'
+                                        } else return true
+                                    }
                                 },
                                 {
                                     xtype: 'panel',
