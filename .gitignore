@@ -40,4 +40,4 @@ build/
 application.properties
 bot.properties
 config/antispam/picture
-*.png
+*.log

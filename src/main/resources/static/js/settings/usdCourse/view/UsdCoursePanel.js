@@ -71,7 +71,7 @@ Ext.define('UsdCourse.view.UsdCoursePanel', {
                                     listeners: {
                                         change: 'updateResultAmounts'
                                     },
-                                    msgTarget: 'under',
+                                    msgTarget: 'side',
                                     validator: function (val) {
                                         if (!val) return 'Введите значение.'
                                         if (val < -99 || val > 99) {
@@ -90,7 +90,7 @@ Ext.define('UsdCourse.view.UsdCoursePanel', {
                                     listeners: {
                                         change: 'updateResultAmounts'
                                     },
-                                    msgTarget: 'under',
+                                    msgTarget: 'side',
                                     validator: function (val) {
                                         if (!val) return 'Введите значение.'
                                         if (val < -99 || val > 99) {
@@ -132,16 +132,7 @@ Ext.define('UsdCourse.view.UsdCoursePanel', {
                     text: 'Сохранить',
                     iconCls: 'fa-regular fa-floppy-disk',
                     cls: 'saveBtn',
-                    handler: function () {
-                        let values = Ext.ComponentQuery.query('[id=coursesForm]')[0].getValues()
-                        let courses = []
-                        for (let key of Object.keys(values)) {
-                            courses.push({
-                                key: key,
-                                value: values[key]
-                            })
-                        }
-                    }
+                    handler: 'onSaveClick'
                 },
                 {
                     text: 'Восстановить значения',
