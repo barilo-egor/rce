@@ -41,3 +41,4 @@ application.properties
 bot.properties
 config/antispam/picture
 *.log
+*.gz
