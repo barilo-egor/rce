@@ -321,27 +321,41 @@ Ext.define('UsdCourse.view.UsdCourseController', {
             )
         )
         for (let value of values) {
+            if (value.getValue() === value.defaultValue) continue;
             let courseObj = {}
             let name = value.name
             let keys = name.split('.')
-            keys.map(key => key.toUpperCase())
-            courseObj.fiatCurrency = keys[0]
-            courseObj.dealType = keys[1]
-            courseObj.cryptoCurrency = keys[2]
+            courseObj.fiatCurrency = keys[0].toUpperCase()
+            courseObj.dealType = keys[1].toUpperCase()
+            courseObj.cryptoCurrency = keys[2].toUpperCase()
             courseObj.value = value.getValue()
             courses.push(courseObj)
         }
-        let jsonData = {
-            courses: JSON.stringify(courses.map(function (el) {
-                return { name: el };
-            }))
+        if (courses.length === 0) {
+            Ext.Msg.alert('Внимание', 'Ни один курс не был изменен.');
+            return
         }
         Ext.Ajax.request({
             url: '/settings/saveUsdCourses',
             method: 'POST',
-            jsonData: jsonData,
+            jsonData: courses,
             success: function (rs) {
-                alert('ok')
+                Ext.Msg.alert('Информация', 'Курсы были успешно обновлены.')
+                let coursesFormItems = Ext.ComponentQuery.query('[id=coursesForm]')[0].items.items
+                coursesFormItems.forEach(
+                    coursesFormItem => coursesFormItem.items.items.forEach(
+                        dealTypeItem => dealTypeItem.items.items.forEach(
+                            containerItem => values.push(containerItem.items.items[0]))
+                    )
+                )
+                for (let value of values) {
+                    value.defaultValue = value.getValue()
+                    value.setValue(1)
+                    value.setValue(value.defaultValue)
+                }
+            },
+            failure: function (rs) {
+                Ext.Msg.alert('Ошибка', 'При обновлении курсов произошли ошибки.')
             }
         })
     }

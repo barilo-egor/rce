@@ -28,8 +28,7 @@ public enum BotProperties implements PropertiesReader {
     FUNCTIONS(FilePaths.FUNCTIONS_PROPERTIES, ',', null, false),
     BUTTONS_DESIGN(FilePaths.BUTTONS_DESIGN_PROPERTIES, ',', null, false),
     CRYPTO_CURRENCIES_DESIGN(FilePaths.CRYPTO_CURRENCIES_DESIGN_PROPERTIES, ',', null, false),
-    SERVER(FilePaths.SERVER_PROPERTIES, ',', null, false)
-    CRYPTO_CURRENCIES_DESIGN(FilePaths.CRYPTO_CURRENCIES_DESIGN_PROPERTIES, ',', null, false),
+    SERVER(FilePaths.SERVER_PROPERTIES, ',', null, false),
     REVIEW_PRISE(FilePaths.REVIEW_PRISE_PROPERTIES, ';', new ReviewPriseService(), false)
     ;
 

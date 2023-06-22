@@ -1,28 +1,31 @@
 package tgb.btc.rce.vo.web;
 
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import tgb.btc.rce.enums.CryptoCurrency;
 import tgb.btc.rce.enums.DealType;
 import tgb.btc.rce.enums.FiatCurrency;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 @Data
 @NoArgsConstructor
 public class CourseVO {
-   private List<Course> courses;
+   @Getter
+   @Setter
+   private FiatCurrency fiatCurrency;
 
-   @Data
-   @NoArgsConstructor
-   public static class Course {
-      private FiatCurrency fiatCurrency;
+   @Getter
+   @Setter
+   private DealType dealType;
 
-      private DealType dealType;
+   @Getter
+   @Setter
+   private CryptoCurrency cryptoCurrency;
 
-      private CryptoCurrency cryptoCurrency;
-
-      private BigDecimal value;
-   }
+   @Getter
+   @Setter
+   private BigDecimal value;
 }
