@@ -47,6 +47,7 @@ public enum CryptoApi {
         double parsedPrice;
         if (price instanceof String) parsedPrice = Double.parseDouble((String) price);
         else if (price instanceof Double) parsedPrice = (Double) price;
+        else if (price instanceof Integer) parsedPrice = ((Integer) price).doubleValue();
         else throw new BaseException("Не определен тип значения из JSON.");
         return BigDecimal.valueOf(parsedPrice);
     }
