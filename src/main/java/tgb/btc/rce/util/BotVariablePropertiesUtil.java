@@ -3,7 +3,6 @@ package tgb.btc.rce.util;
 import lombok.extern.slf4j.Slf4j;
 import tgb.btc.rce.enums.*;
 import tgb.btc.rce.exception.BaseException;
-import tgb.btc.rce.exception.PropertyValueNotFoundException;
 
 import java.math.BigDecimal;
 import java.util.Objects;
@@ -99,14 +98,6 @@ public class BotVariablePropertiesUtil {
             return Integer.parseInt(getVariable(botVariableType));
         } catch (NumberFormatException e) {
             throw new BaseException(String.format(wrongFormat, botVariableType.getKey()));
-        }
-    }
-
-    public static void validate(BotProperties botProperties) throws PropertyValueNotFoundException {
-        for (String key : botProperties.getKeys()) {
-            if (Objects.isNull(botProperties.getString(key))) {
-                throw new PropertyValueNotFoundException("Не корректно указано значение для переменной " + key + ".");
-            }
         }
     }
 

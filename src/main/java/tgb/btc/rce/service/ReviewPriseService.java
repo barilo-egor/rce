@@ -11,7 +11,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-public class ReviewPriseService implements IValidateService{
+public class ReviewPriseService implements IPropertyService {
 
     public static final List<ReviewPrise> REVIEW_PRISES = new ArrayList<>();
 
