@@ -9,7 +9,6 @@ import tgb.btc.rce.constants.FilePaths;
 import tgb.btc.rce.enums.BotKeyboard;
 import tgb.btc.rce.enums.BotProperties;
 import tgb.btc.rce.enums.Command;
-import tgb.btc.rce.exception.PropertyValueNotFoundException;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.util.UpdateUtil;
 
@@ -49,20 +48,6 @@ public class BotVariables extends Processor {
         } catch (IOException | TelegramApiException e) {
             log.error("Ошибка при скачивании новых переменных: ", e);
             responseSender.sendMessage(chatId, "Ошибка при скачивании новых переменных: " + e.getMessage());
-            return;
-        }
-        try {
-            BotProperties.BOT_VARIABLE_BUFFER.validate();
-        } catch (PropertyValueNotFoundException e) {
-            log.error(e.getMessage(),e);
-            responseSender.sendMessage(chatId,e.getMessage());
-            try {
-                FileUtils.delete(BotProperties.BOT_VARIABLE_BUFFER.getFile());
-            } catch (IOException ex) {
-                log.error("Ошибки при удалении " + FilePaths.BOT_VARIABLE_BUFFER_PROPERTIES, ex);
-                responseSender.sendMessage(chatId, "Ошибки при удалении " + FilePaths.BOT_VARIABLE_BUFFER_PROPERTIES + ":"
-                        + ex.getMessage());
-            }
             return;
         }
         try {

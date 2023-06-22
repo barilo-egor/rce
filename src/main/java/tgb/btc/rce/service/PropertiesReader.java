@@ -7,13 +7,13 @@ import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import tgb.btc.rce.enums.BotProperties;
-import tgb.btc.rce.exception.PropertyValueNotFoundException;
 
-import java.math.BigDecimal;
 import java.io.File;
-import java.util.*;
-import java.util.regex.Pattern;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public interface PropertiesReader {
@@ -23,8 +23,6 @@ public interface PropertiesReader {
     String getFileName();
 
     char getListDelimiter();
-
-    boolean getIsBufferProperties();
 
     default String getString(String key, String defaultValue) {
         PropertiesConfiguration instance = ReaderSupport.getInstance(this);
@@ -118,8 +116,6 @@ public interface PropertiesReader {
         ReaderSupport.properties.remove(this);
         ReaderSupport.getInstance(this);
     }
-
-    void validate();
 
     void load();
 
