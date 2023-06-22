@@ -5,9 +5,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import tgb.btc.rce.enums.BotVariableType;
 import tgb.btc.rce.enums.CryptoCurrency;
 import tgb.btc.rce.enums.DealType;
@@ -18,6 +16,7 @@ import tgb.btc.rce.util.BotVariablePropertiesUtil;
 import tgb.btc.rce.util.FiatCurrencyUtil;
 import tgb.btc.rce.vo.calculate.DealAmount;
 import tgb.btc.rce.vo.web.CalculateDataForm;
+import tgb.btc.rce.vo.web.CourseVO;
 
 import java.math.RoundingMode;
 import java.util.Arrays;
@@ -105,5 +104,11 @@ public class SettingsController {
         objectNode.put("success", true);
         objectNode.put("amount", dealAmount.getAmount().setScale(0, RoundingMode.CEILING).toPlainString());
         return objectNode;
+    }
+
+    @PostMapping(value = "/saveUsdCourses")
+    @ResponseBody
+    public ObjectNode saveUsdCourses(@RequestBody CourseVO courseVO) {
+        return null;
     }
 }

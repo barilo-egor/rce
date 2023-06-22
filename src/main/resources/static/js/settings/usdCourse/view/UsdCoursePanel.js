@@ -132,16 +132,7 @@ Ext.define('UsdCourse.view.UsdCoursePanel', {
                     text: 'Сохранить',
                     iconCls: 'fa-regular fa-floppy-disk',
                     cls: 'saveBtn',
-                    handler: function () {
-                        let values = Ext.ComponentQuery.query('[id=coursesForm]')[0].getValues()
-                        let courses = []
-                        for (let key of Object.keys(values)) {
-                            courses.push({
-                                key: key,
-                                value: values[key]
-                            })
-                        }
-                    }
+                    handler: 'onSaveClick'
                 },
                 {
                     text: 'Восстановить значения',

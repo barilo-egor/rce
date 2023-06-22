@@ -26,7 +26,7 @@ Ext.define('UsdCourse.view.UsdCourseController', {
         if (discountsFieldSetItems[0].value) {
             let personalValue = discountsFieldSetItems[1].value
             let bulkValue = discountsFieldSetItems[2].value
-            if (personalValue > 99  || personalValue < -99) return;
+            if (personalValue > 99 || personalValue < -99) return;
             if (bulkValue > 99 || bulkValue < -99) return;
             personalDiscount = personalValue
             bulkDiscount = bulkValue
@@ -308,5 +308,41 @@ Ext.define('UsdCourse.view.UsdCourseController', {
                 }
             }
         }
+    },
+
+    onSaveClick: function () {
+        let courses = []
+        let values = []
+        let coursesFormItems = Ext.ComponentQuery.query('[id=coursesForm]')[0].items.items
+        coursesFormItems.forEach(
+            coursesFormItem => coursesFormItem.items.items.forEach(
+                dealTypeItem => dealTypeItem.items.items.forEach(
+                    containerItem => values.push(containerItem.items.items[0]))
+            )
+        )
+        for (let value of values) {
+            let courseObj = {}
+            let name = value.name
+            let keys = name.split('.')
+            keys.map(key => key.toUpperCase())
+            courseObj.fiatCurrency = keys[0]
+            courseObj.dealType = keys[1]
+            courseObj.cryptoCurrency = keys[2]
+            courseObj.value = value.getValue()
+            courses.push(courseObj)
+        }
+        let jsonData = {
+            courses: JSON.stringify(courses.map(function (el) {
+                return { name: el };
+            }))
+        }
+        Ext.Ajax.request({
+            url: '/settings/saveUsdCourses',
+            method: 'POST',
+            jsonData: jsonData,
+            success: function (rs) {
+                alert('ok')
+            }
+        })
     }
 })
