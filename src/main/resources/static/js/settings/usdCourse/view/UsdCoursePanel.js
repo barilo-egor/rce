@@ -71,7 +71,7 @@ Ext.define('UsdCourse.view.UsdCoursePanel', {
                                     listeners: {
                                         change: 'updateResultAmounts'
                                     },
-                                    msgTarget: 'under',
+                                    msgTarget: 'side',
                                     validator: function (val) {
                                         if (!val) return 'Введите значение.'
                                         if (val < -99 || val > 99) {
@@ -90,7 +90,7 @@ Ext.define('UsdCourse.view.UsdCoursePanel', {
                                     listeners: {
                                         change: 'updateResultAmounts'
                                     },
-                                    msgTarget: 'under',
+                                    msgTarget: 'side',
                                     validator: function (val) {
                                         if (!val) return 'Введите значение.'
                                         if (val < -99 || val > 99) {

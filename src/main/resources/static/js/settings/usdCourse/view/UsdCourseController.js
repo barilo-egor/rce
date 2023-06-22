@@ -154,7 +154,6 @@ Ext.define('UsdCourse.view.UsdCourseController', {
                             handler: 'updateCourses',
                             cls: 'blueButton',
                             iconCls: 'fa-solid fa-rotate-right',
-                            width: 200
                         }
                     ]
                 })
