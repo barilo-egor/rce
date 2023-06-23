@@ -49,7 +49,7 @@ Ext.define('UsdCourse.view.UsdCourseController', {
             bulkDiscount: bulkDiscount
         }
         Ext.Ajax.request({
-            url: '/settings/calculate',
+            url: '/web/settings/calculate',
             method: 'GET',
             params: params,
             success: function (rs) {
@@ -103,7 +103,7 @@ Ext.define('UsdCourse.view.UsdCourseController', {
         let me = this
         component.up('fieldset').setLoading('Загрузка')
         Ext.Ajax.request({
-            url: '/settings/cryptoCourses',
+            url: '/web/settings/cryptoCourses',
             method: 'GET',
             success: function (rs) {
                 let response = Ext.JSON.decode(rs.responseText)
@@ -127,7 +127,7 @@ Ext.define('UsdCourse.view.UsdCourseController', {
     cryptoCoursesAfterRender: function () {
         let me = this
         Ext.Ajax.request({
-            url: '/settings/cryptoCourses',
+            url: '/web/settings/cryptoCourses',
             method: 'GET',
             async: false,
             success: function (rs) {
@@ -167,7 +167,7 @@ Ext.define('UsdCourse.view.UsdCourseController', {
 
         let coursesForm = Ext.ComponentQuery.query('[id=coursesForm]')[0];
         Ext.Ajax.request({
-            url: '/settings/getUsdCourses',
+            url: '/web/settings/getUsdCourses',
             method: 'GET',
             async: false,
             success: function (rs) {
@@ -328,7 +328,7 @@ Ext.define('UsdCourse.view.UsdCourseController', {
             return
         }
         Ext.Ajax.request({
-            url: '/settings/saveUsdCourses',
+            url: '/web/settings/saveUsdCourses',
             method: 'POST',
             jsonData: courses,
             success: function (rs) {

@@ -24,9 +24,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 //Доступ только для не зарегистрированных пользователей
                 .antMatchers("/api/**").not().fullyAuthenticated()
-                .antMatchers("/registration").not().fullyAuthenticated()
+                .antMatchers("/extJS/**").not().fullyAuthenticated()
+                .antMatchers("/fontawesome/**").not().fullyAuthenticated()
+                .antMatchers("/js/login/**").not().fullyAuthenticated()
+                .antMatchers("/js/util/**").not().fullyAuthenticated()
+                .antMatchers("/web/registration/init").not().fullyAuthenticated()
+                .antMatchers("/js/registration/**").not().fullyAuthenticated()
                 //Доступ только для пользователей с ролью Администратор
-                .antMatchers("/settings/**").hasRole("ADMIN")
+                .antMatchers("/web/settings/**").hasRole("ADMIN")
+                .antMatchers("/js/settings/**").hasRole("ADMIN")
                 //Доступ разрешен всем пользователей
 //                .antMatchers("/", "/resources/**").permitAll()
                 //Все остальные страницы требуют аутентификации
@@ -34,7 +40,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 //Настройка для входа в систему
                 .formLogin()
-                .loginPage("/login")
+                .loginPage("/web/login/init")
                 //Перенарпавление на главную страницу после успешного входа
                 .defaultSuccessUrl("/")
                 .permitAll()

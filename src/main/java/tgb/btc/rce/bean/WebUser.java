@@ -9,7 +9,7 @@ import java.util.Collection;
 import java.util.Set;
 
 @Entity
-@Table(name = "USER")
+@Table(name = "WEB_USER")
 public class WebUser extends BasePersist implements UserDetails {
 
     private String username;
