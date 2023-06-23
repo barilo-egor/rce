@@ -1,10 +1,10 @@
 package tgb.btc.rce.bean;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
-import javax.validation.constraints.Size;
 import java.util.Collection;
 import java.util.Set;
 
@@ -12,34 +12,44 @@ import java.util.Set;
 @Table(name = "USER")
 public class WebUser extends BasePersist implements UserDetails {
 
-    @Size(min=2, message = "Не меньше 5 знаков")
     private String username;
-    @Size(min=2, message = "Не меньше 5 знаков")
+
     private String password;
-    @Transient
-    private String passwordConfirm;
+
     @ManyToMany(fetch = FetchType.EAGER)
     private Set<Role> roles;
+
+    private Boolean isEnabled;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return getRoles();
     }
 
-    public String getPasswordConfirm() {
-        return passwordConfirm;
+
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
     }
 
     public Set<Role> getRoles() {
         return roles;
     }
 
-    @Override
-    public String getPassword() {
-        return null;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     @Override
+    public String getPassword() {
+        return password;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    @Override
+    @Column(name = "USERNAME", nullable = false, unique = true)
     public String getUsername() {
         return username;
     }
@@ -61,22 +71,6 @@ public class WebUser extends BasePersist implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public void setPasswordConfirm(String passwordConfirm) {
-        this.passwordConfirm = passwordConfirm;
-    }
-
-    public void setRoles(Set<Role> roles) {
-        this.roles = roles;
+        return BooleanUtils.isNotFalse(isEnabled);
     }
 }
