@@ -32,6 +32,8 @@ public interface FilePaths {
 
     String CRYPTO_CURRENCIES_DESIGN_PROPERTIES = "config/design/crypto_currencies.properties";
 
+    String SERVER_PROPERTIES = "config/bot/server.properties";
+
     String REVIEW_PRISE_PROPERTIES = "config/review_prise.properties";
 
     /**

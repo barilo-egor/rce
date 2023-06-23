@@ -61,6 +61,7 @@ public final class MenuFactory {
         List<Command> commands = new ArrayList<>(Menu.MAIN.getCommands());
         if (isAdmin) {
             commands.add(Command.ADMIN_PANEL);
+            commands.add(Command.WEB_ADMIN_PANEL);
         }
         return fillReply(commands);
     }
