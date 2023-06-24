@@ -28,7 +28,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/fontawesome/**").not().fullyAuthenticated()
                 .antMatchers("/js/login/**").not().fullyAuthenticated()
                 .antMatchers("/js/util/**").not().fullyAuthenticated()
-                .antMatchers("/web/registration/init").not().fullyAuthenticated()
+                .antMatchers("/web/registration/**").not().fullyAuthenticated()
                 .antMatchers("/js/registration/**").not().fullyAuthenticated()
                 //Доступ только для пользователей с ролью Администратор
                 .antMatchers("/web/settings/**").hasRole("ADMIN")
