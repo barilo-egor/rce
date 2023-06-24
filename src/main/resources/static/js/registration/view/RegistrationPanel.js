@@ -22,6 +22,10 @@ Ext.define('Registration.view.RegistrationPanel', {
                 type: 'vbox',
                 align: 'stretch'
             },
+            defaults: {
+                labelWidth: 130,
+                labelAlign: 'right'
+            },
             items: [
                 {
                     xtype: 'textfield',
@@ -31,8 +35,24 @@ Ext.define('Registration.view.RegistrationPanel', {
                     minLength: 4,
                     validator: function (val) {
                         if (!val) return 'Введите значение'
-                        if (RegexUtil.onlyLettersAndNumbers(val)) return true;
-                        else return 'Только латинские буквы и цифры.'
+                        if (!RegexUtil.onlyLettersAndNumbers(val)) return 'Только латинские буквы и цифры.'
+                        let result = true
+                        Ext.Ajax.request({
+                            url: '/web/registration/isUsernameFree',
+                            method: 'GET',
+                            params: {
+                                username: val
+                            },
+                            async: false,
+                            success: function(rs) {
+                                let response = Ext.JSON.decode(rs.responseText)
+                                if (!response.result) result = 'Данный логин уже занят'
+                            },
+                            failure: function () {
+                                Ext.Msg.alert('Ошибка', 'Ошибка при попытке проверки логина.')
+                            }
+                        })
+                        return result
                     },
                     msgTarget: 'side'
                 },
@@ -66,6 +86,7 @@ Ext.define('Registration.view.RegistrationPanel', {
                     msgTarget: 'side',
                 }
             ],
+            buttonAlign: 'center',
             buttons: [
                 {
                     iconCls: 'fa-regular fa-user',

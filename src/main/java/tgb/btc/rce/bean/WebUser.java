@@ -73,4 +73,8 @@ public class WebUser extends BasePersist implements UserDetails {
     public boolean isEnabled() {
         return BooleanUtils.isNotFalse(isEnabled);
     }
+
+    public void setEnabled(Boolean enabled) {
+        isEnabled = enabled;
+    }
 }

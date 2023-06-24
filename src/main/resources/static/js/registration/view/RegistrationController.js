@@ -35,7 +35,7 @@ Ext.define('Registration.view.RegistrationController', {
                 }
             },
             failure: function (rs) {
-                Ext.alert('Ошибка', 'Ошибка при регистрации пользователя.')
+                Ext.Msg.alert('Ошибка', 'Ошибка при регистрации пользователя.')
             }
         })
     }

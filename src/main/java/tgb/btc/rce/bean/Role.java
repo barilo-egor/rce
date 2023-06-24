@@ -2,6 +2,7 @@ package tgb.btc.rce.bean;
 
 import org.springframework.security.core.GrantedAuthority;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
 import javax.persistence.Transient;
@@ -24,6 +25,7 @@ public class Role extends BasePersist implements GrantedAuthority {
         return getName();
     }
 
+    @Column(unique = true)
     public String getName() {
         return name;
     }

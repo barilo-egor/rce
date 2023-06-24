@@ -26,6 +26,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/**").not().fullyAuthenticated()
                 .antMatchers("/extJS/**").not().fullyAuthenticated()
                 .antMatchers("/fontawesome/**").not().fullyAuthenticated()
+                .antMatchers("/web/login/**").not().fullyAuthenticated()
                 .antMatchers("/js/login/**").not().fullyAuthenticated()
                 .antMatchers("/js/util/**").not().fullyAuthenticated()
                 .antMatchers("/web/registration/**").not().fullyAuthenticated()

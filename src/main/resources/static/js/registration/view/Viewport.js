@@ -4,7 +4,7 @@ Ext.define('Registration.view.Viewport', {
         'Registration.view.RegistrationPanel',
         'Registration.view.RegistrationController'
     ],
-    alias: 'widget.registrationViewPort',
+    alias: 'widget.registrationViewport',
     layout: 'fit',
     viewModel: true,
     items: [
