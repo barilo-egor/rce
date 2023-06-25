@@ -2,3 +2,11 @@
     content: '\f0da' !important;
     font: 16px/24px 'Font Awesome 5 Free' !important;
 }
+.main-panel-header-title {
+    color: #f0f0f0;
+    font-size: 16px;
+    font-weight: 400;
+    font-family: 'Open Sans', 'Helvetica Neue', helvetica, arial, verdana, sans-serif;
+    line-height: 20px;
+    background-color: #5fa2dd;
+}

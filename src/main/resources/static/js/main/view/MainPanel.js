@@ -1,104 +1,123 @@
 Ext.define('Main.view.MainPanel', {
     xtype: 'mainpanel',
-    extend: 'Ext.tab.Panel',
-    // controller: 'mainController',
-    title: 'Главное меню',
-    header: {
-        titleAlign: 'center'
-    },
-    region: 'center',
+    extend: 'Ext.form.Panel',
+    id: 'mainPanel',
+    controller: 'mainController',
+    requires: [
+        'Main.view.usdCourse.UsdCoursePanel',
+        'Main.view.usdCourse.UsdCourseController',
+    ],
+    header: false,
+    // title: 'Админ панель',
+    // header: {
+    //     titleAlign: 'center'
+    // },
     scrollable: true,
     layout: 'fit',
 
-    tabPosition: 'left',
-    tabRotation: 0,
-    tabBar: {
-        border: false
-    },
-
-    defaults: {
-        textAlign: 'left',
-        bodyPadding: 15
-    },
-    tbar: [
-        {
-            xtype: 'tbfill'
-        },
-        {
-            xtype: 'button',
-            text: 'Выйти из аккаунта',
-            iconCls: 'fa-solid fa-right-from-bracket',
-            handler: function (btn) {
-                document.location.href = '/logout'
-            }
-        },
-    ],
     items: [
         {
-            title: 'Пользователи',
-            iconCls: 'fa-regular fa-user',
-            layout: 'fit',
-            items: [
+            xtype: 'panel',
+            header: false,
+            layout: {
+                type: 'vbox',
+                align: 'stretch'
+            },
+            dockedItems: [
                 {
-                    xtype: 'panel',
-                    layout: {
-                        type: 'vbox',
-                        align: 'stretch'
-                    },
+                    xtype: 'toolbar',
+                    dock: 'left',
+                    id: 'mainToolBar',
+                    padding: '0 0 0 0',
                     items: [
                         {
-                            xtype: 'fieldset',
-                            title: 'Веб пользователи',
-                            collapsible: false,
-                            layout: {
-                                type: 'vbox',
-                                align: 'stretch'
-                            },
-                            items: [
+                            xtype: 'button',
+                            iconCls: 'fas fa-square-root-alt',
+                            menu: [
                                 {
-                                    xtype: 'button',
-                                    iconCls: 'fa-solid fa-user-plus',
-                                    text: 'Регистрация нового пользователя',
-                                    handler: function (btn) {
-                                        document.location.href='/web/registration/init'
-                                    }
+                                    text: 'Курс доллара',
+                                    iconCls: 'fas fa-dollar-sign',
+                                    handler: 'usdCourseClick'
                                 }
                             ]
                         }
                     ]
-                }
-            ]
-        },
-        {
-            title: 'Переменные',
-            iconCls: 'fa-solid fa-square-root-variable',
-            layout: 'fit',
+                },
+                // {
+                //     xtype: 'toolbar',
+                //     id: 'collapseToolBar',
+                //     dock: 'top',
+                //     border: true,
+                //     padding: '0 0 0 0',
+                //     items: [
+                //         {
+                //             xtype: 'button',
+                //             iconCls: 'fas fa-caret-left',
+                //             handler: 'collapse'
+                //         }
+                //     ]
+                // }
+            ],
             items: [
                 {
-                    xtype: 'panel',
+                    xtype: 'container',
                     layout: {
-                        type: 'vbox',
+                        type: 'hbox',
                         align: 'stretch'
                     },
+                    height: 40,
                     items: [
                         {
-                            xtype: 'fieldset',
-                            title: 'Расчет суммы',
-                            collapsible: false,
-                            layout: {
-                                type: 'vbox',
-                                align: 'stretch'
+                            xtype: 'container',
+                            flex: 0.33,
+                            style: {
+                                backgroundColor: '#5fa2dd',
                             },
                             items: [
                                 {
                                     xtype: 'button',
-                                    iconCls: 'fa-solid fa-dollar-sign',
-                                    text: 'Курс USD',
-                                    handler: function (btn) {
-                                        document.location.href='/web/settings/usdCourse'
-                                    }
+                                    iconCls: 'fas fa-bars',
+                                    handler: 'collapse',
+                                    width: 40,
+                                    height: 40
+                                },
+                            ]
+                        },
+                        {
+                            xtype: 'container',
+                            flex: 0.33,
+                            layout: {
+                                type: 'vbox',
+                                align: 'center',
+                                pack: 'center'
+                            },
+                            cls: 'main-panel-header-title',
+                            items: [
+                                {
+                                    xtype: 'container',
+                                    html: 'Админ панель',
                                 }
                             ]
+                        },
+                        {
+                            xtype: 'container',
+                            style: {
+                                backgroundColor: '#5fa2dd',
+                            },
+                            html: '',
+                            flex: 0.33
+                        }
+                    ]
+
+                },
+                {
+                    xtype: 'panel',
+                    padding: '10 0 0 0',
+                    id: 'mainFramePanel',
+                    layout: 'fit',
+                    items: [
+                        {
+                            xtype: 'usdcoursepanel'
                         }
                     ]
                 }
