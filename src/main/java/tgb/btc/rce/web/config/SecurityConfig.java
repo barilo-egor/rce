@@ -3,6 +3,7 @@ package tgb.btc.rce.web.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -23,31 +24,30 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .disable()
                 .authorizeRequests()
                 //Доступ только для не зарегистрированных пользователей
-                .antMatchers("/api/**").not().fullyAuthenticated()
-                .antMatchers("/extJS/**").not().fullyAuthenticated()
-                .antMatchers("/fontawesome/**").not().fullyAuthenticated()
-                .antMatchers("/web/login/**").not().fullyAuthenticated()
-                .antMatchers("/js/login/**").not().fullyAuthenticated()
-                .antMatchers("/js/util/**").not().fullyAuthenticated()
-                .antMatchers("/web/registration/**").not().fullyAuthenticated()
-                .antMatchers("/js/registration/**").not().fullyAuthenticated()
+                .antMatchers("/web/registration/**", "/static/**", "/extJS/**", "/fontawesome/**",
+                        "/js/login/**", "/js/util/**", "/js/registration/**", "/login/**", "/api/**").permitAll()
                 //Доступ только для пользователей с ролью Администратор
-                .antMatchers("/web/settings/**").hasRole("ADMIN")
-                .antMatchers("/js/settings/**").hasRole("ADMIN")
-                //Доступ разрешен всем пользователей
-//                .antMatchers("/", "/resources/**").permitAll()
+                .antMatchers("/web/settings/**", "/js/settings/**").hasRole("ADMIN")
                 //Все остальные страницы требуют аутентификации
                 .anyRequest().hasRole("ADMIN")
                 .and()
                 //Настройка для входа в систему
                 .formLogin()
-                .loginPage("/web/login/init")
+                .loginPage("/login")
                 //Перенарпавление на главную страницу после успешного входа
-                .defaultSuccessUrl("/")
+                .defaultSuccessUrl("/loginSuccess")
+                .failureUrl("/loginError")
                 .permitAll()
                 .and()
                 .logout()
+                .logoutUrl("/logout")
                 .permitAll()
-                .logoutSuccessUrl("/");
+                .logoutSuccessUrl("/login");
+    }
+
+    @Override
+    public void configure(WebSecurity web) {
+        web.ignoring()
+                .antMatchers();
     }
 }

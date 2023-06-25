@@ -1,6 +1,6 @@
 package tgb.btc.rce.enums;
 
 public enum RoleConstants {
-    USER,
-    ADMIN
+    ROLE_USER,
+    ROLE_ADMIN
 }

@@ -16,13 +16,13 @@ Ext.define('Login.view.LoginPanel', {
         {
             xtype: 'form',
             id: 'loginForm',
-            padding: '20 20 20 20',
+            padding: '20 20 5 20',
             layout: {
                 type: 'vbox',
                 align: 'stretch'
             },
             defaults: {
-                labelWidth: 130,
+                labelWidth: 70,
                 labelAlign: 'right'
             },
             items: [
@@ -54,13 +54,54 @@ Ext.define('Login.view.LoginPanel', {
                     },
                     msgTarget: 'side',
                 }
-            ],
-            buttonAlign: 'center',
-            buttons: [
+            ]
+        },
+        {
+            xtype: 'container',
+            id: 'errorLoginContainer',
+            hidden: true,
+            layout: {
+                type: 'vbox',
+                align: 'center'
+            },
+            height: 30,
+            items: [
                 {
+                    xtype: 'panel',
+                    html: '<i class="fa-solid fa-circle-exclamation" style="color: #ff0000;"></i> Неверный логин либо пароль.',
+                }
+            ]
+        },
+        {
+            xtype: 'container',
+            layout: {
+                type: 'vbox',
+                align: 'center'
+            },
+            height: 30,
+            items: [
+                {
+                    xtype: 'button',
                     iconCls: 'fa-solid fa-right-to-bracket',
                     text: 'Вход',
-                    handler: 'registerUser'
+                    width: 150,
+                    handler: function () {
+                        let form = Ext.ComponentQuery.query('[id=loginForm]')[0]
+                        Ext.Ajax.request({
+                            method: 'POST',
+                            url: '/login',
+                            params: form.getValues(),
+                            success: function (rs) {
+                                let response = Ext.JSON.decode(rs.responseText)
+                                let errorLoginContainer = Ext.ComponentQuery.query('[id=errorLoginContainer]')[0]
+                                if (response.error) errorLoginContainer.show()
+                                else if (response.loginSuccess) {
+                                    errorLoginContainer.hide()
+                                    document.location.href = '/web/settings/usdCourse'
+                                }
+                            }
+                        })
+                    }
                 }
             ]
         }

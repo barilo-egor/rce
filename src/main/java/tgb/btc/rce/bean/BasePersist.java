@@ -15,6 +15,10 @@ public class BasePersist {
     public BasePersist() {
     }
 
+    public BasePersist(Long pid) {
+        this.pid = pid;
+    }
+
     public Long getPid() {
         return pid;
     }

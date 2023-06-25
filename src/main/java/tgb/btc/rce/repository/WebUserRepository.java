@@ -9,4 +9,6 @@ public interface WebUserRepository extends BaseRepository<WebUser> {
 
     @Query("select count(pid) from WebUser where username=:username")
     int countByUsername(String username);
+
+    WebUser getByUsername(String username);
 }

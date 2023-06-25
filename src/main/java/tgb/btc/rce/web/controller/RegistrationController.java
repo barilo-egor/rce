@@ -7,7 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import tgb.btc.rce.repository.WebUserRepository;
 import tgb.btc.rce.service.impl.WebUserService;
-import tgb.btc.rce.vo.web.RegistrationVO;
+import tgb.btc.rce.vo.web.CredentialsVO;
 
 @Controller
 @RequestMapping("/web/registration")
@@ -34,8 +34,8 @@ public class RegistrationController {
 
     @PostMapping("/registerUser")
     @ResponseBody
-    public ObjectNode registerUser(@RequestBody RegistrationVO registrationVO) {
-        webUserService.save(registrationVO);
+    public ObjectNode registerUser(@RequestBody CredentialsVO credentialsVO) {
+        webUserService.save(credentialsVO);
         ObjectNode objectNode = new ObjectMapper().createObjectNode();
         objectNode.put("success", true);
         return objectNode;

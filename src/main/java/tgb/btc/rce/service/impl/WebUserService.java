@@ -1,18 +1,21 @@
 package tgb.btc.rce.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import tgb.btc.rce.bean.WebUser;
 import tgb.btc.rce.enums.RoleConstants;
 import tgb.btc.rce.repository.RoleRepository;
 import tgb.btc.rce.repository.WebUserRepository;
-import tgb.btc.rce.vo.web.RegistrationVO;
+import tgb.btc.rce.vo.web.CredentialsVO;
 
 import java.util.Set;
 
 @Service
-public class WebUserService {
+public class WebUserService implements UserDetailsService {
 
     private WebUserRepository webUserRepository;
 
@@ -40,12 +43,17 @@ public class WebUserService {
         return webUserRepository.save(webUser);
     }
 
-    public WebUser save(RegistrationVO registrationVO) {
+    public WebUser save(CredentialsVO credentialsVO) {
         WebUser webUser = new WebUser();
-        webUser.setUsername(registrationVO.getUsername());
-        webUser.setPassword(passwordEncoder.encode(registrationVO.getPassword()));
+        webUser.setUsername(credentialsVO.getUsername());
+        webUser.setPassword(passwordEncoder.encode(credentialsVO.getPassword()));
         webUser.setEnabled(true);
-        webUser.setRoles(Set.of(roleRepository.getByName(RoleConstants.USER.name())));
+        webUser.setRoles(Set.of(roleRepository.getByName(RoleConstants.ROLE_USER.name())));
         return webUserRepository.save(webUser);
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return webUserRepository.getByUsername(username);
     }
 }

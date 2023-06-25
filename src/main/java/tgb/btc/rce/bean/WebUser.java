@@ -21,6 +21,28 @@ public class WebUser extends BasePersist implements UserDetails {
 
     private Boolean isEnabled;
 
+    public WebUser() {
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    @Override
+    @Column(name = "USERNAME", nullable = false, unique = true)
+    public String getUsername() {
+        return username;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    @Override
+    public String getPassword() {
+        return password;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return getRoles();
@@ -33,25 +55,6 @@ public class WebUser extends BasePersist implements UserDetails {
 
     public Set<Role> getRoles() {
         return roles;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    @Override
-    public String getPassword() {
-        return password;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    @Override
-    @Column(name = "USERNAME", nullable = false, unique = true)
-    public String getUsername() {
-        return username;
     }
 
     @Override
