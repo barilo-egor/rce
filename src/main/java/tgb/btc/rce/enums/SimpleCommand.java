@@ -61,7 +61,7 @@ public enum SimpleCommand {
             BeanHolder.RESPONSE_SENDER.sendMessage(UpdateUtil.getChatId(update), "Веб админ-панель.",
                     KeyboardUtil.buildInline(List.of(InlineButton.builder()
                             .text("Замена курса")
-                            .data(BotStringConstants.MAIN_URL + "web/settings/usdCourse")
+                            .data(BotStringConstants.MAIN_URL + "/web/main")
                             .inlineType(InlineType.WEB_APP)
                             .build()))));
 

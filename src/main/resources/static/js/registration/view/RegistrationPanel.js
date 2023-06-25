@@ -1,6 +1,6 @@
 Ext.define('Registration.view.RegistrationPanel', {
     xtype: 'registrationpanel',
-    extend: 'Ext.form.Panel',
+    extend: 'Ext.form.RcePanel',
     controller: 'registrationController',
     title: 'Регистрация нового пользователя',
     header: {
@@ -12,11 +12,6 @@ Ext.define('Registration.view.RegistrationPanel', {
         type: 'vbox',
         align: 'stretch'
     },
-    tbar: [
-        {
-            xtype: 'mainpagebutton',
-        }
-    ],
     items: [
         {
             xtype: 'form',

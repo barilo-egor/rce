@@ -1,6 +1,6 @@
 Ext.define('UsdCourse.view.UsdCoursePanel', {
     xtype: 'usdcoursepanel',
-    extend: 'Ext.form.Panel',
+    extend: 'Ext.form.RcePanel',
     controller: 'usdCourseController',
     title: 'Курс USD',
     header: {
@@ -12,11 +12,6 @@ Ext.define('UsdCourse.view.UsdCoursePanel', {
         type: 'vbox',
         align: 'stretch'
     },
-    tbar: [
-        {
-            xtype: 'mainpagebutton',
-        }
-    ],
     items: [
         {
             xtype: 'form',

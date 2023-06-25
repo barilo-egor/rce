@@ -20,6 +20,19 @@ Ext.define('Main.view.MainPanel', {
         textAlign: 'left',
         bodyPadding: 15
     },
+    tbar: [
+        {
+            xtype: 'tbfill'
+        },
+        {
+            xtype: 'button',
+            text: 'Выйти из аккаунта',
+            iconCls: 'fa-solid fa-right-from-bracket',
+            handler: function (btn) {
+                document.location.href = '/logout'
+            }
+        },
+    ],
     items: [
         {
             title: 'Пользователи',

@@ -1,0 +1,4 @@
+.x-btn-wrap-default-toolbar-small.x-btn-arrow-right:after {
+    content: '\f0da' !important;
+    font: 16px/24px 'Font Awesome 5 Free' !important;
+}

@@ -26,8 +26,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 //Доступ только для не зарегистрированных пользователей
                 .antMatchers("/web/registration/**", "/static/**", "/extJS/**", "/fontawesome/**",
                         "/js/login/**", "/js/util/**", "/js/registration/**", "/login/**", "/api/**",
-                        "/loginSuccess", "/loginError", "/").permitAll()
+                        "/loginSuccess", "/loginError", "/", "/css/**").permitAll()
                 //Доступ только для пользователей с ролью Администратор
+                .antMatchers("/js/mainUser/**").hasRole("USER")
                 .antMatchers("/web/settings/**", "/js/settings/**", "/js/main/**",
                         "/web/main/**").hasRole("ADMIN")
                 //Все остальные страницы требуют аутентификации
