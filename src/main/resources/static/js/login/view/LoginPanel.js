@@ -90,6 +90,7 @@ Ext.define('Login.view.LoginPanel', {
                         Ext.Ajax.request({
                             method: 'POST',
                             url: '/login',
+                            async: false,
                             params: form.getValues(),
                             success: function (rs) {
                                 let response = Ext.JSON.decode(rs.responseText)
@@ -97,7 +98,7 @@ Ext.define('Login.view.LoginPanel', {
                                 if (response.error) errorLoginContainer.show()
                                 else if (response.loginSuccess) {
                                     errorLoginContainer.hide()
-                                    document.location.href = '/web/settings/usdCourse'
+                                    document.location.href = response.loginUrl
                                 }
                             }
                         })

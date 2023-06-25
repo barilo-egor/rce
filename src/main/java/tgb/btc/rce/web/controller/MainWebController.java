@@ -5,10 +5,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping("/")
-public class MaimController {
+@RequestMapping("/web")
+public class MainWebController {
 
-    @GetMapping("/web")
+    @GetMapping("/main")
     public String web() {
         return "main";
     }

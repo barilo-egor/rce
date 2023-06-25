@@ -12,6 +12,11 @@ Ext.define('UsdCourse.view.UsdCoursePanel', {
         type: 'vbox',
         align: 'stretch'
     },
+    tbar: [
+        {
+            xtype: 'mainpagebutton',
+        }
+    ],
     items: [
         {
             xtype: 'form',

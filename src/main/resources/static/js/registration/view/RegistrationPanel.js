@@ -12,6 +12,11 @@ Ext.define('Registration.view.RegistrationPanel', {
         type: 'vbox',
         align: 'stretch'
     },
+    tbar: [
+        {
+            xtype: 'mainpagebutton',
+        }
+    ],
     items: [
         {
             xtype: 'form',

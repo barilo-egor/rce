@@ -25,9 +25,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 //Доступ только для не зарегистрированных пользователей
                 .antMatchers("/web/registration/**", "/static/**", "/extJS/**", "/fontawesome/**",
-                        "/js/login/**", "/js/util/**", "/js/registration/**", "/login/**", "/api/**").permitAll()
+                        "/js/login/**", "/js/util/**", "/js/registration/**", "/login/**", "/api/**",
+                        "/loginSuccess", "/loginError", "/").permitAll()
                 //Доступ только для пользователей с ролью Администратор
-                .antMatchers("/web/settings/**", "/js/settings/**").hasRole("ADMIN")
+                .antMatchers("/web/settings/**", "/js/settings/**", "/js/main/**",
+                        "/web/main/**").hasRole("ADMIN")
                 //Все остальные страницы требуют аутентификации
                 .anyRequest().hasRole("ADMIN")
                 .and()
@@ -35,7 +37,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .formLogin()
                 .loginPage("/login")
                 //Перенарпавление на главную страницу после успешного входа
-                .defaultSuccessUrl("/loginSuccess")
+                .defaultSuccessUrl("/loginSuccess", true)
                 .failureUrl("/loginError")
                 .permitAll()
                 .and()
