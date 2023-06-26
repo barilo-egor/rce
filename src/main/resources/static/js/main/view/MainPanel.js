@@ -13,7 +13,10 @@ Ext.define('Main.view.MainPanel', {
     //     titleAlign: 'center'
     // },
     scrollable: true,
-    layout: 'fit',
+    layout: {
+        type: 'vbox',
+        align: 'stretch'
+    },
 
     items: [
         {
@@ -43,20 +46,6 @@ Ext.define('Main.view.MainPanel', {
                         }
                     ]
                 },
-                // {
-                //     xtype: 'toolbar',
-                //     id: 'collapseToolBar',
-                //     dock: 'top',
-                //     border: true,
-                //     padding: '0 0 0 0',
-                //     items: [
-                //         {
-                //             xtype: 'button',
-                //             iconCls: 'fas fa-caret-left',
-                //             handler: 'collapse'
-                //         }
-                //     ]
-                // }
             ],
             items: [
                 {
@@ -114,7 +103,11 @@ Ext.define('Main.view.MainPanel', {
                     xtype: 'panel',
                     padding: '10 0 0 0',
                     id: 'mainFramePanel',
-                    layout: 'fit',
+                    layout: {
+                        type: 'vbox',
+                        align: 'stretch'
+                    },
+                    scrollable: true,
                     items: [
                         {
                             xtype: 'usdcoursepanel'
