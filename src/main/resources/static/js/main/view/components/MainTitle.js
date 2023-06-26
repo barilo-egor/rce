@@ -5,6 +5,7 @@ Ext.define('Main.view.components.MainTitle', {
             type: 'hbox',
             align: 'stretch'
         },
+        padding: '0 1 0 1',
         height: 40,
         items: [
             {

@@ -10,3 +10,35 @@
     line-height: 20px;
     background-color: #5fa2dd;
 }
+
+.main-toolbar {
+    border-right: 1px solid #919191 !important;
+}
+
+.usd-course-icon-color {
+    color: #919191 !important;
+}
+
+.variables-icon-color {
+    color: #919191 !important;
+}
+
+.users-icon-color{
+    color: #919191 !important;
+}
+
+.new-web-user-icon-color {
+    color: #919191 !important;
+}
+
+.main-frame-title {
+    color: #919191 !important;
+    background-color: white !important;
+    border-bottom: 1px solid #919191 !important;
+    border-top: 1px solid #919191 !important;
+}
+
+.main-frame-header {
+    color: #919191 !important;
+    background-color: white !important;
+}

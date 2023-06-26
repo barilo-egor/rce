@@ -1,10 +1,10 @@
 Ext.define('Main.view.usdCourse.UsdCoursePanel', {
     xtype: 'usdcoursepanel',
-    extend: 'Ext.form.Panel',
+    extend: 'Main.view.components.FramePanel',
     controller: 'usdCourseController',
-    title: 'Курс USD',
-    header: {
-        titleAlign: 'center'
+    title: {
+        xtype: 'mainframetitle',
+        text: 'Курс USD'
     },
     scrollable: true,
     padding: '0 0 0 0',
