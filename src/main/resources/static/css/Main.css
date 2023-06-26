@@ -46,3 +46,16 @@
 .x-btn-wrap-default-toolbar-small.x-btn-arrow-right:after{
     color: #5fa2dd !important;
 }
+
+.greenBtn {
+    background-color: #9FEFD1 !important;
+    border-color: #1C9165 !important;
+    color: #404040 !important;
+    background-image: none;
+}
+.blueButton {
+    background-color: #A3CBEE !important;
+    border-color: #1F5A90 !important;
+    color: #404040 !important;
+    background-image: none;
+}

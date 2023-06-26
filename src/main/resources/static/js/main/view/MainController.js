@@ -4,6 +4,8 @@ Ext.define('Main.view.MainController', {
     requires: [
         'Main.view.usdCourse.UsdCoursePanel',
         'Main.view.usdCourse.UsdCourseController',
+        'Main.view.registration.RegistrationPanel',
+        'Main.view.registration.RegistrationController'
     ],
 
     collapse: function (btn) {
@@ -24,7 +26,7 @@ Ext.define('Main.view.MainController', {
     },
 
     newWebUserClick: function (btn) {
-
+        this.mainToolBarClick(btn, 'registrationpanel')
     },
 
     mainToolBarClick: function (btn, panel) {
