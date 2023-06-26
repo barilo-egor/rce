@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Controller
-@RequestMapping("/settings")
+@RequestMapping("/web/settings")
 public class SettingsController {
 
     private CalculateService calculateService;

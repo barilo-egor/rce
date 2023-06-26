@@ -1,9 +1,9 @@
-Ext.define('UsdCourse.view.UsdCourseController', {
+Ext.define('Main.view.usdCourse.UsdCourseController', {
     extend: 'Ext.app.ViewController',
     alias: 'controller.usdCourseController',
 
     requires: [
-        'UsdCourse.view.InputsContainer',
+        'Main.view.usdCourse.InputsContainer',
     ],
 
     calculate: function (me) {
@@ -51,6 +51,7 @@ Ext.define('UsdCourse.view.UsdCourseController', {
         Ext.Ajax.request({
             url: '/web/settings/calculate',
             method: 'GET',
+            async: false,
             params: params,
             success: function (rs) {
                 let response = Ext.JSON.decode(rs.responseText)
@@ -105,6 +106,7 @@ Ext.define('UsdCourse.view.UsdCourseController', {
         Ext.Ajax.request({
             url: '/web/settings/cryptoCourses',
             method: 'GET',
+            async: false,
             success: function (rs) {
                 let response = Ext.JSON.decode(rs.responseText)
                 let currencies = response.currencies
@@ -215,6 +217,7 @@ Ext.define('UsdCourse.view.UsdCourseController', {
                 }
             }
         })
+
     },
 
     createInputsContainer(fiatCurrency, dealType, cryptoCurrency) {
