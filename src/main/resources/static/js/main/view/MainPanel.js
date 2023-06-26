@@ -8,10 +8,6 @@ Ext.define('Main.view.MainPanel', {
         'Main.view.usdCourse.UsdCourseController',
     ],
     header: false,
-    // title: 'Админ панель',
-    // header: {
-    //     titleAlign: 'center'
-    // },
     scrollable: true,
     layout: {
         type: 'vbox',

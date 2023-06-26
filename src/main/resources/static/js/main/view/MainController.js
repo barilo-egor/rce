@@ -21,7 +21,7 @@ Ext.define('Main.view.MainController', {
             let toolbar = btn.up('toolbar')
             toolbar.hide()
             let mainFramePanel = Ext.ComponentQuery.query('[id=mainFramePanel]')[0]
-            mainFramePanel.items.items = []
+            mainFramePanel.items.items.forEach(item => item.destroy())
             mainFramePanel.insert({xtype: 'usdcoursepanel'})
             mainFramePanel.update();
             mainFramePanel.updateLayout();
