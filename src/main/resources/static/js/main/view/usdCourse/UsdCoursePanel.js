@@ -72,7 +72,12 @@ Ext.define('Main.view.usdCourse.UsdCoursePanel', {
                                         change: 'updateResultAmounts'
                                     },
                                     msgTarget: 'side',
-                                    validator: 'validateDiscount'
+                                    validator: function (val) {
+                                        if (!val) return 'Введите значение.'
+                                        if (val < -99 || val > 99) {
+                                            return 'Значение должно быть >-99 и <99.'
+                                        } else return true
+                                    }
                                 },
                                 {
                                     xtype: 'numberfield',
@@ -86,7 +91,12 @@ Ext.define('Main.view.usdCourse.UsdCoursePanel', {
                                         change: 'updateResultAmounts'
                                     },
                                     msgTarget: 'side',
-                                    validator: 'validateDiscount'
+                                    validator: function (val) {
+                                        if (!val) return 'Введите значение.'
+                                        if (val < -99 || val > 99) {
+                                            return 'Значение должно быть >-99 и <99.'
+                                        } else return true
+                                    }
                                 },
                                 {
                                     xtype: 'panel',
@@ -120,13 +130,13 @@ Ext.define('Main.view.usdCourse.UsdCoursePanel', {
             buttons: [
                 {
                     text: 'Сохранить',
-                    iconCls: 'fa-regular fa-floppy-disk',
+                    iconCls: 'fas fa-save saveBtn',
                     cls: 'saveBtn',
                     handler: 'onSaveClick'
                 },
                 {
                     text: 'Восстановить значения',
-                    iconCls: 'fa-solid fa-xmark',
+                    iconCls: 'fas fa-redo blueButton',
                     cls: 'blueButton',
                     handler: 'returnValues'
                 }
