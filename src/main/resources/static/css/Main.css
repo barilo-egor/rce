@@ -16,19 +16,19 @@
 }
 
 .usd-course-icon-color {
-    color: #919191 !important;
+    color: #5fa2dd !important;
 }
 
 .variables-icon-color {
-    color: #919191 !important;
+    color: #5fa2dd !important;
 }
 
 .users-icon-color{
-    color: #919191 !important;
+    color: #5fa2dd !important;
 }
 
 .new-web-user-icon-color {
-    color: #919191 !important;
+    color: #5fa2dd !important;
 }
 
 .main-frame-title {
@@ -41,4 +41,8 @@
 .main-frame-header {
     color: #919191 !important;
     background-color: white !important;
+}
+
+.x-btn-wrap-default-toolbar-small.x-btn-arrow-right:after{
+    color: #5fa2dd !important;
 }
