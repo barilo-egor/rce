@@ -1,6 +1,6 @@
 Ext.define('Registration.view.RegistrationPanel', {
     xtype: 'registrationpanel',
-    extend: 'Ext.form.RcePanel',
+    extend: 'Ext.form.Panel',
     controller: 'registrationController',
     title: 'Регистрация нового пользователя',
     header: {
