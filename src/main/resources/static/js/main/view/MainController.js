@@ -5,7 +5,8 @@ Ext.define('Main.view.MainController', {
         'Main.view.usdCourse.UsdCoursePanel',
         'Main.view.usdCourse.UsdCourseController',
         'Main.view.registration.RegistrationPanel',
-        'Main.view.registration.RegistrationController'
+        'Main.view.registration.RegistrationController',
+        'Main.view.apiregistration.ApiRegistrationPanel'
     ],
 
     collapse: function (btn) {
@@ -27,6 +28,10 @@ Ext.define('Main.view.MainController', {
 
     newWebUserClick: function (btn) {
         this.mainToolBarClick(btn, 'registrationpanel')
+    },
+
+    newApiUserClick: function (btn) {
+        this.mainToolBarClick(btn, 'apiregistrationpanel')
     },
 
     mainToolBarClick: function (btn, panel) {
