@@ -1,10 +1,10 @@
-Ext.define('Registration.view.RegistrationPanel', {
+Ext.define('Main.view.registration.RegistrationPanel', {
     xtype: 'registrationpanel',
-    extend: 'Ext.form.Panel',
+    extend: 'Main.view.components.FramePanel',
     controller: 'registrationController',
-    title: 'Регистрация нового пользователя',
-    header: {
-        titleAlign: 'center'
+    title: {
+        xtype: 'mainframetitle',
+        text: 'Регистрация веб-пользователей'
     },
     region: 'center',
     scrollable: true,
@@ -89,7 +89,8 @@ Ext.define('Registration.view.RegistrationPanel', {
             buttonAlign: 'center',
             buttons: [
                 {
-                    iconCls: 'fa-regular fa-user',
+                    iconCls: 'fas fa-save greenBtn',
+                    cls: 'greenBtn',
                     text: 'Регистрация',
                     handler: 'registerUser'
                 }

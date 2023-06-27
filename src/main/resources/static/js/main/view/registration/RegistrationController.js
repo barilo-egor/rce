@@ -1,4 +1,4 @@
-Ext.define('Registration.view.RegistrationController', {
+Ext.define('Main.view.registration.RegistrationController', {
     extend: 'Ext.app.ViewController',
     alias: 'controller.registrationController',
 
