@@ -8,22 +8,27 @@ Ext.define('Main.view.components.MainToolBar', {
     items: [
         {
             xtype: 'button',
-            iconCls: 'fas fa-square-root-alt variables-icon-color',
+            iconCls: 'fas fa-square-root-alt menu-icon-color',
             menu: [
                 {
                     text: 'Курс доллара',
-                    iconCls: 'fas fa-dollar-sign usd-course-icon-color',
+                    iconCls: 'fas fa-dollar-sign menu-icon-color',
                     handler: 'usdCourseClick'
                 },
             ],
         },
         {
             xtype: 'button',
-            iconCls: 'fas fa-users users-icon-color',
+            iconCls: 'fas fa-users menu-icon-color',
             menu: [
                 {
                     text: 'Регистрация веб-пользователей',
-                    iconCls: 'fas fa-user-plus new-web-user-icon-color',
+                    iconCls: 'fas fa-user-plus menu-icon-color',
+                    handler: 'newWebUserClick'
+                },
+                {
+                    text: 'Регистрация апи-пользователей',
+                    iconCls: 'fas fa-user-plus menu-icon-color',
                     handler: 'newWebUserClick'
                 }
             ]
