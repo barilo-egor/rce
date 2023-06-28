@@ -7,8 +7,7 @@ Ext.define('Main.view.usdCourse.UsdCourseController', {
     ],
 
     calculate: function (me) {
-        let cryptoCoursesFieldSet = Ext.ComponentQuery.query('[id=cryptoCourses]')[0]
-        let cryptoCoursesInputs = cryptoCoursesFieldSet.items.items
+        let cryptoCoursesInputs = this.getCryptoCoursesFieldSetFields()
         let container = me.up('container')
         let cryptoAmount = container.items.items[2].value
         if (!cryptoAmount || cryptoAmount === '0' || cryptoAmount === 0) return;
@@ -16,12 +15,12 @@ Ext.define('Main.view.usdCourse.UsdCourseController', {
         if (!usdCourseField.value || usdCourseField.value === '0' || usdCourseField.value === 0) return;
         let cryptoCourse
         for (let cryptoCourseInput of cryptoCoursesInputs) {
-            if (cryptoCourseInput.xtype !== 'numberfield') return;
             if (cryptoCourseInput.fieldLabel === usdCourseField.cryptoCurrency) {
                 cryptoCourse = cryptoCourseInput.value
                 break
             }
         }
+        if (!cryptoCourse || cryptoCourse === 0 || cryptoCourse === '0') return;
         let resultInput = container.items.items[3]
         let usdCourse = usdCourseField.value
         let discountsFieldSetItems = Ext.ComponentQuery.query('[id=discountsFieldSet]')[0].items.items
@@ -59,6 +58,14 @@ Ext.define('Main.view.usdCourse.UsdCourseController', {
                 resultInput.setLoading(false)
             }
         })
+    },
+
+    getCryptoCoursesFieldSetFields: function () {
+        return this.getCryptoCoursesFieldSet().items.items.filter(item => item.xtype === 'numberfield')
+    },
+
+    getCryptoCoursesFieldSet: function () {
+        return Ext.ComponentQuery.query('[id=cryptoCourses]')[0]
     },
 
     usdCourseChange: function (me) {
@@ -111,7 +118,7 @@ Ext.define('Main.view.usdCourse.UsdCourseController', {
                 success: function (rs) {
                     let response = Ext.JSON.decode(rs.responseText)
                     let currencies = response.currencies
-                    let cryptoCoursesFieldSetItems = Ext.ComponentQuery.query('[id=cryptoCourses]')[0].items.items
+                    let cryptoCoursesFieldSetItems = me.getCryptoCoursesFieldSetFields()
 
                     for (let cryptoCurrency of currencies) {
                         for (let item of cryptoCoursesFieldSetItems) {
@@ -139,6 +146,39 @@ Ext.define('Main.view.usdCourse.UsdCourseController', {
                 let currencies = response.currencies
                 let cryptoCoursesFieldSet = Ext.ComponentQuery.query('[id=cryptoCourses]')[0]
 
+                cryptoCoursesFieldSet.insert({
+                    xtype: 'radiogroup',
+                    items: [
+                        {
+                            boxLabel: 'Курс по API',
+                            checked: true,
+                            listeners: {
+                                change: function (component, newValue) {
+                                    if (newValue) {
+                                        me.getCryptoCoursesFieldSetFields().forEach(field => {
+                                            field.setEditable(false)
+                                        })
+                                        me.updateCourses(component)
+                                        me.updateResultAmounts()
+                                    }
+                                }
+                            }
+                        },
+                        {
+                            boxLabel: 'Вручную',
+                            listeners: {
+                                change: function (component, newValue) {
+                                    if (newValue) {
+                                        me.getCryptoCoursesFieldSetFields().forEach(field => {
+                                            field.setEditable(true)
+                                        })
+                                    }
+                                }
+                            }
+                        }
+                    ]
+                })
+
                 for (let cryptoCurrency of currencies) {
                     cryptoCoursesFieldSet.insert({
                         xtype: 'numberfield',
@@ -147,7 +187,18 @@ Ext.define('Main.view.usdCourse.UsdCourseController', {
                         decimalSeparator: '.',
                         padding: '0 0 2 0',
                         editable: false,
-                        hideTrigger: true
+                        hideTrigger: true,
+                        listeners: {
+                            change: function () {
+                                me.updateResultAmounts()
+                            }
+                        },
+                        msgTarget: 'side',
+                        validator: function (value) {
+                            if (!value) return 'Введите значение.'
+                            if (value === 0 || value === '0' || value < 0) return 'Введите значение больше 0.'
+                            return true
+                        }
                     })
                 }
                 cryptoCoursesFieldSet.insert({
