@@ -82,7 +82,7 @@ Ext.define('Login.view.LoginPanel', {
             items: [
                 {
                     xtype: 'button',
-                    iconCls: 'fa-solid fa-right-to-bracket',
+                    iconCls: 'fas fa-sign-in-alt',
                     text: 'Вход',
                     width: 150,
                     handler: function () {
