@@ -10,13 +10,11 @@ Ext.define('Main.view.components.MainFramePanel', {
         'Main.view.components.MainFrameHeader'
     ],
     layout: {
-        type: 'vbox',
-        align: 'stretch'
+        type: 'fit'
     },
-    scrollable: true,
     items: [
         {
-            xtype: 'usdcoursepanel'
+            xtype: 'apiregistrationpanel'
         }
     ]
 })

@@ -1,0 +1,81 @@
+Ext.define('Main.view.api.registration.ApiRegistrationPanel', {
+    xtype: 'apiregistrationpanel',
+    extend: 'Main.view.components.FramePanel',
+    controller: 'usdCourseController',
+    title: {
+        xtype: 'mainframetitle',
+        text: 'Регистрация апи-пользователя'
+    },
+    scrollable: true,
+    padding: '0 0 0 0',
+    layout: {
+        type: 'fit'
+    },
+    items: [
+        {
+            xtype: 'form',
+            padding: '20 20 20 20',
+            scrollable: true,
+            layout: {
+                type: 'vbox',
+                align: 'stretch'
+            },
+            items: [
+                {
+                    xtype: 'textfield',
+                    fieldLabel: 'Идентификатор',
+                    emptyText: 'Введите идентификатор',
+                    name: 'clientId',
+                    msgTarget: 'side',
+                    padding: '0 0 5 0',
+                    validator: function (val) {
+                        if (!val) return 'Введите значение'
+                        if (!RegexUtil.onlyLettersAndNumbers(val)) return 'Только латинские буквы и символы'
+                        return true
+                    }
+                },
+                {
+                    xtype: 'numberfield',
+                    fieldLabel: 'Персональная скидка',
+                    name: 'personalDiscount',
+                    emptyText: 'Введите скидку от -99 до 99',
+                    value: 0,
+                    decimalSeparator: '.',
+                    padding: '0 0 5 0',
+                    hideTrigger: true,
+                    msgTarget: 'side',
+                    listeners: {
+                        render: function( component ) {
+                            component.getEl().on('click', function( event, el ) {
+                                Ext.ComponentQuery.query('[id=personalDiscountHintPanel]')[0].show()
+                            });
+                        },
+                        focusleave: function () {
+                            Ext.ComponentQuery.query('[id=personalDiscountHintPanel]')[0].hide()
+                        }
+                    },
+                    validator: function (val) {
+                        if (!val) return 'Введите значение.'
+                        if (val < -99 || val > 99) {
+                            return 'Значение должно быть от -99 до 99.'
+                        } else return true
+                    }
+                },
+                {
+                    xtype: 'panel',
+                    id: 'personalDiscountHintPanel',
+                    frame: true,
+                    hidden: true,
+                    padding: '5 5 5 5',
+                    style: {
+                        borderColor: '#919191',
+                        borderWidth: '1px',
+                        textAlign: 'center'
+                    },
+                    html: '<i class="fas fa-info-circle" style="color: #005eff;"></i> ' +
+                        'Введите положительное значение для скидки, либо отрицательное для надбавки.'
+                }
+            ]
+        }
+    ]
+})

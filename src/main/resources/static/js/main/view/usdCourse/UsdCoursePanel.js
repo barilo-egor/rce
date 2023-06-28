@@ -6,7 +6,6 @@ Ext.define('Main.view.usdCourse.UsdCoursePanel', {
         xtype: 'mainframetitle',
         text: 'Курс USD'
     },
-    scrollable: true,
     padding: '0 0 0 0',
     layout: {
         type: 'vbox',
@@ -15,7 +14,6 @@ Ext.define('Main.view.usdCourse.UsdCoursePanel', {
     items: [
         {
             xtype: 'form',
-            scrollable: true,
             layout: {
                 type: 'vbox',
                 align: 'stretch'
@@ -75,7 +73,7 @@ Ext.define('Main.view.usdCourse.UsdCoursePanel', {
                                     validator: function (val) {
                                         if (!val) return 'Введите значение.'
                                         if (val < -99 || val > 99) {
-                                            return 'Значение должно быть >-99 и <99.'
+                                            return 'Значение должно быть от -99 до 99.'
                                         } else return true
                                     }
                                 },
@@ -94,7 +92,7 @@ Ext.define('Main.view.usdCourse.UsdCoursePanel', {
                                     validator: function (val) {
                                         if (!val) return 'Введите значение.'
                                         if (val < -99 || val > 99) {
-                                            return 'Значение должно быть >-99 и <99.'
+                                            return 'Значение должно быть от -99 до 99.'
                                         } else return true
                                     }
                                 },
@@ -105,9 +103,10 @@ Ext.define('Main.view.usdCourse.UsdCoursePanel', {
                                     padding: '5 5 5 5',
                                     style: {
                                         borderColor: '#919191',
-                                        borderWidth: '1px'
+                                        borderWidth: '1px',
+                                        textAlign: 'center'
                                     },
-                                    html: 'Введите положительное значение для скидки, либо отрицательное для надбавки.'
+                                    html: '<i class="fas fa-info-circle" style="color: #005eff;"></i> Введите положительное значение для скидки, либо отрицательное для надбавки.'
                                 }
                             ]
                         },
@@ -121,7 +120,6 @@ Ext.define('Main.view.usdCourse.UsdCoursePanel', {
         {
             xtype: 'form',
             id: 'coursesForm',
-            scrollable: true,
             layout: {
                 type: 'vbox',
                 align: 'stretch'

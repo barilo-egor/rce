@@ -9,31 +9,30 @@ Ext.define('Main.view.MainPanel', {
         'Main.view.components.MainFramePanel'
     ],
     header: false,
-    scrollable: true,
     layout: {
-        type: 'vbox',
-        align: 'stretch'
+        type: 'fit'
     },
 
     items: [
         {
             xtype: 'panel',
             header: false,
+            scrollable: true,
             layout: {
                 type: 'vbox',
                 align: 'stretch'
             },
-            dockedItems: [
-                {
-                    xtype: 'maintoolbar'
-                },
-            ],
             items: [
                 {
                     xtype: 'maintitle'
                 },
                 {
-                    xtype: 'mainframepanel'
+                    xtype: 'mainframepanel',
+                    dockedItems: [
+                        {
+                            xtype: 'maintoolbar'
+                        },
+                    ]
                 }
             ]
         }

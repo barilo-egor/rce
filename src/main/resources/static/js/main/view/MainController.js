@@ -6,7 +6,7 @@ Ext.define('Main.view.MainController', {
         'Main.view.usdCourse.UsdCourseController',
         'Main.view.registration.RegistrationPanel',
         'Main.view.registration.RegistrationController',
-        'Main.view.apiregistration.ApiRegistrationPanel'
+        'Main.view.api.registration.ApiRegistrationPanel'
     ],
 
     collapse: function (btn) {
