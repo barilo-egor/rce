@@ -1,7 +1,10 @@
 Ext.define('Main.view.api.registration.ApiRegistrationPanel', {
     xtype: 'apiregistrationpanel',
     extend: 'Main.view.components.FramePanel',
-    controller: 'usdCourseController',
+    controller: 'apiRegistrationController',
+    requires: [
+        'Main.view.components.button.RegisterButton'
+    ],
     title: {
         xtype: 'mainframetitle',
         text: 'Регистрация апи-пользователя'
@@ -9,7 +12,8 @@ Ext.define('Main.view.api.registration.ApiRegistrationPanel', {
     scrollable: true,
     padding: '0 0 0 0',
     layout: {
-        type: 'fit'
+        type: 'vbox',
+        align: 'stretch'
     },
     items: [
         {
@@ -74,6 +78,16 @@ Ext.define('Main.view.api.registration.ApiRegistrationPanel', {
                     },
                     html: '<i class="fas fa-info-circle" style="color: #005eff;"></i> ' +
                         'Введите положительное значение для скидки, либо отрицательное для надбавки.'
+                }
+            ]
+        },
+        {
+            xtype: 'panel',
+            buttonAlign: 'center',
+            buttons: [
+                {
+                    xtype: 'registerbutton',
+                    handler: 'register'
                 }
             ]
         }

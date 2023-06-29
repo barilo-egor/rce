@@ -7,7 +7,9 @@ Ext.define('Main.view.components.MainFramePanel', {
         'Main.view.usdCourse.UsdCoursePanel',
         'Main.view.usdCourse.UsdCourseController',
         'Main.view.components.MainFrameTitle',
-        'Main.view.components.MainFrameHeader'
+        'Main.view.components.MainFrameHeader',
+        'Main.view.api.registration.ApiRegistrationPanel',
+        'Main.view.api.registration.ApiRegistrationController'
     ],
     layout: {
         type: 'fit'
