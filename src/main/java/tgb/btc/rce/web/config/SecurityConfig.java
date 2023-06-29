@@ -32,7 +32,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/js/util/**", "/js/registration/**",
                         "/api/**",
                         "/loginSuccess", "/loginError",
-                        "/css/**"
+                        "/css/**", "/web/main"
                 )
                 .permitAll();
         // Доступ для юзеров
@@ -61,7 +61,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         // Конфигурация логина
         httpSecurity
                 .formLogin()
-                .loginPage("/login")
+                .loginPage("/web/main")
                 //Перенарпавление на главную страницу после успешного входа
                 .defaultSuccessUrl("/loginSuccess", true)
                 .failureUrl("/loginError")
@@ -70,7 +70,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .logout()
                 .logoutUrl("/logout")
                 .permitAll()
-                .logoutSuccessUrl("/login");
+                .logoutSuccessUrl("/web/main");
     }
 
     @Override

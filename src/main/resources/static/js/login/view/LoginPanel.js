@@ -16,6 +16,7 @@ Ext.define('Login.view.LoginPanel', {
         {
             xtype: 'form',
             id: 'loginForm',
+            url: '/web/main',
             padding: '20 20 5 20',
             layout: {
                 type: 'vbox',
@@ -89,7 +90,7 @@ Ext.define('Login.view.LoginPanel', {
                         let form = Ext.ComponentQuery.query('[id=loginForm]')[0]
                         Ext.Ajax.request({
                             method: 'POST',
-                            url: '/login',
+                            url: '/web/main',
                             async: false,
                             params: form.getValues(),
                             success: function (rs) {
