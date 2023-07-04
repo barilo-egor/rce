@@ -1,13 +1,6 @@
 Ext.define('Main.view.MainController', {
     extend: 'Ext.app.ViewController',
     alias: 'controller.mainController',
-    requires: [
-        'Main.view.usdCourse.UsdCoursePanel',
-        'Main.view.usdCourse.UsdCourseController',
-        'Main.view.registration.RegistrationPanel',
-        'Main.view.registration.RegistrationController',
-        'Main.view.api.registration.ApiRegistrationPanel'
-    ],
 
     collapse: function (btn) {
         let toolBar = Ext.ComponentQuery.query('[id=mainToolBar]')[0]
@@ -32,6 +25,10 @@ Ext.define('Main.view.MainController', {
 
     newApiUserClick: function (btn) {
         this.mainToolBarClick(btn, 'apiregistrationpanel')
+    },
+
+    apiUsersControlClick: function (btn) {
+        this.mainToolBarClick(btn, 'apiuserscontrolpanel')
     },
 
     mainToolBarClick: function (btn, panel) {

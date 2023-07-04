@@ -24,6 +24,9 @@ Ext.define('Main.view.api.registration.ApiRegistrationPanel', {
                 type: 'vbox',
                 align: 'stretch'
             },
+            defaults: {
+                labelWidth: 150
+            },
             items: [
                 {
                     xtype: 'textfield',
@@ -68,16 +71,51 @@ Ext.define('Main.view.api.registration.ApiRegistrationPanel', {
                 {
                     xtype: 'panel',
                     id: 'personalDiscountHintPanel',
-                    frame: true,
                     hidden: true,
-                    padding: '5 5 5 5',
-                    style: {
-                        borderColor: '#919191',
-                        borderWidth: '1px',
-                        textAlign: 'center'
-                    },
-                    html: '<i class="fas fa-info-circle" style="color: #005eff;"></i> ' +
-                        'Введите положительное значение для скидки, либо отрицательное для надбавки.'
+                    layout: 'fit',
+                    padding: '0 0 15 0',
+                    items: [
+                        {
+                            xtype: 'panel',
+                            frame: true,
+                            padding: '5 5 5 5',
+                            style: {
+                                borderColor: '#919191',
+                                borderWidth: '1px',
+                                textAlign: 'center'
+                            },
+                            html: '<i class="fas fa-info-circle" style="color: #005eff;"></i> ' +
+                                'Введите положительное значение для скидки, либо отрицательное для надбавки.'
+                        }
+                    ]
+                },
+                {
+                    xtype: 'textfield',
+                    fieldLabel: 'Реквизиты',
+                    emptyText: 'Введите реквизиты',
+                    name: 'requisites',
+                    msgTarget: 'side',
+                    padding: '0 0 5 0',
+                    validator: function (val) {
+                        if (!val) return 'Введите значение'
+                        return true
+                    }
+                },
+                {
+                    xtype: 'numberfield',
+                    fieldLabel: 'Курс USD',
+                    name: 'usdCourse',
+                    emptyText: 'Введите курс',
+                    decimalSeparator: '.',
+                    padding: '0 0 5 0',
+                    hideTrigger: true,
+                    msgTarget: 'side',
+                    validator: function (val) {
+                        if (!val) return 'Введите значение.'
+                        if (val === '0' || val === 0 || val < 1) {
+                            return 'Значение должно больше 0.'
+                        } else return true
+                    }
                 }
             ]
         },
