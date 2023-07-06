@@ -51,11 +51,11 @@ Ext.define('Main.view.api.registration.ApiRegistrationPanel', {
                     listeners: {
                         render: function( component ) {
                             component.getEl().on('click', function( event, el ) {
-                                Ext.ComponentQuery.query('[id=personalDiscountHintPanel]')[0].show()
+                                ExtUtil.idQuery('personalDiscountHintPanel').show()
                             });
                         },
                         focusleave: function () {
-                            Ext.ComponentQuery.query('[id=personalDiscountHintPanel]')[0].hide()
+                            ExtUtil.idQuery('personalDiscountHintPanel').hide()
                         }
                     },
                     validator: ValidatorUtil.validateDiscount

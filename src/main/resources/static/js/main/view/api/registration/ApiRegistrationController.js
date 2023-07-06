@@ -3,7 +3,7 @@ Ext.define('Main.view.api.registration.ApiRegistrationController', {
     alias: 'controller.apiRegistrationController',
 
     register: function (btn) {
-        let form = Ext.ComponentQuery.query('[id=apiuserregisteform]')[0]
+        let form = ExtUtil.idQuery('apiuserregisteform')
         if (!form.isValid()) {
             Ext.Msg.alert('Внимание', 'Неверно заполнена форма.')
             return

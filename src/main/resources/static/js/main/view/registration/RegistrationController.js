@@ -2,19 +2,8 @@ Ext.define('Main.view.registration.RegistrationController', {
     extend: 'Ext.app.ViewController',
     alias: 'controller.registrationController',
 
-    validateInput: function (val) {
-        if (/^[A-Za-z0-9]*$/.test(val)) return true;
-        else return 'Ошибка'
-    },
-
-    validateConfirmPassword: function (val) {
-        let passwordInput = Ext.ComponentQuery.query('[id=passwordInput]')
-        if (passwordInput !== val) return 'Пароли не совпадают'
-        return true
-    },
-
     registerUser: function () {
-        let form = Ext.ComponentQuery.query('[id=registrationForm]')[0]
+        let form = ExtUtil.idQuery('registrationForm')
         if (!form.isValid()) {
             Ext.Msg.alert('Внимание', 'Неверно заполнена форма.');
             return

@@ -66,7 +66,7 @@ let ValidatorUtil = {
     },
 
     validatePasswordConfirm: function (val) {
-        let passwordInput = Ext.ComponentQuery.query('[id=passwordInput]')[0]
+        let passwordInput = ExtUtil.idQuery('passwordInput')
         if (!val) return 'Введите значение'
         if (passwordInput.value !== val) return 'Пароли не совпадают'
         return true

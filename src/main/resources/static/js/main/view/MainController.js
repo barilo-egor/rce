@@ -3,7 +3,7 @@ Ext.define('Main.view.MainController', {
     alias: 'controller.mainController',
 
     collapse: function (btn) {
-        let toolBar = Ext.ComponentQuery.query('[id=mainToolBar]')[0]
+        let toolBar = ExtUtil.idQuery('mainToolBar')
         if (toolBar.hidden) {
             toolBar.show()
         } else {
@@ -32,16 +32,16 @@ Ext.define('Main.view.MainController', {
     },
 
     mainToolBarClick: function (btn, panel) {
-        Ext.ComponentQuery.query('[id=mainPanel]')[0].setLoading('Загрузка')
+        ExtUtil.idQuery('mainPanel').setLoading('Загрузка')
         Ext.Function.defer(function() {
             let toolbar = btn.up('toolbar')
             toolbar.hide()
-            let mainFramePanel = Ext.ComponentQuery.query('[id=mainFramePanel]')[0]
+            let mainFramePanel = ExtUtil.idQuery('mainFramePanel')
             mainFramePanel.items.items.forEach(item => item.destroy())
             mainFramePanel.insert({xtype: panel})
             mainFramePanel.update();
             mainFramePanel.updateLayout();
-            Ext.ComponentQuery.query('[id=mainPanel]')[0].setLoading(false)
+            ExtUtil.idQuery('mainPanel').setLoading(false)
         }, 10);
     },
 })

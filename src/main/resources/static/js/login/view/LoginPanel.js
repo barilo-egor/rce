@@ -79,7 +79,7 @@ Ext.define('Login.view.LoginPanel', {
                     text: 'Вход',
                     width: 150,
                     handler: function () {
-                        let form = Ext.ComponentQuery.query('[id=loginForm]')[0]
+                        let form = ExtUtil.idQuery('loginForm')
                         Ext.Ajax.request({
                             method: 'POST',
                             url: '/web/main',
@@ -87,7 +87,7 @@ Ext.define('Login.view.LoginPanel', {
                             params: form.getValues(),
                             success: function (rs) {
                                 let response = Ext.JSON.decode(rs.responseText)
-                                let errorLoginContainer = Ext.ComponentQuery.query('[id=errorLoginContainer]')[0]
+                                let errorLoginContainer = ExtUtil.idQuery('errorLoginContainer')
                                 if (response.error) errorLoginContainer.show()
                                 else if (response.loginSuccess) {
                                     errorLoginContainer.hide()

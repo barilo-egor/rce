@@ -23,7 +23,7 @@ Ext.define('Main.view.usdCourse.UsdCourseController', {
         if (!cryptoCourse || cryptoCourse === 0 || cryptoCourse === '0') return;
         let resultInput = container.items.items[3]
         let usdCourse = usdCourseField.value
-        let discountsFieldSetItems = Ext.ComponentQuery.query('[id=discountsFieldSet]')[0].items.items
+        let discountsFieldSetItems = ExtUtil.idQuery('discountsFieldSet').items.items
         let personalDiscount = null
         let bulkDiscount = null
         if (discountsFieldSetItems[0].value) {
@@ -65,7 +65,7 @@ Ext.define('Main.view.usdCourse.UsdCourseController', {
     },
 
     getCryptoCoursesFieldSet: function () {
-        return Ext.ComponentQuery.query('[id=cryptoCourses]')[0]
+        return ExtUtil.idQuery('cryptoCourses')
     },
 
     usdCourseChange: function (me) {
@@ -94,7 +94,7 @@ Ext.define('Main.view.usdCourse.UsdCourseController', {
     },
 
     returnValues: function () {
-        let fiatCurrencies = Ext.ComponentQuery.query('[id=coursesForm]')[0].items.items
+        let fiatCurrencies = ExtUtil.idQuery('coursesForm').items.items
         for (let fiatCurrency of fiatCurrencies) {
             let dealTypes = fiatCurrency.items.items
             for (let dealType of dealTypes) {
@@ -144,7 +144,7 @@ Ext.define('Main.view.usdCourse.UsdCourseController', {
             success: function (rs) {
                 let response = Ext.JSON.decode(rs.responseText)
                 let currencies = response.currencies
-                let cryptoCoursesFieldSet = Ext.ComponentQuery.query('[id=cryptoCourses]')[0]
+                let cryptoCoursesFieldSet = ExtUtil.idQuery('cryptoCourses')
 
                 cryptoCoursesFieldSet.insert({
                     xtype: 'radiogroup',
@@ -216,7 +216,7 @@ Ext.define('Main.view.usdCourse.UsdCourseController', {
             }
         })
 
-        let coursesForm = Ext.ComponentQuery.query('[id=coursesForm]')[0];
+        let coursesForm = ExtUtil.idQuery('coursesForm')
         Ext.Ajax.request({
             url: '/web/settings/getUsdCourses',
             method: 'GET',
@@ -343,7 +343,7 @@ Ext.define('Main.view.usdCourse.UsdCourseController', {
     },
 
     updateResultAmounts: function () {
-        let fiatCurrencies = Ext.ComponentQuery.query('[id=coursesForm]')[0].items.items
+        let fiatCurrencies = ExtUtil.idQuery('coursesForm').items.items
         for (let fiatCurrency of fiatCurrencies) {
             let dealTypes = fiatCurrency.items.items
             for (let dealType of dealTypes) {
@@ -359,7 +359,7 @@ Ext.define('Main.view.usdCourse.UsdCourseController', {
     onSaveClick: function () {
         let courses = []
         let values = []
-        let coursesFormItems = Ext.ComponentQuery.query('[id=coursesForm]')[0].items.items
+        let coursesFormItems = ExtUtil.idQuery('coursesForm').items.items
         coursesFormItems.forEach(
             coursesFormItem => coursesFormItem.items.items.forEach(
                 dealTypeItem => dealTypeItem.items.items.forEach(
@@ -387,7 +387,7 @@ Ext.define('Main.view.usdCourse.UsdCourseController', {
             jsonData: courses,
             success: function (rs) {
                 Ext.Msg.alert('Информация', 'Курсы были успешно обновлены.')
-                let coursesFormItems = Ext.ComponentQuery.query('[id=coursesForm]')[0].items.items
+                let coursesFormItems = ExtUtil.idQuery('coursesForm').items.items
                 coursesFormItems.forEach(
                     coursesFormItem => coursesFormItem.items.items.forEach(
                         dealTypeItem => dealTypeItem.items.items.forEach(
