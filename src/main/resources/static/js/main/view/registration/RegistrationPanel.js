@@ -26,38 +26,34 @@ Ext.define('Main.view.registration.RegistrationPanel', {
                 align: 'stretch'
             },
             defaults: {
+                xtype: 'textfield',
                 labelWidth: 130,
-                labelAlign: 'right'
+                labelAlign: 'right',
+                msgTarget: 'side'
             },
             items: [
                 {
-                    xtype: 'textfield',
                     fieldLabel: 'Логин',
                     name: 'username',
                     emptyText: 'Введите логин',
                     minLength: 4,
-                    validator: ValidatorUtil.validateLogin,
-                    msgTarget: 'side'
+                    validator: ValidatorUtil.validateLogin
                 },
                 {
-                    xtype: 'textfield',
                     id: 'passwordInput',
                     fieldLabel: 'Пароль',
                     name: 'password',
                     emptyText: 'Введите пароль',
                     inputType: 'password',
                     minLength: 8,
-                    validator: ValidatorUtil.validateNotEmptyAndLettersAndNumber,
-                    msgTarget: 'side',
+                    validator: ValidatorUtil.validateNotEmptyAndLettersAndNumber
                 },
                 {
-                    xtype: 'textfield',
                     fieldLabel: 'Повторите пароль',
                     emptyText: 'Введите пароль',
                     inputType: 'password',
                     minLength: 8,
-                    validator: ValidatorUtil.validatePasswordConfirm,
-                    msgTarget: 'side',
+                    validator: ValidatorUtil.validatePasswordConfirm
                 }
             ],
             buttonAlign: 'center',
