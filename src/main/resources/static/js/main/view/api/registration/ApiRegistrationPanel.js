@@ -76,8 +76,7 @@ Ext.define('Main.view.api.registration.ApiRegistrationPanel', {
                                 borderWidth: '1px',
                                 textAlign: 'center'
                             },
-                            html: '<i class="fas fa-info-circle" style="color: #005eff;"></i> ' +
-                                'Введите положительное значение для скидки, либо отрицательное для надбавки.'
+                            html: HtmlConstants.personalDiscountInfo
                         }
                     ]
                 },

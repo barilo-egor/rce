@@ -28,28 +28,25 @@ Ext.define('Main.view.usdCourse.UsdCoursePanel', {
                         type: 'vbox',
                         align: 'stretch'
                     },
+                    defaults: {
+                        collapsible: false,
+                        layout: {
+                            type: 'vbox',
+                            align: 'stretch'
+                        }
+                    },
                     items: [
                         {
                             xtype: 'fieldset',
                             id: 'cryptoCourses',
-                            collapsible: false,
                             title: 'Крипто курсы',
-                            layout: {
-                                type: 'vbox',
-                                align: 'stretch'
-                            },
                             flex: 0.35
                         },
                         {
                             xtype: 'fieldset',
                             id: 'discountsFieldSet',
-                            collapsible: false,
                             title: 'Скидки',
                             flex: 0.65,
-                            layout: {
-                                type: 'vbox',
-                                align: 'stretch'
-                            },
                             items: [
                                 {
                                     xtype: 'checkbox',
@@ -96,7 +93,7 @@ Ext.define('Main.view.usdCourse.UsdCoursePanel', {
                                         borderWidth: '1px',
                                         textAlign: 'center'
                                     },
-                                    html: '<i class="fas fa-info-circle" style="color: #005eff;"></i> Введите положительное значение для скидки, либо отрицательное для надбавки.'
+                                    html: HtmlConstants.personalDiscountInfo
                                 }
                             ]
                         },
