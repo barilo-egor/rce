@@ -3,7 +3,8 @@ Ext.define('Main.view.api.registration.ApiRegistrationPanel', {
     extend: 'Main.view.components.FramePanel',
     controller: 'apiRegistrationController',
     requires: [
-        'Main.view.components.button.RegisterButton'
+        'Main.view.components.button.RegisterButton',
+        'Main.view.components.panel.DiscountHintPanel'
     ],
     title: {
         xtype: 'mainframetitle',
@@ -51,38 +52,33 @@ Ext.define('Main.view.api.registration.ApiRegistrationPanel', {
                     listeners: {
                         render: function( component ) {
                             component.getEl().on('click', function( event, el ) {
-                                ExtUtil.idQuery('personalDiscountHintPanel').show()
+                                ExtUtil.idQuery('discountHintOuterPanel').show()
+                                ExtUtil.idQuery('discountHintPanel').show()
                             });
                         },
                         focusleave: function () {
-                            ExtUtil.idQuery('personalDiscountHintPanel').hide()
+                            ExtUtil.idQuery('discountHintOuterPanel').hide()
+                            ExtUtil.idQuery('discountHintPanel').hide()
                         }
                     },
                     validator: ValidatorUtil.validateDiscount
                 },
                 {
                     xtype: 'panel',
-                    id: 'personalDiscountHintPanel',
+                    id: 'discountHintOuterPanel',
                     hidden: true,
                     layout: 'fit',
                     padding: '0 0 15 0',
                     items: [
                         {
-                            xtype: 'panel',
-                            frame: true,
-                            padding: '5 5 5 5',
-                            style: {
-                                borderColor: '#919191',
-                                borderWidth: '1px',
-                                textAlign: 'center'
-                            },
-                            html: HtmlConstants.personalDiscountInfo
+                            xtype: 'discounthintpanel'
                         }
                     ]
                 },
                 {
                     xtype: 'textfield',
                     fieldLabel: 'Реквизиты',
+                    id: 'requisitesInput',
                     emptyText: 'Введите реквизиты',
                     name: 'requisites',
                     msgTarget: 'side',

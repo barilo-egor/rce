@@ -6,6 +6,9 @@ Ext.define('Main.view.usdCourse.UsdCoursePanel', {
         xtype: 'mainframetitle',
         text: 'Курс USD'
     },
+    requires: [
+        'Main.view.components.panel.DiscountHintPanel'
+    ],
     padding: '0 0 0 0',
     layout: {
         type: 'vbox',
@@ -84,16 +87,7 @@ Ext.define('Main.view.usdCourse.UsdCoursePanel', {
                                     validator: ValidatorUtil.validateDiscount
                                 },
                                 {
-                                    xtype: 'panel',
-                                    frame: true,
-                                    hidden: true,
-                                    padding: '5 5 5 5',
-                                    style: {
-                                        borderColor: '#919191',
-                                        borderWidth: '1px',
-                                        textAlign: 'center'
-                                    },
-                                    html: HtmlConstants.personalDiscountInfo
+                                    xtype: 'discounthintpanel'
                                 }
                             ]
                         },

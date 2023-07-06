@@ -13,7 +13,7 @@ Ext.define('Main.view.components.MainFramePanel', {
         'Main.view.api.registration.ApiRegistrationPanel',
         'Main.view.api.registration.ApiRegistrationController',
         'Main.view.api.control.ApiUsersControlPanel',
-        'Main.view.api.control.ApiUsersControlController'
+        'Main.view.api.control.ApiUsersControlController',
     ],
     layout: {
         type: 'fit'
