@@ -18,6 +18,7 @@ Ext.define('Main.view.api.registration.ApiRegistrationPanel', {
     items: [
         {
             xtype: 'form',
+            id: 'apiuserregisteform',
             padding: '20 20 20 20',
             scrollable: true,
             layout: {
@@ -32,14 +33,10 @@ Ext.define('Main.view.api.registration.ApiRegistrationPanel', {
                     xtype: 'textfield',
                     fieldLabel: 'Идентификатор',
                     emptyText: 'Введите идентификатор',
-                    name: 'clientId',
+                    name: 'id',
                     msgTarget: 'side',
                     padding: '0 0 5 0',
-                    validator: function (val) {
-                        if (!val) return 'Введите значение'
-                        if (!RegexUtil.onlyLettersAndNumbers(val)) return 'Только латинские буквы и символы'
-                        return true
-                    }
+                    validator: ValidatorUtil.validateId
                 },
                 {
                     xtype: 'numberfield',
@@ -61,12 +58,7 @@ Ext.define('Main.view.api.registration.ApiRegistrationPanel', {
                             Ext.ComponentQuery.query('[id=personalDiscountHintPanel]')[0].hide()
                         }
                     },
-                    validator: function (val) {
-                        if (!val) return 'Введите значение.'
-                        if (val < -99 || val > 99) {
-                            return 'Значение должно быть от -99 до 99.'
-                        } else return true
-                    }
+                    validator: ValidatorUtil.validateDiscount
                 },
                 {
                     xtype: 'panel',
@@ -96,10 +88,7 @@ Ext.define('Main.view.api.registration.ApiRegistrationPanel', {
                     name: 'requisites',
                     msgTarget: 'side',
                     padding: '0 0 5 0',
-                    validator: function (val) {
-                        if (!val) return 'Введите значение'
-                        return true
-                    }
+                    validator: ValidatorUtil.validateNotEmpty
                 },
                 {
                     xtype: 'numberfield',
@@ -110,12 +99,7 @@ Ext.define('Main.view.api.registration.ApiRegistrationPanel', {
                     padding: '0 0 5 0',
                     hideTrigger: true,
                     msgTarget: 'side',
-                    validator: function (val) {
-                        if (!val) return 'Введите значение.'
-                        if (val === '0' || val === 0 || val < 1) {
-                            return 'Значение должно больше 0.'
-                        } else return true
-                    }
+                    validator: ValidatorUtil.validatePositiveInt
                 }
             ]
         },

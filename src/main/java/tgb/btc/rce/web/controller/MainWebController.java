@@ -1,5 +1,6 @@
 package tgb.btc.rce.web.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -10,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 @RequestMapping("/web")
 public class MainWebController {
+
+    public static final ObjectMapper DEFAULT_MAPPER = new ObjectMapper();
 
     @GetMapping("/main")
     public String web() {

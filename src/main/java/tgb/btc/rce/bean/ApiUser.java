@@ -17,6 +17,7 @@ public class ApiUser extends BasePersist {
 
     @Getter
     @Setter
+    @Column(unique = true)
     private String id;
 
     @Getter
@@ -33,6 +34,7 @@ public class ApiUser extends BasePersist {
 
     @Getter
     @Setter
+    @Column(unique = true)
     private String token;
 
     @Getter

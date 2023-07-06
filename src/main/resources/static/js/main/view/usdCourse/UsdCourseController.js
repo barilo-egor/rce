@@ -194,11 +194,7 @@ Ext.define('Main.view.usdCourse.UsdCourseController', {
                             }
                         },
                         msgTarget: 'side',
-                        validator: function (value) {
-                            if (!value) return 'Введите значение.'
-                            if (value === 0 || value === '0' || value < 0) return 'Введите значение больше 0.'
-                            return true
-                        }
+                        validator: ValidatorUtil.validatePositiveInt
                     })
                 }
                 cryptoCoursesFieldSet.insert({
@@ -289,11 +285,7 @@ Ext.define('Main.view.usdCourse.UsdCourseController', {
                     listeners: {
                         change: 'usdCourseChange'
                     },
-                    validator: function (value) {
-                        if (!value) return 'Введите значение.'
-                        if (value === 0 || value === '0' || value < 0) return 'Введите значение больше 0.'
-                        return true
-                    },
+                    validator: ValidatorUtil.validatePositiveInt,
                     name: (fiatCurrency.name + "." + dealType.name + "."
                         + cryptoCurrency.name).toLowerCase(),
                     fiatCurrency: fiatCurrency.name,
@@ -323,11 +315,7 @@ Ext.define('Main.view.usdCourse.UsdCourseController', {
                     listeners: {
                         change: 'calculate'
                     },
-                    validator: function (value) {
-                        if (!value) return 'Введите значение.'
-                        if (value === 0 || value === '0' || value < 0) return 'Введите значение больше 0.'
-                        return true
-                    },
+                    validator: ValidatorUtil.validatePositiveInt,
                 },
                 {
                     xtype: 'numberfield',

@@ -70,12 +70,7 @@ Ext.define('Main.view.usdCourse.UsdCoursePanel', {
                                         change: 'updateResultAmounts'
                                     },
                                     msgTarget: 'side',
-                                    validator: function (val) {
-                                        if (!val) return 'Введите значение.'
-                                        if (val < -99 || val > 99) {
-                                            return 'Значение должно быть от -99 до 99.'
-                                        } else return true
-                                    }
+                                    validator: ValidatorUtil.validateDiscount
                                 },
                                 {
                                     xtype: 'numberfield',
@@ -89,12 +84,7 @@ Ext.define('Main.view.usdCourse.UsdCoursePanel', {
                                         change: 'updateResultAmounts'
                                     },
                                     msgTarget: 'side',
-                                    validator: function (val) {
-                                        if (!val) return 'Введите значение.'
-                                        if (val < -99 || val > 99) {
-                                            return 'Значение должно быть от -99 до 99.'
-                                        } else return true
-                                    }
+                                    validator: ValidatorUtil.validateDiscount
                                 },
                                 {
                                     xtype: 'panel',

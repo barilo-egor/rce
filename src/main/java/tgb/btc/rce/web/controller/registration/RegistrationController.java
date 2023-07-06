@@ -1,4 +1,4 @@
-package tgb.btc.rce.web.controller;
+package tgb.btc.rce.web.controller.registration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;

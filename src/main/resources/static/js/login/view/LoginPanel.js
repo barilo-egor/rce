@@ -33,11 +33,7 @@ Ext.define('Login.view.LoginPanel', {
                     name: 'username',
                     emptyText: 'Введите логин',
                     minLength: 4,
-                    validator: function (val) {
-                        if (!val) return 'Введите значение'
-                        if (!RegexUtil.onlyLettersAndNumbers(val)) return 'Только латинские буквы и цифры.'
-                        return true
-                    },
+                    validator: ValidatorUtil.validateNotEmptyAndLettersAndNumber,
                     msgTarget: 'side'
                 },
                 {
@@ -48,11 +44,7 @@ Ext.define('Login.view.LoginPanel', {
                     emptyText: 'Введите пароль',
                     inputType: 'password',
                     minLength: 8,
-                    validator: function (val) {
-                        if (!val) return 'Введите значение'
-                        if (RegexUtil.onlyLettersAndNumbers(val)) return true;
-                        else return 'Только латинские буквы и цифры.'
-                    },
+                    validator: ValidatorUtil.validateNotEmptyAndLettersAndNumber,
                     msgTarget: 'side',
                 }
             ]

@@ -36,27 +36,7 @@ Ext.define('Main.view.registration.RegistrationPanel', {
                     name: 'username',
                     emptyText: 'Введите логин',
                     minLength: 4,
-                    validator: function (val) {
-                        if (!val) return 'Введите значение'
-                        if (!RegexUtil.onlyLettersAndNumbers(val)) return 'Только латинские буквы и цифры.'
-                        let result = true
-                        Ext.Ajax.request({
-                            url: '/web/registration/isUsernameFree',
-                            method: 'GET',
-                            params: {
-                                username: val
-                            },
-                            async: false,
-                            success: function(rs) {
-                                let response = Ext.JSON.decode(rs.responseText)
-                                if (!response.result) result = 'Данный логин уже занят'
-                            },
-                            failure: function () {
-                                Ext.Msg.alert('Ошибка', 'Ошибка при попытке проверки логина.')
-                            }
-                        })
-                        return result
-                    },
+                    validator: ValidatorUtil.validateLogin,
                     msgTarget: 'side'
                 },
                 {
@@ -67,11 +47,7 @@ Ext.define('Main.view.registration.RegistrationPanel', {
                     emptyText: 'Введите пароль',
                     inputType: 'password',
                     minLength: 8,
-                    validator: function (val) {
-                        if (!val) return 'Введите значение'
-                        if (RegexUtil.onlyLettersAndNumbers(val)) return true;
-                        else return 'Только латинские буквы и цифры.'
-                    },
+                    validator: ValidatorUtil.validateNotEmptyAndLettersAndNumber,
                     msgTarget: 'side',
                 },
                 {
@@ -80,12 +56,7 @@ Ext.define('Main.view.registration.RegistrationPanel', {
                     emptyText: 'Введите пароль',
                     inputType: 'password',
                     minLength: 8,
-                    validator: function (val) {
-                        let passwordInput = Ext.ComponentQuery.query('[id=passwordInput]')[0]
-                        if (!val) return 'Введите значение'
-                        if (passwordInput.value !== val) return 'Пароли не совпадают'
-                        return true
-                    },
+                    validator: ValidatorUtil.validatePasswordConfirm,
                     msgTarget: 'side',
                 }
             ],
