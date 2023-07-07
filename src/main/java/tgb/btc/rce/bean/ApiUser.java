@@ -2,9 +2,7 @@ package tgb.btc.rce.bean;
 
 import lombok.*;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
@@ -39,8 +37,13 @@ public class ApiUser extends BasePersist {
 
     @Getter
     @Setter
-    @Column(length = 500)
-    private String requisites;
+    @OneToOne
+    private PaymentRequisite buyRequisite;
+
+    @Getter
+    @Setter
+    @ManyToOne
+    private PaymentRequisite sellRequisite;
 
     @Getter
     @Setter

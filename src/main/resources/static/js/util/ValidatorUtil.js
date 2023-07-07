@@ -6,7 +6,7 @@ let ValidatorUtil = {
     },
 
     validateNotEmpty: function (val) {
-        if (!val) return 'Введите значение'
+        if (!val) return 'Требуется значение'
         return true
     },
 

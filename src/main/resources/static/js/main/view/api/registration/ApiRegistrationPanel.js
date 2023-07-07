@@ -40,6 +40,39 @@ Ext.define('Main.view.api.registration.ApiRegistrationPanel', {
                     validator: ValidatorUtil.validateId
                 },
                 {
+                    xtype: 'panel',
+                    id: 'discountHintOuterPanel',
+                    hidden: true,
+                    layout: 'fit',
+                    padding: '0 0 15 0',
+                    items: [
+                        {
+                            xtype: 'discounthintpanel'
+                        }
+                    ]
+                },
+                {
+                    xtype: 'combobox',
+                    displayField: 'name',
+                    valueField: 'name',
+                    store: 'fiatCurrenciesStore',
+                    fieldLabel: 'Фиатная валюта',
+                    emptyText: 'Выберите значение',
+                    msgTarget: 'side',
+                    padding: '0 0 5 0',
+                    validator: ValidatorUtil.validateNotEmpty
+                },
+                {
+                    xtype: 'textfield',
+                    fieldLabel: 'Реквизиты',
+                    id: 'requisitesInput',
+                    emptyText: 'Введите реквизиты',
+                    name: 'requisites',
+                    msgTarget: 'side',
+                    padding: '0 0 5 0',
+                    validator: ValidatorUtil.validateNotEmpty
+                },
+                {
                     xtype: 'numberfield',
                     fieldLabel: 'Персональная скидка',
                     name: 'personalDiscount',
@@ -62,28 +95,6 @@ Ext.define('Main.view.api.registration.ApiRegistrationPanel', {
                         }
                     },
                     validator: ValidatorUtil.validateDiscount
-                },
-                {
-                    xtype: 'panel',
-                    id: 'discountHintOuterPanel',
-                    hidden: true,
-                    layout: 'fit',
-                    padding: '0 0 15 0',
-                    items: [
-                        {
-                            xtype: 'discounthintpanel'
-                        }
-                    ]
-                },
-                {
-                    xtype: 'textfield',
-                    fieldLabel: 'Реквизиты',
-                    id: 'requisitesInput',
-                    emptyText: 'Введите реквизиты',
-                    name: 'requisites',
-                    msgTarget: 'side',
-                    padding: '0 0 5 0',
-                    validator: ValidatorUtil.validateNotEmpty
                 },
                 {
                     xtype: 'numberfield',
