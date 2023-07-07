@@ -1,7 +1,7 @@
 package tgb.btc.rce.util;
 
 import tgb.btc.rce.enums.FiatCurrency;
-import tgb.btc.rce.service.ReviewPriseService;
+import tgb.btc.rce.service.impl.ReviewPriseService;
 import tgb.btc.rce.vo.ReviewPrise;
 
 import java.math.BigDecimal;

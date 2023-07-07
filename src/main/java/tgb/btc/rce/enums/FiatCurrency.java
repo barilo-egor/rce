@@ -1,12 +1,15 @@
 package tgb.btc.rce.enums;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import tgb.btc.rce.exception.EnumTypeNotFoundException;
 import tgb.btc.rce.util.CallbackQueryUtil;
+import tgb.btc.rce.web.controller.MainWebController;
+import tgb.btc.rce.web.interfaces.JsonConvertable;
 
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
-public enum FiatCurrency {
+public enum FiatCurrency implements JsonConvertable {
     /**
      * Бел.рубль
      */
@@ -62,5 +65,15 @@ public enum FiatCurrency {
     public static FiatCurrency fromCallbackQuery(CallbackQuery callbackQuery) {
         String enteredCurrency = CallbackQueryUtil.getSplitData(callbackQuery, 1);
         return FiatCurrency.valueOf(enteredCurrency);
+    }
+
+    @Override
+    public ObjectNode toJson() {
+        return MainWebController.DEFAULT_MAPPER.createObjectNode()
+                .put("name", this.name())
+                .put("code", this.getCode())
+                .put("displayName", this.getDisplayName())
+                .put("genitive", this.getGenitive())
+                .put("flag", this.getFlag());
     }
 }

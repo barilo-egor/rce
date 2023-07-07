@@ -1,4 +1,6 @@
 Ext.define('Main.model.api.ApiUser', {
+    extend: 'Ext.data.Model',
+    idProperty: 'pid',
     fields: [
         {
             name: 'pid',

@@ -4,7 +4,7 @@ import tgb.btc.rce.constants.FilePaths;
 import tgb.btc.rce.exception.PropertyValueNotFoundException;
 import tgb.btc.rce.service.IValidateService;
 import tgb.btc.rce.service.PropertiesReader;
-import tgb.btc.rce.service.ReviewPriseService;
+import tgb.btc.rce.service.impl.ReviewPriseService;
 import tgb.btc.rce.service.impl.BulkDiscountValidateService;
 import tgb.btc.rce.service.impl.CurrenciesTurningValidateService;
 
