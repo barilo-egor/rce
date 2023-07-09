@@ -8,12 +8,26 @@ Ext.define('Main.view.api.registration.ApiRegistrationController', {
             Ext.Msg.alert('Внимание', 'Неверно заполнена форма.')
             return
         }
+        let selection = ExtUtil.idQuery('requisitesTree').getSelection()
+        if (!selection || selection.length === 0) {
+            Ext.Msg.alert('Внимание', 'Выберите реквизит для покупки')
+            return
+        }
+        let requisitePid = selection[0].getData().pid
+        if (!requisitePid) {
+            Ext.Msg.alert('Внимание', 'Выберите реквизит для покупки')
+            return
+        }
+        let jsonData = form.getValues()
+        jsonData.buyRequisite = {
+            pid: requisitePid
+        }
         form.setLoading('Загрузка')
         Ext.Function.defer(function() {
             Ext.Ajax.request({
                 url: 'api/user/create',
                 method: 'POST',
-                jsonData: form.getValues(),
+                jsonData: jsonData,
                 success: function (rs) {
                     let response = Ext.JSON.decode(rs.responseText)
                     Ext.Msg.alert('Сохранено',

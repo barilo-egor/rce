@@ -69,6 +69,7 @@ public class PaymentRequisitesController {
                         .map(paymentRequisite -> MainWebController.DEFAULT_MAPPER.createObjectNode()
                                 .put("text", paymentRequisite.getRequisite())
                                 .put("iconCls", "far fa-credit-card customIconAlign")
+                                .put("pid", paymentRequisite.getPid())
                                 .put("leaf", true))
                         .collect(Collectors.toList())
         );

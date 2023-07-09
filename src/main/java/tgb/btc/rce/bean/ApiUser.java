@@ -42,10 +42,5 @@ public class ApiUser extends BasePersist {
 
     @Getter
     @Setter
-    @ManyToOne
-    private PaymentRequisite sellRequisite;
-
-    @Getter
-    @Setter
     private BigDecimal usdCourse;
 }

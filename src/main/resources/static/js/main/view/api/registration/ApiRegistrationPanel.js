@@ -41,6 +41,7 @@ Ext.define('Main.view.api.registration.ApiRegistrationPanel', {
                 },
                 {
                     xtype: 'treepanel',
+                    id: 'requisitesTree',
                     renderTo: Ext.getBody(),
                     height: 200,
                     width: 300,
