@@ -56,3 +56,11 @@
 .boldText {
     font-weight: bold !important;
 }
+
+.greenColor {
+    color: green !important;
+}
+
+.redColor {
+    color: red !important;
+}

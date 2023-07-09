@@ -27,7 +27,7 @@ Ext.define('Main.model.api.ApiUser', {
             type: 'string'
         },
         {
-            name: 'requisites',
+            name: 'buyRequisite',
             type: 'string'
         },
         {

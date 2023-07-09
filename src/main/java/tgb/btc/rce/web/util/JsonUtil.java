@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 
 public class JsonUtil {
 
-    public static ArrayNode toJsonArray(List<JsonConvertable> list) {
+    public static <T extends JsonConvertable> ArrayNode toJsonArray(List<T> list) {
         return MainWebController.DEFAULT_MAPPER.createArrayNode()
                 .addAll(list.stream()
                         .map(JsonConvertable::toJson)
