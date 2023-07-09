@@ -18,20 +18,27 @@ Ext.define('Main.view.MainPanel', {
             xtype: 'panel',
             header: false,
             scrollable: true,
-            layout: {
-                type: 'vbox',
-                align: 'stretch'
-            },
+            layout: 'fit',
             items: [
                 {
-                    xtype: 'maintitle'
-                },
-                {
-                    xtype: 'mainframepanel',
-                    dockedItems: [
+                    xtype: 'container',
+                    layout: {
+                        type: 'vbox',
+                        align: 'stretch'
+                    },
+                    items: [
                         {
-                            xtype: 'maintoolbar'
+                            xtype: 'maintitle'
                         },
+                        {
+                            xtype: 'mainframepanel',
+                            flex: 1,
+                            dockedItems: [
+                                {
+                                    xtype: 'maintoolbar'
+                                },
+                            ]
+                        }
                     ]
                 }
             ]
