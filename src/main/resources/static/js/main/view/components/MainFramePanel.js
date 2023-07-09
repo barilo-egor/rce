@@ -20,7 +20,7 @@ Ext.define('Main.view.components.MainFramePanel', {
     },
     items: [
         {
-            xtype: 'apiregistrationpanel'
+            xtype: 'apiuserscontrolpanel'
         }
     ]
 })
