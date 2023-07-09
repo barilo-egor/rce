@@ -16,7 +16,7 @@ Ext.define('Main.model.api.ApiUser', {
         },
         {
             name: 'registrationDate',
-            type: 'date'
+            type: 'string'
         },
         {
             name: 'isBanned',

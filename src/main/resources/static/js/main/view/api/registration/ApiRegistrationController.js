@@ -25,7 +25,7 @@ Ext.define('Main.view.api.registration.ApiRegistrationController', {
         form.setLoading('Загрузка')
         Ext.Function.defer(function() {
             Ext.Ajax.request({
-                url: 'api/user/create',
+                url: 'api/user/save',
                 method: 'POST',
                 jsonData: jsonData,
                 success: function (rs) {

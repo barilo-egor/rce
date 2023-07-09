@@ -30,10 +30,10 @@ public class ApiUserController {
         this.apiUserService = apiUserService;
     }
 
-    @PostMapping("/create")
+    @PostMapping("/save")
     @ResponseBody
-    public ApiUser create(@RequestBody ApiUser apiUser) {
-        return apiUserService.register(apiUser);
+    public ObjectNode save(@RequestBody ApiUser apiUser) {
+        return apiUserService.register(apiUser).toJson();
     }
 
     @GetMapping("/isExistById")

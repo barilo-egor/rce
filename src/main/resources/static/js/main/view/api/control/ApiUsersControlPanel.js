@@ -21,6 +21,8 @@ Ext.define('Main.view.api.control.ApiUsersControlPanel', {
                     xtype: 'grid',
                     title: 'Апи-пользователи',
                     store: 'apiusersstore',
+                    sortableColumns: false,
+                    enableColumnHide: false,
                     columns: [
                         {
                             width: 35,
@@ -29,27 +31,26 @@ Ext.define('Main.view.api.control.ApiUsersControlPanel', {
                                 if (val) {
                                     return '<i class="fas fa-circle redColor"></i>'
                                 } else {
-                                    return '<i class="fas fa-circle greenColor"></i>'
+                                    return '<i class="fas fa-circle limeColor"></i>'
                                 }
                             }
                         },
                         {
-                            text: 'ID',
+                            text: 'Идентификатор',
                             dataIndex: 'id',
+                            flex: 0.9
                         },
                         {
-                            text: 'Скидка',
-                            dataIndex: 'personalDiscount'
-                        },
-                        {
-                            text: 'Курс USD',
-                            dataIndex: 'usdCourse'
-                        },
-                        {
-                            text: 'Реквизит покупки',
-                            dataIndex: 'buyRequisite',
-                            flex: 1
-                        },
+                            xtype: 'actioncolumn',
+                            width: 35,
+                            items: [
+                                {
+                                    iconCls: 'fas fa-user-edit',
+                                    handler: 'editUserClick',
+                                    padding: '0 5 0 2'
+                                }
+                            ]
+                        }
                     ]
                 }
             ]
