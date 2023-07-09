@@ -54,6 +54,9 @@ Ext.define('Main.view.api.registration.ApiRegistrationPanel', {
                             view.getViewRange().forEach(row => row.removeCls('boldText'))
                             if (rowBodyEl.childNodes.length === 0) rowBodyEl.addCls('boldText')
                         },
+                        afterrender: function (me) {
+                            me.getView().getViewRange().forEach(row => row.removeCls('boldText'))
+                        }
                     },
                     columns: [
                         {
