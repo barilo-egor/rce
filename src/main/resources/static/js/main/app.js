@@ -8,6 +8,7 @@ Ext.application({
     title: 'Главное меню',
     autoCreateViewport: true,
     stores: [
-        'Main.store.enum.FiatCurrenciesStore'
+        'Main.store.enum.FiatCurrenciesStore',
+        'Main.store.tree.RequisitesTreeStore'
     ]
 });

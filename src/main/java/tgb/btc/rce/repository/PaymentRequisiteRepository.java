@@ -16,6 +16,9 @@ public interface PaymentRequisiteRepository extends BaseRepository<PaymentRequis
     @Query("from PaymentRequisite where paymentType=:paymentType")
     List<PaymentRequisite> getByPaymentType(PaymentType paymentType);
 
+    @Query("select count(pid) from PaymentRequisite where paymentType=:paymentType")
+    long getCountByPaymentType(PaymentType paymentType);
+
     @Query("from PaymentRequisite where paymentType.pid=:paymentTypePid")
     List<PaymentRequisite> getByPaymentTypePid(Long paymentTypePid);
 

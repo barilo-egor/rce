@@ -48,3 +48,11 @@
     color: #404040 !important;
     background-image: none;
 }
+
+.customIconAlign {
+    line-height: 32px !important;
+}
+
+.boldText {
+    font-weight: bold !important;
+}

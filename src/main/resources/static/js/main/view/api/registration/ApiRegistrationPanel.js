@@ -40,37 +40,28 @@ Ext.define('Main.view.api.registration.ApiRegistrationPanel', {
                     validator: ValidatorUtil.validateId
                 },
                 {
-                    xtype: 'panel',
-                    id: 'discountHintOuterPanel',
-                    hidden: true,
-                    layout: 'fit',
+                    xtype: 'treepanel',
+                    renderTo: Ext.getBody(),
+                    height: 200,
+                    width: 300,
+                    rootVisible: false,
+                    store: 'requisitestreestore',
                     padding: '0 0 15 0',
-                    items: [
+                    animate: true,
+                    listeners: {
+                        rowclick: function (view, rowBodyEl) {
+                            view.getViewRange().forEach(row => row.removeCls('boldText'))
+                            if (rowBodyEl.childNodes.length === 0) rowBodyEl.addCls('boldText')
+                        },
+                    },
+                    columns: [
                         {
-                            xtype: 'discounthintpanel'
+                            xtype: 'treecolumn',
+                            text: 'Реквизиты покупки',
+                            dataIndex: 'text',
+                            flex: 1
                         }
                     ]
-                },
-                {
-                    xtype: 'combobox',
-                    displayField: 'name',
-                    valueField: 'name',
-                    store: 'fiatCurrenciesStore',
-                    fieldLabel: 'Фиатная валюта',
-                    emptyText: 'Выберите значение',
-                    msgTarget: 'side',
-                    padding: '0 0 5 0',
-                    validator: ValidatorUtil.validateNotEmpty
-                },
-                {
-                    xtype: 'textfield',
-                    fieldLabel: 'Реквизиты',
-                    id: 'requisitesInput',
-                    emptyText: 'Введите реквизиты',
-                    name: 'requisites',
-                    msgTarget: 'side',
-                    padding: '0 0 5 0',
-                    validator: ValidatorUtil.validateNotEmpty
                 },
                 {
                     xtype: 'numberfield',
@@ -83,8 +74,8 @@ Ext.define('Main.view.api.registration.ApiRegistrationPanel', {
                     hideTrigger: true,
                     msgTarget: 'side',
                     listeners: {
-                        render: function( component ) {
-                            component.getEl().on('click', function( event, el ) {
+                        render: function (component) {
+                            component.getEl().on('click', function (event, el) {
                                 ExtUtil.idQuery('discountHintOuterPanel').show()
                                 ExtUtil.idQuery('discountHintPanel').show()
                             });
@@ -95,6 +86,18 @@ Ext.define('Main.view.api.registration.ApiRegistrationPanel', {
                         }
                     },
                     validator: ValidatorUtil.validateDiscount
+                },
+                {
+                    xtype: 'panel',
+                    id: 'discountHintOuterPanel',
+                    hidden: true,
+                    layout: 'fit',
+                    padding: '0 0 15 0',
+                    items: [
+                        {
+                            xtype: 'discounthintpanel'
+                        }
+                    ]
                 },
                 {
                     xtype: 'numberfield',
