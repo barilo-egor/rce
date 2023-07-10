@@ -21,6 +21,7 @@ Ext.define('Main.view.api.control.ApiUsersControlPanel', {
                     xtype: 'grid',
                     title: 'Апи-пользователи',
                     store: 'apiusersstore',
+                    emptyText: 'Список пуст.',
                     sortableColumns: false,
                     enableColumnHide: false,
                     columns: [
