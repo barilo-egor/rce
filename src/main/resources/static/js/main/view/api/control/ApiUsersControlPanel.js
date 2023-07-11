@@ -24,6 +24,11 @@ Ext.define('Main.view.api.control.ApiUsersControlPanel', {
                     emptyText: 'Список пуст.',
                     sortableColumns: false,
                     enableColumnHide: false,
+                    listeners: {
+                        afterrender: function (me) {
+                            me.getStore().load()
+                        }
+                    },
                     columns: [
                         {
                             width: 35,

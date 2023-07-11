@@ -50,6 +50,10 @@ public class ApiUser extends BasePersist implements JsonConvertable {
 
     @Getter
     @Setter
+    private String sellRequisite;
+
+    @Getter
+    @Setter
     private BigDecimal usdCourse;
 
     @Override
@@ -62,6 +66,7 @@ public class ApiUser extends BasePersist implements JsonConvertable {
                 .put("isBanned", BooleanUtils.isTrue(this.getIsBanned()))
                 .put("token", this.getToken())
                 .put("buyRequisite", this.getBuyRequisite().getPid())
+                .put("sellRequisite", this.getSellRequisite())
                 .put("usdCourse", this.getUsdCourse());
     }
 }

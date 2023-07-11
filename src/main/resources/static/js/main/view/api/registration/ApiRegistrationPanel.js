@@ -68,6 +68,15 @@ Ext.define('Main.view.api.registration.ApiRegistrationPanel', {
                     ]
                 },
                 {
+                    xtype: 'textfield',
+                    fieldLabel: 'Реквизит для продажи',
+                    emptyText: 'Введите текст для продажи',
+                    padding: '0 0 5 0',
+                    name: 'sellRequisite',
+                    msgTarget: 'side',
+                    validator: ValidatorUtil.validateNotEmpty
+                },
+                {
                     xtype: 'numberfield',
                     fieldLabel: 'Персональная скидка',
                     name: 'personalDiscount',
