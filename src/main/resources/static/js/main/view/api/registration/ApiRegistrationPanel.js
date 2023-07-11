@@ -37,7 +37,7 @@ Ext.define('Main.view.api.registration.ApiRegistrationPanel', {
                     name: 'id',
                     msgTarget: 'side',
                     padding: '0 0 5 0',
-                    validator: ValidatorUtil.validateId
+                    validator: ValidatorUtil.validateIdWithExists
                 },
                 {
                     xtype: 'treepanel',

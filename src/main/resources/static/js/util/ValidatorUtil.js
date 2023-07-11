@@ -26,6 +26,12 @@ let ValidatorUtil = {
     validateId: function (val) {
         if (!val || val === '') return  'Введите значение'
         if (!RegexUtil.onlyLettersAndNumbers(val)) return 'Только латинские буквы и символы'
+        return true
+    },
+
+    validateIdWithExists: function (val) {
+        if (!val || val === '') return  'Введите значение'
+        if (!RegexUtil.onlyLettersAndNumbers(val)) return 'Только латинские буквы и символы'
         let result
         Ext.Ajax.request({
             url: 'api/user/isExistById',

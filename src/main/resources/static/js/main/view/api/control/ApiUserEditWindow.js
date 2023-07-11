@@ -1,12 +1,29 @@
 Ext.define('Main.view.api.control.ApiUserEditWindow', {
     extend: 'Ext.window.Window',
 
+    requires: [
+        'Main.view.components.button.SaveButton',
+        'Main.view.components.button.DeleteButton'
+    ],
     padding: '20 20 20 20',
     layout: 'fit',
     width: '95%',
     height: '95%',
     modal: true,
     title: 'Редактирование апи-пользователя',
+    buttonAlign: 'center',
+    controller: 'apiUsersControlController',
+    buttons: [
+        {
+            xtype: 'savebutton',
+            disabled: true,
+            handler: 'save'
+        },
+        {
+            xtype: 'deletebutton',
+            handler: 'delete'
+        }
+    ],
     items: [
         {
             xtype: 'form',
@@ -67,6 +84,18 @@ Ext.define('Main.view.api.control.ApiUserEditWindow', {
                             flex: 1
                         }
                     ]
+                },
+                {
+                    xtype: 'textfield',
+                    fieldLabel: 'Реквизит для продажи',
+                    emptyText: 'Введите текст для продажи',
+                    padding: '0 0 5 0',
+                    name: 'sellRequisite',
+                    msgTarget: 'side',
+                    bind: {
+                        value: '{apiUser.sellRequisite}'
+                    },
+                    validator: ValidatorUtil.validateNotEmpty
                 },
                 {
                     xtype: 'numberfield',
