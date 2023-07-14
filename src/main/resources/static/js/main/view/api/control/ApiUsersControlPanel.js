@@ -1,6 +1,7 @@
 Ext.define('Main.view.api.control.ApiUsersControlPanel', {
     xtype: 'apiuserscontrolpanel',
     extend: 'Main.view.components.FramePanel',
+    id: 'apiUserControlPanel',
     controller: 'apiUsersControlController',
     title: {
         xtype: 'mainframetitle',

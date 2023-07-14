@@ -36,6 +36,13 @@ public class ApiUserController {
         return apiUserService.register(apiUser).toJson();
     }
 
+    @PostMapping("/update")
+    @ResponseBody
+    public ObjectNode update(@RequestBody ApiUser apiUser) {
+//        return apiUserRepository.save(apiUser).toJson();
+        return null;
+    }
+
     @GetMapping("/isExistById")
     @ResponseBody
     public ObjectNode isExistById(@RequestParam String id) {

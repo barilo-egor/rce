@@ -62,7 +62,7 @@ public class ApiUser extends BasePersist implements JsonConvertable {
                 .put("pid", this.getPid())
                 .put("id", this.getId())
                 .put("personalDiscount", this.getPersonalDiscount())
-                .put("registrationDate", this.getRegistrationDate().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")))
+                .put("registrationDate", this.getRegistrationDate().format(DateTimeFormatter.ISO_DATE))
                 .put("isBanned", BooleanUtils.isTrue(this.getIsBanned()))
                 .put("token", this.getToken())
                 .put("buyRequisite", this.getBuyRequisite().getPid())
