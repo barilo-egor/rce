@@ -59,6 +59,7 @@ Ext.define('Main.view.registration.RegistrationPanel', {
                     xtype: 'combobox',
                     fieldLabel: 'Роль',
                     displayField: 'displayName',
+                    emptyText: 'Выберите роль',
                     valueField: 'name',
                     name: 'role',
                     store: {
@@ -75,6 +76,17 @@ Ext.define('Main.view.registration.RegistrationPanel', {
                         }
                     },
                     validator: ValidatorUtil.validateNotEmpty
+                },
+                {
+                    xtype: 'numberfield',
+                    fieldLabel: 'Chat ID',
+                    name: 'chatId',
+                    emptyText: 'Введите chat ID',
+                    decimalSeparator: '.',
+                    padding: '0 0 5 0',
+                    hideTrigger: true,
+                    msgTarget: 'side',
+                    validator: ValidatorUtil.validateNotEmpty,
                 }
             ],
             buttonAlign: 'center',

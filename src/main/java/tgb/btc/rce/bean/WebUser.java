@@ -21,6 +21,8 @@ public class WebUser extends BasePersist implements UserDetails {
 
     private Boolean isEnabled;
 
+    private Long chatId;
+
     public WebUser() {
     }
 
@@ -79,5 +81,14 @@ public class WebUser extends BasePersist implements UserDetails {
 
     public void setEnabled(Boolean enabled) {
         isEnabled = enabled;
+    }
+
+    @Column(nullable = false)
+    public Long getChatId() {
+        return chatId;
+    }
+
+    public void setChatId(Long chatId) {
+        this.chatId = chatId;
     }
 }

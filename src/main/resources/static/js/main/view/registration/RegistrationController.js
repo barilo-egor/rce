@@ -10,7 +10,8 @@ Ext.define('Main.view.registration.RegistrationController', {
         }
         let registrationVO = {
             username: form.getValues().username,
-            password: form.getValues().password
+            password: form.getValues().password,
+            chatId: form.getValues.chatId
         }
         Ext.Ajax.request({
             url: '/web/registration/registerUser',
