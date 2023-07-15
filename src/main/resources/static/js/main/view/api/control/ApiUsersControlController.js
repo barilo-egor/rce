@@ -44,7 +44,35 @@ Ext.define('Main.view.api.control.ApiUsersControlController', {
     },
 
     delete: function (btn) {
-        alert('delete')
+        let me = btn
+        Ext.Msg.show({
+            title:'Удаление пользователя',
+            message: 'Вы уверены, что хотите удалить пользователя?',
+            buttons: Ext.Msg.YESNO,
+            icon: Ext.Msg.QUESTION,
+            fn: function(btn) {
+                if (btn === 'yes') {
+                    Ext.Ajax.request({
+                        url: 'api/user/delete',
+                        method: 'DELETE',
+                        params: {
+                            pid: me.up('window').getViewModel().data.apiUser.pid
+                        },
+                        success: function (rs) {
+                            if (rs.responseText === 'true') {
+                                me.up('window').close()
+                                Ext.toast('Пользователь удален.')
+                                Ext.getStore('apiusersstore').load()
+                            } else Ext.Msg.alert('Ошибка', 'Возникли ошибки при удалении.')
+                        }
+                        ,
+                        failure: function () {
+                            Ext.Msg.alert('Ошибка', 'Возникли ошибки при удалении.')
+                        }
+                    })
+                }
+            }
+        });
     },
 
     editUserClick: function (grid, rowIndex, colIndex) {

@@ -1,5 +1,6 @@
 package tgb.btc.rce.bean;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.*;
 import org.apache.commons.lang.BooleanUtils;
@@ -32,6 +33,7 @@ public class ApiUser extends BasePersist implements JsonConvertable {
 
     @Getter
     @Setter
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd.MM.yyyy")
     private LocalDate registrationDate;
 
     @Getter

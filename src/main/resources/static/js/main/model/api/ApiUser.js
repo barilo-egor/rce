@@ -12,11 +12,13 @@ Ext.define('Main.model.api.ApiUser', {
         },
         {
             name: 'personalDiscount',
-            type: 'number'
+            type: 'number',
         },
         {
             name: 'registrationDate',
-            type: 'date'
+            convert: function (value) {
+                return new Date(value);
+            }
         },
         {
             name: 'isBanned',

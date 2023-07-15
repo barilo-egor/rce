@@ -190,6 +190,7 @@ Ext.define('Main.view.api.control.ApiUserEditWindow', {
                     hideTrigger: true,
                     fieldLabel: 'Дата регистрации',
                     name: 'registrationDate',
+                    format: 'd.m.Y',
                     padding: '0 0 5 0',
                     bind: {
                         value: '{apiUser.registrationDate}'

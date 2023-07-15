@@ -39,8 +39,7 @@ public class ApiUserController {
     @PostMapping("/update")
     @ResponseBody
     public ObjectNode update(@RequestBody ApiUser apiUser) {
-//        return apiUserRepository.save(apiUser).toJson();
-        return null;
+        return apiUserRepository.save(apiUser).toJson();
     }
 
     @GetMapping("/isExistById")
@@ -55,5 +54,12 @@ public class ApiUserController {
     @ResponseBody
     public ArrayNode findAll() {
         return JsonUtil.toJsonArray(apiUserRepository.findAll());
+    }
+
+    @DeleteMapping("/delete")
+    @ResponseBody
+    public Boolean deleteUser(@RequestParam Long pid) {
+        apiUserRepository.deleteById(pid);
+        return true;
     }
 }
