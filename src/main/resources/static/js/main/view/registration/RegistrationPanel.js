@@ -54,6 +54,27 @@ Ext.define('Main.view.registration.RegistrationPanel', {
                     inputType: 'password',
                     minLength: 8,
                     validator: ValidatorUtil.validatePasswordConfirm
+                },
+                {
+                    xtype: 'combobox',
+                    fieldLabel: 'Роль',
+                    displayField: 'displayName',
+                    valueField: 'name',
+                    name: 'role',
+                    store: {
+                        fields: [
+                            'name', 'displayName'
+                        ],
+                        autoLoad: true,
+                        proxy: {
+                            type: 'ajax',
+                            url: '/web/enum/roles',
+                            reader: {
+                                type: 'json'
+                            }
+                        }
+                    },
+                    validator: ValidatorUtil.validateNotEmpty
                 }
             ],
             buttonAlign: 'center',

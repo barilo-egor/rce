@@ -43,12 +43,12 @@ public class WebUserService implements UserDetailsService {
         return webUserRepository.save(webUser);
     }
 
-    public WebUser save(CredentialsVO credentialsVO) {
+    public WebUser save(CredentialsVO credentialsVO, RoleConstants role) {
         WebUser webUser = new WebUser();
         webUser.setUsername(credentialsVO.getUsername());
         webUser.setPassword(passwordEncoder.encode(credentialsVO.getPassword()));
         webUser.setEnabled(true);
-        webUser.setRoles(Set.of(roleRepository.getByName(RoleConstants.ROLE_USER.name())));
+        webUser.setRoles(Set.of(roleRepository.getByName(role.name())));
         return webUserRepository.save(webUser);
     }
 

@@ -15,6 +15,9 @@ Ext.define('Main.view.registration.RegistrationController', {
         Ext.Ajax.request({
             url: '/web/registration/registerUser',
             method: 'POST',
+            params: {
+                role: form.getValues().role
+            },
             jsonData: registrationVO,
             success: function (rs) {
                 Ext.Msg.alert('Информация', 'Пользователь зарегестрирован.')
