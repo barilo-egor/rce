@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.*;
 import org.apache.commons.lang.BooleanUtils;
+import tgb.btc.rce.enums.DealType;
+import tgb.btc.rce.enums.FiatCurrency;
 import tgb.btc.rce.web.controller.MainWebController;
 import tgb.btc.rce.web.interfaces.JsonConvertable;
 
@@ -57,6 +59,15 @@ public class ApiUser extends BasePersist implements JsonConvertable {
     @Getter
     @Setter
     private BigDecimal usdCourse;
+
+    @Getter
+    @Setter
+    private FiatCurrency fiatCurrency;
+
+    public String getRequisite(DealType dealType) {
+        if (DealType.isBuy(dealType)) return buyRequisite.getRequisite();
+        else return sellRequisite;
+    }
 
     @Override
     public ObjectNode toJson() {

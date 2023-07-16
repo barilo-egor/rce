@@ -69,7 +69,8 @@ public class CalculateService {
         dealAmount.setDealType(dealType);
         dealAmount.setEnteredInCrypto(true);
         dealAmount.setCalculateData(calculateData);
-        dealAmount.setCryptoAmount(calculateDataForm.getCryptoAmount());
+        if (Objects.nonNull(calculateDataForm.getCryptoAmount())) dealAmount.setCryptoAmount(calculateDataForm.getCryptoAmount());
+        else dealAmount.setAmount(calculateDataForm.getAmount());
         if (DealType.isBuy(dealType)) calculateAmount(dealAmount, calculateData, fiatCurrency);
         else calculateAmountForSell(dealAmount, calculateData, fiatCurrency);
         return dealAmount;

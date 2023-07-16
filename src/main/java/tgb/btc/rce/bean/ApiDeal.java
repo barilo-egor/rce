@@ -6,11 +6,8 @@ import lombok.NoArgsConstructor;
 import tgb.btc.rce.enums.ApiDealStatus;
 import tgb.btc.rce.enums.CryptoCurrency;
 import tgb.btc.rce.enums.DealType;
-import tgb.btc.rce.enums.FiatCurrency;
 
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -32,15 +29,12 @@ public class ApiDeal extends BasePersist{
 
     private BigDecimal amount;
 
+    @Enumerated(EnumType.STRING)
     private ApiDealStatus apiDealStatus;
-
-    private FiatCurrency fiatCurrency;
 
     private CryptoCurrency cryptoCurrency;
 
-
-    public ApiDeal() {
-    }
+    private String requisite;
 
     public ApiUser getApiUser() {
         return apiUser;
@@ -90,19 +84,24 @@ public class ApiDeal extends BasePersist{
         this.apiDealStatus = apiDealStatus;
     }
 
-    public FiatCurrency getFiatCurrency() {
-        return fiatCurrency;
-    }
-
-    public void setFiatCurrency(FiatCurrency fiatCurrency) {
-        this.fiatCurrency = fiatCurrency;
-    }
-
     public CryptoCurrency getCryptoCurrency() {
         return cryptoCurrency;
     }
 
     public void setCryptoCurrency(CryptoCurrency cryptoCurrency) {
         this.cryptoCurrency = cryptoCurrency;
+    }
+
+    public String getRequisite() {
+        return requisite;
+    }
+
+    public void setRequisite(String requisite) {
+        this.requisite = requisite;
+    }
+
+    public BigDecimal getAmountToPay() {
+        if (DealType.isBuy(dealType)) return amount;
+        else return cryptoAmount;
     }
 }
