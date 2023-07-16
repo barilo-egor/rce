@@ -4,12 +4,15 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
+import tgb.btc.rce.bean.ApiDeal;
 import tgb.btc.rce.bean.Deal;
 import tgb.btc.rce.bean.User;
 import tgb.btc.rce.constants.BotStringConstants;
+import tgb.btc.rce.enums.ApiDealStatus;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.FiatCurrency;
 import tgb.btc.rce.enums.PaymentTypeEnum;
+import tgb.btc.rce.repository.ApiDealRepository;
 import tgb.btc.rce.service.impl.DealService;
 import tgb.btc.rce.service.impl.UserService;
 import tgb.btc.rce.util.KeyboardUtil;
@@ -24,12 +27,32 @@ import java.util.Objects;
 public class DealSupportService {
 
     private final DealService dealService;
+
     private final UserService userService;
+
+    private ApiDealRepository apiDealRepository;
+
+    @Autowired
+    public void setApiDealRepository(ApiDealRepository apiDealRepository) {
+        this.apiDealRepository = apiDealRepository;
+    }
 
     @Autowired
     public DealSupportService(DealService dealService, UserService userService) {
         this.dealService = dealService;
         this.userService = userService;
+    }
+
+    public String apiDealToString(ApiDeal apiDeal) {
+        return "API заявка на " + apiDeal.getDealType().getGenitive() + " №" + apiDeal.getPid() + "\n"
+                + "Идентификатор клиента: " + apiDeal.getApiUser().getId() + "\n"
+                + "Дата, время: " + apiDeal.getDateTime().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")) + "\n"
+                + "Рекзвизиты клиента: " + apiDeal.getRequisite() + "\n"
+                + "Реквизиты оплаты: " + apiDeal.getApiUser().getRequisite(apiDeal.getDealType()) + "\n"
+                + "Количество сделок: " + apiDealRepository.getCountByApiDealStatusAndApiUserPid(ApiDealStatus.ACCEPTED, apiDeal.getApiUser().getPid()) + "\n"
+                + "Сумма " + apiDeal.getCryptoCurrency().getShortName() + ": " + apiDeal.getCryptoAmount() + "\n"
+                + "Сумма " + apiDeal.getApiUser().getFiatCurrency().getGenitive() + ": " + apiDeal.getAmount();
+
     }
 
     public String dealToString(Long pid) {

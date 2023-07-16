@@ -14,6 +14,7 @@ import tgb.btc.rce.repository.ApiUserRepository;
 import tgb.btc.rce.service.impl.AdminService;
 import tgb.btc.rce.service.impl.CalculateService;
 import tgb.btc.rce.service.impl.CryptoCurrencyService;
+import tgb.btc.rce.service.impl.KeyboardService;
 import tgb.btc.rce.util.BulkDiscountUtil;
 import tgb.btc.rce.vo.web.CalculateDataForm;
 import tgb.btc.rce.web.controller.MainWebController;
@@ -37,6 +38,13 @@ public class ApiController {
     private CalculateService calculateService;
 
     private CryptoCurrencyService cryptoCurrencyService;
+
+    private KeyboardService keyboardService;
+
+    @Autowired
+    public void setKeyboardService(KeyboardService keyboardService) {
+        this.keyboardService = keyboardService;
+    }
 
     @Autowired
     public void setCalculateService(CalculateService calculateService) {
@@ -108,7 +116,6 @@ public class ApiController {
         apiDeal.setCryptoCurrency(apiDealVO.getCryptoCurrency());
         apiDeal.setRequisite(apiDealVO.getRequisite());
         apiDeal = apiDealRepository.save(apiDeal);
-        adminService.notify("Поступила новая api сделка на " + apiDeal.getDealType().getGenitive() + ".");
         return StatusCode.CREATED_DEAL.toJson()
                 .set("data", MainWebController.DEFAULT_MAPPER.createObjectNode()
                         .put("id", apiDeal.getPid())
@@ -124,6 +131,7 @@ public class ApiController {
             return StatusCode.DEAL_NOT_EXISTS.toJson();
         } else {
             apiDealRepository.updateApiDealStatusByPid(ApiDealStatus.PAID, id);
+            adminService.notify("Поступила новая api сделка.", keyboardService.getShowApiDeal(id));
             return StatusCode.DEAL_EXISTS.toJson();
         }
     }

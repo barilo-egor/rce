@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class ApiDeal extends BasePersist{
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     private ApiUser apiUser;
 
     private LocalDateTime dateTime;

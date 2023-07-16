@@ -2,5 +2,8 @@ package tgb.btc.rce.enums;
 
 public enum ApiDealStatus {
     CREATED,
-    PAID
+    PAID,
+    CANCELED,
+    ACCEPTED,
+    DECLINED
 }

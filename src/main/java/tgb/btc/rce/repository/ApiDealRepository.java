@@ -17,4 +17,7 @@ public interface ApiDealRepository extends BaseRepository<ApiDeal> {
     @Modifying
     @Query("update ApiDeal set apiDealStatus=:status where pid=:pid")
     void updateApiDealStatusByPid(ApiDealStatus status, Long pid);
+
+    @Query("select count(pid) from ApiDeal where apiDealStatus=:status and apiUser.pid=:userPid")
+    long getCountByApiDealStatusAndApiUserPid(ApiDealStatus status, Long userPid);
 }
