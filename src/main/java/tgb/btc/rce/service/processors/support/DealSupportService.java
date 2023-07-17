@@ -13,6 +13,7 @@ import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.FiatCurrency;
 import tgb.btc.rce.enums.PaymentTypeEnum;
 import tgb.btc.rce.repository.ApiDealRepository;
+import tgb.btc.rce.repository.ApiUserRepository;
 import tgb.btc.rce.service.impl.DealService;
 import tgb.btc.rce.service.impl.UserService;
 import tgb.btc.rce.util.KeyboardUtil;
@@ -32,6 +33,13 @@ public class DealSupportService {
 
     private ApiDealRepository apiDealRepository;
 
+    private ApiUserRepository apiUserRepository;
+
+    @Autowired
+    public void setApiUserRepository(ApiUserRepository apiUserRepository) {
+        this.apiUserRepository = apiUserRepository;
+    }
+
     @Autowired
     public void setApiDealRepository(ApiDealRepository apiDealRepository) {
         this.apiDealRepository = apiDealRepository;
@@ -43,7 +51,8 @@ public class DealSupportService {
         this.userService = userService;
     }
 
-    public String apiDealToString(ApiDeal apiDeal) {
+    public String apiDealToString(Long pid) {
+        ApiDeal apiDeal = apiDealRepository.getByPid(pid);
         return "API заявка на " + apiDeal.getDealType().getGenitive() + " №" + apiDeal.getPid() + "\n"
                 + "Идентификатор клиента: " + apiDeal.getApiUser().getId() + "\n"
                 + "Дата, время: " + apiDeal.getDateTime().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")) + "\n"
@@ -52,7 +61,6 @@ public class DealSupportService {
                 + "Количество сделок: " + apiDealRepository.getCountByApiDealStatusAndApiUserPid(ApiDealStatus.ACCEPTED, apiDeal.getApiUser().getPid()) + "\n"
                 + "Сумма " + apiDeal.getCryptoCurrency().getShortName() + ": " + apiDeal.getCryptoAmount() + "\n"
                 + "Сумма " + apiDeal.getApiUser().getFiatCurrency().getGenitive() + ": " + apiDeal.getAmount();
-
     }
 
     public String dealToString(Long pid) {

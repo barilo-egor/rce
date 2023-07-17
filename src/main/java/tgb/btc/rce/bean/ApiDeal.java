@@ -25,6 +25,7 @@ public class ApiDeal extends BasePersist{
 
     private DealType dealType;
 
+    @Column(precision = 15, scale = 8)
     private BigDecimal cryptoAmount;
 
     private BigDecimal amount;

@@ -9,10 +9,7 @@ import tgb.btc.rce.enums.FiatCurrency;
 import tgb.btc.rce.web.controller.MainWebController;
 import tgb.btc.rce.web.interfaces.JsonConvertable;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -62,6 +59,8 @@ public class ApiUser extends BasePersist implements JsonConvertable {
 
     @Getter
     @Setter
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private FiatCurrency fiatCurrency;
 
     public String getRequisite(DealType dealType) {

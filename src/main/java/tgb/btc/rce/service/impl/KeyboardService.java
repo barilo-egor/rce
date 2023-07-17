@@ -79,7 +79,7 @@ public class KeyboardService {
     public ReplyKeyboard getShowApiDeal(Long pid) {
         return KeyboardUtil.buildInline(List.of(
                 InlineButton.builder()
-                        .text(Command.SHOW_API_DEAL.getText())
+                        .text("Показать")
                         .data(Command.SHOW_API_DEAL.getText() + BotStringConstants.CALLBACK_DATA_SPLITTER
                                 + pid)
                         .build()

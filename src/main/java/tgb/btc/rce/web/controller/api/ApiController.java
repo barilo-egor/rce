@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import tgb.btc.rce.bean.ApiDeal;
 import tgb.btc.rce.bean.ApiUser;
 import tgb.btc.rce.enums.ApiDealStatus;
+import tgb.btc.rce.enums.BotVariableType;
 import tgb.btc.rce.enums.CryptoCurrency;
 import tgb.btc.rce.enums.DealType;
 import tgb.btc.rce.repository.ApiDealRepository;
@@ -15,7 +16,9 @@ import tgb.btc.rce.service.impl.AdminService;
 import tgb.btc.rce.service.impl.CalculateService;
 import tgb.btc.rce.service.impl.CryptoCurrencyService;
 import tgb.btc.rce.service.impl.KeyboardService;
-import tgb.btc.rce.util.BulkDiscountUtil;
+import tgb.btc.rce.util.BigDecimalUtil;
+import tgb.btc.rce.util.BotVariablePropertiesUtil;
+import tgb.btc.rce.vo.calculate.DealAmount;
 import tgb.btc.rce.vo.web.CalculateDataForm;
 import tgb.btc.rce.web.controller.MainWebController;
 import tgb.btc.rce.web.controller.api.enums.StatusCode;
@@ -97,21 +100,25 @@ public class ApiController {
         apiDeal.setApiUser(apiUser);
         apiDeal.setDateTime(LocalDateTime.now());
         apiDeal.setDealType(dealType);
-        if (Objects.nonNull(apiDealVO.getAmount())) {
-            calculateService.calculate(CalculateDataForm.builder()
-                            .amount(apiDealVO.getAmount())
-                            .dealType(apiDealVO.getDealType())
-                            .fiatCurrency(apiUser.getFiatCurrency())
-                            .usdCourse(apiUser.getUsdCourse())
-                            .cryptoCourse(cryptoCurrencyService.getCurrency(cryptoCurrency))
-                            .personalDiscount(apiUser.getPersonalDiscount())
-                            .cryptoCurrency(apiDealVO.getCryptoCurrency())
-                            .bulkDiscount(BulkDiscountUtil.getPercentBySum(amount, apiUser.getFiatCurrency()))
-                    .build());
-            apiDeal.setAmount(apiDealVO.getAmount());
-        } else {
-            apiDeal.setCryptoAmount(apiDealVO.getCryptoAmount());
+        DealAmount dealAmount;
+        CalculateDataForm.CalculateDataFormBuilder builder = CalculateDataForm.builder();
+        builder.dealType(apiDealVO.getDealType())
+                .fiatCurrency(apiUser.getFiatCurrency())
+                .usdCourse(apiUser.getUsdCourse())
+                .cryptoCourse(cryptoCurrencyService.getCurrency(cryptoCurrency))
+                .personalDiscount(apiUser.getPersonalDiscount())
+                .cryptoCurrency(apiDealVO.getCryptoCurrency());
+        if (Objects.nonNull(apiDealVO.getAmount())) builder.amount(apiDealVO.getAmount());
+        else builder.cryptoAmount(apiDealVO.getCryptoAmount());
+        dealAmount = calculateService.calculate(builder.build());
+        BigDecimal minSum = BotVariablePropertiesUtil.getBigDecimal(BotVariableType.MIN_SUM, dealType, cryptoCurrency);
+        if (dealAmount.getCryptoAmount().compareTo(minSum) < 0) {
+            return StatusCode.MIN_SUM.toJson().set("data",
+                    MainWebController.DEFAULT_MAPPER.createObjectNode()
+                            .put("minSum", BigDecimalUtil.roundToPlainString(minSum, 8)));
         }
+        apiDeal.setAmount(dealAmount.getAmount());
+        apiDeal.setCryptoAmount(dealAmount.getCryptoAmount());
         apiDeal.setApiDealStatus(ApiDealStatus.CREATED);
         apiDeal.setCryptoCurrency(apiDealVO.getCryptoCurrency());
         apiDeal.setRequisite(apiDealVO.getRequisite());
@@ -119,7 +126,7 @@ public class ApiController {
         return StatusCode.CREATED_DEAL.toJson()
                 .set("data", MainWebController.DEFAULT_MAPPER.createObjectNode()
                         .put("id", apiDeal.getPid())
-                        .put("amount", apiDeal.getAmountToPay())
+                        .put("amount", BigDecimalUtil.roundToPlainString(apiDeal.getAmountToPay(), 8))
                         .put("requisite", apiUser.getRequisite(apiDeal.getDealType()))
                 );
     }
@@ -129,10 +136,12 @@ public class ApiController {
     public ObjectNode paid(@RequestParam Long id) {
         if (apiDealRepository.countByPid(id) == 0) {
             return StatusCode.DEAL_NOT_EXISTS.toJson();
+        } else if (ApiDealStatus.PAID.equals(apiDealRepository.getApiDealStatusByPid(id))) {
+            return StatusCode.DEAL_ALREADY_PAID.toJson();
         } else {
             apiDealRepository.updateApiDealStatusByPid(ApiDealStatus.PAID, id);
             adminService.notify("Поступила новая api сделка.", keyboardService.getShowApiDeal(id));
-            return StatusCode.DEAL_EXISTS.toJson();
+            return StatusCode.STATUS_PAID_UPDATED.toJson();
         }
     }
 

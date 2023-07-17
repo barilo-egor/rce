@@ -9,6 +9,8 @@ import tgb.btc.rce.enums.ApiDealStatus;
 @Repository
 public interface ApiDealRepository extends BaseRepository<ApiDeal> {
 
+    ApiDeal getByPid(Long pid);
+
     long countByPid(Long pid);
 
     @Query("select apiDealStatus from ApiDeal where pid=:pid")

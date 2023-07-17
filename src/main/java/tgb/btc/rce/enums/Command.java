@@ -106,7 +106,7 @@ public enum Command {
     CANCEL_DEAL("Отменить заявку", false, false, false),
     DELETE_DEAL("Удалить заявку", false, false, false),
     SHOW_DEAL("Показать", true, false, false),
-    SHOW_API_DEAL("Показать", true, false, false),
+    SHOW_API_DEAL("show_api_deal", true, false, false),
     DELETE_USER_DEAL("delete_deal", true, false, false),
     DELETE_DEAL_AND_BLOCK_USER("deleteDeal_and_block_user", true, false, false),
     CONFIRM_USER_DEAL("confirm_deal", true, false, false),

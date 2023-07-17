@@ -18,7 +18,9 @@ public enum StatusCode implements JsonConvertable {
     STATUS_PAID_UPDATED(0, "Сделка переведена в статус \"Оплачено\"."),
     DEAL_DELETED(0, "Сделка удалена."),
     DEAL_NOT_EXISTS(1, "Сделка не найдена."),
-    DEAL_CONFIRMED(2, "Сделка уже обработана.");
+    DEAL_CONFIRMED(2, "Сделка уже обработана."),
+    DEAL_ALREADY_PAID(2, "Сделка уже в статусе \"Оплачено\"."),
+    MIN_SUM(2, "Получившаяся сумма меньше минимально требуемой.");
 
     final int code;
 
