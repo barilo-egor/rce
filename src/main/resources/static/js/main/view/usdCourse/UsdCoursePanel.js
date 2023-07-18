@@ -6,7 +6,9 @@ Ext.define('Main.view.usdCourse.UsdCoursePanel', {
         xtype: 'mainframetitle',
         text: 'Курс USD'
     },
-    scrollable: true,
+    requires: [
+        'Main.view.components.panel.DiscountHintPanel'
+    ],
     padding: '0 0 0 0',
     layout: {
         type: 'vbox',
@@ -15,7 +17,6 @@ Ext.define('Main.view.usdCourse.UsdCoursePanel', {
     items: [
         {
             xtype: 'form',
-            scrollable: true,
             layout: {
                 type: 'vbox',
                 align: 'stretch'
@@ -30,28 +31,25 @@ Ext.define('Main.view.usdCourse.UsdCoursePanel', {
                         type: 'vbox',
                         align: 'stretch'
                     },
+                    defaults: {
+                        collapsible: false,
+                        layout: {
+                            type: 'vbox',
+                            align: 'stretch'
+                        }
+                    },
                     items: [
                         {
                             xtype: 'fieldset',
                             id: 'cryptoCourses',
-                            collapsible: false,
                             title: 'Крипто курсы',
-                            layout: {
-                                type: 'vbox',
-                                align: 'stretch'
-                            },
                             flex: 0.35
                         },
                         {
                             xtype: 'fieldset',
                             id: 'discountsFieldSet',
-                            collapsible: false,
                             title: 'Скидки',
                             flex: 0.65,
-                            layout: {
-                                type: 'vbox',
-                                align: 'stretch'
-                            },
                             items: [
                                 {
                                     xtype: 'checkbox',
@@ -72,12 +70,7 @@ Ext.define('Main.view.usdCourse.UsdCoursePanel', {
                                         change: 'updateResultAmounts'
                                     },
                                     msgTarget: 'side',
-                                    validator: function (val) {
-                                        if (!val) return 'Введите значение.'
-                                        if (val < -99 || val > 99) {
-                                            return 'Значение должно быть >-99 и <99.'
-                                        } else return true
-                                    }
+                                    validator: ValidatorUtil.validateDiscount
                                 },
                                 {
                                     xtype: 'numberfield',
@@ -91,23 +84,10 @@ Ext.define('Main.view.usdCourse.UsdCoursePanel', {
                                         change: 'updateResultAmounts'
                                     },
                                     msgTarget: 'side',
-                                    validator: function (val) {
-                                        if (!val) return 'Введите значение.'
-                                        if (val < -99 || val > 99) {
-                                            return 'Значение должно быть >-99 и <99.'
-                                        } else return true
-                                    }
+                                    validator: ValidatorUtil.validateDiscount
                                 },
                                 {
-                                    xtype: 'panel',
-                                    frame: true,
-                                    hidden: true,
-                                    padding: '5 5 5 5',
-                                    style: {
-                                        borderColor: '#919191',
-                                        borderWidth: '1px'
-                                    },
-                                    html: 'Введите положительное значение для скидки, либо отрицательное для надбавки.'
+                                    xtype: 'discounthintpanel'
                                 }
                             ]
                         },
@@ -121,7 +101,6 @@ Ext.define('Main.view.usdCourse.UsdCoursePanel', {
         {
             xtype: 'form',
             id: 'coursesForm',
-            scrollable: true,
             layout: {
                 type: 'vbox',
                 align: 'stretch'

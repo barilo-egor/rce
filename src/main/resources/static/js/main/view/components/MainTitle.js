@@ -19,7 +19,7 @@ Ext.define('Main.view.components.MainTitle', {
                         xtype: 'button',
                         iconCls: 'fas fa-bars',
                         handler: 'collapse',
-                        width: 40,
+                        width: 58,
                         height: 40
                     },
                 ]

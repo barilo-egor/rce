@@ -21,22 +21,48 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
                 .csrf()
-                .disable()
+                .disable();
+        //  Доступ для всех
+        httpSecurity
                 .authorizeRequests()
                 //Доступ только для не зарегистрированных пользователей
-                .antMatchers("/web/registration/**", "/static/**", "/extJS/**", "/fontawesome/**",
-                        "/js/login/**", "/js/util/**", "/js/registration/**", "/login/**", "/api/**",
-                        "/loginSuccess", "/loginError", "/", "/css/**").permitAll()
-                //Доступ только для пользователей с ролью Администратор
-                .antMatchers("/js/mainUser/**").hasRole("USER")
-                .antMatchers("/web/settings/**", "/js/settings/**", "/js/main/**",
-                        "/web/main/**").hasRole("ADMIN")
+                .antMatchers(
+                        "/web/registration/**", "/static/**", "/extJS/**", "/fontawesome/**",
+                        "/js/login/**", "/login/**",
+                        "/js/util/**", "/js/registration/**",
+                        "/api/**",
+                        "/loginSuccess", "/loginError",
+                        "/css/**", "/web/main",
+                        "/api/**", "/documentation/**"
+                )
+                .permitAll();
+        // Доступ для юзеров
+        httpSecurity
+                .authorizeRequests()
+                .antMatchers(
+                        "/", "/js/mainUser/**"
+                )
+                .hasRole("USER");
+
+        // Доступ для админов
+        httpSecurity
+                .authorizeRequests()
+                .antMatchers(
+                        "/js/main/**", "/web/main/**"
+                )
+                .hasRole("ADMIN");
+
+        // Доступ всех оставшихся юрлов
+        httpSecurity
+                .authorizeRequests()
                 //Все остальные страницы требуют аутентификации
-                .anyRequest().hasRole("ADMIN")
-                .and()
-                //Настройка для входа в систему
+                .anyRequest()
+                .hasRole("ADMIN");
+
+        // Конфигурация логина
+        httpSecurity
                 .formLogin()
-                .loginPage("/login")
+                .loginPage("/web/main")
                 //Перенарпавление на главную страницу после успешного входа
                 .defaultSuccessUrl("/loginSuccess", true)
                 .failureUrl("/loginError")
@@ -45,7 +71,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .logout()
                 .logoutUrl("/logout")
                 .permitAll()
-                .logoutSuccessUrl("/login");
+                .logoutSuccessUrl("/web/main");
     }
 
     @Override

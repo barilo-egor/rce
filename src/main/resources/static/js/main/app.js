@@ -6,5 +6,10 @@ Ext.application({
     extend: 'Ext.app.Application',
     appFolder: '/js/main',
     title: 'Главное меню',
-    autoCreateViewport: true
+    autoCreateViewport: true,
+    stores: [
+        'Main.store.enum.FiatCurrenciesStore',
+        'Main.store.tree.RequisitesTreeStore',
+        'Main.store.api.ApiUsersStore'
+    ]
 });

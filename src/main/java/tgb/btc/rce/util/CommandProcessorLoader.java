@@ -189,6 +189,7 @@ public final class CommandProcessorLoader {
         commandProcessors.add(InlineQueryCalculator.class);
         commandProcessors.add(InlineCalculator.class);
         commandProcessors.add(Help.class);
+        commandProcessors.add(ShowApiDeal.class);
         commandProcessors.stream()
                 .filter(processor -> !extendsProcessor(processor))
                 .findFirst()

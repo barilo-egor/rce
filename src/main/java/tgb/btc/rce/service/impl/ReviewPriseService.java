@@ -1,4 +1,4 @@
-package tgb.btc.rce.service;
+package tgb.btc.rce.service.impl;
 
 import org.apache.commons.lang.StringUtils;
 import tgb.btc.rce.enums.BotProperties;

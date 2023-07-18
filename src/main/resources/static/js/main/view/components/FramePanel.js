@@ -4,4 +4,7 @@ Ext.define('Main.view.components.FramePanel', {
     header: {
         xtype: 'mainframeheader'
     },
+    style: {
+        borderBottom: '1px solid #919191 !important'
+    }
 })

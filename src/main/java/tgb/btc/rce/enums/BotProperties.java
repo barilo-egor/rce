@@ -3,7 +3,7 @@ package tgb.btc.rce.enums;
 import tgb.btc.rce.constants.FilePaths;
 import tgb.btc.rce.service.IPropertyService;
 import tgb.btc.rce.service.PropertiesReader;
-import tgb.btc.rce.service.ReviewPriseService;
+import tgb.btc.rce.service.impl.ReviewPriseService;
 import tgb.btc.rce.service.impl.BulkDiscountService;
 
 import java.util.Objects;

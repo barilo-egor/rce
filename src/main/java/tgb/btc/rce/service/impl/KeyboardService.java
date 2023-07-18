@@ -76,6 +76,16 @@ public class KeyboardService {
         ));
     }
 
+    public ReplyKeyboard getShowApiDeal(Long pid) {
+        return KeyboardUtil.buildInline(List.of(
+                InlineButton.builder()
+                        .text("Показать")
+                        .data(Command.SHOW_API_DEAL.getText() + BotStringConstants.CALLBACK_DATA_SPLITTER
+                                + pid)
+                        .build()
+        ));
+    }
+
     public ReplyKeyboard getUseReferralDiscount(BigDecimal sumWithDiscount, BigDecimal dealAmount) {
         return KeyboardUtil.buildInline(List.of(
                 InlineButton.builder()

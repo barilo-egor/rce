@@ -2,30 +2,23 @@ Ext.define('Main.view.registration.RegistrationController', {
     extend: 'Ext.app.ViewController',
     alias: 'controller.registrationController',
 
-    validateInput: function (val) {
-        if (/^[A-Za-z0-9]*$/.test(val)) return true;
-        else return 'Ошибка'
-    },
-
-    validateConfirmPassword: function (val) {
-        let passwordInput = Ext.ComponentQuery.query('[id=passwordInput]')
-        if (passwordInput !== val) return 'Пароли не совпадают'
-        return true
-    },
-
     registerUser: function () {
-        let form = Ext.ComponentQuery.query('[id=registrationForm]')[0]
+        let form = ExtUtil.idQuery('registrationForm')
         if (!form.isValid()) {
             Ext.Msg.alert('Внимание', 'Неверно заполнена форма.');
             return
         }
         let registrationVO = {
             username: form.getValues().username,
-            password: form.getValues().password
+            password: form.getValues().password,
+            chatId: form.getValues.chatId
         }
         Ext.Ajax.request({
             url: '/web/registration/registerUser',
             method: 'POST',
+            params: {
+                role: form.getValues().role
+            },
             jsonData: registrationVO,
             success: function (rs) {
                 Ext.Msg.alert('Информация', 'Пользователь зарегестрирован.')

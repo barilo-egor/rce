@@ -7,16 +7,20 @@ Ext.define('Main.view.components.MainFramePanel', {
         'Main.view.usdCourse.UsdCoursePanel',
         'Main.view.usdCourse.UsdCourseController',
         'Main.view.components.MainFrameTitle',
-        'Main.view.components.MainFrameHeader'
+        'Main.view.components.MainFrameHeader',
+        'Main.view.registration.RegistrationPanel',
+        'Main.view.registration.RegistrationController',
+        'Main.view.api.registration.ApiRegistrationPanel',
+        'Main.view.api.registration.ApiRegistrationController',
+        'Main.view.api.control.ApiUsersControlPanel',
+        'Main.view.api.control.ApiUsersControlController',
     ],
     layout: {
-        type: 'vbox',
-        align: 'stretch'
+        type: 'fit'
     },
-    scrollable: true,
     items: [
         {
-            xtype: 'usdcoursepanel'
+            xtype: 'apiuserscontrolpanel'
         }
     ]
 })

@@ -16,6 +16,7 @@ Ext.define('Login.view.LoginPanel', {
         {
             xtype: 'form',
             id: 'loginForm',
+            url: '/web/main',
             padding: '20 20 5 20',
             layout: {
                 type: 'vbox',
@@ -32,11 +33,7 @@ Ext.define('Login.view.LoginPanel', {
                     name: 'username',
                     emptyText: 'Введите логин',
                     minLength: 4,
-                    validator: function (val) {
-                        if (!val) return 'Введите значение'
-                        if (!RegexUtil.onlyLettersAndNumbers(val)) return 'Только латинские буквы и цифры.'
-                        return true
-                    },
+                    validator: ValidatorUtil.validateNotEmptyAndLettersAndNumber,
                     msgTarget: 'side'
                 },
                 {
@@ -47,11 +44,7 @@ Ext.define('Login.view.LoginPanel', {
                     emptyText: 'Введите пароль',
                     inputType: 'password',
                     minLength: 8,
-                    validator: function (val) {
-                        if (!val) return 'Введите значение'
-                        if (RegexUtil.onlyLettersAndNumbers(val)) return true;
-                        else return 'Только латинские буквы и цифры.'
-                    },
+                    validator: ValidatorUtil.validateNotEmptyAndLettersAndNumber,
                     msgTarget: 'side',
                 }
             ]
@@ -82,19 +75,19 @@ Ext.define('Login.view.LoginPanel', {
             items: [
                 {
                     xtype: 'button',
-                    iconCls: 'fa-solid fa-right-to-bracket',
+                    iconCls: 'fas fa-sign-in-alt',
                     text: 'Вход',
                     width: 150,
                     handler: function () {
-                        let form = Ext.ComponentQuery.query('[id=loginForm]')[0]
+                        let form = ExtUtil.idQuery('loginForm')
                         Ext.Ajax.request({
                             method: 'POST',
-                            url: '/login',
+                            url: '/web/main',
                             async: false,
                             params: form.getValues(),
                             success: function (rs) {
                                 let response = Ext.JSON.decode(rs.responseText)
-                                let errorLoginContainer = Ext.ComponentQuery.query('[id=errorLoginContainer]')[0]
+                                let errorLoginContainer = ExtUtil.idQuery('errorLoginContainer')
                                 if (response.error) errorLoginContainer.show()
                                 else if (response.loginSuccess) {
                                     errorLoginContainer.hide()

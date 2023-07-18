@@ -1,10 +1,11 @@
-package tgb.btc.rce.web.controller;
+package tgb.btc.rce.web.controller.registration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import tgb.btc.rce.enums.RoleConstants;
 import tgb.btc.rce.repository.WebUserRepository;
 import tgb.btc.rce.service.impl.WebUserService;
 import tgb.btc.rce.vo.web.CredentialsVO;
@@ -34,8 +35,8 @@ public class RegistrationController {
 
     @PostMapping("/registerUser")
     @ResponseBody
-    public ObjectNode registerUser(@RequestBody CredentialsVO credentialsVO) {
-        webUserService.save(credentialsVO);
+    public ObjectNode registerUser(@RequestBody CredentialsVO credentialsVO, @RequestParam RoleConstants role) {
+        webUserService.save(credentialsVO, role);
         ObjectNode objectNode = new ObjectMapper().createObjectNode();
         objectNode.put("success", true);
         return objectNode;

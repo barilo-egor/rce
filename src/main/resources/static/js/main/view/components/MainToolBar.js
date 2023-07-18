@@ -33,8 +33,13 @@ Ext.define('Main.view.components.MainToolBar', {
                 },
                 {
                     text: 'Регистрация апи-пользователей',
-                    iconCls: 'fas fa-user-plus menu-icon-color',
-                    handler: 'newWebUserClick'
+                    iconCls: 'fas fa-user-cog menu-icon-color',
+                    handler: 'newApiUserClick'
+                },
+                {
+                    text: 'Управление апи-пользователями',
+                    iconCls: 'fas fa-users-cog menu-icon-color',
+                    handler: 'apiUsersControlClick'
                 }
             ]
         }

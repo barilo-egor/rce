@@ -1,17 +1,9 @@
 Ext.define('Main.view.MainController', {
     extend: 'Ext.app.ViewController',
     alias: 'controller.mainController',
-    requires: [
-        'Main.view.usdCourse.UsdCoursePanel',
-        'Main.view.usdCourse.UsdCourseController',
-        'Main.view.registration.RegistrationPanel',
-        'Main.view.registration.RegistrationController',
-        'Main.view.bulkDiscount.BulkDiscountPanel',
-        'Main.view.bulkDiscount.BulkDiscountController'
-    ],
 
     collapse: function (btn) {
-        let toolBar = Ext.ComponentQuery.query('[id=mainToolBar]')[0]
+        let toolBar = ExtUtil.idQuery('mainToolBar')
         if (toolBar.hidden) {
             toolBar.show()
         } else {
@@ -31,17 +23,25 @@ Ext.define('Main.view.MainController', {
         this.mainToolBarClick(btn, 'registrationpanel')
     },
 
+    newApiUserClick: function (btn) {
+        this.mainToolBarClick(btn, 'apiregistrationpanel')
+    },
+
+    apiUsersControlClick: function (btn) {
+        this.mainToolBarClick(btn, 'apiuserscontrolpanel')
+    },
+
     mainToolBarClick: function (btn, panel) {
-        Ext.ComponentQuery.query('[id=mainPanel]')[0].setLoading('Загрузка')
+        ExtUtil.idQuery('mainPanel').setLoading('Загрузка')
         Ext.Function.defer(function() {
             let toolbar = btn.up('toolbar')
             toolbar.hide()
-            let mainFramePanel = Ext.ComponentQuery.query('[id=mainFramePanel]')[0]
+            let mainFramePanel = ExtUtil.idQuery('mainFramePanel')
             mainFramePanel.items.items.forEach(item => item.destroy())
             mainFramePanel.insert({xtype: panel})
             mainFramePanel.update();
             mainFramePanel.updateLayout();
-            Ext.ComponentQuery.query('[id=mainPanel]')[0].setLoading(false)
+            ExtUtil.idQuery('mainPanel').setLoading(false)
         }, 10);
     },
 })

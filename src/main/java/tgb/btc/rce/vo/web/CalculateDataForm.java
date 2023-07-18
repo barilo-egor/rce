@@ -1,5 +1,6 @@
 package tgb.btc.rce.vo.web;
 
+import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,6 +11,7 @@ import tgb.btc.rce.enums.FiatCurrency;
 import java.math.BigDecimal;
 
 @Data
+@Builder
 public class CalculateDataForm {
 
     @Getter
@@ -19,6 +21,10 @@ public class CalculateDataForm {
     @Getter
     @Setter
     private BigDecimal cryptoAmount;
+
+    @Getter
+    @Setter
+    private BigDecimal amount;
 
     @Getter
     @Setter
