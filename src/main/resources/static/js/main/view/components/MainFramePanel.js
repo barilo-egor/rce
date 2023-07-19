@@ -14,6 +14,8 @@ Ext.define('Main.view.components.MainFramePanel', {
         'Main.view.api.registration.ApiRegistrationController',
         'Main.view.api.control.ApiUsersControlPanel',
         'Main.view.api.control.ApiUsersControlController',
+        'Main.view.bulkDiscount.BulkDiscountPanel',
+        'Main.view.bulkDiscount.BulkDiscountController'
     ],
     layout: {
         type: 'fit'

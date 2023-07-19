@@ -23,33 +23,49 @@ Ext.define('Main.view.bulkDiscount.BulkDiscountController', {
         })
     },
 
-    createGridPanel(fiatCurrency) {
-        Ext.define('bulkDiscountModel', {
-            extend: 'Ext.data.Model',
-            fields: ['value', 'percent'],
-        });
-        let store = Ext.create('Ext.data.Store', {
-            model: 'bulkDiscountModel',
-            pageSize : 100,
-            proxy: {
-                type: 'memory',
-                enablePaging: true,
-                reader: {
-                    type: 'json'
-                }
-            }
-        });
-        store.getProxy().setData(fiatCurrency.bulkDiscounts);
-        store.load();
-        return {
+    createGridPanel: function (fiatCurrency) {
+        let fiatCurrencyTabPanel = {
             title: fiatCurrency.displayName,
+            layout: {
+                type: 'fit'
+            },
             items: [
                 {
-                    xtype: 'bulkdiscountgridpanel',
-                    store: store
+                    xtype: 'tabpanel',
+                    items: []
                 }
             ]
+        };
+        for (let dealType of fiatCurrency.dealTypes) {
+            let store = Ext.create('Main.view.bulkDiscount.store.BulkDiscountStore');
+            store.getProxy().setData(dealType.bulkDiscounts);
+            store.load();
+            let dealTypeTabPanel = {
+                title: dealType.displayName,
+                layout: {
+                    type: 'fit'
+                },
+                items: [
+                    {
+                        xtype: 'bulkdiscountgridpanel',
+                        store: store
+                    }
+                ]
+            };
+            fiatCurrencyTabPanel.items[0].items.push(dealTypeTabPanel);
         }
+        return fiatCurrencyTabPanel;
     },
+
+    onAddClick() {
+        let view = this.getView(),
+            rec = new Main.view.bulkDiscount.model.BulkDiscountModel({
+                value: '',
+                percent: ''
+            });
+
+        view.store.insert(0, rec);
+        view.findPlugin('cellediting').startEdit(rec, 0);
+    }
 
 })

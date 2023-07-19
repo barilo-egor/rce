@@ -6,11 +6,9 @@ Ext.define('Main.view.bulkDiscount.BulkDiscountPanel', {
         xtype: 'mainframetitle',
         text: 'Оптовые скидки'
     },
-    // layout: {
-    //     type: 'vbox',
-    //     align: 'stretch'
-    // },
-    scrollable: true,
+    layout: {
+        type: 'fit'
+    },
     items: [
         {
             xtype: 'tabpanel',

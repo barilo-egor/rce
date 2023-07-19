@@ -2,6 +2,7 @@ package tgb.btc.rce.service.impl;
 
 import org.apache.commons.lang.StringUtils;
 import tgb.btc.rce.enums.BotProperties;
+import tgb.btc.rce.enums.DealType;
 import tgb.btc.rce.enums.FiatCurrency;
 import tgb.btc.rce.exception.PropertyValueNotFoundException;
 import tgb.btc.rce.service.IPropertyService;
@@ -22,7 +23,7 @@ public class BulkDiscountService implements IPropertyService {
                 throw new PropertyValueNotFoundException("Не указано название для одного из ключей" + key + ".");
             }
             try {
-                sum = Integer.parseInt(key.split("\\.")[1]);
+                sum = Integer.parseInt(key.split("\\.")[2]);
             } catch (NumberFormatException e) {
                 throw new PropertyValueNotFoundException("Не корректное название для ключа " + key + ".");
             }
@@ -40,6 +41,7 @@ public class BulkDiscountService implements IPropertyService {
                     .percent(percent)
                     .sum(sum)
                     .fiatCurrency(FiatCurrency.getByCode(key.split("\\.")[0]))
+                    .dealType(DealType.findByKey((key.split("\\.")[1])))
                     .build());
         }
         BULK_DISCOUNTS.sort(Comparator.comparingInt(BulkDiscount::getSum));

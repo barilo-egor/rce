@@ -3,6 +3,7 @@ package tgb.btc.rce.vo;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
+import tgb.btc.rce.enums.DealType;
 import tgb.btc.rce.enums.FiatCurrency;
 
 @Builder
@@ -15,6 +16,8 @@ public class BulkDiscount {
     private double percent;
 
     private FiatCurrency fiatCurrency;
+
+    private DealType dealType;
 
     public FiatCurrency getFiatCurrency() {
         return fiatCurrency;
@@ -39,4 +42,13 @@ public class BulkDiscount {
     public void setPercent(double percent) {
         this.percent = percent;
     }
+
+    public DealType getDealType() {
+        return dealType;
+    }
+
+    public void setDealType(DealType dealType) {
+        this.dealType = dealType;
+    }
+
 }

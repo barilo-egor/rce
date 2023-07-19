@@ -16,6 +16,7 @@ import tgb.btc.rce.util.BotVariablePropertiesUtil;
 import tgb.btc.rce.util.FiatCurrencyUtil;
 import tgb.btc.rce.vo.BulkDiscount;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Controller
@@ -30,16 +31,24 @@ public class BulkDiscountController {
         for (FiatCurrency fiatCurrencyEnum : FiatCurrencyUtil.getFiatCurrencies()) {
             ObjectNode fiatCurrency = objectMapper.createObjectNode();
             fiatCurrency.put("displayName", fiatCurrencyEnum.name());
-            ArrayNode bulkDiscounts = objectMapper.createArrayNode();
-            for (BulkDiscount bulkDiscountVo : BulkDiscountService.BULK_DISCOUNTS.stream()
-                    .filter(bulkDiscount -> bulkDiscount.getFiatCurrency().equals(fiatCurrencyEnum))
-                    .collect(Collectors.toList())) {
-                ObjectNode bulkDiscount = objectMapper.createObjectNode();
-                bulkDiscount.put("value", bulkDiscountVo.getSum());
-                bulkDiscount.put("percent", bulkDiscountVo.getPercent());
-                bulkDiscounts.add(bulkDiscount);
+            ArrayNode dealTypes = objectMapper.createArrayNode();
+            for (DealType dealTypeEnum : DealType.values()) {
+                ObjectNode dealType = objectMapper.createObjectNode();
+                dealType.put("displayName", dealTypeEnum.name());
+                ArrayNode bulkDiscounts = objectMapper.createArrayNode();
+                for (BulkDiscount bulkDiscountVo : BulkDiscountService.BULK_DISCOUNTS.stream()
+                        .filter(bulkDiscount -> bulkDiscount.getFiatCurrency().equals(fiatCurrencyEnum))
+                        .filter(bulkDiscount -> bulkDiscount.getDealType().equals(dealTypeEnum))
+                        .collect(Collectors.toList())) {
+                    ObjectNode bulkDiscount = objectMapper.createObjectNode();
+                    bulkDiscount.put("value", bulkDiscountVo.getSum());
+                    bulkDiscount.put("percent", bulkDiscountVo.getPercent());
+                    bulkDiscounts.add(bulkDiscount);
+                }
+                dealType.set("bulkDiscounts", bulkDiscounts);
+                dealTypes.add(dealType);
             }
-            fiatCurrency.set("bulkDiscounts", bulkDiscounts);
+            fiatCurrency.set("dealTypes", dealTypes);
             fiatCurrencies.add(fiatCurrency);
         }
         ObjectNode result = objectMapper.createObjectNode();
