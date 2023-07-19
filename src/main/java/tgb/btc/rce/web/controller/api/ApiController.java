@@ -123,12 +123,18 @@ public class ApiController {
         apiDeal.setCryptoCurrency(apiDealVO.getCryptoCurrency());
         apiDeal.setRequisite(apiDealVO.getRequisite());
         apiDeal = apiDealRepository.save(apiDeal);
-        return StatusCode.CREATED_DEAL.toJson()
+        ObjectNode result = StatusCode.CREATED_DEAL.toJson()
                 .set("data", MainWebController.DEFAULT_MAPPER.createObjectNode()
                         .put("id", apiDeal.getPid())
-                        .put("amount", BigDecimalUtil.roundToPlainString(apiDeal.getAmountToPay(), 8))
+                        .put("amountToPay", BigDecimalUtil.roundToPlainString(apiDeal.getAmountToPay(), 8))
                         .put("requisite", apiUser.getRequisite(apiDeal.getDealType()))
                 );
+        if (DealType.isBuy(apiDeal.getDealType())) {
+            result.put("cryptoAmount", apiDeal.getCryptoAmount());
+        } else {
+            result.put("amount", apiDeal.getAmount());
+        }
+        return result;
     }
 
     @PostMapping("/paid")

@@ -169,7 +169,13 @@ public enum Command {
     INLINE_QUERY_CALCULATOR("inline_q_calc", false, false, false),
     INLINE_CALCULATOR("inline_calculator", false, false, false),
 
-    WEB_ADMIN_PANEL("Веб админ-панель", true, true, false)
+    WEB_ADMIN_PANEL("Веб админ-панель", true, true, false),
+
+    /**
+     * API DEALS
+     */
+    CONFIRM_API_DEAL("confirm_api_deal", true, false, false),
+    CANCEL_API_DEAL("cancel_api_deal", true, false, false)
     ;
 
     final String text;
