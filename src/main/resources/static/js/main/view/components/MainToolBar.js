@@ -17,7 +17,7 @@ Ext.define('Main.view.components.MainToolBar', {
                 },
                 {
                     text: 'Оптовые скидки',
-                    iconCls: 'fas fa-tag',
+                    iconCls: 'fas fa-tag menu-icon-color',
                     handler: 'bulkDiscountClick'
                 },
             ],

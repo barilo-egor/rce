@@ -5,7 +5,7 @@ Ext.define('Main.view.bulkDiscount.BulkDiscountGridPanel', {
     scrollable: true,
     columns: [{
         header: 'Сумма',
-        dataIndex: 'value',
+        dataIndex: 'sum',
         flex: 0.65,
         editor: {
             xtype: 'numberfield',
@@ -21,10 +21,22 @@ Ext.define('Main.view.bulkDiscount.BulkDiscountGridPanel', {
             selectOnFocus: false,
             allowBlank: false,
         }
+    }, {
+        xtype: 'actioncolumn',
+
+        width: 30,
+        sortable: false,
+        menuDisabled: true,
+        items: [{
+            iconCls: 'fas fa-minus',
+            tooltip: 'Удалить',
+            handler: 'onRemoveClick'
+        }]
     }
     ],
     tbar: [{
-        text: 'Добавить',
+        iconCls: 'fas fa-plus',
+        tooltip: 'Добавить',
         handler: 'onAddClick'
     }],
     fbar: [{

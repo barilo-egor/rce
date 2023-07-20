@@ -4,15 +4,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import tgb.btc.rce.enums.BotVariableType;
-import tgb.btc.rce.enums.CryptoCurrency;
+import org.springframework.web.bind.annotation.*;
+import tgb.btc.rce.enums.BotProperties;
 import tgb.btc.rce.enums.DealType;
 import tgb.btc.rce.enums.FiatCurrency;
 import tgb.btc.rce.service.impl.BulkDiscountService;
-import tgb.btc.rce.util.BotVariablePropertiesUtil;
 import tgb.btc.rce.util.FiatCurrencyUtil;
 import tgb.btc.rce.vo.BulkDiscount;
 
@@ -41,7 +37,7 @@ public class BulkDiscountController {
                         .filter(bulkDiscount -> bulkDiscount.getDealType().equals(dealTypeEnum))
                         .collect(Collectors.toList())) {
                     ObjectNode bulkDiscount = objectMapper.createObjectNode();
-                    bulkDiscount.put("value", bulkDiscountVo.getSum());
+                    bulkDiscount.put("sum", bulkDiscountVo.getSum());
                     bulkDiscount.put("percent", bulkDiscountVo.getPercent());
                     bulkDiscounts.add(bulkDiscount);
                 }
@@ -54,6 +50,22 @@ public class BulkDiscountController {
         ObjectNode result = objectMapper.createObjectNode();
         result.put("success", true);
         result.set("data", fiatCurrencies);
+        return result;
+    }
+
+    @PostMapping(value = "/saveDiscounts")
+    @ResponseBody
+    public ObjectNode saveDiscounts(@RequestBody List<BulkDiscount> bulkDiscounts) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectNode result = objectMapper.createObjectNode();
+        bulkDiscounts.forEach(bulkDiscount -> {
+            String key = String.join(".", new String[] {bulkDiscount.getFiatCurrency().getCode(),
+                    bulkDiscount.getDealType().getKey(), String.valueOf(bulkDiscount.getSum())});
+            BotProperties.BULK_DISCOUNT.setProperty(key, bulkDiscount.getPercent());
+            BotProperties.BULK_DISCOUNT.reload();
+            BotProperties.BULK_DISCOUNT.load();
+        });
+        result.put("success", true);
         return result;
     }
 
