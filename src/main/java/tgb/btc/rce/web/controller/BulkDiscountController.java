@@ -55,16 +55,30 @@ public class BulkDiscountController {
 
     @PostMapping(value = "/saveDiscounts")
     @ResponseBody
-    public ObjectNode saveDiscounts(@RequestBody List<BulkDiscount> bulkDiscounts) {
+    public ObjectNode saveDiscounts(@RequestBody List<List<BulkDiscount>> bulkDiscounts) {
         ObjectMapper objectMapper = new ObjectMapper();
         ObjectNode result = objectMapper.createObjectNode();
-        bulkDiscounts.forEach(bulkDiscount -> {
-            String key = String.join(".", new String[] {bulkDiscount.getFiatCurrency().getCode(),
+        bulkDiscounts.get(0).forEach(bulkDiscount -> {
+            String key = String.join(".", new String[]{bulkDiscount.getFiatCurrency().getCode(),
                     bulkDiscount.getDealType().getKey(), String.valueOf(bulkDiscount.getSum())});
-            BotProperties.BULK_DISCOUNT.setProperty(key, bulkDiscount.getPercent());
-            BotProperties.BULK_DISCOUNT.reload();
-            BotProperties.BULK_DISCOUNT.load();
+            BotProperties.BULK_DISCOUNT.setProperty(key, String.valueOf(bulkDiscount.getPercent()));
         });
+        bulkDiscounts.get(1).forEach(bulkDiscount -> {
+            String key = String.join(".", new String[]{bulkDiscount.getFiatCurrency().getCode(),
+                    bulkDiscount.getDealType().getKey(), String.valueOf(bulkDiscount.getSum())});
+            BotProperties.BULK_DISCOUNT.setProperty(key, String.valueOf(bulkDiscount.getPercent()));
+        });
+        bulkDiscounts.get(2).forEach(bulkDiscount -> {
+            String key = String.join(".", new String[]{bulkDiscount.getFiatCurrency().getCode(),
+                    bulkDiscount.getDealType().getKey(), String.valueOf(bulkDiscount.getSum())});
+            BotProperties.BULK_DISCOUNT.clearProperty(key);
+        });
+//        bulkDiscounts.forEach(bulkDiscount -> {
+//            String key = String.join(".", new String[] {bulkDiscount.getFiatCurrency().getCode(),
+//                    bulkDiscount.getDealType().getKey(), String.valueOf(bulkDiscount.getSum())});
+//            BotProperties.BULK_DISCOUNT.setProperty(key, bulkDiscount.getPercent());
+//        });
+        BotProperties.BULK_DISCOUNT.load();
         result.put("success", true);
         return result;
     }

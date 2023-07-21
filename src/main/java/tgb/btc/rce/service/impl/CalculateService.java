@@ -99,7 +99,7 @@ public class CalculateService {
                 : BigDecimalUtil.multiplyHalfUp(amount, getPercentsFactor(calculateData.getCommission()));
         dealAmount.setCommission(commission);
         amount = amount.subtract(commission);
-        BigDecimal bulkDiscount = BulkDiscountUtil.getPercentBySum(amount, fiatCurrency);
+        BigDecimal bulkDiscount = BulkDiscountUtil.getPercentBySum(amount, fiatCurrency, dealAmount.getDealType());
         if (BigDecimal.ZERO.compareTo(bulkDiscount) != 0) {
             amount = BigDecimalUtil.addHalfUp(amount, BigDecimalUtil.multiplyHalfUp(amount, getPercentsFactor(bulkDiscount)));
         }
@@ -130,7 +130,8 @@ public class CalculateService {
         BigDecimal bulkDiscount = Objects.nonNull(calculateData.getBulkDiscount())
                 ? calculateData.getBulkDiscount()
                 : BulkDiscountUtil.getPercentBySum(
-                convertToFiat(cryptoAmount, calculateData.getCryptoCourse(), calculateData.getUsdCourse()), fiatCurrency);
+                convertToFiat(cryptoAmount, calculateData.getCryptoCourse(), calculateData.getUsdCourse()), fiatCurrency,
+                dealAmount.getDealType());
         if (BigDecimal.ZERO.compareTo(bulkDiscount) != 0) {
             BigDecimal totalPercentsWithBulk = BigDecimalUtil.addHalfUp(BigDecimalUtil.HUNDRED, bulkDiscount);
             BigDecimal onePercentBulk = BigDecimalUtil.divideHalfUp(cryptoAmount, totalPercentsWithBulk);
@@ -176,7 +177,7 @@ public class CalculateService {
                 ? calculateData.getFixCommission()
                 : getCommissionForSell(amount, calculateData.getCommission());
         amount = amount.add(commission);
-        BigDecimal bulkDiscount = BulkDiscountUtil.getPercentBySum(amount, fiatCurrency);
+        BigDecimal bulkDiscount = BulkDiscountUtil.getPercentBySum(amount, fiatCurrency, dealAmount.getDealType());
         if (BigDecimal.ZERO.compareTo(bulkDiscount) != 0) {
             amount = BigDecimalUtil.subtractHalfUp(amount, BigDecimalUtil.multiplyHalfUp(amount, getPercentsFactor(bulkDiscount)));
         }
@@ -202,7 +203,8 @@ public class CalculateService {
         BigDecimal bulkDiscount = Objects.nonNull(calculateData.getBulkDiscount())
                 ? calculateData.getBulkDiscount()
                 : BulkDiscountUtil.getPercentBySum(
-                convertToFiat(cryptoAmount, calculateData.getCryptoCourse(), calculateData.getUsdCourse()), fiatCurrency);
+                convertToFiat(cryptoAmount, calculateData.getCryptoCourse(), calculateData.getUsdCourse()), fiatCurrency,
+                dealAmount.getDealType());
         if (BigDecimal.ZERO.compareTo(bulkDiscount) != 0) {
             BigDecimal totalPercentsWithBulk = BigDecimalUtil.subtractHalfUp(BigDecimalUtil.HUNDRED, bulkDiscount);
             BigDecimal onePercentBulk = BigDecimalUtil.divideHalfUp(cryptoAmount, totalPercentsWithBulk);

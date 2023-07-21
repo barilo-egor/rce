@@ -14,9 +14,9 @@ public enum Menu {
                         Command.USERS, Command.QUIT_ADMIN_PANEL)),
     DISCOUNTS(ReferralType.STANDARD.equals(UserService.REFERRAL_TYPE)
             ? List.of(Command.RANK_DISCOUNT, Command.TURN_RANK_DISCOUNT, Command.PERSONAL_BUY_DISCOUNT,
-                      Command.PERSONAL_SELL_DISCOUNT, Command.BULK_DISCOUNTS, Command.REFERRAL_PERCENT, Command.ADMIN_BACK)
+                      Command.PERSONAL_SELL_DISCOUNT, Command.REFERRAL_PERCENT, Command.ADMIN_BACK)
             : List.of(Command.RANK_DISCOUNT, Command.TURN_RANK_DISCOUNT, Command.PERSONAL_BUY_DISCOUNT,
-            Command.PERSONAL_SELL_DISCOUNT, Command.BULK_DISCOUNTS, Command.ADMIN_BACK)),
+            Command.PERSONAL_SELL_DISCOUNT, Command.ADMIN_BACK)),
     USERS(ReferralType.STANDARD.equals(UserService.REFERRAL_TYPE)
             ? List.of(Command.SEND_MESSAGES,  Command.BAN_UNBAN, Command.USER_INFORMATION, Command.USER_REFERRAL_BALANCE, Command.ADMIN_BACK)
             : List.of(Command.SEND_MESSAGES,  Command.BAN_UNBAN, Command.USER_INFORMATION, Command.ADMIN_BACK)),

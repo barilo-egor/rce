@@ -15,7 +15,7 @@ import java.io.IOException;
 
 @CommandProcessor(command = Command.BULK_DISCOUNTS, step = 1)
 @Slf4j
-public class UpdateBulkDiscounts extends Processor {
+public class UpdateBulkDiscounts extends Processor { // TODO удалить
 
     @Override
     public void run(Update update) {

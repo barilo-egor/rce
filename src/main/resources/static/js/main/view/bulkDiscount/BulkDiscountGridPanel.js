@@ -7,11 +7,11 @@ Ext.define('Main.view.bulkDiscount.BulkDiscountGridPanel', {
         header: 'Сумма',
         dataIndex: 'sum',
         flex: 0.65,
-        editor: {
-            xtype: 'numberfield',
-            selectOnFocus: false,
-            allowBlank: false,
-        },
+        // editor: {
+        //     xtype: 'numberfield',
+        //     selectOnFocus: false,
+        //     allowBlank: false,
+        // },
     }, {
         header: 'Скидка',
         dataIndex: 'percent',

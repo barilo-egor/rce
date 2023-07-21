@@ -108,6 +108,10 @@ public interface PropertiesReader {
         ReaderSupport.getInstance(this).setProperty(key, value);
     }
 
+    default void clearProperty(String key) {
+        ReaderSupport.getInstance(this).clearProperty(key);
+    }
+
     default File getFile() {
         return ReaderSupport.getInstance(this).getFile();
     }
