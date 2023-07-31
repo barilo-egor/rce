@@ -1,10 +1,14 @@
 package tgb.btc.rce.enums;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import tgb.btc.rce.exception.EnumTypeNotFoundException;
+import tgb.btc.rce.web.util.JacksonUtil;
+import tgb.btc.rce.web.vo.interfaces.ObjectNodeConvertable;
 
 import java.util.Arrays;
+import java.util.function.Function;
 
-public enum DealType {
+public enum DealType implements ObjectNodeConvertable<DealType> {
     BUY("покупка", "покупку", "покупки", "buy"),
     SELL("продажа", "продажу", "продажи", "sell");
 
@@ -61,5 +65,12 @@ public enum DealType {
                 .filter(dealType -> dealType.getKey().equals(key))
                 .findFirst()
                 .orElseThrow(EnumTypeNotFoundException::new);
+    }
+
+    @Override
+    public Function<DealType, ObjectNode> mapFunction() {
+        return dealType -> JacksonUtil.getEmpty()
+                .put("name", dealType.name())
+                .put("nominative", dealType.getNominative());
     }
 }
