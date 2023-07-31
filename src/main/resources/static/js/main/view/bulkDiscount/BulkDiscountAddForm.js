@@ -8,31 +8,49 @@ Ext.define('Main.view.bulkDiscount.BulkDiscountAddForm', {
         type: 'fit'
     },
     viewModel: true,
+    modal: true,
     items: [
         {
             xtype: 'form',
-            layout: {
-                type: 'vbox',
-                align: 'stretch'
+            bodyPadding: 50,
+            defaults: {
+                anchor: '100%',
+                labelWidth: 60
             },
+            // layout: {
+            //     type: 'vbox',
+            //     align: 'stretch'
+            // },
             buttonAlign: 'center',
             items: [
                 {
                     xtype: 'numberfield',
-                    fieldLabel: 'Сумма',
                     name: 'sum',
+                    hidden: true,
+                    bind: {
+                        value: '{sum}'
+                    }
+                },
+                {
+                    xtype: 'numberfield',
+                    fieldLabel: 'Сумма',
+                    name: 'newSum',
+                    bind: {
+                        value: '{sum}'
+                    }
                 },
                 {
                     xtype: 'numberfield',
                     fieldLabel: 'Скидка',
                     name: 'percent',
+                    bind: {
+                        value: '{percent}'
+                    }
                 }
             ],
             buttons: [
                 {
                     text: 'Сохранить',
-                    iconCls: 'fas fa-save greenBtn',
-                    cls: 'greenBtn',
                     handler: 'onSaveRecClick'
                 }
             ]

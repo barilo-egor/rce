@@ -6,8 +6,7 @@ Ext.define('Main.view.bulkDiscount.BulkDiscountController', {
         'Main.view.bulkDiscount.BulkDiscountAddForm'
     ],
     bulkDiscountsAfterRender: function () {
-        let me = this
-
+        let me = this;
         let discountsTabPanel = Ext.ComponentQuery.query('[id=discountsTabPanel]')[0];
         Ext.Ajax.request({
             url: '/web/bulk_discount/getDiscounts',
@@ -53,7 +52,9 @@ Ext.define('Main.view.bulkDiscount.BulkDiscountController', {
                 items: [
                     {
                         xtype: 'bulkdiscountgridpanel',
-                        store: store
+                        store: store,
+                        fiatCurrency: fiatCurrency.displayName,
+                        dealType: dealType.displayName
                     }
                 ]
             };
@@ -67,7 +68,7 @@ Ext.define('Main.view.bulkDiscount.BulkDiscountController', {
         let sum = form.getValues().sum;
         let percent = form.getValues().percent;
         let window = btn.up('window');
-        let view = window.getViewModel().get('view');
+        // let view = window.getViewModel().get('view');
         window.close();
         let newRec = new Main.view.bulkDiscount.model.BulkDiscountModel({
             sum: sum,
@@ -77,35 +78,34 @@ Ext.define('Main.view.bulkDiscount.BulkDiscountController', {
         });
         let store = view.getStore();
         let recs = store.getData().getRange();
-        if (recs[recs.length - 1].getData().sum > sum) store.insert(recs.length, newRec);
+        if (recs.length === 0) store.add(newRec)
         else {
-            for (let rec of recs) {
-                if (sum > rec.getData().sum) {
-                    store.insert(store.indexOf(rec), newRec);
-                    break;
+            if (recs[recs.length - 1].getData().sum > sum) store.insert(recs.length, newRec);
+            else {
+                for (let rec of recs) {
+                    if (sum > rec.getData().sum) {
+                        store.insert(store.indexOf(rec), newRec);
+                        break;
+                    }
                 }
             }
         }
     },
 
     onAddClick: function () {
-        // let view = this.getView(),
-        //     rec = new Main.view.bulkDiscount.model.BulkDiscountModel({
-        //         sum: '',
-        //         percent: '',
-        //         fiatCurrency: view.up().up().up().title,
-        //         dealType: view.up().title,
-        //     });
-        //
-        // view.store.insert(0, rec);
-        // view.findPlugin('cellediting').startEdit(rec, 0);
+        Ext.widget('bulkdiscountaddform').show()
+    },
+
+    onEditClick: function (view, recIndex, cellIndex, item, e, record) {
         Ext.widget('bulkdiscountaddform', {
             viewModel: {
                 data: {
-                    view: this.getView()
+                    sum: record.data.sum,
+                    newSum: record.data.sum,
+                    percent: record.data.percent
                 }
             },
-        }).show();
+        }).show()
     },
 
     onRemoveClick: function(view, recIndex, cellIndex, item, e, record) {

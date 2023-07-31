@@ -23,15 +23,28 @@ Ext.define('Main.view.bulkDiscount.BulkDiscountGridPanel', {
         }
     }, {
         xtype: 'actioncolumn',
-
         width: 30,
         sortable: false,
         menuDisabled: true,
-        items: [{
-            iconCls: 'fas fa-minus',
-            tooltip: 'Удалить',
-            handler: 'onRemoveClick'
-        }]
+        items: [
+            {
+                iconCls: 'fas fa-pen',
+                tooltip: 'Редактировать',
+                handler: 'onEditClick'
+            }
+        ]
+    }, {
+        xtype: 'actioncolumn',
+        width: 30,
+        sortable: false,
+        menuDisabled: true,
+        items: [
+            {
+                iconCls: 'fas fa-minus',
+                tooltip: 'Удалить',
+                handler: 'onRemoveClick'
+            }
+        ]
     }
     ],
     tbar: [{
@@ -41,6 +54,8 @@ Ext.define('Main.view.bulkDiscount.BulkDiscountGridPanel', {
     }],
     fbar: [{
         text: 'Сохранить',
+        iconCls: 'fas fa-save greenBtn',
+        cls: 'greenBtn',
         handler: 'onSaveClick'
     }],
     plugins: {
