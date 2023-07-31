@@ -20,7 +20,8 @@ Ext.define('Main.view.components.MainFramePanel', {
     },
     items: [
         {
-            xtype: 'apiuserscontrolpanel'
+            xtype: 'usdcoursepanel',
+            scrollable: true
         }
     ]
 })

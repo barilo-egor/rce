@@ -194,7 +194,7 @@ Ext.define('Main.view.usdCourse.UsdCourseController', {
                             }
                         },
                         msgTarget: 'side',
-                        validator: ValidatorUtil.validatePositiveInt
+                        validator: ValidatorUtil.validateNotEmpty()
                     })
                 }
                 cryptoCoursesFieldSet.insert({
