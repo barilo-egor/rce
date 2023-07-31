@@ -4,34 +4,26 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import tgb.btc.rce.bean.ApiDeal;
-import tgb.btc.rce.bean.ApiUser;
-import tgb.btc.rce.enums.*;
+import tgb.btc.rce.enums.ApiDealStatus;
+import tgb.btc.rce.enums.CryptoCurrency;
+import tgb.btc.rce.enums.DealType;
+import tgb.btc.rce.enums.FiatCurrency;
 import tgb.btc.rce.repository.ApiDealRepository;
-import tgb.btc.rce.repository.ApiUserRepository;
-import tgb.btc.rce.service.impl.*;
-import tgb.btc.rce.util.BigDecimalUtil;
-import tgb.btc.rce.util.BotVariablePropertiesUtil;
+import tgb.btc.rce.service.impl.AdminService;
+import tgb.btc.rce.service.impl.ApiDealService;
+import tgb.btc.rce.service.impl.KeyboardService;
 import tgb.btc.rce.web.controller.MainWebController;
 import tgb.btc.rce.web.controller.api.enums.StatusCode;
-import tgb.btc.rce.web.vo.ApiDealVO;
 
 import java.math.BigDecimal;
-import java.util.Objects;
 
 @Controller
 @RequestMapping("/api")
 public class ApiController {
 
-    private ApiUserRepository apiUserRepository;
-
     private ApiDealRepository apiDealRepository;
 
     private AdminService adminService;
-
-    private CalculateService calculateService;
-
-    private CryptoCurrencyService cryptoCurrencyService;
 
     private KeyboardService keyboardService;
 
@@ -48,16 +40,6 @@ public class ApiController {
     }
 
     @Autowired
-    public void setCalculateService(CalculateService calculateService) {
-        this.calculateService = calculateService;
-    }
-
-    @Autowired
-    public void setCryptoCurrencyService(CryptoCurrencyService cryptoCurrencyService) {
-        this.cryptoCurrencyService = cryptoCurrencyService;
-    }
-
-    @Autowired
     public void setAdminService(AdminService adminService) {
         this.adminService = adminService;
     }
@@ -65,11 +47,6 @@ public class ApiController {
     @Autowired
     public void setApiDealRepository(ApiDealRepository apiDealRepository) {
         this.apiDealRepository = apiDealRepository;
-    }
-
-    @Autowired
-    public void setApiUserRepository(ApiUserRepository apiUserRepository) {
-        this.apiUserRepository = apiUserRepository;
     }
 
     @GetMapping("/documentation")
@@ -80,40 +57,13 @@ public class ApiController {
     @PostMapping("/new")
     @ResponseBody
     public ObjectNode newDeal(@RequestParam(required = false) String token,
-                              @RequestParam(required = false) DealType dealType,
-                              @RequestParam(required = false) BigDecimal amount,
-                              @RequestParam(required = false) BigDecimal cryptoAmount,
-                              @RequestParam(required = false) CryptoCurrency cryptoCurrency,
-                              @RequestParam(required = false) String requisite,
-                              @RequestParam(required = false) FiatCurrency fiatCurrency) {
-        ApiDealVO apiDealVO = new ApiDealVO(token, dealType, amount, cryptoAmount, cryptoCurrency, requisite, fiatCurrency);
-        StatusCode code = apiDealVO.verify();
-        if (Objects.nonNull(code)) return code.toJson();
-
-        if (apiUserRepository.countByToken(token) == 0) {
-            return StatusCode.USER_NOT_FOUND.toJson();
-        }
-
-        ApiUser apiUser = apiUserRepository.getByToken(token);
-        ApiDeal apiDeal = apiDealService.create(apiDealVO, apiUser);
-        BigDecimal minSum = BotVariablePropertiesUtil.getBigDecimal(BotVariableType.MIN_SUM, dealType, cryptoCurrency);
-        if (apiDeal.getCryptoAmount().compareTo(minSum) < 0) {
-            return StatusCode.MIN_SUM.toJson().set("data",
-                    MainWebController.DEFAULT_MAPPER.createObjectNode()
-                            .put("minSum", BigDecimalUtil.roundToPlainString(minSum, 8)));
-        }
-        ObjectNode result = StatusCode.CREATED_DEAL.toJson()
-                .set("data", MainWebController.DEFAULT_MAPPER.createObjectNode()
-                        .put("id", apiDeal.getPid())
-                        .put("amountToPay", BigDecimalUtil.roundToPlainString(apiDeal.getAmountToPay(), 8))
-                        .put("requisite", apiUser.getRequisite(apiDeal.getDealType()))
-                );
-        if (DealType.isBuy(apiDeal.getDealType())) {
-            result.put("cryptoAmount", apiDeal.getCryptoAmount());
-        } else {
-            result.put("amount", apiDeal.getAmount());
-        }
-        return result;
+                               @RequestParam(required = false) DealType dealType,
+                               @RequestParam(required = false) BigDecimal amount,
+                               @RequestParam(required = false) BigDecimal cryptoAmount,
+                               @RequestParam(required = false) CryptoCurrency cryptoCurrency,
+                               @RequestParam(required = false) String requisite,
+                               @RequestParam(required = false) FiatCurrency fiatCurrency) {
+        return apiDealService.newDeal(token, dealType, amount, cryptoAmount, cryptoCurrency, requisite, fiatCurrency);
     }
 
     @PostMapping("/paid")
