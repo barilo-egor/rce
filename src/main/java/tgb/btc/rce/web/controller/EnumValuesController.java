@@ -1,4 +1,4 @@
-package tgb.btc.rce.web.controller.api;
+package tgb.btc.rce.web.controller;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import org.springframework.stereotype.Controller;

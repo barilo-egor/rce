@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import tgb.btc.rce.enums.CryptoCurrency;
 import tgb.btc.rce.enums.DealType;
+import tgb.btc.rce.enums.FiatCurrency;
 import tgb.btc.rce.web.controller.api.enums.StatusCode;
 
 import java.math.BigDecimal;
@@ -24,6 +25,8 @@ public class ApiDealVO {
     private CryptoCurrency cryptoCurrency;
 
     private String requisite;
+
+    private FiatCurrency fiatCurrency;
 
     public StatusCode verify() {
         if (Objects.isNull(token)) return StatusCode.EMPTY_TOKEN;
