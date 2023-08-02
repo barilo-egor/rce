@@ -25,16 +25,32 @@ Ext.define('Main.view.bulkDiscount.BulkDiscountAddForm', {
             items: [
                 {
                     xtype: 'numberfield',
-                    name: 'sum',
+                    name: 'oldSum',
                     hidden: true,
                     bind: {
-                        value: '{sum}'
+                        value: '{oldSum}'
+                    }
+                },
+                {
+                    xtype: 'textfield',
+                    name: 'fiatCurrency',
+                    hidden: true,
+                    bind: {
+                        value: '{fiatCurrency}'
+                    }
+                },
+                {
+                    xtype: 'textfield',
+                    name: 'dealType',
+                    hidden: true,
+                    bind: {
+                        value: '{dealType}'
                     }
                 },
                 {
                     xtype: 'numberfield',
                     fieldLabel: 'Сумма',
-                    name: 'newSum',
+                    name: 'sum',
                     bind: {
                         value: '{sum}'
                     }
@@ -51,7 +67,7 @@ Ext.define('Main.view.bulkDiscount.BulkDiscountAddForm', {
             buttons: [
                 {
                     text: 'Сохранить',
-                    handler: 'onSaveRecClick'
+                    handler: 'onSaveClick'
                 }
             ]
         }

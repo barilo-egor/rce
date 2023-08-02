@@ -63,46 +63,57 @@ Ext.define('Main.view.bulkDiscount.BulkDiscountController', {
         return fiatCurrencyTabPanel;
     },
 
-    onSaveRecClick: function (btn) {
+    onSaveClick: function (btn) {
+        let me = this;
         let form = btn.up('form');
-        let sum = form.getValues().sum;
-        let percent = form.getValues().percent;
-        let window = btn.up('window');
-        // let view = window.getViewModel().get('view');
-        window.close();
-        let newRec = new Main.view.bulkDiscount.model.BulkDiscountModel({
-            sum: sum,
-            percent: percent,
-            fiatCurrency: view.up().up().up().title,
-            dealType: view.up().title,
-        });
-        let store = view.getStore();
-        let recs = store.getData().getRange();
-        if (recs.length === 0) store.add(newRec)
-        else {
-            if (recs[recs.length - 1].getData().sum > sum) store.insert(recs.length, newRec);
-            else {
-                for (let rec of recs) {
-                    if (sum > rec.getData().sum) {
-                        store.insert(store.indexOf(rec), newRec);
-                        break;
-                    }
-                }
+        let oldSum = form.getValues().oldSum;
+        let values = form.getValues();
+        let bulkDiscount = {
+            sum: values.sum,
+            percent: values.percent,
+            fiatCurrency: values.fiatCurrency,
+            dealType: values.dealType
+        };
+        me.saveDiscountRequest(bulkDiscount, oldSum)
+    },
+
+    saveDiscountRequest: function (bulkDiscount, oldSum) {
+        let requestBody = {
+            url: '/web/bulk_discount/saveDiscount',
+            method: 'POST',
+            jsonData: bulkDiscount,
+            success: function (rs) {
+                Ext.Msg.alert('Информация', 'Скидка сохранена.');
             }
+        };
+        if (oldSum) requestBody.params = {
+            oldSum: oldSum
         }
+        Ext.Ajax.request(requestBody);
     },
 
-    onAddClick: function () {
-        Ext.widget('bulkdiscountaddform').show()
-    },
-
-    onEditClick: function (view, recIndex, cellIndex, item, e, record) {
+    onAddClick: function (btn) {
+        let grid = btn.up('grid');
         Ext.widget('bulkdiscountaddform', {
             viewModel: {
                 data: {
+                    fiatCurrency: grid.fiatCurrency,
+                    dealType: grid.dealType
+                }
+            },
+        }).show()
+    },
+
+    onEditClick: function (view, recIndex, cellIndex, item, e, record) {
+        let grid = view.up('grid');
+        Ext.widget('bulkdiscountaddform', {
+            viewModel: {
+                data: {
+                    oldSum: record.data.sum,
                     sum: record.data.sum,
-                    newSum: record.data.sum,
-                    percent: record.data.percent
+                    percent: record.data.percent,
+                    fiatCurrency: grid.fiatCurrency,
+                    dealType: grid.dealType
                 }
             },
         }).show()
@@ -112,37 +123,37 @@ Ext.define('Main.view.bulkDiscount.BulkDiscountController', {
         record.drop();
     },
 
-    onSaveClick: function () {
-        let addedBulkDiscounts = [];
-        let updatedBulkDiscounts = [];
-        let removedBulkDiscounts = [];
-        let bulkDiscounts = [];
-        for (let grid of Ext.ComponentQuery.query('grid')) {
-            let store = grid.getStore();
-            for (let bulkDiscount of store.getModifiedRecords()) {
-                if (bulkDiscount.crudState === "C") addedBulkDiscounts.push(bulkDiscount.data)
-                else updatedBulkDiscounts.push(bulkDiscount.data)
-            }
-            for (let bulkDiscount of store.getRemovedRecords()) {
-                removedBulkDiscounts.push(bulkDiscount.data)
-            }
-        }
-        bulkDiscounts.push(addedBulkDiscounts);
-        bulkDiscounts.push(updatedBulkDiscounts);
-        bulkDiscounts.push(removedBulkDiscounts);
-        // for (let grid of Ext.ComponentQuery.query('grid')) {
-        //     for (let bulkDiscount of grid.getStore().data.items) {
-        //             bulkDiscounts.push(bulkDiscount.data)
-        //     }
-        // }
-        Ext.Ajax.request({
-            url: '/web/bulk_discount/saveDiscounts',
-            method: 'POST',
-            jsonData: bulkDiscounts,
-            success: function (rs) {
-                Ext.Msg.alert('Информация', 'Скидки были успешно обновлены.');
-            }
-        })
-    }
+    // onSaveClick: function () {
+    //     let addedBulkDiscounts = [];
+    //     let updatedBulkDiscounts = [];
+    //     let removedBulkDiscounts = [];
+    //     let bulkDiscounts = [];
+    //     for (let grid of Ext.ComponentQuery.query('grid')) {
+    //         let store = grid.getStore();
+    //         for (let bulkDiscount of store.getModifiedRecords()) {
+    //             if (bulkDiscount.crudState === "C") addedBulkDiscounts.push(bulkDiscount.data)
+    //             else updatedBulkDiscounts.push(bulkDiscount.data)
+    //         }
+    //         for (let bulkDiscount of store.getRemovedRecords()) {
+    //             removedBulkDiscounts.push(bulkDiscount.data)
+    //         }
+    //     }
+    //     bulkDiscounts.push(addedBulkDiscounts);
+    //     bulkDiscounts.push(updatedBulkDiscounts);
+    //     bulkDiscounts.push(removedBulkDiscounts);
+    //     // for (let grid of Ext.ComponentQuery.query('grid')) {
+    //     //     for (let bulkDiscount of grid.getStore().data.items) {
+    //     //             bulkDiscounts.push(bulkDiscount.data)
+    //     //     }
+    //     // }
+    //     Ext.Ajax.request({
+    //         url: '/web/bulk_discount/saveDiscounts',
+    //         method: 'POST',
+    //         jsonData: bulkDiscounts,
+    //         success: function (rs) {
+    //             Ext.Msg.alert('Информация', 'Скидки были успешно обновлены.');
+    //         }
+    //     })
+    // }
 
 })

@@ -53,34 +53,34 @@ public class BulkDiscountController {
         return result;
     }
 
-    @PostMapping(value = "/saveDiscounts")
+    @PostMapping(value = "/saveDiscount")
     @ResponseBody
-    public ObjectNode saveDiscounts(@RequestBody List<List<BulkDiscount>> bulkDiscounts) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        ObjectNode result = objectMapper.createObjectNode();
-        bulkDiscounts.get(0).forEach(bulkDiscount -> {
-            String key = String.join(".", new String[]{bulkDiscount.getFiatCurrency().getCode(),
-                    bulkDiscount.getDealType().getKey(), String.valueOf(bulkDiscount.getSum())});
-            BotProperties.BULK_DISCOUNT.setProperty(key, String.valueOf(bulkDiscount.getPercent()));
-        });
-        bulkDiscounts.get(1).forEach(bulkDiscount -> {
-            String key = String.join(".", new String[]{bulkDiscount.getFiatCurrency().getCode(),
-                    bulkDiscount.getDealType().getKey(), String.valueOf(bulkDiscount.getSum())});
-            BotProperties.BULK_DISCOUNT.setProperty(key, String.valueOf(bulkDiscount.getPercent()));
-        });
-        bulkDiscounts.get(2).forEach(bulkDiscount -> {
-            String key = String.join(".", new String[]{bulkDiscount.getFiatCurrency().getCode(),
-                    bulkDiscount.getDealType().getKey(), String.valueOf(bulkDiscount.getSum())});
-            BotProperties.BULK_DISCOUNT.clearProperty(key);
-        });
-//        bulkDiscounts.forEach(bulkDiscount -> {
-//            String key = String.join(".", new String[] {bulkDiscount.getFiatCurrency().getCode(),
+    public ObjectNode saveDiscounts(
+            @RequestBody BulkDiscount bulkDiscount, @RequestParam(required = false) Integer oldSum) {
+
+
+
+//        ObjectMapper objectMapper = new ObjectMapper();
+//        ObjectNode result = objectMapper.createObjectNode();
+//        bulkDiscounts.get(0).forEach(bulkDiscount -> {
+//            String key = String.join(".", new String[]{bulkDiscount.getFiatCurrency().getCode(),
 //                    bulkDiscount.getDealType().getKey(), String.valueOf(bulkDiscount.getSum())});
-//            BotProperties.BULK_DISCOUNT.setProperty(key, bulkDiscount.getPercent());
+//            BotProperties.BULK_DISCOUNT.setProperty(key, String.valueOf(bulkDiscount.getPercent()));
 //        });
-        BotProperties.BULK_DISCOUNT.load();
-        result.put("success", true);
-        return result;
+//        bulkDiscounts.get(1).forEach(bulkDiscount -> {
+//            String key = String.join(".", new String[]{bulkDiscount.getFiatCurrency().getCode(),
+//                    bulkDiscount.getDealType().getKey(), String.valueOf(bulkDiscount.getSum())});
+//            BotProperties.BULK_DISCOUNT.setProperty(key, String.valueOf(bulkDiscount.getPercent()));
+//        });
+//        bulkDiscounts.get(2).forEach(bulkDiscount -> {
+//            String key = String.join(".", new String[]{bulkDiscount.getFiatCurrency().getCode(),
+//                    bulkDiscount.getDealType().getKey(), String.valueOf(bulkDiscount.getSum())});
+//            BotProperties.BULK_DISCOUNT.clearProperty(key);
+//        });
+//        BotProperties.BULK_DISCOUNT.load();
+//        result.put("success", true);
+//        return result;
+        return null;
     }
 
 }

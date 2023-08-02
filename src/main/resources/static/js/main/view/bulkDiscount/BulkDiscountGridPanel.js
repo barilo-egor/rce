@@ -52,12 +52,12 @@ Ext.define('Main.view.bulkDiscount.BulkDiscountGridPanel', {
         tooltip: 'Добавить',
         handler: 'onAddClick'
     }],
-    fbar: [{
-        text: 'Сохранить',
-        iconCls: 'fas fa-save greenBtn',
-        cls: 'greenBtn',
-        handler: 'onSaveClick'
-    }],
+    // fbar: [{
+    //     text: 'Сохранить',
+    //     iconCls: 'fas fa-save greenBtn',
+    //     cls: 'greenBtn',
+    //     handler: 'onSaveClick'
+    // }],
     plugins: {
         cellediting: {
             clicksToEdit: 1
