@@ -113,6 +113,8 @@ public enum Command {
     USER_ADDITIONAL_VERIFICATION("user_verification", false, false, false),
     SHARE_REVIEW("share_review", false, false, false),
     CHOOSING_FIAT_CURRENCY("chs_fc", false, false, false),
+    USE_PROMO(BotProperties.BUTTONS_DESIGN.getString("USE_PROMO"), false, false, false),
+    DONT_USE_PROMO(BotProperties.BUTTONS_DESIGN.getString("DONT_USE_PROMO"), false, false, false),
 
     /** REQUESTS */
     NEW_DEALS("Новые заявки", true, false, false),

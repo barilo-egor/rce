@@ -95,12 +95,12 @@ public class KeyboardService {
     public ReplyKeyboard getPromoCode(BigDecimal sumWithDiscount, BigDecimal dealAmount) {
         return KeyboardUtil.buildInline(List.of(
                 InlineButton.builder()
-                        .text("Использовать, " + BigDecimalUtil.roundToPlainString(sumWithDiscount))
+                        .text(String.format(Command.USE_PROMO.getText(), BigDecimalUtil.roundToPlainString(sumWithDiscount)))
                         .data(BotStringConstants.USE_PROMO)
                         .inlineType(InlineType.CALLBACK_DATA)
                         .build(),
                 InlineButton.builder()
-                        .text("Без промокода, " + BigDecimalUtil.roundToPlainString(dealAmount))
+                        .text(String.format(Command.DONT_USE_PROMO.getText(), BigDecimalUtil.roundToPlainString(dealAmount)))
                         .data(BotStringConstants.DONT_USE_PROMO)
                         .inlineType(InlineType.CALLBACK_DATA)
                         .build(),

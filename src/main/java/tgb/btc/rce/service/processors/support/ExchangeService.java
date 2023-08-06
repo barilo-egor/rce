@@ -200,24 +200,34 @@ public class ExchangeService {
         Long currentDealPid = userRepository.getCurrentDealByChatId(chatId);
         BigDecimal dealAmount = dealRepository.getAmountByPid(currentDealPid);
         BigDecimal cryptoAmount = dealRepository.getCryptoAmountByPid(currentDealPid);
-        String message;
-        if (DealType.isBuy(dealType)) {
-            message = "Сумма к получению: " + BigDecimalUtil.roundToPlainString(cryptoAmount, cryptoCurrency.getScale())
-                    + " " + cryptoCurrency.getDisplayName() + "\n"
-                    + "Сумма к оплате: " + BigDecimalUtil.roundToPlainString(dealAmount) + " "
-                    + fiatCurrency.getDisplayName() + "\n";
-            if (BooleanUtils.isTrue(FunctionPropertiesUtil.getSumToReceive(cryptoCurrency))) {
-                message = message.concat("Сумма к зачислению: "
-                        + BigDecimalUtil.roundToPlainString(calculateService.convertToFiat(
-                        dealRepository.getCryptoCurrencyByPid(currentDealPid),
-                        dealRepository.getFiatCurrencyByPid(currentDealPid),
-                        cryptoAmount))
-                        + " " + fiatCurrency.getDisplayName());
+        String message = BotProperties.MESSAGE.getString("sum.info");
+        if (Objects.isNull(message)) {
+            if (DealType.isBuy(dealType)) {
+                message = "Сумма к получению: " + BigDecimalUtil.roundToPlainString(cryptoAmount, cryptoCurrency.getScale())
+                        + " " + cryptoCurrency.getDisplayName() + "\n"
+                        + "Сумма к оплате: " + BigDecimalUtil.roundToPlainString(dealAmount) + " "
+                        + fiatCurrency.getDisplayName() + "\n";
+                if (BooleanUtils.isTrue(FunctionPropertiesUtil.getSumToReceive(cryptoCurrency))) {
+                    message = message.concat("Сумма к зачислению: "
+                            + BigDecimalUtil.roundToPlainString(calculateService.convertToFiat(
+                            dealRepository.getCryptoCurrencyByPid(currentDealPid),
+                            dealRepository.getFiatCurrencyByPid(currentDealPid),
+                            cryptoAmount))
+                            + " " + fiatCurrency.getDisplayName());
+                }
+            } else message = "Сумма к получению: " + BigDecimalUtil.roundToPlainString(dealAmount) + " "
+                    + fiatCurrency.getDisplayName() + "\n"
+                    + "Сумма к оплате: " + BigDecimalUtil.roundToPlainString(cryptoAmount, cryptoCurrency.getScale())
+                    + " " + cryptoCurrency.getShortName();
+        } else {
+            if (DealType.isBuy(dealType)) {
+                message = String.format(message, BigDecimalUtil.roundToPlainString(cryptoAmount, cryptoCurrency.getScale()),
+                        cryptoCurrency.getDisplayName(), BigDecimalUtil.roundToPlainString(dealAmount), fiatCurrency.getDisplayName());
+            } else {
+                message = String.format(message, BigDecimalUtil.roundToPlainString(dealAmount), fiatCurrency.getDisplayName(),
+                        BigDecimalUtil.roundToPlainString(cryptoAmount, cryptoCurrency.getScale()), cryptoCurrency.getShortName());
             }
-        } else message = "Сумма к получению: " + BigDecimalUtil.roundToPlainString(dealAmount) + " "
-                + fiatCurrency.getDisplayName() + "\n"
-                + "Сумма к оплате: " + BigDecimalUtil.roundToPlainString(cryptoAmount, cryptoCurrency.getScale())
-                + " " + cryptoCurrency.getShortName();
+        }
         responseSender.sendMessage(chatId, message);
     }
 
@@ -293,10 +303,17 @@ public class ExchangeService {
         ReplyKeyboard keyboard;
         String message;
         if (DealType.isBuy(deal.getDealType())) {
-            message = "\uD83D\uDCDDВведите " + cryptoCurrency.getDisplayName()
-                    + "-адрес кошелька, куда вы хотите отправить "
-                    + BigDecimalUtil.roundToPlainString(deal.getCryptoAmount(), cryptoCurrency.getScale())
-                    + " " + cryptoCurrency.getShortName();
+            message = MessagePropertiesUtil.getMessage("send.wallet.buy");
+            if (Objects.isNull(message)) {
+                message = "\uD83D\uDCDDВведите " + cryptoCurrency.getDisplayName()
+                        + "-адрес кошелька, куда вы хотите отправить "
+                        + BigDecimalUtil.roundToPlainString(deal.getCryptoAmount(), cryptoCurrency.getScale())
+                        + " " + cryptoCurrency.getShortName();
+            } else {
+                message = String.format(message, BigDecimalUtil.roundToPlainString(deal.getCryptoAmount(), cryptoCurrency.getScale()),
+                        cryptoCurrency.getShortName());
+
+            }
             List<InlineButton> buttons = new ArrayList<>();
 
             if (dealRepository.getPassedDealsCountByUserChatIdAndDealTypeAndCryptoCurrency(chatId, DealType.BUY,
@@ -310,9 +327,14 @@ public class ExchangeService {
             buttons.add(BotInlineButton.CANCEL.getButton());
             keyboard = KeyboardUtil.buildInline(buttons);
         } else {
-            message = "Введите " + deal.getPaymentType().getName() + " реквизиты, куда вы хотите получить "
-                    + BigDecimalUtil.roundToPlainString(deal.getAmount(), 0) + " "
-                    + deal.getFiatCurrency().getDisplayName();
+            message = MessagePropertiesUtil.getMessage("send.wallet.sell");
+            if (Objects.isNull(message)) {
+                message = "Введите " + deal.getPaymentType().getName() + " реквизиты, куда вы хотите получить "
+                        + BigDecimalUtil.roundToPlainString(deal.getAmount(), 0) + " "
+                        + deal.getFiatCurrency().getDisplayName();
+            } else {
+                message = String.format(message, BigDecimalUtil.roundToPlainString(deal.getAmount(), 0), deal.getFiatCurrency().getDisplayName());
+            }
             keyboard = BotKeyboard.INLINE_CANCEL.getKeyboard();
         }
         responseSender.sendMessage(chatId, message, keyboard, "HTML")
@@ -401,6 +423,12 @@ public class ExchangeService {
             additionalText = botMessageService.findByTypeThrows(BotMessageType.ADDITIONAL_DEAL_TEXT).getText() + "\n\n";
         } catch (BaseException e) {
             additionalText = StringUtils.EMPTY;
+        }
+        String message = MessagePropertiesUtil.getMessage("choose.payment.type");
+        if (Objects.nonNull(message)) {
+            responseSender.sendMessage(chatId, message,
+                    keyboardService.getPaymentTypes(deal.getDealType(), deal.getFiatCurrency()), "HTML");
+            return;
         }
         StringBuilder messageNew = new StringBuilder();
         messageNew.append("\uD83D\uDCAC<b>Информация по заявке</b>\n" + "\uD83D\uDCAC<b>")
