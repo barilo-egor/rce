@@ -74,7 +74,8 @@ Ext.define('Main.view.bulkDiscount.BulkDiscountController', {
             fiatCurrency: values.fiatCurrency,
             dealType: values.dealType
         };
-        me.saveDiscountRequest(bulkDiscount, oldSum)
+        me.saveDiscountRequest(bulkDiscount, oldSum);
+        form.up('window').close();
     },
 
     saveDiscountRequest: function (bulkDiscount, oldSum) {
@@ -84,6 +85,29 @@ Ext.define('Main.view.bulkDiscount.BulkDiscountController', {
             jsonData: bulkDiscount,
             success: function (rs) {
                 Ext.Msg.alert('Информация', 'Скидка сохранена.');
+                // let newRec = new Main.view.bulkDiscount.model.BulkDiscountModel({
+                //     sum: sum,
+                //     percent: percent,
+                //     fiatCurrency: view.up().up().up().title,
+                //     dealType: view.up().title,
+                // });
+                // let store = view.getStore();
+                // let recs = store.getData().getRange();
+                // if (recs.length === 0) store.add(newRec)
+                // else {
+                //     if (recs[recs.length - 1].getData().sum > sum) store.insert(recs.length, newRec);
+                //     else {
+                //         for (let rec of recs) {
+                //             if (sum > rec.getData().sum) {
+                //                 store.insert(store.indexOf(rec), newRec);
+                //                 break;
+                //             }
+                //         }
+                //     }
+                // }
+            },
+            failure: function (rs) {
+                Ext.Msg.alert('Ошибка', 'При сохранении произошли ошибки.')
             }
         };
         if (oldSum) requestBody.params = {
@@ -120,7 +144,23 @@ Ext.define('Main.view.bulkDiscount.BulkDiscountController', {
     },
 
     onRemoveClick: function(view, recIndex, cellIndex, item, e, record) {
-        record.drop();
+        let bulkDiscount = {
+            sum: record.data.sum,
+            fiatCurrency: record.data.fiatCurrency,
+            dealType: record.data.dealType
+        };
+        Ext.Ajax.request({
+            url: '/web/bulk_discount/removeDiscount',
+            method: 'DELETE',
+            jsonData: bulkDiscount,
+            success: function (rs) {
+                Ext.Msg.alert('Информация', 'Скидка удалена.');
+                record.drop();
+            },
+            failure: function (rs) {
+                Ext.Msg.alert('Ошибка', 'При удалении произошли ошибки.')
+            }
+        });
     },
 
     // onSaveClick: function () {

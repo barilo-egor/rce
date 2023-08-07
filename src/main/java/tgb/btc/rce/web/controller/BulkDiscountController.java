@@ -12,7 +12,7 @@ import tgb.btc.rce.service.impl.BulkDiscountService;
 import tgb.btc.rce.util.FiatCurrencyUtil;
 import tgb.btc.rce.vo.BulkDiscount;
 
-import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Controller
@@ -55,13 +55,19 @@ public class BulkDiscountController {
 
     @PostMapping(value = "/saveDiscount")
     @ResponseBody
-    public ObjectNode saveDiscounts(
+    public ObjectNode saveDiscount(
             @RequestBody BulkDiscount bulkDiscount, @RequestParam(required = false) Integer oldSum) {
-
-
-
-//        ObjectMapper objectMapper = new ObjectMapper();
-//        ObjectNode result = objectMapper.createObjectNode();
+        String key = String.join(".", new String[]{bulkDiscount.getFiatCurrency().getCode(),
+                bulkDiscount.getDealType().getKey(), String.valueOf(bulkDiscount.getSum())});
+        if (Objects.nonNull(oldSum) && !oldSum.equals(bulkDiscount.getSum())) {
+            String oldKey = String.join(".", new String[]{bulkDiscount.getFiatCurrency().getCode(),
+                    bulkDiscount.getDealType().getKey(), String.valueOf(oldSum)});
+            BotProperties.BULK_DISCOUNT.clearProperty(oldKey);
+        }
+        BotProperties.BULK_DISCOUNT.setProperty(key, String.valueOf(bulkDiscount.getPercent()));
+        BotProperties.BULK_DISCOUNT.load();
+        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectNode result = objectMapper.createObjectNode();
 //        bulkDiscounts.get(0).forEach(bulkDiscount -> {
 //            String key = String.join(".", new String[]{bulkDiscount.getFiatCurrency().getCode(),
 //                    bulkDiscount.getDealType().getKey(), String.valueOf(bulkDiscount.getSum())});
@@ -78,9 +84,22 @@ public class BulkDiscountController {
 //            BotProperties.BULK_DISCOUNT.clearProperty(key);
 //        });
 //        BotProperties.BULK_DISCOUNT.load();
-//        result.put("success", true);
-//        return result;
-        return null;
+        result.put("success", true);
+        return result;
+    }
+
+    @DeleteMapping(value = "/removeDiscount")
+    @ResponseBody
+    public ObjectNode removeDiscount(
+            @RequestBody BulkDiscount bulkDiscount) {
+        String key = String.join(".", new String[]{bulkDiscount.getFiatCurrency().getCode(),
+                bulkDiscount.getDealType().getKey(), String.valueOf(bulkDiscount.getSum())});
+        BotProperties.BULK_DISCOUNT.clearProperty(key);
+        BotProperties.BULK_DISCOUNT.load();
+        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectNode result = objectMapper.createObjectNode();
+        result.put("success", true);
+        return result;
     }
 
 }
