@@ -16,6 +16,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static tgb.btc.rce.enums.InlineCalculatorButton.*;
@@ -61,7 +62,10 @@ public class KeyboardService {
                         .inlineType(InlineType.CALLBACK_DATA)
                         .build())
                 .collect(Collectors.toList());
-
+        Integer numberOfColumns = BotProperties.FUNCTIONS.getInteger("payment.types.columns", null);
+        if (Objects.nonNull(numberOfColumns)) {
+            return KeyboardUtil.buildInlineSingleLast(buttons, numberOfColumns, KeyboardUtil.INLINE_BACK_BUTTON);
+        }
         buttons.add(KeyboardUtil.INLINE_BACK_BUTTON);
         return KeyboardUtil.buildInline(buttons);
     }

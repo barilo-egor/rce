@@ -102,7 +102,7 @@ public enum Command {
 
     /** DEAL */
     DEAL("deal_proc", false, false, false),
-    PAID("Я оплатил(а)", false, false, false),
+    PAID(BotProperties.BUTTONS_DESIGN.getString("PAID"), false, false, false),
     CANCEL_DEAL("Отменить заявку", false, false, false),
     DELETE_DEAL("Удалить заявку", false, false, false),
     SHOW_DEAL("Показать", true, false, false),

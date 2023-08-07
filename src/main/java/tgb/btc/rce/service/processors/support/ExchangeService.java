@@ -29,10 +29,7 @@ import tgb.btc.rce.vo.calculate.DealAmount;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class ExchangeService {
@@ -493,7 +490,6 @@ public class ExchangeService {
         Long chatId = UpdateUtil.getChatId(update);
         Deal deal = dealRepository.findByPid(userRepository.getCurrentDealByChatId(chatId));
         CryptoCurrency currency = deal.getCryptoCurrency();
-        String message;
         Long countPassed = dealRepository.getCountPassedByUserChatId(chatId);
         Rank rank = Objects.nonNull(countPassed)
                 ? Rank.getByDealsNumber(countPassed.intValue())
@@ -507,6 +503,7 @@ public class ExchangeService {
 
         PaymentType paymentType = deal.getPaymentType();
         deal.setDateTime(LocalDateTime.now());
+        String message;
         if (DealType.isBuy(deal.getDealType())) {
             dealAmount = userDiscountService.applyDealDiscounts(chatId, dealAmount, deal.getUsedPromo(),
                     deal.getUsedReferralDiscount(), deal.getDiscount());
@@ -519,40 +516,46 @@ public class ExchangeService {
                 return;
             }
 
-            message = "✅<b>Заявка №</b><code>" + deal.getPid() + "</code> успешно создана." + "\n\n"
-                    + "<b>Получаете</b>: " + BigDecimalUtil.roundToPlainString(deal.getCryptoAmount(),
-                    currency.getScale())
-                    + " " + currency.getShortName() + "\n"
-                    + "<b>" + deal.getCryptoCurrency()
-                    .getDisplayName() + "-адрес</b>:" + "<code>" + deal.getWallet() + "</code>" + "\n\n"
-                    + "Ваш ранг: " + rank.getSmile() + ", скидка " + rank.getPercent() + "%" + "\n\n"
-                    + "<b>\uD83D\uDCB5Сумма к оплате</b>: <code>" + BigDecimalUtil.roundToPlainString(dealAmount, 0)
-                    + " " + deal.getFiatCurrency().getDisplayName() + "</code>" + "\n"
-                    + "<b>Резквизиты для оплаты:</b>" + "\n\n"
-                    + "<code>" + requisite + "</code>" + "\n\n"
-                    + "<b>⏳Заявка действительна</b>: " + BotVariablePropertiesUtil.getVariable(
-                    BotVariableType.DEAL_ACTIVE_TIME) + " минут" + "\n\n"
-                    + "☑️После успешного перевода денег по указанным реквизитам нажмите на кнопку <b>\""
-                    + Command.PAID.getText() + "\"</b> или же вы можете отменить данную заявку, нажав на кнопку <b>\""
-                    + Command.CANCEL_DEAL.getText() + "\"</b>."
-                    + promoCodeText;
+            message = getBuyMessage(deal, rank, requisite);
+            if (Objects.isNull(message)) {
+                message = "✅<b>Заявка №</b><code>" + deal.getPid() + "</code> успешно создана." + "\n\n"
+                        + "<b>Получаете</b>: " + BigDecimalUtil.roundToPlainString(deal.getCryptoAmount(),
+                        currency.getScale())
+                        + " " + currency.getShortName() + "\n"
+                        + "<b>" + deal.getCryptoCurrency()
+                        .getDisplayName() + "-адрес</b>:" + "<code>" + deal.getWallet() + "</code>" + "\n\n"
+                        + "Ваш ранг: " + rank.getSmile() + ", скидка " + rank.getPercent() + "%" + "\n\n"
+                        + "<b>\uD83D\uDCB5Сумма к оплате</b>: <code>" + BigDecimalUtil.roundToPlainString(dealAmount, 0)
+                        + " " + deal.getFiatCurrency().getDisplayName() + "</code>" + "\n"
+                        + "<b>Резквизиты для оплаты:</b>" + "\n\n"
+                        + "<code>" + requisite + "</code>" + "\n\n"
+                        + "<b>⏳Заявка действительна</b>: " + BotVariablePropertiesUtil.getVariable(
+                        BotVariableType.DEAL_ACTIVE_TIME) + " минут" + "\n\n"
+                        + "☑️После успешного перевода денег по указанным реквизитам нажмите на кнопку <b>\""
+                        + Command.PAID.getText() + "\"</b> или же вы можете отменить данную заявку, нажав на кнопку <b>\""
+                        + Command.CANCEL_DEAL.getText() + "\"</b>."
+                        + promoCodeText;
+            }
         } else {
-            message = "✅<b>Заявка №</b><code>" + deal.getPid() + "</code> успешно создана." + "\n\n"
-                    + "<b>Продаете</b>: "
-                    + BigDecimalUtil.roundToPlainString(deal.getCryptoAmount(),
-                    currency.getScale()) + " " + currency.getShortName() + "\n"
-                    + "<b>" + paymentType.getName() + " реквизиты</b>:" + "<code>" + deal.getWallet() + "</code>" + "\n\n"
-                    + "Ваш ранг: " + rank.getSmile() + ", скидка " + rank.getPercent() + "%" + "\n\n"
-                    + "\uD83D\uDCB5<b>Получаете</b>: <code>" + BigDecimalUtil.roundToPlainString(dealAmount)
-                    + " " + deal.getFiatCurrency().getDisplayName() + "</code>" + "\n"
-                    + "<b>Реквизиты для перевода " + currency.getShortName() + ":</b>" + "\n\n"
-                    + "<code>" + BotVariablePropertiesUtil.getWallet(currency) + "</code>" + "\n\n"
-                    + "⏳<b>Заявка действительна</b>: " + BotVariablePropertiesUtil.getVariable(
-                    BotVariableType.DEAL_ACTIVE_TIME) + " минут" + "\n\n"
-                    + "☑️После успешного перевода денег по указанному кошельку нажмите на кнопку <b>\""
-                    + Command.PAID.getText() + "\"</b> или же вы можете отменить данную заявку, нажав на кнопку <b>\""
-                    + Command.CANCEL_DEAL.getText() + "\"</b>."
-                    + promoCodeText;
+            message = getSellMessage(deal, rank);
+            if (Objects.isNull(message)) {
+                message = "✅<b>Заявка №</b><code>" + deal.getPid() + "</code> успешно создана." + "\n\n"
+                        + "<b>Продаете</b>: "
+                        + BigDecimalUtil.roundToPlainString(deal.getCryptoAmount(),
+                        currency.getScale()) + " " + currency.getShortName() + "\n"
+                        + "<b>" + paymentType.getName() + " реквизиты</b>:" + "<code>" + deal.getWallet() + "</code>" + "\n\n"
+                        + "Ваш ранг: " + rank.getSmile() + ", скидка " + rank.getPercent() + "%" + "\n\n"
+                        + "\uD83D\uDCB5<b>Получаете</b>: <code>" + BigDecimalUtil.roundToPlainString(dealAmount)
+                        + " " + deal.getFiatCurrency().getDisplayName() + "</code>" + "\n"
+                        + "<b>Реквизиты для перевода " + currency.getShortName() + ":</b>" + "\n\n"
+                        + "<code>" + BotVariablePropertiesUtil.getWallet(currency) + "</code>" + "\n\n"
+                        + "⏳<b>Заявка действительна</b>: " + BotVariablePropertiesUtil.getVariable(
+                        BotVariableType.DEAL_ACTIVE_TIME) + " минут" + "\n\n"
+                        + "☑️После успешного перевода денег по указанному кошельку нажмите на кнопку <b>\""
+                        + Command.PAID.getText() + "\"</b> или же вы можете отменить данную заявку, нажав на кнопку <b>\""
+                        + Command.CANCEL_DEAL.getText() + "\"</b>."
+                        + promoCodeText;
+            }
         }
         deal.setAmount(dealAmount);
         dealRepository.save(deal);
@@ -567,6 +570,27 @@ public class ExchangeService {
                                     () -> new BaseException(
                                             "Ошибка при получении messageId.")));
         }
+    }
+
+    public String getSellMessage(Deal deal, Rank rank) {
+        String message = MessagePropertiesUtil.getMessage("deal.build.sell");
+        if (Objects.isNull(message)) return null;
+        CryptoCurrency currency = deal.getCryptoCurrency();
+        return String.format(message, deal.getPid(), deal.getAmount(), deal.getFiatCurrency().getCode(), deal.getPaymentType().getName(),
+                deal.getWallet(), rank.getSmile(), rank.getPercent(),
+                deal.getCryptoAmount(), currency.getShortName(), currency.getShortName(),
+                BotVariablePropertiesUtil.getWallet(currency),
+                BotVariablePropertiesUtil.getVariable(BotVariableType.DEAL_ACTIVE_TIME));
+    }
+
+    public String getBuyMessage(Deal deal, Rank rank, String requisite) {
+        String message = MessagePropertiesUtil.getMessage("deal.build.buy");
+        if (Objects.isNull(message)) return null;
+        CryptoCurrency currency = deal.getCryptoCurrency();
+        return String.format(message, deal.getPid(), deal.getCryptoAmount(), currency.getShortName(), currency.getDisplayName(),
+                currency.getDisplayName(), deal.getWallet(), rank.getSmile(), rank.getPercent(),
+                deal.getAmount(), deal.getFiatCurrency().getDisplayName(), requisite,
+                BotVariablePropertiesUtil.getVariable(BotVariableType.DEAL_ACTIVE_TIME));
     }
 
     public Boolean isPaid(Update update) {
