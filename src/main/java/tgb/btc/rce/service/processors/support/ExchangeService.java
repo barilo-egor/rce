@@ -197,7 +197,7 @@ public class ExchangeService {
         Long currentDealPid = userRepository.getCurrentDealByChatId(chatId);
         BigDecimal dealAmount = dealRepository.getAmountByPid(currentDealPid);
         BigDecimal cryptoAmount = dealRepository.getCryptoAmountByPid(currentDealPid);
-        String message = BotProperties.MESSAGE.getString("sum.info");
+        String message = MessagePropertiesUtil.getMessage("sum.info");
         if (Objects.isNull(message)) {
             if (DealType.isBuy(dealType)) {
                 message = "Сумма к получению: " + BigDecimalUtil.roundToPlainString(cryptoAmount, cryptoCurrency.getScale())
@@ -318,7 +318,10 @@ public class ExchangeService {
                 String wallet = dealRepository.getWalletFromLastPassedByChatIdAndDealTypeAndCryptoCurrency(chatId,
                         DealType.BUY,
                         cryptoCurrency);
-                message = message.concat("\n\nВы можете использовать ваш сохраненный адрес:\n" + wallet);
+                String lastWalletMessage = MessagePropertiesUtil.getMessage("send.wallet.last");
+                if (Objects. isNull(lastWalletMessage))
+                    message = message.concat("\n\nВы можете использовать ваш сохраненный адрес:\n" + wallet);
+                else message = message.concat("\n\n" + lastWalletMessage + "\n" + wallet);
                 buttons.add(BotInlineButton.USE_SAVED_WALLET.getButton());
             }
             buttons.add(BotInlineButton.CANCEL.getButton());
@@ -576,9 +579,9 @@ public class ExchangeService {
         String message = MessagePropertiesUtil.getMessage("deal.build.sell");
         if (Objects.isNull(message)) return null;
         CryptoCurrency currency = deal.getCryptoCurrency();
-        return String.format(message, deal.getPid(), deal.getAmount(), deal.getFiatCurrency().getCode(), deal.getPaymentType().getName(),
+        return String.format(message, deal.getPid(), BigDecimalUtil.roundToPlainString(deal.getAmount()), deal.getFiatCurrency().getCode(), deal.getPaymentType().getName(),
                 deal.getWallet(), rank.getSmile(), rank.getPercent(),
-                deal.getCryptoAmount(), currency.getShortName(), currency.getShortName(),
+                BigDecimalUtil.roundToPlainString(deal.getCryptoAmount()), currency.getShortName(), currency.getShortName(),
                 BotVariablePropertiesUtil.getWallet(currency),
                 BotVariablePropertiesUtil.getVariable(BotVariableType.DEAL_ACTIVE_TIME));
     }
@@ -587,9 +590,9 @@ public class ExchangeService {
         String message = MessagePropertiesUtil.getMessage("deal.build.buy");
         if (Objects.isNull(message)) return null;
         CryptoCurrency currency = deal.getCryptoCurrency();
-        return String.format(message, deal.getPid(), deal.getCryptoAmount(), currency.getShortName(), currency.getDisplayName(),
-                currency.getDisplayName(), deal.getWallet(), rank.getSmile(), rank.getPercent(),
-                deal.getAmount(), deal.getFiatCurrency().getDisplayName(), requisite,
+        return String.format(message, deal.getPid(), BigDecimalUtil.roundToPlainString(deal.getCryptoAmount()), currency.getShortName(), currency.getDisplayName(),
+                deal.getWallet(), rank.getSmile(), rank.getPercent() + "%",
+                BigDecimalUtil.roundToPlainString(deal.getAmount()), deal.getFiatCurrency().getDisplayName(), requisite,
                 BotVariablePropertiesUtil.getVariable(BotVariableType.DEAL_ACTIVE_TIME));
     }
 
