@@ -65,48 +65,59 @@ Ext.define('Main.view.bulkDiscount.BulkDiscountController', {
 
     onSaveClick: function (btn) {
         let me = this;
-        let form = btn.up('form');
-        let oldSum = form.getValues().oldSum;
-        let values = form.getValues();
+        let oldSum = ExtUtil.idQuery('oldSum').getValue();
         let bulkDiscount = {
-            sum: values.sum,
-            percent: values.percent,
-            fiatCurrency: values.fiatCurrency,
-            dealType: values.dealType
+            sum: ExtUtil.idQuery('sum').getValue(),
+            percent: ExtUtil.idQuery('percent').getValue(),
+            fiatCurrency: ExtUtil.idQuery('fiatCurrency').getValue(),
+            dealType: ExtUtil.idQuery('dealType').getValue()
         };
         me.saveDiscountRequest(bulkDiscount, oldSum);
-        form.up('window').close();
+        btn.up('window').close();
     },
 
     saveDiscountRequest: function (bulkDiscount, oldSum) {
+        let me = this;
         let requestBody = {
             url: '/web/bulk_discount/saveDiscount',
             method: 'POST',
             jsonData: bulkDiscount,
-            success: function (rs) {
+            success: function () {
+                for (let grid of Ext.ComponentQuery.query('grid')) {
+                    if (grid.fiatCurrency === bulkDiscount.fiatCurrency && grid.dealType === bulkDiscount.dealType) {
+                        let store = grid.getStore();
+                        let recs = store.getData().getRange();
+                        if (oldSum) {
+                            for (let rec of recs) {
+                                if (rec.getData().sum === oldSum) {
+                                    rec.data.percent = bulkDiscount.percent;
+                                    if (bulkDiscount.sum !== oldSum) {
+                                        rec.data.sum = bulkDiscount.sum;
+                                        me.insertNewRec(store, recs, rec, bulkDiscount);
+                                    } else {
+                                        store.add(rec);
+                                    }
+                                    break;
+                                }
+                            }
+                        } else {
+                            let newRec = new Main.view.bulkDiscount.model.BulkDiscountModel({
+                                sum: bulkDiscount.sum,
+                                percent: bulkDiscount.percent,
+                                fiatCurrency: bulkDiscount.fiatCurrency,
+                                dealType: bulkDiscount.dealType,
+                            });
+                            if (recs.length === 0) store.add(newRec);
+                            else {
+                                me.insertNewRec(store, recs, newRec, bulkDiscount);
+                            }
+                        }
+                        break;
+                    }
+                }
                 Ext.Msg.alert('Информация', 'Скидка сохранена.');
-                // let newRec = new Main.view.bulkDiscount.model.BulkDiscountModel({
-                //     sum: sum,
-                //     percent: percent,
-                //     fiatCurrency: view.up().up().up().title,
-                //     dealType: view.up().title,
-                // });
-                // let store = view.getStore();
-                // let recs = store.getData().getRange();
-                // if (recs.length === 0) store.add(newRec)
-                // else {
-                //     if (recs[recs.length - 1].getData().sum > sum) store.insert(recs.length, newRec);
-                //     else {
-                //         for (let rec of recs) {
-                //             if (sum > rec.getData().sum) {
-                //                 store.insert(store.indexOf(rec), newRec);
-                //                 break;
-                //             }
-                //         }
-                //     }
-                // }
             },
-            failure: function (rs) {
+            failure: function () {
                 Ext.Msg.alert('Ошибка', 'При сохранении произошли ошибки.')
             }
         };
@@ -114,6 +125,18 @@ Ext.define('Main.view.bulkDiscount.BulkDiscountController', {
             oldSum: oldSum
         }
         Ext.Ajax.request(requestBody);
+    },
+
+    insertNewRec: function (store, recs, newRec, bulkDiscount) {
+        if (recs[recs.length - 1].getData().sum > bulkDiscount.sum) store.insert(recs.length, newRec);
+        else {
+            for (let rec of recs) {
+                if (bulkDiscount.sum > rec.getData().sum) {
+                    store.insert(store.indexOf(rec), newRec);
+                    break;
+                }
+            }
+        }
     },
 
     onAddClick: function (btn) {
@@ -153,47 +176,14 @@ Ext.define('Main.view.bulkDiscount.BulkDiscountController', {
             url: '/web/bulk_discount/removeDiscount',
             method: 'DELETE',
             jsonData: bulkDiscount,
-            success: function (rs) {
-                Ext.Msg.alert('Информация', 'Скидка удалена.');
+            success: function () {
                 record.drop();
+                Ext.Msg.alert('Информация', 'Скидка удалена.');
             },
-            failure: function (rs) {
+            failure: function () {
                 Ext.Msg.alert('Ошибка', 'При удалении произошли ошибки.')
             }
         });
     },
-
-    // onSaveClick: function () {
-    //     let addedBulkDiscounts = [];
-    //     let updatedBulkDiscounts = [];
-    //     let removedBulkDiscounts = [];
-    //     let bulkDiscounts = [];
-    //     for (let grid of Ext.ComponentQuery.query('grid')) {
-    //         let store = grid.getStore();
-    //         for (let bulkDiscount of store.getModifiedRecords()) {
-    //             if (bulkDiscount.crudState === "C") addedBulkDiscounts.push(bulkDiscount.data)
-    //             else updatedBulkDiscounts.push(bulkDiscount.data)
-    //         }
-    //         for (let bulkDiscount of store.getRemovedRecords()) {
-    //             removedBulkDiscounts.push(bulkDiscount.data)
-    //         }
-    //     }
-    //     bulkDiscounts.push(addedBulkDiscounts);
-    //     bulkDiscounts.push(updatedBulkDiscounts);
-    //     bulkDiscounts.push(removedBulkDiscounts);
-    //     // for (let grid of Ext.ComponentQuery.query('grid')) {
-    //     //     for (let bulkDiscount of grid.getStore().data.items) {
-    //     //             bulkDiscounts.push(bulkDiscount.data)
-    //     //     }
-    //     // }
-    //     Ext.Ajax.request({
-    //         url: '/web/bulk_discount/saveDiscounts',
-    //         method: 'POST',
-    //         jsonData: bulkDiscounts,
-    //         success: function (rs) {
-    //             Ext.Msg.alert('Информация', 'Скидки были успешно обновлены.');
-    //         }
-    //     })
-    // }
 
 })

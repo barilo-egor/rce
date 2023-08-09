@@ -7,20 +7,10 @@ Ext.define('Main.view.bulkDiscount.BulkDiscountGridPanel', {
         header: 'Сумма',
         dataIndex: 'sum',
         flex: 0.65,
-        // editor: {
-        //     xtype: 'numberfield',
-        //     selectOnFocus: false,
-        //     allowBlank: false,
-        // },
     }, {
         header: 'Скидка',
         dataIndex: 'percent',
         flex: 0.35,
-        editor: {
-            xtype: 'numberfield',
-            selectOnFocus: false,
-            allowBlank: false,
-        }
     }, {
         xtype: 'actioncolumn',
         width: 30,
@@ -51,16 +41,5 @@ Ext.define('Main.view.bulkDiscount.BulkDiscountGridPanel', {
         iconCls: 'fas fa-plus',
         tooltip: 'Добавить',
         handler: 'onAddClick'
-    }],
-    // fbar: [{
-    //     text: 'Сохранить',
-    //     iconCls: 'fas fa-save greenBtn',
-    //     cls: 'greenBtn',
-    //     handler: 'onSaveClick'
-    // }],
-    plugins: {
-        cellediting: {
-            clicksToEdit: 1
-        }
-    }
+    }]
 });
