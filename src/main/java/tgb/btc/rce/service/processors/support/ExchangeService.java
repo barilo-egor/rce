@@ -438,7 +438,7 @@ public class ExchangeService {
                 .append("\n");
         if (DealType.isBuy(deal.getDealType())) {
             dealAmount = userDiscountService.applyDealDiscounts(chatId, dealAmount, deal.getUsedPromo(),
-                    deal.getUsedReferralDiscount(), deal.getDiscount());
+                    deal.getUsedReferralDiscount(), deal.getDiscount(), deal.getFiatCurrency());
             messageNew.append("\uD83D\uDCB5<b>Сумма перевода</b>: ")
                     .append(BigDecimalUtil.roundToPlainString(dealAmount))
                     .append(" ").append(deal.getFiatCurrency().getDisplayName()).append("\n\n")
@@ -509,7 +509,7 @@ public class ExchangeService {
         String message;
         if (DealType.isBuy(deal.getDealType())) {
             dealAmount = userDiscountService.applyDealDiscounts(chatId, dealAmount, deal.getUsedPromo(),
-                    deal.getUsedReferralDiscount(), deal.getDiscount());
+                    deal.getUsedReferralDiscount(), deal.getDiscount(), deal.getFiatCurrency());
 
             String requisite;
             try {
@@ -640,16 +640,27 @@ public class ExchangeService {
         if (BooleanUtils.isTrue(dealRepository.getIsUsedPromoByPid(currentDealPid))) {
             dealAmount = dealAmount.subtract(dealRepository.getDiscountByPid(currentDealPid));
         }
-        Integer referralBalance = userRepository.getReferralBalanceByChatId(chatId);
-
         BigDecimal sumWithDiscount;
-        if (referralBalance <= dealAmount.intValue()) {
-            sumWithDiscount = dealAmount.subtract(BigDecimal.valueOf(referralBalance));
+        String message;
+        Integer referralBalance = userRepository.getReferralBalanceByChatId(chatId);
+        if (ReferralType.STANDARD.isCurrent() && !FiatCurrency.BYN.equals(dealService.getByPid(currentDealPid).getFiatCurrency())) {
+            if (referralBalance <= dealAmount.intValue()) {
+                sumWithDiscount = dealAmount.subtract(BigDecimal.valueOf(referralBalance));
+            } else {
+                sumWithDiscount = BigDecimal.ZERO;
+            }
+            message = "\uD83E\uDD11У вас есть " + referralBalance + "₽ на реферальном балансе. Использовать их в качестве скидки?";
         } else {
-            sumWithDiscount = BigDecimal.ZERO;
-        }
+            BigDecimal bynReferralBalance = BigDecimal.valueOf(referralBalance).multiply(BotProperties.BOT_VARIABLE.getBigDecimal("course.rub.byn"));
 
-        String message = "\uD83E\uDD11У вас есть " + referralBalance + "₽ на реферальном балансе. Использовать их в качестве скидки?";
+            if (bynReferralBalance.compareTo(dealAmount) < 1) {
+                sumWithDiscount = dealAmount.subtract(bynReferralBalance);
+            } else {
+                sumWithDiscount = BigDecimal.ZERO;
+            }
+            message = "\uD83E\uDD11У вас есть " + referralBalance + "₽(" + BigDecimalUtil.roundToPlainString(bynReferralBalance, 2)
+                    + " бел.рублей) на реферальном балансе. Использовать их в качестве скидки?";
+        }
         responseSender.sendMessage(chatId, message,
                 keyboardService.getUseReferralDiscount(sumWithDiscount, dealAmount), "HTML");
     }
