@@ -63,15 +63,13 @@ public class UserDiscountService {
 
     private BigDecimal applyReferralDiscount(Long chatId, BigDecimal dealAmount, Boolean isUsedReferralDiscount, FiatCurrency fiatCurrency) {
         if (BooleanUtils.isTrue(isUsedReferralDiscount)) {
+            Integer referralBalance = userRepository.getReferralBalanceByChatId(chatId);
             if (ReferralType.CURRENT.isCurrent() && !FiatCurrency.BYN.equals(fiatCurrency)) {
-                Integer referralBalance = userRepository.getReferralBalanceByChatId(chatId);
                 if (referralBalance <= dealAmount.intValue())
                     dealAmount = dealAmount.subtract(BigDecimal.valueOf(referralBalance));
                 else dealAmount = BigDecimal.ZERO;
             } else {
-                Integer referralBalance = userRepository.getReferralBalanceByChatId(chatId);
                 BigDecimal bynReferralBalance = BigDecimal.valueOf(referralBalance).multiply(BotProperties.BOT_VARIABLE.getBigDecimal("course.rub.byn"));
-
                 if (bynReferralBalance.compareTo(dealAmount) < 1)
                     dealAmount = dealAmount.subtract(bynReferralBalance);
                 else dealAmount = BigDecimal.ZERO;

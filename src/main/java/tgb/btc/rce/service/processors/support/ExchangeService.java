@@ -510,7 +510,7 @@ public class ExchangeService {
         if (DealType.isBuy(deal.getDealType())) {
             dealAmount = userDiscountService.applyDealDiscounts(chatId, dealAmount, deal.getUsedPromo(),
                     deal.getUsedReferralDiscount(), deal.getDiscount(), deal.getFiatCurrency());
-
+            deal.setAmount(dealAmount);
             String requisite;
             try {
                 requisite = paymentRequisiteService.getRequisite(paymentType);
@@ -540,6 +540,7 @@ public class ExchangeService {
                         + promoCodeText;
             }
         } else {
+            deal.setAmount(dealAmount);
             message = getSellMessage(deal, rank);
             if (Objects.isNull(message)) {
                 message = "✅<b>Заявка №</b><code>" + deal.getPid() + "</code> успешно создана." + "\n\n"
@@ -560,7 +561,6 @@ public class ExchangeService {
                         + promoCodeText;
             }
         }
-        deal.setAmount(dealAmount);
         dealRepository.save(deal);
 
         Optional<Message> optionalMessage = responseSender.sendMessage(chatId, message,
