@@ -88,30 +88,48 @@ Ext.define('Main.view.bulkDiscount.BulkDiscountController', {
                         let store = grid.getStore();
                         let recs = store.getData().getRange();
                         if (oldSum) {
+                            // for (let rec of recs) {
+                            //     if (rec.getData().sum === oldSum) {
+                            //         rec.data.percent = bulkDiscount.percent;
+                            //         if (bulkDiscount.sum !== oldSum) {
+                            //             rec.data.sum = bulkDiscount.sum;
+                            //             me.insertNewRec(store, recs, rec, bulkDiscount);
+                            //         } else {
+                            //             store.add(rec);
+                            //         }
+                            //         break;
+                            //     }
+                            // }
                             for (let rec of recs) {
                                 if (rec.getData().sum === oldSum) {
                                     rec.data.percent = bulkDiscount.percent;
                                     if (bulkDiscount.sum !== oldSum) {
                                         rec.data.sum = bulkDiscount.sum;
-                                        me.insertNewRec(store, recs, rec, bulkDiscount);
-                                    } else {
-                                        store.add(rec);
                                     }
+                                    store.add(rec);
                                     break;
                                 }
                             }
                         } else {
+                            // let newRec = new Main.view.bulkDiscount.model.BulkDiscountModel({
+                            //     sum: bulkDiscount.sum,
+                            //     percent: bulkDiscount.percent,
+                            //     fiatCurrency: bulkDiscount.fiatCurrency,
+                            //     dealType: bulkDiscount.dealType,
+                            // });
+                            // if (recs.length === 0) store.add(newRec);
+                            // else {
+                            //     me.insertNewRec(store, recs, newRec, bulkDiscount);
+                            // }
                             let newRec = new Main.view.bulkDiscount.model.BulkDiscountModel({
                                 sum: bulkDiscount.sum,
                                 percent: bulkDiscount.percent,
                                 fiatCurrency: bulkDiscount.fiatCurrency,
                                 dealType: bulkDiscount.dealType,
                             });
-                            if (recs.length === 0) store.add(newRec);
-                            else {
-                                me.insertNewRec(store, recs, newRec, bulkDiscount);
-                            }
+                            store.add(newRec);
                         }
+                        store.sort('sum', 'DESC');
                         break;
                     }
                 }
@@ -127,17 +145,17 @@ Ext.define('Main.view.bulkDiscount.BulkDiscountController', {
         Ext.Ajax.request(requestBody);
     },
 
-    insertNewRec: function (store, recs, newRec, bulkDiscount) {
-        if (recs[recs.length - 1].getData().sum > bulkDiscount.sum) store.insert(recs.length, newRec);
-        else {
-            for (let rec of recs) {
-                if (bulkDiscount.sum > rec.getData().sum) {
-                    store.insert(store.indexOf(rec), newRec);
-                    break;
-                }
-            }
-        }
-    },
+    // insertNewRec: function (store, recs, newRec, bulkDiscount) {
+    //     if (recs[recs.length - 1].getData().sum > bulkDiscount.sum) store.insert(recs.length, newRec);
+    //     else {
+    //         for (let rec of recs) {
+    //             if (bulkDiscount.sum > rec.getData().sum) {
+    //                 store.insert(store.indexOf(rec), newRec);
+    //                 break;
+    //             }
+    //         }
+    //     }
+    // },
 
     onAddClick: function (btn) {
         let grid = btn.up('grid');

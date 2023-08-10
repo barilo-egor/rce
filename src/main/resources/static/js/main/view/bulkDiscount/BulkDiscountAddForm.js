@@ -2,8 +2,9 @@ Ext.define('Main.view.bulkDiscount.BulkDiscountAddForm', {
     extend: 'Ext.window.Window',
     alias: 'widget.bulkdiscountaddform',
     controller: 'bulkDiscountController',
-    width: 680,
-    height: 350,
+    title: 'Добавление скидки',
+    width: '50%',
+    height: '30%',
     layout: {
         type: 'fit'
     },
@@ -12,15 +13,11 @@ Ext.define('Main.view.bulkDiscount.BulkDiscountAddForm', {
     items: [
         {
             xtype: 'form',
-            bodyPadding: 50,
+            bodyPadding: 10,
             defaults: {
                 anchor: '100%',
                 labelWidth: 60
             },
-            // layout: {
-            //     type: 'vbox',
-            //     align: 'stretch'
-            // },
             buttonAlign: 'center',
             items: [
                 {
@@ -55,6 +52,8 @@ Ext.define('Main.view.bulkDiscount.BulkDiscountAddForm', {
                     id: 'sum',
                     fieldLabel: 'Сумма',
                     name: 'sum',
+                    hideTrigger: true,
+                    decimalSeparator: '.',
                     bind: {
                         value: '{sum}'
                     }
@@ -64,6 +63,8 @@ Ext.define('Main.view.bulkDiscount.BulkDiscountAddForm', {
                     id: 'percent',
                     fieldLabel: 'Скидка',
                     name: 'percent',
+                    hideTrigger: true,
+                    decimalSeparator: '.',
                     bind: {
                         value: '{percent}'
                     }

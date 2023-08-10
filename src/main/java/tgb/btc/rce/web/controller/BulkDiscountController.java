@@ -68,22 +68,6 @@ public class BulkDiscountController {
         BotProperties.BULK_DISCOUNT.load();
         ObjectMapper objectMapper = new ObjectMapper();
         ObjectNode result = objectMapper.createObjectNode();
-//        bulkDiscounts.get(0).forEach(bulkDiscount -> {
-//            String key = String.join(".", new String[]{bulkDiscount.getFiatCurrency().getCode(),
-//                    bulkDiscount.getDealType().getKey(), String.valueOf(bulkDiscount.getSum())});
-//            BotProperties.BULK_DISCOUNT.setProperty(key, String.valueOf(bulkDiscount.getPercent()));
-//        });
-//        bulkDiscounts.get(1).forEach(bulkDiscount -> {
-//            String key = String.join(".", new String[]{bulkDiscount.getFiatCurrency().getCode(),
-//                    bulkDiscount.getDealType().getKey(), String.valueOf(bulkDiscount.getSum())});
-//            BotProperties.BULK_DISCOUNT.setProperty(key, String.valueOf(bulkDiscount.getPercent()));
-//        });
-//        bulkDiscounts.get(2).forEach(bulkDiscount -> {
-//            String key = String.join(".", new String[]{bulkDiscount.getFiatCurrency().getCode(),
-//                    bulkDiscount.getDealType().getKey(), String.valueOf(bulkDiscount.getSum())});
-//            BotProperties.BULK_DISCOUNT.clearProperty(key);
-//        });
-//        BotProperties.BULK_DISCOUNT.load();
         result.put("success", true);
         return result;
     }
