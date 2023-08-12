@@ -4,7 +4,7 @@ import org.apache.commons.lang.StringUtils;
 import tgb.btc.rce.enums.BotProperties;
 import tgb.btc.rce.enums.FiatCurrency;
 import tgb.btc.rce.exception.PropertyValueNotFoundException;
-import tgb.btc.rce.service.IValidateService;
+import tgb.btc.rce.service.IPropertyService;
 import tgb.btc.rce.vo.ReviewPrise;
 
 import java.util.ArrayList;
@@ -12,7 +12,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-public class ReviewPriseService implements IValidateService {
+public class ReviewPriseService implements IPropertyService {
 
     public static final List<ReviewPrise> REVIEW_PRISES = new ArrayList<>();
 

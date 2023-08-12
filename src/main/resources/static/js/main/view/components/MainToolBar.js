@@ -15,6 +15,11 @@ Ext.define('Main.view.components.MainToolBar', {
                     iconCls: 'fas fa-dollar-sign menu-icon-color',
                     handler: 'usdCourseClick'
                 },
+                {
+                    text: 'Оптовые скидки',
+                    iconCls: 'fas fa-tag menu-icon-color',
+                    handler: 'bulkDiscountClick'
+                },
             ],
         },
         {

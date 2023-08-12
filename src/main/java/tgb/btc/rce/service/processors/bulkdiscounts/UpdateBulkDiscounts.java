@@ -8,7 +8,6 @@ import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.constants.FilePaths;
 import tgb.btc.rce.enums.BotProperties;
 import tgb.btc.rce.enums.Command;
-import tgb.btc.rce.exception.PropertyValueNotFoundException;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.util.UpdateUtil;
 
@@ -16,7 +15,7 @@ import java.io.IOException;
 
 @CommandProcessor(command = Command.BULK_DISCOUNTS, step = 1)
 @Slf4j
-public class UpdateBulkDiscounts extends Processor {
+public class UpdateBulkDiscounts extends Processor { // TODO удалить
 
     @Override
     public void run(Update update) {
@@ -36,20 +35,6 @@ public class UpdateBulkDiscounts extends Processor {
         } catch (IOException | TelegramApiException e) {
             log.error("Ошибка при скачивании оптовых скидок: ", e);
             responseSender.sendMessage(chatId, "Ошибка при скачивании оптовых скидок: " + e.getMessage());
-            return;
-        }
-        try {
-            BotProperties.BULK_DISCOUNT_BUFFER.validate();
-        } catch (PropertyValueNotFoundException e) {
-            log.error(e.getMessage(), e);
-            responseSender.sendMessage(chatId, e.getMessage());
-            try {
-                FileUtils.delete(BotProperties.BULK_DISCOUNT_BUFFER.getFile());
-            } catch (IOException ex) {
-                log.error("Ошибки при удалении " + FilePaths.BULK_DISCOUNT_BUFFER_PROPERTIES, e);
-                responseSender.sendMessage(chatId, "Ошибки при удалении " + FilePaths.BULK_DISCOUNT_BUFFER_PROPERTIES + ":"
-                        + e.getMessage());
-            }
             return;
         }
         try {

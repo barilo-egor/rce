@@ -8,7 +8,6 @@ import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.constants.FilePaths;
 import tgb.btc.rce.enums.BotProperties;
 import tgb.btc.rce.enums.Command;
-import tgb.btc.rce.exception.PropertyValueNotFoundException;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.util.UpdateUtil;
 
@@ -48,20 +47,6 @@ public class SystemMessages extends Processor {
         } catch (IOException | TelegramApiException e) {
             log.error("Ошибка при скачивании новых сообщений: ", e);
             responseSender.sendMessage(chatId, "Ошибка при скачивании новых сообщений: " + e.getMessage());
-            return;
-        }
-        try {
-            BotProperties.MESSAGE_BUFFER.validate();
-        } catch (PropertyValueNotFoundException e) {
-            log.error(e.getMessage(), e);
-            responseSender.sendMessage(chatId, e.getMessage());
-            try {
-                FileUtils.delete(BotProperties.MESSAGE_BUFFER.getFile());
-            } catch (IOException ex) {
-                log.error("Ошибки при удалении " + FilePaths.MESSAGE_BUFFER_PROPERTIES, ex);
-                responseSender.sendMessage(chatId, "Ошибки при удалении " + FilePaths.MESSAGE_BUFFER_PROPERTIES + ":"
-                        + ex.getMessage());
-            }
             return;
         }
         try {
