@@ -38,6 +38,10 @@ public enum FiatCurrency {
         return code;
     }
 
+    public String getDisplayData() {
+        return displayData;
+    }
+
     public String getFlag() {
         return flag;
     }

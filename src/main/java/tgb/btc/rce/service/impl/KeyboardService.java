@@ -45,7 +45,7 @@ public class KeyboardService {
     public ReplyKeyboard getFiatCurrencies() {
         List<InlineButton> buttons = FiatCurrencyUtil.getFiatCurrencies().stream()
                 .map(fiatCurrency -> InlineButton.builder()
-                        .text(fiatCurrency.getDisplayName())
+                        .text(fiatCurrency.getDisplayData())
                         .data(CallbackQueryUtil.buildCallbackData(Command.CHOOSING_FIAT_CURRENCY.getText(), fiatCurrency.name()))
                         .build())
                 .collect(Collectors.toList());
