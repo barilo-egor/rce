@@ -38,6 +38,7 @@ Ext.define('Main.view.changePassword.ChangePasswordPanel', {
                     msgTarget: 'side',
                     minLength: 8,
                     inputType: 'password',
+                    emptyText: 'Введите пароль'
                 }
             },
             buttonAlign: 'center',
@@ -51,11 +52,9 @@ Ext.define('Main.view.changePassword.ChangePasswordPanel', {
                 {
                     items: [
                         {
-
                             id: 'passwordInput',
                             fieldLabel: 'Новый пароль',
                             name: 'password',
-                            emptyText: 'Введите пароль',
                             validator: ValidatorUtil.validateNotEmptyAndLettersAndNumber
                         },
                         {
@@ -68,7 +67,6 @@ Ext.define('Main.view.changePassword.ChangePasswordPanel', {
                     items: [
                         {
                             fieldLabel: 'Повторите пароль',
-                            emptyText: 'Введите пароль',
                             validator: ValidatorUtil.validatePasswordConfirm
                         },
                         {

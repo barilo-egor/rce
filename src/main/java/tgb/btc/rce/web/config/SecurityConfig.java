@@ -29,6 +29,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/web/registration/**", "/static/**", "/extJS/**", "/fontawesome/**",
                         "/js/login/**", "/login/**",
                         "/js/util/**", "/js/registration/**",
+                        "/js/api/**",
                         "/api/**",
                         "/loginSuccess", "/loginError",
                         "/css/**", "/web/main",

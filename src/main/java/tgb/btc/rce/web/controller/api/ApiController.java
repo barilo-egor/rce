@@ -4,21 +4,20 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import tgb.btc.rce.enums.ApiDealStatus;
-import tgb.btc.rce.enums.CryptoCurrency;
-import tgb.btc.rce.enums.DealType;
-import tgb.btc.rce.enums.FiatCurrency;
+import tgb.btc.rce.constants.BotStringConstants;
+import tgb.btc.rce.enums.*;
 import tgb.btc.rce.repository.ApiDealRepository;
 import tgb.btc.rce.service.impl.AdminService;
 import tgb.btc.rce.service.impl.ApiDealService;
 import tgb.btc.rce.service.impl.KeyboardService;
 import tgb.btc.rce.web.controller.MainWebController;
 import tgb.btc.rce.web.controller.api.enums.StatusCode;
+import tgb.btc.rce.web.util.JacksonUtil;
 
 import java.math.BigDecimal;
 
 @Controller
-@RequestMapping("/api")
+@RequestMapping("/api/10/")
 public class ApiController {
 
     private ApiDealRepository apiDealRepository;
@@ -51,7 +50,7 @@ public class ApiController {
 
     @GetMapping("/documentation")
     public String documentation() {
-        return "index";
+        return "apiDocumentation";
     }
 
     @PostMapping("/new")
@@ -104,5 +103,11 @@ public class ApiController {
                     .set("data", MainWebController.DEFAULT_MAPPER.createObjectNode()
                             .put("status", apiDealRepository.getApiDealStatusByPid(id).name()));
         }
+    }
+
+    @GetMapping("getUrl")
+    @ResponseBody
+    public ObjectNode getUrl() {
+        return JacksonUtil.getEmpty().put("data", BotProperties.SERVER.getString(BotStringConstants.MAIN_URL));
     }
 }
