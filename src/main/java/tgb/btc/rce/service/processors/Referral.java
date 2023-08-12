@@ -5,15 +5,17 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.bean.ReferralUser;
 import tgb.btc.rce.enums.*;
-import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.repository.DealRepository;
 import tgb.btc.rce.service.Processor;
+import tgb.btc.rce.util.BigDecimalUtil;
 import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.MessagePropertiesUtil;
 import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.InlineButton;
 
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Objects;
 
 @CommandProcessor(command = Command.REFERRAL)
 public class Referral extends Processor {
@@ -30,7 +32,8 @@ public class Referral extends Processor {
         Long chatId = UpdateUtil.getChatId(update);
         String startParameter = "?start=" + chatId;
         String refLink = BotProperties.BOT_CONFIG.getString("bot.link").concat(startParameter);
-        String currentBalance = userService.getReferralBalanceByChatId(chatId).toString();
+        BigDecimal referralBalance = BigDecimal.valueOf(userService.getReferralBalanceByChatId(chatId));
+        String currentBalance = BigDecimalUtil.roundToPlainString(referralBalance);
         List<ReferralUser> referralUsers = userService.getUserReferralsByChatId(chatId);
         String numberOfReferrals = String.valueOf(referralUsers.size());
         int numberOfActiveReferrals = (int) referralUsers.stream()
@@ -38,9 +41,18 @@ public class Referral extends Processor {
 
         Long dealsCount = dealRepository.getCountPassedByUserChatId(chatId);
         Rank rank = Rank.getByDealsNumber(dealsCount.intValue());
-        String resultMessage = String.format(MessagePropertiesUtil.getMessage(PropertiesMessage.REFERRAL_MAIN),
-                refLink, currentBalance, numberOfReferrals, numberOfActiveReferrals,
-                userService.getChargesByChatId(chatId), dealsCount, rank.getSmile(), rank.getPercent()).concat("%");
+        String resultMessage;
+        String referralMessageFewFiat = MessagePropertiesUtil.getMessage("referral.main.few.fiat");
+        if (Objects.nonNull(referralMessageFewFiat)) {
+            resultMessage = String.format(referralMessageFewFiat,
+                    refLink, currentBalance, BigDecimalUtil.roundToPlainString(referralBalance.multiply(BotProperties.BOT_VARIABLE.getBigDecimal("course.rub.byn")), 2),
+                    numberOfReferrals, numberOfActiveReferrals,
+                    userService.getChargesByChatId(chatId), dealsCount, rank.getSmile(), rank.getPercent()).concat("%");;
+        } else {
+            resultMessage = String.format(MessagePropertiesUtil.getMessage(PropertiesMessage.REFERRAL_MAIN),
+                    refLink, currentBalance, numberOfReferrals, numberOfActiveReferrals,
+                    userService.getChargesByChatId(chatId), dealsCount, rank.getSmile(), rank.getPercent()).concat("%");
+        }
 
         responseSender.sendMessage(chatId, resultMessage, KeyboardUtil.buildInline(getButtons(refLink)));
     }

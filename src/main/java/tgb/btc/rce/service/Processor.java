@@ -67,7 +67,7 @@ public abstract class Processor {
         userService.setDefaultValues(chatId);
         responseSender.sendMessage(chatId,
                 MessagePropertiesUtil.getMessage(PropertiesMessage.MENU_MAIN),
-                getMainMenuKeyboard(chatId));
+                getMainMenuKeyboard(chatId), "HTML");
     }
 
     public void processToAdminMainPanel(Long chatId) {

@@ -1,10 +1,14 @@
 package tgb.btc.rce.enums;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import tgb.btc.rce.exception.EnumTypeNotFoundException;
+import tgb.btc.rce.web.util.JacksonUtil;
+import tgb.btc.rce.web.vo.interfaces.ObjectNodeConvertable;
 
 import java.util.Arrays;
+import java.util.function.Function;
 
-public enum CryptoCurrency {
+public enum CryptoCurrency implements ObjectNodeConvertable<CryptoCurrency> {
     BITCOIN(BotProperties.CRYPTO_CURRENCIES_DESIGN.getString("BITCOIN"), "btc", String.class, 8, 0.004),
     LITECOIN(BotProperties.CRYPTO_CURRENCIES_DESIGN.getString("LITECOIN"), "ltc", String.class, 8, 0.7),
     USDT(BotProperties.CRYPTO_CURRENCIES_DESIGN.getString("USDT"), "usdt", String.class, 1, 50.0),
@@ -54,4 +58,10 @@ public enum CryptoCurrency {
                 .orElseThrow(() -> new EnumTypeNotFoundException("Не найдена крипто валюта: " + displayName));
     }
 
+    @Override
+    public Function<CryptoCurrency, ObjectNode> mapFunction() {
+        return cryptoCurrency -> JacksonUtil.getEmpty()
+                .put("name", cryptoCurrency.name())
+                .put("displayName", cryptoCurrency.getDisplayName());
+    }
 }

@@ -102,7 +102,7 @@ public enum Command {
 
     /** DEAL */
     DEAL("deal_proc", false, false, false),
-    PAID("Я оплатил(а)", false, false, false),
+    PAID(BotProperties.BUTTONS_DESIGN.getString("PAID"), false, false, false),
     CANCEL_DEAL("Отменить заявку", false, false, false),
     DELETE_DEAL("Удалить заявку", false, false, false),
     SHOW_DEAL("Показать", true, false, false),
@@ -114,6 +114,8 @@ public enum Command {
     USER_ADDITIONAL_VERIFICATION("user_verification", false, false, false),
     SHARE_REVIEW("share_review", false, false, false),
     CHOOSING_FIAT_CURRENCY("chs_fc", false, false, false),
+    USE_PROMO(BotProperties.BUTTONS_DESIGN.getString("USE_PROMO"), false, false, false),
+    DONT_USE_PROMO(BotProperties.BUTTONS_DESIGN.getString("DONT_USE_PROMO"), false, false, false),
 
     /** REQUESTS */
     NEW_DEALS("Новые заявки", true, false, false),
@@ -169,7 +171,13 @@ public enum Command {
     INLINE_QUERY_CALCULATOR("inline_q_calc", false, false, false),
     INLINE_CALCULATOR("inline_calculator", false, false, false),
 
-    WEB_ADMIN_PANEL("Веб админ-панель", true, true, false)
+    WEB_ADMIN_PANEL("Веб админ-панель", true, true, false),
+
+    /**
+     * API DEALS
+     */
+    CONFIRM_API_DEAL("confirm_api_deal", true, false, false),
+    CANCEL_API_DEAL("cancel_api_deal", true, false, false)
     ;
 
     final String text;

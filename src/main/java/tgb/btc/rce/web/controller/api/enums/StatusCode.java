@@ -3,8 +3,12 @@ package tgb.btc.rce.web.controller.api.enums;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import tgb.btc.rce.web.controller.MainWebController;
 import tgb.btc.rce.web.interfaces.JsonConvertable;
+import tgb.btc.rce.web.util.JacksonUtil;
+import tgb.btc.rce.web.vo.interfaces.ObjectNodeConvertable;
 
-public enum StatusCode implements JsonConvertable {
+import java.util.function.Function;
+
+public enum StatusCode implements JsonConvertable, ObjectNodeConvertable<StatusCode> {
     CREATED_DEAL(0, "Сделка создана."),
     EMPTY_TOKEN(1, "Отсутствует токен."),
     EMPTY_DEAL_TYPE(2, "Отсутствует тип сделки."),
@@ -42,6 +46,13 @@ public enum StatusCode implements JsonConvertable {
     @Override
     public ObjectNode toJson() {
         return MainWebController.DEFAULT_MAPPER.createObjectNode()
+                .put("code", this.code)
+                .put("description", this.description);
+    }
+
+    @Override
+    public Function<StatusCode, ObjectNode> mapFunction() {
+        return statusCode -> JacksonUtil.getEmpty()
                 .put("code", this.code)
                 .put("description", this.description);
     }

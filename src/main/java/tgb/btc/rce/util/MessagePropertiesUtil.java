@@ -15,7 +15,9 @@ public class MessagePropertiesUtil {
     public static String getMessage(PropertiesMessage message) {
         String text;
         try {
-            text = BotProperties.MESSAGE.getString(message.getKey()).replaceAll("<ln>", "\n");
+            String propertiesMessage = BotProperties.MESSAGE.getString(message.getKey());
+            if (Objects.isNull(propertiesMessage)) return null;
+            text = propertiesMessage.replaceAll("<ln>", "\n");
         } catch (Exception e) {
             text = getErrorText(message.getKey());
         }
@@ -24,13 +26,17 @@ public class MessagePropertiesUtil {
     }
 
     public static String getMessage(PropertiesMessage message, Object... variables) {
-        return String.format(getMessage(message), variables);
+        String propertiesMessage = getMessage(message);
+        if (Objects.isNull(propertiesMessage)) return null; // TODO переделать на наллсейф,и не налл сейф
+        return String.format(propertiesMessage, variables);
     }
 
     public static String getMessage(String key) {
         String text;
         try {
-            text = BotProperties.MESSAGE.getString(key).replaceAll("<ln>", "\n");
+            String message = BotProperties.MESSAGE.getString(key);
+            if (Objects.isNull(message)) return null;
+            text = message.replaceAll("<ln>", "\n");
         } catch (Exception e) {
             text = getErrorText(key);
         }
