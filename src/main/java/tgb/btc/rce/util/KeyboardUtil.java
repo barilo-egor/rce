@@ -44,34 +44,19 @@ public final class KeyboardUtil {
                 .build();
     }
 
+    public static InlineKeyboardMarkup buildInlineSingleLast(List<InlineButton> buttons, int numberOfColumns, InlineButton inlineButton) {
+        List<List<InlineKeyboardButton>> builtRows = buildInlineRows(buttons, numberOfColumns);
+        builtRows.add(List.of(parse(inlineButton)));
+        return InlineKeyboardMarkup.builder().keyboard(builtRows).build();
+    }
+
     public static List<List<InlineKeyboardButton>> buildInlineRows(List<InlineButton> buttons, int numberOfColumns) {
         List<List<InlineKeyboardButton>> rows = new ArrayList<>();
         List<InlineKeyboardButton> row = new ArrayList<>();
         int j = 0;
 
         for (int i = 0; i < buttons.size(); i++) {
-            InlineKeyboardButton inlineKeyboardButton = new InlineKeyboardButton();
-            inlineKeyboardButton.setText(buttons.get(i).getText());
-            String data = buttons.get(i).getData();
-            InlineType inlineType = buttons.get(i).getInlineType();
-            switch (Objects.isNull(inlineType) ? InlineType.CALLBACK_DATA : inlineType) {
-                case URL:
-                    inlineKeyboardButton.setUrl(data);
-                    break;
-                case CALLBACK_DATA:
-                    inlineKeyboardButton.setCallbackData(data);
-                    break;
-                case SWITCH_INLINE_QUERY:
-                    inlineKeyboardButton.setSwitchInlineQuery(data);
-                    break;
-                case SWITCH_INLINE_QUERY_CURRENT_CHAT:
-                    inlineKeyboardButton.setSwitchInlineQueryCurrentChat(data);
-                    break;
-                case WEB_APP:
-                    inlineKeyboardButton.setWebApp(WebAppInfo.builder().url(data).build());
-                    break;
-            }
-            row.add(inlineKeyboardButton);
+            row.add(parse(buttons.get(i)));
             j++;
             if (j == numberOfColumns || i == (buttons.size() - 1)) {
                 rows.add(row);
@@ -80,6 +65,31 @@ public final class KeyboardUtil {
             }
         }
         return rows;
+    }
+
+    private static InlineKeyboardButton parse(InlineButton inlineButton) {
+        InlineKeyboardButton inlineKeyboardButton = new InlineKeyboardButton();
+        inlineKeyboardButton.setText(inlineButton.getText());
+        String data = inlineButton.getData();
+        InlineType inlineType = inlineButton.getInlineType();
+        switch (Objects.isNull(inlineType) ? InlineType.CALLBACK_DATA : inlineType) {
+            case URL:
+                inlineKeyboardButton.setUrl(data);
+                break;
+            case CALLBACK_DATA:
+                inlineKeyboardButton.setCallbackData(data);
+                break;
+            case SWITCH_INLINE_QUERY:
+                inlineKeyboardButton.setSwitchInlineQuery(data);
+                break;
+            case SWITCH_INLINE_QUERY_CURRENT_CHAT:
+                inlineKeyboardButton.setSwitchInlineQueryCurrentChat(data);
+                break;
+            case WEB_APP:
+                inlineKeyboardButton.setWebApp(WebAppInfo.builder().url(data).build());
+                break;
+        }
+        return inlineKeyboardButton;
     }
 
     public static ReplyKeyboardMarkup buildReply(List<ReplyButton> buttons) {

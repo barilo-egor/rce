@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.CryptoCurrency;
 import tgb.btc.rce.enums.PropertiesMessage;
 import tgb.btc.rce.repository.DealRepository;
@@ -49,6 +48,7 @@ public abstract class SimpleCalculatorService implements ICalculatorTypeService 
         SendMessage sendMessage = new SendMessage();
         sendMessage.setChatId(chatId.toString());
         sendMessage.setText(text);
+        sendMessage.setParseMode("HTML");
         addKeyboard(sendMessage);
         setCommand(chatId);
         responseSender.sendMessage(sendMessage);

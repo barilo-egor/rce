@@ -232,6 +232,7 @@ public class ResponseSender implements IResponseSender {
                     .chatId(chatId.toString())
                     .messageId(messageId)
                     .text(text)
+                    .parseMode("HTML")
                     .replyMarkup((InlineKeyboardMarkup) replyKeyboard)
                     .build());
         } catch (TelegramApiException e) {

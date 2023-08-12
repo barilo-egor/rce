@@ -1,6 +1,16 @@
 package tgb.btc.rce.enums;
 
-public enum ReferralType {
+import tgb.btc.rce.service.Module;
+
+public enum ReferralType implements Module {
     NONE,
     STANDARD;
+
+    public static final ReferralType CURRENT =
+            ReferralType.valueOf(BotProperties.MODULES.getString("referral.type"));
+
+    @Override
+    public boolean isCurrent() {
+        return this.equals(CURRENT);
+    }
 }

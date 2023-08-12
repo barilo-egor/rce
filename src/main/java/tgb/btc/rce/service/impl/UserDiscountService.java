@@ -4,9 +4,7 @@ import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tgb.btc.rce.bean.Deal;
-import tgb.btc.rce.enums.BotVariableType;
-import tgb.btc.rce.enums.DealType;
-import tgb.btc.rce.enums.Rank;
+import tgb.btc.rce.enums.*;
 import tgb.btc.rce.repository.DealRepository;
 import tgb.btc.rce.repository.UserDiscountRepository;
 import tgb.btc.rce.repository.UserRepository;
@@ -50,9 +48,9 @@ public class UserDiscountService {
     }
 
     public BigDecimal applyDealDiscounts(Long chatId, BigDecimal dealAmount, Boolean isUsedPromo,
-                                         Boolean isUserReferralDiscount, BigDecimal discount) {
+                                         Boolean isUserReferralDiscount, BigDecimal discount, FiatCurrency fiatCurrency) {
         BigDecimal newDealAmount = applyPromoCodeDiscount(dealAmount, isUsedPromo, discount);
-        newDealAmount = applyReferralDiscount(chatId, newDealAmount, isUserReferralDiscount);
+        newDealAmount = applyReferralDiscount(chatId, newDealAmount, isUserReferralDiscount, fiatCurrency);
         return newDealAmount;
     }
 
@@ -63,12 +61,19 @@ public class UserDiscountService {
         return dealAmount;
     }
 
-    private BigDecimal applyReferralDiscount(Long chatId, BigDecimal dealAmount, Boolean isUsedReferralDiscount) {
+    private BigDecimal applyReferralDiscount(Long chatId, BigDecimal dealAmount, Boolean isUsedReferralDiscount, FiatCurrency fiatCurrency) {
         if (BooleanUtils.isTrue(isUsedReferralDiscount)) {
             Integer referralBalance = userRepository.getReferralBalanceByChatId(chatId);
-            if (referralBalance <= dealAmount.intValue())
-                dealAmount = dealAmount.subtract(BigDecimal.valueOf(referralBalance));
-            else dealAmount = BigDecimal.ZERO;
+            if (ReferralType.CURRENT.isCurrent() && !FiatCurrency.BYN.equals(fiatCurrency)) {
+                if (referralBalance <= dealAmount.intValue())
+                    dealAmount = dealAmount.subtract(BigDecimal.valueOf(referralBalance));
+                else dealAmount = BigDecimal.ZERO;
+            } else {
+                BigDecimal bynReferralBalance = BigDecimal.valueOf(referralBalance).multiply(BotProperties.BOT_VARIABLE.getBigDecimal("course.rub.byn"));
+                if (bynReferralBalance.compareTo(dealAmount) < 1)
+                    dealAmount = dealAmount.subtract(bynReferralBalance);
+                else dealAmount = BigDecimal.ZERO;
+            }
         }
         return dealAmount;
     }

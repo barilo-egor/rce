@@ -13,12 +13,12 @@ public enum FiatCurrency implements JsonConvertable {
     /**
      * Бел.рубль
      */
-    BYN("byn", "Бел.рубли", "бел.рублей", "\uD83C\uDDE7\uD83C\uDDFE"),
+    BYN("byn", "Бел.рубли", "бел.рублей", "\uD83C\uDDE7\uD83C\uDDFE", BotProperties.BUTTONS_DESIGN.getString("BYN")),
     /**
      * Рос.рубль
      */
-    RUB("rub", "Рос.рубли","₽", "\uD83C\uDDF7\uD83C\uDDFA"),
-    UAH("uah", "Гривны", "гривен", "\uD83C\uDDFA\uD83C\uDDE6");
+    RUB("rub", "Рос.рубли", "₽", "\uD83C\uDDF7\uD83C\uDDFA", BotProperties.BUTTONS_DESIGN.getString("RUB")),
+    UAH("uah", "Гривны", "гривен", "\uD83C\uDDFA\uD83C\uDDE6", BotProperties.BUTTONS_DESIGN.getString("UAH"));
 
     final String code;
 
@@ -28,11 +28,14 @@ public enum FiatCurrency implements JsonConvertable {
 
     final String flag;
 
-    FiatCurrency(String code, String displayName, String genitive, String flag) {
+    final String displayData;
+
+    FiatCurrency(String code, String displayName, String genitive, String flag, String displayData) {
         this.code = code;
         this.displayName = displayName;
         this.genitive = genitive;
         this.flag = flag;
+        this.displayData = displayData;
     }
 
     public String getName() {
@@ -45,6 +48,10 @@ public enum FiatCurrency implements JsonConvertable {
 
     public String getCode() {
         return code;
+    }
+
+    public String getDisplayData() {
+        return displayData;
     }
 
     public String getFlag() {

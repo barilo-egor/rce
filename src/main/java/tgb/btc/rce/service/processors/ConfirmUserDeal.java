@@ -65,22 +65,22 @@ public class ConfirmUserDeal extends Processor {
         deal.setPassed(true);
 
         if (BooleanUtils.isTrue(deal.getUsedReferralDiscount())) {
-            Integer referralBalance = user.getReferralBalance();
-
-            log.info("Снятие с реф баланса в учет скидки. chatId = " + user.getChatId() + ", referralBalance = "
-                    + referralBalance);
+            BigDecimal referralBalance = BigDecimal.valueOf(user.getReferralBalance());
             BigDecimal sumWithDiscount;
-            log.info("Deal pid =" + deal.getPid() + ", amount=" + deal.getAmount().toPlainString() + ", int amount = " + deal.getAmount().intValue());
-            if (referralBalance <= deal.getOriginalPrice().intValue()) {
-                sumWithDiscount = deal.getOriginalPrice().subtract(BigDecimal.valueOf(referralBalance));
-                referralBalance = BigDecimal.ZERO.intValue();
+            if (ReferralType.STANDARD.isCurrent() && FiatCurrency.BYN.equals(deal.getFiatCurrency())) {
+                referralBalance = referralBalance.multiply(BotProperties.BOT_VARIABLE.getBigDecimal("course.rub.byn"));
+            }
+            if (referralBalance.compareTo(deal.getOriginalPrice()) < 1) {
+                sumWithDiscount = deal.getOriginalPrice().subtract(referralBalance);
+                referralBalance = BigDecimal.ZERO;
             } else {
                 sumWithDiscount = BigDecimal.ZERO;
-                referralBalance = BigDecimal.valueOf(referralBalance).subtract(deal.getOriginalPrice()).setScale(0, RoundingMode.HALF_UP).intValue();
+                referralBalance = referralBalance.subtract(deal.getOriginalPrice()).setScale(0, RoundingMode.HALF_UP);
+                if (ReferralType.STANDARD.isCurrent() && FiatCurrency.BYN.equals(deal.getFiatCurrency())) {
+                    referralBalance = referralBalance.divide(BotProperties.BOT_VARIABLE.getBigDecimal("course.byn.rub"), RoundingMode.HALF_UP);
+                }
             }
-            log.info("Подсчет total после использования скидки с реф баланса = " + referralBalance +
-                    ", сумма устанавливается юзеру чат айди = " + user.getChatId());
-            user.setReferralBalance(referralBalance);
+            user.setReferralBalance(referralBalance.intValue());
             deal.setAmount(sumWithDiscount);
         }
         dealService.save(deal);
@@ -100,11 +100,10 @@ public class ConfirmUserDeal extends Processor {
                     : refUserReferralPercent;
             BigDecimal sumToAdd = BigDecimalUtil.multiplyHalfUp(deal.getAmount(),
                     calculateService.getPercentsFactor(referralPercent));
+            if (ReferralType.STANDARD.isCurrent() && FiatCurrency.BYN.equals(deal.getFiatCurrency())) {
+                sumToAdd = sumToAdd.divide(BotProperties.BOT_VARIABLE.getBigDecimal("course.byn.rub"), RoundingMode.HALF_UP);
+            }
             Integer total = refUser.getReferralBalance() + sumToAdd.intValue();
-            log.info("Подтверждение сделки, зачисление на реф баланс пользователю. Админ чат айди = "
-                    + UpdateUtil.getChatId(update) + ". refUserChatId = " + refUser.getChatId() + ", sumToAdd = "
-                    + sumToAdd.toPlainString() + ", refUser.referralBalance = " + refUser.getReferralBalance().toString()
-                    + ", total = " + total);
             userService.updateReferralBalanceByChatId(total, refUser.getChatId());
             if (BigDecimal.ZERO.compareTo(sumToAdd) != 0)
                 responseSender.sendMessage(refUser.getChatId(), "На реферальный баланс было добавлено " + sumToAdd.intValue() + "₽ по сделке партнера.");

@@ -102,7 +102,7 @@ public enum Command {
 
     /** DEAL */
     DEAL("deal_proc", false, false, false),
-    PAID("Я оплатил(а)", false, false, false),
+    PAID(BotProperties.BUTTONS_DESIGN.getString("PAID"), false, false, false),
     CANCEL_DEAL("Отменить заявку", false, false, false),
     DELETE_DEAL("Удалить заявку", false, false, false),
     SHOW_DEAL("Показать", true, false, false),
@@ -114,6 +114,8 @@ public enum Command {
     USER_ADDITIONAL_VERIFICATION("user_verification", false, false, false),
     SHARE_REVIEW("share_review", false, false, false),
     CHOOSING_FIAT_CURRENCY("chs_fc", false, false, false),
+    USE_PROMO(BotProperties.BUTTONS_DESIGN.getString("USE_PROMO"), false, false, false),
+    DONT_USE_PROMO(BotProperties.BUTTONS_DESIGN.getString("DONT_USE_PROMO"), false, false, false),
 
     /** REQUESTS */
     NEW_DEALS("Новые заявки", true, false, false),

@@ -16,6 +16,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static tgb.btc.rce.enums.InlineCalculatorButton.*;
@@ -44,7 +45,7 @@ public class KeyboardService {
     public ReplyKeyboard getFiatCurrencies() {
         List<InlineButton> buttons = FiatCurrencyUtil.getFiatCurrencies().stream()
                 .map(fiatCurrency -> InlineButton.builder()
-                        .text(fiatCurrency.getCode().toUpperCase())
+                        .text(fiatCurrency.getDisplayData())
                         .data(CallbackQueryUtil.buildCallbackData(Command.CHOOSING_FIAT_CURRENCY.getText(), fiatCurrency.name()))
                         .build())
                 .collect(Collectors.toList());
@@ -61,7 +62,10 @@ public class KeyboardService {
                         .inlineType(InlineType.CALLBACK_DATA)
                         .build())
                 .collect(Collectors.toList());
-
+        Integer numberOfColumns = BotProperties.FUNCTIONS.getInteger("payment.types.columns", null);
+        if (Objects.nonNull(numberOfColumns)) {
+            return KeyboardUtil.buildInlineSingleLast(buttons, numberOfColumns, KeyboardUtil.INLINE_BACK_BUTTON);
+        }
         buttons.add(KeyboardUtil.INLINE_BACK_BUTTON);
         return KeyboardUtil.buildInline(buttons);
     }
@@ -105,12 +109,12 @@ public class KeyboardService {
     public ReplyKeyboard getPromoCode(BigDecimal sumWithDiscount, BigDecimal dealAmount) {
         return KeyboardUtil.buildInline(List.of(
                 InlineButton.builder()
-                        .text("Использовать, " + BigDecimalUtil.roundToPlainString(sumWithDiscount))
+                        .text(String.format(Command.USE_PROMO.getText(), BigDecimalUtil.roundToPlainString(sumWithDiscount)))
                         .data(BotStringConstants.USE_PROMO)
                         .inlineType(InlineType.CALLBACK_DATA)
                         .build(),
                 InlineButton.builder()
-                        .text("Без промокода, " + BigDecimalUtil.roundToPlainString(dealAmount))
+                        .text(String.format(Command.DONT_USE_PROMO.getText(), BigDecimalUtil.roundToPlainString(dealAmount)))
                         .data(BotStringConstants.DONT_USE_PROMO)
                         .inlineType(InlineType.CALLBACK_DATA)
                         .build(),

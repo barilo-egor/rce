@@ -9,7 +9,7 @@ public enum BotInlineButton {
                    .data(Command.BACK.getText())
                    .build()),
     USE_SAVED_WALLET(InlineButton.builder()
-                             .text("Использовать сохраненный адрес")
+                             .text(BotProperties.BUTTONS_DESIGN.getString("USE_SAVED_WALLET"))
                              .data(BotStringConstants.USE_SAVED_WALLET)
                              .build());
 
