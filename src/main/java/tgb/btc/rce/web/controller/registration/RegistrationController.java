@@ -2,6 +2,7 @@ package tgb.btc.rce.web.controller.registration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -10,8 +11,11 @@ import tgb.btc.rce.repository.WebUserRepository;
 import tgb.btc.rce.service.impl.WebUserService;
 import tgb.btc.rce.vo.web.CredentialsVO;
 
+import java.security.Principal;
+
 @Controller
 @RequestMapping("/web/registration")
+@Slf4j
 public class RegistrationController {
 
     private WebUserService webUserService;
@@ -28,14 +32,14 @@ public class RegistrationController {
         this.webUserService = webUserService;
     }
 
-    @GetMapping("/init")
+    @GetMapping
     public String init() {
-        return "registration/registration";
+        return "registration";
     }
 
     @PostMapping("/registerUser")
     @ResponseBody
-    public ObjectNode registerUser(@RequestBody CredentialsVO credentialsVO, @RequestParam RoleConstants role) {
+    public ObjectNode registerUser(@RequestBody CredentialsVO credentialsVO, @RequestParam(required = false) RoleConstants role) {
         webUserService.save(credentialsVO, role);
         ObjectNode objectNode = new ObjectMapper().createObjectNode();
         objectNode.put("success", true);
@@ -48,6 +52,20 @@ public class RegistrationController {
         ObjectNode objectNode = new ObjectMapper().createObjectNode();
         objectNode.put("result", webUserRepository.countByUsername(username) == 0);
         objectNode.put("success", true);
+        return objectNode;
+    }
+
+    @PostMapping("/changePassword")
+    @ResponseBody
+    public ObjectNode changePassword(@RequestParam String password, Principal principal) {
+        ObjectNode objectNode = new ObjectMapper().createObjectNode();
+        try {
+            webUserService.changePassword(principal.getName(), password);
+            objectNode.put("success", true);
+        } catch (Exception e) {
+            objectNode.put("success", false);
+            log.error("Ошибка при обновлении пароля. ", e);
+        }
         return objectNode;
     }
 }

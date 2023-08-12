@@ -27,6 +27,11 @@ Ext.define('Main.view.components.MainToolBar', {
             iconCls: 'fas fa-users menu-icon-color',
             menu: [
                 {
+                    text: 'Смена пароля',
+                    iconCls: 'fas fa-key menu-icon-color',
+                    handler: 'changePasswordClick'
+                },
+                {
                     text: 'Регистрация веб-пользователей',
                     iconCls: 'fas fa-user-plus menu-icon-color',
                     handler: 'newWebUserClick'

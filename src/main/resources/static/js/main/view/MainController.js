@@ -44,4 +44,8 @@ Ext.define('Main.view.MainController', {
             ExtUtil.idQuery('mainPanel').setLoading(false)
         }, 10);
     },
+
+    changePasswordClick: function (btn) {
+        // this.mainToolBarClick(btn, 'changepasswordpanel')
+    }
 })

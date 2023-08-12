@@ -25,7 +25,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         //  Доступ для всех
         httpSecurity
                 .authorizeRequests()
-                //Доступ только для не зарегистрированных пользователей
                 .antMatchers(
                         "/web/registration/**", "/static/**", "/extJS/**", "/fontawesome/**",
                         "/js/login/**", "/login/**",

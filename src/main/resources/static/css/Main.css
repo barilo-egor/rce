@@ -72,3 +72,21 @@
 .redColor {
     color: red !important;
 }
+
+.noColorBtn {
+    background-color: #ffffff !important;
+    border-color: #919191 !important;
+    border-width: 1px;
+    color: #404040 !important;
+    box-shadow: none;
+    background-image: none;
+}
+
+.noColor-noBorderBtn {
+    background-color: #ffffff !important;
+    border-color: white !important;
+    border-width: 1px;
+    color: #404040 !important;
+    box-shadow: none;
+    background-image: none;
+}

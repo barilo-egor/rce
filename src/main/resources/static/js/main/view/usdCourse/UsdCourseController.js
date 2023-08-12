@@ -299,9 +299,9 @@ Ext.define('Main.view.usdCourse.UsdCourseController', {
                     xtype: 'button',
                     weight: 50,
                     tooltip: 'Восстановить значение',
-                    iconCls: 'fas fa-redo returnValueBtn',
+                    iconCls: 'fas fa-redo noColorBtn',
                     disabled: true,
-                    cls: 'returnValueBtn',
+                    cls: 'noColorBtn',
                     handler: 'returnValue'
                 },
                 {

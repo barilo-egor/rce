@@ -14,15 +14,18 @@ Ext.define('Main.view.components.MainFramePanel', {
         'Main.view.api.registration.ApiRegistrationController',
         'Main.view.api.control.ApiUsersControlPanel',
         'Main.view.api.control.ApiUsersControlController',
+        'Main.view.changePassword.ChangePasswordPanel',
         'Main.view.bulkDiscount.BulkDiscountPanel',
-        'Main.view.bulkDiscount.BulkDiscountController'
+        'Main.view.bulkDiscount.BulkDiscountGridPanel',
+        'Main.view.bulkDiscount.BulkDiscountController',
+        'Main.view.bulkDiscount.BulkDiscountAddForm',
     ],
     layout: {
         type: 'fit'
     },
     items: [
         {
-            xtype: 'usdcoursepanel',
+            xtype: 'changepasswordpanel',
             scrollable: true
         }
     ]

@@ -12,6 +12,7 @@ import tgb.btc.rce.repository.RoleRepository;
 import tgb.btc.rce.repository.WebUserRepository;
 import tgb.btc.rce.vo.web.CredentialsVO;
 
+import java.util.Objects;
 import java.util.Set;
 
 @Service
@@ -48,8 +49,21 @@ public class WebUserService implements UserDetailsService {
         webUser.setUsername(credentialsVO.getUsername());
         webUser.setPassword(passwordEncoder.encode(credentialsVO.getPassword()));
         webUser.setEnabled(true);
+        if (Objects.isNull(role)) {
+            role = RoleConstants.ROLE_USER;
+        }
         webUser.setRoles(Set.of(roleRepository.getByName(role.name())));
         return webUserRepository.save(webUser);
+    }
+
+    public void changePassword(String userName, String newPassword) {
+        WebUser webUser = getUser(userName);
+        webUser.setPassword(passwordEncoder.encode(newPassword));
+        webUserRepository.save(webUser);
+    }
+
+    public WebUser getUser(String username) {
+        return (WebUser) loadUserByUsername(username);
     }
 
     @Override
