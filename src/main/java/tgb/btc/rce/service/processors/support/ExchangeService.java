@@ -147,7 +147,9 @@ public class ExchangeService {
     }
 
     public void askForFiatCurrency(Long chatId) {
-        responseSender.sendMessage(chatId, "Выберите валюту.", keyboardService.getFiatCurrencies());
+        String message = MessagePropertiesUtil.getMessage("choose.fiat.currency");
+        if (Objects.isNull(message)) message = "Выберите валюту.";
+        responseSender.sendMessage(chatId, message, keyboardService.getFiatCurrencies());
     }
 
     public boolean saveFiatCurrency(Update update) {
