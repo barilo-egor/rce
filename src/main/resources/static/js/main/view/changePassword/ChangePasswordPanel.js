@@ -67,6 +67,7 @@ Ext.define('Main.view.changePassword.ChangePasswordPanel', {
                     items: [
                         {
                             fieldLabel: 'Повторите пароль',
+                            id: 'passwordConfirmInput',
                             validator: ValidatorUtil.validatePasswordConfirm
                         },
                         {

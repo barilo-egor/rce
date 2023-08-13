@@ -1,7 +1,7 @@
 let ValidatorUtil = {
     validatePositiveInt: function (val) {
         if (!val) return 'Введите значение.'
-        if (val === '0' || val === 0 || val < 1) return 'Введите значение больше 0.'
+        if (val === '0' || val === 0 || val < 0) return 'Введите значение больше 0.'
         else return true
     },
 

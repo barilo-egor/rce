@@ -9,16 +9,17 @@ Ext.define('Main.view.MainPanel', {
         'Main.view.components.MainFramePanel'
     ],
     header: false,
-    layout: {
-        type: 'fit'
-    },
+    layout: 'fit',
 
     items: [
         {
             xtype: 'panel',
             header: false,
             scrollable: true,
-            layout: 'fit',
+            layout: {
+                type: 'vbox',
+                align: 'stretch'
+            },
             items: [
                 {
                     xtype: 'container',

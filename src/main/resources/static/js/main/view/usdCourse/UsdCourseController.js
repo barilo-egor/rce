@@ -391,13 +391,21 @@ Ext.define('Main.view.usdCourse.UsdCourseController', {
                 coursesFormItems.forEach(
                     coursesFormItem => coursesFormItem.items.items.forEach(
                         dealTypeItem => dealTypeItem.items.items.forEach(
-                            containerItem => values.push(containerItem.items.items[0]))
+                            containerItem => {
+                                values.push(containerItem.items.items[0])
+                                containerItem.items.items[1].setDisabled(true)
+                            })
                     )
                 )
                 for (let value of values) {
                     value.defaultValue = value.getValue()
                     value.setValue(1)
                     value.setValue(value.defaultValue)
+                    value.setFieldStyle('color: #404040;\n' +
+                        'padding: 5px 10px 4px;\n' +
+                        'background-color: #fff;\n' +
+                        'font: 300 13px/21px \'Open Sans\', \'Helvetica Neue\', helvetica, arial, verdana, sans-serif;\n' +
+                        'min-height: 30px;')
                 }
             },
             failure: function (rs) {

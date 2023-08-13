@@ -15,7 +15,8 @@ Ext.define('Main.view.changePassword.ChangePasswordController', {
 
     saveButtonClick: function () {
         let input = ExtUtil.idQuery('passwordInput')
-        if (!input.isValid()) {
+        let confirmInput = ExtUtil.idQuery('passwordConfirmInput')
+        if (!input.isValid() || !confirmInput.isValid()) {
             Ext.Msg.alert('Внимание', 'Неверно заполнена форма.')
             return
         }
@@ -28,6 +29,8 @@ Ext.define('Main.view.changePassword.ChangePasswordController', {
                 let response = Ext.JSON.decode(rs.responseText)
                 if (response.success) {
                     Ext.Msg.alert('Сохранено', 'Пароль успешно обновлен.')
+                    input.setValue('')
+                    confirmInput.setValue('')
                 } else {
                     Ext.Msg.alert('Ошибка', 'Ошибки при обновлении пароля')
                 }

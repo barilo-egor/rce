@@ -61,6 +61,7 @@ Ext.define('Main.view.registration.RegistrationPanel', {
                     displayField: 'displayName',
                     emptyText: 'Выберите роль',
                     valueField: 'name',
+                    editable: false,
                     name: 'role',
                     store: {
                         fields: [
@@ -85,8 +86,7 @@ Ext.define('Main.view.registration.RegistrationPanel', {
                     decimalSeparator: '.',
                     padding: '0 0 5 0',
                     hideTrigger: true,
-                    msgTarget: 'side',
-                    validator: ValidatorUtil.validateNotEmpty,
+                    msgTarget: 'side'
                 }
             ],
             buttonAlign: 'center',
