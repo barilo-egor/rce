@@ -4,7 +4,6 @@ Ext.define('Main.view.bulkDiscount.BulkDiscountAddForm', {
     controller: 'bulkDiscountController',
     title: 'Добавление скидки',
     width: '50%',
-    height: '30%',
     layout: {
         type: 'fit'
     },

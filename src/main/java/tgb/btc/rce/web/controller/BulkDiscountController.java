@@ -3,6 +3,7 @@ package tgb.btc.rce.web.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import tgb.btc.rce.enums.BotProperties;
@@ -26,11 +27,12 @@ public class BulkDiscountController {
         ArrayNode fiatCurrencies = objectMapper.createArrayNode();
         for (FiatCurrency fiatCurrencyEnum : FiatCurrencyUtil.getFiatCurrencies()) {
             ObjectNode fiatCurrency = objectMapper.createObjectNode();
-            fiatCurrency.put("displayName", fiatCurrencyEnum.name());
+            fiatCurrency.put("name", fiatCurrencyEnum.name());
             ArrayNode dealTypes = objectMapper.createArrayNode();
             for (DealType dealTypeEnum : DealType.values()) {
                 ObjectNode dealType = objectMapper.createObjectNode();
-                dealType.put("displayName", dealTypeEnum.name());
+                dealType.put("name", dealTypeEnum.name());
+                dealType.put("displayName", StringUtils.capitalize(dealTypeEnum.getNominative()));
                 ArrayNode bulkDiscounts = objectMapper.createArrayNode();
                 for (BulkDiscount bulkDiscountVo : BulkDiscountService.BULK_DISCOUNTS.stream()
                         .filter(bulkDiscount -> bulkDiscount.getFiatCurrency().equals(fiatCurrencyEnum))
