@@ -25,7 +25,7 @@ Ext.define('Main.view.bulkDiscount.BulkDiscountController', {
 
     createGridPanel: function (fiatCurrency) {
         let fiatCurrencyTabPanel = {
-            title: fiatCurrency.displayName,
+            title: fiatCurrency.name,
             layout: {
                 type: 'fit'
             },
@@ -39,8 +39,8 @@ Ext.define('Main.view.bulkDiscount.BulkDiscountController', {
         for (let dealType of fiatCurrency.dealTypes) {
             let store = Ext.create('Main.view.bulkDiscount.store.BulkDiscountStore');
             for (let bulkDiscount of dealType.bulkDiscounts) {
-                bulkDiscount.fiatCurrency = fiatCurrency.displayName;
-                bulkDiscount.dealType = dealType.displayName;
+                bulkDiscount.fiatCurrency = fiatCurrency.name;
+                bulkDiscount.dealType = dealType.name;
             }
             store.getProxy().setData(dealType.bulkDiscounts);
             store.load();
@@ -53,8 +53,8 @@ Ext.define('Main.view.bulkDiscount.BulkDiscountController', {
                     {
                         xtype: 'bulkdiscountgridpanel',
                         store: store,
-                        fiatCurrency: fiatCurrency.displayName,
-                        dealType: dealType.displayName
+                        fiatCurrency: fiatCurrency.name,
+                        dealType: dealType.name
                     }
                 ]
             };
