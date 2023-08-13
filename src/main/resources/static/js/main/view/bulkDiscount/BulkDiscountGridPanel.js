@@ -3,6 +3,7 @@ Ext.define('Main.view.bulkDiscount.BulkDiscountGridPanel', {
     xtype: 'bulkdiscountgridpanel',
     controller: 'bulkDiscountController',
     scrollable: true,
+    enableColumnHide: false,
     columns: [{
         header: 'Сумма',
         dataIndex: 'sum',
