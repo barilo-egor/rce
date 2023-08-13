@@ -60,7 +60,7 @@ public enum SimpleCommand {
     WEB_ADMIN_PANEL(Command.WEB_ADMIN_PANEL, update ->
             BeanHolder.RESPONSE_SENDER.sendMessage(UpdateUtil.getChatId(update), "Веб админ-панель.",
                     KeyboardUtil.buildInline(List.of(InlineButton.builder()
-                            .text("Замена курса")
+                            .text("Перейти")
                             .data(BotStringConstants.MAIN_URL + "/web/main")
                             .inlineType(InlineType.WEB_APP)
                             .build()))));
