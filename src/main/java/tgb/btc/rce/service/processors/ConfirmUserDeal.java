@@ -135,18 +135,21 @@ public class ConfirmUserDeal extends Processor {
         if (UserService.REFERRAL_TYPE.equals(ReferralType.STANDARD)) {
             Integer reviewPrise = BotVariablePropertiesUtil.getInt(BotVariableType.REVIEW_PRISE); // TODO уточнить нужно ли 30 выводить или брать число из проперти
             String data;
+            String amount;
         if (DYNAMIC.isCurrent()) {
             ReviewPrise reviewPriseVo = ReviewPriseUtil.getReviewPrise(deal.getAmount(), deal.getFiatCurrency());
             if (Objects.nonNull(reviewPriseVo)) {
                 data = CallbackQueryUtil.buildCallbackData(Command.SHARE_REVIEW,
                        String.valueOf(reviewPriseVo.getMinPrise()), String.valueOf(reviewPriseVo.getMaxPrise()));
+                amount = "от " + reviewPriseVo.getMinPrise() + "₽" + " до " + reviewPriseVo.getMaxPrise() + "₽";
             }
             else return;
         } else {
             data = Command.SHARE_REVIEW.getText();
+            amount = BotVariablePropertiesUtil.getInt(BotVariableType.REVIEW_PRISE) +"₽";
         }
             responseSender.sendMessage(deal.getUser().getChatId(), "Хотите оставить отзыв?\n" +
-                            "За оставленный отзыв вы получите вознаграждение в размере до 30₽" +
+                            "За оставленный отзыв вы получите вознаграждение в размере " + amount +
                             " на реферальный баланс после публикации.",
                     KeyboardUtil.buildInline(List.of(
                                     InlineButton.builder()
