@@ -219,12 +219,12 @@ public class UserService extends BasePersistService<User> {
     }
 
     public void ban(Long chatId) {
-        bannedUserCache.remove(chatId);
+        bannedUserCache.add(chatId, true);
         userRepository.updateIsBannedByChatId(chatId, true);
     }
 
     public void unban(Long chatId) {
-        bannedUserCache.remove(chatId);
+        bannedUserCache.add(chatId, false);
         userRepository.updateIsBannedByChatId(chatId, false);
     }
 
