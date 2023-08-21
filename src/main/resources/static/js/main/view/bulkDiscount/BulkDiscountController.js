@@ -107,7 +107,12 @@ Ext.define('Main.view.bulkDiscount.BulkDiscountController', {
                             });
                             store.add(newRec);
                         }
-                        store.sort('sum', 'DESC');
+                        let sortersItems = store.getSorters().items;
+                        if (sortersItems.length !== 0) {
+                            store.sort('sum', sortersItems[0]._direction);
+                        } else {
+                            store.sort('sum', 'DESC');
+                        }
                         break;
                     }
                 }
