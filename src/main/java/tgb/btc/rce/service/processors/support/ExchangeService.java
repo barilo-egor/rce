@@ -30,7 +30,10 @@ import tgb.btc.rce.vo.calculate.DealAmount;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -590,7 +593,18 @@ public class ExchangeService {
         String message = MessagePropertiesUtil.getMessage("deal.build.sell");
         if (Objects.isNull(message)) return null;
         CryptoCurrency currency = deal.getCryptoCurrency();
-        return String.format(message, deal.getPid(), BigDecimalUtil.roundToPlainString(deal.getAmount()), deal.getFiatCurrency().getCode(), deal.getPaymentType().getName(),
+        log.info("dealPid=" + deal.getPid());
+        log.info("dealAmount=" + BigDecimalUtil.roundToPlainString(deal.getAmount()));
+        log.info("fiatCurrencyCode=" + deal.getFiatCurrency().getCode());
+        log.info("paymentType=" + deal.getPaymentType().getName());
+        log.info("wallet=" + deal.getWallet());
+        log.info("smile=" + rank.getSmile());
+        log.info("rank=" + rank.getPercent());
+        log.info("cryptoAmount=" + BigDecimalUtil.roundToPlainString(deal.getCryptoAmount()));
+        log.info("currencyShortName=" + currency.getShortName());
+        log.info("currencyWallet=" + BotVariablePropertiesUtil.getWallet(currency));
+        log.info("dealActiveTime=" + BotVariablePropertiesUtil.getVariable(BotVariableType.DEAL_ACTIVE_TIME));
+        return MessagePropertiesUtil.getMessage("deal.build.sell", deal.getPid(), BigDecimalUtil.roundToPlainString(deal.getAmount()), deal.getFiatCurrency().getCode(), deal.getPaymentType().getName(),
                 deal.getWallet(), rank.getSmile(), rank.getPercent(),
                 BigDecimalUtil.roundToPlainString(deal.getCryptoAmount()), currency.getShortName(), currency.getShortName(),
                 BotVariablePropertiesUtil.getWallet(currency),
@@ -601,7 +615,7 @@ public class ExchangeService {
         String message = MessagePropertiesUtil.getMessage("deal.build.buy");
         if (Objects.isNull(message)) return null;
         CryptoCurrency currency = deal.getCryptoCurrency();
-        return String.format(message, deal.getPid(), BigDecimalUtil.roundToPlainString(deal.getCryptoAmount()), currency.getShortName(), currency.getDisplayName(),
+        return MessagePropertiesUtil.getMessage("deal.build.buy", deal.getPid(), BigDecimalUtil.roundToPlainString(deal.getCryptoAmount()), currency.getShortName(), currency.getDisplayName(),
                 deal.getWallet(), rank.getSmile(), rank.getPercent() + "%",
                 BigDecimalUtil.roundToPlainString(deal.getAmount()), deal.getFiatCurrency().getDisplayName(), requisite,
                 BotVariablePropertiesUtil.getVariable(BotVariableType.DEAL_ACTIVE_TIME));
