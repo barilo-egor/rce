@@ -105,9 +105,17 @@ public class ApiController {
         }
     }
 
-    @GetMapping("getUrl")
+    @GetMapping("/getUrl")
     @ResponseBody
     public ObjectNode getUrl() {
-        return JacksonUtil.getEmpty().put("data", BotProperties.SERVER.getString(BotStringConstants.MAIN_URL));
+        return JacksonUtil.getEmpty()
+                .put("success", true)
+                .put("data", BotProperties.SERVER.getString(BotStringConstants.MAIN_URL));
+    }
+
+    @GetMapping("/getFiat")
+    @ResponseBody
+    public String getFiat() {
+        return BotProperties.BOT_CONFIG.getString("bot.fiat.currencies");
     }
 }
