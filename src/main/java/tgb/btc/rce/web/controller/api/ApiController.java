@@ -13,8 +13,11 @@ import tgb.btc.rce.service.impl.KeyboardService;
 import tgb.btc.rce.web.controller.MainWebController;
 import tgb.btc.rce.web.controller.api.enums.StatusCode;
 import tgb.btc.rce.web.util.JacksonUtil;
+import tgb.btc.rce.web.util.SuccessResponseUtil;
+import tgb.btc.rce.web.vo.SuccessResponse;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Controller
 @RequestMapping("/api/10/")
@@ -72,7 +75,7 @@ public class ApiController {
             return StatusCode.DEAL_NOT_EXISTS.toJson();
         } else if (ApiDealStatus.PAID.equals(apiDealRepository.getApiDealStatusByPid(id))) {
             return StatusCode.DEAL_ALREADY_PAID.toJson();
-        } else {
+        } else { // TODO проверить время
             apiDealRepository.updateApiDealStatusByPid(ApiDealStatus.PAID, id);
             adminService.notify("Поступила новая api сделка.", keyboardService.getShowApiDeal(id));
             return StatusCode.STATUS_PAID_UPDATED.toJson();
@@ -110,12 +113,42 @@ public class ApiController {
     public ObjectNode getUrl() {
         return JacksonUtil.getEmpty()
                 .put("success", true)
-                .put("data", BotProperties.SERVER.getString(BotStringConstants.MAIN_URL));
+                .put("data", BotStringConstants.MAIN_URL);
     }
 
     @GetMapping("/getFiat")
     @ResponseBody
     public String getFiat() {
         return BotProperties.BOT_CONFIG.getString("bot.fiat.currencies");
+    }
+
+    @GetMapping("/statusCodes/new")
+    @ResponseBody
+    public SuccessResponse<?> statusCodesNew() {
+        return SuccessResponseUtil.data(StatusCode.NEW_DEAL_STATUSES);
+    }
+
+    @GetMapping("/statusCodes/paid")
+    @ResponseBody
+    public SuccessResponse<?> statusCodesPaid() {
+        return SuccessResponseUtil.data(StatusCode.PAID_STATUSES);
+    }
+
+    @GetMapping("/statusCodes/cancel")
+    @ResponseBody
+    public SuccessResponse<?> statusCodesCancel() {
+        return SuccessResponseUtil.data(StatusCode.CANCEL_STATUSES);
+    }
+
+    @GetMapping("/statusCodes/getStatuses")
+    @ResponseBody
+    public SuccessResponse<?> statusCodesGetStatuses() {
+        return SuccessResponseUtil.data(StatusCode.GET_STATUS_STATUSES);
+    }
+
+    @GetMapping("/getDealStatuses")
+    @ResponseBody
+    public SuccessResponse<?> getDealStatuses() {
+        return SuccessResponseUtil.data(List.of(ApiDealStatus.values()));
     }
 }

@@ -47,6 +47,11 @@ public class ApiDealService {
         this.apiDealRepository = apiDealRepository;
     }
 
+    @Autowired
+    public void setApiUserRepository(ApiUserRepository apiUserRepository) {
+        this.apiUserRepository = apiUserRepository;
+    }
+
     public ObjectNode newDeal(String token, DealType dealType, BigDecimal amount, BigDecimal cryptoAmount,
                               CryptoCurrency cryptoCurrency, String requisite, FiatCurrency fiatCurrency) {
         ApiDealVO apiDealVO = new ApiDealVO(token, dealType, amount, cryptoAmount, cryptoCurrency, requisite, fiatCurrency);
