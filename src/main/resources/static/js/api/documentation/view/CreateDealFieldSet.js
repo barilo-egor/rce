@@ -182,7 +182,7 @@ Ext.define('ApiDocumentation.view.CreateDealFieldSet', {
                 autoLoad: true,
                 proxy: {
                     type: 'ajax',
-                    url: '/api/10/statusCodes/newDeal',
+                    url: '/api/10/statusCodes/new',
                     reader: {
                         type: 'json',
                         rootProperty: 'body.data'
