@@ -4,28 +4,95 @@ import org.apache.commons.lang.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tgb.btc.rce.bean.ApiUser;
+import tgb.btc.rce.bean.PaymentRequisite;
+import tgb.btc.rce.bean.UsdApiUserCourse;
+import tgb.btc.rce.enums.FiatCurrency;
 import tgb.btc.rce.repository.ApiUserRepository;
+import tgb.btc.rce.repository.UsdApiUserCourseRepository;
+import tgb.btc.rce.web.vo.ApiUserVO;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 @Service
 public class ApiUserService {
 
     private ApiUserRepository apiUserRepository;
 
+    private UsdApiUserCourseRepository usdApiUserCourseRepository;
+
+    @Autowired
+    public void setUsdApiUserCourseRepository(UsdApiUserCourseRepository usdApiUserCourseRepository) {
+        this.usdApiUserCourseRepository = usdApiUserCourseRepository;
+    }
+
     @Autowired
     public void setApiUserRepository(ApiUserRepository apiUserRepository) {
         this.apiUserRepository = apiUserRepository;
     }
 
-    public ApiUser register(ApiUser apiUser) {
-        apiUser.setRegistrationDate(LocalDate.now());
-        String token = RandomStringUtils.randomAlphanumeric(40);
-        while (apiUserRepository.countByToken(token) > 0) {
-            token = RandomStringUtils.randomAlphanumeric(40);
+    public ApiUser save(ApiUserVO apiUserVO) {
+        ApiUser apiUser;
+        if (Objects.nonNull(apiUserVO.getPid())) {
+            apiUser = apiUserRepository.getById(apiUserVO.getPid());
+            apiUser.setIsBanned(apiUserVO.getIsBanned());
+        } else {
+            apiUser = new ApiUser();
+            apiUser.setRegistrationDate(LocalDate.now());
+            apiUser.setIsBanned(false);
+            String token = RandomStringUtils.randomAlphanumeric(40);
+            while (apiUserRepository.countByToken(token) > 0) {
+                token = RandomStringUtils.randomAlphanumeric(40);
+            }
+            apiUser.setToken(token);
+            List<UsdApiUserCourse> usdApiUserCourseList = new ArrayList<>();
+            if (Objects.nonNull(apiUserVO.getUsdCourseBYN())) {
+                usdApiUserCourseList.add(usdApiUserCourseRepository.save(UsdApiUserCourse.builder()
+                        .fiatCurrency(FiatCurrency.BYN)
+                        .course(apiUserVO.getUsdCourseBYN())
+                        .build()));
+            }
+            if (Objects.nonNull(apiUserVO.getUsdCourseRUB())) {
+                usdApiUserCourseList.add(usdApiUserCourseRepository.save(UsdApiUserCourse.builder()
+                        .fiatCurrency(FiatCurrency.BYN)
+                        .course(apiUserVO.getUsdCourseRUB())
+                        .build()));
+            }
+            apiUser.setUsdApiUserCourseList(usdApiUserCourseList);
         }
-        apiUser.setToken(token);
-        apiUser.setIsBanned(false);
+        if (Objects.nonNull(apiUserVO.getUsdCourseBYN())) {
+            UsdApiUserCourse byn = apiUser.getCourse(FiatCurrency.BYN);
+            if (Objects.isNull(byn)) {
+                UsdApiUserCourse usdApiUserCourse = usdApiUserCourseRepository.save(UsdApiUserCourse.builder()
+                        .fiatCurrency(FiatCurrency.BYN)
+                        .course(apiUserVO.getUsdCourseBYN())
+                        .build());
+                apiUser.getUsdApiUserCourseList().add(usdApiUserCourse);
+            } else {
+                byn.setCourse(apiUserVO.getUsdCourseBYN());
+                usdApiUserCourseRepository.save(byn);
+            }
+        }
+        if (Objects.nonNull(apiUserVO.getUsdCourseRUB())) {
+            UsdApiUserCourse rub = apiUser.getCourse(FiatCurrency.RUB);
+            if (Objects.isNull(rub)) {
+                UsdApiUserCourse usdApiUserCourse = usdApiUserCourseRepository.save(UsdApiUserCourse.builder()
+                        .fiatCurrency(FiatCurrency.RUB)
+                        .course(apiUserVO.getUsdCourseRUB())
+                        .build());
+                apiUser.getUsdApiUserCourseList().add(usdApiUserCourse);
+            } else {
+                rub.setCourse(apiUserVO.getUsdCourseRUB());
+                usdApiUserCourseRepository.save(rub);
+            }
+        }
+        apiUser.setId(apiUserVO.getId());
+        apiUser.setPersonalDiscount(apiUserVO.getPersonalDiscount());
+        apiUser.setBuyRequisite(new PaymentRequisite(apiUserVO.getBuyRequisitePid()));
+        apiUser.setSellRequisite(apiUserVO.getSellRequisite());
+        apiUser.setFiatCurrency(apiUserVO.getFiatCurrency());
         return apiUserRepository.save(apiUser);
     }
 

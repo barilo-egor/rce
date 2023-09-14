@@ -161,8 +161,8 @@ Ext.define('Main.view.api.control.ApiUserEditWindow', {
                 },
                 {
                     xtype: 'numberfield',
-                    fieldLabel: 'Курс USD',
-                    name: 'usdCourse',
+                    fieldLabel: 'Курс USD BYN',
+                    name: 'usdCourseBYN',
                     emptyText: 'Введите курс',
                     decimalSeparator: '.',
                     padding: '0 0 5 0',
@@ -170,17 +170,51 @@ Ext.define('Main.view.api.control.ApiUserEditWindow', {
                     msgTarget: 'side',
                     validator: ValidatorUtil.validatePositiveInt,
                     bind: {
-                        value: '{apiUser.usdCourse}'
+                        value: '{apiUser.usdCourseBYN}'
+                    },
+                    hidden: true,
+                    listeners: {
+                        beforerender: function (me) {
+                            ExtUtil.request({
+                                url: '/web/api/user/isOn',
+                                params: {
+                                    fiatCurrency: 'BYN'
+                                },
+                                method: 'GET',
+                                success: function (response) {
+                                    if (response.body.data.result) me.show()
+                                }
+                            })
+                        }
                     }
                 },
                 {
-                    xtype: 'textfield',
-                    editable: false,
-                    fieldLabel: 'Токен',
-                    name: 'token',
+                    xtype: 'numberfield',
+                    fieldLabel: 'Курс USD RUB',
+                    name: 'usdCourseRUB',
+                    emptyText: 'Введите курс',
+                    decimalSeparator: '.',
                     padding: '0 0 5 0',
+                    hideTrigger: true,
+                    msgTarget: 'side',
+                    validator: ValidatorUtil.validatePositiveInt,
+                    hidden: true,
                     bind: {
-                        value: '{apiUser.token}'
+                        value: '{apiUser.usdCourseRUB}'
+                    },
+                    listeners: {
+                        beforerender: function (me) {
+                            ExtUtil.request({
+                                url: '/web/api/user/isOn',
+                                params: {
+                                    fiatCurrency: 'RUB'
+                                },
+                                method: 'GET',
+                                success: function (response) {
+                                    if (response.body.data.result) me.show()
+                                }
+                            })
+                        }
                     }
                 },
                 {
@@ -203,7 +237,25 @@ Ext.define('Main.view.api.control.ApiUserEditWindow', {
                     bind: {
                         value: '{apiUser.isBanned}'
                     }
-                }
+                },
+                {
+                    xtype: 'combobox',
+                    fieldLabel: 'Фиатная валюта по умолчанию',
+                    displayField: 'displayName',
+                    emptyText: 'Выберите фиатную валюту',
+                    valueField: 'name',
+                    editable: false,
+                    name: 'fiatCurrency',
+                    store: 'fiatCurrenciesStore',
+                    validator: ValidatorUtil.validateNotEmpty,
+                    listeners: {
+                        beforerender: function (me) {
+                            let fiatCurrency = me.up('window').getViewModel().data.apiUser.fiatCurrency
+                            let record = me.getStore().getRange().filter(currency => currency.getData().name === fiatCurrency)[0]
+                            me.setValue(record)
+                        }
+                    }
+                },
             ]
         }
     ]

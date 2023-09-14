@@ -77,7 +77,7 @@ public class ApiDealService {
                 .fiatCurrency(Objects.nonNull(apiDealVO.getFiatCurrency())
                         ? apiDealVO.getFiatCurrency()
                         : apiUser.getFiatCurrency())
-                .usdCourse(apiUser.getUsdCourse())
+                .usdCourse(apiUser.getCourse(apiDealVO.getFiatCurrency()).getCourse())
                 .cryptoCourse(cryptoCurrencyService.getCurrency(apiDealVO.getCryptoCurrency()))
                 .personalDiscount(apiUser.getPersonalDiscount())
                 .cryptoCurrency(apiDealVO.getCryptoCurrency());

@@ -10,6 +10,7 @@ let ExtUtil = {
         if (config.params) requestObj.params = config.params
         if (config.jsonData) requestObj.jsonData = config.jsonData
         requestObj.failure = this.failure
+        requestObj.async = config.async !== false
         requestObj.success = function (rawResponse) {
             let response = Ext.JSON.decode(rawResponse.responseText)
             if (!response.success) {

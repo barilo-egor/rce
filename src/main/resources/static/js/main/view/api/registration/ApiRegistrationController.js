@@ -19,9 +19,7 @@ Ext.define('Main.view.api.registration.ApiRegistrationController', {
             return
         }
         let jsonData = form.getValues()
-        jsonData.buyRequisite = {
-            pid: requisitePid
-        }
+        jsonData.buyRequisitePid = requisitePid
         form.setLoading('Загрузка')
         Ext.Function.defer(function() {
             Ext.Ajax.request({

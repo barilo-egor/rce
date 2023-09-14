@@ -114,15 +114,67 @@ Ext.define('Main.view.api.registration.ApiRegistrationPanel', {
                 },
                 {
                     xtype: 'numberfield',
-                    fieldLabel: 'Курс USD',
-                    name: 'usdCourse',
+                    fieldLabel: 'Курс USD BYN',
+                    name: 'usdCourseBYN',
                     emptyText: 'Введите курс',
                     decimalSeparator: '.',
                     padding: '0 0 5 0',
                     hideTrigger: true,
                     msgTarget: 'side',
-                    validator: ValidatorUtil.validatePositiveInt
-                }
+                    validator: ValidatorUtil.validatePositiveInt,
+                    hidden: true,
+                    listeners: {
+                        beforerender: function (me) {
+                            ExtUtil.request({
+                                url: '/web/api/user/isOn',
+                                params: {
+                                    fiatCurrency: 'BYN'
+                                },
+                                method: 'GET',
+                                success: function (response) {
+                                    if (response.body.data.result) me.show()
+                                }
+                            })
+                        }
+                    }
+                },
+                {
+                    xtype: 'numberfield',
+                    fieldLabel: 'Курс USD RUB',
+                    name: 'usdCourseRUB',
+                    emptyText: 'Введите курс',
+                    decimalSeparator: '.',
+                    padding: '0 0 5 0',
+                    hideTrigger: true,
+                    msgTarget: 'side',
+                    validator: ValidatorUtil.validatePositiveInt,
+                    hidden: true,
+                    listeners: {
+                        beforerender: function (me) {
+                            ExtUtil.request({
+                                url: '/web/api/user/isOn',
+                                params: {
+                                    fiatCurrency: 'RUB'
+                                },
+                                method: 'GET',
+                                success: function (response) {
+                                    if (response.body.data.result) me.show()
+                                }
+                            })
+                        }
+                    }
+                },
+                {
+                    xtype: 'combobox',
+                    fieldLabel: 'Фиатная валюта по умолчанию',
+                    displayField: 'displayName',
+                    emptyText: 'Выберите фиатную валюту',
+                    valueField: 'name',
+                    editable: false,
+                    name: 'fiatCurrency',
+                    store: 'fiatCurrenciesStore',
+                    validator: ValidatorUtil.validateNotEmpty
+                },
             ]
         },
         {
