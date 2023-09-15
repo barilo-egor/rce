@@ -177,7 +177,8 @@ public enum Command {
      * API DEALS
      */
     CONFIRM_API_DEAL("confirm_api_deal", true, false, false),
-    CANCEL_API_DEAL("cancel_api_deal", true, false, false)
+    CANCEL_API_DEAL("cancel_api_deal", true, false, false),
+    NEW_API_DEALS("Новые API заявки", true, false, false)
     ;
 
     final String text;

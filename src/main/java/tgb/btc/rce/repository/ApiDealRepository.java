@@ -6,6 +6,8 @@ import org.springframework.stereotype.Repository;
 import tgb.btc.rce.bean.ApiDeal;
 import tgb.btc.rce.enums.ApiDealStatus;
 
+import java.util.List;
+
 @Repository
 public interface ApiDealRepository extends BaseRepository<ApiDeal> {
 
@@ -22,4 +24,7 @@ public interface ApiDealRepository extends BaseRepository<ApiDeal> {
 
     @Query("select count(pid) from ApiDeal where apiDealStatus=:status and apiUser.pid=:userPid")
     long getCountByApiDealStatusAndApiUserPid(ApiDealStatus status, Long userPid);
+
+    @Query("select pid from ApiDeal where apiDealStatus='PAID'")
+    List<Long> getActiveDealsPids();
 }

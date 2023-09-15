@@ -28,9 +28,9 @@ public enum Menu {
                          Command.TURNING_CURRENCY, Command.CHANGE_USD_COURSE, Command.EDIT_CONTACTS,
                          Command.ADMIN_BACK)),
     REQUESTS(ReferralType.STANDARD.equals(UserService.REFERRAL_TYPE)
-            ? List.of(Command.NEW_DEALS, Command.NEW_WITHDRAWALS, Command.NEW_REVIEWS, Command.NEW_SPAM_BANS,
+            ? List.of(Command.NEW_DEALS, Command.NEW_API_DEALS, Command.NEW_WITHDRAWALS, Command.NEW_REVIEWS, Command.NEW_SPAM_BANS,
                      Command.ADMIN_BACK)
-            :List.of(Command.NEW_DEALS, Command.NEW_REVIEWS, Command.NEW_SPAM_BANS, Command.ADMIN_BACK)),
+            :List.of(Command.NEW_DEALS, Command.NEW_API_DEALS, Command.NEW_REVIEWS, Command.NEW_SPAM_BANS, Command.ADMIN_BACK)),
     REPORTS(List.of(Command.CHECKS_FOR_DATE, Command.USERS_REPORT, Command.DEAL_REPORTS, Command.PARTNERS_REPORT,
                     Command.USERS_DEALS_REPORT, Command.LOTTERY_REPORT, Command.ADMIN_BACK)),
 

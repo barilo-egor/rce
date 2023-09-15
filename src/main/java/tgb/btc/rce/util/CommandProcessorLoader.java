@@ -5,6 +5,8 @@ import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.exception.BaseException;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.processors.*;
+import tgb.btc.rce.service.processors.apideal.CancelApiDeal;
+import tgb.btc.rce.service.processors.apideal.ConfirmApiDeal;
 import tgb.btc.rce.service.processors.bulkdiscounts.BulkDiscounts;
 import tgb.btc.rce.service.processors.bulkdiscounts.UpdateBulkDiscounts;
 import tgb.btc.rce.service.processors.calculator.InlineQueryCalculator;
@@ -190,6 +192,9 @@ public final class CommandProcessorLoader {
         commandProcessors.add(InlineCalculator.class);
         commandProcessors.add(Help.class);
         commandProcessors.add(ShowApiDeal.class);
+        commandProcessors.add(NewApiDeals.class);
+        commandProcessors.add(ConfirmApiDeal.class);
+        commandProcessors.add(CancelApiDeal.class);
         commandProcessors.stream()
                 .filter(processor -> !extendsProcessor(processor))
                 .findFirst()
