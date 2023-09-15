@@ -109,7 +109,7 @@ Ext.define('ApiDocumentation.view.PaidFieldSet', {
                     width: 400,
                     editable: false,
                     value: '{\n' +
-                        '   "code": 0,\n' +
+                        '   "code": 9,\n' +
                         '   "description": "Сделка переведена в статус "Оплачено"."\n' +
                         '}'
                 }
@@ -132,7 +132,7 @@ Ext.define('ApiDocumentation.view.PaidFieldSet', {
                     width: 400,
                     editable: false,
                     value: '{\n' +
-                        '   "code": 2,\n' +
+                        '   "code": 13,\n' +
                         '   "description": "Сделка уже в статусе "Оплачено"."\n' +
                         '}'
                 }

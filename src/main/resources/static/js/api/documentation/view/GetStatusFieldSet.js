@@ -109,7 +109,7 @@ Ext.define('ApiDocumentation.view.GetStatusFieldSet', {
                     width: 400,
                     editable: false,
                     value: '{\n' +
-                        '   "code": 0,\n' +
+                        '   "code": 8,\n' +
                         '   "description": "Сделка найдена.",\n' +
                         '   "data":{\n' +
                         '      "status": "PAID"\n' +
@@ -135,7 +135,7 @@ Ext.define('ApiDocumentation.view.GetStatusFieldSet', {
                     width: 400,
                     editable: false,
                     value: '{\n' +
-                        '   "code": 1,\n' +
+                        '   "code": 11,\n' +
                         '   "description": "Сделка не найдена."\n' +
                         '}'
                 }

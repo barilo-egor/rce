@@ -163,7 +163,7 @@ Ext.define('ApiDocumentation.view.CreateDealFieldSet', {
                     width: 400,
                     editable: false,
                     value: '{\n' +
-                        '   "code": 2,\n' +
+                        '   "code": 14,\n' +
                         '   "description": "Получившаяся сумма меньше минимально требуемой.",\n' +
                         '   "data":{\n' +
                         '      "minSum": "0.001"\n' +

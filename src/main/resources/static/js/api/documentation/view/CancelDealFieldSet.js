@@ -109,7 +109,7 @@ Ext.define('ApiDocumentation.view.CancelDealFieldSet', {
                     width: 400,
                     editable: false,
                     value: '{\n' +
-                        '   "code": 0,\n' +
+                        '   "code": 10,\n' +
                         '   "description": "Сделка отменена."\n' +
                         '}'
                 }
@@ -132,7 +132,7 @@ Ext.define('ApiDocumentation.view.CancelDealFieldSet', {
                     width: 400,
                     editable: false,
                     value: '{\n' +
-                        '   "code": 1,\n' +
+                        '   "code": 11,\n' +
                         '   "description": "Сделка не найдена."\n' +
                         '}'
                 }
