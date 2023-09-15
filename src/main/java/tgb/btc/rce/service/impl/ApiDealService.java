@@ -47,6 +47,11 @@ public class ApiDealService {
         this.apiDealRepository = apiDealRepository;
     }
 
+    @Autowired
+    public void setApiUserRepository(ApiUserRepository apiUserRepository) {
+        this.apiUserRepository = apiUserRepository;
+    }
+
     public ObjectNode newDeal(String token, DealType dealType, BigDecimal amount, BigDecimal cryptoAmount,
                               CryptoCurrency cryptoCurrency, String requisite, FiatCurrency fiatCurrency) {
         ApiDealVO apiDealVO = new ApiDealVO(token, dealType, amount, cryptoAmount, cryptoCurrency, requisite, fiatCurrency);
@@ -72,7 +77,7 @@ public class ApiDealService {
                 .fiatCurrency(Objects.nonNull(apiDealVO.getFiatCurrency())
                         ? apiDealVO.getFiatCurrency()
                         : apiUser.getFiatCurrency())
-                .usdCourse(apiUser.getUsdCourse())
+                .usdCourse(apiUser.getCourse(apiDealVO.getFiatCurrency()).getCourse())
                 .cryptoCourse(cryptoCurrencyService.getCurrency(apiDealVO.getCryptoCurrency()))
                 .personalDiscount(apiUser.getPersonalDiscount())
                 .cryptoCurrency(apiDealVO.getCryptoCurrency());

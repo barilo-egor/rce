@@ -6,25 +6,34 @@ import tgb.btc.rce.web.interfaces.JsonConvertable;
 import tgb.btc.rce.web.util.JacksonUtil;
 import tgb.btc.rce.web.vo.interfaces.ObjectNodeConvertable;
 
+import java.util.List;
 import java.util.function.Function;
 
 public enum StatusCode implements JsonConvertable, ObjectNodeConvertable<StatusCode> {
     CREATED_DEAL(0, "Сделка создана."),
     EMPTY_TOKEN(1, "Отсутствует токен."),
     EMPTY_DEAL_TYPE(2, "Отсутствует тип сделки."),
-    EMPTY_AMOUNTS(3, "Не передана ни одна сумма(amount и cryptoAmount)."),
-    ONLY_ONE_AMOUNT_NEEDED(4, "Должна быть заполнена только одна сумма(amount или cryptoAmount)."),
+    EMPTY_AMOUNTS(3, "Не передана ни одна сумма (amount и cryptoAmount)."),
+    ONLY_ONE_AMOUNT_NEEDED(4, "Должна быть заполнена только одна сумма (amount или cryptoAmount)."),
     EMPTY_CRYPTO_CURRENCY(5, "Отсутствует криптовалюта."),
     EMPTY_REQUISITE(6, "Отсутствует реквизит."),
     USER_NOT_FOUND(7, "Пользователь не найден."),
 
     DEAL_EXISTS(0, "Сделка найдена."),
     STATUS_PAID_UPDATED(0, "Сделка переведена в статус \"Оплачено\"."),
-    DEAL_DELETED(0, "Сделка удалена."),
+    DEAL_DELETED(0, "Сделка отменена."),
     DEAL_NOT_EXISTS(1, "Сделка не найдена."),
     DEAL_CONFIRMED(2, "Сделка уже обработана."),
     DEAL_ALREADY_PAID(2, "Сделка уже в статусе \"Оплачено\"."),
-    MIN_SUM(2, "Получившаяся сумма меньше минимально требуемой.");
+    MIN_SUM(2, "Получившаяся сумма меньше минимально требуемой."),
+    PAYMENT_TIME_IS_UP(3, "Время оплаты вышло.");
+
+    public static final List<StatusCode> NEW_DEAL_STATUSES = List.of(CREATED_DEAL, EMPTY_TOKEN, EMPTY_DEAL_TYPE, EMPTY_AMOUNTS,
+            ONLY_ONE_AMOUNT_NEEDED, EMPTY_CRYPTO_CURRENCY, EMPTY_REQUISITE, USER_NOT_FOUND);
+    public static final List<StatusCode> PAID_STATUSES = List.of(STATUS_PAID_UPDATED, DEAL_NOT_EXISTS, DEAL_ALREADY_PAID,
+            PAYMENT_TIME_IS_UP);
+    public static final List<StatusCode> CANCEL_STATUSES = List.of(DEAL_DELETED, DEAL_NOT_EXISTS, DEAL_CONFIRMED);
+    public static final List<StatusCode> GET_STATUS_STATUSES = List.of(DEAL_EXISTS, DEAL_NOT_EXISTS);
 
     final int code;
 

@@ -22,10 +22,9 @@ Ext.define('Main.view.api.control.ApiUsersControlController', {
             return
         }
         let jsonData = form.getValues()
-        jsonData.buyRequisite = {
-            pid: requisitePid
-        }
+        jsonData.buyRequisitePid = requisitePid
         jsonData.isBanned = ExtUtil.idQuery('isBannedCheckBox').value
+        delete jsonData.registrationDate
         form.setLoading('Загрузка')
         Ext.Function.defer(function() {
             Ext.Ajax.request({

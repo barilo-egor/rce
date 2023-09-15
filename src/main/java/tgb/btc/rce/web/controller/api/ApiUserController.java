@@ -5,10 +5,15 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import tgb.btc.rce.bean.ApiUser;
+import tgb.btc.rce.enums.FiatCurrency;
 import tgb.btc.rce.repository.ApiUserRepository;
 import tgb.btc.rce.service.impl.ApiUserService;
+import tgb.btc.rce.util.FiatCurrencyUtil;
+import tgb.btc.rce.web.util.JacksonUtil;
 import tgb.btc.rce.web.util.JsonUtil;
+import tgb.btc.rce.web.util.SuccessResponseUtil;
+import tgb.btc.rce.web.vo.ApiUserVO;
+import tgb.btc.rce.web.vo.SuccessResponse;
 
 import static tgb.btc.rce.web.controller.MainWebController.DEFAULT_MAPPER;
 
@@ -32,14 +37,14 @@ public class ApiUserController {
 
     @PostMapping("/save")
     @ResponseBody
-    public ObjectNode save(@RequestBody ApiUser apiUser) {
-        return apiUserService.register(apiUser).toJson();
+    public ObjectNode save(@RequestBody ApiUserVO apiUserVO) {
+        return apiUserService.save(apiUserVO).toJson();
     }
 
     @PostMapping("/update")
     @ResponseBody
-    public ObjectNode update(@RequestBody ApiUser apiUser) {
-        return apiUserRepository.save(apiUser).toJson();
+    public ObjectNode update(@RequestBody ApiUserVO apiUserVO) {
+       return apiUserService.save(apiUserVO).toJson();
     }
 
     @GetMapping("/isExistById")
@@ -61,5 +66,13 @@ public class ApiUserController {
     public Boolean deleteUser(@RequestParam Long pid) {
         apiUserRepository.deleteById(pid);
         return true;
+    }
+
+    @GetMapping("/isOn")
+    @ResponseBody
+    public SuccessResponse<?> isOn(@RequestParam FiatCurrency fiatCurrency) {
+        boolean result = FiatCurrencyUtil.getFiatCurrencies().contains(fiatCurrency);
+        return SuccessResponseUtil.getDataObjectNode(JacksonUtil.getEmpty()
+                .put("result", result));
     }
 }

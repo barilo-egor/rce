@@ -22,6 +22,10 @@ public class PaymentRequisite extends BasePersist {
     @Column(name = "REQUISITE_ORDER")
     private Integer requisiteOrder;
 
+    public PaymentRequisite(Long pid) {
+        super(pid);
+    }
+
     public PaymentType getPaymentType() {
         return paymentType;
     }

@@ -11,6 +11,7 @@ Ext.define('ApiDocumentation.view.Viewport', {
     viewModel: true,
     items: [
         {
+            flex: 1,
             xtype: 'apidocumentationpanel'
         }
     ]

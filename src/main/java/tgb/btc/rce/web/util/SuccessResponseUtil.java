@@ -40,6 +40,10 @@ public class SuccessResponseUtil {
         return new SuccessResponse<>(JacksonUtil.toObjectNode("warningString", warningString));
     }
 
+    public static <T> SuccessResponse<?> message(String message) {
+        return new SuccessResponse<>(JacksonUtil.toObjectNode("message", message));
+    }
+
     /**
      * Возвращает сообщение исключения.
      */
@@ -47,7 +51,7 @@ public class SuccessResponseUtil {
         return new SuccessResponse<>(JacksonUtil.toObjectNode("exceptionString", exception.getMessage()));
     }
 
-    private static SuccessResponse<?> getDataObjectNode(JsonNode jsonNode) {
+    public static SuccessResponse<?> getDataObjectNode(JsonNode jsonNode) {
         return getObjectNode(jsonNode, "data");
     }
 
