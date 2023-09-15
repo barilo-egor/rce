@@ -102,7 +102,7 @@ public class ApiDealService {
                 .put("id", deal.getPid())
                 .put("amountToPay", BigDecimalUtil.roundToPlainString(deal.getAmountToPay(), 8))
                 .put("requisite", requisite));
-        if (DealType.isBuy(apiDeal.getDealType())) data.put("cryptoAmount", apiDeal.getCryptoAmount());
+        if (DealType.isBuy(apiDeal.getDealType())) data.put("cryptoAmount", BigDecimalUtil.roundToPlainString(apiDeal.getCryptoAmount(), 8));
         else data.put("amount", apiDeal.getAmount());
         return data;
     }

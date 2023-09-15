@@ -140,7 +140,7 @@ Ext.define('ApiDocumentation.view.CreateDealFieldSet', {
                         '      "id": 8,\n' +
                         '      "amountToPay": "5000",\n' +
                         '      "requisite": "1111 1111 1111 1111",\n' +
-                        '      "cryptoAmount": 0.00217\n' +
+                        '      "cryptoAmount": "0.00217"\n' +
                         '   }\n' +
                         '}'
                 }

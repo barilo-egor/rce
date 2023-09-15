@@ -46,7 +46,7 @@ Ext.define('Main.view.api.control.ApiUsersControlController', {
         let me = btn
         Ext.Msg.show({
             title:'Удаление пользователя',
-            message: 'Вы уверены, что хотите удалить пользователя?',
+            message: 'Вы уверены, что хотите удалить пользователя? Все сделки пользователя будут удалены.',
             buttons: Ext.Msg.YESNO,
             icon: Ext.Msg.QUESTION,
             fn: function(btn) {
