@@ -1,12 +1,14 @@
 package tgb.btc.rce.web.controller.api;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.*;
 import tgb.btc.rce.repository.ApiDealRepository;
+import tgb.btc.rce.repository.ApiUserRepository;
 import tgb.btc.rce.service.impl.AdminService;
 import tgb.btc.rce.service.impl.ApiDealService;
 import tgb.btc.rce.service.impl.KeyboardService;
@@ -18,6 +20,7 @@ import tgb.btc.rce.web.vo.SuccessResponse;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Objects;
 
 @Controller
 @RequestMapping("/api/10/")
@@ -30,6 +33,13 @@ public class ApiController {
     private KeyboardService keyboardService;
 
     private ApiDealService apiDealService;
+
+    private ApiUserRepository apiUserRepository;
+
+    @Autowired
+    public void setApiUserRepository(ApiUserRepository apiUserRepository) {
+        this.apiUserRepository = apiUserRepository;
+    }
 
     @Autowired
     public void setApiDealService(ApiDealService apiDealService) {
@@ -65,12 +75,17 @@ public class ApiController {
                                @RequestParam(required = false) CryptoCurrency cryptoCurrency,
                                @RequestParam(required = false) String requisite,
                                @RequestParam(required = false) FiatCurrency fiatCurrency) {
+        StatusCode statusCode = hasAccess(token);
+        if (Objects.nonNull(statusCode)) return statusCode.toJson();
         return apiDealService.newDeal(token, dealType, amount, cryptoAmount, cryptoCurrency, requisite, fiatCurrency);
     }
 
     @PostMapping("/paid")
     @ResponseBody
-    public ObjectNode paid(@RequestParam Long id) {
+    public ObjectNode paid(@RequestParam(required = false) String token, @RequestParam(required = false) Long id) {
+        StatusCode statusCode = hasAccess(token);
+        if (Objects.nonNull(statusCode)) return statusCode.toJson();
+        if (Objects.isNull(id)) return StatusCode.DEAL_ID_EXPECTED.toJson();
         if (apiDealRepository.countByPid(id) == 0) {
             return StatusCode.DEAL_NOT_EXISTS.toJson();
         } else if (ApiDealStatus.PAID.equals(apiDealRepository.getApiDealStatusByPid(id))) {
@@ -84,7 +99,10 @@ public class ApiController {
 
     @PostMapping("/cancel")
     @ResponseBody
-    public ObjectNode cancel(@RequestParam Long id) {
+    public ObjectNode cancel(@RequestParam(required = false) String token, @RequestParam(required = false) Long id) {
+        StatusCode statusCode = hasAccess(token);
+        if (Objects.nonNull(statusCode)) return statusCode.toJson();
+        if (Objects.isNull(id)) return StatusCode.DEAL_ID_EXPECTED.toJson();
         if (apiDealRepository.countByPid(id) == 0) {
             return StatusCode.DEAL_NOT_EXISTS.toJson();
         } else {
@@ -98,7 +116,10 @@ public class ApiController {
 
     @GetMapping("/getStatus")
     @ResponseBody
-    public ObjectNode getStatus(@RequestParam Long id) {
+    public ObjectNode getStatus(@RequestParam(required = false) String token, @RequestParam(required = false) Long id) {
+        StatusCode statusCode = hasAccess(token);
+        if (Objects.nonNull(statusCode)) return statusCode.toJson();
+        if (Objects.isNull(id)) return StatusCode.DEAL_ID_EXPECTED.toJson();
         if (apiDealRepository.countByPid(id) == 0) {
             return StatusCode.DEAL_NOT_EXISTS.toJson();
         } else {
@@ -150,5 +171,12 @@ public class ApiController {
     @ResponseBody
     public SuccessResponse<?> getDealStatuses() {
         return SuccessResponseUtil.data(List.of(ApiDealStatus.values()));
+    }
+
+    private StatusCode hasAccess(String token) {
+        if (StringUtils.isEmpty(token) || apiUserRepository.countByToken(token) == 0) {
+            return StatusCode.TOKEN_EXPECTED;
+        }
+        return null;
     }
 }

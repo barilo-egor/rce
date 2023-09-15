@@ -19,14 +19,18 @@ public enum StatusCode implements JsonConvertable, ObjectNodeConvertable<StatusC
     EMPTY_REQUISITE(6, "Отсутствует реквизит."),
     USER_NOT_FOUND(7, "Пользователь не найден."),
 
-    DEAL_EXISTS(0, "Сделка найдена."),
-    STATUS_PAID_UPDATED(0, "Сделка переведена в статус \"Оплачено\"."),
-    DEAL_DELETED(0, "Сделка отменена."),
-    DEAL_NOT_EXISTS(1, "Сделка не найдена."),
-    DEAL_CONFIRMED(2, "Сделка уже обработана."),
-    DEAL_ALREADY_PAID(2, "Сделка уже в статусе \"Оплачено\"."),
-    MIN_SUM(2, "Получившаяся сумма меньше минимально требуемой."),
-    PAYMENT_TIME_IS_UP(3, "Время оплаты вышло.");
+    DEAL_EXISTS(8, "Сделка найдена."),
+    STATUS_PAID_UPDATED(9, "Сделка переведена в статус \"Оплачено\"."),
+    DEAL_DELETED(10, "Сделка отменена."),
+    DEAL_NOT_EXISTS(11, "Сделка не найдена."),
+    DEAL_CONFIRMED(12, "Сделка уже обработана."),
+    DEAL_ALREADY_PAID(13, "Сделка уже в статусе \"Оплачено\"."),
+    MIN_SUM(14, "Получившаяся сумма меньше минимально требуемой."),
+    PAYMENT_TIME_IS_UP(15, "Время оплаты вышло."),
+
+    TOKEN_EXPECTED(16, "Отсутствует токен."),
+
+    DEAL_ID_EXPECTED(17, "Отсутствует идентификатор сделки.");
 
     public static final List<StatusCode> NEW_DEAL_STATUSES = List.of(CREATED_DEAL, EMPTY_TOKEN, EMPTY_DEAL_TYPE, EMPTY_AMOUNTS,
             ONLY_ONE_AMOUNT_NEEDED, EMPTY_CRYPTO_CURRENCY, EMPTY_REQUISITE, USER_NOT_FOUND);
