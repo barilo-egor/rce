@@ -17,4 +17,10 @@ public interface ApiUserRepository extends BaseRepository<ApiUser> {
 
     @Query("select count(pid) from ApiUser where id=:id")
     long countById(String id);
+
+    @Query("select isBanned from ApiUser where pid=:pid")
+    Boolean isBanned(Long pid);
+
+    @Query("select pid from ApiUser where token=:token")
+    Long getPidByToken(String token);
 }

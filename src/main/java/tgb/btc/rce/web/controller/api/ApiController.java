@@ -1,6 +1,7 @@
 package tgb.btc.rce.web.controller.api;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -176,6 +177,9 @@ public class ApiController {
     private StatusCode hasAccess(String token) {
         if (StringUtils.isEmpty(token) || apiUserRepository.countByToken(token) == 0) {
             return StatusCode.EMPTY_TOKEN;
+        }
+        if (BooleanUtils.isTrue(apiUserRepository.isBanned(apiUserRepository.getPidByToken(token)))) {
+            return StatusCode.USER_BANNED;
         }
         return null;
     }
