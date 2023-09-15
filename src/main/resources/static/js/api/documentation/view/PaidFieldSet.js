@@ -67,6 +67,11 @@ Ext.define('ApiDocumentation.view.PaidFieldSet', {
                         type: 'Number',
                         description: 'Идентификатор заявки'
                     },
+                    {
+                        name: 'token',
+                        type: 'String',
+                        description: 'Ваш api-токен'
+                    }
                 ]
             }),
             columns: [
@@ -165,7 +170,7 @@ Ext.define('ApiDocumentation.view.PaidFieldSet', {
                     width: 35,
                     dataIndex: 'code',
                     renderer: function (val) {
-                        if (val !== 0) {
+                        if (val !== 9) {
                             return '<i class="fas fa-circle redColor"></i>'
                         } else {
                             return '<i class="fas fa-circle limeColor"></i>'

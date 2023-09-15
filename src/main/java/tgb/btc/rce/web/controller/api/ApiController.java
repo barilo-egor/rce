@@ -175,7 +175,7 @@ public class ApiController {
 
     private StatusCode hasAccess(String token) {
         if (StringUtils.isEmpty(token) || apiUserRepository.countByToken(token) == 0) {
-            return StatusCode.TOKEN_EXPECTED;
+            return StatusCode.EMPTY_TOKEN;
         }
         return null;
     }

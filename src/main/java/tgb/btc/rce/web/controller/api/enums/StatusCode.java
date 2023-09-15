@@ -28,16 +28,14 @@ public enum StatusCode implements JsonConvertable, ObjectNodeConvertable<StatusC
     MIN_SUM(14, "Получившаяся сумма меньше минимально требуемой."),
     PAYMENT_TIME_IS_UP(15, "Время оплаты вышло."),
 
-    TOKEN_EXPECTED(16, "Отсутствует токен."),
-
-    DEAL_ID_EXPECTED(17, "Отсутствует идентификатор сделки.");
+    DEAL_ID_EXPECTED(16, "Отсутствует идентификатор сделки.");
 
     public static final List<StatusCode> NEW_DEAL_STATUSES = List.of(CREATED_DEAL, EMPTY_TOKEN, EMPTY_DEAL_TYPE, EMPTY_AMOUNTS,
             ONLY_ONE_AMOUNT_NEEDED, EMPTY_CRYPTO_CURRENCY, EMPTY_REQUISITE, USER_NOT_FOUND);
-    public static final List<StatusCode> PAID_STATUSES = List.of(STATUS_PAID_UPDATED, DEAL_NOT_EXISTS, DEAL_ALREADY_PAID,
-            PAYMENT_TIME_IS_UP);
-    public static final List<StatusCode> CANCEL_STATUSES = List.of(DEAL_DELETED, DEAL_NOT_EXISTS, DEAL_CONFIRMED);
-    public static final List<StatusCode> GET_STATUS_STATUSES = List.of(DEAL_EXISTS, DEAL_NOT_EXISTS);
+    public static final List<StatusCode> PAID_STATUSES = List.of(STATUS_PAID_UPDATED, EMPTY_TOKEN, DEAL_NOT_EXISTS, DEAL_ALREADY_PAID,
+            PAYMENT_TIME_IS_UP, DEAL_ID_EXPECTED);
+    public static final List<StatusCode> CANCEL_STATUSES = List.of(DEAL_DELETED, EMPTY_TOKEN, DEAL_NOT_EXISTS, DEAL_CONFIRMED, DEAL_ID_EXPECTED);
+    public static final List<StatusCode> GET_STATUS_STATUSES = List.of(DEAL_EXISTS, EMPTY_TOKEN, DEAL_NOT_EXISTS, DEAL_ID_EXPECTED);
 
     final int code;
 
