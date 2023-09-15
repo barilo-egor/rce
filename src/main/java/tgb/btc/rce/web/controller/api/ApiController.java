@@ -108,7 +108,7 @@ public class ApiController {
         } else {
             ApiDealStatus status = apiDealRepository.getApiDealStatusByPid(id);
             if (ApiDealStatus.CREATED.equals(status) || ApiDealStatus.PAID.equals(status)) {
-                apiDealRepository.deleteById(id);
+                apiDealRepository.updateApiDealStatusByPid(ApiDealStatus.CANCELED, id);
                 return StatusCode.DEAL_DELETED.toJson();
             } else return StatusCode.DEAL_CONFIRMED.toJson();
         }
