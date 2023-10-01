@@ -6,6 +6,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import tgb.btc.rce.bean.ApiDeal;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.*;
 import tgb.btc.rce.repository.ApiDealRepository;
@@ -20,6 +21,7 @@ import tgb.btc.rce.web.util.SuccessResponseUtil;
 import tgb.btc.rce.web.vo.SuccessResponse;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
@@ -91,7 +93,12 @@ public class ApiController {
             return StatusCode.DEAL_NOT_EXISTS.toJson();
         } else if (ApiDealStatus.PAID.equals(apiDealRepository.getApiDealStatusByPid(id))) {
             return StatusCode.DEAL_ALREADY_PAID.toJson();
-        } else { // TODO проверить время
+        } else {
+            ApiDeal apiDeal = apiDealRepository.getByPid(id);
+            LocalDateTime now = LocalDateTime.now();
+            if (now.minusMinutes(BotProperties.BOT_VARIABLE.getLong(BotVariableType.DEAL_ACTIVE_TIME.getKey(), 15L)).isAfter(apiDeal.getDateTime())) {
+                return StatusCode.PAYMENT_TIME_IS_UP.toJson();
+            }
             apiDealRepository.updateApiDealStatusByPid(ApiDealStatus.PAID, id);
             adminService.notify("Поступила новая api сделка.", keyboardService.getShowApiDeal(id));
             return StatusCode.STATUS_PAID_UPDATED.toJson();
