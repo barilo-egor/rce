@@ -1,9 +1,5 @@
 package tgb.btc.rce.enums;
 
-import tgb.btc.rce.exception.BaseException;
-
-import java.util.Arrays;
-
 public enum BotVariableType {
     USD_COURSE("Курс доллара", "course.usd"),
     FIX("Фикс рублей покупка", "fix"),
@@ -47,10 +43,5 @@ public enum BotVariableType {
 
     public String getKey(DealType dealType, CryptoCurrency cryptoCurrency) {
         return key.concat("." + dealType.getKey()).concat("." + cryptoCurrency.getShortName());
-    }
-
-    public static BotVariableType getByDisplayName(String name) {
-        return Arrays.stream(BotVariableType.values()).filter(t -> t.getDisplayName().equals(name)).findFirst()
-                .orElseThrow(() -> new BaseException("Не найдена переменна бота: " + name));
     }
 }

@@ -10,7 +10,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import tgb.btc.rce.exception.NumberParseException;
 import tgb.btc.rce.service.IUpdateDispatcher;
-import tgb.btc.rce.util.BotPropertiesUtil;
+import tgb.btc.rce.util.TelegramBotPropertiesUtil;
 import tgb.btc.rce.util.UpdateUtil;
 
 @Service
@@ -26,12 +26,12 @@ public class RceBot extends TelegramLongPollingBot {
 
     @Override
     public String getBotUsername() {
-        return BotPropertiesUtil.getUsername();
+        return TelegramBotPropertiesUtil.getUsername();
     }
 
     @Override
     public String getBotToken() {
-        return BotPropertiesUtil.getToken();
+        return TelegramBotPropertiesUtil.getToken();
     }
 
     @Override

@@ -7,8 +7,8 @@ import tgb.btc.rce.exception.BaseException;
 import java.util.Objects;
 
 @Slf4j
-public final class BotPropertiesUtil {
-    private BotPropertiesUtil() {
+public final class TelegramBotPropertiesUtil {
+    private TelegramBotPropertiesUtil() {
     }
 
     private static String BOT_TOKEN;
