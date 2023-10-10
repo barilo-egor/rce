@@ -676,14 +676,17 @@ public class ExchangeService {
             }
             message = "\uD83E\uDD11У вас есть " + referralBalance + "₽ на реферальном балансе. Использовать их в качестве скидки?";
         } else {
-            BigDecimal bynReferralBalance = BigDecimal.valueOf(referralBalance).multiply(BotProperties.BOT_VARIABLE.getBigDecimal("course.rub.byn"));
-
-            if (bynReferralBalance.compareTo(dealAmount) < 1) {
-                sumWithDiscount = dealAmount.subtract(bynReferralBalance);
+            BigDecimal courseRubByn = BotProperties.BOT_VARIABLE.getBigDecimal("course.rub.byn");
+            BigDecimal refBalance = BigDecimal.valueOf(referralBalance);
+            if (Objects.nonNull(courseRubByn)) {
+                refBalance = BigDecimal.valueOf(referralBalance).multiply(BotProperties.BOT_VARIABLE.getBigDecimal("course.rub.byn"));
+            }
+            if (refBalance.compareTo(dealAmount) < 1) {
+                sumWithDiscount = dealAmount.subtract(refBalance);
             } else {
                 sumWithDiscount = BigDecimal.ZERO;
             }
-            message = "\uD83E\uDD11У вас есть " + referralBalance + "₽(" + BigDecimalUtil.roundToPlainString(bynReferralBalance, 2)
+            message = "\uD83E\uDD11У вас есть " + referralBalance + "₽(" + BigDecimalUtil.roundToPlainString(refBalance, 2)
                     + " бел.рублей) на реферальном балансе. Использовать их в качестве скидки?";
         }
         responseSender.sendMessage(chatId, message,

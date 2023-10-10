@@ -44,8 +44,12 @@ public class Referral extends Processor {
         String resultMessage;
         String referralMessageFewFiat = MessagePropertiesUtil.getMessage("referral.main.few.fiat");
         if (Objects.nonNull(referralMessageFewFiat)) {
+            BigDecimal courseRubByn = BotProperties.BOT_VARIABLE.getBigDecimal("course.rub.byn");
+            String refBalanceString = Objects.nonNull(courseRubByn)
+                    ? BigDecimalUtil.roundToPlainString(referralBalance.multiply(courseRubByn), 2)
+                    : BigDecimalUtil.roundToPlainString(referralBalance);
             resultMessage = String.format(referralMessageFewFiat,
-                    refLink, currentBalance, BigDecimalUtil.roundToPlainString(referralBalance.multiply(BotProperties.BOT_VARIABLE.getBigDecimal("course.rub.byn")), 2),
+                    refLink, currentBalance, refBalanceString,
                     numberOfReferrals, numberOfActiveReferrals,
                     userService.getChargesByChatId(chatId), dealsCount, rank.getSmile(), rank.getPercent()).concat("%");;
         } else {

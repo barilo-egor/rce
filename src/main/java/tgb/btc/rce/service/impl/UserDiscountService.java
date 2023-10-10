@@ -12,6 +12,7 @@ import tgb.btc.rce.util.BigDecimalUtil;
 import tgb.btc.rce.util.BotVariablePropertiesUtil;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 
 @Service
 public class UserDiscountService {
@@ -69,10 +70,18 @@ public class UserDiscountService {
                     dealAmount = dealAmount.subtract(BigDecimal.valueOf(referralBalance));
                 else dealAmount = BigDecimal.ZERO;
             } else {
-                BigDecimal bynReferralBalance = BigDecimal.valueOf(referralBalance).multiply(BotProperties.BOT_VARIABLE.getBigDecimal("course.rub.byn"));
-                if (bynReferralBalance.compareTo(dealAmount) < 1)
-                    dealAmount = dealAmount.subtract(bynReferralBalance);
-                else dealAmount = BigDecimal.ZERO;
+                BigDecimal courseRubByn = BotProperties.BOT_VARIABLE.getBigDecimal("course.rub.byn");
+                if (Objects.nonNull(courseRubByn)) {
+                    BigDecimal bynReferralBalance = BigDecimal.valueOf(referralBalance).multiply(courseRubByn);
+                    if (bynReferralBalance.compareTo(dealAmount) < 1)
+                        dealAmount = dealAmount.subtract(bynReferralBalance);
+                    else dealAmount = BigDecimal.ZERO;
+                } else {
+                    BigDecimal refBalance = BigDecimal.valueOf(referralBalance);
+                    if (refBalance.compareTo(dealAmount) < 1)
+                        dealAmount = dealAmount.subtract(refBalance);
+                    else dealAmount = BigDecimal.ZERO;
+                }
             }
         }
         return dealAmount;
