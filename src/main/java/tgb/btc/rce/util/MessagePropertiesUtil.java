@@ -31,12 +31,32 @@ public class MessagePropertiesUtil {
         return String.format(propertiesMessage, variables);
     }
 
+    public static String getMessage(String key, Object... variables) {
+        String propertiesMessage = getMessageForFormat(key);
+        if (Objects.isNull(propertiesMessage)) return null; // TODO переделать на наллсейф,и не налл сейф
+        return String.format(propertiesMessage, variables);
+    }
+
     public static String getMessage(String key) {
         String text;
         try {
             String message = BotProperties.MESSAGE.getString(key);
             if (Objects.isNull(message)) return null;
             text = message.replaceAll("<ln>", "\n");
+        } catch (Exception e) {
+            text = getErrorText(key);
+        }
+        if (Objects.isNull(text)) text = getErrorText(key);
+        return text;
+    }
+
+
+    public static String getMessageForFormat(String key) {
+        String text;
+        try {
+            String message = BotProperties.MESSAGE.getString(key);
+            if (Objects.isNull(message)) return null;
+            text = message.replaceAll("<ln>", "%n");
         } catch (Exception e) {
             text = getErrorText(key);
         }
