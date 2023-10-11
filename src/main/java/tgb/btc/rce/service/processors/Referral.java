@@ -44,9 +44,8 @@ public class Referral extends Processor {
         String resultMessage;
         String referralMessageFewFiat = MessagePropertiesUtil.getMessage("referral.main.few.fiat");
         if (Objects.nonNull(referralMessageFewFiat)) {
-            BigDecimal courseRubByn = BotProperties.BOT_VARIABLE.getBigDecimal("course.rub.byn");
-            String refBalanceString = Objects.nonNull(courseRubByn)
-                    ? BigDecimalUtil.roundToPlainString(referralBalance.multiply(courseRubByn), 2)
+            String refBalanceString = BotProperties.BOT_VARIABLE.isNotBlank("course.rub.byn")
+                    ? BigDecimalUtil.roundToPlainString(referralBalance.multiply(BotProperties.BOT_VARIABLE.getBigDecimal("course.rub.byn")), 2)
                     : BigDecimalUtil.roundToPlainString(referralBalance);
             resultMessage = String.format(referralMessageFewFiat,
                     refLink, currentBalance, refBalanceString,
