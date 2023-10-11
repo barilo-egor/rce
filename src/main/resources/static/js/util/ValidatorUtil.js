@@ -32,21 +32,7 @@ let ValidatorUtil = {
     validateIdWithExists: function (val) {
         if (!val || val === '') return  'Введите значение'
         if (!RegexUtil.onlyLettersAndNumbers(val)) return 'Только латинские буквы и символы'
-        let result
-        Ext.Ajax.request({
-            url: 'api/user/isExistById',
-            params: {
-                id: val
-            },
-            method: 'GET',
-            async: false,
-            success: function (rs) {
-                let response = Ext.JSON.decode(rs.responseText)
-                if (response.result) result = 'Данный идентификатор уже занят'
-                else result = true
-            }
-        })
-        return result
+        return true
     },
 
     validateLogin: function (val) {

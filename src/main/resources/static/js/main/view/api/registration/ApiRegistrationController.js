@@ -4,6 +4,24 @@ Ext.define('Main.view.api.registration.ApiRegistrationController', {
 
     register: function (btn) {
         let form = ExtUtil.idQuery('apiuserregisteform')
+        let result
+        Ext.Ajax.request({
+            url: 'api/user/isExistById',
+            params: {
+                id: ExtUtil.idQuery('idField').getValue()
+            },
+            method: 'GET',
+            async: false,
+            success: function (rs) {
+                let response = Ext.JSON.decode(rs.responseText)
+                if (response.result) result = 'Данный идентификатор уже занят'
+                else result = true
+            }
+        })
+        if (!result) {
+            Ext.Msg.alert('Внимание', 'Такой логин уже занят.')
+            return
+        }
         if (!form.isValid()) {
             Ext.Msg.alert('Внимание', 'Неверно заполнена форма.')
             return

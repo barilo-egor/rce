@@ -32,6 +32,7 @@ Ext.define('Main.view.api.registration.ApiRegistrationPanel', {
             items: [
                 {
                     xtype: 'textfield',
+                    id: 'idField',
                     fieldLabel: 'Идентификатор',
                     emptyText: 'Введите идентификатор',
                     name: 'id',
@@ -121,7 +122,13 @@ Ext.define('Main.view.api.registration.ApiRegistrationPanel', {
                     padding: '0 0 5 0',
                     hideTrigger: true,
                     msgTarget: 'side',
-                    validator: ValidatorUtil.validatePositiveInt,
+                    validator: function (val) {
+                        if (this.hidden) {
+                            return true
+                        } else {
+                            return ValidatorUtil.validatePositiveInt(val)
+                        }
+                    },
                     hidden: true,
                     listeners: {
                         beforerender: function (me) {
@@ -147,7 +154,13 @@ Ext.define('Main.view.api.registration.ApiRegistrationPanel', {
                     padding: '0 0 5 0',
                     hideTrigger: true,
                     msgTarget: 'side',
-                    validator: ValidatorUtil.validatePositiveInt,
+                    validator: function (val) {
+                        if (this.hidden) {
+                            return true
+                        } else {
+                            return ValidatorUtil.validatePositiveInt(val)
+                        }
+                    },
                     hidden: true,
                     listeners: {
                         beforerender: function (me) {
