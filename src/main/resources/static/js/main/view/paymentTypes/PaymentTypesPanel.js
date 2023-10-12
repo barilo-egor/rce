@@ -7,13 +7,30 @@ Ext.define('Main.view.paymentTypes.PaymentTypesPanel', {
     },
 
     padding: '0 0 0 20',
+    dockedItems: [
+        {
+            xtype: 'toolbar',
+            defaults: {
+                xtype: 'button'
+            },
+            items: [
+                {
+                    iconCls: 'fas fa-plus',
+                    tooltip: 'Создать тип оплаты',
+                    handler: function (me) {
+                        Ext.create('Main.view.paymentTypes.CreatePaymentTypeWindow')
+                    }
+                }
+            ]
+        }
+    ],
     items: [
         {
             xtype: 'grid',
             emptyText: 'Нет записей',
             store: {
                 storeId: 'paymentTypesStore',
-                fields: ['name', 'isOn'],
+                fields: ['pid', 'title', 'isOn'],
                 autoLoad: true,
                 proxy: {
                     type: 'ajax',
@@ -27,7 +44,7 @@ Ext.define('Main.view.paymentTypes.PaymentTypesPanel', {
             columns: [
                 {
                     flex: 1,
-                    dataIndex: 'name',
+                    dataIndex: 'title',
                     text: 'Название'
                 },
                 {
@@ -45,6 +62,24 @@ Ext.define('Main.view.paymentTypes.PaymentTypesPanel', {
                 {
                     xtype: 'actioncolumn',
                     width: 35,
+                    handler: function (view, rowIndex, collIndex, item, e, record) {
+                        ExtUtil.request({
+                            url: '/web/paymentTypes/get',
+                            method: 'GET',
+                            params: {
+                                pid: record.get('pid')
+                            },
+                            success: function (response) {
+                                Ext.create('Main.view.paymentTypes.CreatePaymentTypeWindow', {
+                                    viewModel: {
+                                        data: {
+                                            paymentType: response.body.data
+                                        }
+                                    }
+                                })
+                            }
+                        })
+                    },
                     items: [
                         {
                             iconCls: 'fas fa-edit',

@@ -1,4 +1,4 @@
-package tgb.btc.rce.web.controller;
+package tgb.btc.rce.web.controller.paymentTypes;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

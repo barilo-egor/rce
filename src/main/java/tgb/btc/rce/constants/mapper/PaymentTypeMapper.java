@@ -5,18 +5,13 @@ import tgb.btc.rce.bean.PaymentType;
 import tgb.btc.rce.web.util.JacksonUtil;
 import tgb.btc.rce.web.vo.interfaces.ObjectNodeConvertable;
 
-import java.util.Objects;
 import java.util.function.Function;
 
 public enum PaymentTypeMapper implements ObjectNodeConvertable<PaymentType> {
     FIND_ALL(paymentType -> JacksonUtil.getEmpty()
-            .put("name", paymentType.getName())
-            .put("isOn", paymentType.getOn())
-            .put("minSum", paymentType.getMinSum().doubleValue())
-            .put("dealType", Objects.nonNull(paymentType.getDealType())
-                    ? paymentType.getDealType().getNominative() : null)
-            .put("isDynamicOn", paymentType.getDynamicOn())
-            .put("fiatCurrency", paymentType.getFiatCurrency().getDisplayName()));
+            .put("pid", paymentType.getPid())
+            .put("title", paymentType.getTitle())
+            .put("isOn", paymentType.getOn()));
 
     PaymentTypeMapper(Function<PaymentType, ObjectNode> mapFunction) {
         this.mapFunction = mapFunction;

@@ -16,6 +16,9 @@ import java.math.BigDecimal;
 @Builder
 public class PaymentType extends BasePersist {
 
+    @Column(name = "TITLE")
+    private String title;
+
     @Column(name = "NAME")
     private String name;
 
@@ -84,4 +87,11 @@ public class PaymentType extends BasePersist {
         isDynamicOn = dynamicOn;
     }
 
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
 }

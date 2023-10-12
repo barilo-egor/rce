@@ -45,7 +45,13 @@ Ext.define('Main.view.components.MainToolBar', {
                     text: 'Управление апи-пользователями',
                     iconCls: 'fas fa-users-cog menu-icon-color',
                     handler: 'apiUsersControlClick'
-                },
+                }
+            ]
+        },
+        {
+            xtype: 'button',
+            iconCls: 'fas fa-shopping-cart menu-icon-color',
+            menu: [
                 {
                     text: 'Типы оплат',
                     iconCls: 'fas fa-credit-card menu-icon-color',
