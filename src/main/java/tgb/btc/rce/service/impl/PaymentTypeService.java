@@ -59,4 +59,8 @@ public class PaymentTypeService {
             throw new BaseException("Не найден ни один тип оплаты для " + dealType.name() + " " + fiatCurrency.name());
         return paymentTypeList.get(0);
     }
+
+    public List<PaymentType> findAll() {
+        return paymentTypeRepository.findAll();
+    }
 }

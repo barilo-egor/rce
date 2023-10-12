@@ -42,6 +42,7 @@ public class DeletingPaymentRequisite extends Processor {
 
         PaymentRequisite paymentRequisite = paymentRequisiteRepository.getById(Long.parseLong(values[1]));
         PaymentType paymentType = paymentRequisiteRepository.getPaymentTypeByPid(paymentRequisite.getPid());
+
         paymentRequisiteRepository.delete(paymentRequisite);
         List<PaymentRequisite> paymentRequisites = paymentRequisiteRepository.getByPaymentType(paymentType).stream()
                 .sorted(Comparator.comparing(BasePersist::getPid))

@@ -47,5 +47,9 @@ Ext.define('Main.view.MainController', {
 
     changePasswordClick: function (btn) {
         this.mainToolBarClick(btn, 'changepasswordpanel')
+    },
+
+    paymentTypesClick: function (btn) {
+        this.mainToolBarClick(btn, 'paymenttypespanel')
     }
 })

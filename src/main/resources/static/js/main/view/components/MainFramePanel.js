@@ -19,13 +19,14 @@ Ext.define('Main.view.components.MainFramePanel', {
         'Main.view.bulkDiscount.BulkDiscountGridPanel',
         'Main.view.bulkDiscount.BulkDiscountController',
         'Main.view.bulkDiscount.BulkDiscountAddForm',
+        'Main.view.paymentTypes.PaymentTypesPanel',
     ],
     layout: {
         type: 'fit'
     },
     items: [
         {
-            xtype: 'changepasswordpanel',
+            xtype: 'paymenttypespanel',
             scrollable: true
         }
     ]
