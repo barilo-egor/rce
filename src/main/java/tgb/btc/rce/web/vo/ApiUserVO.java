@@ -20,7 +20,7 @@ public class ApiUserVO {
 
     @Getter
     @Setter
-    private Long buyRequisitePid;
+    private String buyRequisite;
 
     @Getter
     @Setter

@@ -4,7 +4,6 @@ import org.apache.commons.lang.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tgb.btc.rce.bean.ApiUser;
-import tgb.btc.rce.bean.PaymentRequisite;
 import tgb.btc.rce.bean.UsdApiUserCourse;
 import tgb.btc.rce.enums.FiatCurrency;
 import tgb.btc.rce.repository.ApiUserRepository;
@@ -90,7 +89,7 @@ public class ApiUserService {
         }
         apiUser.setId(apiUserVO.getId());
         apiUser.setPersonalDiscount(apiUserVO.getPersonalDiscount());
-        apiUser.setBuyRequisite(new PaymentRequisite(apiUserVO.getBuyRequisitePid()));
+        apiUser.setBuyRequisite(apiUserVO.getBuyRequisite());
         apiUser.setSellRequisite(apiUserVO.getSellRequisite());
         apiUser.setFiatCurrency(apiUserVO.getFiatCurrency());
         return apiUserRepository.save(apiUser);

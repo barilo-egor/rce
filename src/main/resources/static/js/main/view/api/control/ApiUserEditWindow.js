@@ -65,48 +65,16 @@ Ext.define('Main.view.api.control.ApiUserEditWindow', {
                     }
                 },
                 {
-                    xtype: 'treepanel',
-                    id: 'requisitesTree',
-                    renderTo: Ext.getBody(),
-                    height: 200,
-                    width: 300,
-                    rootVisible: false,
-                    store: 'requisitestreestore',
-                    padding: '0 0 15 0',
-                    animate: true,
-                    listeners: {
-                        rowclick: function (view, rowBodyEl) {
-                            view.getViewRange().forEach(row => row.removeCls('boldText'))
-                            if (rowBodyEl.childNodes.length === 0) rowBodyEl.addCls('boldText')
-                        },
-                        afterrender: function (me) {
-                            me.getView().getViewRange().forEach(row => row.removeCls('boldText'))
-                            let allNodes = me.getView().getViewRange()
-                            let leafNodes = []
-                            allNodes.forEach(n1 => n1.eachChild(n2 => n2.eachChild(n3 => leafNodes.push(n3))))
-                            leafNodes.forEach(node => {
-                                let pid = node.getData().pid
-                                if (node.getData().leaf && pid
-                                    && pid.toString() === me.up('window').getViewModel().data.apiUser.buyRequisite) {
-                                    node.addCls('boldText')
-                                    node.parentNode.expand()
-                                    me.getSelectionModel().select(me.getStore().indexOf(node))
-                                    me.selectNodePath = node.getPath()
-                                }
-                            })
-                        },
-                        afterlayout: function (me) {
-                            me.selectPath(me.selectNodePath)
-                        }
+                    xtype: 'textfield',
+                    fieldLabel: 'Реквизит для покупки',
+                    emptyText: 'Введите текст для покупки',
+                    padding: '0 0 5 0',
+                    name: 'buyRequisite',
+                    msgTarget: 'side',
+                    bind: {
+                        value: '{apiUser.buyRequisite}'
                     },
-                    columns: [
-                        {
-                            xtype: 'treecolumn',
-                            text: 'Реквизиты покупки',
-                            dataIndex: 'text',
-                            flex: 1
-                        }
-                    ]
+                    validator: ValidatorUtil.validateNotEmpty
                 },
                 {
                     xtype: 'textfield',

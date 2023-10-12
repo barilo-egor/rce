@@ -41,37 +41,18 @@ Ext.define('Main.view.api.registration.ApiRegistrationPanel', {
                     validator: ValidatorUtil.validateIdWithExists
                 },
                 {
-                    xtype: 'treepanel',
-                    id: 'requisitesTree',
-                    renderTo: Ext.getBody(),
-                    height: 200,
-                    width: 300,
-                    rootVisible: false,
-                    store: 'requisitestreestore',
-                    padding: '0 0 15 0',
-                    animate: true,
-                    listeners: {
-                        rowclick: function (view, rowBodyEl) {
-                            view.getViewRange().forEach(row => row.removeCls('boldText'))
-                            if (rowBodyEl.childNodes.length === 0) rowBodyEl.addCls('boldText')
-                        },
-                        afterrender: function (me) {
-                            me.getView().getViewRange().forEach(row => row.removeCls('boldText'))
-                        }
-                    },
-                    columns: [
-                        {
-                            xtype: 'treecolumn',
-                            text: 'Реквизиты покупки',
-                            dataIndex: 'text',
-                            flex: 1
-                        }
-                    ]
+                    xtype: 'textfield',
+                    fieldLabel: 'Реквизит для покупки',
+                    emptyText: 'Введите реквизит для покупки',
+                    padding: '0 0 5 0',
+                    name: 'buyRequisite',
+                    msgTarget: 'side',
+                    validator: ValidatorUtil.validateNotEmpty
                 },
                 {
                     xtype: 'textfield',
                     fieldLabel: 'Реквизит для продажи',
-                    emptyText: 'Введите текст для продажи',
+                    emptyText: 'Введите реквизит для продажи',
                     padding: '0 0 5 0',
                     name: 'sellRequisite',
                     msgTarget: 'side',

@@ -49,8 +49,7 @@ public class ApiUser extends BasePersist implements JsonConvertable {
 
     @Getter
     @Setter
-    @OneToOne
-    private PaymentRequisite buyRequisite;
+    private String buyRequisite;
 
     @Getter
     @Setter
@@ -72,7 +71,7 @@ public class ApiUser extends BasePersist implements JsonConvertable {
     private List<ApiUserMinSum> apiUserMinSum;
 
     public String getRequisite(DealType dealType) {
-        if (DealType.isBuy(dealType)) return buyRequisite.getRequisite();
+        if (DealType.isBuy(dealType)) return buyRequisite;
         else return sellRequisite;
     }
 
@@ -91,7 +90,7 @@ public class ApiUser extends BasePersist implements JsonConvertable {
                 .put("registrationDate", this.getRegistrationDate().format(DateTimeFormatter.ISO_DATE))
                 .put("isBanned", BooleanUtils.isTrue(this.getIsBanned()))
                 .put("token", this.getToken())
-                .put("buyRequisite", this.getBuyRequisite().getPid())
+                .put("buyRequisite", this.getBuyRequisite())
                 .put("sellRequisite", this.getSellRequisite())
                 .put("fiatCurrency", this.fiatCurrency.name());
         usdApiUserCourseList.stream()
