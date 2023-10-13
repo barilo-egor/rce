@@ -42,7 +42,9 @@ Ext.define('Login.view.LoginPanel', {
                     minLength: 4,
                     validator: ValidatorUtil.validateNotEmptyAndLettersAndNumber,
                     msgTarget: 'side',
-                    listeners: 'specialKeyPress'
+                    listeners: {
+                        specialkey: 'specialKeyPress'
+                    }
                 },
                 {
                     xtype: 'textfield',
