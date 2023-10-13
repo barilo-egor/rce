@@ -44,7 +44,7 @@ public class WebAdminPanelProcessor extends Processor {
         WebUser webUser = webUserRepository.getByChatId(chatId);
         String url;
         Optional<Message> optionalMessage;
-        if (Objects.isNull(webUser)) {
+        if (Objects.nonNull(webUser)) {
             url = BotStringConstants.MAIN_URL + "/web/main?username=" + webUser.getUsername()
                     + "&token=" + token + "&chatId=" + chatId;
             optionalMessage = responseSender.sendMessage(chatId, "Веб админ-панель. Доступ для автоматической авторизации открыт на " + AUTH_TIME + " секунд.",
@@ -55,12 +55,13 @@ public class WebAdminPanelProcessor extends Processor {
                             .build())));
         } else {
             url = BotStringConstants.MAIN_URL + "/web/registration?chatId=" + chatId;
-            optionalMessage = responseSender.sendMessage(chatId, BotProperties.INFO_MESSAGE.getString("web.user.not.found"),
+            responseSender.sendMessage(chatId, BotProperties.INFO_MESSAGE.getString("web.user.not.found"),
                     KeyboardUtil.buildInline(List.of(InlineButton.builder()
                             .text("Зарегистрироваться")
                             .data(url)
                             .inlineType(InlineType.WEB_APP)
                             .build())));
+            return;
         }
         deleteMessageAndToken(optionalMessage);
     }
