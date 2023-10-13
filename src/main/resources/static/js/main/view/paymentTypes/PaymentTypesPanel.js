@@ -5,6 +5,7 @@ Ext.define('Main.view.paymentTypes.PaymentTypesPanel', {
         xtype: 'mainframetitle',
         text: 'Типы оплат'
     },
+    requires: ['Main.view.paymentTypes.CreatePaymentTypeWindow'],
 
     padding: '0 0 0 20',
     dockedItems: [
@@ -44,7 +45,7 @@ Ext.define('Main.view.paymentTypes.PaymentTypesPanel', {
             columns: [
                 {
                     flex: 1,
-                    dataIndex: 'title',
+                    dataIndex: 'name',
                     text: 'Название'
                 },
                 {
@@ -53,9 +54,9 @@ Ext.define('Main.view.paymentTypes.PaymentTypesPanel', {
                     dataIndex: 'isOn',
                     renderer: function (val) {
                         if (val) {
-                            return '<i class="fas fa-circle redColor"></i>'
-                        } else {
                             return '<i class="fas fa-circle limeColor"></i>'
+                        } else {
+                            return '<i class="fas fa-circle redColor"></i>'
                         }
                     }
                 },

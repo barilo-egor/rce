@@ -39,6 +39,9 @@ public interface PaymentTypeRepository extends BaseRepository<PaymentType> {
     @Query("select dealType from PaymentType where pid=:pid")
     DealType getDealTypeByPid(Long pid);
 
+    @Query("select count(pid) from PaymentType where name like :name")
+    long getCountByName(String name);
+
 
     /** UPDATE **/
     @Modifying

@@ -7,9 +7,11 @@ import tgb.btc.rce.bean.PaymentType;
 import tgb.btc.rce.enums.DealType;
 import tgb.btc.rce.enums.FiatCurrency;
 import tgb.btc.rce.exception.BaseException;
+import tgb.btc.rce.exception.EntityUniqueFieldException;
 import tgb.btc.rce.repository.DealRepository;
 import tgb.btc.rce.repository.PaymentTypeRepository;
 import tgb.btc.rce.repository.UserRepository;
+import tgb.btc.rce.web.vo.PaymentTypeVO;
 
 import java.util.List;
 
@@ -62,5 +64,18 @@ public class PaymentTypeService {
 
     public List<PaymentType> findAll() {
         return paymentTypeRepository.findAll();
+    }
+
+    public PaymentType save(PaymentTypeVO paymentTypeVO) {
+        if (paymentTypeRepository.getCountByName(paymentTypeVO.getName()) > 0)
+            throw new EntityUniqueFieldException("Тип оплаты с таким именем уже существует.");
+        PaymentType paymentType = new PaymentType();
+        paymentType.setName(paymentTypeVO.getName());
+        paymentType.setOn(paymentTypeVO.getIsOn());
+        paymentType.setFiatCurrency(paymentTypeVO.getFiatCurrency());
+        paymentType.setDealType(paymentTypeVO.getDealType());
+        paymentType.setMinSum(paymentTypeVO.getMinSum());
+        paymentType.setDynamicOn(paymentTypeVO.getIsDynamicOn());
+        return paymentTypeRepository.save(paymentType);
     }
 }

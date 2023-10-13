@@ -79,7 +79,7 @@ public enum FiatCurrency implements JsonConvertable {
         return MainWebController.DEFAULT_MAPPER.createObjectNode()
                 .put("name", this.name())
                 .put("code", this.getCode())
-                .put("displayName", this.getGenitive())
+                .put("displayName", this.getDisplayName())
                 .put("genitive", this.getGenitive())
                 .put("flag", this.getFlag());
     }

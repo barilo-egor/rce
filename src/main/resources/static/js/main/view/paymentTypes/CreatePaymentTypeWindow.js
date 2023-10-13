@@ -9,19 +9,24 @@ Ext.define('Main.view.paymentTypes.CreatePaymentTypeWindow', {
         type: 'vbox',
         align: 'stretch'
     },
+    requires: ['Main.view.paymentTypes.CreatePaymentTypeController'],
+    controller: 'createPaymentTypeController',
 
     buttonAlign: 'center',
     buttons: [
         {
             xtype: 'savebutton',
+            handler: 'save'
         },
         {
-            xtype: 'cancelbutton'
+            xtype: 'cancelbutton',
+            handler: ExtUtil.closeWindow
         }
     ],
     items: [
         {
             xtype: 'form',
+            id: 'paymentTypeCreateForm',
             layout: {
                 type: 'vbox',
                 align: 'stretch',
@@ -35,16 +40,17 @@ Ext.define('Main.view.paymentTypes.CreatePaymentTypeWindow', {
                 {
                     xtype: 'textfield',
                     fieldLabel: 'Название',
-                    emptyText: 'Краткое название'
-                },
-                {
-                    xtype: 'textfield',
-                    fieldLabel: 'Реквизит',
-                    emptyText: 'Текст для пользователя'
+                    emptyText: 'Введите название',
+                    name: 'name',
+                    validator: ValidatorUtil.validateNotEmpty
                 },
                 {
                     xtype: 'checkbox',
-                    fieldLabel: 'Включить'
+                    id: 'isOnCheckbox',
+                    fieldLabel: 'Включить',
+                    name: 'isOn',
+                    inputValue: true,
+                    uncheckedValue: false
                 },
                 {
                     xtype: 'combo',
@@ -52,7 +58,10 @@ Ext.define('Main.view.paymentTypes.CreatePaymentTypeWindow', {
                     emptyText: 'Выберите фиатную валюту',
                     valueField: 'name',
                     displayField: 'displayName',
-                    store: 'fiatCurrenciesStore'
+                    store: 'fiatCurrenciesStore',
+                    name: 'fiatCurrency',
+                    editable: false,
+                    validator: ValidatorUtil.validateNotEmpty
                 },
                 {
                     xtype: 'combo',
@@ -60,7 +69,9 @@ Ext.define('Main.view.paymentTypes.CreatePaymentTypeWindow', {
                     emptyText: 'Покупка или продажа',
                     valueField: 'name',
                     displayField: 'nominative',
+                    name: 'dealType',
                     store: {
+                        storeId: 'dealTypesStore',
                         fields: ['name', 'nominative'],
                         autoLoad: true,
                         proxy: {
@@ -71,7 +82,9 @@ Ext.define('Main.view.paymentTypes.CreatePaymentTypeWindow', {
                                 rootProperty: 'body.data'
                             }
                         }
-                    }
+                    },
+                    editable: false,
+                    validator: ValidatorUtil.validateNotEmpty
                 },
                 {
                     xtype: 'numberfield',
@@ -79,11 +92,16 @@ Ext.define('Main.view.paymentTypes.CreatePaymentTypeWindow', {
                     emptyText: 'Минимальная сумма покупки',
                     hideTrigger: true,
                     value: 0,
-                    decimalSeparator: '.'
+                    decimalSeparator: '.',
+                    name: 'minSum',
+                    validator: ValidatorUtil.validateNotEmpty
                 },
                 {
                     xtype: 'checkbox',
-                    fieldLabel: 'Динамические реквизиты'
+                    fieldLabel: 'Динамические реквизиты',
+                    name: 'isDynamicOn',
+                    inputValue: true,
+                    uncheckedValue: false
                 }
             ]
         }

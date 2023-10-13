@@ -10,7 +10,7 @@ import java.util.function.Function;
 public enum PaymentTypeMapper implements ObjectNodeConvertable<PaymentType> {
     FIND_ALL(paymentType -> JacksonUtil.getEmpty()
             .put("pid", paymentType.getPid())
-            .put("title", paymentType.getTitle())
+            .put("name", paymentType.getName())
             .put("isOn", paymentType.getOn()));
 
     PaymentTypeMapper(Function<PaymentType, ObjectNode> mapFunction) {

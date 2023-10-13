@@ -18,8 +18,10 @@ let ExtUtil = {
                     ? ': ' + response.body.exceptionString
                     : '. Информация отсутствует.'
                 Ext.Msg.alert('Ошибка', 'Ошибка сервера' + addingText)
+                if (config.loadingComponent) config.loadingComponent.setLoading(false)
             } else if (response.body && response.body.warningString){
                 Ext.Msg.alert('Внимание', response.body.warningString)
+                if (config.loadingComponent) config.loadingComponent.setLoading(false)
             } else {
                 config.success(response, rawResponse)
             }
@@ -29,5 +31,9 @@ let ExtUtil = {
 
     failure: function (response) {
         Ext.Msg.alert('Ошибка', 'Ошибка при выполнении запроса. Статус: ' + response.status + '.Описание: ' + response.statusText)
+    },
+
+    closeWindow: function (btn) {
+        btn.up('window').close()
     }
 }
