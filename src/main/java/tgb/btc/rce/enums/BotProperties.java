@@ -3,8 +3,8 @@ package tgb.btc.rce.enums;
 import tgb.btc.rce.constants.FilePaths;
 import tgb.btc.rce.service.IPropertyService;
 import tgb.btc.rce.service.PropertiesReader;
-import tgb.btc.rce.service.impl.ReviewPriseService;
 import tgb.btc.rce.service.impl.BulkDiscountService;
+import tgb.btc.rce.service.impl.ReviewPriseService;
 
 import java.util.Objects;
 
@@ -25,7 +25,10 @@ public enum BotProperties implements PropertiesReader {
     BUTTONS_DESIGN(FilePaths.BUTTONS_DESIGN_PROPERTIES, ',', null),
     CRYPTO_CURRENCIES_DESIGN(FilePaths.CRYPTO_CURRENCIES_DESIGN_PROPERTIES, ',', null),
     SERVER(FilePaths.SERVER_PROPERTIES, ',', null),
-    REVIEW_PRISE(FilePaths.REVIEW_PRISE_PROPERTIES, ';', new ReviewPriseService())
+    REVIEW_PRISE(FilePaths.REVIEW_PRISE_PROPERTIES, ';', new ReviewPriseService()),
+    INFO_MESSAGE(FilePaths.INFO_MESSAGE_PROPERTIES, ',', null),
+
+    LOGIN(FilePaths.LOGIN_PROPERTIES, ',', null)
     ;
 
     private final String fileName;

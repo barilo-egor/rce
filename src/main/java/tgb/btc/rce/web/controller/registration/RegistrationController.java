@@ -11,6 +11,7 @@ import tgb.btc.rce.repository.WebUserRepository;
 import tgb.btc.rce.service.impl.WebUserService;
 import tgb.btc.rce.vo.web.CredentialsVO;
 
+import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
 
 @Controller
@@ -33,7 +34,8 @@ public class RegistrationController {
     }
 
     @GetMapping
-    public String init() {
+    public String init(HttpServletRequest request, @RequestParam(required = false) Long chatId) {
+        request.getSession().setAttribute("chatId", chatId);
         return "registration";
     }
 

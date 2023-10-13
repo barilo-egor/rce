@@ -40,4 +40,8 @@ public interface FilePaths {
      * PICTURES
      */
     String CAPTCHA_PICTURES_PACKAGE = "config/antispam/picture";
+
+    String INFO_MESSAGE_PROPERTIES = "config/message/info_message.properties";
+
+    String LOGIN_PROPERTIES = "config/system/login.properties";
 }
