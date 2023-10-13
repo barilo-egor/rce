@@ -13,7 +13,6 @@ import tgb.btc.rce.repository.WebUserRepository;
 import tgb.btc.rce.vo.web.CredentialsVO;
 
 import java.util.Objects;
-import java.util.Set;
 
 @Service
 public class WebUserService implements UserDetailsService {
@@ -52,7 +51,7 @@ public class WebUserService implements UserDetailsService {
         if (Objects.isNull(role)) {
             role = RoleConstants.ROLE_USER;
         }
-        webUser.setRoles(Set.of(roleRepository.getByName(role.name())));
+        webUser.setRoles(roleRepository.getByName(role.name()));
         return webUserRepository.save(webUser);
     }
 

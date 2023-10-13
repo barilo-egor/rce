@@ -26,7 +26,7 @@ Ext.define('Main.view.components.MainFramePanel', {
     },
     items: [
         {
-            xtype: 'paymenttypespanel',
+            xtype: 'usdcoursepanel',
             scrollable: true
         }
     ]

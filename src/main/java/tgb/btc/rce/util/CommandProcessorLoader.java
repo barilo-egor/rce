@@ -195,6 +195,7 @@ public final class CommandProcessorLoader {
         commandProcessors.add(NewApiDeals.class);
         commandProcessors.add(ConfirmApiDeal.class);
         commandProcessors.add(CancelApiDeal.class);
+        commandProcessors.add(WebAdminPanelProcessor.class);
         commandProcessors.stream()
                 .filter(processor -> !extendsProcessor(processor))
                 .findFirst()

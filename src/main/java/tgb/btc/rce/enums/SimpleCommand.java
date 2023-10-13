@@ -1,14 +1,11 @@
 package tgb.btc.rce.enums;
 
 import org.telegram.telegrambots.meta.api.objects.Update;
-import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.exception.BaseException;
 import tgb.btc.rce.service.BeanHolder;
 import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.UpdateUtil;
-import tgb.btc.rce.vo.InlineButton;
 
-import java.util.List;
 import java.util.function.Consumer;
 
 public enum SimpleCommand {
@@ -55,15 +52,7 @@ public enum SimpleCommand {
             BeanHolder.RESPONSE_SENDER.sendMessage(UpdateUtil.getChatId(update), PropertiesMessage.SEND_MESSAGES_MENU, Menu.SEND_MESSAGES)),
 
     USERS(Command.USERS, update ->
-            BeanHolder.RESPONSE_SENDER.sendMessage(UpdateUtil.getChatId(update), "Меню для работы с пользователем", Menu.USERS)),
-
-    WEB_ADMIN_PANEL(Command.WEB_ADMIN_PANEL, update ->
-            BeanHolder.RESPONSE_SENDER.sendMessage(UpdateUtil.getChatId(update), "Веб админ-панель.",
-                    KeyboardUtil.buildInline(List.of(InlineButton.builder()
-                            .text("Перейти")
-                            .data(BotStringConstants.MAIN_URL + "/web/main")
-                            .inlineType(InlineType.WEB_APP)
-                            .build()))));
+            BeanHolder.RESPONSE_SENDER.sendMessage(UpdateUtil.getChatId(update), "Меню для работы с пользователем", Menu.USERS));
 
     final Command command;
 
