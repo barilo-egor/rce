@@ -42,8 +42,12 @@ public enum FiatCurrency implements JsonConvertable {
         return this.name();
     }
 
-    public String getDisplayName() {
+    public String getGenitive() {
         return genitive;
+    }
+
+    public String getDisplayName() {
+        return displayName;
     }
 
     public String getCode() {
@@ -56,10 +60,6 @@ public enum FiatCurrency implements JsonConvertable {
 
     public String getFlag() {
         return flag;
-    }
-
-    public String getGenitive() {
-        return genitive;
     }
 
     public static FiatCurrency getByCode(String code) {
@@ -79,7 +79,7 @@ public enum FiatCurrency implements JsonConvertable {
         return MainWebController.DEFAULT_MAPPER.createObjectNode()
                 .put("name", this.name())
                 .put("code", this.getCode())
-                .put("displayName", this.getDisplayName())
+                .put("displayName", this.getGenitive())
                 .put("genitive", this.getGenitive())
                 .put("flag", this.getFlag());
     }

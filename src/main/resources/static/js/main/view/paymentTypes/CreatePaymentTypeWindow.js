@@ -10,16 +10,27 @@ Ext.define('Main.view.paymentTypes.CreatePaymentTypeWindow', {
         align: 'stretch'
     },
 
+    buttonAlign: 'center',
+    buttons: [
+        {
+            xtype: 'savebutton',
+        },
+        {
+            xtype: 'cancelbutton'
+        }
+    ],
     items: [
         {
             xtype: 'form',
             layout: {
                 type: 'vbox',
-                align: 'stretch'
+                align: 'stretch',
+            },
+            defaults: {
+                labelWidth: 170,
+                labelAlign: 'right'
             },
             padding: '20 20 20 20',
-            defaults: {
-            },
             items: [
                 {
                     xtype: 'textfield',
@@ -37,7 +48,16 @@ Ext.define('Main.view.paymentTypes.CreatePaymentTypeWindow', {
                 },
                 {
                     xtype: 'combo',
+                    fieldLabel: 'Фиатная валюта',
+                    emptyText: 'Выберите фиатную валюту',
+                    valueField: 'name',
+                    displayField: 'displayName',
+                    store: 'fiatCurrenciesStore'
+                },
+                {
+                    xtype: 'combo',
                     fieldLabel: 'Тип сделки',
+                    emptyText: 'Покупка или продажа',
                     valueField: 'name',
                     displayField: 'nominative',
                     store: {
@@ -55,7 +75,15 @@ Ext.define('Main.view.paymentTypes.CreatePaymentTypeWindow', {
                 },
                 {
                     xtype: 'numberfield',
-                    fieldLabel: 'Минимальная сумма'
+                    fieldLabel: 'Минимальная сумма',
+                    emptyText: 'Минимальная сумма покупки',
+                    hideTrigger: true,
+                    value: 0,
+                    decimalSeparator: '.'
+                },
+                {
+                    xtype: 'checkbox',
+                    fieldLabel: 'Динамические реквизиты'
                 }
             ]
         }

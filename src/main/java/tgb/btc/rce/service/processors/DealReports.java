@@ -262,7 +262,7 @@ public class DealReports extends Processor {
         Cell cell = row.createCell(3);
         cell.setCellValue(BigDecimalUtil.roundToPlainString(totalFiatAmountMap.get(fiatCurrency)));
         cell = row.createCell(4);
-        cell.setCellValue(fiatCurrency.getDisplayName());
+        cell.setCellValue(fiatCurrency.getGenitive());
     }
 
 

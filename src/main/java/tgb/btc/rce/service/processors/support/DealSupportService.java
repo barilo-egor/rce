@@ -60,7 +60,7 @@ public class DealSupportService {
                 + "Реквизиты оплаты: " + apiDeal.getApiUser().getRequisite(apiDeal.getDealType()) + "\n"
                 + "Количество сделок: " + apiDealRepository.getCountByApiDealStatusAndApiUserPid(ApiDealStatus.ACCEPTED, apiDeal.getApiUser().getPid()) + "\n"
                 + "Сумма " + apiDeal.getCryptoCurrency().getShortName() + ": " + apiDeal.getCryptoAmount() + "\n"
-                + "Сумма " + apiDeal.getApiUser().getFiatCurrency().getGenitive() + ": " + apiDeal.getAmount();
+                + "Сумма " + apiDeal.getApiUser().getFiatCurrency().getDisplayName() + ": " + apiDeal.getAmount();
     }
 
     public String dealToString(Long pid) {
@@ -84,7 +84,7 @@ public class DealSupportService {
                 deal.getCryptoAmount().setScale(8, RoundingMode.FLOOR).stripTrailingZeros()
                         .toPlainString(),
                 deal.getAmount().setScale(0, RoundingMode.HALF_UP).stripTrailingZeros().toPlainString(),
-                Objects.nonNull(fiatCurrency) ? fiatCurrency.getDisplayName() : "отсутствует"
+                Objects.nonNull(fiatCurrency) ? fiatCurrency.getGenitive() : "отсутствует"
         );
     }
 

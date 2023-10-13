@@ -26,7 +26,7 @@ public final class FiatCurrencyUtil {
                 .collect(Collectors.toList());
         log.info("Загружено " + FIAT_CURRENCIES.size() + " фиатных валют: "
                 + FIAT_CURRENCIES.stream()
-                .map(FiatCurrency::getDisplayName)
+                .map(FiatCurrency::getGenitive)
                 .collect(Collectors.joining(", ")));
         if (CollectionUtils.isEmpty(FIAT_CURRENCIES)) throw new BaseException("Не найдена ни одна фиатная валюта");
         IS_FEW = FIAT_CURRENCIES.size() > 1;
