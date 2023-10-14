@@ -5,7 +5,7 @@ Ext.define('Registration.view.RegistrationController', {
     registerUser: function () {
         let form = ExtUtil.idQuery('registrationForm')
         if (!form.isValid()) {
-            Ext.Msg.alert('Внимание', 'Неверно заполнена форма.');
+            ExtMessages.incorrectlyForm()
             return
         }
         let registrationVO = {

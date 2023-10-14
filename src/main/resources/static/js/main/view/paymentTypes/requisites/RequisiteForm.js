@@ -15,7 +15,8 @@ Ext.define('Main.view.paymentTypes.requisites.RequisiteForm', {
             name: 'name',
             bind: {
                 value: '{requisite.name}'
-            }
+            },
+            validator: ValidatorUtil.validateNotEmpty
         },
         {
             xtype: 'textarea',
@@ -25,7 +26,8 @@ Ext.define('Main.view.paymentTypes.requisites.RequisiteForm', {
             name: 'requisite',
             bind: {
                 value: '{requisite.requisite}'
-            }
+            },
+            validator: ValidatorUtil.validateNotEmpty
         }
     ]
 })

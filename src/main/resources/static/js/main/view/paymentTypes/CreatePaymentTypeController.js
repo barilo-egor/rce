@@ -7,7 +7,7 @@ Ext.define('Main.view.paymentTypes.CreatePaymentTypeController', {
         win.setLoading('Сохранение типа оплаты...')
         let form = ExtUtil.idQuery('paymentTypeCreateForm')
         if (!form.isValid()) {
-            Ext.Msg.alert('Внимание', 'Неверно заполнена форма')
+            ExtMessages.incorrectlyForm()
             return
         }
         let jsonData = form.getValues()

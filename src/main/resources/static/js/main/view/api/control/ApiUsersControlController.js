@@ -8,7 +8,7 @@ Ext.define('Main.view.api.control.ApiUsersControlController', {
     save: function (btn) {
         let form = ExtUtil.idQuery('editApiUserForm')
         if (!form.isValid()) {
-            Ext.Msg.alert('Внимание', 'Неверно заполнена форма.')
+            ExtMessages.incorrectlyForm()
             return
         }
         let jsonData = form.getValues()

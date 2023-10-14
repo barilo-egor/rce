@@ -12,7 +12,12 @@ Ext.define('Main.view.paymentTypes.requisites.CreateRequisiteWindow', {
         {
             xtype: 'savebutton',
             handler: function (me) {
-                let values = ExtUtil.idQuery('requisiteForm').getValues()
+                let form = ExtUtil.idQuery('requisiteForm')
+                if (!form.isValid()) {
+                    ExtMessages.incorrectlyForm()
+                    return;
+                }
+                let values = form.getValues()
                 let store = Ext.getStore('createPaymentTypeRequisitesStore')
                 let range = store.getRange()
                 if (range.length > 0 && store.getRange().filter(record => record.get('name') === values.name).length > 0) {

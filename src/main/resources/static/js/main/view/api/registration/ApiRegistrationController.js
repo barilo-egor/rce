@@ -23,7 +23,7 @@ Ext.define('Main.view.api.registration.ApiRegistrationController', {
             return
         }
         if (!form.isValid()) {
-            Ext.Msg.alert('Внимание', 'Неверно заполнена форма.')
+            ExtMessages.incorrectlyForm()
             return
         }
         let jsonData = form.getValues()

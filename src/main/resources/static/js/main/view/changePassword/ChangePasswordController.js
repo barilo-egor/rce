@@ -17,7 +17,7 @@ Ext.define('Main.view.changePassword.ChangePasswordController', {
         let input = ExtUtil.idQuery('passwordInput')
         let confirmInput = ExtUtil.idQuery('passwordConfirmInput')
         if (!input.isValid() || !confirmInput.isValid()) {
-            Ext.Msg.alert('Внимание', 'Неверно заполнена форма.')
+            ExtMessages.incorrectlyForm()
             return
         }
         Ext.Ajax.request({
