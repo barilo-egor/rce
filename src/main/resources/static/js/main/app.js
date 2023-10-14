@@ -1,6 +1,15 @@
 Ext.Loader.setConfig({
     disableCaching: false,
 });
+Ext.define('DisableColumnHideOverride', {
+    override: 'Ext.grid.Panel',
+    enableColumnHide: false
+});
+Ext.define('FixedWindows', {
+    override: 'Ext.window.Window',
+    draggable: false,
+    resizable: false
+})
 Ext.application({
     name: 'Main',
     extend: 'Ext.app.Application',

@@ -16,7 +16,9 @@ Ext.define('Main.view.paymentTypes.requisites.EditRequisiteWindow', {
                 let store = Ext.getStore('createPaymentTypeRequisitesStore')
                 let record = store.getAt(me.up('window').getViewModel().getData().rowIndex)
                 let range = store.getRange()
-                if (range.length > 0 && store.getRange().filter(record => record.get('name') === values.name).length > 0) {
+                if (record.get('name') !== values.name
+                    && range.length > 1
+                    && store.getRange().filter(record => record.get('name') === values.name).length > 0) {
                     Ext.Msg.alert('Внимание', 'Реквизит с таким наименованием уже добавлен.')
                     return
                 }

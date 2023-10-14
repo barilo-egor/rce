@@ -100,10 +100,24 @@ Ext.define('Main.view.paymentTypes.CreatePaymentTypeWindow', {
                 },
                 {
                     xtype: 'checkbox',
+                    id: 'isDynamicOnField',
                     fieldLabel: 'Динамические реквизиты',
                     name: 'isDynamicOn',
                     inputValue: true,
-                    uncheckedValue: false
+                    uncheckedValue: false,
+                    readOnly: true
+                },
+                {
+                    xtype: 'panel',
+                    frame: true,
+                    padding: '5 5 5 5',
+                    style: {
+                        borderColor: '#919191',
+                        borderWidth: '1px',
+                        textAlign: 'center'
+                    },
+                    html: '<i class="fas fa-info-circle" style="color: #005eff;"></i> ' +
+                        'Динамические реквизиты будут автоматически включены при включении нескольких реквизитов.'
                 }
             ]
         },
@@ -140,7 +154,18 @@ Ext.define('Main.view.paymentTypes.CreatePaymentTypeWindow', {
                     dataIndex: 'isOn',
                     text: '<i class="fas fa-power-off"></i>',
                     width: 35,
-                    tooltip: 'Включен ли реквизит'
+                    tooltip: 'Включен ли реквизит',
+                    listeners: {
+                        checkchange: function () {
+                            if (Ext.getStore('createPaymentTypeRequisitesStore').getRange()
+                                .filter(rec => rec.get('isOn') === true)
+                                .length < 2) {
+                                ExtUtil.idQuery('isDynamicOnField').setValue(false)
+                            } else {
+                                ExtUtil.idQuery('isDynamicOnField').setValue(true)
+                            }
+                        }
+                    }
                 },
                 {
                     xtype: 'actioncolumn',
