@@ -16,11 +16,17 @@ public class PaymentRequisite extends BasePersist {
     @ManyToOne
     private PaymentType paymentType;
 
+    @Column(name = "NAME")
+    private String name;
+
     @Column(name = "REQUISITE")
     private String requisite;
 
     @Column(name = "REQUISITE_ORDER")
     private Integer requisiteOrder;
+
+    @Column(name = "IS_ON")
+    private Boolean isOn;
 
     public PaymentRequisite(Long pid) {
         super(pid);
@@ -50,4 +56,19 @@ public class PaymentRequisite extends BasePersist {
         this.requisiteOrder = order;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Boolean getOn() {
+        return isOn;
+    }
+
+    public void setOn(Boolean on) {
+        isOn = on;
+    }
 }

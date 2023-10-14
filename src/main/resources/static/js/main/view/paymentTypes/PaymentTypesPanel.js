@@ -87,6 +87,28 @@ Ext.define('Main.view.paymentTypes.PaymentTypesPanel', {
                             padding: '0 5 0 2'
                         }
                     ]
+                },
+                {
+                    xtype: 'actioncolumn',
+                    width: 35,
+                    handler: function (view, rowIndex, collIndex, item, e, record) {
+                        // ExtUtil.request({
+                        //     url: '/web/paymentTypes/delete',
+                        //     method: 'GET',
+                        //     params: {
+                        //         pid: record.get('pid')
+                        //     },
+                        //     success: function (response) {
+                        //         Ext.getStore('paymentTypesStore').reload()
+                        //     }
+                        // })
+                    },
+                    items: [
+                        {
+                            iconCls: 'fas fa-edit',
+                            padding: '0 5 0 2'
+                        }
+                    ]
                 }
             ]
         }

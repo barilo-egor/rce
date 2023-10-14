@@ -104,6 +104,35 @@ Ext.define('Main.view.paymentTypes.CreatePaymentTypeWindow', {
                     uncheckedValue: false
                 }
             ]
+        },
+        {
+            xtype: 'grid',
+            store: {
+                storeId: 'createPaymentTypeRequisitesStore',
+                fields: ['name', 'requisite']
+            },
+            columns: [
+                {
+                    text: 'Наименование',
+                    dataIndex: 'name'
+                },
+                {
+                    xtype: 'actioncolumn',
+                    items: [
+                        {
+                            iconCls: 'fas fa-power-off',
+                            padding: '0 5 0 2'
+                        }
+                    ],
+                    renderer: function (val) {
+                        if (val) {
+                            return '<i class="fas fa-circle limeColor"></i>'
+                        } else {
+                            return '<i class="fas fa-circle redColor"></i>'
+                        }
+                    }
+                }
+            ]
         }
     ]
 })
