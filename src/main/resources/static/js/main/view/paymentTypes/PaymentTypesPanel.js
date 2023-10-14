@@ -84,7 +84,8 @@ Ext.define('Main.view.paymentTypes.PaymentTypesPanel', {
                     items: [
                         {
                             iconCls: 'fas fa-edit',
-                            padding: '0 5 0 2'
+                            padding: '0 5 0 2',
+                            tooltip: 'Редактировать'
                         }
                     ]
                 },
@@ -105,8 +106,9 @@ Ext.define('Main.view.paymentTypes.PaymentTypesPanel', {
                     },
                     items: [
                         {
-                            iconCls: 'fas fa-edit',
-                            padding: '0 5 0 2'
+                            iconCls: 'fas fa-minus',
+                            padding: '0 5 0 2',
+                            tooltip: 'Удалить'
                         }
                     ]
                 }

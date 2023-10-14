@@ -3,15 +3,18 @@ package tgb.btc.rce.service.impl;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import tgb.btc.rce.bean.PaymentRequisite;
 import tgb.btc.rce.bean.PaymentType;
 import tgb.btc.rce.enums.DealType;
 import tgb.btc.rce.enums.FiatCurrency;
 import tgb.btc.rce.exception.BaseException;
 import tgb.btc.rce.exception.EntityUniqueFieldException;
 import tgb.btc.rce.repository.DealRepository;
+import tgb.btc.rce.repository.PaymentRequisiteRepository;
 import tgb.btc.rce.repository.PaymentTypeRepository;
 import tgb.btc.rce.repository.UserRepository;
 import tgb.btc.rce.web.vo.PaymentTypeVO;
+import tgb.btc.rce.web.vo.RequisiteVO;
 
 import java.util.List;
 
@@ -23,6 +26,13 @@ public class PaymentTypeService {
     private DealRepository dealRepository;
 
     private UserRepository userRepository;
+
+    private PaymentRequisiteRepository paymentRequisiteRepository;
+
+    @Autowired
+    public void setPaymentRequisiteRepository(PaymentRequisiteRepository paymentRequisiteRepository) {
+        this.paymentRequisiteRepository = paymentRequisiteRepository;
+    }
 
     @Autowired
     public void setUserRepository(UserRepository userRepository) {
@@ -76,6 +86,17 @@ public class PaymentTypeService {
         paymentType.setDealType(paymentTypeVO.getDealType());
         paymentType.setMinSum(paymentTypeVO.getMinSum());
         paymentType.setDynamicOn(paymentTypeVO.getIsDynamicOn());
-        return paymentTypeRepository.save(paymentType);
+        paymentType = paymentTypeRepository.save(paymentType);
+        if (CollectionUtils.isNotEmpty(paymentTypeVO.getRequisites())) {
+            for (RequisiteVO requisite: paymentTypeVO.getRequisites()) {
+                PaymentRequisite paymentRequisite = new PaymentRequisite();
+                paymentRequisite.setName(requisite.getName());
+                paymentRequisite.setRequisite(requisite.getRequisite());
+                paymentRequisite.setOn(requisite.getIsOn());
+                paymentRequisite.setPaymentType(paymentType);
+                paymentRequisiteRepository.save(paymentRequisite);
+            }
+        }
+        return paymentType;
     }
 }

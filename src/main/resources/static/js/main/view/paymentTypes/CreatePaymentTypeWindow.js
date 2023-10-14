@@ -9,7 +9,9 @@ Ext.define('Main.view.paymentTypes.CreatePaymentTypeWindow', {
         type: 'vbox',
         align: 'stretch'
     },
-    requires: ['Main.view.paymentTypes.CreatePaymentTypeController'],
+    requires: ['Main.view.paymentTypes.CreatePaymentTypeController',
+        'Main.view.paymentTypes.requisites.CreateRequisiteWindow',
+        'Main.view.paymentTypes.requisites.RequisiteForm'],
     controller: 'createPaymentTypeController',
 
     buttonAlign: 'center',
@@ -107,29 +109,82 @@ Ext.define('Main.view.paymentTypes.CreatePaymentTypeWindow', {
         },
         {
             xtype: 'grid',
+            padding: '20 20 20 20',
+            title: 'Реквизиты',
             store: {
                 storeId: 'createPaymentTypeRequisitesStore',
-                fields: ['name', 'requisite']
+                fields: ['name', 'requisite', 'isOn']
             },
+            dockedItems: [
+                {
+                    xtype: 'toolbar',
+                    items: [
+                        {
+                            iconCls: 'fas fa-plus',
+                            tooltip: 'Добавить реквизит',
+                            handler: function (me) {
+                                Ext.create('Main.view.paymentTypes.requisites.CreateRequisiteWindow')
+                            }
+                        }
+                    ]
+                }
+            ],
             columns: [
                 {
                     text: 'Наименование',
+                    flex: 1,
                     dataIndex: 'name'
                 },
                 {
+                    xtype: 'checkcolumn',
+                    dataIndex: 'isOn',
+                    text: '<i class="fas fa-power-off"></i>',
+                    width: 35,
+                    tooltip: 'Включен ли реквизит'
+                },
+                {
                     xtype: 'actioncolumn',
+                    width: 30,
                     items: [
                         {
-                            iconCls: 'fas fa-power-off',
-                            padding: '0 5 0 2'
+                            iconCls: 'fas fa-edit',
+                            tooltip: 'Редактировать',
+                            handler: function (view, rowIndex, collIndex, item, e, record) {
+                                Ext.create('Main.view.paymentTypes.requisites.EditRequisiteWindow', {
+                                    viewModel: {
+                                        data: {
+                                            requisite: record.getData(),
+                                            rowIndex: rowIndex
+                                        }
+                                    }
+                                })
+                            }
+                        }
+                    ]
+                },
+                {
+                    xtype: 'actioncolumn',
+                    width: 30,
+                    items: [
+                        {
+                            iconCls: 'fas fa-minus redColor',
+                            padding: '0 5 0 2',
+                            tooltip: 'Удалить'
                         }
                     ],
-                    renderer: function (val) {
-                        if (val) {
-                            return '<i class="fas fa-circle limeColor"></i>'
-                        } else {
-                            return '<i class="fas fa-circle redColor"></i>'
-                        }
+                    handler: function (view, rowIndex, collIndex, item, e, record) {
+                        Ext.Msg.show({
+                            title:'Удаление реквизита',
+                            message: 'Вы уверены, что хотите удалить реквизит <b>' + record.get('name') + '</b>?',
+                            buttons: Ext.Msg.YESNO,
+                            icon: Ext.Msg.QUESTION,
+                            fn: function(btn) {
+                                if (btn === 'yes') {
+                                    Ext.getStore('createPaymentTypeRequisitesStore').remove(record)
+                                    Ext.toast('Резквизит <b>' + record.get('name') + '</b> удален.')
+                                }
+                            }
+                        });
                     }
                 }
             ]

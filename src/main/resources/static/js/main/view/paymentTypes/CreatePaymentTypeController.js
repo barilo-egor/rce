@@ -11,6 +11,11 @@ Ext.define('Main.view.paymentTypes.CreatePaymentTypeController', {
             return
         }
         let jsonData = form.getValues()
+        let requisites = []
+        for (let record of Ext.getStore('createPaymentTypeRequisitesStore').getRange()) {
+            requisites.push(record.getData())
+        }
+        jsonData.requisites = requisites
         ExtUtil.request({
             url: '/web/paymentTypes/save',
             jsonData: jsonData,

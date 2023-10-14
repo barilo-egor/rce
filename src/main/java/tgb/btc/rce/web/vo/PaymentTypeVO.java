@@ -6,6 +6,7 @@ import tgb.btc.rce.enums.DealType;
 import tgb.btc.rce.enums.FiatCurrency;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 public class PaymentTypeVO {
     @Getter
@@ -25,6 +26,10 @@ public class PaymentTypeVO {
     @Getter
     @Setter
     private BigDecimal minSum;
+
+    @Getter
+    @Setter
+    private List<RequisiteVO> requisites;
 
     private Boolean isDynamicOn;
 

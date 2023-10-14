@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 public class PaymentRequisiteService {
@@ -52,18 +53,23 @@ public class PaymentRequisiteService {
     }
 
     public String getRequisite(PaymentType paymentType) {
-        String requisites;
-
         List<PaymentRequisite> paymentRequisite = paymentRequisiteRepository.getByPaymentTypePid(paymentType.getPid());
         if (CollectionUtils.isEmpty(paymentRequisite)) {
             throw new BaseException("Не установлены реквизиты для " + paymentType.getName() + ".");
         }
-        if (BooleanUtils.isNotTrue(paymentType.getDynamicOn()) || paymentRequisite.size() == 1) {
-            requisites = paymentRequisite.get(0).getRequisite();
-        } else if (paymentRequisite.size() > 0){
-            Integer order = getOrder(paymentType.getPid());
-            requisites = paymentRequisiteRepository.getRequisiteByPaymentTypePidAndOrder(paymentType.getPid(), order);
-        } else throw new BaseException("Не найдены реквизиты для " + paymentType.getName() + ".");
-        return requisites;
+        if (BooleanUtils.isNotTrue(paymentType.getDynamicOn())) {
+            return paymentRequisite.stream()
+                    .filter(requisite -> BooleanUtils.isTrue(requisite.getOn()))
+                    .findFirst()
+                    .orElseThrow(() -> new BaseException("Не найден ни один включенный реквизит"))
+                    .getRequisite();
+        }
+        List<PaymentRequisite> turnedRequisites = paymentRequisite.stream()
+                .filter(requisite -> BooleanUtils.isTrue(requisite.getOn()))
+                .collect(Collectors.toList());
+        if (CollectionUtils.isEmpty(turnedRequisites))
+            throw new BaseException("Не найден ни один включенный реквизит.");
+        Integer order = getOrder(paymentType.getPid());
+        return turnedRequisites.get(order).getRequisite();
     }
 }
