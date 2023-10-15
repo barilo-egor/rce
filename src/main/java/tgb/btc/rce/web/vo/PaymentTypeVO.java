@@ -11,6 +11,10 @@ import java.util.List;
 public class PaymentTypeVO {
     @Getter
     @Setter
+    private Long pid;
+
+    @Getter
+    @Setter
     private String name;
 
     private Boolean isOn;

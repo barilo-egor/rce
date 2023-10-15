@@ -5,9 +5,10 @@ Ext.define('Main.view.paymentTypes.CreatePaymentTypeController', {
     save: function (me) {
         let win = me.up('window')
         win.setLoading('Сохранение типа оплаты...')
-        let form = ExtUtil.idQuery('paymentTypeCreateForm')
+        let form = ExtUtil.idQuery('paymentTypeForm')
         if (!form.isValid()) {
             ExtMessages.incorrectlyForm()
+            win.setLoading(false)
             return
         }
         let isPaymentTypeOn = ExtUtil.idQuery('isOnCheckbox').getValue()

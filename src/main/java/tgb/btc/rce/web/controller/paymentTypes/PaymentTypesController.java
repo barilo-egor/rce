@@ -2,10 +2,11 @@ package tgb.btc.rce.web.controller.paymentTypes;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import tgb.btc.rce.bean.PaymentType;
+import tgb.btc.rce.constants.mapper.PaymentRequisiteMapper;
 import tgb.btc.rce.constants.mapper.PaymentTypeMapper;
+import tgb.btc.rce.repository.PaymentRequisiteRepository;
 import tgb.btc.rce.service.impl.PaymentTypeService;
 import tgb.btc.rce.web.util.SuccessResponseUtil;
 import tgb.btc.rce.web.vo.PaymentTypeVO;
@@ -13,12 +14,19 @@ import tgb.btc.rce.web.vo.SuccessResponse;
 
 import javax.persistence.EntityNotFoundException;
 
-@Controller
+@RestController
 @RequestMapping("/web/paymentTypes")
 @Slf4j
 public class PaymentTypesController {
 
     private PaymentTypeService paymentTypeService;
+
+    private PaymentRequisiteRepository paymentRequisiteRepository;
+
+    @Autowired
+    public void setPaymentRequisiteRepository(PaymentRequisiteRepository paymentRequisiteRepository) {
+        this.paymentRequisiteRepository = paymentRequisiteRepository;
+    }
 
     @Autowired
     public void setPaymentTypeService(PaymentTypeService paymentTypeService) {
@@ -26,13 +34,11 @@ public class PaymentTypesController {
     }
 
     @GetMapping("/findAll")
-    @ResponseBody
     public SuccessResponse<?> findAll() {
         return SuccessResponseUtil.data(paymentTypeService.findAll(), PaymentTypeMapper.FIND_ALL);
     }
 
     @PostMapping("/save")
-    @ResponseBody
     public SuccessResponse<?> save(@RequestBody PaymentTypeVO paymentTypeVO) {
         PaymentType paymentType;
         try {
@@ -44,5 +50,16 @@ public class PaymentTypesController {
             return SuccessResponseUtil.warningString(e.getMessage());
         }
         return SuccessResponseUtil.data(paymentType, PaymentTypeMapper.FIND_ALL);
+    }
+
+    @GetMapping("/get")
+    public SuccessResponse<?> get(Long pid) {
+        return SuccessResponseUtil.data(paymentTypeService.getByPid(pid), PaymentTypeMapper.GET);
+    }
+
+    @GetMapping("/getRequisites")
+    public SuccessResponse<?> getRequisites(Long paymentTypePid) {
+        return SuccessResponseUtil.data(paymentRequisiteRepository.getByPaymentTypePid(paymentTypePid),
+                PaymentRequisiteMapper.GET_BY_PAYMENT_TYPE);
     }
 }

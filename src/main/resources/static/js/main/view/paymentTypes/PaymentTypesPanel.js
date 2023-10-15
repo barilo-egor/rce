@@ -5,7 +5,7 @@ Ext.define('Main.view.paymentTypes.PaymentTypesPanel', {
         xtype: 'mainframetitle',
         text: 'Типы оплат'
     },
-    requires: ['Main.view.paymentTypes.CreatePaymentTypeWindow'],
+    requires: ['Main.view.paymentTypes.PaymentTypeWindow'],
 
     padding: '0 0 0 20',
     dockedItems: [
@@ -19,7 +19,13 @@ Ext.define('Main.view.paymentTypes.PaymentTypesPanel', {
                     iconCls: 'fas fa-plus',
                     tooltip: 'Создать тип оплаты',
                     handler: function (me) {
-                        Ext.create('Main.view.paymentTypes.CreatePaymentTypeWindow')
+                        Ext.create('Main.view.paymentTypes.PaymentTypeWindow', {
+                            viewModel: {
+                                data: {
+                                    title: 'Создание типа оплаты'
+                                }
+                            }
+                        })
                     }
                 }
             ]
@@ -71,9 +77,10 @@ Ext.define('Main.view.paymentTypes.PaymentTypesPanel', {
                                 pid: record.get('pid')
                             },
                             success: function (response) {
-                                Ext.create('Main.view.paymentTypes.CreatePaymentTypeWindow', {
+                                Ext.create('Main.view.paymentTypes.PaymentTypeWindow', {
                                     viewModel: {
                                         data: {
+                                            title: 'Редактирование типа оплаты',
                                             paymentType: response.body.data
                                         }
                                     }

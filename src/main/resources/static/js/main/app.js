@@ -18,6 +18,7 @@ Ext.application({
     autoCreateViewport: true,
     stores: [
         'Main.store.enum.FiatCurrenciesStore',
+        'Main.store.enum.DealTypesStore',
         'Main.store.tree.RequisitesTreeStore',
         'Main.store.api.ApiUsersStore'
     ]

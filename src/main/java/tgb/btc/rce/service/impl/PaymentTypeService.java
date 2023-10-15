@@ -17,6 +17,7 @@ import tgb.btc.rce.web.vo.PaymentTypeVO;
 import tgb.btc.rce.web.vo.RequisiteVO;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class PaymentTypeService {
@@ -77,9 +78,14 @@ public class PaymentTypeService {
     }
 
     public PaymentType save(PaymentTypeVO paymentTypeVO) {
-        if (paymentTypeRepository.getCountByName(paymentTypeVO.getName()) > 0)
+        if (Objects.isNull(paymentTypeVO.getPid()) && paymentTypeRepository.getCountByName(paymentTypeVO.getName()) > 0)
             throw new EntityUniqueFieldException("Тип оплаты с таким именем уже существует.");
-        PaymentType paymentType = new PaymentType();
+        PaymentType paymentType;
+        if (Objects.nonNull(paymentTypeVO.getPid())) {
+            paymentType = paymentTypeRepository.getByPid(paymentTypeVO.getPid());
+        } else {
+            paymentType = new PaymentType();
+        }
         paymentType.setName(paymentTypeVO.getName());
         paymentType.setOn(paymentTypeVO.getIsOn());
         paymentType.setFiatCurrency(paymentTypeVO.getFiatCurrency());
@@ -87,9 +93,24 @@ public class PaymentTypeService {
         paymentType.setMinSum(paymentTypeVO.getMinSum());
         paymentType.setDynamicOn(paymentTypeVO.getIsDynamicOn());
         paymentType = paymentTypeRepository.save(paymentType);
+        if (Objects.nonNull(paymentTypeVO.getPid())) {
+            List<PaymentRequisite> existsRequisites = paymentRequisiteRepository.getByPaymentTypePid(paymentTypeVO.getPid());
+            if (CollectionUtils.isNotEmpty(existsRequisites)) {
+                for (PaymentRequisite requisite : existsRequisites) {
+                    if (paymentTypeVO.getRequisites().stream().noneMatch(req -> req.getPid().equals(requisite.getPid()))) {
+                        paymentRequisiteRepository.delete(requisite);
+                    }
+                }
+            }
+        }
         if (CollectionUtils.isNotEmpty(paymentTypeVO.getRequisites())) {
             for (RequisiteVO requisite: paymentTypeVO.getRequisites()) {
-                PaymentRequisite paymentRequisite = new PaymentRequisite();
+                PaymentRequisite paymentRequisite;
+                if (Objects.nonNull(requisite.getPid())) {
+                    paymentRequisite = paymentRequisiteRepository.getById(requisite.getPid());
+                } else {
+                    paymentRequisite = new PaymentRequisite();
+                }
                 paymentRequisite.setName(requisite.getName());
                 paymentRequisite.setRequisite(requisite.getRequisite());
                 paymentRequisite.setOn(requisite.getIsOn());
@@ -98,5 +119,9 @@ public class PaymentTypeService {
             }
         }
         return paymentType;
+    }
+
+    public PaymentType getByPid(Long pid) {
+        return paymentTypeRepository.getByPid(pid);
     }
 }

@@ -7,6 +7,10 @@ public class RequisiteVO {
 
     @Getter
     @Setter
+    private Long pid;
+
+    @Getter
+    @Setter
     private String name;
 
     @Getter
