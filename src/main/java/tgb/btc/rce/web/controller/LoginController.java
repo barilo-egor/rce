@@ -44,7 +44,7 @@ public class LoginController {
         List<RoleConstants> roles = webUserRepository.getRolesByUsername(principal.getName()).stream()
                 .map(role -> RoleConstants.valueOf(role.getName()))
                 .collect(Collectors.toList());
-        if (roles.stream().anyMatch(RoleConstants.ROLE_ADMIN::equals)) {
+        if (roles.stream().anyMatch(role -> RoleConstants.ROLE_ADMIN.equals(role) || RoleConstants.ROLE_OPERATOR.equals(role))) {
             objectNode.put("loginUrl", "/web/main");
         } else {
             objectNode.put("loginUrl", "/");

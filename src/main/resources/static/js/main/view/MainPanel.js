@@ -36,7 +36,23 @@ Ext.define('Main.view.MainPanel', {
                             flex: 1,
                             dockedItems: [
                                 {
-                                    xtype: 'maintoolbar'
+                                    xtype: 'maintoolbar',
+                                    listeners: {
+                                        beforerender: function (me) {
+                                            ExtUtil.request({
+                                                url: '/web/roles/getRole',
+                                                method: 'GET',
+                                                async: false,
+                                                success: function (response) {
+                                                    me.setViewModel({
+                                                        data: {
+                                                            isNotAdmin: response.body.data.filter(role => role.name === 'ADMIN').length === 0
+                                                        }
+                                                    })
+                                                }
+                                            })
+                                        }
+                                    }
                                 },
                             ]
                         }

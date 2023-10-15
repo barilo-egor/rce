@@ -6,6 +6,7 @@ import tgb.btc.rce.web.interfaces.JsonConvertable;
 
 public enum RoleConstants implements JsonConvertable {
     ROLE_USER("Пользователь"),
+    ROLE_OPERATOR("Оператор"),
     ROLE_ADMIN("Администратор");
 
     final String displayName;

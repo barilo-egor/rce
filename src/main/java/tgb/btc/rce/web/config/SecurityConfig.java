@@ -59,16 +59,24 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         httpSecurity
                 .authorizeRequests()
                 .antMatchers(
-                        "/js/main/**", "/web/main/**"
+                        "/js/main/**", "/web/main/**", "/web/roles"
                 )
                 .hasRole("ADMIN");
+
+        // Доступ для операторов
+        httpSecurity
+                .authorizeRequests()
+                .antMatchers(
+                        "/js/main/**", "/web/main/**", "/web/roles"
+                )
+                .hasRole("OPERATOR");
 
         // Доступ всех оставшихся юрлов
         httpSecurity
                 .authorizeRequests()
                 //Все остальные страницы требуют аутентификации
                 .anyRequest()
-                .hasRole("ADMIN");
+                .hasAnyRole("ADMIN", "OPERATOR");
 
         // Конфигурация логина
         httpSecurity

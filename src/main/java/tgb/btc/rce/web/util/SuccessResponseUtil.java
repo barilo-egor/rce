@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import tgb.btc.rce.web.vo.SuccessResponse;
 import tgb.btc.rce.web.vo.interfaces.ObjectNodeConvertable;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.function.Function;
 
 public class SuccessResponseUtil {
@@ -16,15 +16,15 @@ public class SuccessResponseUtil {
         return getDataObjectNode(JacksonUtil.toObjectNode(t));
     }
 
-    public static <T extends ObjectNodeConvertable<T>> SuccessResponse<?> data(List<T> objects) {
+    public static <T extends ObjectNodeConvertable<T>> SuccessResponse<?> data(Collection<T> objects) {
         return getDataObjectNode(JacksonUtil.toArrayNode(objects));
     }
 
-    public static <T> SuccessResponse<?> data(List<T> objects, Function<T, ObjectNode> mapper) {
+    public static <T> SuccessResponse<?> data(Collection<T> objects, Function<T, ObjectNode> mapper) {
         return getDataObjectNode(JacksonUtil.toArrayNode(objects, mapper));
     }
 
-    public static <T> SuccessResponse<?> data(List<T> objects, ObjectNodeConvertable<T> mapper) {
+    public static <T> SuccessResponse<?> data(Collection<T> objects, ObjectNodeConvertable<T> mapper) {
         return getDataObjectNode(JacksonUtil.toArrayNode(objects, mapper));
     }
 

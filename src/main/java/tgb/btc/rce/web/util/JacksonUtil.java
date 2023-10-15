@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import tgb.btc.rce.web.vo.interfaces.ObjectNodeConvertable;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -15,21 +15,21 @@ public class JacksonUtil {
 
     public static ObjectMapper DEFAULT_OBJECT_MAPPER = new ObjectMapper();
 
-    public static <T> ArrayNode toArrayNode(List<T> objects, Function<T, ObjectNode> mapper) {
+    public static <T> ArrayNode toArrayNode(Collection<T> objects, Function<T, ObjectNode> mapper) {
         return getEmptyArray()
                 .addAll(objects.stream()
                         .map(mapper)
                         .collect(Collectors.toList()));
     }
 
-    public static <T> ArrayNode toArrayNode(List<T> objects, ObjectNodeConvertable<T> mapper) {
+    public static <T> ArrayNode toArrayNode(Collection<T> objects, ObjectNodeConvertable<T> mapper) {
         return getEmptyArray()
                 .addAll(objects.stream()
                         .map(object -> mapper.mapFunction().apply(object))
                         .collect(Collectors.toList()));
     }
 
-    public static <T extends ObjectNodeConvertable<T>> ArrayNode toArrayNode(List<T> objects) {
+    public static <T extends ObjectNodeConvertable<T>> ArrayNode toArrayNode(Collection<T> objects) {
         return getEmptyArray()
                 .addAll(objects.stream()
                         .map(object -> object.mapFunction().apply(object))

@@ -9,6 +9,9 @@ Ext.define('Main.view.components.MainToolBar', {
         {
             xtype: 'button',
             iconCls: 'fas fa-square-root-alt menu-icon-color',
+            bind: {
+                hidden: '{isNotAdmin}'
+            },
             menu: [
                 {
                     text: 'Курс доллара',
@@ -34,28 +37,40 @@ Ext.define('Main.view.components.MainToolBar', {
                 {
                     text: 'Регистрация веб-пользователей',
                     iconCls: 'fas fa-user-plus menu-icon-color',
-                    handler: 'newWebUserClick'
+                    handler: 'newWebUserClick',
+                    bind: {
+                        hidden: '{isNotAdmin}'
+                    }
                 },
                 {
                     text: 'Регистрация апи-пользователей',
                     iconCls: 'fas fa-user-cog menu-icon-color',
-                    handler: 'newApiUserClick'
+                    handler: 'newApiUserClick',
+                    bind: {
+                        hidden: '{isNotAdmin}'
+                    }
                 },
                 {
                     text: 'Управление апи-пользователями',
                     iconCls: 'fas fa-users-cog menu-icon-color',
-                    handler: 'apiUsersControlClick'
+                    handler: 'apiUsersControlClick',
+                    bind: {
+                        hidden: '{isNotAdmin}'
+                    }
                 }
             ]
         },
         {
             xtype: 'button',
             iconCls: 'fas fa-shopping-cart menu-icon-color',
+            bind: {
+                hidden: '{isNotAdmin}'
+            },
             menu: [
                 {
                     text: 'Типы оплат',
                     iconCls: 'fas fa-credit-card menu-icon-color',
-                    handler: 'paymentTypesClick'
+                    handler: 'paymentTypesClick',
                 }
             ]
         }
