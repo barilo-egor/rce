@@ -73,6 +73,18 @@ Ext.define('Main.view.components.MainToolBar', {
                     handler: 'paymentTypesClick',
                 }
             ]
+        },
+        {
+            xtype: 'button',
+            iconCls: 'fas fa-id-card-alt',
+            menu: [
+                {
+                    text: 'Сделки из бота',
+                    iconCls: 'fas fa-robot menu-icon-color',
+                    handler: 'botDealsClick'
+                }
+            ]
+
         }
     ]
 })

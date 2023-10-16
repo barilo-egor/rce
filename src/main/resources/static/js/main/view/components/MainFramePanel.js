@@ -20,13 +20,14 @@ Ext.define('Main.view.components.MainFramePanel', {
         'Main.view.bulkDiscount.BulkDiscountController',
         'Main.view.bulkDiscount.BulkDiscountAddForm',
         'Main.view.paymentTypes.PaymentTypesPanel',
+        'Main.view.deal.bot.BotDealsPanel'
     ],
     layout: {
         type: 'fit'
     },
     items: [
         {
-            xtype: 'paymenttypespanel',
+            xtype: 'botdealspanel',
             scrollable: true
         }
     ]
