@@ -5,6 +5,8 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.BotVariableType;
 import tgb.btc.rce.enums.Command;
+import tgb.btc.rce.enums.DealStatus;
+import tgb.btc.rce.repository.DealRepository;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.impl.DealService;
 import tgb.btc.rce.util.BotImageUtil;
@@ -19,6 +21,13 @@ import java.util.List;
 public class UserAdditionalVerification extends Processor {
 
     private DealService dealService;
+
+    private DealRepository dealRepository;
+
+    @Autowired
+    public void setDealRepository(DealRepository dealRepository) {
+        this.dealRepository = dealRepository;
+    }
 
     @Autowired
     public void setDealService(DealService dealService) {
@@ -42,6 +51,7 @@ public class UserAdditionalVerification extends Processor {
             responseSender.sendMessage(UpdateUtil.getChatId(update),
                     "Спасибо, твоя верификация отправлена администратору.");
             userService.setDefaultValues(chatId);
+            dealRepository.updateDealStatusByPid(DealStatus.VERIFICATION_RECEIVED, dealPid);
             processToMainMenu(chatId);
             return;
         }
@@ -56,6 +66,7 @@ public class UserAdditionalVerification extends Processor {
             userService.getAdminsChatIds().forEach(adminChatId ->
                     responseSender.sendMessage(adminChatId, "Отказ от верификации по заявке №" + dealPid));
             userService.setDefaultValues(chatId);
+            dealRepository.updateDealStatusByPid(DealStatus.VERIFICATION_REJECTED, dealPid);
             processToMainMenu(chatId);
             return;
         }

@@ -76,7 +76,7 @@ Ext.define('Main.view.components.MainToolBar', {
         },
         {
             xtype: 'button',
-            iconCls: 'fas fa-id-card-alt',
+            iconCls: 'fas fa-id-card-alt menu-icon-color',
             menu: [
                 {
                     text: 'Сделки из бота',

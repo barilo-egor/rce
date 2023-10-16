@@ -652,6 +652,7 @@ public class ExchangeService {
         Long currentDealPid = userRepository.getCurrentDealByChatId(chatId);
         DealType dealType = dealRepository.getDealTypeByPid(currentDealPid);
         dealRepository.updateIsActiveByPid(true, currentDealPid);
+        dealRepository.updateDealStatusByPid(DealStatus.NEW, currentDealPid);
         userRepository.setDefaultValues(chatId);
         responseSender.sendMessage(chatId, MessagePropertiesUtil.getMessage(PropertiesMessage.DEAL_CONFIRMED));
         adminService.notify("Поступила новая заявка на " + dealType.getGenitive() + ".",

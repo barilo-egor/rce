@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import tgb.btc.rce.web.vo.interfaces.ObjectNodeConvertable;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -58,5 +59,13 @@ public class JacksonUtil {
 
     public static ObjectNode toObjectNode(String key, String value) {
         return getEmpty().put(key, value);
+    }
+
+    public static <T> ObjectNode pagingData(List<T> list, long total, ObjectNodeConvertable<T> mapper) {
+        ObjectNode result = getEmpty();
+        result.put("success", true);
+        result.put("total", total);
+        result.set("items", toArrayNode(list, mapper));
+        return result;
     }
 }

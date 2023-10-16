@@ -3,20 +3,13 @@ package tgb.btc.rce.bean;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.Fetch;
-import tgb.btc.rce.enums.CryptoCurrency;
-import tgb.btc.rce.enums.DealType;
-import tgb.btc.rce.enums.FiatCurrency;
-import tgb.btc.rce.enums.PaymentTypeEnum;
+import tgb.btc.rce.enums.*;
 
 import javax.persistence.*;
-import javax.persistence.Entity;
-import javax.persistence.Table;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
 
 @Entity
 @Table(name = "DEAL")
@@ -105,6 +98,10 @@ public class Deal extends BasePersist {
     @Column(name = "FIAT_CURRENCY")
     @Enumerated(value = EnumType.STRING)
     private FiatCurrency fiatCurrency;
+
+    @Column(name = "DEAL_STATUS")
+    @Enumerated(value = EnumType.STRING)
+    private DealStatus dealStatus;
 
     public Boolean getCurrent() {
         return isCurrent;
@@ -305,5 +302,13 @@ public class Deal extends BasePersist {
 
     public void setPersonalApplied(Boolean personalApplied) {
         isPersonalApplied = personalApplied;
+    }
+
+    public DealStatus getDealStatus() {
+        return dealStatus;
+    }
+
+    public void setDealStatus(DealStatus dealStatus) {
+        this.dealStatus = dealStatus;
     }
 }

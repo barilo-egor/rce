@@ -5,6 +5,8 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
+import tgb.btc.rce.enums.DealStatus;
+import tgb.btc.rce.repository.DealRepository;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.impl.DealService;
 import tgb.btc.rce.util.KeyboardUtil;
@@ -18,6 +20,13 @@ public class AdditionalVerification extends Processor {
 
     private DealService dealService;
 
+    private DealRepository dealRepository;
+
+    @Autowired
+    public void setDealRepository(DealRepository dealRepository) {
+        this.dealRepository = dealRepository;
+    }
+
     @Autowired
     public void setDealService(DealService dealService) {
         this.dealService = dealService;
@@ -27,6 +36,7 @@ public class AdditionalVerification extends Processor {
     public void run(Update update) {
         Long dealPid = Long.parseLong(update.getCallbackQuery().getData().split(BotStringConstants.CALLBACK_DATA_SPLITTER)[1]);
         Long userChatId = dealService.getUserChatIdByDealPid(dealPid);
+        dealRepository.updateDealStatusByPid(DealStatus.AWAITING_VERIFICATION, dealPid);
         userService.nextStep(userChatId, Command.USER_ADDITIONAL_VERIFICATION);
         userService.updateBufferVariable(userChatId, dealPid.toString());
         responseSender.sendMessage(userChatId,

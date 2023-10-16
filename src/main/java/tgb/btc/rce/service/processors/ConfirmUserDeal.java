@@ -85,6 +85,7 @@ public class ConfirmUserDeal extends Processor {
             user.setReferralBalance(referralBalance.intValue());
             deal.setAmount(sumWithDiscount);
         }
+        deal.setDealStatus(DealStatus.CONFIRMED);
         dealService.save(deal);
         DealDeleteScheduler.deleteCryptoDeal(deal.getPid());
         paymentRequisiteService.updateOrder(deal.getPaymentType().getPid());

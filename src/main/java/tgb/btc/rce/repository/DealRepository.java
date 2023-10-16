@@ -6,10 +6,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import tgb.btc.rce.bean.Deal;
 import tgb.btc.rce.bean.PaymentType;
-import tgb.btc.rce.enums.CryptoCurrency;
-import tgb.btc.rce.enums.DealType;
-import tgb.btc.rce.enums.FiatCurrency;
-import tgb.btc.rce.enums.PaymentTypeEnum;
+import tgb.btc.rce.enums.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -97,6 +94,10 @@ public interface DealRepository extends BaseRepository<Deal> {
     @Modifying
     @Query("update Deal set isActive=:isActive where pid=:pid")
     void updateIsActiveByPid(Boolean isActive, Long pid);
+
+    @Modifying
+    @Query("update Deal set dealStatus=:dealStatus where pid=:pid")
+    void updateDealStatusByPid(DealStatus dealStatus, Long pid);
 
     @Query("select count(d) from Deal d where d.user.chatId=:chatId and d.isActive=true")
     Long getActiveDealsCountByUserChatId(Long chatId);
