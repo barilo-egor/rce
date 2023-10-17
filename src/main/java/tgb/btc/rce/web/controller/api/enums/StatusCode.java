@@ -1,10 +1,10 @@
 package tgb.btc.rce.web.controller.api.enums;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import tgb.btc.library.interfaces.JsonConvertable;
+import tgb.btc.library.interfaces.ObjectNodeConvertable;
 import tgb.btc.rce.web.controller.MainWebController;
-import tgb.btc.rce.web.interfaces.JsonConvertable;
-import tgb.btc.rce.web.util.JacksonUtil;
-import tgb.btc.rce.web.vo.interfaces.ObjectNodeConvertable;
+import tgb.btc.library.util.web.JacksonUtil;
 
 import java.util.List;
 import java.util.function.Function;

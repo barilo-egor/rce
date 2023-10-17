@@ -2,9 +2,14 @@ package tgb.btc.rce.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import tgb.btc.rce.enums.*;
-import tgb.btc.rce.exception.BaseException;
-import tgb.btc.rce.exception.ReadFromUrlException;
+import tgb.btc.library.constants.enums.bot.CryptoCurrency;
+import tgb.btc.library.constants.enums.bot.FiatCurrency;
+import tgb.btc.library.exception.BaseException;
+import tgb.btc.library.exception.ReadFromUrlException;
+import tgb.btc.rce.enums.BotProperties;
+import tgb.btc.rce.enums.BotVariableType;
+import tgb.btc.rce.enums.CryptoApi;
+import tgb.btc.rce.enums.ManualBTCApi;
 import tgb.btc.rce.util.BotVariablePropertiesUtil;
 
 import java.math.BigDecimal;

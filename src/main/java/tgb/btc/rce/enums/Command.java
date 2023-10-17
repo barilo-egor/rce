@@ -2,11 +2,13 @@ package tgb.btc.rce.enums;
 
 import lombok.extern.slf4j.Slf4j;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import tgb.btc.library.constants.enums.bot.UpdateType;
+import tgb.btc.library.interfaces.ICommand;
 
 import java.util.Arrays;
 
 @Slf4j
-public enum Command {
+public enum Command implements ICommand {
     /*
      * CallbackQuery
      */

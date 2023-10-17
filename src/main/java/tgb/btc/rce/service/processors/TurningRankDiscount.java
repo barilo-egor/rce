@@ -6,7 +6,7 @@ import org.apache.commons.lang.exception.ExceptionUtils;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.constants.BotStringConstants;
-import tgb.btc.rce.constants.FilePaths;
+import tgb.btc.library.constants.strings.FilePaths;
 import tgb.btc.rce.enums.BotProperties;
 import tgb.btc.rce.enums.BotVariableType;
 import tgb.btc.rce.enums.Command;

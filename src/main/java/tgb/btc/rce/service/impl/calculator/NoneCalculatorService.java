@@ -20,7 +20,7 @@ public class NoneCalculatorService extends SimpleCalculatorService {
 
     @Override
     public void setCommand(Long chatId) {
-        userRepository.updateStepAndCommandByChatId(chatId, Command.NONE_CALCULATOR, 1);
+        userRepository.updateStepAndCommandByChatId(chatId, Command.NONE_CALCULATOR.name(), 1);
     }
 
 }

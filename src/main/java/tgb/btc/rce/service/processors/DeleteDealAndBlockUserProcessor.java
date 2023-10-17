@@ -7,7 +7,7 @@ import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.impl.BanningUserService;
-import tgb.btc.rce.service.impl.bean.DealService;
+import tgb.btc.library.service.bean.bot.DealService;
 import tgb.btc.rce.service.schedule.DealDeleteScheduler;
 import tgb.btc.rce.util.UpdateUtil;
 

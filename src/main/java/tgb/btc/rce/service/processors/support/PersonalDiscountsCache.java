@@ -2,9 +2,9 @@ package tgb.btc.rce.service.processors.support;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import tgb.btc.rce.enums.DealType;
-import tgb.btc.rce.exception.BaseException;
-import tgb.btc.rce.repository.UserDiscountRepository;
+import tgb.btc.library.constants.enums.bot.DealType;
+import tgb.btc.library.exception.BaseException;
+import tgb.btc.library.repository.bot.UserDiscountRepository;
 
 import java.math.BigDecimal;
 import java.util.HashMap;

@@ -4,8 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import tgb.btc.rce.repository.DealRepository;
-import tgb.btc.rce.repository.PagingDealRepository;
+import tgb.btc.library.repository.bot.DealRepository;
+import tgb.btc.library.repository.bot.paging.PagingDealRepository;
 import tgb.btc.rce.vo.DealVO;
 
 import java.util.List;

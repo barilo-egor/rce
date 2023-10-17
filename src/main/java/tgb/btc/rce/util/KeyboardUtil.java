@@ -7,8 +7,9 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.meta.api.objects.webapp.WebAppInfo;
-import tgb.btc.rce.bean.Contact;
+import tgb.btc.library.bean.bot.Contact;
 import tgb.btc.rce.enums.*;
+import tgb.btc.library.constants.enums.bot.CryptoCurrency;
 import tgb.btc.rce.vo.InlineButton;
 import tgb.btc.rce.vo.ReplyButton;
 import tgb.btc.rce.web.util.CryptoCurrenciesDesignUtil;

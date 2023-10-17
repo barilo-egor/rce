@@ -3,13 +3,13 @@ package tgb.btc.rce.service.processors;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import tgb.btc.library.bean.bot.Review;
+import tgb.btc.library.service.bean.bot.ReviewService;
 import tgb.btc.rce.annotation.CommandProcessor;
-import tgb.btc.rce.bean.Review;
 import tgb.btc.rce.enums.BotVariableType;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.InlineType;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.service.impl.bean.ReviewService;
 import tgb.btc.rce.util.BotVariablePropertiesUtil;
 import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.UpdateUtil;
@@ -44,7 +44,7 @@ public class ShareReview extends Processor {
             case 0:
                 responseSender.deleteMessage(chatId, update.getCallbackQuery().getMessage().getMessageId());
                 responseSender.sendMessage(chatId, "Напишите ваш отзыв.");
-                userService.nextStep(chatId, Command.SHARE_REVIEW);
+                userRepository.nextStep(chatId, Command.SHARE_REVIEW.name());
                 if (DYNAMIC.isCurrent()) reviewPrisesMap.put(chatId, new ReviewPrise(update.getCallbackQuery().getData()));
                 return;
             case 1:

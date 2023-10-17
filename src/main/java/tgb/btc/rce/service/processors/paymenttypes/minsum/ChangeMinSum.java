@@ -19,8 +19,8 @@ public class ChangeMinSum extends Processor {
             responseSender.sendMessage(chatId, BotStringConstants.FIAT_CURRENCY_CHOOSE, BotKeyboard.FIAT_CURRENCIES);
         } else {
             responseSender.sendMessage(chatId, BotStringConstants.BUY_OR_SELL, BotKeyboard.BUY_OR_SELL);
-            userService.nextStep(chatId, Command.CHANGE_MIN_SUM);
+            userRepository.nextStep(chatId, Command.CHANGE_MIN_SUM.name());
         }
-        userService.nextStep(chatId, Command.CHANGE_MIN_SUM);
+        userRepository.nextStep(chatId, Command.CHANGE_MIN_SUM.name());
     }
 }

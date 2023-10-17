@@ -1,6 +1,6 @@
 package tgb.btc.rce.enums;
 
-import tgb.btc.rce.exception.BaseException;
+import tgb.btc.library.exception.BaseException;
 
 import java.util.Arrays;
 

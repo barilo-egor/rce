@@ -7,13 +7,14 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import tgb.btc.library.repository.bot.UserRepository;
 import tgb.btc.rce.enums.BotProperties;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.SimpleCommand;
 import tgb.btc.rce.service.AntiSpam;
 import tgb.btc.rce.service.IUpdateDispatcher;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.service.impl.bean.UserService;
+import tgb.btc.library.service.bean.bot.UserService;
 import tgb.btc.rce.util.CommandProcessorLoader;
 import tgb.btc.rce.util.CommandUtil;
 import tgb.btc.rce.util.UpdateUtil;
@@ -34,6 +35,13 @@ public class UpdateDispatcher implements IUpdateDispatcher {
     private AntiSpam antiSpam;
 
     private BannedUserCache bannedUserCache;
+
+    private UserRepository userRepository;
+
+    @Autowired
+    public void setUserRepository(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     @Autowired
     public void setBannedUserCache(BannedUserCache bannedUserCache) {
@@ -76,7 +84,7 @@ public class UpdateDispatcher implements IUpdateDispatcher {
         if (CommandUtil.isStartCommand(update)) return Command.START;
         Command command;
         if (userService.isDefaultStep(chatId)) command = Command.fromUpdate(update);
-        else command = userService.getCommandByChatId(chatId);
+        else command = Command.valueOf(userRepository.getCommandByChatId(chatId));
         if (Objects.isNull(command) || !hasAccess(command, chatId)) return Command.START;
         else return command;
     }

@@ -3,8 +3,8 @@ package tgb.btc.rce.util;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.BooleanUtils;
 import tgb.btc.rce.enums.BotProperties;
-import tgb.btc.rce.enums.CryptoCurrency;
-import tgb.btc.rce.enums.DealType;
+import tgb.btc.library.constants.enums.bot.CryptoCurrency;
+import tgb.btc.library.constants.enums.bot.DealType;
 
 import java.util.Arrays;
 import java.util.HashMap;

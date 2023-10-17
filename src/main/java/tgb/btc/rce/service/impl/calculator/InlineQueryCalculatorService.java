@@ -5,6 +5,9 @@ import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import tgb.btc.rce.conditional.calculkator.InlineQueryCalculatorCondition;
 import tgb.btc.rce.enums.*;
+import tgb.btc.library.constants.enums.bot.CryptoCurrency;
+import tgb.btc.library.constants.enums.bot.DealType;
+import tgb.btc.library.constants.enums.bot.FiatCurrency;
 import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.vo.InlineButton;
 
@@ -31,7 +34,7 @@ public class InlineQueryCalculatorService extends SimpleCalculatorService {
 
     @Override
     public void setCommand(Long chatId) {
-        userRepository.updateStepAndCommandByChatId(chatId, Command.INLINE_QUERY_CALCULATOR, 1);
+        userRepository.updateStepAndCommandByChatId(chatId, Command.INLINE_QUERY_CALCULATOR.name(), 1);
     }
 
 }

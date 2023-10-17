@@ -9,12 +9,12 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import tgb.btc.library.bean.bot.User;
+import tgb.btc.library.exception.BaseException;
+import tgb.btc.library.service.bean.bot.DealService;
 import tgb.btc.rce.annotation.CommandProcessor;
-import tgb.btc.rce.bean.User;
 import tgb.btc.rce.enums.Command;
-import tgb.btc.rce.exception.BaseException;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.service.impl.bean.DealService;
 import tgb.btc.rce.util.UpdateUtil;
 
 import java.io.File;

@@ -2,7 +2,7 @@ package tgb.btc.rce.util;
 
 import lombok.extern.slf4j.Slf4j;
 import tgb.btc.rce.enums.BotProperties;
-import tgb.btc.rce.exception.BaseException;
+import tgb.btc.library.exception.BaseException;
 
 import java.util.Objects;
 

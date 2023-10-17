@@ -4,17 +4,17 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Conditional;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import tgb.btc.library.bean.bot.SpamBan;
+import tgb.btc.library.exception.BaseException;
+import tgb.btc.library.service.bean.bot.SpamBanService;
 import tgb.btc.rce.annotation.CommandProcessor;
-import tgb.btc.rce.bean.SpamBan;
 import tgb.btc.rce.conditional.AntispamCondition;
 import tgb.btc.rce.enums.BotKeyboard;
 import tgb.btc.rce.enums.Command;
-import tgb.btc.rce.exception.BaseException;
 import tgb.btc.rce.service.AntiSpam;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.impl.AdminService;
 import tgb.btc.rce.service.impl.BanningUserService;
-import tgb.btc.rce.service.impl.bean.SpamBanService;
 import tgb.btc.rce.service.schedule.CaptchaSender;
 import tgb.btc.rce.util.CallbackQueryUtil;
 import tgb.btc.rce.util.KeyboardUtil;
@@ -124,6 +124,6 @@ public class CaptchaProcessor extends Processor {
 
     public void send(Long chatId) {
         captchaSender.sendCaptcha(chatId);
-        userService.nextStep(chatId, Command.CAPTCHA);
+        userRepository.nextStep(chatId, Command.CAPTCHA.name());
     }
 }

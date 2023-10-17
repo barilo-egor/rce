@@ -2,8 +2,9 @@ package tgb.btc.rce.web.util;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import tgb.btc.library.util.web.JacksonUtil;
 import tgb.btc.rce.web.vo.SuccessResponse;
-import tgb.btc.rce.web.vo.interfaces.ObjectNodeConvertable;
+import tgb.btc.library.interfaces.ObjectNodeConvertable;
 
 import java.util.Collection;
 import java.util.function.Function;

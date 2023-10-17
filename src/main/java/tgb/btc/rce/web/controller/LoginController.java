@@ -6,8 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import tgb.btc.rce.enums.RoleConstants;
-import tgb.btc.rce.repository.WebUserRepository;
+import tgb.btc.library.constants.enums.web.RoleConstants;
+import tgb.btc.library.repository.web.WebUserRepository;
 
 import java.security.Principal;
 import java.util.List;

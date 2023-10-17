@@ -1,8 +1,8 @@
 package tgb.btc.rce.web.util;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import tgb.btc.library.interfaces.JsonConvertable;
 import tgb.btc.rce.web.controller.MainWebController;
-import tgb.btc.rce.web.interfaces.JsonConvertable;
 
 import java.util.List;
 import java.util.stream.Collectors;

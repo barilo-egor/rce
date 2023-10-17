@@ -3,12 +3,12 @@ package tgb.btc.rce.web.controller.paymentTypes;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import tgb.btc.rce.bean.PaymentType;
+import tgb.btc.library.bean.bot.PaymentType;
 import tgb.btc.rce.constants.mapper.PaymentRequisiteMapper;
 import tgb.btc.rce.constants.mapper.PaymentTypeMapper;
-import tgb.btc.rce.repository.PaymentRequisiteRepository;
+import tgb.btc.library.repository.bot.PaymentRequisiteRepository;
 import tgb.btc.rce.service.impl.PaymentTypeProcessService;
-import tgb.btc.rce.service.impl.bean.PaymentTypeService;
+import tgb.btc.library.service.bean.bot.PaymentTypeService;
 import tgb.btc.rce.web.util.SuccessResponseUtil;
 import tgb.btc.rce.web.vo.PaymentTypeVO;
 import tgb.btc.rce.web.vo.SuccessResponse;
@@ -67,7 +67,7 @@ public class PaymentTypesController {
 
     @GetMapping("/getRequisites")
     public SuccessResponse<?> getRequisites(Long paymentTypePid) {
-        return SuccessResponseUtil.data(paymentRequisiteRepository.getByPaymentTypePid(paymentTypePid),
+        return SuccessResponseUtil.data(paymentRequisiteRepository.getByPaymentType_Pid(paymentTypePid),
                 PaymentRequisiteMapper.GET_BY_PAYMENT_TYPE);
     }
 }

@@ -2,12 +2,15 @@ package tgb.btc.rce.service.processors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import tgb.btc.library.constants.enums.bot.CryptoCurrency;
+import tgb.btc.library.constants.enums.bot.DealType;
+import tgb.btc.library.constants.enums.bot.FiatCurrency;
+import tgb.btc.library.exception.BaseException;
+import tgb.btc.library.exception.EnumTypeNotFoundException;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.*;
-import tgb.btc.rce.exception.BaseException;
-import tgb.btc.rce.exception.EnumTypeNotFoundException;
-import tgb.btc.rce.repository.UserDataRepository;
+import tgb.btc.library.repository.bot.UserDataRepository;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.util.FiatCurrencyUtil;
 import tgb.btc.rce.util.KeyboardUtil;
@@ -35,7 +38,7 @@ public class ChangeUsdCourseProcessor extends Processor {
         switch (userService.getStepByChatId(chatId)) {
             case 0:
                 responseSender.sendMessage(chatId, BotStringConstants.BUY_OR_SELL, BotKeyboard.BUY_OR_SELL);
-                userService.nextStep(chatId, Command.CHANGE_USD_COURSE);
+                userRepository.nextStep(chatId, Command.CHANGE_USD_COURSE.name());
                 break;
             case 1:
                 if (!hasMessageText(update, BotStringConstants.BUY_OR_SELL)) {

@@ -9,8 +9,8 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import tgb.btc.rce.repository.RoleRepository;
-import tgb.btc.rce.repository.WebUserRepository;
+import tgb.btc.library.repository.web.RoleRepository;
+import tgb.btc.library.repository.web.WebUserRepository;
 
 @Configuration
 @EnableWebSecurity

@@ -1,8 +1,8 @@
 package tgb.btc.rce.web.util;
 
-import tgb.btc.library.constants.enums.system.DesignProperties;
-import tgb.btc.rce.enums.CryptoCurrency;
-import tgb.btc.rce.exception.BaseException;
+import tgb.btc.library.constants.enums.bot.CryptoCurrency;
+import tgb.btc.rce.enums.DesignProperties;
+import tgb.btc.library.exception.BaseException;
 
 public class CryptoCurrenciesDesignUtil {
 

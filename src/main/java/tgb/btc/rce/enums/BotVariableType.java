@@ -1,5 +1,8 @@
 package tgb.btc.rce.enums;
 
+import tgb.btc.library.constants.enums.bot.CryptoCurrency;
+import tgb.btc.library.constants.enums.bot.DealType;
+
 public enum BotVariableType {
     USD_COURSE("Курс доллара", "course.usd"),
     FIX("Фикс рублей покупка", "fix"),

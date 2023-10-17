@@ -6,10 +6,10 @@ import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
-import tgb.btc.rce.enums.DealType;
+import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.rce.enums.InlineCalculatorButton;
 import tgb.btc.rce.enums.PropertiesMessage;
-import tgb.btc.rce.repository.DealRepository;
+import tgb.btc.library.repository.bot.DealRepository;
 import tgb.btc.rce.service.IUpdateDispatcher;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.impl.CalculateService;
@@ -87,14 +87,14 @@ public class InlineCalculator extends Processor {
     public void run(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
         if (CallbackQueryUtil.isBack(update)) {
-            userRepository.updateStepAndCommandByChatId(chatId, Command.DEAL, DealProcessor.AFTER_CALCULATOR_STEP);
+            userRepository.updateStepAndCommandByChatId(chatId, Command.DEAL.name(), DealProcessor.AFTER_CALCULATOR_STEP);
             dealProcessor.run(update);
             return;
         }
         InlineCalculatorVO calculator = cache.get(chatId);
         if (update.hasMessage() && !calculator.getOn()) {
             if (!exchangeService.calculateDealAmount(chatId, UpdateUtil.getBigDecimalFromText(update))) return;
-            userRepository.updateStepAndCommandByChatId(chatId, Command.DEAL, DealProcessor.AFTER_CALCULATOR_STEP);
+            userRepository.updateStepAndCommandByChatId(chatId, Command.DEAL.name(), DealProcessor.AFTER_CALCULATOR_STEP);
             updateDispatcher.runProcessor(Command.DEAL, chatId, update);
             return;
         } else if (update.hasMessage()) {
@@ -145,7 +145,7 @@ public class InlineCalculator extends Processor {
                 break;
             case READY:
                 if (!exchangeService.calculateDealAmount(chatId, new BigDecimal(sum), !isSwitched)) return;
-                userRepository.updateStepAndCommandByChatId(chatId, Command.DEAL, DealProcessor.AFTER_CALCULATOR_STEP);
+                userRepository.updateStepAndCommandByChatId(chatId, Command.DEAL.name(), DealProcessor.AFTER_CALCULATOR_STEP);
                 updateDispatcher.runProcessor(Command.DEAL, chatId, update);
                 return;
         }

@@ -49,7 +49,7 @@
                 <dependency>
                     <groupId>com.github.barilo-egor</groupId>
                     <artifactId>rce-library</artifactId>
-                    <version>2ca565e1af</version>
+                    <version>c829c353e1</version>
                 </dependency>
             </dependencies>
         </profile>

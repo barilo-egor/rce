@@ -2,8 +2,8 @@ package tgb.btc.rce.enums;
 
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
-import tgb.btc.rce.exception.BaseException;
-import tgb.btc.rce.exception.ReadFromUrlException;
+import tgb.btc.library.exception.BaseException;
+import tgb.btc.library.exception.ReadFromUrlException;
 
 import java.io.*;
 import java.math.BigDecimal;

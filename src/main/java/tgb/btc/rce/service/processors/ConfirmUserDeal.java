@@ -5,17 +5,22 @@ import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import tgb.btc.library.bean.bot.Deal;
+import tgb.btc.library.bean.bot.User;
+import tgb.btc.library.constants.enums.bot.DealStatus;
+import tgb.btc.library.constants.enums.bot.DealType;
+import tgb.btc.library.constants.enums.bot.FiatCurrency;
+import tgb.btc.library.exception.BaseException;
+import tgb.btc.library.service.bean.bot.DealService;
+import tgb.btc.library.service.bean.bot.PaymentRequisiteService;
 import tgb.btc.rce.annotation.CommandProcessor;
-import tgb.btc.rce.bean.Deal;
-import tgb.btc.rce.bean.User;
 import tgb.btc.rce.constants.BotStringConstants;
-import tgb.btc.rce.enums.*;
-import tgb.btc.rce.exception.BaseException;
+import tgb.btc.rce.enums.BotProperties;
+import tgb.btc.rce.enums.BotVariableType;
+import tgb.btc.rce.enums.Command;
+import tgb.btc.rce.enums.ReferralType;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.impl.CalculateService;
-import tgb.btc.rce.service.impl.bean.DealService;
-import tgb.btc.rce.service.impl.bean.PaymentRequisiteService;
-import tgb.btc.rce.service.impl.bean.UserService;
 import tgb.btc.rce.service.schedule.DealDeleteScheduler;
 import tgb.btc.rce.util.*;
 import tgb.btc.rce.vo.InlineButton;
@@ -136,7 +141,7 @@ public class ConfirmUserDeal extends Processor {
         }
         responseSender.sendMessage(deal.getUser().getChatId(), message);
 
-        if (UserService.REFERRAL_TYPE.equals(ReferralType.STANDARD)) {
+        if (ReferralType.STANDARD.isCurrent()) {
             Integer reviewPrise = BotVariablePropertiesUtil.getInt(BotVariableType.REVIEW_PRISE); // TODO уточнить нужно ли 30 выводить или брать число из проперти
             String data;
             String amount;

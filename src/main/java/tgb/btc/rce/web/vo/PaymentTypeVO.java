@@ -2,8 +2,8 @@ package tgb.btc.rce.web.vo;
 
 import lombok.Getter;
 import lombok.Setter;
-import tgb.btc.rce.enums.DealType;
-import tgb.btc.rce.enums.FiatCurrency;
+import tgb.btc.library.constants.enums.bot.DealType;
+import tgb.btc.library.constants.enums.bot.FiatCurrency;
 
 import java.math.BigDecimal;
 import java.util.List;

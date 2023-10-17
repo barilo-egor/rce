@@ -1,10 +1,10 @@
 package tgb.btc.rce.service.impl;
 
 import org.apache.commons.lang.StringUtils;
+import tgb.btc.library.constants.enums.bot.DealType;
+import tgb.btc.library.constants.enums.bot.FiatCurrency;
+import tgb.btc.library.exception.PropertyValueNotFoundException;
 import tgb.btc.rce.enums.BotProperties;
-import tgb.btc.rce.enums.DealType;
-import tgb.btc.rce.enums.FiatCurrency;
-import tgb.btc.rce.exception.PropertyValueNotFoundException;
 import tgb.btc.rce.service.IPropertyService;
 import tgb.btc.rce.vo.BulkDiscount;
 

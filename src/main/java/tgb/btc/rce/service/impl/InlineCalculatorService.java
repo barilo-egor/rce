@@ -4,14 +4,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import tgb.btc.library.constants.enums.bot.DealType;
+import tgb.btc.library.repository.bot.DealRepository;
 import tgb.btc.rce.conditional.calculkator.InlineCalculatorCondition;
 import tgb.btc.rce.enums.Command;
-import tgb.btc.rce.enums.DealType;
-import tgb.btc.rce.repository.DealRepository;
-import tgb.btc.rce.repository.UserRepository;
+import tgb.btc.library.repository.bot.UserRepository;
 import tgb.btc.rce.service.ICalculatorTypeService;
 import tgb.btc.rce.service.IResponseSender;
-import tgb.btc.rce.service.impl.bean.UserService;
+import tgb.btc.library.service.bean.bot.UserService;
 import tgb.btc.rce.service.processors.InlineCalculator;
 import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.InlineCalculatorVO;
@@ -69,7 +69,7 @@ public class InlineCalculatorService implements ICalculatorTypeService {
         InlineCalculator.cache.put(chatId, inlineCalculatorVO);
         responseSender.sendMessage(chatId, messageService.getInlineCalculatorMessage(dealType, inlineCalculatorVO),
                 keyboardService.getInlineCalculator(chatId));
-        userRepository.updateStepAndCommandByChatId(chatId, Command.INLINE_CALCULATOR, 1);
+        userRepository.updateStepAndCommandByChatId(chatId, Command.INLINE_CALCULATOR.name(), 1);
     }
 
 }

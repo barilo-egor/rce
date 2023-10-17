@@ -2,9 +2,9 @@ package tgb.btc.rce.constants.mapper;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.lang.StringUtils;
+import tgb.btc.library.interfaces.ObjectNodeConvertable;
+import tgb.btc.library.util.web.JacksonUtil;
 import tgb.btc.rce.vo.DealVO;
-import tgb.btc.rce.web.util.JacksonUtil;
-import tgb.btc.rce.web.vo.interfaces.ObjectNodeConvertable;
 
 import java.util.Objects;
 import java.util.function.Function;

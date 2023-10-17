@@ -2,6 +2,7 @@ package tgb.btc.rce.enums;
 
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
+import tgb.btc.library.constants.enums.bot.FiatCurrency;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.vo.InlineButton;

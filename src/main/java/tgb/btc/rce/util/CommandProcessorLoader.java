@@ -2,7 +2,7 @@ package tgb.btc.rce.util;
 
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
-import tgb.btc.rce.exception.BaseException;
+import tgb.btc.library.exception.BaseException;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.processors.*;
 import tgb.btc.rce.service.processors.apideal.CancelApiDeal;

@@ -3,7 +3,7 @@ package tgb.btc.rce.service.processors.bulkdiscounts;
 import lombok.extern.slf4j.Slf4j;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.annotation.CommandProcessor;
-import tgb.btc.rce.constants.FilePaths;
+import tgb.btc.library.constants.strings.FilePaths;
 import tgb.btc.rce.enums.BotKeyboard;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.Processor;
@@ -22,6 +22,6 @@ public class BulkDiscounts extends Processor {
         responseSender.sendMessage(chatId, "Измените нужные значения и отправьте исправленный файл. " +
                 "Обязательно закройте файл, перед тем как отправлять.", BotKeyboard.REPLY_CANCEL);
         responseSender.sendFile(chatId, new File(FilePaths.BULK_DISCOUNT_PROPERTIES));
-        userService.nextStep(chatId, Command.BULK_DISCOUNTS);
+        userRepository.nextStep(chatId, Command.BULK_DISCOUNTS.name());
     }
 }

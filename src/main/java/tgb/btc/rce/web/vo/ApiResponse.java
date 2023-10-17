@@ -2,8 +2,8 @@ package tgb.btc.rce.web.vo;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import tgb.btc.rce.web.controller.api.enums.StatusCode;
-import tgb.btc.rce.web.util.JacksonUtil;
-import tgb.btc.rce.web.vo.interfaces.ObjectNodeConvertable;
+import tgb.btc.library.util.web.JacksonUtil;
+import tgb.btc.library.interfaces.ObjectNodeConvertable;
 
 import java.util.Objects;
 import java.util.function.Function;

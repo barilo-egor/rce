@@ -19,8 +19,8 @@ public class FiatCurrencyDeletePaymentType extends Processor {
             responseSender.sendMessage(chatId, BotStringConstants.FIAT_CURRENCY_CHOOSE, BotKeyboard.FIAT_CURRENCIES);
         } else {
             responseSender.sendMessage(chatId, BotStringConstants.BUY_OR_SELL, BotKeyboard.BUY_OR_SELL);
-            userService.nextStep(chatId, Command.DELETE_PAYMENT_TYPE);
+            userRepository.nextStep(chatId, Command.DELETE_PAYMENT_TYPE.name());
         }
-        userService.nextStep(chatId, Command.DELETE_PAYMENT_TYPE);
+        userRepository.nextStep(chatId, Command.DELETE_PAYMENT_TYPE.name());
     }
 }

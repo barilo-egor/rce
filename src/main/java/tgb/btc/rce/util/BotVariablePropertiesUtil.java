@@ -2,7 +2,10 @@ package tgb.btc.rce.util;
 
 import lombok.extern.slf4j.Slf4j;
 import tgb.btc.rce.enums.*;
-import tgb.btc.rce.exception.BaseException;
+import tgb.btc.library.constants.enums.bot.CryptoCurrency;
+import tgb.btc.library.constants.enums.bot.DealType;
+import tgb.btc.library.constants.enums.bot.FiatCurrency;
+import tgb.btc.library.exception.BaseException;
 
 import java.math.BigDecimal;
 import java.util.Objects;

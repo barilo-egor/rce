@@ -3,8 +3,8 @@ package tgb.btc.rce.util;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
-import tgb.btc.rce.enums.UpdateType;
-import tgb.btc.rce.exception.BaseException;
+import tgb.btc.library.constants.enums.bot.UpdateType;
+import tgb.btc.library.exception.BaseException;
 
 import java.math.BigDecimal;
 import java.util.Objects;

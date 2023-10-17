@@ -4,20 +4,20 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import tgb.btc.library.bean.bot.User;
+import tgb.btc.library.constants.enums.bot.BotMessageType;
+import tgb.btc.library.constants.enums.bot.DealType;
+import tgb.btc.library.repository.bot.DealRepository;
+import tgb.btc.library.service.bean.bot.PaymentTypeService;
 import tgb.btc.rce.annotation.CommandProcessor;
-import tgb.btc.rce.bean.User;
-import tgb.btc.rce.enums.BotMessageType;
 import tgb.btc.rce.enums.Command;
-import tgb.btc.rce.enums.DealType;
 import tgb.btc.rce.enums.Menu;
-import tgb.btc.rce.repository.DealRepository;
 import tgb.btc.rce.service.ICalculatorTypeService;
 import tgb.btc.rce.service.IUpdateDispatcher;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.impl.BotMessageService;
 import tgb.btc.rce.service.impl.DealProcessService;
-import tgb.btc.rce.service.impl.bean.DealService;
-import tgb.btc.rce.service.impl.bean.PaymentTypeService;
+import tgb.btc.library.service.bean.bot.DealService;
 import tgb.btc.rce.service.processors.support.ExchangeService;
 import tgb.btc.rce.util.CallbackQueryUtil;
 import tgb.btc.rce.util.FiatCurrencyUtil;
@@ -118,7 +118,7 @@ public class DealProcessor extends Processor {
         DealType dealType;
         switch (userStep) {
             case 0:
-                if (!isBack) userRepository.updateCommandByChatId(Command.DEAL, chatId);
+                if (!isBack) userRepository.updateCommandByChatId(Command.DEAL.name(), chatId);
                 if (!FiatCurrencyUtil.isFew()) {
                     recursiveSwitch(update, chatId, isBack);
                     break;

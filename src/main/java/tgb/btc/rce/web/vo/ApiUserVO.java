@@ -1,7 +1,7 @@
 package tgb.btc.rce.web.vo;
 
 import lombok.*;
-import tgb.btc.rce.enums.FiatCurrency;
+import tgb.btc.library.constants.enums.bot.FiatCurrency;
 
 import java.math.BigDecimal;
 

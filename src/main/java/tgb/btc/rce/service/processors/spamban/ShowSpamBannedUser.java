@@ -4,10 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
-import tgb.btc.rce.repository.SpamBanRepository;
+import tgb.btc.library.repository.bot.SpamBanRepository;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.impl.UserInfoService;
-import tgb.btc.rce.service.impl.bean.UserService;
+import tgb.btc.library.service.bean.bot.UserService;
 import tgb.btc.rce.util.CallbackQueryUtil;
 import tgb.btc.rce.util.UpdateUtil;
 

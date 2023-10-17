@@ -14,9 +14,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import tgb.btc.rce.bean.Role;
-import tgb.btc.rce.bean.WebUser;
-import tgb.btc.rce.repository.WebUserRepository;
+import tgb.btc.library.bean.web.Role;
+import tgb.btc.library.bean.web.WebUser;
+import tgb.btc.library.repository.web.WebUserRepository;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;

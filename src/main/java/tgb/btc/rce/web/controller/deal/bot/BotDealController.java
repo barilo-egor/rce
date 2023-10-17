@@ -6,9 +6,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import tgb.btc.rce.constants.mapper.DealMapper;
-import tgb.btc.rce.repository.DealRepository;
+import tgb.btc.library.repository.bot.DealRepository;
 import tgb.btc.rce.service.web.WebDealService;
-import tgb.btc.rce.web.util.JacksonUtil;
+import tgb.btc.library.util.web.JacksonUtil;
 
 @RestController
 @RequestMapping("/web/deal/bot")

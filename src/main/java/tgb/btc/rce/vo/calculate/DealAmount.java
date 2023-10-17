@@ -3,8 +3,8 @@ package tgb.btc.rce.vo.calculate;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
-import tgb.btc.rce.bean.Deal;
-import tgb.btc.rce.enums.DealType;
+import tgb.btc.library.bean.bot.Deal;
+import tgb.btc.library.constants.enums.bot.DealType;
 
 import java.math.BigDecimal;
 

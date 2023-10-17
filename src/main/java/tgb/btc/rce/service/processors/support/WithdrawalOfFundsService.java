@@ -4,15 +4,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
-import tgb.btc.rce.bean.WithdrawalRequest;
+import tgb.btc.library.bean.bot.WithdrawalRequest;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.PropertiesMessage;
-import tgb.btc.rce.repository.UserRepository;
+import tgb.btc.library.repository.bot.UserRepository;
 import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.impl.AdminService;
-import tgb.btc.rce.service.impl.bean.UserService;
-import tgb.btc.rce.service.impl.bean.WithdrawalRequestService;
+import tgb.btc.library.service.bean.bot.UserService;
+import tgb.btc.library.service.bean.bot.WithdrawalRequestService;
 import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.MessagePropertiesUtil;
 import tgb.btc.rce.util.UpdateUtil;
@@ -68,7 +68,7 @@ public class WithdrawalOfFundsService {
 
     public void askForContact(Long chatId, Integer messageId) {
         responseSender.deleteMessage(chatId, messageId);
-        userService.nextStep(chatId, Command.WITHDRAWAL_OF_FUNDS);
+        userRepository.nextStep(chatId, Command.WITHDRAWAL_OF_FUNDS.name());
         ReplyKeyboard keyboard = KeyboardUtil.buildReply(List.of(
                 ReplyButton.builder()
                         .text(Command.SHARE_CONTACT.getText())

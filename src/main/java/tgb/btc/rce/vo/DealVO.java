@@ -1,7 +1,7 @@
 package tgb.btc.rce.vo;
 
 import lombok.*;
-import tgb.btc.rce.enums.DealStatus;
+import tgb.btc.library.constants.enums.bot.DealStatus;
 
 @Data
 @AllArgsConstructor

@@ -1,6 +1,6 @@
 package tgb.btc.rce.util;
 
-import tgb.btc.rce.enums.FiatCurrency;
+import tgb.btc.library.constants.enums.bot.FiatCurrency;
 import tgb.btc.rce.service.impl.ReviewPriseService;
 import tgb.btc.rce.vo.ReviewPrise;
 

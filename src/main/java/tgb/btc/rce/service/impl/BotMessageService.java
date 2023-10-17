@@ -2,14 +2,14 @@ package tgb.btc.rce.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import tgb.btc.rce.bean.BotMessage;
+import tgb.btc.library.bean.bot.BotMessage;
+import tgb.btc.library.constants.enums.bot.BotMessageType;
+import tgb.btc.library.constants.enums.bot.MessageType;
+import tgb.btc.library.exception.BaseException;
+import tgb.btc.library.repository.BaseRepository;
+import tgb.btc.library.repository.bot.BotMessageRepository;
+import tgb.btc.library.service.bean.BasePersistService;
 import tgb.btc.rce.constants.ErrorMessage;
-import tgb.btc.rce.enums.BotMessageType;
-import tgb.btc.rce.enums.MessageType;
-import tgb.btc.rce.exception.BaseException;
-import tgb.btc.rce.repository.BaseRepository;
-import tgb.btc.rce.repository.BotMessageRepository;
-import tgb.btc.rce.service.impl.bean.BasePersistService;
 
 @Service
 public class BotMessageService extends BasePersistService<BotMessage> {

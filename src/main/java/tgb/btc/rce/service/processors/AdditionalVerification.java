@@ -5,10 +5,10 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
-import tgb.btc.rce.enums.DealStatus;
-import tgb.btc.rce.repository.DealRepository;
+import tgb.btc.library.constants.enums.bot.DealStatus;
+import tgb.btc.library.repository.bot.DealRepository;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.service.impl.bean.DealService;
+import tgb.btc.library.service.bean.bot.DealService;
 import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.ReplyButton;
@@ -37,7 +37,7 @@ public class AdditionalVerification extends Processor {
         Long dealPid = Long.parseLong(update.getCallbackQuery().getData().split(BotStringConstants.CALLBACK_DATA_SPLITTER)[1]);
         Long userChatId = dealService.getUserChatIdByDealPid(dealPid);
         dealRepository.updateDealStatusByPid(DealStatus.AWAITING_VERIFICATION, dealPid);
-        userService.nextStep(userChatId, Command.USER_ADDITIONAL_VERIFICATION);
+        userRepository.nextStep(userChatId, Command.USER_ADDITIONAL_VERIFICATION.name());
         userService.updateBufferVariable(userChatId, dealPid.toString());
         responseSender.sendMessage(userChatId,
                 "⚠️Уважаемый клиент, необходимо пройти дополнительную верификацию. Предоставьте фото карты " +

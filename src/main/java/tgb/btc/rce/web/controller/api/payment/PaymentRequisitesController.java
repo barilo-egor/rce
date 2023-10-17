@@ -8,11 +8,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import tgb.btc.rce.bean.PaymentType;
-import tgb.btc.rce.enums.DealType;
-import tgb.btc.rce.enums.FiatCurrency;
-import tgb.btc.rce.repository.PaymentRequisiteRepository;
-import tgb.btc.rce.repository.PaymentTypeRepository;
+import tgb.btc.library.bean.bot.PaymentType;
+import tgb.btc.library.constants.enums.bot.DealType;
+import tgb.btc.library.constants.enums.bot.FiatCurrency;
+import tgb.btc.library.repository.bot.PaymentRequisiteRepository;
+import tgb.btc.library.repository.bot.PaymentTypeRepository;
 import tgb.btc.rce.web.controller.MainWebController;
 
 import java.util.Arrays;
@@ -42,7 +42,7 @@ public class PaymentRequisitesController {
         return MainWebController.DEFAULT_MAPPER.createObjectNode()
                 .set("children", MainWebController.DEFAULT_MAPPER.createArrayNode()
                         .addAll(Arrays.stream(FiatCurrency.values())
-                                .filter(fiatCurrency -> paymentTypeRepository.getCountByDealTypeAndFiatCurrency(dealType, fiatCurrency) > 0)
+                                .filter(fiatCurrency -> paymentTypeRepository.countByDealTypeAndFiatCurrency(dealType, fiatCurrency) > 0)
                                 .map(fiatCurrency -> MainWebController.DEFAULT_MAPPER.createObjectNode()
                                         .put("text", fiatCurrency.name())
                                         .put("expanded", true)

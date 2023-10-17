@@ -1,7 +1,7 @@
 package tgb.btc.rce.enums;
 
-import tgb.btc.rce.constants.FilePaths;
-import tgb.btc.rce.service.PropertiesReader;
+import tgb.btc.library.constants.strings.FilePaths;
+import tgb.btc.library.util.system.PropertiesReader;
 
 public enum BotProperties implements PropertiesReader {
 

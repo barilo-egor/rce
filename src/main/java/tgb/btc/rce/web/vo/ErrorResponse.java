@@ -4,9 +4,9 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
+import tgb.btc.library.interfaces.JsonConvertable;
 import tgb.btc.rce.web.controller.MainWebController;
 import tgb.btc.rce.web.controller.api.enums.StatusCode;
-import tgb.btc.rce.web.interfaces.JsonConvertable;
 
 @Data
 public class ErrorResponse implements JsonConvertable {

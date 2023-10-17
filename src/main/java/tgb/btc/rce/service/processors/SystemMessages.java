@@ -5,7 +5,7 @@ import org.apache.commons.io.FileUtils;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import tgb.btc.rce.annotation.CommandProcessor;
-import tgb.btc.rce.constants.FilePaths;
+import tgb.btc.library.constants.strings.FilePaths;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.MessageProperties;
 import tgb.btc.rce.service.Processor;
@@ -27,7 +27,7 @@ public class SystemMessages extends Processor {
                 responseSender.sendMessage(chatId, "Измените нужные сообщения и отправьте исправленный файл. " +
                         "Обязательно закройте файл, перед тем как отправлять.");
                 responseSender.sendFile(chatId, new File(FilePaths.MESSAGE_PROPERTIES));
-                userService.nextStep(chatId, Command.SYSTEM_MESSAGES);
+                userRepository.nextStep(chatId, Command.SYSTEM_MESSAGES.name());
                 break;
             case 1:
                 if (!update.hasMessage() || !update.getMessage().hasDocument()) {

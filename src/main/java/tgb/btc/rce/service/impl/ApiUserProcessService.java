@@ -3,11 +3,11 @@ package tgb.btc.rce.service.impl;
 import org.apache.commons.lang.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import tgb.btc.rce.bean.ApiUser;
-import tgb.btc.rce.bean.UsdApiUserCourse;
-import tgb.btc.rce.enums.FiatCurrency;
-import tgb.btc.rce.repository.ApiUserRepository;
-import tgb.btc.rce.repository.UsdApiUserCourseRepository;
+import tgb.btc.library.bean.web.api.ApiUser;
+import tgb.btc.library.bean.web.api.UsdApiUserCourse;
+import tgb.btc.library.constants.enums.bot.FiatCurrency;
+import tgb.btc.library.repository.web.ApiUserRepository;
+import tgb.btc.library.repository.web.UsdApiUserCourseRepository;
 import tgb.btc.rce.web.vo.ApiUserVO;
 
 import java.time.LocalDate;

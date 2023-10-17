@@ -2,9 +2,9 @@ package tgb.btc.rce.constants.mapper;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.lang.BooleanUtils;
-import tgb.btc.rce.bean.PaymentRequisite;
-import tgb.btc.rce.web.util.JacksonUtil;
-import tgb.btc.rce.web.vo.interfaces.ObjectNodeConvertable;
+import tgb.btc.library.bean.bot.PaymentRequisite;
+import tgb.btc.library.util.web.JacksonUtil;
+import tgb.btc.library.interfaces.ObjectNodeConvertable;
 
 import java.util.function.Function;
 

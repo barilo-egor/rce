@@ -1,7 +1,7 @@
 package tgb.btc.rce.util;
 
 import tgb.btc.rce.enums.BotProperties;
-import tgb.btc.rce.enums.CryptoCurrency;
+import tgb.btc.library.constants.enums.bot.CryptoCurrency;
 
 public final class FunctionPropertiesUtil {
     private FunctionPropertiesUtil() {
