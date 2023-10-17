@@ -9,10 +9,10 @@ import java.util.Arrays;
 import java.util.function.Function;
 
 public enum CryptoCurrency implements ObjectNodeConvertable<CryptoCurrency> {
-    BITCOIN(BotProperties.CRYPTO_CURRENCIES_DESIGN.getString("BITCOIN"), "btc", String.class, 8, 0.004),
-    LITECOIN(BotProperties.CRYPTO_CURRENCIES_DESIGN.getString("LITECOIN"), "ltc", String.class, 8, 0.7),
-    USDT(BotProperties.CRYPTO_CURRENCIES_DESIGN.getString("USDT"), "usdt", String.class, 1, 50.0),
-    MONERO(BotProperties.CRYPTO_CURRENCIES_DESIGN.getString("MONERO"), "xmr", Double.class, 8, 0.5);
+    BITCOIN(DesignProperties.CRYPTO_CURRENCIES_DESIGN.getString("BITCOIN"), "btc", String.class, 8, 0.004),
+    LITECOIN(DesignProperties.CRYPTO_CURRENCIES_DESIGN.getString("LITECOIN"), "ltc", String.class, 8, 0.7),
+    USDT(DesignProperties.CRYPTO_CURRENCIES_DESIGN.getString("USDT"), "usdt", String.class, 1, 50.0),
+    MONERO(DesignProperties.CRYPTO_CURRENCIES_DESIGN.getString("MONERO"), "xmr", Double.class, 8, 0.5);
 
     final String displayName;
     final String shortName;

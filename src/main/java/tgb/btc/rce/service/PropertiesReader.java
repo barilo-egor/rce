@@ -121,8 +121,6 @@ public interface PropertiesReader {
         ReaderSupport.getInstance(this);
     }
 
-    void load();
-
     class ReaderSupport {
         private static final Map<PropertiesReader, PropertiesConfiguration> properties = new HashMap<>();
 

@@ -19,7 +19,7 @@ public enum Command {
      */
 
     /** UTIL */
-    BACK(BotProperties.BUTTONS_DESIGN.getString("BACK"), false, true, false),
+    BACK(DesignProperties.BUTTONS_DESIGN.getString("BACK"), false, true, false),
     ADMIN_BACK("Назад", true, false, false),
     CANCEL("Отмена", false, false, false),
     SHARE_CONTACT("Поделиться контактом", false, false, false),
@@ -36,16 +36,16 @@ public enum Command {
     HELP("/help", true, false, true),
 
     /** MAIN */
-    BUY_BITCOIN(BotProperties.BUTTONS_DESIGN.getString("BUY_BITCOIN"), false, false, false),
-    SELL_BITCOIN(BotProperties.BUTTONS_DESIGN.getString("SELL_BITCOIN"), false, false, false),
-    CONTACTS(BotProperties.BUTTONS_DESIGN.getString("CONTACTS"), false, true, false),
-    DRAWS(BotProperties.BUTTONS_DESIGN.getString("DRAWS"), false, true, false),
-    REFERRAL(BotProperties.BUTTONS_DESIGN.getString("REFERRAL"), false, false, false),
+    BUY_BITCOIN(DesignProperties.BUTTONS_DESIGN.getString("BUY_BITCOIN"), false, false, false),
+    SELL_BITCOIN(DesignProperties.BUTTONS_DESIGN.getString("SELL_BITCOIN"), false, false, false),
+    CONTACTS(DesignProperties.BUTTONS_DESIGN.getString("CONTACTS"), false, true, false),
+    DRAWS(DesignProperties.BUTTONS_DESIGN.getString("DRAWS"), false, true, false),
+    REFERRAL(DesignProperties.BUTTONS_DESIGN.getString("REFERRAL"), false, false, false),
     ADMIN_PANEL("Админ панель", true, true, false),
 
     /** DRAWS */
-    LOTTERY(BotProperties.BUTTONS_DESIGN.getString("LOTTERY"), false, false, false),
-    ROULETTE(BotProperties.BUTTONS_DESIGN.getString("ROULETTE"), false, true, false),
+    LOTTERY(DesignProperties.BUTTONS_DESIGN.getString("LOTTERY"), false, false, false),
+    ROULETTE(DesignProperties.BUTTONS_DESIGN.getString("ROULETTE"), false, true, false),
 
     /** REFERRAL */
     WITHDRAWAL_OF_FUNDS("withdrawal", false, false, false),
@@ -102,7 +102,7 @@ public enum Command {
 
     /** DEAL */
     DEAL("deal_proc", false, false, false),
-    PAID(BotProperties.BUTTONS_DESIGN.getString("PAID"), false, false, false),
+    PAID(DesignProperties.BUTTONS_DESIGN.getString("PAID"), false, false, false),
     CANCEL_DEAL("Отменить заявку", false, false, false),
     DELETE_DEAL("Удалить заявку", false, false, false),
     SHOW_DEAL("Показать", true, false, false),
@@ -114,8 +114,8 @@ public enum Command {
     USER_ADDITIONAL_VERIFICATION("user_verification", false, false, false),
     SHARE_REVIEW("share_review", false, false, false),
     CHOOSING_FIAT_CURRENCY("chs_fc", false, false, false),
-    USE_PROMO(BotProperties.BUTTONS_DESIGN.getString("USE_PROMO"), false, false, false),
-    DONT_USE_PROMO(BotProperties.BUTTONS_DESIGN.getString("DONT_USE_PROMO"), false, false, false),
+    USE_PROMO(DesignProperties.BUTTONS_DESIGN.getString("USE_PROMO"), false, false, false),
+    DONT_USE_PROMO(DesignProperties.BUTTONS_DESIGN.getString("DONT_USE_PROMO"), false, false, false),
 
     /** REQUESTS */
     NEW_DEALS("Новые заявки", true, false, false),

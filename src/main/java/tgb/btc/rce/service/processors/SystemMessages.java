@@ -6,8 +6,8 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.constants.FilePaths;
-import tgb.btc.rce.enums.BotProperties;
 import tgb.btc.rce.enums.Command;
+import tgb.btc.rce.enums.MessageProperties;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.util.UpdateUtil;
 
@@ -58,7 +58,7 @@ public class SystemMessages extends Processor {
             return;
         }
         try {
-            FileUtils.moveFile(BotProperties.MESSAGE_BUFFER.getFile(), BotProperties.MESSAGE.getFile());
+            FileUtils.moveFile(MessageProperties.MESSAGE_BUFFER.getFile(), MessageProperties.MESSAGE.getFile());
         } catch (IOException e) {
             log.error("Ошибки при перемещении файла + " + FilePaths.MESSAGE_BUFFER_PROPERTIES
                     + " в " + FilePaths.MESSAGE_PROPERTIES, e);
@@ -66,7 +66,7 @@ public class SystemMessages extends Processor {
                     + FilePaths.MESSAGE_BUFFER_PROPERTIES + " в " + FilePaths.MESSAGE_PROPERTIES);
             return;
         }
-        BotProperties.MESSAGE.reload();
+        MessageProperties.MESSAGE.reload();
         responseSender.sendMessage(chatId, "Переменные обновлены.");
     }
 }

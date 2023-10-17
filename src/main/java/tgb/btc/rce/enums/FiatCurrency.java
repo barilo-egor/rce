@@ -11,12 +11,12 @@ public enum FiatCurrency implements JsonConvertable {
     /**
      * Бел.рубль
      */
-    BYN("byn", "Бел.рубли", "бел.рублей", "\uD83C\uDDE7\uD83C\uDDFE", BotProperties.BUTTONS_DESIGN.getString("BYN")),
+    BYN("byn", "Бел.рубли", "бел.рублей", "\uD83C\uDDE7\uD83C\uDDFE", DesignProperties.BUTTONS_DESIGN.getString("BYN")),
     /**
      * Рос.рубль
      */
-    RUB("rub", "Рос.рубли", "₽", "\uD83C\uDDF7\uD83C\uDDFA", BotProperties.BUTTONS_DESIGN.getString("RUB")),
-    UAH("uah", "Гривны", "гривен", "\uD83C\uDDFA\uD83C\uDDE6", BotProperties.BUTTONS_DESIGN.getString("UAH"));
+    RUB("rub", "Рос.рубли", "₽", "\uD83C\uDDF7\uD83C\uDDFA", DesignProperties.BUTTONS_DESIGN.getString("RUB")),
+    UAH("uah", "Гривны", "гривен", "\uD83C\uDDFA\uD83C\uDDE6", DesignProperties.BUTTONS_DESIGN.getString("UAH"));
 
     final String code;
 

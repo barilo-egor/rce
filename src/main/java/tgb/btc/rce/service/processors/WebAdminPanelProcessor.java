@@ -8,9 +8,10 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.bean.WebUser;
 import tgb.btc.rce.constants.BotStringConstants;
-import tgb.btc.rce.enums.BotProperties;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.InlineType;
+import tgb.btc.rce.enums.MessageProperties;
+import tgb.btc.rce.enums.WebProperties;
 import tgb.btc.rce.exception.BaseException;
 import tgb.btc.rce.repository.WebUserRepository;
 import tgb.btc.rce.service.Processor;
@@ -27,7 +28,7 @@ import java.util.Optional;
 @Slf4j
 public class WebAdminPanelProcessor extends Processor {
 
-    private static final Long AUTH_TIME = BotProperties.LOGIN.getLong("auth.time", 10L);
+    private static final Long AUTH_TIME = WebProperties.LOGIN.getLong("auth.time", 10L);
 
     private WebUserRepository webUserRepository;
 
@@ -55,7 +56,7 @@ public class WebAdminPanelProcessor extends Processor {
                             .build())));
         } else {
             url = BotStringConstants.MAIN_URL + "/web/registration?chatId=" + chatId;
-            responseSender.sendMessage(chatId, BotProperties.INFO_MESSAGE.getString("web.user.not.found"),
+            responseSender.sendMessage(chatId, MessageProperties.INFO_MESSAGE.getString("web.user.not.found"),
                     KeyboardUtil.buildInline(List.of(InlineButton.builder()
                             .text("Зарегистрироваться")
                             .data(url)

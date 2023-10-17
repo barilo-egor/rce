@@ -1,6 +1,6 @@
 package tgb.btc.rce.constants;
 
-import tgb.btc.rce.enums.BotProperties;
+import tgb.btc.rce.enums.WebProperties;
 
 public interface BotStringConstants {
     String WRITE_TO_OPERATOR_BUTTON_LABEL = "Написать оператору";
@@ -42,5 +42,5 @@ public interface BotStringConstants {
 
     String DONT_USE_REFERRAL_DISCOUNT = "dont_use_discount";
 
-    String MAIN_URL = BotProperties.SERVER.getString("main.url");
+    String MAIN_URL = WebProperties.SERVER.getString("main.url");
 }
