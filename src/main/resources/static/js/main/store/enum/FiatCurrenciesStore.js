@@ -8,7 +8,8 @@ Ext.define('Main.store.enum.FiatCurrenciesStore', {
         type: 'ajax',
         url: '/web/enum/fiatCurrencies',
         reader: {
-            type: 'json'
+            type: 'json',
+            rootProperty: 'body.data'
         }
     }
 });

@@ -11,6 +11,8 @@ import tgb.btc.rce.service.processors.InlineCalculator;
 import tgb.btc.rce.util.*;
 import tgb.btc.rce.vo.InlineButton;
 import tgb.btc.rce.vo.InlineCalculatorVO;
+import tgb.btc.rce.web.util.CryptoCurrenciesDesignUtil;
+import tgb.btc.rce.web.util.FiatCurrenciesDesignUtil;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -37,7 +39,7 @@ public class KeyboardService {
     public ReplyKeyboard getCurrencies(DealType dealType) {
         List<InlineButton> currencies = new ArrayList<>();
         TurningCurrenciesUtil.getSwitchedOnByDealType(dealType)
-                .forEach(currency -> currencies.add(InlineButton.buildData(currency.getDisplayName(), currency.name())));
+                .forEach(currency -> currencies.add(InlineButton.buildData(CryptoCurrenciesDesignUtil.getDisplayName(currency), currency.name())));
         currencies.add(KeyboardUtil.INLINE_BACK_BUTTON);
         return KeyboardUtil.buildInline(currencies);
     }
@@ -45,7 +47,7 @@ public class KeyboardService {
     public ReplyKeyboard getFiatCurrencies() {
         List<InlineButton> buttons = FiatCurrencyUtil.getFiatCurrencies().stream()
                 .map(fiatCurrency -> InlineButton.builder()
-                        .text(fiatCurrency.getDisplayData())
+                        .text(FiatCurrenciesDesignUtil.getDisplayData(fiatCurrency))
                         .data(CallbackQueryUtil.buildCallbackData(Command.CHOOSING_FIAT_CURRENCY.getText(), fiatCurrency.name()))
                         .build())
                 .collect(Collectors.toList());

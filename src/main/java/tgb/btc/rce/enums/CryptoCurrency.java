@@ -9,18 +9,16 @@ import java.util.Arrays;
 import java.util.function.Function;
 
 public enum CryptoCurrency implements ObjectNodeConvertable<CryptoCurrency> {
-    BITCOIN(DesignProperties.CRYPTO_CURRENCIES_DESIGN.getString("BITCOIN"), "btc", 8, 0.004),
-    LITECOIN(DesignProperties.CRYPTO_CURRENCIES_DESIGN.getString("LITECOIN"), "ltc", 8, 0.7),
-    USDT(DesignProperties.CRYPTO_CURRENCIES_DESIGN.getString("USDT"), "usdt", 1, 50.0),
-    MONERO(DesignProperties.CRYPTO_CURRENCIES_DESIGN.getString("MONERO"), "xmr", 8, 0.5);
+    BITCOIN("btc", 8, 0.004),
+    LITECOIN("ltc", 8, 0.7),
+    USDT("usdt", 1, 50.0),
+    MONERO("xmr", 8, 0.5);
 
-    final String displayName;
     final String shortName;
     final int scale;
     final Double defaultCheckValue;
 
-    CryptoCurrency(String displayName, String shortName, int scale, Double defaultCheckValue) {
-        this.displayName = displayName;
+    CryptoCurrency(String shortName, int scale, Double defaultCheckValue) {
         this.shortName = shortName;
         this.scale = scale;
         this.defaultCheckValue = defaultCheckValue;
@@ -34,10 +32,6 @@ public enum CryptoCurrency implements ObjectNodeConvertable<CryptoCurrency> {
         return scale;
     }
 
-    public String getDisplayName() {
-        return displayName;
-    }
-
     public String getShortName() {
         return shortName;
     }
@@ -46,16 +40,9 @@ public enum CryptoCurrency implements ObjectNodeConvertable<CryptoCurrency> {
         return Arrays.stream(CryptoCurrency.values()).filter(t -> t.getShortName().equals(shortName)).findFirst()
                 .orElseThrow(() -> new EnumTypeNotFoundException("Не найдена крипто валюта: " + shortName));
     }
-
-    public static CryptoCurrency fromDisplayName(String displayName) {
-        return Arrays.stream(CryptoCurrency.values()).filter(t -> t.getDisplayName().equals(displayName)).findFirst()
-                .orElseThrow(() -> new EnumTypeNotFoundException("Не найдена крипто валюта: " + displayName));
-    }
-
     @Override
     public Function<CryptoCurrency, ObjectNode> mapFunction() {
         return cryptoCurrency -> JacksonUtil.getEmpty()
-                .put("name", cryptoCurrency.name())
-                .put("displayName", cryptoCurrency.getDisplayName());
+                .put("name", cryptoCurrency.name());
     }
 }

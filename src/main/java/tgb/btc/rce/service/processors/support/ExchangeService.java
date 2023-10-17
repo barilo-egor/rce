@@ -30,6 +30,7 @@ import tgb.btc.rce.util.*;
 import tgb.btc.rce.vo.CalculatorQuery;
 import tgb.btc.rce.vo.InlineButton;
 import tgb.btc.rce.vo.calculate.DealAmount;
+import tgb.btc.rce.web.util.CryptoCurrenciesDesignUtil;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -218,7 +219,7 @@ public class ExchangeService {
         if (Objects.isNull(message)) {
             if (DealType.isBuy(dealType)) {
                 message = "Сумма к получению: " + BigDecimalUtil.roundToPlainString(cryptoAmount, cryptoCurrency.getScale())
-                        + " " + cryptoCurrency.getDisplayName() + "\n"
+                        + " " + CryptoCurrenciesDesignUtil.getDisplayName(cryptoCurrency) + "\n"
                         + "Сумма к оплате: " + BigDecimalUtil.roundToPlainString(dealAmount) + " "
                         + fiatCurrency.getGenitive() + "\n";
                 if (BooleanUtils.isTrue(FunctionPropertiesUtil.getSumToReceive(cryptoCurrency))) {
@@ -236,7 +237,7 @@ public class ExchangeService {
         } else {
             if (DealType.isBuy(dealType)) {
                 message = String.format(message, BigDecimalUtil.roundToPlainString(cryptoAmount, cryptoCurrency.getScale()),
-                        cryptoCurrency.getDisplayName(), BigDecimalUtil.roundToPlainString(dealAmount), fiatCurrency.getGenitive());
+                        CryptoCurrenciesDesignUtil.getDisplayName(cryptoCurrency), BigDecimalUtil.roundToPlainString(dealAmount), fiatCurrency.getGenitive());
             } else {
                 message = String.format(message, BigDecimalUtil.roundToPlainString(dealAmount), fiatCurrency.getGenitive(),
                         BigDecimalUtil.roundToPlainString(cryptoAmount, cryptoCurrency.getScale()), cryptoCurrency.getShortName());
@@ -268,7 +269,7 @@ public class ExchangeService {
             responseSender.sendMessage(chatId, "Минимальная сумма " + (DealType.isBuy(dealType)
                     ? "покупки"
                     : "продажи")
-                    + " " + cryptoCurrency.getDisplayName()
+                    + " " + CryptoCurrenciesDesignUtil.getDisplayName(cryptoCurrency)
                     + " = " + minSum.stripTrailingZeros().toPlainString() + ".");
             return true;
         }
@@ -319,7 +320,7 @@ public class ExchangeService {
         if (DealType.isBuy(deal.getDealType())) {
             message = MessagePropertiesUtil.getMessage("send.wallet.buy");
             if (Objects.isNull(message)) {
-                message = "\uD83D\uDCDDВведите " + cryptoCurrency.getDisplayName()
+                message = "\uD83D\uDCDDВведите " + CryptoCurrenciesDesignUtil.getDisplayName(cryptoCurrency)
                         + "-адрес кошелька, куда вы хотите отправить "
                         + BigDecimalUtil.roundToPlainString(deal.getCryptoAmount(), cryptoCurrency.getScale())
                         + " " + cryptoCurrency.getShortName();
@@ -370,7 +371,7 @@ public class ExchangeService {
         dealRepository.updateDiscountByPid(discount, deal.getPid());
         BigDecimal sumWithDiscount = dealAmount.subtract(discount);
 
-        String message = "<b>Покупка " + cryptoCurrency.getDisplayName() + "</b>: "
+        String message = "<b>Покупка " + CryptoCurrenciesDesignUtil.getDisplayName(cryptoCurrency) + "</b>: "
                 + BigDecimalUtil.roundToPlainString(deal.getCryptoAmount(), cryptoCurrency.getScale()) + "\n\n"
                 + "<b>Сумма перевода</b>: <s>" + BigDecimalUtil.roundToPlainString(dealAmount)
                 + "</s> " + BigDecimalUtil.roundToPlainString(sumWithDiscount) + "\n\n"
@@ -434,7 +435,7 @@ public class ExchangeService {
         Long chatId = UpdateUtil.getChatId(update);
         Deal deal = dealRepository.findByPid(userRepository.getCurrentDealByChatId(chatId));
         BigDecimal dealAmount = deal.getAmount();
-        String displayCurrencyName = deal.getCryptoCurrency().getDisplayName();
+        String displayCurrencyName = CryptoCurrenciesDesignUtil.getDisplayName(deal.getCryptoCurrency());
         String additionalText;
         try {
             additionalText = botMessageService.findByTypeThrows(BotMessageType.ADDITIONAL_DEAL_TEXT).getText() + "\n\n";
@@ -542,8 +543,8 @@ public class ExchangeService {
                         + "<b>Получаете</b>: " + BigDecimalUtil.roundToPlainString(deal.getCryptoAmount(),
                         currency.getScale())
                         + " " + currency.getShortName() + "\n"
-                        + "<b>" + deal.getCryptoCurrency()
-                        .getDisplayName() + "-адрес</b>:" + "<code>" + deal.getWallet() + "</code>" + "\n\n"
+                        + "<b>" + CryptoCurrenciesDesignUtil.getDisplayName(deal.getCryptoCurrency())
+                        + "-адрес</b>:" + "<code>" + deal.getWallet() + "</code>" + "\n\n"
                         + "Ваш ранг: " + rank.getSmile() + ", скидка " + rank.getPercent() + "%" + "\n\n"
                         + "<b>\uD83D\uDCB5Сумма к оплате</b>: <code>" + BigDecimalUtil.roundToPlainString(dealAmount, 0)
                         + " " + deal.getFiatCurrency().getGenitive() + "</code>" + "\n"
@@ -618,7 +619,9 @@ public class ExchangeService {
         String message = MessagePropertiesUtil.getMessage("deal.build.buy");
         if (Objects.isNull(message)) return null;
         CryptoCurrency currency = deal.getCryptoCurrency();
-        return MessagePropertiesUtil.getMessage("deal.build.buy", deal.getPid(), BigDecimalUtil.roundToPlainString(deal.getCryptoAmount()), currency.getShortName(), currency.getDisplayName(),
+        return MessagePropertiesUtil.getMessage("deal.build.buy", deal.getPid(),
+                BigDecimalUtil.roundToPlainString(deal.getCryptoAmount()), currency.getShortName(),
+                CryptoCurrenciesDesignUtil.getDisplayName(currency),
                 deal.getWallet(), rank.getSmile(), rank.getPercent() + "%",
                 BigDecimalUtil.roundToPlainString(deal.getAmount()), deal.getFiatCurrency().getGenitive(), requisite,
                 BotVariablePropertiesUtil.getVariable(BotVariableType.DEAL_ACTIVE_TIME));

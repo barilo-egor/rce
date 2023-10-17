@@ -11,6 +11,7 @@ import tgb.btc.rce.bean.Contact;
 import tgb.btc.rce.enums.*;
 import tgb.btc.rce.vo.InlineButton;
 import tgb.btc.rce.vo.ReplyButton;
+import tgb.btc.rce.web.util.CryptoCurrenciesDesignUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -139,7 +140,7 @@ public final class KeyboardUtil {
         int i = 0;
         for (CryptoCurrency cryptoCurrency : CryptoCurrency.values()) {
             ReplyButton replyButton = ReplyButton.builder()
-                    .text(cryptoCurrency.getDisplayName())
+                    .text(CryptoCurrenciesDesignUtil.getDisplayName(cryptoCurrency))
                     .build();
             replyButtons[i] = replyButton;
             i++;

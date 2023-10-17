@@ -3,20 +3,22 @@ package tgb.btc.rce.enums;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import tgb.btc.rce.exception.EnumTypeNotFoundException;
-import tgb.btc.rce.web.controller.MainWebController;
-import tgb.btc.rce.web.interfaces.JsonConvertable;
+import tgb.btc.rce.web.util.JacksonUtil;
+import tgb.btc.rce.web.vo.interfaces.ObjectNodeConvertable;
+
+import java.util.function.Function;
 
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
-public enum FiatCurrency implements JsonConvertable {
+public enum FiatCurrency implements ObjectNodeConvertable<FiatCurrency> {
     /**
      * Бел.рубль
      */
-    BYN("byn", "Бел.рубли", "бел.рублей", "\uD83C\uDDE7\uD83C\uDDFE", DesignProperties.BUTTONS_DESIGN.getString("BYN")),
+    BYN("byn", "Бел.рубли", "бел.рублей", "\uD83C\uDDE7\uD83C\uDDFE"),
     /**
      * Рос.рубль
      */
-    RUB("rub", "Рос.рубли", "₽", "\uD83C\uDDF7\uD83C\uDDFA", DesignProperties.BUTTONS_DESIGN.getString("RUB")),
-    UAH("uah", "Гривны", "гривен", "\uD83C\uDDFA\uD83C\uDDE6", DesignProperties.BUTTONS_DESIGN.getString("UAH"));
+    RUB("rub", "Рос.рубли", "₽", "\uD83C\uDDF7\uD83C\uDDFA"),
+    UAH("uah", "Гривны", "гривен", "\uD83C\uDDFA\uD83C\uDDE6");
 
     final String code;
 
@@ -26,14 +28,11 @@ public enum FiatCurrency implements JsonConvertable {
 
     final String flag;
 
-    final String displayData;
-
-    FiatCurrency(String code, String displayName, String genitive, String flag, String displayData) {
+    FiatCurrency(String code, String displayName, String genitive, String flag) {
         this.code = code;
         this.displayName = displayName;
         this.genitive = genitive;
         this.flag = flag;
-        this.displayData = displayData;
     }
 
     public String getName() {
@@ -52,10 +51,6 @@ public enum FiatCurrency implements JsonConvertable {
         return code;
     }
 
-    public String getDisplayData() {
-        return displayData;
-    }
-
     public String getFlag() {
         return flag;
     }
@@ -68,12 +63,12 @@ public enum FiatCurrency implements JsonConvertable {
     }
 
     @Override
-    public ObjectNode toJson() {
-        return MainWebController.DEFAULT_MAPPER.createObjectNode()
-                .put("name", this.name())
-                .put("code", this.getCode())
-                .put("displayName", this.getDisplayName())
-                .put("genitive", this.getGenitive())
-                .put("flag", this.getFlag());
+    public Function<FiatCurrency, ObjectNode> mapFunction() {
+        return fiatCurrency -> JacksonUtil.getEmpty()
+                .put("name", fiatCurrency.name())
+                .put("code", fiatCurrency.getCode())
+                .put("displayName", fiatCurrency.getDisplayName())
+                .put("genitive", fiatCurrency.getGenitive())
+                .put("flag", fiatCurrency.getFlag());
     }
 }

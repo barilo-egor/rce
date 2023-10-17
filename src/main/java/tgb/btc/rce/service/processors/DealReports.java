@@ -23,6 +23,7 @@ import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.MessageTextUtil;
 import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.ReplyButton;
+import tgb.btc.rce.web.util.CryptoCurrenciesDesignUtil;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -191,7 +192,7 @@ public class DealReports extends Processor {
                     ? totalBuyCryptoAmountMap : totalSellCryptoAmountMap;
             totalCryptoAmountMap.put(deal.getCryptoCurrency(), totalCryptoAmountMap.get(deal.getCryptoCurrency()).add(deal.getCryptoAmount()));
             cell = row.createCell(6);
-            cell.setCellValue(deal.getCryptoCurrency().getDisplayName());
+            cell.setCellValue(CryptoCurrenciesDesignUtil.getDisplayName(deal.getCryptoCurrency()));
             cell = row.createCell(7);
             // getPaymentTypeEnum используется для старых сделок
             String paymentTypeName = Objects.nonNull(deal.getPaymentType())
@@ -269,6 +270,6 @@ public class DealReports extends Processor {
         cell.setCellValue(BigDecimalUtil.roundToPlainString(totalFiatAmountMap.get(cryptoCurrency),
                 cryptoCurrency.getScale()));
         cell = row.createCell(6);
-        cell.setCellValue(cryptoCurrency.getDisplayName());
+        cell.setCellValue(CryptoCurrenciesDesignUtil.getDisplayName(cryptoCurrency));
     }
 }

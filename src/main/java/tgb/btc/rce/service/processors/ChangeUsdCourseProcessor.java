@@ -13,6 +13,7 @@ import tgb.btc.rce.util.FiatCurrencyUtil;
 import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.ReplyButton;
+import tgb.btc.rce.web.util.CryptoCurrenciesDesignUtil;
 
 import java.util.Arrays;
 import java.util.List;
@@ -61,7 +62,7 @@ public class ChangeUsdCourseProcessor extends Processor {
                 String cryptoCurrencyString = UpdateUtil.getMessageText(update);
                 CryptoCurrency cryptoCurrency;
                 try {
-                    cryptoCurrency = CryptoCurrency.fromDisplayName(cryptoCurrencyString);
+                    cryptoCurrency = CryptoCurrenciesDesignUtil.fromDisplayName(cryptoCurrencyString);
                 } catch (EnumTypeNotFoundException e) {
                     responseSender.sendMessage(chatId, BotStringConstants.SELECT_CRYPTO_CURRENCY);
                     return;

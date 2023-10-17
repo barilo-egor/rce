@@ -15,6 +15,7 @@ import tgb.btc.rce.service.impl.AdminService;
 import tgb.btc.rce.util.BigDecimalUtil;
 import tgb.btc.rce.util.FiatCurrencyUtil;
 import tgb.btc.rce.vo.DealReportData;
+import tgb.btc.rce.web.util.CryptoCurrenciesDesignUtil;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -123,7 +124,7 @@ public class DealAutoReport {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("Отчет за ").append(data.getPeriod()).append(":\n");
             for (CryptoCurrency cryptoCurrency : CryptoCurrency.values()) {
-                stringBuilder.append("Куплено ").append(cryptoCurrency.getDisplayName()).append(": ")
+                stringBuilder.append("Куплено ").append(CryptoCurrenciesDesignUtil.getDisplayName(cryptoCurrency)).append(": ")
                         .append(getBuyCryptoAmount(cryptoCurrency, cryptoCurrency.getScale(), dateTimeBegin,
                                                    dateTimeEnd).toPlainString())
                         .append("\n");
@@ -137,7 +138,7 @@ public class DealAutoReport {
                                                            fiatCurrency);
                     totalSum = totalSum.add(cryptoAmount);
                     stringBuilder.append("Получено ").append(fiatCurrency.getCode()).append(" от ")
-                            .append(cryptoCurrency.getDisplayName()).append(": ")
+                            .append(CryptoCurrenciesDesignUtil.getDisplayName(cryptoCurrency)).append(": ")
                             .append(BigDecimalUtil.roundToPlainString(cryptoAmount, cryptoCurrency.getScale())).append("\n");
                 }
                 totalAmounts.put(fiatCurrency, totalSum);
@@ -147,7 +148,7 @@ public class DealAutoReport {
             for (CryptoCurrency cryptoCurrency : CryptoCurrency.values()) {
                 BigDecimal cryptoAmount =
                         getSellCryptoAmount(cryptoCurrency, cryptoCurrency.getScale(), dateTimeBegin, dateTimeEnd);
-                stringBuilder.append("Продано ").append(cryptoCurrency.getDisplayName()).append(": ")
+                stringBuilder.append("Продано ").append(CryptoCurrenciesDesignUtil.getDisplayName(cryptoCurrency)).append(": ")
                         .append(cryptoAmount.toPlainString())
                         .append("\n");
             }
