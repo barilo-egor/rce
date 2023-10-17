@@ -11,7 +11,6 @@ import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.ApiDealStatus;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.FiatCurrency;
-import tgb.btc.rce.enums.PaymentTypeEnum;
 import tgb.btc.rce.repository.ApiDealRepository;
 import tgb.btc.rce.repository.ApiUserRepository;
 import tgb.btc.rce.service.impl.DealService;
@@ -66,11 +65,7 @@ public class DealSupportService {
     public String dealToString(Long pid) {
         Deal deal = dealService.getByPid(pid);
         User user = deal.getUser();
-        // getPaymentTypeEnum используется для старых сделок
-        PaymentTypeEnum paymentTypeEnum = deal.getPaymentTypeEnum();
-        String paymentTypeName = Objects.nonNull(paymentTypeEnum)
-                                 ? paymentTypeEnum.getDisplayName()
-                                 : Objects.nonNull(deal.getPaymentType()) ? deal.getPaymentType().getName() : "Не установлен тип оплаты.";
+        String paymentTypeName = Objects.nonNull(deal.getPaymentType()) ? deal.getPaymentType().getName() : "Не установлен тип оплаты.";
         FiatCurrency fiatCurrency = deal.getFiatCurrency();
         return String.format(
                 BotStringConstants.DEAL_INFO, deal.getDealType().getAccusative(), deal.getPid(),

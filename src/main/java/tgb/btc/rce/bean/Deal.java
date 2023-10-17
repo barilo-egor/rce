@@ -3,7 +3,10 @@ package tgb.btc.rce.bean;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
-import tgb.btc.rce.enums.*;
+import tgb.btc.rce.enums.CryptoCurrency;
+import tgb.btc.rce.enums.DealStatus;
+import tgb.btc.rce.enums.DealType;
+import tgb.btc.rce.enums.FiatCurrency;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -26,14 +29,6 @@ public class Deal extends BasePersist {
     @Deprecated
     @Column(name = "DATE")
     private LocalDate date;
-
-    @Deprecated
-    @Column(name = "PAYMENT_TYPE_ENUM")
-    @Enumerated(value = EnumType.STRING)
-    /**
-     * use paymentType
-     */
-    private PaymentTypeEnum paymentTypeEnum;
 
     @ManyToOne
     private PaymentType paymentType;
@@ -157,23 +152,6 @@ public class Deal extends BasePersist {
 
     public void setDateTime(LocalDateTime dateTime) {
         this.dateTime = dateTime;
-    }
-
-    @Deprecated
-    /**
-     * use paymentType
-     */
-    // TODO написать скрипт по пере
-    public PaymentTypeEnum getPaymentTypeEnum() {
-        return paymentTypeEnum;
-    }
-
-    @Deprecated
-    /**
-     * use paymentType
-     */
-    public void setPaymentTypeEnum(PaymentTypeEnum paymentTypeEnum) {
-        this.paymentTypeEnum = paymentTypeEnum;
     }
 
     public PaymentType getPaymentType() {

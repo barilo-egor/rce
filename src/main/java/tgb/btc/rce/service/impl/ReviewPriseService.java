@@ -12,6 +12,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+// TODO удалить всё
 public class ReviewPriseService implements IPropertyService {
 
     public static final List<ReviewPrise> REVIEW_PRISES = new ArrayList<>();

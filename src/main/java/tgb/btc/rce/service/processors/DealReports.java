@@ -194,9 +194,7 @@ public class DealReports extends Processor {
             cell.setCellValue(deal.getCryptoCurrency().getDisplayName());
             cell = row.createCell(7);
             // getPaymentTypeEnum используется для старых сделок
-            String paymentTypeName = Objects.nonNull(deal.getPaymentTypeEnum())
-                    ? deal.getPaymentTypeEnum().getDisplayName()
-                    : Objects.nonNull(deal.getPaymentType())
+            String paymentTypeName = Objects.nonNull(deal.getPaymentType())
                     ? deal.getPaymentType().getName()
                     : StringUtils.EMPTY;
             cell.setCellValue(paymentTypeName);

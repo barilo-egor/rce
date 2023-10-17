@@ -2,9 +2,7 @@ package tgb.btc.rce.enums;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import tgb.btc.rce.exception.EnumTypeNotFoundException;
-import tgb.btc.rce.util.CallbackQueryUtil;
 import tgb.btc.rce.web.controller.MainWebController;
 import tgb.btc.rce.web.interfaces.JsonConvertable;
 
@@ -67,11 +65,6 @@ public enum FiatCurrency implements JsonConvertable {
             if (fiatCurrency.getCode().equals(code)) return fiatCurrency;
         }
         throw new EnumTypeNotFoundException("Фиатная валюта не найдена.");
-    }
-
-    public static FiatCurrency fromCallbackQuery(CallbackQuery callbackQuery) {
-        String enteredCurrency = CallbackQueryUtil.getSplitData(callbackQuery, 1);
-        return FiatCurrency.valueOf(enteredCurrency);
     }
 
     @Override

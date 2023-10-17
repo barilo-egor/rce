@@ -167,7 +167,7 @@ public class ExchangeService {
                 responseSender.sendMessage(chatId, "Выберите валюту.");
                 return false;
             }
-            fiatCurrency = FiatCurrency.fromCallbackQuery(update.getCallbackQuery());
+            fiatCurrency = FiatCurrency.valueOf(CallbackQueryUtil.getSplitData(update.getCallbackQuery(), 1));
         } else {
             fiatCurrency = FiatCurrencyUtil.getFirst();
             if (Objects.isNull(fiatCurrency)) log.debug("FiatCurrencyUtil.getFirst() == null");

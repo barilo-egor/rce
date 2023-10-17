@@ -8,15 +8,57 @@
         <version>2.6.7</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
+
     <groupId>tgb.btc</groupId>
     <artifactId>rce</artifactId>
     <version>1.2</version>
     <name>rce</name>
     <description>rce</description>
+    <packaging>jar</packaging>
+
+    <profiles>
+        <profile>
+            <id>local-getting-libraries</id>
+            <activation>
+                <os>
+                    <family>unix</family>
+                </os>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>tgb.btc</groupId>
+                    <artifactId>rce-library</artifactId>
+                    <version>1.0-SNAPSHOT</version>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>jitpack-getting-libraries</id>
+            <activation>
+                <os>
+                    <family>windows</family>
+                </os>
+            </activation>
+            <repositories>
+                <repository>
+                    <id>jitpack.io</id>
+                    <url>https://jitpack.io</url>
+                </repository>
+            </repositories>
+            <dependencies>
+                <dependency>
+                    <groupId>com.github.barilo-egor</groupId>
+                    <artifactId>rce-library</artifactId>
+                    <version>master-SNAPSHOT</version>
+                </dependency>
+            </dependencies>
+        </profile>
+    </profiles>
+
     <properties>
         <java.version>11</java.version>
     </properties>
-    <packaging>jar</packaging>
+
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>

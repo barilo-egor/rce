@@ -18,6 +18,8 @@ import tgb.btc.rce.util.CommandUtil;
 import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.report.ReportUserVO;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -92,7 +94,19 @@ public class UserService extends BasePersistService<User> {
     }
 
     public User register(Update update) {
-        User newUser = User.buildFromUpdate(update);
+        User newUser = new User();
+        newUser.setChatId(UpdateUtil.getChatId(update));
+        newUser.setUsername(UpdateUtil.getUsername(update));
+        newUser.setCommand(Command.START);
+        newUser.setRegistrationDate(LocalDateTime.now());
+        newUser.setStep(User.DEFAULT_STEP);
+        newUser.setAdmin(false);
+        newUser.setLotteryCount(0);
+        newUser.setReferralBalance(0);
+        newUser.setActive(true);
+        newUser.setBanned(false);
+        newUser.setCharges(0);
+        newUser.setReferralPercent(BigDecimal.ZERO);
         User inviter = null;
         if (CommandUtil.isStartCommand(update) && ReferralType.STANDARD.equals(REFERRAL_TYPE)) {
             try {

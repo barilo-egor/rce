@@ -8,10 +8,14 @@ import tgb.btc.rce.exception.PropertyValueNotFoundException;
 import tgb.btc.rce.service.IPropertyService;
 import tgb.btc.rce.vo.BulkDiscount;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 public class BulkDiscountService implements IPropertyService {
 
+    // TODO вынести поле отсюда, удалить этот сервис, интерфейс
     public static final List<BulkDiscount> BULK_DISCOUNTS = new ArrayList<>();
 
     @Override
