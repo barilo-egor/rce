@@ -5,15 +5,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Conditional;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.annotation.CommandProcessor;
+import tgb.btc.rce.bean.SpamBan;
 import tgb.btc.rce.conditional.AntispamCondition;
 import tgb.btc.rce.enums.BotKeyboard;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.exception.BaseException;
 import tgb.btc.rce.service.AntiSpam;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.service.impl.SpamBanService;
+import tgb.btc.rce.service.impl.AdminService;
+import tgb.btc.rce.service.impl.BanningUserService;
+import tgb.btc.rce.service.impl.bean.SpamBanService;
 import tgb.btc.rce.service.schedule.CaptchaSender;
+import tgb.btc.rce.util.CallbackQueryUtil;
+import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.UpdateUtil;
+import tgb.btc.rce.vo.InlineButton;
+
+import java.util.List;
 
 @CommandProcessor(command = Command.CAPTCHA)
 @Conditional(AntispamCondition.class)
@@ -26,6 +34,20 @@ public class CaptchaProcessor extends Processor {
     private AntiSpam antiSpam;
 
     private SpamBanService spamBanService;
+
+    private AdminService adminService;
+
+    private BanningUserService banningUserService;
+
+    @Autowired
+    public void setBanningUserService(BanningUserService banningUserService) {
+        this.banningUserService = banningUserService;
+    }
+
+    @Autowired
+    public void setAdminService(AdminService adminService) {
+        this.adminService = adminService;
+    }
 
     @Autowired
     public void setSpamBanService(SpamBanService spamBanService) {
@@ -71,9 +93,18 @@ public class CaptchaProcessor extends Processor {
                 if (isEnteredCaptchaIsRight(update)) {
                     removeUserFromSpam(chatId);
                 } else {
-                    userService.ban(chatId);
+                    banningUserService.ban(chatId);
                     responseSender.sendMessage(chatId, "Вы были заблокированы.", BotKeyboard.OPERATOR);
-                    spamBanService.saveAndNotifyAdmins(chatId);
+                    SpamBan spamBan = spamBanService.save(chatId);
+                    adminService.notify("Антиспам система заблокировала пользователя.",
+                            KeyboardUtil.buildInline(List.of(
+                                    InlineButton.builder()
+                                            .text("Показать")
+                                            .data(CallbackQueryUtil.buildCallbackData(
+                                                    Command.SHOW_SPAM_BANNED_USER.getText(), spamBan.getPid().toString())
+                                            )
+                                            .build()
+                            )));
                     userService.setDefaultValues(chatId);
                     antiSpam.removeUser(chatId);
                 }

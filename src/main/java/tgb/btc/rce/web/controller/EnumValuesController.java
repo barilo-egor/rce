@@ -28,8 +28,8 @@ public class EnumValuesController {
 
     @GetMapping("/roles")
     @ResponseBody
-    public ArrayNode roles() {
-        return JsonUtil.toJsonArray(List.of(RoleConstants.values()));
+    public SuccessResponse<?> roles() {
+        return SuccessResponseUtil.data(List.of(RoleConstants.values()));
     }
 
     @GetMapping("/cryptoCurrencies")

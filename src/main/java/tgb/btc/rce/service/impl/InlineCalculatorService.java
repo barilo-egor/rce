@@ -11,6 +11,7 @@ import tgb.btc.rce.repository.DealRepository;
 import tgb.btc.rce.repository.UserRepository;
 import tgb.btc.rce.service.ICalculatorTypeService;
 import tgb.btc.rce.service.IResponseSender;
+import tgb.btc.rce.service.impl.bean.UserService;
 import tgb.btc.rce.service.processors.InlineCalculator;
 import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.InlineCalculatorVO;

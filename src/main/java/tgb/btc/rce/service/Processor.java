@@ -11,7 +11,7 @@ import tgb.btc.rce.enums.PropertiesMessage;
 import tgb.btc.rce.enums.UpdateType;
 import tgb.btc.rce.exception.BaseException;
 import tgb.btc.rce.repository.UserRepository;
-import tgb.btc.rce.service.impl.UserService;
+import tgb.btc.rce.service.impl.bean.UserService;
 import tgb.btc.rce.util.MenuFactory;
 import tgb.btc.rce.util.MessagePropertiesUtil;
 import tgb.btc.rce.util.UpdateUtil;

@@ -8,14 +8,16 @@ import org.springframework.stereotype.Service;
 import tgb.btc.rce.enums.BotVariableType;
 import tgb.btc.rce.repository.DealRepository;
 import tgb.btc.rce.service.IResponseSender;
-import tgb.btc.rce.service.impl.UserService;
+import tgb.btc.rce.service.impl.bean.UserService;
 import tgb.btc.rce.service.processors.Start;
 import tgb.btc.rce.util.BotVariablePropertiesUtil;
 import tgb.btc.rce.util.MessagePropertiesUtil;
 
 import javax.annotation.PostConstruct;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 @Service
 @Slf4j

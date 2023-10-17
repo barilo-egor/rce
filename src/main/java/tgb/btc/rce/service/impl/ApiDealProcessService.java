@@ -22,15 +22,15 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Service
-public class ApiDealService {
+public class ApiDealProcessService {
+
+    private ApiUserRepository apiUserRepository;
 
     private ApiDealRepository apiDealRepository;
 
     private CryptoCurrencyService cryptoCurrencyService;
 
     private CalculateService calculateService;
-
-    private ApiUserRepository apiUserRepository;
 
     @Autowired
     public void setCryptoCurrencyService(CryptoCurrencyService cryptoCurrencyService) {
@@ -43,13 +43,13 @@ public class ApiDealService {
     }
 
     @Autowired
-    public void setApiDealRepository(ApiDealRepository apiDealRepository) {
-        this.apiDealRepository = apiDealRepository;
+    public void setApiUserRepository(ApiUserRepository apiUserRepository) {
+        this.apiUserRepository = apiUserRepository;
     }
 
     @Autowired
-    public void setApiUserRepository(ApiUserRepository apiUserRepository) {
-        this.apiUserRepository = apiUserRepository;
+    public void setApiDealRepository(ApiDealRepository apiDealRepository) {
+        this.apiDealRepository = apiDealRepository;
     }
 
     public ObjectNode newDeal(String token, DealType dealType, BigDecimal amount, BigDecimal cryptoAmount,
@@ -61,17 +61,6 @@ public class ApiDealService {
         if (apiUserRepository.countByToken(token) == 0) ApiResponseUtil.build(StatusCode.USER_NOT_FOUND);
 
         ApiUser apiUser = apiUserRepository.getByToken(token);
-        ApiDeal apiDeal = create(apiDealVO, apiUser);
-        BigDecimal minSum = BotVariablePropertiesUtil.getBigDecimal(BotVariableType.MIN_SUM, dealType, cryptoCurrency);
-        if (apiDeal.getCryptoAmount().compareTo(minSum) < 0)
-            return ApiResponseUtil.build(StatusCode.MIN_SUM,
-                    JacksonUtil.getEmpty().put("minSum", BigDecimalUtil.roundToPlainString(minSum, 8)));
-
-        return ApiResponseUtil.build(StatusCode.CREATED_DEAL,
-                dealData(apiDeal, apiUser.getRequisite(apiDeal.getDealType())));
-    }
-
-    public ApiDeal create(ApiDealVO apiDealVO, ApiUser apiUser) {
         CalculateDataForm.CalculateDataFormBuilder builder = CalculateDataForm.builder();
         builder.dealType(apiDealVO.getDealType())
                 .fiatCurrency(Objects.nonNull(apiDealVO.getFiatCurrency())
@@ -83,8 +72,17 @@ public class ApiDealService {
                 .cryptoCurrency(apiDealVO.getCryptoCurrency());
         if (Objects.nonNull(apiDealVO.getAmount())) builder.amount(apiDealVO.getAmount());
         else builder.cryptoAmount(apiDealVO.getCryptoAmount());
-        DealAmount dealAmount = calculateService.calculate(builder.build());
+        ApiDeal apiDeal = create(apiDealVO, apiUser, calculateService.calculate(builder.build()));
+        BigDecimal minSum = BotVariablePropertiesUtil.getBigDecimal(BotVariableType.MIN_SUM, dealType, cryptoCurrency);
+        if (apiDeal.getCryptoAmount().compareTo(minSum) < 0)
+            return ApiResponseUtil.build(StatusCode.MIN_SUM,
+                    JacksonUtil.getEmpty().put("minSum", BigDecimalUtil.roundToPlainString(minSum, 8)));
 
+        return ApiResponseUtil.build(StatusCode.CREATED_DEAL,
+                dealData(apiDeal, apiUser.getRequisite(apiDeal.getDealType())));
+    }
+
+    public ApiDeal create(ApiDealVO apiDealVO, ApiUser apiUser, DealAmount dealAmount) {
         ApiDeal apiDeal = new ApiDeal();
         apiDeal.setApiUser(apiUser);
         apiDeal.setDateTime(LocalDateTime.now());

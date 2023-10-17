@@ -17,7 +17,7 @@ import tgb.btc.rce.enums.DealType;
 import tgb.btc.rce.enums.FiatCurrency;
 import tgb.btc.rce.exception.BaseException;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.service.impl.DealService;
+import tgb.btc.rce.service.impl.bean.DealService;
 import tgb.btc.rce.util.BigDecimalUtil;
 import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.MessageTextUtil;

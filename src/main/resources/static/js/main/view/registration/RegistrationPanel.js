@@ -72,7 +72,8 @@ Ext.define('Main.view.registration.RegistrationPanel', {
                             type: 'ajax',
                             url: '/web/enum/roles',
                             reader: {
-                                type: 'json'
+                                type: 'json',
+                                rootProperty: 'body.data'
                             }
                         }
                     },

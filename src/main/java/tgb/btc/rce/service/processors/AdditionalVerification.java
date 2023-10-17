@@ -8,7 +8,7 @@ import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.DealStatus;
 import tgb.btc.rce.repository.DealRepository;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.service.impl.DealService;
+import tgb.btc.rce.service.impl.bean.DealService;
 import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.ReplyButton;

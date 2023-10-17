@@ -10,7 +10,7 @@ import tgb.btc.rce.enums.MessageType;
 import tgb.btc.rce.exception.BaseException;
 import tgb.btc.rce.service.impl.BotMessageService;
 import tgb.btc.rce.service.impl.ResponseSender;
-import tgb.btc.rce.service.impl.UserService;
+import tgb.btc.rce.service.impl.bean.UserService;
 import tgb.btc.rce.util.BotImageUtil;
 import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.UpdateUtil;

@@ -13,8 +13,8 @@ import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.FiatCurrency;
 import tgb.btc.rce.repository.ApiDealRepository;
 import tgb.btc.rce.repository.ApiUserRepository;
-import tgb.btc.rce.service.impl.DealService;
-import tgb.btc.rce.service.impl.UserService;
+import tgb.btc.rce.service.impl.bean.DealService;
+import tgb.btc.rce.service.impl.bean.UserService;
 import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.vo.InlineButton;
 

@@ -17,7 +17,7 @@ import tgb.btc.rce.enums.FiatCurrency;
 import tgb.btc.rce.exception.BaseException;
 import tgb.btc.rce.repository.DealRepository;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.service.impl.DealService;
+import tgb.btc.rce.service.impl.bean.DealService;
 import tgb.btc.rce.util.BigDecimalUtil;
 import tgb.btc.rce.util.FiatCurrencyUtil;
 import tgb.btc.rce.util.UpdateUtil;
@@ -76,9 +76,30 @@ public class UsersReport extends Processor {
 
             int i = 2;
             log.info("Загрузка пользователей");
-            List<ReportUserVO> users = userService.findAllForUsersReport();
+            List<Object[]> rawsUsers = userRepository.findAllForUsersReport();
+            List<ReportUserVO> users = new ArrayList<>();
+            for (Object[] raw : rawsUsers) {
+                users.add(ReportUserVO.builder()
+                        .pid((Long) raw[0])
+                        .chatId((Long) raw[1])
+                        .username((String) raw[2])
+                        .build());
+            }
             log.info("Загрузка сделок.");
-            List<ReportDealVO> deals = dealService.findAllForUsersReport();
+            List<Object[]> raws = dealRepository.findAllForUsersReport();
+            List<ReportDealVO> deals = new ArrayList<>();
+            log.info("Маппинг сделок.");
+            for (Object[] raw : raws) {
+                deals.add(ReportDealVO.builder()
+                        .pid((Long) raw[0])
+                        .userPid((Long) raw[1])
+                        .dealType((DealType) raw[2])
+                        .cryptoCurrency((CryptoCurrency) raw[3])
+                        .cryptoAmount((BigDecimal) raw[4])
+                        .fiatCurrency((FiatCurrency) raw[5])
+                        .amount((BigDecimal) raw[6])
+                        .build());
+            }
             Map<Long, List<ReportDealVO>> usersDeals = new HashMap<>();
             log.info("Сортировка сделок по пользователям.");
             for (ReportUserVO user : users) {

@@ -8,7 +8,7 @@ import tgb.btc.rce.bean.UserDiscount;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.repository.UserDiscountRepository;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.service.impl.UserDiscountService;
+import tgb.btc.rce.service.impl.bean.UserDiscountService;
 import tgb.btc.rce.service.processors.support.PersonalDiscountsCache;
 import tgb.btc.rce.util.UpdateUtil;
 

@@ -1,4 +1,4 @@
-package tgb.btc.rce.service.impl;
+package tgb.btc.rce.service.impl.bean;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -10,7 +10,6 @@ import tgb.btc.rce.bean.WebUser;
 import tgb.btc.rce.enums.RoleConstants;
 import tgb.btc.rce.repository.RoleRepository;
 import tgb.btc.rce.repository.WebUserRepository;
-import tgb.btc.rce.vo.web.CredentialsVO;
 
 import java.util.Objects;
 
@@ -43,10 +42,10 @@ public class WebUserService implements UserDetailsService {
         return webUserRepository.save(webUser);
     }
 
-    public WebUser save(CredentialsVO credentialsVO, RoleConstants role) {
+    public WebUser save(String username, String password, RoleConstants role) {
         WebUser webUser = new WebUser();
-        webUser.setUsername(credentialsVO.getUsername());
-        webUser.setPassword(passwordEncoder.encode(credentialsVO.getPassword()));
+        webUser.setUsername(username);
+        webUser.setPassword(passwordEncoder.encode(password));
         webUser.setEnabled(true);
         if (Objects.isNull(role)) {
             role = RoleConstants.ROLE_USER;

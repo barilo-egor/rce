@@ -11,7 +11,7 @@ import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.ReceiptFormat;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.service.impl.DealService;
+import tgb.btc.rce.service.impl.bean.DealService;
 import tgb.btc.rce.service.processors.support.DealSupportService;
 import tgb.btc.rce.util.UpdateUtil;
 

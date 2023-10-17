@@ -13,6 +13,7 @@ import tgb.btc.rce.enums.SimpleCommand;
 import tgb.btc.rce.service.AntiSpam;
 import tgb.btc.rce.service.IUpdateDispatcher;
 import tgb.btc.rce.service.Processor;
+import tgb.btc.rce.service.impl.bean.UserService;
 import tgb.btc.rce.util.CommandProcessorLoader;
 import tgb.btc.rce.util.CommandUtil;
 import tgb.btc.rce.util.UpdateUtil;
@@ -28,6 +29,8 @@ public class UpdateDispatcher implements IUpdateDispatcher {
 
     private static final boolean IS_LOG_UDPATES = BotProperties.FUNCTIONS.getBoolean("log.updates", false);
     private final UserService userService;
+
+    private final UserProcessService userProcessService;
     private AntiSpam antiSpam;
 
     private BannedUserCache bannedUserCache;
@@ -43,8 +46,9 @@ public class UpdateDispatcher implements IUpdateDispatcher {
     }
 
     @Autowired
-    public UpdateDispatcher(UserService userService) {
+    public UpdateDispatcher(UserService userService, UserProcessService userProcessService) {
         this.userService = userService;
+        this.userProcessService = userProcessService;
     }
 
     public void dispatch(Update update) {
@@ -67,7 +71,7 @@ public class UpdateDispatcher implements IUpdateDispatcher {
         if (Objects.nonNull(antiSpam)) {
             if (isCaptcha(update)) return Command.CAPTCHA;
             antiSpam.saveTime(chatId);
-        } else userService.registerIfNotExists(update);
+        } else userProcessService.registerIfNotExists(update);
         if (isOffed(chatId)) return Command.BOT_OFFED;
         if (CommandUtil.isStartCommand(update)) return Command.START;
         Command command;
@@ -78,7 +82,7 @@ public class UpdateDispatcher implements IUpdateDispatcher {
     }
 
     private boolean isCaptcha(Update update) {
-        return !userService.registerIfNotExists(update) || antiSpam.isSpamUser(UpdateUtil.getChatId(update));
+        return !userProcessService.registerIfNotExists(update) || antiSpam.isSpamUser(UpdateUtil.getChatId(update));
     }
 
     private boolean isOffed(Long chatId) {

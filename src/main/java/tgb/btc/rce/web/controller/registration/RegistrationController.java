@@ -8,7 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import tgb.btc.rce.enums.RoleConstants;
 import tgb.btc.rce.repository.WebUserRepository;
-import tgb.btc.rce.service.impl.WebUserService;
+import tgb.btc.rce.service.impl.bean.WebUserService;
 import tgb.btc.rce.vo.web.CredentialsVO;
 
 import javax.servlet.http.HttpServletRequest;
@@ -42,7 +42,7 @@ public class RegistrationController {
     @PostMapping("/registerUser")
     @ResponseBody
     public ObjectNode registerUser(@RequestBody CredentialsVO credentialsVO, @RequestParam(required = false) RoleConstants role) {
-        webUserService.save(credentialsVO, role);
+        webUserService.save(credentialsVO.getUsername(), credentialsVO.getPassword(), role);
         ObjectNode objectNode = new ObjectMapper().createObjectNode();
         objectNode.put("success", true);
         return objectNode;

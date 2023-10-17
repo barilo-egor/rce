@@ -15,8 +15,9 @@ import tgb.btc.rce.service.ICalculatorTypeService;
 import tgb.btc.rce.service.IUpdateDispatcher;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.impl.BotMessageService;
-import tgb.btc.rce.service.impl.DealService;
-import tgb.btc.rce.service.impl.PaymentTypeService;
+import tgb.btc.rce.service.impl.DealProcessService;
+import tgb.btc.rce.service.impl.bean.DealService;
+import tgb.btc.rce.service.impl.bean.PaymentTypeService;
 import tgb.btc.rce.service.processors.support.ExchangeService;
 import tgb.btc.rce.util.CallbackQueryUtil;
 import tgb.btc.rce.util.FiatCurrencyUtil;
@@ -45,6 +46,13 @@ public class DealProcessor extends Processor {
     private DealRepository dealRepository;
 
     private BotMessageService botMessageService;
+
+    private DealProcessService dealProcessService;
+
+    @Autowired
+    public void setDealProcessService(DealProcessService dealProcessService) {
+        this.dealProcessService = dealProcessService;
+    }
 
     @Autowired
     public void setBotMessageService(BotMessageService botMessageService) {
@@ -142,7 +150,7 @@ public class DealProcessor extends Processor {
                 dealType = dealService.getDealTypeByPid(userRepository.getCurrentDealByChatId(chatId));
                 if (!isBack) exchangeService.sendTotalDealAmount(chatId, dealType, dealService.getCryptoCurrencyByPid(currentDealPid),
                         dealRepository.getFiatCurrencyByPid(currentDealPid));
-                if (!DealType.isBuy(dealType) || !dealService.isAvailableForPromo(chatId)) {
+                if (!DealType.isBuy(dealType) || !dealProcessService.isAvailableForPromo(chatId)) {
                     recursiveSwitch(update, chatId, isBack);
                     break;
                 }
@@ -151,7 +159,7 @@ public class DealProcessor extends Processor {
                 break;
             case 4:
                 dealType = dealService.getDealTypeByPid(userRepository.getCurrentDealByChatId(chatId));
-                if (!isBack && DealType.isBuy(dealType) && dealService.isAvailableForPromo(chatId)) {
+                if (!isBack && DealType.isBuy(dealType) && dealProcessService.isAvailableForPromo(chatId)) {
                     responseSender.deleteCallbackMessageIfExists(update);
                     exchangeService.processPromoCode(update);
                 }

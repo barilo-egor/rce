@@ -6,7 +6,7 @@ import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.service.impl.ReviewService;
+import tgb.btc.rce.service.impl.bean.ReviewService;
 import tgb.btc.rce.util.UpdateUtil;
 
 @CommandProcessor(command = Command.DELETE_REVIEW)

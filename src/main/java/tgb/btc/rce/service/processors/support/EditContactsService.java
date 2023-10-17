@@ -9,9 +9,9 @@ import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.Menu;
 import tgb.btc.rce.enums.PropertiesMessage;
 import tgb.btc.rce.exception.BaseException;
-import tgb.btc.rce.service.impl.ContactService;
 import tgb.btc.rce.service.impl.ResponseSender;
-import tgb.btc.rce.service.impl.UserService;
+import tgb.btc.rce.service.impl.bean.ContactService;
+import tgb.btc.rce.service.impl.bean.UserService;
 import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.MenuFactory;
 import tgb.btc.rce.util.MessagePropertiesUtil;
@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static tgb.btc.rce.constants.BotStringConstants.*;
+import static tgb.btc.rce.constants.BotStringConstants.CALLBACK_DATA_SPLITTER;
 
 @Service
 public class EditContactsService {

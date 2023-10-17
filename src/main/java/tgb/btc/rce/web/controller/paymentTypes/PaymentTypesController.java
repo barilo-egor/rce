@@ -7,7 +7,8 @@ import tgb.btc.rce.bean.PaymentType;
 import tgb.btc.rce.constants.mapper.PaymentRequisiteMapper;
 import tgb.btc.rce.constants.mapper.PaymentTypeMapper;
 import tgb.btc.rce.repository.PaymentRequisiteRepository;
-import tgb.btc.rce.service.impl.PaymentTypeService;
+import tgb.btc.rce.service.impl.PaymentTypeProcessService;
+import tgb.btc.rce.service.impl.bean.PaymentTypeService;
 import tgb.btc.rce.web.util.SuccessResponseUtil;
 import tgb.btc.rce.web.vo.PaymentTypeVO;
 import tgb.btc.rce.web.vo.SuccessResponse;
@@ -22,6 +23,13 @@ public class PaymentTypesController {
     private PaymentTypeService paymentTypeService;
 
     private PaymentRequisiteRepository paymentRequisiteRepository;
+
+    private PaymentTypeProcessService paymentTypeProcessService;
+
+    @Autowired
+    public void setPaymentTypeProcessService(PaymentTypeProcessService paymentTypeProcessService) {
+        this.paymentTypeProcessService = paymentTypeProcessService;
+    }
 
     @Autowired
     public void setPaymentRequisiteRepository(PaymentRequisiteRepository paymentRequisiteRepository) {
@@ -42,7 +50,7 @@ public class PaymentTypesController {
     public SuccessResponse<?> save(@RequestBody PaymentTypeVO paymentTypeVO) {
         PaymentType paymentType;
         try {
-            paymentType = paymentTypeService.save(paymentTypeVO);
+            paymentType = paymentTypeProcessService.save(paymentTypeVO);
         } catch (EntityNotFoundException e) {
             return SuccessResponseUtil.warningString(e.getMessage());
         } catch (Exception e) {

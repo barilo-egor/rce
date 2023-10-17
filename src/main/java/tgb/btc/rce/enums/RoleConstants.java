@@ -1,10 +1,12 @@
 package tgb.btc.rce.enums;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import tgb.btc.rce.web.controller.MainWebController;
-import tgb.btc.rce.web.interfaces.JsonConvertable;
+import tgb.btc.rce.web.util.JacksonUtil;
+import tgb.btc.rce.web.vo.interfaces.ObjectNodeConvertable;
 
-public enum RoleConstants implements JsonConvertable {
+import java.util.function.Function;
+
+public enum RoleConstants implements ObjectNodeConvertable<RoleConstants> {
     ROLE_USER("Пользователь"),
     ROLE_OPERATOR("Оператор"),
     ROLE_ADMIN("Администратор");
@@ -20,9 +22,9 @@ public enum RoleConstants implements JsonConvertable {
     }
 
     @Override
-    public ObjectNode toJson() {
-        return MainWebController.DEFAULT_MAPPER.createObjectNode()
-                .put("name", this.name())
-                .put("displayName", this.getDisplayName());
+    public Function<RoleConstants, ObjectNode> mapFunction() {
+        return roleConstants -> JacksonUtil.getEmpty()
+                .put("name", roleConstants.name())
+                .put("displayName", roleConstants.getDisplayName());
     }
 }

@@ -7,7 +7,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import tgb.btc.rce.enums.FiatCurrency;
 import tgb.btc.rce.repository.ApiUserRepository;
-import tgb.btc.rce.service.impl.ApiUserService;
+import tgb.btc.rce.service.impl.ApiUserProcessService;
+import tgb.btc.rce.service.impl.bean.ApiUserService;
 import tgb.btc.rce.util.FiatCurrencyUtil;
 import tgb.btc.rce.web.util.JacksonUtil;
 import tgb.btc.rce.web.util.JsonUtil;
@@ -25,6 +26,13 @@ public class ApiUserController {
 
     private ApiUserRepository apiUserRepository;
 
+    private ApiUserProcessService apiUserProcessService;
+
+    @Autowired
+    public void setApiUserProcessService(ApiUserProcessService apiUserProcessService) {
+        this.apiUserProcessService = apiUserProcessService;
+    }
+
     @Autowired
     public void setApiUserRepository(ApiUserRepository apiUserRepository) {
         this.apiUserRepository = apiUserRepository;
@@ -38,13 +46,13 @@ public class ApiUserController {
     @PostMapping("/save")
     @ResponseBody
     public ObjectNode save(@RequestBody ApiUserVO apiUserVO) {
-        return apiUserService.save(apiUserVO).toJson();
+        return apiUserProcessService.save(apiUserVO).toJson();
     }
 
     @PostMapping("/update")
     @ResponseBody
     public ObjectNode update(@RequestBody ApiUserVO apiUserVO) {
-       return apiUserService.save(apiUserVO).toJson();
+       return apiUserProcessService.save(apiUserVO).toJson();
     }
 
     @GetMapping("/isExistById")

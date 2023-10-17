@@ -44,7 +44,7 @@ public class Lottery extends Processor {
 
     @Override
     public void run(Update update) {
-        User user = userService.findByChatId(update);
+        User user = userRepository.findByChatId(UpdateUtil.getChatId(update));
         if(Objects.isNull(user.getLotteryCount()) || user.getLotteryCount() == 0) {
             responseSender.sendMessage(user.getChatId(),
                     MessagePropertiesUtil.getMessage(PropertiesMessage.NO_LOTTERY_ATTEMPTS));

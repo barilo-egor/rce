@@ -6,7 +6,8 @@ import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.service.impl.DealService;
+import tgb.btc.rce.service.impl.BanningUserService;
+import tgb.btc.rce.service.impl.bean.DealService;
 import tgb.btc.rce.service.schedule.DealDeleteScheduler;
 import tgb.btc.rce.util.UpdateUtil;
 
@@ -14,6 +15,13 @@ import tgb.btc.rce.util.UpdateUtil;
 public class DeleteDealAndBlockUserProcessor extends Processor {
 
     private DealService dealService;
+
+    private BanningUserService banningUserService;
+
+    @Autowired
+    public void setBanningUserService(BanningUserService banningUserService) {
+        this.banningUserService = banningUserService;
+    }
 
     @Autowired
     public void setDealService(DealService dealService) {
@@ -32,6 +40,6 @@ public class DeleteDealAndBlockUserProcessor extends Processor {
         DealDeleteScheduler.deleteCryptoDeal(dealPid);
         responseSender.sendMessage(chatId, "Заявка №" + dealPid + " удалена.");
         responseSender.deleteMessage(chatId, update.getCallbackQuery().getMessage().getMessageId());
-        userService.ban(userChatId);
+        banningUserService.ban(userChatId);
     }
 }

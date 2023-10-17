@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Service
-public class ApiUserService {
+public class ApiUserProcessService {
 
     private ApiUserRepository apiUserRepository;
 
@@ -93,9 +93,5 @@ public class ApiUserService {
         apiUser.setSellRequisite(apiUserVO.getSellRequisite());
         apiUser.setFiatCurrency(apiUserVO.getFiatCurrency());
         return apiUserRepository.save(apiUser);
-    }
-
-    public boolean isExistsById(String id) {
-        return apiUserRepository.countById(id) > 0;
     }
 }

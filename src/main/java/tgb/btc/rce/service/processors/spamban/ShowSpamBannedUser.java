@@ -7,7 +7,7 @@ import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.repository.SpamBanRepository;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.impl.UserInfoService;
-import tgb.btc.rce.service.impl.UserService;
+import tgb.btc.rce.service.impl.bean.UserService;
 import tgb.btc.rce.util.CallbackQueryUtil;
 import tgb.btc.rce.util.UpdateUtil;
 

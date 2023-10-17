@@ -8,11 +8,14 @@ import tgb.btc.rce.bean.WithdrawalRequest;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.PropertiesMessage;
+import tgb.btc.rce.repository.UserRepository;
 import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.impl.AdminService;
-import tgb.btc.rce.service.impl.UserService;
-import tgb.btc.rce.service.impl.WithdrawalRequestService;
-import tgb.btc.rce.util.*;
+import tgb.btc.rce.service.impl.bean.UserService;
+import tgb.btc.rce.service.impl.bean.WithdrawalRequestService;
+import tgb.btc.rce.util.KeyboardUtil;
+import tgb.btc.rce.util.MessagePropertiesUtil;
+import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.ReplyButton;
 
 import java.util.List;
@@ -24,6 +27,13 @@ public class WithdrawalOfFundsService {
     private final IResponseSender responseSender;
     private final WithdrawalRequestService withdrawalRequestService;
     private final AdminService adminService;
+
+    private UserRepository userRepository;
+
+    @Autowired
+    public void setUserRepository(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     @Autowired
     public WithdrawalOfFundsService(UserService userService, IResponseSender responseSender,
@@ -42,7 +52,7 @@ public class WithdrawalOfFundsService {
             return false;
         }
         WithdrawalRequest request = withdrawalRequestService.save(
-                WithdrawalRequest.buildFromUpdate(userService.findByChatId(update), update));
+                WithdrawalRequest.buildFromUpdate(userRepository.findByChatId(UpdateUtil.getChatId(update)), update));
         adminService.notify(MessagePropertiesUtil.getMessage(PropertiesMessage.ADMIN_NOTIFY_WITHDRAWAL_NEW),
                 Command.SHOW_WITHDRAWAL_REQUEST.getText() + BotStringConstants.CALLBACK_DATA_SPLITTER +
                         request.getPid());

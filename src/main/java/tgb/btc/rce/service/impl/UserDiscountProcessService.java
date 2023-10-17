@@ -14,7 +14,7 @@ import tgb.btc.rce.util.BotVariablePropertiesUtil;
 import java.math.BigDecimal;
 
 @Service
-public class UserDiscountService {
+public class UserDiscountProcessService {
     private UserDiscountRepository userDiscountRepository;
 
     private CalculateService calculateService;
@@ -41,10 +41,6 @@ public class UserDiscountService {
     @Autowired
     public void setUserDiscountRepository(UserDiscountRepository userDiscountRepository) {
         this.userDiscountRepository = userDiscountRepository;
-    }
-
-    public boolean isExistByUserPid(Long userPid) {
-        return userDiscountRepository.countByUserPid(userPid) > 0;
     }
 
     public BigDecimal applyDealDiscounts(Long chatId, BigDecimal dealAmount, Boolean isUsedPromo,

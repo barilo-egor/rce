@@ -22,6 +22,9 @@ import tgb.btc.rce.repository.UserRepository;
 import tgb.btc.rce.service.ICalculatorTypeService;
 import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.impl.*;
+import tgb.btc.rce.service.impl.bean.DealService;
+import tgb.btc.rce.service.impl.bean.PaymentRequisiteService;
+import tgb.btc.rce.service.impl.bean.PaymentTypeService;
 import tgb.btc.rce.service.schedule.DealDeleteScheduler;
 import tgb.btc.rce.util.*;
 import tgb.btc.rce.vo.CalculatorQuery;
@@ -48,7 +51,7 @@ public class ExchangeService {
 
     private IResponseSender responseSender;
 
-    private UserDiscountService userDiscountService;
+    private UserDiscountProcessService userDiscountProcessService;
 
     private CalculateService calculateService;
 
@@ -126,8 +129,8 @@ public class ExchangeService {
     }
 
     @Autowired
-    public void setUserDiscountService(UserDiscountService userDiscountService) {
-        this.userDiscountService = userDiscountService;
+    public void setUserDiscountService(UserDiscountProcessService userDiscountProcessService) {
+        this.userDiscountProcessService = userDiscountProcessService;
     }
 
     @Autowired
@@ -451,7 +454,7 @@ public class ExchangeService {
                 .append(BigDecimalUtil.roundToPlainString(deal.getCryptoAmount(), deal.getCryptoCurrency().getScale()))
                 .append("\n");
         if (DealType.isBuy(deal.getDealType())) {
-            dealAmount = userDiscountService.applyDealDiscounts(chatId, dealAmount, deal.getUsedPromo(),
+            dealAmount = userDiscountProcessService.applyDealDiscounts(chatId, dealAmount, deal.getUsedPromo(),
                     deal.getUsedReferralDiscount(), deal.getDiscount(), deal.getFiatCurrency());
             messageNew.append("\uD83D\uDCB5<b>Сумма перевода</b>: ")
                     .append(BigDecimalUtil.roundToPlainString(dealAmount))
@@ -511,7 +514,7 @@ public class ExchangeService {
         Rank rank = Objects.nonNull(countPassed)
                 ? Rank.getByDealsNumber(countPassed.intValue())
                 : Rank.FIRST;
-        BigDecimal dealAmount = userDiscountService.applyRank(rank, deal);
+        BigDecimal dealAmount = userDiscountProcessService.applyRank(rank, deal);
 
         String promoCodeText = Boolean.TRUE.equals(deal.getUsedPromo())
                 ? "\n\n<b> Использован скидочный промокод</b>: "
@@ -522,7 +525,7 @@ public class ExchangeService {
         deal.setDateTime(LocalDateTime.now());
         String message;
         if (DealType.isBuy(deal.getDealType())) {
-            dealAmount = userDiscountService.applyDealDiscounts(chatId, dealAmount, deal.getUsedPromo(),
+            dealAmount = userDiscountProcessService.applyDealDiscounts(chatId, dealAmount, deal.getUsedPromo(),
                     deal.getUsedReferralDiscount(), deal.getDiscount(), deal.getFiatCurrency());
             deal.setAmount(dealAmount);
             String requisite;

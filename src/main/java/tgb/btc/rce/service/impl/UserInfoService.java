@@ -77,7 +77,7 @@ public class UserInfoService {
         Long lotteryWinCount = lotteryWinRepository.getLotteryWinCount(chatId);
         String fromChatId = Objects.nonNull(user.getFromChatId()) ? String.valueOf(user.getFromChatId()) : "отсутствует";
         String result = null;
-        if (ReferralType.STANDARD.equals(UserService.REFERRAL_TYPE)) {
+        if (ReferralType.STANDARD.isCurrent()) {
             int numberOfReferrals = referralUsers.size();
             int numberOfActiveReferrals = (int) referralUsers.stream()
                     .filter(usr -> dealRepository.getCountPassedByUserChatId(usr.getChatId()) > 0).count();

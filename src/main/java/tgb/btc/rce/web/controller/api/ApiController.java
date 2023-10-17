@@ -12,7 +12,7 @@ import tgb.btc.rce.enums.*;
 import tgb.btc.rce.repository.ApiDealRepository;
 import tgb.btc.rce.repository.ApiUserRepository;
 import tgb.btc.rce.service.impl.AdminService;
-import tgb.btc.rce.service.impl.ApiDealService;
+import tgb.btc.rce.service.impl.ApiDealProcessService;
 import tgb.btc.rce.service.impl.KeyboardService;
 import tgb.btc.rce.web.controller.MainWebController;
 import tgb.btc.rce.web.controller.api.enums.StatusCode;
@@ -35,19 +35,20 @@ public class ApiController {
 
     private KeyboardService keyboardService;
 
-    private ApiDealService apiDealService;
-
     private ApiUserRepository apiUserRepository;
+
+    private ApiDealProcessService apiDealProcessService;
+
+    @Autowired
+    public void setApiDealProcessService(ApiDealProcessService apiDealProcessService) {
+        this.apiDealProcessService = apiDealProcessService;
+    }
 
     @Autowired
     public void setApiUserRepository(ApiUserRepository apiUserRepository) {
         this.apiUserRepository = apiUserRepository;
     }
 
-    @Autowired
-    public void setApiDealService(ApiDealService apiDealService) {
-        this.apiDealService = apiDealService;
-    }
 
     @Autowired
     public void setKeyboardService(KeyboardService keyboardService) {
@@ -80,7 +81,7 @@ public class ApiController {
                                @RequestParam(required = false) FiatCurrency fiatCurrency) {
         StatusCode statusCode = hasAccess(token);
         if (Objects.nonNull(statusCode)) return statusCode.toJson();
-        return apiDealService.newDeal(token, dealType, amount, cryptoAmount, cryptoCurrency, requisite, fiatCurrency);
+        return apiDealProcessService.newDeal(token, dealType, amount, cryptoAmount, cryptoCurrency, requisite, fiatCurrency);
     }
 
     @PostMapping("/paid")
