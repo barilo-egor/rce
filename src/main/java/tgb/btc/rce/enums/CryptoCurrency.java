@@ -9,21 +9,19 @@ import java.util.Arrays;
 import java.util.function.Function;
 
 public enum CryptoCurrency implements ObjectNodeConvertable<CryptoCurrency> {
-    BITCOIN(DesignProperties.CRYPTO_CURRENCIES_DESIGN.getString("BITCOIN"), "btc", String.class, 8, 0.004),
-    LITECOIN(DesignProperties.CRYPTO_CURRENCIES_DESIGN.getString("LITECOIN"), "ltc", String.class, 8, 0.7),
-    USDT(DesignProperties.CRYPTO_CURRENCIES_DESIGN.getString("USDT"), "usdt", String.class, 1, 50.0),
-    MONERO(DesignProperties.CRYPTO_CURRENCIES_DESIGN.getString("MONERO"), "xmr", Double.class, 8, 0.5);
+    BITCOIN(DesignProperties.CRYPTO_CURRENCIES_DESIGN.getString("BITCOIN"), "btc", 8, 0.004),
+    LITECOIN(DesignProperties.CRYPTO_CURRENCIES_DESIGN.getString("LITECOIN"), "ltc", 8, 0.7),
+    USDT(DesignProperties.CRYPTO_CURRENCIES_DESIGN.getString("USDT"), "usdt", 1, 50.0),
+    MONERO(DesignProperties.CRYPTO_CURRENCIES_DESIGN.getString("MONERO"), "xmr", 8, 0.5);
 
     final String displayName;
     final String shortName;
-    final Class rateClass;
     final int scale;
     final Double defaultCheckValue;
 
-    CryptoCurrency(String displayName, String shortName, Class rateClass, int scale, Double defaultCheckValue) {
+    CryptoCurrency(String displayName, String shortName, int scale, Double defaultCheckValue) {
         this.displayName = displayName;
         this.shortName = shortName;
-        this.rateClass = rateClass;
         this.scale = scale;
         this.defaultCheckValue = defaultCheckValue;
     }
@@ -34,10 +32,6 @@ public enum CryptoCurrency implements ObjectNodeConvertable<CryptoCurrency> {
 
     public int getScale() {
         return scale;
-    }
-
-    public Class getRateClass() {
-        return rateClass;
     }
 
     public String getDisplayName() {
