@@ -9,10 +9,13 @@ import org.springframework.web.bind.annotation.*;
 import tgb.btc.rce.enums.BotProperties;
 import tgb.btc.rce.enums.DealType;
 import tgb.btc.rce.enums.FiatCurrency;
+import tgb.btc.rce.exception.PropertyValueNotFoundException;
 import tgb.btc.rce.service.impl.BulkDiscountService;
 import tgb.btc.rce.util.FiatCurrencyUtil;
 import tgb.btc.rce.vo.BulkDiscount;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -67,7 +70,7 @@ public class BulkDiscountController {
             BotProperties.BULK_DISCOUNT.clearProperty(oldKey);
         }
         BotProperties.BULK_DISCOUNT.setProperty(key, String.valueOf(bulkDiscount.getPercent()));
-        BotProperties.BULK_DISCOUNT.load();
+        reload();
         ObjectMapper objectMapper = new ObjectMapper();
         ObjectNode result = objectMapper.createObjectNode();
         result.put("success", true);
@@ -81,11 +84,44 @@ public class BulkDiscountController {
         String key = String.join(".", new String[]{bulkDiscount.getFiatCurrency().getCode(),
                 bulkDiscount.getDealType().getKey(), String.valueOf(bulkDiscount.getSum())});
         BotProperties.BULK_DISCOUNT.clearProperty(key);
-        BotProperties.BULK_DISCOUNT.load();
+        reload();
         ObjectMapper objectMapper = new ObjectMapper();
         ObjectNode result = objectMapper.createObjectNode();
         result.put("success", true);
         return result;
+    }
+
+    public void reload() {
+        BulkDiscountService.BULK_DISCOUNTS.clear();
+        for (String key : BotProperties.BULK_DISCOUNT.getKeys()) {
+            int sum;
+            if (StringUtils.isBlank(key)) {
+                throw new PropertyValueNotFoundException("Не указано название для одного из ключей" + key + ".");
+            }
+            try {
+                sum = Integer.parseInt(key.split("\\.")[2]);
+            } catch (NumberFormatException e) {
+                throw new PropertyValueNotFoundException("Не корректное название для ключа " + key + ".");
+            }
+            String value =  BotProperties.BULK_DISCOUNT.getString(key);
+            if (StringUtils.isBlank(value)) {
+                throw new PropertyValueNotFoundException("Не указано значение для ключа " + key + ".");
+            }
+            double percent;
+            try {
+                percent = Double.parseDouble(value);
+            } catch (NumberFormatException e) {
+                throw new PropertyValueNotFoundException("Не корректное значение для ключа " + key + ".");
+            }
+            BulkDiscountService.BULK_DISCOUNTS.add(BulkDiscount.builder()
+                    .percent(percent)
+                    .sum(sum)
+                    .fiatCurrency(FiatCurrency.getByCode(key.split("\\.")[0]))
+                    .dealType(DealType.findByKey((key.split("\\.")[1])))
+                    .build());
+        }
+        BulkDiscountService.BULK_DISCOUNTS.sort(Comparator.comparingInt(BulkDiscount::getSum));
+        Collections.reverse(BulkDiscountService.BULK_DISCOUNTS);
     }
 
 }
