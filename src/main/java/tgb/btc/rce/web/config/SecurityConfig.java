@@ -51,7 +51,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         httpSecurity
                 .authorizeRequests()
                 .antMatchers(
-                        "/", "/js/mainUser/**"
+                        "/", "js/mainUser/**"
                 )
                 .hasRole("USER");
 
@@ -59,7 +59,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         httpSecurity
                 .authorizeRequests()
                 .antMatchers(
-                        "/js/main/**", "/web/main/**", "/web/roles"
+                        "js/main/**", "web/main/**", "web/roles/**", "web/deal"
                 )
                 .hasRole("ADMIN");
 
@@ -67,7 +67,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         httpSecurity
                 .authorizeRequests()
                 .antMatchers(
-                        "/js/main/**", "/web/main/**", "/web/roles"
+                        "js/main/**", "web/main/**", "web/roles/**", "web/deal"
                 )
                 .hasRole("OPERATOR");
 
