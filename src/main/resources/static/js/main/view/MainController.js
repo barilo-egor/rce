@@ -2,6 +2,21 @@ Ext.define('Main.view.MainController', {
     extend: 'Ext.app.ViewController',
     alias: 'controller.mainController',
 
+    setIsNotAdmin: function (me) {
+        ExtUtil.request({
+            url: '/web/roles/getRole',
+            method: 'GET',
+            async: false,
+            success: function (response) {
+                me.setViewModel({
+                    data: {
+                        isNotAdmin: response.body.data.filter(role => role.name === 'ROLE_ADMIN').length === 0
+                    }
+                })
+            }
+        })
+    },
+
     collapse: function (btn) {
         let toolBar = ExtUtil.idQuery('mainToolBar')
         if (toolBar.hidden) {
