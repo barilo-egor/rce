@@ -1,4 +1,4 @@
-package tgb.btc.rce.conditional.calculkator;
+package tgb.btc.rce.conditional.calculator;
 
 import org.springframework.context.annotation.Condition;
 import org.springframework.context.annotation.ConditionContext;
