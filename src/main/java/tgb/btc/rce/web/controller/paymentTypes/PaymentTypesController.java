@@ -4,11 +4,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import tgb.btc.library.bean.bot.PaymentType;
+import tgb.btc.library.repository.bot.PaymentRequisiteRepository;
+import tgb.btc.library.service.bean.bot.PaymentTypeService;
 import tgb.btc.rce.constants.mapper.PaymentRequisiteMapper;
 import tgb.btc.rce.constants.mapper.PaymentTypeMapper;
-import tgb.btc.library.repository.bot.PaymentRequisiteRepository;
 import tgb.btc.rce.service.impl.PaymentTypeProcessService;
-import tgb.btc.library.service.bean.bot.PaymentTypeService;
 import tgb.btc.rce.web.util.SuccessResponseUtil;
 import tgb.btc.rce.web.vo.PaymentTypeVO;
 import tgb.btc.rce.web.vo.SuccessResponse;
@@ -69,5 +69,10 @@ public class PaymentTypesController {
     public SuccessResponse<?> getRequisites(Long paymentTypePid) {
         return SuccessResponseUtil.data(paymentRequisiteRepository.getByPaymentType_Pid(paymentTypePid),
                 PaymentRequisiteMapper.GET_BY_PAYMENT_TYPE);
+    }
+
+    @PostMapping("delete")
+    public SuccessResponse<?> delete(Long pid) {
+        return null;
     }
 }
