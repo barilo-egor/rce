@@ -15,9 +15,6 @@ public interface ControllerMapping {
 
     String PAYMENT_TYPES = WEB + "/paymentTypes";
 
-    String PAYMENT = WEB + "/payment";
-    String PAYMENT_REQUISITE = PAYMENT + "/requisite";
-
     String SETTINGS = WEB + "/settings";
 
     String BULK_DISCOUNTS = WEB + "/bulk_discounts";
