@@ -11,7 +11,11 @@ public enum BotInlineButton {
     USE_SAVED_WALLET(InlineButton.builder()
                              .text(DesignProperties.BUTTONS_DESIGN.getString("USE_SAVED_WALLET"))
                              .data(BotStringConstants.USE_SAVED_WALLET)
-                             .build());
+                             .build()),
+    SHOW(InlineButton.builder()
+            .text("Показать")
+            .inlineType(InlineType.CALLBACK_DATA)
+            .build());
 
     private final InlineButton button;
 
