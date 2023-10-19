@@ -54,12 +54,12 @@
                 <dependency>
                     <groupId>com.github.barilo-egor</groupId>
                     <artifactId>rce-library</artifactId>
-                    <version>-150645d762-1</version>
+                    <version>150645d762</version>
                 </dependency>
                 <dependency>
                     <groupId>com.github.barilo-egor</groupId>
                     <artifactId>rce-web</artifactId>
-                    <version>f4f1bc7833</version>
+                    <version>721440b9fc</version>
                 </dependency>
             </dependencies>
         </profile>
