@@ -1,8 +1,8 @@
 package tgb.btc.rce.util;
 
+import tgb.btc.library.exception.BaseException;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
-import tgb.btc.library.exception.BaseException;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.processors.*;
 import tgb.btc.rce.service.processors.apideal.CancelApiDeal;
@@ -126,7 +126,6 @@ public final class CommandProcessorLoader {
         commandProcessors.add(UsersDealsReport.class);
         commandProcessors.add(ChecksForDate.class);
         commandProcessors.add(DeleteDealAndBlockUserProcessor.class);
-        commandProcessors.add(ChangeUsdCourseProcessor.class);
         commandProcessors.add(TurningCurrencyProcessor.class);
         commandProcessors.add(TurnOnCurrencyProcessor.class);
         commandProcessors.add(TurnOffCurrencyProcessor.class);
