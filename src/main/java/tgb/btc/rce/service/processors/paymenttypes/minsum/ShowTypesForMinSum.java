@@ -4,14 +4,14 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.bean.bot.PaymentType;
-import tgb.btc.rce.annotation.CommandProcessor;
-import tgb.btc.rce.constants.BotStringConstants;
-import tgb.btc.rce.enums.BotKeyboard;
-import tgb.btc.rce.enums.Command;
 import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
 import tgb.btc.library.repository.bot.PaymentTypeRepository;
 import tgb.btc.library.repository.bot.UserDataRepository;
+import tgb.btc.rce.annotation.CommandProcessor;
+import tgb.btc.rce.constants.BotStringConstants;
+import tgb.btc.rce.enums.BotKeyboard;
+import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.util.FiatCurrencyUtil;
 import tgb.btc.rce.util.KeyboardUtil;
@@ -46,9 +46,9 @@ public class ShowTypesForMinSum extends Processor {
         Long chatId = UpdateUtil.getChatId(update);
         String message = UpdateUtil.getMessageText(update);
         DealType dealType;
-        if (BotStringConstants.BUY.equals(message)) {
+        if (DealType.BUY.getNominativeFirstLetterToUpper().equals(message)) {
             dealType = DealType.BUY;
-        } else if (BotStringConstants.SELL.equals(message)) {
+        } else if (DealType.SELL.getNominativeFirstLetterToUpper().equals(message)) {
             dealType = DealType.SELL;
         } else {
             responseSender.sendMessage(chatId, BotStringConstants.BUY_OR_SELL);

@@ -6,10 +6,10 @@ import tgb.btc.library.bean.bot.PaymentType;
 import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
 import tgb.btc.library.repository.bot.PaymentTypeRepository;
+import tgb.btc.library.repository.bot.UserDataRepository;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
-import tgb.btc.library.repository.bot.UserDataRepository;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.util.FiatCurrencyUtil;
 import tgb.btc.rce.util.UpdateUtil;
@@ -39,8 +39,8 @@ public class CreateNewPaymentType extends Processor {
         String message = UpdateUtil.getMessageText(update);
         DealType dealType;
         FiatCurrency fiatCurrency;
-        if (BotStringConstants.BUY.equals(message)) dealType = DealType.BUY;
-        else if (BotStringConstants.SELL.equals(message)) dealType = DealType.SELL;
+        if (DealType.BUY.getNominativeFirstLetterToUpper().equals(message)) dealType = DealType.BUY;
+        else if (DealType.SELL.getNominativeFirstLetterToUpper().equals(message)) dealType = DealType.SELL;
         else {
             responseSender.sendMessage(chatId, BotStringConstants.BUY_OR_SELL);
             return;

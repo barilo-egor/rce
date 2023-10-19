@@ -2,8 +2,8 @@ package tgb.btc.rce.enums;
 
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
+import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
-import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.vo.InlineButton;
 import tgb.btc.rce.vo.ReplyButton;
@@ -18,10 +18,10 @@ public enum BotKeyboard {
     INLINE_CANCEL(KeyboardUtil.buildInline(List.of(BotInlineButton.CANCEL.getButton()))),
     BUY_OR_SELL(KeyboardUtil.buildReply(List.of(
             ReplyButton.builder()
-                    .text(BotStringConstants.BUY)
+                    .text(DealType.BUY.getNominativeFirstLetterToUpper())
                     .build(),
             ReplyButton.builder()
-                    .text(BotStringConstants.SELL)
+                    .text(DealType.SELL.getNominativeFirstLetterToUpper())
                     .build(),
             BotReplyButton.CANCEL.getButton()
     ))),
