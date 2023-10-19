@@ -8,7 +8,7 @@ import tgb.btc.library.bean.web.api.UsdApiUserCourse;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
 import tgb.btc.library.repository.web.ApiUserRepository;
 import tgb.btc.library.repository.web.UsdApiUserCourseRepository;
-import tgb.btc.rce.web.vo.ApiUserVO;
+import tgb.btc.web.vo.form.ApiUserVO;
 
 import java.time.LocalDate;
 import java.util.ArrayList;

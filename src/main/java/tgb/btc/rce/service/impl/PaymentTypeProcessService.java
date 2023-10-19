@@ -8,8 +8,8 @@ import tgb.btc.library.bean.bot.PaymentType;
 import tgb.btc.library.exception.EntityUniqueFieldException;
 import tgb.btc.library.repository.bot.PaymentRequisiteRepository;
 import tgb.btc.library.repository.bot.PaymentTypeRepository;
-import tgb.btc.rce.web.vo.PaymentTypeVO;
-import tgb.btc.rce.web.vo.RequisiteVO;
+import tgb.btc.web.vo.form.PaymentTypeVO;
+import tgb.btc.web.vo.form.RequisiteVO;
 
 import java.util.List;
 import java.util.Objects;

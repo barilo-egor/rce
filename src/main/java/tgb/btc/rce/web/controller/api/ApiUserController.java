@@ -10,10 +10,10 @@ import tgb.btc.library.service.bean.web.ApiUserService;
 import tgb.btc.library.util.web.JacksonUtil;
 import tgb.btc.rce.service.impl.ApiUserProcessService;
 import tgb.btc.rce.util.FiatCurrencyUtil;
-import tgb.btc.rce.web.vo.ApiUserVO;
 import tgb.btc.web.constant.ControllerMapping;
 import tgb.btc.web.util.SuccessResponseUtil;
 import tgb.btc.web.vo.SuccessResponse;
+import tgb.btc.web.vo.form.ApiUserVO;
 
 import static tgb.btc.rce.web.controller.MainWebController.DEFAULT_MAPPER;
 

@@ -17,9 +17,9 @@ import tgb.btc.rce.util.BigDecimalUtil;
 import tgb.btc.rce.util.BotVariablePropertiesUtil;
 import tgb.btc.rce.vo.calculate.DealAmount;
 import tgb.btc.rce.vo.web.CalculateDataForm;
-import tgb.btc.rce.web.vo.ApiDealVO;
 import tgb.btc.web.constant.enums.ApiStatusCode;
 import tgb.btc.web.util.ApiResponseUtil;
+import tgb.btc.web.vo.form.ApiDealVO;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
