@@ -23,7 +23,7 @@ public enum Menu {
     SEND_MESSAGES(List.of(Command.MAILING_LIST, Command.SEND_MESSAGE_TO_USER, Command.ADMIN_BACK)),
     BOT_SETTINGS(List.of(Command.CURRENT_DATA, Command.ON_BOT, Command.OFF_BOT, Command.BOT_MESSAGES,
                          Command.BOT_VARIABLES, Command.SYSTEM_MESSAGES, Command.PAYMENT_TYPES,
-                         Command.TURNING_CURRENCY, Command.CHANGE_USD_COURSE, Command.EDIT_CONTACTS,
+                         Command.TURNING_CURRENCY, Command.EDIT_CONTACTS,
                          Command.ADMIN_BACK)),
     REQUESTS(ReferralType.STANDARD.isCurrent()
             ? List.of(Command.NEW_DEALS, Command.NEW_API_DEALS, Command.NEW_WITHDRAWALS, Command.NEW_REVIEWS, Command.NEW_SPAM_BANS,

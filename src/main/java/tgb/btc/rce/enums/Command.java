@@ -65,7 +65,6 @@ public enum Command implements ICommand {
     REPORTS("Отчеты", true, true, false),
     EDIT_CONTACTS("Редактирование контактов", true, true, false),
     USER_REFERRAL_BALANCE("Реф.баланс юзера", true, false, false),
-    CHANGE_USD_COURSE("Курс доллара", true, false, false),
     TURNING_CURRENCY("Включение криптовалют", true, false, false),
     DISCOUNTS("Скидки", true, true, false),
     USERS("Пользователи", true, true, false),

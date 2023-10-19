@@ -9,10 +9,6 @@ public interface BotStringConstants {
 
     String SHOW_BUTTON = "Показать";
 
-    String SELECT_CRYPTO_CURRENCY = "Выберите криптовалюту.";
-
-    String SELECT_FIAT_CURRENCY = "Выберите фиатную валюту.";
-
     String DEAL_INFO = "Заявка на %s №%s\n" + "Дата,время: %s\n" + "Тип оплаты: %s\n" + "Кошелек: %s\n" + "Контакт: %s\n"
             + "Количество сделок: %s\n" + "ID: %s\n" + "Сумма %s: %s\n" + "Сумма: %s %s";
 
@@ -25,12 +21,6 @@ public interface BotStringConstants {
     String BUY = "Покупка";
 
     String SELL = "Продажа";
-
-    String ENTER_NEW_COURSE = "Введите новый курс.";
-
-    String SUCCESSFUL_COURSE_CHANGE = "Курс обновлен.";
-
-    String INCORRECT_VALUE = "Не корректное значение. Введите значение еще раз.";
 
     String USE_SAVED_WALLET = "use_saved";
 
