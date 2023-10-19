@@ -1,8 +1,8 @@
-package tgb.btc.rce.web.util;
+package tgb.btc.rce.util;
 
-import tgb.btc.rce.enums.DesignProperties;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
 import tgb.btc.library.exception.BaseException;
+import tgb.btc.rce.enums.DesignProperties;
 
 public class FiatCurrenciesDesignUtil {
     public static String getDisplayData(FiatCurrency currency) {

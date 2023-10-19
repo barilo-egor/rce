@@ -11,15 +11,15 @@ import tgb.btc.library.constants.enums.bot.FiatCurrency;
 import tgb.btc.library.constants.enums.web.ApiDealStatus;
 import tgb.btc.library.repository.web.ApiDealRepository;
 import tgb.btc.library.repository.web.ApiUserRepository;
+import tgb.btc.library.util.web.JacksonUtil;
 import tgb.btc.rce.enums.BotVariableType;
 import tgb.btc.rce.util.BigDecimalUtil;
 import tgb.btc.rce.util.BotVariablePropertiesUtil;
 import tgb.btc.rce.vo.calculate.DealAmount;
 import tgb.btc.rce.vo.web.CalculateDataForm;
-import tgb.btc.rce.web.controller.api.enums.StatusCode;
-import tgb.btc.rce.web.util.ApiResponseUtil;
-import tgb.btc.library.util.web.JacksonUtil;
 import tgb.btc.rce.web.vo.ApiDealVO;
+import tgb.btc.web.constant.enums.ApiStatusCode;
+import tgb.btc.web.util.ApiResponseUtil;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -59,10 +59,10 @@ public class ApiDealProcessService {
     public ObjectNode newDeal(String token, DealType dealType, BigDecimal amount, BigDecimal cryptoAmount,
                               CryptoCurrency cryptoCurrency, String requisite, FiatCurrency fiatCurrency) {
         ApiDealVO apiDealVO = new ApiDealVO(token, dealType, amount, cryptoAmount, cryptoCurrency, requisite, fiatCurrency);
-        StatusCode code = apiDealVO.verify();
+        ApiStatusCode code = apiDealVO.verify();
         if (Objects.nonNull(code)) return ApiResponseUtil.build(code);
 
-        if (apiUserRepository.countByToken(token) == 0) ApiResponseUtil.build(StatusCode.USER_NOT_FOUND);
+        if (apiUserRepository.countByToken(token) == 0) ApiResponseUtil.build(ApiStatusCode.USER_NOT_FOUND);
 
         ApiUser apiUser = apiUserRepository.getByToken(token);
         CalculateDataForm.CalculateDataFormBuilder builder = CalculateDataForm.builder();
@@ -79,10 +79,10 @@ public class ApiDealProcessService {
         ApiDeal apiDeal = create(apiDealVO, apiUser, calculateService.calculate(builder.build()));
         BigDecimal minSum = BotVariablePropertiesUtil.getBigDecimal(BotVariableType.MIN_SUM, dealType, cryptoCurrency);
         if (apiDeal.getCryptoAmount().compareTo(minSum) < 0)
-            return ApiResponseUtil.build(StatusCode.MIN_SUM,
+            return ApiResponseUtil.build(ApiStatusCode.MIN_SUM,
                     JacksonUtil.getEmpty().put("minSum", BigDecimalUtil.roundToPlainString(minSum, 8)));
 
-        return ApiResponseUtil.build(StatusCode.CREATED_DEAL,
+        return ApiResponseUtil.build(ApiStatusCode.CREATED_DEAL,
                 dealData(apiDeal, apiUser.getRequisite(apiDeal.getDealType())));
     }
 

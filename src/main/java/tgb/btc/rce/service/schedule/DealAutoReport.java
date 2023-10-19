@@ -13,9 +13,9 @@ import tgb.btc.library.repository.bot.UserRepository;
 import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.impl.AdminService;
 import tgb.btc.rce.util.BigDecimalUtil;
+import tgb.btc.rce.util.CryptoCurrenciesDesignUtil;
 import tgb.btc.rce.util.FiatCurrencyUtil;
 import tgb.btc.rce.vo.DealReportData;
-import tgb.btc.rce.web.util.CryptoCurrenciesDesignUtil;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;

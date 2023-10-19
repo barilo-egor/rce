@@ -10,7 +10,7 @@ import tgb.btc.library.constants.enums.web.RoleConstants;
 import tgb.btc.library.repository.web.WebUserRepository;
 import tgb.btc.library.service.bean.web.WebUserService;
 import tgb.btc.rce.vo.web.CredentialsVO;
-import tgb.btc.rce.web.constant.ControllerMapping;
+import tgb.btc.web.constant.ControllerMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;

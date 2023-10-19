@@ -21,7 +21,7 @@ Ext.define('Main.view.api.control.ApiUsersControlController', {
                 method: 'POST',
                 jsonData: jsonData,
                 success: function (rs) {
-                    let response = Ext.JSON.decode(rs.responseText)
+                    let response = Ext.JSON.decode(rs.responseText).body.data
                     Ext.toast('Пользователь <b>' + response.id + '</b> обновлен.');
                     Ext.getStore('apiusersstore').load()
                     form.setLoading(false)

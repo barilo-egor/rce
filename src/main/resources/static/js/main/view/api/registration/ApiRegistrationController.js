@@ -34,7 +34,7 @@ Ext.define('Main.view.api.registration.ApiRegistrationController', {
                 method: 'POST',
                 jsonData: jsonData,
                 success: function (rs) {
-                    let response = Ext.JSON.decode(rs.responseText)
+                    let response = Ext.JSON.decode(rs.responseText).body.data
                     Ext.Msg.alert('Сохранено',
                         '<div style="text-align: center;">Токен пользователя: <p/><b>' + response.token + '</b></div>')
                     form.reset()

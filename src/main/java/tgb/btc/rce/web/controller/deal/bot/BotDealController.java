@@ -9,7 +9,7 @@ import tgb.btc.library.repository.bot.DealRepository;
 import tgb.btc.library.util.web.JacksonUtil;
 import tgb.btc.rce.constants.mapper.DealMapper;
 import tgb.btc.rce.service.web.WebDealService;
-import tgb.btc.rce.web.constant.ControllerMapping;
+import tgb.btc.web.constant.ControllerMapping;
 
 @RestController
 @RequestMapping(ControllerMapping.BOT_DEAL)

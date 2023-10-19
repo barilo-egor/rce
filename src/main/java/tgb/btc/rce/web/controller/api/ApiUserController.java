@@ -1,6 +1,5 @@
 package tgb.btc.rce.web.controller.api;
 
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -11,11 +10,10 @@ import tgb.btc.library.service.bean.web.ApiUserService;
 import tgb.btc.library.util.web.JacksonUtil;
 import tgb.btc.rce.service.impl.ApiUserProcessService;
 import tgb.btc.rce.util.FiatCurrencyUtil;
-import tgb.btc.rce.web.constant.ControllerMapping;
-import tgb.btc.rce.web.util.JsonUtil;
-import tgb.btc.rce.web.util.SuccessResponseUtil;
 import tgb.btc.rce.web.vo.ApiUserVO;
-import tgb.btc.rce.web.vo.SuccessResponse;
+import tgb.btc.web.constant.ControllerMapping;
+import tgb.btc.web.util.SuccessResponseUtil;
+import tgb.btc.web.vo.SuccessResponse;
 
 import static tgb.btc.rce.web.controller.MainWebController.DEFAULT_MAPPER;
 
@@ -46,14 +44,14 @@ public class ApiUserController {
 
     @PostMapping("/save")
     @ResponseBody
-    public ObjectNode save(@RequestBody ApiUserVO apiUserVO) {
-        return apiUserProcessService.save(apiUserVO).toJson();
+    public SuccessResponse<?> save(@RequestBody ApiUserVO apiUserVO) {
+        return SuccessResponseUtil.data(apiUserProcessService.save(apiUserVO));
     }
 
     @PostMapping("/update")
     @ResponseBody
-    public ObjectNode update(@RequestBody ApiUserVO apiUserVO) {
-       return apiUserProcessService.save(apiUserVO).toJson();
+    public SuccessResponse<?> update(@RequestBody ApiUserVO apiUserVO) {
+       return SuccessResponseUtil.data(apiUserProcessService.save(apiUserVO));
     }
 
     @GetMapping("/isExistById")
@@ -66,8 +64,8 @@ public class ApiUserController {
 
     @GetMapping("/findAll")
     @ResponseBody
-    public ArrayNode findAll() {
-        return JsonUtil.toJsonArray(apiUserRepository.findAll());
+    public SuccessResponse<?> findAll() {
+        return SuccessResponseUtil.data(apiUserRepository.findAll());
     }
 
     @DeleteMapping("/delete")

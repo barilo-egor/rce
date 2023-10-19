@@ -5,9 +5,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import tgb.btc.library.repository.web.WebUserRepository;
-import tgb.btc.rce.web.constant.ControllerMapping;
-import tgb.btc.rce.web.util.SuccessResponseUtil;
-import tgb.btc.rce.web.vo.SuccessResponse;
+import tgb.btc.web.constant.ControllerMapping;
+import tgb.btc.web.util.SuccessResponseUtil;
+import tgb.btc.web.vo.SuccessResponse;
 
 import java.security.Principal;
 

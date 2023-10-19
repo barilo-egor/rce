@@ -18,7 +18,7 @@ import tgb.btc.rce.util.FiatCurrencyUtil;
 import tgb.btc.rce.vo.calculate.DealAmount;
 import tgb.btc.rce.vo.web.CalculateDataForm;
 import tgb.btc.rce.vo.web.CourseVO;
-import tgb.btc.rce.web.constant.ControllerMapping;
+import tgb.btc.web.constant.ControllerMapping;
 
 import javax.ws.rs.core.MediaType;
 import java.math.RoundingMode;

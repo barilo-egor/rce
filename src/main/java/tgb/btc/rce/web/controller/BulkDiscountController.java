@@ -13,7 +13,7 @@ import tgb.btc.rce.enums.BotProperties;
 import tgb.btc.rce.service.impl.BulkDiscountService;
 import tgb.btc.rce.util.FiatCurrencyUtil;
 import tgb.btc.rce.vo.BulkDiscount;
-import tgb.btc.rce.web.constant.ControllerMapping;
+import tgb.btc.web.constant.ControllerMapping;
 
 import java.util.Collections;
 import java.util.Comparator;

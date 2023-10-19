@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import tgb.btc.library.bean.web.Role;
 import tgb.btc.library.bean.web.WebUser;
 import tgb.btc.library.repository.web.WebUserRepository;
-import tgb.btc.rce.web.constant.ControllerMapping;
+import tgb.btc.web.constant.ControllerMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;

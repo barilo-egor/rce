@@ -9,6 +9,7 @@ Ext.define('Main.store.api.ApiUsersStore', {
         url: '/web/api/user/findAll',
         reader: {
             type: 'json',
+            rootProperty: 'body.data'
         }
     }
 });

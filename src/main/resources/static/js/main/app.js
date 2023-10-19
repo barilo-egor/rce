@@ -19,7 +19,6 @@ Ext.application({
     stores: [
         'Main.store.enum.FiatCurrenciesStore',
         'Main.store.enum.DealTypesStore',
-        'Main.store.tree.RequisitesTreeStore',
         'Main.store.api.ApiUsersStore',
         'Main.store.deal.BotDealStore'
     ]
