@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
 import tgb.btc.library.constants.enums.web.RoleConstants;
+import tgb.btc.rce.web.constant.ControllerMapping;
 import tgb.btc.rce.web.util.SuccessResponseUtil;
 import tgb.btc.rce.web.vo.SuccessResponse;
 
@@ -14,7 +15,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @Controller
-@RequestMapping("/web/enum")
+@RequestMapping(ControllerMapping.ENUM)
 public class EnumValuesController {
 
     @GetMapping("/fiatCurrencies")

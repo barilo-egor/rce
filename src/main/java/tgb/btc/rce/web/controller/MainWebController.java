@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import tgb.btc.library.bean.web.Role;
 import tgb.btc.library.bean.web.WebUser;
 import tgb.btc.library.repository.web.WebUserRepository;
+import tgb.btc.rce.web.constant.ControllerMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -27,7 +28,7 @@ import java.util.Objects;
 import static org.springframework.security.web.context.HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY;
 
 @Controller
-@RequestMapping("/web")
+@RequestMapping(ControllerMapping.WEB)
 @Slf4j
 public class MainWebController {
 

@@ -6,13 +6,14 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import tgb.btc.rce.enums.BotProperties;
 import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
 import tgb.btc.library.exception.PropertyValueNotFoundException;
+import tgb.btc.rce.enums.BotProperties;
 import tgb.btc.rce.service.impl.BulkDiscountService;
 import tgb.btc.rce.util.FiatCurrencyUtil;
 import tgb.btc.rce.vo.BulkDiscount;
+import tgb.btc.rce.web.constant.ControllerMapping;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -20,7 +21,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Controller
-@RequestMapping("/web/bulk_discount")
+@RequestMapping(ControllerMapping.BULK_DISCOUNTS)
 public class BulkDiscountController {
 
     @GetMapping(value = "/getDiscounts")

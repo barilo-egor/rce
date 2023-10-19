@@ -4,7 +4,7 @@ Ext.define('Main.view.MainController', {
 
     setIsNotAdmin: function (me) {
         ExtUtil.request({
-            url: '/web/roles/getRole',
+            url: '/web/role/get',
             method: 'GET',
             async: false,
             success: function (response) {

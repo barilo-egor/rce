@@ -9,7 +9,7 @@ Ext.define('Main.view.bulkDiscount.BulkDiscountController', {
         let me = this;
         let discountsTabPanel = Ext.ComponentQuery.query('[id=discountsTabPanel]')[0];
         Ext.Ajax.request({
-            url: '/web/bulk_discount/getDiscounts',
+            url: '/web/bulkDiscount/getDiscounts',
             method: 'GET',
             async: false,
             success: function (rs) {
@@ -79,7 +79,7 @@ Ext.define('Main.view.bulkDiscount.BulkDiscountController', {
     saveDiscountRequest: function (bulkDiscount, oldSum) {
         let me = this;
         let requestBody = {
-            url: '/web/bulk_discount/saveDiscount',
+            url: '/web/bulkDiscount/saveDiscount',
             method: 'POST',
             jsonData: bulkDiscount,
             success: function () {
@@ -162,7 +162,7 @@ Ext.define('Main.view.bulkDiscount.BulkDiscountController', {
             dealType: record.data.dealType
         };
         Ext.Ajax.request({
-            url: '/web/bulk_discount/removeDiscount',
+            url: '/web/bulkDiscount/removeDiscount',
             method: 'DELETE',
             jsonData: bulkDiscount,
             success: function () {

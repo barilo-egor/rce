@@ -13,13 +13,14 @@ import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
 import tgb.btc.library.repository.bot.PaymentRequisiteRepository;
 import tgb.btc.library.repository.bot.PaymentTypeRepository;
+import tgb.btc.rce.web.constant.ControllerMapping;
 import tgb.btc.rce.web.controller.MainWebController;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
 @Controller
-@RequestMapping("/web/api/payment/requisite")
+@RequestMapping(ControllerMapping.PAYMENT_REQUISITE)
 public class PaymentRequisitesController {
 
     private PaymentTypeRepository paymentTypeRepository;

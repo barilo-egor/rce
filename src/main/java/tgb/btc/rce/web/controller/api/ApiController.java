@@ -20,6 +20,7 @@ import tgb.btc.rce.enums.BotVariableType;
 import tgb.btc.rce.service.impl.AdminService;
 import tgb.btc.rce.service.impl.ApiDealProcessService;
 import tgb.btc.rce.service.impl.KeyboardService;
+import tgb.btc.rce.web.constant.ControllerMapping;
 import tgb.btc.rce.web.controller.MainWebController;
 import tgb.btc.rce.web.controller.api.enums.StatusCode;
 import tgb.btc.rce.web.util.SuccessResponseUtil;
@@ -31,7 +32,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Controller
-@RequestMapping("/api/10/")
+@RequestMapping(ControllerMapping.API10)
 public class ApiController {
 
     private ApiDealRepository apiDealRepository;

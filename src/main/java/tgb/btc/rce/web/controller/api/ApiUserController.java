@@ -11,6 +11,7 @@ import tgb.btc.library.service.bean.web.ApiUserService;
 import tgb.btc.library.util.web.JacksonUtil;
 import tgb.btc.rce.service.impl.ApiUserProcessService;
 import tgb.btc.rce.util.FiatCurrencyUtil;
+import tgb.btc.rce.web.constant.ControllerMapping;
 import tgb.btc.rce.web.util.JsonUtil;
 import tgb.btc.rce.web.util.SuccessResponseUtil;
 import tgb.btc.rce.web.vo.ApiUserVO;
@@ -19,7 +20,7 @@ import tgb.btc.rce.web.vo.SuccessResponse;
 import static tgb.btc.rce.web.controller.MainWebController.DEFAULT_MAPPER;
 
 @Controller
-@RequestMapping("/web/api/user")
+@RequestMapping(ControllerMapping.API_USER)
 public class ApiUserController {
 
     private ApiUserService apiUserService;

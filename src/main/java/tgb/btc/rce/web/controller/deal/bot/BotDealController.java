@@ -5,13 +5,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import tgb.btc.rce.constants.mapper.DealMapper;
 import tgb.btc.library.repository.bot.DealRepository;
-import tgb.btc.rce.service.web.WebDealService;
 import tgb.btc.library.util.web.JacksonUtil;
+import tgb.btc.rce.constants.mapper.DealMapper;
+import tgb.btc.rce.service.web.WebDealService;
+import tgb.btc.rce.web.constant.ControllerMapping;
 
 @RestController
-@RequestMapping("/web/deal/bot")
+@RequestMapping(ControllerMapping.BOT_DEAL)
 public class BotDealController {
 
     private WebDealService webDealService;

@@ -6,10 +6,11 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import tgb.btc.rce.enums.*;
 import tgb.btc.library.constants.enums.bot.CryptoCurrency;
 import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
+import tgb.btc.rce.enums.BotProperties;
+import tgb.btc.rce.enums.BotVariableType;
 import tgb.btc.rce.service.impl.CalculateService;
 import tgb.btc.rce.service.impl.CryptoCurrencyService;
 import tgb.btc.rce.util.BotVariablePropertiesUtil;
@@ -17,6 +18,7 @@ import tgb.btc.rce.util.FiatCurrencyUtil;
 import tgb.btc.rce.vo.calculate.DealAmount;
 import tgb.btc.rce.vo.web.CalculateDataForm;
 import tgb.btc.rce.vo.web.CourseVO;
+import tgb.btc.rce.web.constant.ControllerMapping;
 
 import javax.ws.rs.core.MediaType;
 import java.math.RoundingMode;
@@ -25,7 +27,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Controller
-@RequestMapping("/web/settings")
+@RequestMapping(ControllerMapping.SETTINGS)
 public class SettingsController {
 
     private CalculateService calculateService;
