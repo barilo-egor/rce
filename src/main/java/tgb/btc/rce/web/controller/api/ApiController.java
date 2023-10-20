@@ -17,7 +17,6 @@ import tgb.btc.library.repository.web.ApiDealRepository;
 import tgb.btc.library.repository.web.ApiUserRepository;
 import tgb.btc.library.util.web.JacksonUtil;
 import tgb.btc.rce.constants.BotStringConstants;
-import tgb.btc.rce.enums.properties.BotProperties;
 import tgb.btc.rce.service.impl.AdminService;
 import tgb.btc.rce.service.impl.ApiDealProcessService;
 import tgb.btc.rce.service.impl.KeyboardService;
@@ -156,7 +155,7 @@ public class ApiController {
     @GetMapping("/getFiat")
     @ResponseBody
     public String getFiat() {
-        return BotProperties.BOT_CONFIG.getString("bot.fiat.currencies");
+        return CommonProperties.CONFIG.getString("bot.fiat.currencies");
     }
 
     @GetMapping("/statusCodes/new")

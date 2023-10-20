@@ -3,8 +3,8 @@ package tgb.btc.rce.util;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
+import tgb.btc.library.constants.enums.properties.CommonProperties;
 import tgb.btc.library.exception.BaseException;
-import tgb.btc.rce.enums.properties.BotProperties;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,7 +21,7 @@ public final class FiatCurrencyUtil {
     private static final boolean IS_FEW;
 
     static {
-        FIAT_CURRENCIES = Arrays.stream(BotProperties.BOT_CONFIG.getStringArray("bot.fiat.currencies"))
+        FIAT_CURRENCIES = Arrays.stream(CommonProperties.CONFIG.getStringArray("bot.fiat.currencies"))
                 .map(FiatCurrency::valueOf)
                 .collect(Collectors.toList());
         log.info("Загружено " + FIAT_CURRENCIES.size() + " фиатных валют: "
