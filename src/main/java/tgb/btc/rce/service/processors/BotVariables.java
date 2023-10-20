@@ -44,7 +44,7 @@ public class BotVariables extends Processor {
     private void updateProperties(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
         try {
-            responseSender.downloadFile(update.getMessage().getDocument(), FilePaths.BOT_VARIABLE_BUFFER_PROPERTIES);
+            responseSender.downloadFile(update.getMessage().getDocument(), FilePaths.VARIABLE_BUFFER_PROPERTIES);
         } catch (IOException | TelegramApiException e) {
             log.error("Ошибка при скачивании новых переменных: ", e);
             responseSender.sendMessage(chatId, "Ошибка при скачивании новых переменных: " + e.getMessage());
@@ -61,10 +61,10 @@ public class BotVariables extends Processor {
         try {
             FileUtils.moveFile(BotProperties.BOT_VARIABLE_BUFFER.getFile(), BotProperties.BOT_VARIABLE.getFile());
         } catch (IOException e) {
-            log.error("Ошибки при перемещении файла + " + FilePaths.BOT_VARIABLE_BUFFER_PROPERTIES
+            log.error("Ошибки при перемещении файла + " + FilePaths.VARIABLE_BUFFER_PROPERTIES
                     + " в " + FilePaths.VARIABLE_PROPERTIES, e);
             responseSender.sendMessage(chatId, "Ошибки при перемещении файла + "
-                    + FilePaths.BOT_VARIABLE_BUFFER_PROPERTIES + " в " + FilePaths.VARIABLE_PROPERTIES);
+                    + FilePaths.VARIABLE_BUFFER_PROPERTIES + " в " + FilePaths.VARIABLE_PROPERTIES);
             return;
         }
         BotProperties.BOT_VARIABLE.reload();
