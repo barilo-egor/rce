@@ -25,6 +25,7 @@ import tgb.btc.library.service.bean.bot.PaymentRequisiteService;
 import tgb.btc.library.service.bean.bot.PaymentTypeService;
 import tgb.btc.library.service.process.CalculateService;
 import tgb.btc.library.util.BigDecimalUtil;
+import tgb.btc.library.util.FiatCurrencyUtil;
 import tgb.btc.library.util.properties.VariablePropertiesUtil;
 import tgb.btc.library.vo.calculate.DealAmount;
 import tgb.btc.rce.constants.BotStringConstants;

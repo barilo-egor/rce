@@ -13,10 +13,10 @@ import tgb.btc.library.constants.enums.properties.CommonProperties;
 import tgb.btc.library.constants.enums.properties.VariableType;
 import tgb.btc.library.service.process.CalculateService;
 import tgb.btc.library.service.process.CryptoCurrencyService;
+import tgb.btc.library.util.FiatCurrencyUtil;
 import tgb.btc.library.util.properties.VariablePropertiesUtil;
 import tgb.btc.library.vo.calculate.CalculateDataForm;
 import tgb.btc.library.vo.calculate.DealAmount;
-import tgb.btc.rce.util.FiatCurrencyUtil;
 import tgb.btc.rce.vo.web.CourseVO;
 import tgb.btc.web.constant.ControllerMapping;
 

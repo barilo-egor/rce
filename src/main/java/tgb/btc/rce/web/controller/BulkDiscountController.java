@@ -10,8 +10,8 @@ import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
 import tgb.btc.library.constants.enums.properties.CommonProperties;
 import tgb.btc.library.exception.PropertyValueNotFoundException;
+import tgb.btc.library.util.FiatCurrencyUtil;
 import tgb.btc.library.vo.BulkDiscount;
-import tgb.btc.rce.util.FiatCurrencyUtil;
 import tgb.btc.web.constant.ControllerMapping;
 
 import java.util.Collections;
