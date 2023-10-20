@@ -9,9 +9,9 @@ import tgb.btc.library.bean.bot.User;
 import tgb.btc.library.constants.enums.bot.BotMessageType;
 import tgb.btc.library.repository.bot.LotteryWinRepository;
 import tgb.btc.rce.annotation.CommandProcessor;
-import tgb.btc.rce.enums.BotVariableType;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.PropertiesMessage;
+import tgb.btc.rce.enums.VariableType;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.impl.BotMessageService;
 import tgb.btc.rce.util.BotVariablePropertiesUtil;
@@ -53,11 +53,11 @@ public class Lottery extends Processor {
     }
 
     private void processLottery(Update update, User user) {
-        float probability = BotVariablePropertiesUtil.getFloat(BotVariableType.PROBABILITY);
+        float probability = BotVariablePropertiesUtil.getFloat(VariableType.PROBABILITY);
         if (((double) new Random().nextInt(101) < ((double) probability))) {
             responseSender.sendBotMessage(botMessageService.findByType(BotMessageType.WON_LOTTERY), user.getChatId(),
                     MenuFactory.getLink("Написать оператору",
-                            BotVariablePropertiesUtil.getVariable(BotVariableType.OPERATOR_LINK)));
+                            BotVariablePropertiesUtil.getVariable(VariableType.OPERATOR_LINK)));
             Long chatId = UpdateUtil.getChatId(update);
             String username = userRepository.getUsernameByChatId(chatId);
             userRepository.getAdminsChatIds()

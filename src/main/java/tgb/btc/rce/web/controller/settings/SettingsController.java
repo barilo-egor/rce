@@ -10,7 +10,7 @@ import tgb.btc.library.constants.enums.bot.CryptoCurrency;
 import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
 import tgb.btc.rce.enums.BotProperties;
-import tgb.btc.rce.enums.BotVariableType;
+import tgb.btc.rce.enums.VariableType;
 import tgb.btc.rce.service.impl.CalculateService;
 import tgb.btc.rce.service.impl.CryptoCurrencyService;
 import tgb.btc.rce.util.BotVariablePropertiesUtil;
@@ -70,7 +70,7 @@ public class SettingsController {
                     cryptoCurrency.put("displayName", cryptoCurrencyEnum.name());
                     cryptoCurrency.put("name", cryptoCurrencyEnum.name());
                     cryptoCurrency.put("value",
-                            BotVariablePropertiesUtil.getBigDecimal(BotVariableType.USD_COURSE, fiatCurrencyEnum, dealTypeEnum, cryptoCurrencyEnum));
+                            BotVariablePropertiesUtil.getBigDecimal(VariableType.USD_COURSE, fiatCurrencyEnum, dealTypeEnum, cryptoCurrencyEnum));
                     cryptoCurrencies.add(cryptoCurrency);
                 }
                 dealType.set("cryptoCurrencies", cryptoCurrencies);
@@ -114,7 +114,7 @@ public class SettingsController {
     @ResponseBody
     public ObjectNode saveUsdCourses(@RequestBody List<CourseVO> courses) {
         for (CourseVO courseVO : courses) {
-            BotProperties.BOT_VARIABLE.setProperty(BotVariableType.USD_COURSE.getKey() + "."
+            BotProperties.BOT_VARIABLE.setProperty(VariableType.USD_COURSE.getKey() + "."
                     + courseVO.getFiatCurrency().getCode() + "."
                     + courseVO.getDealType().getKey() + "."
                     + courseVO.getCryptoCurrency().getShortName(), courseVO.getValue());

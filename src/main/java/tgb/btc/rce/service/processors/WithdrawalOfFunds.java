@@ -2,12 +2,12 @@ package tgb.btc.rce.service.processors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import tgb.btc.library.service.bean.bot.WithdrawalRequestService;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.constants.BotStringConstants;
-import tgb.btc.rce.enums.BotVariableType;
 import tgb.btc.rce.enums.Command;
+import tgb.btc.rce.enums.VariableType;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.library.service.bean.bot.WithdrawalRequestService;
 import tgb.btc.rce.service.processors.support.WithdrawalOfFundsService;
 import tgb.btc.rce.util.BotVariablePropertiesUtil;
 import tgb.btc.rce.util.KeyboardUtil;
@@ -45,7 +45,7 @@ public class WithdrawalOfFunds extends Processor {
                             )));
                     return;
                 }
-                int minSum = BotVariablePropertiesUtil.getInt(BotVariableType.REFERRAL_MIN_SUM);
+                int minSum = BotVariablePropertiesUtil.getInt(VariableType.REFERRAL_MIN_SUM);
                 if (userService.getReferralBalanceByChatId(chatId) < minSum) {
                     responseSender.sendMessage(chatId, "Минимальная сумма для вывода средств равна " + minSum + "₽");
                     return;

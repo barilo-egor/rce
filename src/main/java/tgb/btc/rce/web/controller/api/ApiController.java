@@ -16,7 +16,7 @@ import tgb.btc.library.repository.web.ApiUserRepository;
 import tgb.btc.library.util.web.JacksonUtil;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.BotProperties;
-import tgb.btc.rce.enums.BotVariableType;
+import tgb.btc.rce.enums.VariableType;
 import tgb.btc.rce.service.impl.AdminService;
 import tgb.btc.rce.service.impl.ApiDealProcessService;
 import tgb.btc.rce.service.impl.KeyboardService;
@@ -103,7 +103,7 @@ public class ApiController {
         } else {
             ApiDeal apiDeal = apiDealRepository.getByPid(id);
             LocalDateTime now = LocalDateTime.now();
-            if (now.minusMinutes(BotProperties.BOT_VARIABLE.getLong(BotVariableType.DEAL_ACTIVE_TIME.getKey(), 15L)).isAfter(apiDeal.getDateTime())) {
+            if (now.minusMinutes(BotProperties.BOT_VARIABLE.getLong(VariableType.DEAL_ACTIVE_TIME.getKey(), 15L)).isAfter(apiDeal.getDateTime())) {
                 return ApiStatusCode.PAYMENT_TIME_IS_UP.toJson();
             }
             apiDealRepository.updateApiDealStatusByPid(ApiDealStatus.PAID, id);

@@ -6,9 +6,9 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.bean.bot.Review;
 import tgb.btc.library.service.bean.bot.ReviewService;
 import tgb.btc.rce.annotation.CommandProcessor;
-import tgb.btc.rce.enums.BotVariableType;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.InlineType;
+import tgb.btc.rce.enums.VariableType;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.util.BotVariablePropertiesUtil;
 import tgb.btc.rce.util.KeyboardUtil;
@@ -67,7 +67,7 @@ public class ShareReview extends Processor {
                 String author = "Анонимный отзыв\n\n";
                 Integer amount = DYNAMIC.isCurrent()
                                  ? getRandomAmount(chatId)
-                                 : BotVariablePropertiesUtil.getInt(BotVariableType.REVIEW_PRISE);
+                                 : BotVariablePropertiesUtil.getInt(VariableType.REVIEW_PRISE);
                 if (update.hasMessage()) {
                     reviewService.save(Review.builder()
                             .text(author + UpdateUtil.getMessageText(update))

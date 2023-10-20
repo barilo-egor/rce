@@ -4,8 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.library.constants.strings.FilePaths;
+import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.BotKeyboard;
 import tgb.btc.rce.enums.BotProperties;
 import tgb.btc.rce.enums.Command;
@@ -27,7 +27,7 @@ public class BotVariables extends Processor {
             case 0:
                 responseSender.sendMessage(chatId, "Измените нужные значения и отправьте исправленный файл. " +
                         "Обязательно закройте файл, перед тем как отправлять.", BotKeyboard.REPLY_CANCEL);
-                responseSender.sendFile(chatId, new File(FilePaths.BOT_VARIABLE_PROPERTIES));
+                responseSender.sendFile(chatId, new File(FilePaths.VARIABLE_PROPERTIES));
                 userRepository.nextStep(chatId, Command.BOT_VARIABLES.name());
                 break;
             case 1:
@@ -53,8 +53,8 @@ public class BotVariables extends Processor {
         try {
             FileUtils.delete(BotProperties.BOT_VARIABLE.getFile());
         } catch (IOException e) {
-            log.error("Ошибки при удалении " + FilePaths.BOT_VARIABLE_PROPERTIES, e);
-            responseSender.sendMessage(chatId, "Ошибки при удалении " + FilePaths.BOT_VARIABLE_PROPERTIES + ":"
+            log.error("Ошибки при удалении " + FilePaths.VARIABLE_PROPERTIES, e);
+            responseSender.sendMessage(chatId, "Ошибки при удалении " + FilePaths.VARIABLE_PROPERTIES + ":"
                     + e.getMessage());
             return;
         }
@@ -62,9 +62,9 @@ public class BotVariables extends Processor {
             FileUtils.moveFile(BotProperties.BOT_VARIABLE_BUFFER.getFile(), BotProperties.BOT_VARIABLE.getFile());
         } catch (IOException e) {
             log.error("Ошибки при перемещении файла + " + FilePaths.BOT_VARIABLE_BUFFER_PROPERTIES
-                    + " в " + FilePaths.BOT_VARIABLE_PROPERTIES, e);
+                    + " в " + FilePaths.VARIABLE_PROPERTIES, e);
             responseSender.sendMessage(chatId, "Ошибки при перемещении файла + "
-                    + FilePaths.BOT_VARIABLE_BUFFER_PROPERTIES + " в " + FilePaths.BOT_VARIABLE_PROPERTIES);
+                    + FilePaths.BOT_VARIABLE_BUFFER_PROPERTIES + " в " + FilePaths.VARIABLE_PROPERTIES);
             return;
         }
         BotProperties.BOT_VARIABLE.reload();

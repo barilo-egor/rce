@@ -7,9 +7,9 @@ import tgb.btc.library.constants.enums.bot.FiatCurrency;
 import tgb.btc.library.exception.BaseException;
 import tgb.btc.library.exception.ReadFromUrlException;
 import tgb.btc.rce.enums.BotProperties;
-import tgb.btc.rce.enums.BotVariableType;
 import tgb.btc.rce.enums.CryptoApi;
 import tgb.btc.rce.enums.ManualBTCApi;
+import tgb.btc.rce.enums.VariableType;
 import tgb.btc.rce.util.BotVariablePropertiesUtil;
 
 import java.math.BigDecimal;
@@ -65,7 +65,7 @@ public class CryptoCurrencyService {
             case LITECOIN:
                 return CryptoApi.LTC_USD_BINANCE.getCourse();
             case USDT:
-                return BigDecimal.valueOf(Double.parseDouble(BotVariablePropertiesUtil.getVariable(BotVariableType.USDT_COURSE)));
+                return BigDecimal.valueOf(Double.parseDouble(BotVariablePropertiesUtil.getVariable(VariableType.USDT_COURSE)));
             case MONERO:
                 return CryptoApi.XMR_USD_COINREMITTER.getCourse();
             default:

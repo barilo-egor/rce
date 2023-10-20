@@ -1,11 +1,12 @@
 package tgb.btc.rce.util;
 
 import lombok.extern.slf4j.Slf4j;
-import tgb.btc.rce.enums.*;
 import tgb.btc.library.constants.enums.bot.CryptoCurrency;
 import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
 import tgb.btc.library.exception.BaseException;
+import tgb.btc.rce.enums.BotProperties;
+import tgb.btc.rce.enums.VariableType;
 
 import java.math.BigDecimal;
 import java.util.Objects;
@@ -15,27 +16,27 @@ public class BotVariablePropertiesUtil {
 
     private final static String wrongFormat = "Неверный формат переменной по ключу %s";
 
-    public static String getVariable(BotVariableType botVariableType) {
+    public static String getVariable(VariableType variableType) {
         String text;
         try {
-            text = BotProperties.BOT_VARIABLE.getString(botVariableType.getKey());
+            text = BotProperties.BOT_VARIABLE.getString(variableType.getKey());
         } catch (Exception e) {
-            throw new BaseException("Переменная по ключу " + botVariableType.getKey() + " не найдена.");
+            throw new BaseException("Переменная по ключу " + variableType.getKey() + " не найдена.");
         }
         if (Objects.isNull(text))
-            throw new BaseException("Переменная по ключу " + botVariableType.getKey() + " не найдена.");
+            throw new BaseException("Переменная по ключу " + variableType.getKey() + " не найдена.");
         return text;
     }
 
-    public static String getVariable(BotVariableType botVariableType, FiatCurrency fiatCurrency,
+    public static String getVariable(VariableType variableType, FiatCurrency fiatCurrency,
                                      DealType dealType, CryptoCurrency cryptoCurrency) {
         String text;
-        String key = botVariableType.getKey() + "."
+        String key = variableType.getKey() + "."
                 + fiatCurrency.getCode() + "."
                 + dealType.getKey() + "."
                 + cryptoCurrency.getShortName();
         try {
-            text = BotProperties.BOT_VARIABLE.getString(botVariableType.getKey() + "."
+            text = BotProperties.BOT_VARIABLE.getString(variableType.getKey() + "."
                     + fiatCurrency.getCode() + "."
                     + dealType.getKey() + "."
                     + cryptoCurrency.getShortName());
@@ -43,13 +44,13 @@ public class BotVariablePropertiesUtil {
             throw new BaseException("Переменная по ключу " + key + " не найдена.");
         }
         if (Objects.isNull(text))
-            throw new BaseException("Переменная по ключу " + botVariableType.getKey() + " не найдена.");
+            throw new BaseException("Переменная по ключу " + variableType.getKey() + " не найдена.");
         return text;
     }
 
-    public static String getVariable(BotVariableType botVariableType, DealType dealType, CryptoCurrency cryptoCurrency) {
+    public static String getVariable(VariableType variableType, DealType dealType, CryptoCurrency cryptoCurrency) {
         String text;
-        String key = botVariableType.getKey() + "."
+        String key = variableType.getKey() + "."
                 + dealType.getKey() + "."
                 + cryptoCurrency.getShortName();
         try {
@@ -62,50 +63,50 @@ public class BotVariablePropertiesUtil {
         return text;
     }
 
-    public static BigDecimal getBigDecimal(BotVariableType botVariableType, FiatCurrency fiatCurrency, DealType dealType,
+    public static BigDecimal getBigDecimal(VariableType variableType, FiatCurrency fiatCurrency, DealType dealType,
                                            CryptoCurrency cryptoCurrency) {
-        return BigDecimal.valueOf(Double.parseDouble(getVariable(botVariableType, fiatCurrency, dealType, cryptoCurrency)));
+        return BigDecimal.valueOf(Double.parseDouble(getVariable(variableType, fiatCurrency, dealType, cryptoCurrency)));
     }
 
-    public static BigDecimal getBigDecimal(BotVariableType botVariableType, DealType dealType, CryptoCurrency cryptoCurrency) {
-        return BigDecimal.valueOf(getDouble(botVariableType, dealType, cryptoCurrency));
+    public static BigDecimal getBigDecimal(VariableType variableType, DealType dealType, CryptoCurrency cryptoCurrency) {
+        return BigDecimal.valueOf(getDouble(variableType, dealType, cryptoCurrency));
     }
 
-    public static Double getDouble(BotVariableType botVariableType, DealType dealType, CryptoCurrency cryptoCurrency) {
-        return Double.parseDouble(getVariable(botVariableType, dealType, cryptoCurrency));
+    public static Double getDouble(VariableType variableType, DealType dealType, CryptoCurrency cryptoCurrency) {
+        return Double.parseDouble(getVariable(variableType, dealType, cryptoCurrency));
     }
 
 
-    public static Float getFloat(BotVariableType botVariableType) {
+    public static Float getFloat(VariableType variableType) {
         try {
-            return Float.parseFloat(getVariable(botVariableType));
+            return Float.parseFloat(getVariable(variableType));
         } catch (NumberFormatException e) {
-            throw new BaseException(String.format(wrongFormat, botVariableType.getKey()));
+            throw new BaseException(String.format(wrongFormat, variableType.getKey()));
         }
     }
 
-    public static Double getDouble(BotVariableType botVariableType) {
+    public static Double getDouble(VariableType variableType) {
         try {
-            return Double.parseDouble(getVariable(botVariableType));
+            return Double.parseDouble(getVariable(variableType));
         } catch (NumberFormatException e) {
-            throw new BaseException(String.format(wrongFormat, botVariableType.getKey()));
+            throw new BaseException(String.format(wrongFormat, variableType.getKey()));
         }
     }
 
-    public static Boolean getBoolean(BotVariableType botVariableType) {
-        return Boolean.parseBoolean(getVariable(botVariableType));
+    public static Boolean getBoolean(VariableType variableType) {
+        return Boolean.parseBoolean(getVariable(variableType));
     }
 
-    public static Integer getInt(BotVariableType botVariableType) {
+    public static Integer getInt(VariableType variableType) {
         try {
-            return Integer.parseInt(getVariable(botVariableType));
+            return Integer.parseInt(getVariable(variableType));
         } catch (NumberFormatException e) {
-            throw new BaseException(String.format(wrongFormat, botVariableType.getKey()));
+            throw new BaseException(String.format(wrongFormat, variableType.getKey()));
         }
     }
 
     public static BigDecimal getTransactionCommission(CryptoCurrency cryptoCurrency) {
-        return getBigDecimal(BotVariableType.TRANSACTION_COMMISSION.getKey(cryptoCurrency));
+        return getBigDecimal(VariableType.TRANSACTION_COMMISSION.getKey(cryptoCurrency));
     }
 
     public static BigDecimal getBigDecimal(String key) {
@@ -117,6 +118,6 @@ public class BotVariablePropertiesUtil {
     }
 
     public static String getWallet(CryptoCurrency cryptoCurrency) {
-        return BotProperties.BOT_VARIABLE.getString(BotVariableType.WALLET.getKey(cryptoCurrency));
+        return BotProperties.BOT_VARIABLE.getString(VariableType.WALLET.getKey(cryptoCurrency));
     }
 }

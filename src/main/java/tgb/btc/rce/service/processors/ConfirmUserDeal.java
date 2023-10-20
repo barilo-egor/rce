@@ -16,9 +16,9 @@ import tgb.btc.library.service.bean.bot.PaymentRequisiteService;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.BotProperties;
-import tgb.btc.rce.enums.BotVariableType;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.ReferralType;
+import tgb.btc.rce.enums.VariableType;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.impl.CalculateService;
 import tgb.btc.rce.service.schedule.DealDeleteScheduler;
@@ -104,7 +104,7 @@ public class ConfirmUserDeal extends Processor {
             BigDecimal refUserReferralPercent = userRepository.getReferralPercentByChatId(refUser.getChatId());
             boolean isGeneralReferralPercent = Objects.isNull(refUserReferralPercent) || refUserReferralPercent.compareTo(BigDecimal.ZERO) == 0;
             BigDecimal referralPercent = isGeneralReferralPercent
-                    ? BigDecimal.valueOf(BotVariablePropertiesUtil.getDouble(BotVariableType.REFERRAL_PERCENT))
+                    ? BigDecimal.valueOf(BotVariablePropertiesUtil.getDouble(VariableType.REFERRAL_PERCENT))
                     : refUserReferralPercent;
             BigDecimal sumToAdd = BigDecimalUtil.multiplyHalfUp(deal.getAmount(),
                     calculateService.getPercentsFactor(referralPercent));
@@ -142,7 +142,7 @@ public class ConfirmUserDeal extends Processor {
         responseSender.sendMessage(deal.getUser().getChatId(), message);
 
         if (ReferralType.STANDARD.isCurrent()) {
-            Integer reviewPrise = BotVariablePropertiesUtil.getInt(BotVariableType.REVIEW_PRISE); // TODO уточнить нужно ли 30 выводить или брать число из проперти
+            Integer reviewPrise = BotVariablePropertiesUtil.getInt(VariableType.REVIEW_PRISE); // TODO уточнить нужно ли 30 выводить или брать число из проперти
             String data;
             String amount;
         if (DYNAMIC.isCurrent()) {
@@ -155,7 +155,7 @@ public class ConfirmUserDeal extends Processor {
             else return;
         } else {
             data = Command.SHARE_REVIEW.getText();
-            amount = BotVariablePropertiesUtil.getInt(BotVariableType.REVIEW_PRISE) +"₽";
+            amount = BotVariablePropertiesUtil.getInt(VariableType.REVIEW_PRISE) +"₽";
         }
             responseSender.sendMessage(deal.getUser().getChatId(), "Хотите оставить отзыв?\n" +
                             "За оставленный отзыв вы получите вознаграждение в размере " + amount +
