@@ -35,6 +35,11 @@
                     <artifactId>rce-web</artifactId>
                     <version>1.0-SNAPSHOT</version>
                 </dependency>
+                <dependency>
+                    <groupId>tgb.btc</groupId>
+                    <artifactId>rce-api</artifactId>
+                    <version>1.0-SNAPSHOT</version>
+                </dependency>
             </dependencies>
         </profile>
         <profile>
@@ -60,6 +65,11 @@
                     <groupId>com.github.barilo-egor</groupId>
                     <artifactId>rce-web</artifactId>
                     <version>721440b9fc</version>
+                </dependency>
+                <dependency>
+                    <groupId>com.github.barilo-egor</groupId>
+                    <artifactId>rce-api</artifactId>
+                    <version>d9a71be872</version>
                 </dependency>
             </dependencies>
         </profile>

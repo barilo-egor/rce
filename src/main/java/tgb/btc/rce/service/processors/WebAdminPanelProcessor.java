@@ -5,6 +5,7 @@ import org.apache.commons.lang.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import tgb.btc.api.bot.ITokenTransmitter;
 import tgb.btc.library.bean.web.WebUser;
 import tgb.btc.library.constants.enums.properties.WebProperties;
 import tgb.btc.library.exception.BaseException;
@@ -17,7 +18,6 @@ import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.InlineButton;
-import tgb.btc.rce.web.controller.MainWebController;
 
 import java.util.List;
 import java.util.Objects;
@@ -31,6 +31,13 @@ public class WebAdminPanelProcessor extends Processor {
 
     private WebUserRepository webUserRepository;
 
+    private ITokenTransmitter tokenTransmitter;
+
+    @Autowired
+    public void setTokenTransmitter(ITokenTransmitter tokenTransmitter) {
+        this.tokenTransmitter = tokenTransmitter;
+    }
+
     @Autowired
     public void setWebUserRepository(WebUserRepository webUserRepository) {
         this.webUserRepository = webUserRepository;
@@ -40,7 +47,7 @@ public class WebAdminPanelProcessor extends Processor {
     public void run(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
         String token = RandomStringUtils.randomAlphanumeric(40);
-        MainWebController.AVAILABLE_TOKENS.put(chatId, token);
+        tokenTransmitter.putWebLoginToken(chatId, token);
         WebUser webUser = webUserRepository.getByChatId(chatId);
         String url;
         Optional<Message> optionalMessage;
@@ -75,8 +82,6 @@ public class WebAdminPanelProcessor extends Processor {
             }
             optionalMessage.ifPresent(message -> {
                 responseSender.deleteMessage(message.getChatId(), message.getMessageId());
-                MainWebController.AVAILABLE_TOKENS.remove(message.getChatId());
-                System.out.println();
             });
         });
         thread.start();
