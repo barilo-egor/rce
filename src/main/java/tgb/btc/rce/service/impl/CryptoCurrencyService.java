@@ -4,13 +4,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import tgb.btc.library.constants.enums.bot.CryptoCurrency;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
+import tgb.btc.library.constants.enums.properties.CommonProperties;
 import tgb.btc.library.constants.enums.properties.VariableType;
 import tgb.btc.library.exception.BaseException;
 import tgb.btc.library.exception.ReadFromUrlException;
 import tgb.btc.library.util.properties.VariablePropertiesUtil;
 import tgb.btc.rce.enums.CryptoApi;
 import tgb.btc.rce.enums.ManualBTCApi;
-import tgb.btc.rce.enums.properties.BotProperties;
 
 import java.math.BigDecimal;
 import java.util.Objects;
@@ -24,7 +24,7 @@ public class CryptoCurrencyService {
     private static final boolean IS_BTC_USD_API_MANUAL;
 
     static {
-        String propertyApi = BotProperties.BOT_CONFIG.getString("bot.btc.api");
+        String propertyApi = CommonProperties.CONFIG.getString("bot.btc.api");
         if (Objects.isNull(propertyApi)) {
             CURRENT_BTC_USD_API = getAvailable();
             IS_BTC_USD_API_MANUAL = false;
