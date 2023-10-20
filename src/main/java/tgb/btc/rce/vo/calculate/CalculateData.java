@@ -3,7 +3,7 @@ package tgb.btc.rce.vo.calculate;
 import tgb.btc.library.constants.enums.bot.CryptoCurrency;
 import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
-import tgb.btc.rce.enums.VariableType;
+import tgb.btc.library.constants.enums.properties.VariableType;
 import tgb.btc.rce.util.BotVariablePropertiesUtil;
 
 import java.math.BigDecimal;
