@@ -1,15 +1,8 @@
 package tgb.btc.rce.constants;
 
-import tgb.btc.rce.enums.properties.WebProperties;
-
 public interface BotStringConstants {
 
     String CALLBACK_DATA_SPLITTER = ":";
-
-    String DEAL_INFO = "Заявка на %s №%s\n" + "Дата,время: %s\n" + "Тип оплаты: %s\n" + "Кошелек: %s\n" + "Контакт: %s\n"
-            + "Количество сделок: %s\n" + "ID: %s\n" + "Сумма %s: %s\n" + "Сумма: %s %s";
-
-    String ABSENT = "Отсутствует";
 
     String BUY_OR_SELL = "Покупка или продажа?";
 
@@ -24,6 +17,4 @@ public interface BotStringConstants {
     String USE_REFERRAL_DISCOUNT = "use_discount";
 
     String DONT_USE_REFERRAL_DISCOUNT = "dont_use_discount";
-
-    String MAIN_URL = WebProperties.SERVER.getString("main.url");
 }

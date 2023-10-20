@@ -16,13 +16,13 @@ import tgb.btc.library.constants.enums.web.ApiDealStatus;
 import tgb.btc.library.repository.web.ApiDealRepository;
 import tgb.btc.library.repository.web.ApiUserRepository;
 import tgb.btc.library.util.web.JacksonUtil;
-import tgb.btc.rce.constants.BotStringConstants;
+import tgb.btc.rce.enums.properties.WebProperties;
 import tgb.btc.rce.service.impl.AdminService;
-import tgb.btc.rce.service.impl.ApiDealProcessService;
 import tgb.btc.rce.service.impl.KeyboardService;
 import tgb.btc.rce.web.controller.MainWebController;
 import tgb.btc.web.constant.ControllerMapping;
 import tgb.btc.web.constant.enums.ApiStatusCode;
+import tgb.btc.web.service.process.ApiDealProcessService;
 import tgb.btc.web.util.SuccessResponseUtil;
 import tgb.btc.web.vo.SuccessResponse;
 
@@ -149,7 +149,7 @@ public class ApiController {
     public ObjectNode getUrl() {
         return JacksonUtil.getEmpty()
                 .put("success", true)
-                .put("data", BotStringConstants.MAIN_URL);
+                .put("data", WebProperties.SERVER.getString("main.url"));
     }
 
     @GetMapping("/getFiat")

@@ -7,13 +7,13 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import tgb.btc.library.bean.bot.Deal;
 import tgb.btc.library.bean.bot.User;
 import tgb.btc.library.bean.web.api.ApiDeal;
-import tgb.btc.rce.constants.BotStringConstants;
-import tgb.btc.library.constants.enums.web.ApiDealStatus;
-import tgb.btc.rce.enums.Command;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
+import tgb.btc.library.constants.enums.web.ApiDealStatus;
 import tgb.btc.library.repository.web.ApiDealRepository;
 import tgb.btc.library.service.bean.bot.DealService;
 import tgb.btc.library.service.bean.bot.UserService;
+import tgb.btc.rce.constants.BotStringConstants;
+import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.vo.InlineButton;
 
@@ -24,6 +24,9 @@ import java.util.Objects;
 
 @Service
 public class DealSupportService {
+
+    private static final String DEAL_INFO = "Заявка на %s №%s\n" + "Дата,время: %s\n" + "Тип оплаты: %s\n" + "Кошелек: %s\n" + "Контакт: %s\n"
+            + "Количество сделок: %s\n" + "ID: %s\n" + "Сумма %s: %s\n" + "Сумма: %s %s";
 
     private final DealService dealService;
 
@@ -60,12 +63,12 @@ public class DealSupportService {
         String paymentTypeName = Objects.nonNull(deal.getPaymentType()) ? deal.getPaymentType().getName() : "Не установлен тип оплаты.";
         FiatCurrency fiatCurrency = deal.getFiatCurrency();
         return String.format(
-                BotStringConstants.DEAL_INFO, deal.getDealType().getAccusative(), deal.getPid(),
+                DEAL_INFO, deal.getDealType().getAccusative(), deal.getPid(),
                 deal.getDateTime().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")),
                 paymentTypeName,
                 deal.getWallet(),
                 StringUtils.defaultIfEmpty(userService.getUsernameByChatId(user.getChatId()),
-                                           BotStringConstants.ABSENT),
+                        "Отсутствует"),
                 dealService.getCountPassedByUserChatId(user.getChatId()), user.getChatId(),
                 deal.getCryptoCurrency().getShortName(),
                 deal.getCryptoAmount().setScale(8, RoundingMode.FLOOR).stripTrailingZeros()
