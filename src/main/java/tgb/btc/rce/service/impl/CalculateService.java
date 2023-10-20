@@ -10,9 +10,9 @@ import tgb.btc.library.service.process.PersonalDiscountsCache;
 import tgb.btc.library.util.BigDecimalUtil;
 import tgb.btc.library.util.properties.VariablePropertiesUtil;
 import tgb.btc.library.vo.calculate.CalculateData;
+import tgb.btc.library.vo.calculate.CalculateDataForm;
 import tgb.btc.library.vo.calculate.DealAmount;
 import tgb.btc.rce.util.BulkDiscountUtil;
-import tgb.btc.rce.vo.web.CalculateDataForm;
 
 import java.math.BigDecimal;
 import java.util.Objects;
