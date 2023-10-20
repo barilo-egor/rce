@@ -2,7 +2,6 @@ package tgb.btc.rce.enums;
 
 import lombok.extern.slf4j.Slf4j;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import tgb.btc.library.constants.enums.bot.UpdateType;
 import tgb.btc.library.interfaces.ICommand;
 import tgb.btc.rce.enums.properties.BotProperties;
 
