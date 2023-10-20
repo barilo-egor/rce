@@ -24,6 +24,7 @@ import tgb.btc.library.service.bean.bot.DealService;
 import tgb.btc.library.service.bean.bot.PaymentRequisiteService;
 import tgb.btc.library.service.bean.bot.PaymentTypeService;
 import tgb.btc.library.util.BigDecimalUtil;
+import tgb.btc.library.util.properties.VariablePropertiesUtil;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.*;
 import tgb.btc.rce.service.ICalculatorTypeService;
@@ -267,7 +268,7 @@ public class ExchangeService {
     }
 
     private boolean isLessThanMin(Long chatId, DealType dealType, CryptoCurrency cryptoCurrency, BigDecimal dealCryptoAmount) {
-        BigDecimal minSum = BotVariablePropertiesUtil.getBigDecimal(VariableType.MIN_SUM, dealType, cryptoCurrency);
+        BigDecimal minSum = VariablePropertiesUtil.getBigDecimal(VariableType.MIN_SUM, dealType, cryptoCurrency);
         if (dealCryptoAmount.compareTo(minSum) < 0) {
             responseSender.sendMessage(chatId, "Минимальная сумма " + (DealType.isBuy(dealType)
                     ? "покупки"
@@ -298,7 +299,7 @@ public class ExchangeService {
         Long currentDealPid = userRepository.getCurrentDealByChatId(chatId);
         DealType dealType = dealRepository.getDealTypeByPid(currentDealPid);
         CryptoCurrency cryptoCurrency = dealRepository.getCryptoCurrencyByPid(currentDealPid);
-        BigDecimal minSum = BotVariablePropertiesUtil.getBigDecimal(VariableType.MIN_SUM,
+        BigDecimal minSum = VariablePropertiesUtil.getBigDecimal(VariableType.MIN_SUM,
                 dealType, cryptoCurrency);
         if (dealAmount.getCryptoAmount().compareTo(minSum) < 0) {
             responseSender.sendAnswerInlineQuery(inlineQueryId, "Минимальная сумма " + dealType.getAccusative()
@@ -367,7 +368,7 @@ public class ExchangeService {
         Deal deal = dealRepository.findByPid(userRepository.getCurrentDealByChatId(chatId));
         CryptoCurrency cryptoCurrency = deal.getCryptoCurrency();
         BigDecimal dealAmount = deal.getAmount();
-        BigDecimal promoCodeDiscount = BotVariablePropertiesUtil.getBigDecimal(
+        BigDecimal promoCodeDiscount = VariablePropertiesUtil.getBigDecimal(
                 VariableType.PROMO_CODE_DISCOUNT.getKey());
         BigDecimal discount = BigDecimalUtil.multiplyHalfUp(deal.getCommission(),
                 calculateService.getPercentsFactor(promoCodeDiscount));
@@ -378,7 +379,7 @@ public class ExchangeService {
                 + BigDecimalUtil.roundToPlainString(deal.getCryptoAmount(), cryptoCurrency.getScale()) + "\n\n"
                 + "<b>Сумма перевода</b>: <s>" + BigDecimalUtil.roundToPlainString(dealAmount)
                 + "</s> " + BigDecimalUtil.roundToPlainString(sumWithDiscount) + "\n\n"
-                + "\uD83C\uDFAB У вас есть промокод: <b>" + BotVariablePropertiesUtil.getVariable(
+                + "\uD83C\uDFAB У вас есть промокод: <b>" + VariablePropertiesUtil.getVariable(
                 VariableType.PROMO_CODE_NAME)
                 + "</b>, который даёт скидку в размере " + BigDecimalUtil.roundToPlainString(
                 promoCodeDiscount) + "% от комиссии"
@@ -522,7 +523,7 @@ public class ExchangeService {
 
         String promoCodeText = Boolean.TRUE.equals(deal.getUsedPromo())
                 ? "\n\n<b> Использован скидочный промокод</b>: "
-                        + BotVariablePropertiesUtil.getVariable(VariableType.PROMO_CODE_NAME) + "\n\n"
+                        + VariablePropertiesUtil.getVariable(VariableType.PROMO_CODE_NAME) + "\n\n"
                 : "\n\n";
 
         PaymentType paymentType = deal.getPaymentType();
@@ -553,7 +554,7 @@ public class ExchangeService {
                         + " " + deal.getFiatCurrency().getGenitive() + "</code>" + "\n"
                         + "<b>Резквизиты для оплаты:</b>" + "\n\n"
                         + "<code>" + requisite + "</code>" + "\n\n"
-                        + "<b>⏳Заявка действительна</b>: " + BotVariablePropertiesUtil.getVariable(
+                        + "<b>⏳Заявка действительна</b>: " + VariablePropertiesUtil.getVariable(
                         VariableType.DEAL_ACTIVE_TIME) + " минут" + "\n\n"
                         + "☑️После успешного перевода денег по указанным реквизитам нажмите на кнопку <b>\""
                         + Command.PAID.getText() + "\"</b> или же вы можете отменить данную заявку, нажав на кнопку <b>\""
@@ -573,8 +574,8 @@ public class ExchangeService {
                         + "\uD83D\uDCB5<b>Получаете</b>: <code>" + BigDecimalUtil.roundToPlainString(dealAmount)
                         + " " + deal.getFiatCurrency().getGenitive() + "</code>" + "\n"
                         + "<b>Реквизиты для перевода " + currency.getShortName() + ":</b>" + "\n\n"
-                        + "<code>" + BotVariablePropertiesUtil.getWallet(currency) + "</code>" + "\n\n"
-                        + "⏳<b>Заявка действительна</b>: " + BotVariablePropertiesUtil.getVariable(
+                        + "<code>" + VariablePropertiesUtil.getWallet(currency) + "</code>" + "\n\n"
+                        + "⏳<b>Заявка действительна</b>: " + VariablePropertiesUtil.getVariable(
                         VariableType.DEAL_ACTIVE_TIME) + " минут" + "\n\n"
                         + "☑️После успешного перевода денег по указанному кошельку нажмите на кнопку <b>\""
                         + Command.PAID.getText() + "\"</b> или же вы можете отменить данную заявку, нажав на кнопку <b>\""
@@ -609,13 +610,13 @@ public class ExchangeService {
         log.info("rank=" + rank.getPercent());
         log.info("cryptoAmount=" + BigDecimalUtil.roundToPlainString(deal.getCryptoAmount()));
         log.info("currencyShortName=" + currency.getShortName());
-        log.info("currencyWallet=" + BotVariablePropertiesUtil.getWallet(currency));
-        log.info("dealActiveTime=" + BotVariablePropertiesUtil.getVariable(VariableType.DEAL_ACTIVE_TIME));
+        log.info("currencyWallet=" + VariablePropertiesUtil.getWallet(currency));
+        log.info("dealActiveTime=" + VariablePropertiesUtil.getVariable(VariableType.DEAL_ACTIVE_TIME));
         return MessagePropertiesUtil.getMessage("deal.build.sell", deal.getPid(), BigDecimalUtil.roundToPlainString(deal.getAmount()), deal.getFiatCurrency().getCode(), deal.getPaymentType().getName(),
                 deal.getWallet(), rank.getSmile(), rank.getPercent(),
                 BigDecimalUtil.roundToPlainString(deal.getCryptoAmount()), currency.getShortName(), currency.getShortName(),
-                BotVariablePropertiesUtil.getWallet(currency),
-                BotVariablePropertiesUtil.getVariable(VariableType.DEAL_ACTIVE_TIME));
+                VariablePropertiesUtil.getWallet(currency),
+                VariablePropertiesUtil.getVariable(VariableType.DEAL_ACTIVE_TIME));
     }
 
     public String getBuyMessage(Deal deal, Rank rank, String requisite) {
@@ -627,7 +628,7 @@ public class ExchangeService {
                 CryptoCurrenciesDesignUtil.getDisplayName(currency),
                 deal.getWallet(), rank.getSmile(), rank.getPercent() + "%",
                 BigDecimalUtil.roundToPlainString(deal.getAmount()), deal.getFiatCurrency().getGenitive(), requisite,
-                BotVariablePropertiesUtil.getVariable(VariableType.DEAL_ACTIVE_TIME));
+                VariablePropertiesUtil.getVariable(VariableType.DEAL_ACTIVE_TIME));
     }
 
     public Boolean isPaid(Update update) {

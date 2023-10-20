@@ -8,7 +8,7 @@ import tgb.btc.library.constants.enums.bot.FiatCurrency;
 import tgb.btc.library.constants.enums.properties.VariableType;
 import tgb.btc.library.service.process.PersonalDiscountsCache;
 import tgb.btc.library.util.BigDecimalUtil;
-import tgb.btc.rce.util.BotVariablePropertiesUtil;
+import tgb.btc.library.util.properties.VariablePropertiesUtil;
 import tgb.btc.rce.util.BulkDiscountUtil;
 import tgb.btc.rce.vo.calculate.CalculateData;
 import tgb.btc.rce.vo.calculate.DealAmount;
@@ -89,7 +89,7 @@ public class CalculateService {
 
     private boolean isEnteredInCrypto(CryptoCurrency cryptoCurrency, BigDecimal enteredAmount) {
         return !CryptoCurrency.BITCOIN.equals(cryptoCurrency)
-                || enteredAmount.compareTo(BotVariablePropertiesUtil.getBigDecimal(VariableType.DEAL_BTC_MAX_ENTERED_SUM.getKey())) < 0;
+                || enteredAmount.compareTo(VariablePropertiesUtil.getBigDecimal(VariableType.DEAL_BTC_MAX_ENTERED_SUM.getKey())) < 0;
     }
 
     private void calculateCryptoAmount(DealAmount dealAmount, CalculateData calculateData, FiatCurrency fiatCurrency) {

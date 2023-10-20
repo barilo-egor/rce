@@ -11,9 +11,9 @@ import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
 import tgb.btc.library.constants.enums.properties.CommonProperties;
 import tgb.btc.library.constants.enums.properties.VariableType;
+import tgb.btc.library.util.properties.VariablePropertiesUtil;
 import tgb.btc.rce.service.impl.CalculateService;
 import tgb.btc.rce.service.impl.CryptoCurrencyService;
-import tgb.btc.rce.util.BotVariablePropertiesUtil;
 import tgb.btc.rce.util.FiatCurrencyUtil;
 import tgb.btc.rce.vo.calculate.DealAmount;
 import tgb.btc.rce.vo.web.CalculateDataForm;
@@ -70,7 +70,7 @@ public class SettingsController {
                     cryptoCurrency.put("displayName", cryptoCurrencyEnum.name());
                     cryptoCurrency.put("name", cryptoCurrencyEnum.name());
                     cryptoCurrency.put("value",
-                            BotVariablePropertiesUtil.getBigDecimal(VariableType.USD_COURSE, fiatCurrencyEnum, dealTypeEnum, cryptoCurrencyEnum));
+                            VariablePropertiesUtil.getBigDecimal(VariableType.USD_COURSE, fiatCurrencyEnum, dealTypeEnum, cryptoCurrencyEnum));
                     cryptoCurrencies.add(cryptoCurrency);
                 }
                 dealType.set("cryptoCurrencies", cryptoCurrencies);

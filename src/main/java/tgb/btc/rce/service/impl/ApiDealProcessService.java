@@ -13,8 +13,8 @@ import tgb.btc.library.constants.enums.web.ApiDealStatus;
 import tgb.btc.library.repository.web.ApiDealRepository;
 import tgb.btc.library.repository.web.ApiUserRepository;
 import tgb.btc.library.util.BigDecimalUtil;
+import tgb.btc.library.util.properties.VariablePropertiesUtil;
 import tgb.btc.library.util.web.JacksonUtil;
-import tgb.btc.rce.util.BotVariablePropertiesUtil;
 import tgb.btc.rce.vo.calculate.DealAmount;
 import tgb.btc.rce.vo.web.CalculateDataForm;
 import tgb.btc.web.constant.enums.ApiStatusCode;
@@ -77,7 +77,7 @@ public class ApiDealProcessService {
         if (Objects.nonNull(apiDealVO.getAmount())) builder.amount(apiDealVO.getAmount());
         else builder.cryptoAmount(apiDealVO.getCryptoAmount());
         ApiDeal apiDeal = create(apiDealVO, apiUser, calculateService.calculate(builder.build()));
-        BigDecimal minSum = BotVariablePropertiesUtil.getBigDecimal(VariableType.MIN_SUM, dealType, cryptoCurrency);
+        BigDecimal minSum = VariablePropertiesUtil.getBigDecimal(VariableType.MIN_SUM, dealType, cryptoCurrency);
         if (apiDeal.getCryptoAmount().compareTo(minSum) < 0)
             return ApiResponseUtil.build(ApiStatusCode.MIN_SUM,
                     JacksonUtil.getEmpty().put("minSum", BigDecimalUtil.roundToPlainString(minSum, 8)));

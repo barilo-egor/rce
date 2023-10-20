@@ -12,9 +12,9 @@ import tgb.btc.library.repository.bot.DealRepository;
 import tgb.btc.library.repository.bot.UserDiscountRepository;
 import tgb.btc.library.repository.bot.UserRepository;
 import tgb.btc.library.util.BigDecimalUtil;
+import tgb.btc.library.util.properties.VariablePropertiesUtil;
 import tgb.btc.rce.enums.Rank;
 import tgb.btc.rce.enums.ReferralType;
-import tgb.btc.rce.util.BotVariablePropertiesUtil;
 
 import java.math.BigDecimal;
 
@@ -89,7 +89,7 @@ public class UserDiscountProcessService {
     public BigDecimal applyRank(Rank rank, Deal deal) {
         BigDecimal newAmount = deal.getAmount();
         boolean isRankDiscountOn = BooleanUtils.isTrue(
-                BotVariablePropertiesUtil.getBoolean(VariableType.DEAL_RANK_DISCOUNT_ENABLE))
+                VariablePropertiesUtil.getBoolean(VariableType.DEAL_RANK_DISCOUNT_ENABLE))
                 && BooleanUtils.isNotFalse(userDiscountRepository.getRankDiscountByUserChatId(
                         dealRepository.getUserChatIdByDealPid(deal.getPid())));
         if (!Rank.FIRST.equals(rank) && isRankDiscountOn) {
