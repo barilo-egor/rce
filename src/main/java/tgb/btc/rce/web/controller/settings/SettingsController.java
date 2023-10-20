@@ -114,12 +114,12 @@ public class SettingsController {
     @ResponseBody
     public ObjectNode saveUsdCourses(@RequestBody List<CourseVO> courses) {
         for (CourseVO courseVO : courses) {
-            BotProperties.BOT_VARIABLE.setProperty(VariableType.USD_COURSE.getKey() + "."
+            BotProperties.VARIABLE.setProperty(VariableType.USD_COURSE.getKey() + "."
                     + courseVO.getFiatCurrency().getCode() + "."
                     + courseVO.getDealType().getKey() + "."
                     + courseVO.getCryptoCurrency().getShortName(), courseVO.getValue());
         }
-        BotProperties.BOT_VARIABLE.reload();
+        BotProperties.VARIABLE.reload();
         return null;
     }
 }

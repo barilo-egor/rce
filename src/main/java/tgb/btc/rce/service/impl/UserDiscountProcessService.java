@@ -70,8 +70,8 @@ public class UserDiscountProcessService {
                     dealAmount = dealAmount.subtract(BigDecimal.valueOf(referralBalance));
                 else dealAmount = BigDecimal.ZERO;
             } else {
-                if (BotProperties.BOT_VARIABLE.isNotBlank("course.rub.byn")) {
-                    BigDecimal bynReferralBalance = BigDecimal.valueOf(referralBalance).multiply(BotProperties.BOT_VARIABLE.getBigDecimal("course.rub.byn"));
+                if (BotProperties.VARIABLE.isNotBlank("course.rub.byn")) {
+                    BigDecimal bynReferralBalance = BigDecimal.valueOf(referralBalance).multiply(BotProperties.VARIABLE.getBigDecimal("course.rub.byn"));
                     if (bynReferralBalance.compareTo(dealAmount) < 1)
                         dealAmount = dealAmount.subtract(bynReferralBalance);
                     else dealAmount = BigDecimal.ZERO;

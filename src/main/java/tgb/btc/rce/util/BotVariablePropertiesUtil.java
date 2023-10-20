@@ -19,7 +19,7 @@ public class BotVariablePropertiesUtil {
     public static String getVariable(VariableType variableType) {
         String text;
         try {
-            text = BotProperties.BOT_VARIABLE.getString(variableType.getKey());
+            text = BotProperties.VARIABLE.getString(variableType.getKey());
         } catch (Exception e) {
             throw new BaseException("Переменная по ключу " + variableType.getKey() + " не найдена.");
         }
@@ -36,7 +36,7 @@ public class BotVariablePropertiesUtil {
                 + dealType.getKey() + "."
                 + cryptoCurrency.getShortName();
         try {
-            text = BotProperties.BOT_VARIABLE.getString(variableType.getKey() + "."
+            text = BotProperties.VARIABLE.getString(variableType.getKey() + "."
                     + fiatCurrency.getCode() + "."
                     + dealType.getKey() + "."
                     + cryptoCurrency.getShortName());
@@ -54,7 +54,7 @@ public class BotVariablePropertiesUtil {
                 + dealType.getKey() + "."
                 + cryptoCurrency.getShortName();
         try {
-            text = BotProperties.BOT_VARIABLE.getString(key);
+            text = BotProperties.VARIABLE.getString(key);
         } catch (Exception e) {
             throw new BaseException("Переменная по ключу " + key + " не найдена.");
         }
@@ -110,14 +110,14 @@ public class BotVariablePropertiesUtil {
     }
 
     public static BigDecimal getBigDecimal(String key) {
-        return BotProperties.BOT_VARIABLE.getBigDecimal(key);
+        return BotProperties.VARIABLE.getBigDecimal(key);
     }
 
     public static Double getDouble(String key) {
-        return BotProperties.BOT_VARIABLE.getDouble(key);
+        return BotProperties.VARIABLE.getDouble(key);
     }
 
     public static String getWallet(CryptoCurrency cryptoCurrency) {
-        return BotProperties.BOT_VARIABLE.getString(VariableType.WALLET.getKey(cryptoCurrency));
+        return BotProperties.VARIABLE.getString(VariableType.WALLET.getKey(cryptoCurrency));
     }
 }

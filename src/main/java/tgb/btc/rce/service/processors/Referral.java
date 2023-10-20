@@ -3,9 +3,9 @@ package tgb.btc.rce.service.processors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.bean.bot.ReferralUser;
+import tgb.btc.library.repository.bot.DealRepository;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.*;
-import tgb.btc.library.repository.bot.DealRepository;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.util.BigDecimalUtil;
 import tgb.btc.rce.util.KeyboardUtil;
@@ -44,8 +44,8 @@ public class Referral extends Processor {
         String resultMessage;
         String referralMessageFewFiat = MessagePropertiesUtil.getMessage("referral.main.few.fiat");
         if (Objects.nonNull(referralMessageFewFiat)) {
-            String refBalanceString = BotProperties.BOT_VARIABLE.isNotBlank("course.rub.byn")
-                    ? BigDecimalUtil.roundToPlainString(referralBalance.multiply(BotProperties.BOT_VARIABLE.getBigDecimal("course.rub.byn")), 2)
+            String refBalanceString = BotProperties.VARIABLE.isNotBlank("course.rub.byn")
+                    ? BigDecimalUtil.roundToPlainString(referralBalance.multiply(BotProperties.VARIABLE.getBigDecimal("course.rub.byn")), 2)
                     : BigDecimalUtil.roundToPlainString(referralBalance);
             resultMessage = String.format(referralMessageFewFiat,
                     refLink, currentBalance, refBalanceString,

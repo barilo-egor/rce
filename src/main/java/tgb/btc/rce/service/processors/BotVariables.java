@@ -51,7 +51,7 @@ public class BotVariables extends Processor {
             return;
         }
         try {
-            FileUtils.delete(BotProperties.BOT_VARIABLE.getFile());
+            FileUtils.delete(BotProperties.VARIABLE.getFile());
         } catch (IOException e) {
             log.error("Ошибки при удалении " + FilePaths.VARIABLE_PROPERTIES, e);
             responseSender.sendMessage(chatId, "Ошибки при удалении " + FilePaths.VARIABLE_PROPERTIES + ":"
@@ -59,7 +59,7 @@ public class BotVariables extends Processor {
             return;
         }
         try {
-            FileUtils.moveFile(BotProperties.BOT_VARIABLE_BUFFER.getFile(), BotProperties.BOT_VARIABLE.getFile());
+            FileUtils.moveFile(BotProperties.VARIABLE_BUFFER.getFile(), BotProperties.VARIABLE.getFile());
         } catch (IOException e) {
             log.error("Ошибки при перемещении файла + " + FilePaths.VARIABLE_BUFFER_PROPERTIES
                     + " в " + FilePaths.VARIABLE_PROPERTIES, e);
@@ -67,7 +67,7 @@ public class BotVariables extends Processor {
                     + FilePaths.VARIABLE_BUFFER_PROPERTIES + " в " + FilePaths.VARIABLE_PROPERTIES);
             return;
         }
-        BotProperties.BOT_VARIABLE.reload();
+        BotProperties.VARIABLE.reload();
         responseSender.sendMessage(chatId, "Переменные обновлены.");
     }
 }

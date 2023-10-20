@@ -28,7 +28,7 @@ public enum BotKeyboard {
     OPERATOR(KeyboardUtil.buildInline(List.of(
             InlineButton.builder()
                     .text("Связь с оператором")
-                    .data(BotProperties.BOT_VARIABLE.getString(VariableType.OPERATOR_LINK.getKey()))
+                    .data(BotProperties.VARIABLE.getString(VariableType.OPERATOR_LINK.getKey()))
                     .inlineType(InlineType.URL)
                     .build()
     ))),

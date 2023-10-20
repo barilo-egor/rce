@@ -36,7 +36,7 @@ public class TurningRankDiscount extends Processor {
             responseSender.sendMessage(chatId, newValue ? "Скидка включена." : "Скидка выключена.");
             responseSender.deleteMessage(chatId, update.getCallbackQuery().getMessage().getMessageId());
             processToAdminMainPanel(chatId);
-            BotProperties.BOT_VARIABLE.reload();
+            BotProperties.VARIABLE.reload();
         } catch (ConfigurationException e) {
             responseSender.sendMessage(chatId, "Ошибки при включении/выключении ранговой скидки: " + e.getMessage() + "\n"
                     + ExceptionUtils.getFullStackTrace(e));

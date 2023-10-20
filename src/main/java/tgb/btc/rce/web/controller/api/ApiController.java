@@ -103,7 +103,7 @@ public class ApiController {
         } else {
             ApiDeal apiDeal = apiDealRepository.getByPid(id);
             LocalDateTime now = LocalDateTime.now();
-            if (now.minusMinutes(BotProperties.BOT_VARIABLE.getLong(VariableType.DEAL_ACTIVE_TIME.getKey(), 15L)).isAfter(apiDeal.getDateTime())) {
+            if (now.minusMinutes(BotProperties.VARIABLE.getLong(VariableType.DEAL_ACTIVE_TIME.getKey(), 15L)).isAfter(apiDeal.getDateTime())) {
                 return ApiStatusCode.PAYMENT_TIME_IS_UP.toJson();
             }
             apiDealRepository.updateApiDealStatusByPid(ApiDealStatus.PAID, id);

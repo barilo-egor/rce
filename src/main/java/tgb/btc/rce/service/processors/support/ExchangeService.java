@@ -684,8 +684,8 @@ public class ExchangeService {
             message = "\uD83E\uDD11У вас есть " + referralBalance + "₽ на реферальном балансе. Использовать их в качестве скидки?";
         } else {
             BigDecimal refBalance = BigDecimal.valueOf(referralBalance);
-            if (BotProperties.BOT_VARIABLE.isNotBlank("course.rub.byn")) {
-                refBalance = BigDecimal.valueOf(referralBalance).multiply(BotProperties.BOT_VARIABLE.getBigDecimal("course.rub.byn"));
+            if (BotProperties.VARIABLE.isNotBlank("course.rub.byn")) {
+                refBalance = BigDecimal.valueOf(referralBalance).multiply(BotProperties.VARIABLE.getBigDecimal("course.rub.byn"));
             }
             if (refBalance.compareTo(dealAmount) < 1) {
                 sumWithDiscount = dealAmount.subtract(refBalance);
