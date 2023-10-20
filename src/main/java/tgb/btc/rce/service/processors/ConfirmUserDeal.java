@@ -14,6 +14,7 @@ import tgb.btc.library.constants.enums.properties.CommonProperties;
 import tgb.btc.library.exception.BaseException;
 import tgb.btc.library.service.bean.bot.DealService;
 import tgb.btc.library.service.bean.bot.PaymentRequisiteService;
+import tgb.btc.library.util.BigDecimalUtil;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;

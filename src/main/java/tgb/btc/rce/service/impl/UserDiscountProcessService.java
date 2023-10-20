@@ -10,10 +10,10 @@ import tgb.btc.library.constants.enums.properties.CommonProperties;
 import tgb.btc.library.repository.bot.DealRepository;
 import tgb.btc.library.repository.bot.UserDiscountRepository;
 import tgb.btc.library.repository.bot.UserRepository;
+import tgb.btc.library.util.BigDecimalUtil;
 import tgb.btc.rce.enums.Rank;
 import tgb.btc.rce.enums.ReferralType;
 import tgb.btc.rce.enums.VariableType;
-import tgb.btc.rce.util.BigDecimalUtil;
 import tgb.btc.rce.util.BotVariablePropertiesUtil;
 
 import java.math.BigDecimal;
