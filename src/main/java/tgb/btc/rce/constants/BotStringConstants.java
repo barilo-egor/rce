@@ -1,6 +1,6 @@
 package tgb.btc.rce.constants;
 
-import tgb.btc.rce.enums.WebProperties;
+import tgb.btc.rce.enums.properties.WebProperties;
 
 public interface BotStringConstants {
 

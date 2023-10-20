@@ -6,10 +6,10 @@ import tgb.btc.library.constants.enums.bot.CryptoCurrency;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
 import tgb.btc.library.exception.BaseException;
 import tgb.btc.library.exception.ReadFromUrlException;
-import tgb.btc.rce.enums.BotProperties;
 import tgb.btc.rce.enums.CryptoApi;
 import tgb.btc.rce.enums.ManualBTCApi;
 import tgb.btc.rce.enums.VariableType;
+import tgb.btc.rce.enums.properties.BotProperties;
 import tgb.btc.rce.util.BotVariablePropertiesUtil;
 
 import java.math.BigDecimal;

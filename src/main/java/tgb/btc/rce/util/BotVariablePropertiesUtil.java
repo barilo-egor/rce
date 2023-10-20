@@ -5,8 +5,8 @@ import tgb.btc.library.constants.enums.bot.CryptoCurrency;
 import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
 import tgb.btc.library.exception.BaseException;
-import tgb.btc.rce.enums.BotProperties;
 import tgb.btc.rce.enums.VariableType;
+import tgb.btc.rce.enums.properties.CommonProperties;
 
 import java.math.BigDecimal;
 import java.util.Objects;
@@ -19,7 +19,7 @@ public class BotVariablePropertiesUtil {
     public static String getVariable(VariableType variableType) {
         String text;
         try {
-            text = BotProperties.VARIABLE.getString(variableType.getKey());
+            text = CommonProperties.VARIABLE.getString(variableType.getKey());
         } catch (Exception e) {
             throw new BaseException("Переменная по ключу " + variableType.getKey() + " не найдена.");
         }
@@ -36,7 +36,7 @@ public class BotVariablePropertiesUtil {
                 + dealType.getKey() + "."
                 + cryptoCurrency.getShortName();
         try {
-            text = BotProperties.VARIABLE.getString(variableType.getKey() + "."
+            text = CommonProperties.VARIABLE.getString(variableType.getKey() + "."
                     + fiatCurrency.getCode() + "."
                     + dealType.getKey() + "."
                     + cryptoCurrency.getShortName());
@@ -54,7 +54,7 @@ public class BotVariablePropertiesUtil {
                 + dealType.getKey() + "."
                 + cryptoCurrency.getShortName();
         try {
-            text = BotProperties.VARIABLE.getString(key);
+            text = CommonProperties.VARIABLE.getString(key);
         } catch (Exception e) {
             throw new BaseException("Переменная по ключу " + key + " не найдена.");
         }
@@ -110,14 +110,14 @@ public class BotVariablePropertiesUtil {
     }
 
     public static BigDecimal getBigDecimal(String key) {
-        return BotProperties.VARIABLE.getBigDecimal(key);
+        return CommonProperties.VARIABLE.getBigDecimal(key);
     }
 
     public static Double getDouble(String key) {
-        return BotProperties.VARIABLE.getDouble(key);
+        return CommonProperties.VARIABLE.getDouble(key);
     }
 
     public static String getWallet(CryptoCurrency cryptoCurrency) {
-        return BotProperties.VARIABLE.getString(VariableType.WALLET.getKey(cryptoCurrency));
+        return CommonProperties.VARIABLE.getString(VariableType.WALLET.getKey(cryptoCurrency));
     }
 }

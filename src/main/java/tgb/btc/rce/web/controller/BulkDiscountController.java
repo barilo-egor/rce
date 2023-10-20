@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
 import tgb.btc.library.exception.PropertyValueNotFoundException;
-import tgb.btc.rce.enums.BotProperties;
+import tgb.btc.rce.enums.properties.CommonProperties;
 import tgb.btc.rce.service.impl.BulkDiscountService;
 import tgb.btc.rce.util.FiatCurrencyUtil;
 import tgb.btc.rce.vo.BulkDiscount;
@@ -68,9 +68,9 @@ public class BulkDiscountController {
         if (Objects.nonNull(oldSum) && !oldSum.equals(bulkDiscount.getSum())) {
             String oldKey = String.join(".", new String[]{bulkDiscount.getFiatCurrency().getCode(),
                     bulkDiscount.getDealType().getKey(), String.valueOf(oldSum)});
-            BotProperties.BULK_DISCOUNT.clearProperty(oldKey);
+            CommonProperties.BULK_DISCOUNT.clearProperty(oldKey);
         }
-        BotProperties.BULK_DISCOUNT.setProperty(key, String.valueOf(bulkDiscount.getPercent()));
+        CommonProperties.BULK_DISCOUNT.setProperty(key, String.valueOf(bulkDiscount.getPercent()));
         reload();
         ObjectMapper objectMapper = new ObjectMapper();
         ObjectNode result = objectMapper.createObjectNode();
@@ -84,7 +84,7 @@ public class BulkDiscountController {
             @RequestBody BulkDiscount bulkDiscount) {
         String key = String.join(".", new String[]{bulkDiscount.getFiatCurrency().getCode(),
                 bulkDiscount.getDealType().getKey(), String.valueOf(bulkDiscount.getSum())});
-        BotProperties.BULK_DISCOUNT.clearProperty(key);
+        CommonProperties.BULK_DISCOUNT.clearProperty(key);
         reload();
         ObjectMapper objectMapper = new ObjectMapper();
         ObjectNode result = objectMapper.createObjectNode();
@@ -94,7 +94,7 @@ public class BulkDiscountController {
 
     public void reload() {
         BulkDiscountService.BULK_DISCOUNTS.clear();
-        for (String key : BotProperties.BULK_DISCOUNT.getKeys()) {
+        for (String key : CommonProperties.BULK_DISCOUNT.getKeys()) {
             int sum;
             if (StringUtils.isBlank(key)) {
                 throw new PropertyValueNotFoundException("Не указано название для одного из ключей" + key + ".");
@@ -104,7 +104,7 @@ public class BulkDiscountController {
             } catch (NumberFormatException e) {
                 throw new PropertyValueNotFoundException("Не корректное название для ключа " + key + ".");
             }
-            String value =  BotProperties.BULK_DISCOUNT.getString(key);
+            String value =  CommonProperties.BULK_DISCOUNT.getString(key);
             if (StringUtils.isBlank(value)) {
                 throw new PropertyValueNotFoundException("Не указано значение для ключа " + key + ".");
             }

@@ -5,7 +5,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import tgb.btc.rce.conditional.AntispamCondition;
-import tgb.btc.rce.enums.BotProperties;
+import tgb.btc.rce.enums.properties.BotProperties;
 
 import java.util.ArrayList;
 import java.util.List;

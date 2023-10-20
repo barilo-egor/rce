@@ -9,10 +9,10 @@ import tgb.btc.library.constants.enums.bot.FiatCurrency;
 import tgb.btc.library.repository.bot.DealRepository;
 import tgb.btc.library.repository.bot.UserDiscountRepository;
 import tgb.btc.library.repository.bot.UserRepository;
-import tgb.btc.rce.enums.BotProperties;
 import tgb.btc.rce.enums.Rank;
 import tgb.btc.rce.enums.ReferralType;
 import tgb.btc.rce.enums.VariableType;
+import tgb.btc.rce.enums.properties.CommonProperties;
 import tgb.btc.rce.util.BigDecimalUtil;
 import tgb.btc.rce.util.BotVariablePropertiesUtil;
 
@@ -70,8 +70,8 @@ public class UserDiscountProcessService {
                     dealAmount = dealAmount.subtract(BigDecimal.valueOf(referralBalance));
                 else dealAmount = BigDecimal.ZERO;
             } else {
-                if (BotProperties.VARIABLE.isNotBlank("course.rub.byn")) {
-                    BigDecimal bynReferralBalance = BigDecimal.valueOf(referralBalance).multiply(BotProperties.VARIABLE.getBigDecimal("course.rub.byn"));
+                if (CommonProperties.VARIABLE.isNotBlank("course.rub.byn")) {
+                    BigDecimal bynReferralBalance = BigDecimal.valueOf(referralBalance).multiply(CommonProperties.VARIABLE.getBigDecimal("course.rub.byn"));
                     if (bynReferralBalance.compareTo(dealAmount) < 1)
                         dealAmount = dealAmount.subtract(bynReferralBalance);
                     else dealAmount = BigDecimal.ZERO;

@@ -1,5 +1,6 @@
 package tgb.btc.rce.enums;
 
+import tgb.btc.rce.enums.properties.BotProperties;
 import tgb.btc.rce.service.Module;
 
 public enum AntiSpamType implements Module {

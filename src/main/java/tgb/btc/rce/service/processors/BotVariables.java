@@ -7,8 +7,8 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import tgb.btc.library.constants.strings.FilePaths;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.BotKeyboard;
-import tgb.btc.rce.enums.BotProperties;
 import tgb.btc.rce.enums.Command;
+import tgb.btc.rce.enums.properties.CommonProperties;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.util.UpdateUtil;
 
@@ -51,7 +51,7 @@ public class BotVariables extends Processor {
             return;
         }
         try {
-            FileUtils.delete(BotProperties.VARIABLE.getFile());
+            FileUtils.delete(CommonProperties.VARIABLE.getFile());
         } catch (IOException e) {
             log.error("Ошибки при удалении " + FilePaths.VARIABLE_PROPERTIES, e);
             responseSender.sendMessage(chatId, "Ошибки при удалении " + FilePaths.VARIABLE_PROPERTIES + ":"
@@ -59,7 +59,7 @@ public class BotVariables extends Processor {
             return;
         }
         try {
-            FileUtils.moveFile(BotProperties.VARIABLE_BUFFER.getFile(), BotProperties.VARIABLE.getFile());
+            FileUtils.moveFile(CommonProperties.VARIABLE_BUFFER.getFile(), CommonProperties.VARIABLE.getFile());
         } catch (IOException e) {
             log.error("Ошибки при перемещении файла + " + FilePaths.VARIABLE_BUFFER_PROPERTIES
                     + " в " + FilePaths.VARIABLE_PROPERTIES, e);
@@ -67,7 +67,7 @@ public class BotVariables extends Processor {
                     + FilePaths.VARIABLE_BUFFER_PROPERTIES + " в " + FilePaths.VARIABLE_PROPERTIES);
             return;
         }
-        BotProperties.VARIABLE.reload();
+        CommonProperties.VARIABLE.reload();
         responseSender.sendMessage(chatId, "Переменные обновлены.");
     }
 }

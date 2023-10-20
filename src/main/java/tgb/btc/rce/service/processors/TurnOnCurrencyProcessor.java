@@ -2,12 +2,12 @@ package tgb.btc.rce.service.processors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import tgb.btc.rce.annotation.CommandProcessor;
-import tgb.btc.rce.constants.BotStringConstants;
-import tgb.btc.rce.enums.BotProperties;
-import tgb.btc.rce.enums.Command;
 import tgb.btc.library.constants.enums.bot.CryptoCurrency;
 import tgb.btc.library.constants.enums.bot.DealType;
+import tgb.btc.rce.annotation.CommandProcessor;
+import tgb.btc.rce.constants.BotStringConstants;
+import tgb.btc.rce.enums.Command;
+import tgb.btc.rce.enums.properties.CommonProperties;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.util.TurningCurrenciesUtil;
 import tgb.btc.rce.util.UpdateUtil;
@@ -30,10 +30,10 @@ public class TurnOnCurrencyProcessor extends Processor {
 
         if (DealType.BUY.equals(dealType)) {
             TurningCurrenciesUtil.BUY_TURNING.put(currency, true);
-            BotProperties.TURNING_CURRENCIES.setProperty("buy." + currency.name(), true);
+            CommonProperties.TURNING_CURRENCIES.setProperty("buy." + currency.name(), true);
         } else {
             TurningCurrenciesUtil.SELL_TURNING.put(currency, true);
-            BotProperties.TURNING_CURRENCIES.setProperty("sell." + currency.name(), true);
+            CommonProperties.TURNING_CURRENCIES.setProperty("sell." + currency.name(), true);
         }
         responseSender.deleteMessage(UpdateUtil.getChatId(update), update.getCallbackQuery().getMessage().getMessageId());
         turningCurrencyProcessor.run(update);

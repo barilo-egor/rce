@@ -1,4 +1,4 @@
-package tgb.btc.rce.enums;
+package tgb.btc.rce.enums.properties;
 
 import tgb.btc.library.constants.strings.FilePaths;
 import tgb.btc.library.util.system.PropertiesReader;

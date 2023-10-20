@@ -2,9 +2,9 @@ package tgb.btc.rce.util;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import tgb.btc.rce.enums.BotProperties;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
 import tgb.btc.library.exception.BaseException;
+import tgb.btc.rce.enums.properties.BotProperties;
 
 import java.util.ArrayList;
 import java.util.Arrays;

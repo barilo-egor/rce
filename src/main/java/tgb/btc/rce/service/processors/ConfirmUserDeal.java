@@ -15,10 +15,10 @@ import tgb.btc.library.service.bean.bot.DealService;
 import tgb.btc.library.service.bean.bot.PaymentRequisiteService;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.constants.BotStringConstants;
-import tgb.btc.rce.enums.BotProperties;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.ReferralType;
 import tgb.btc.rce.enums.VariableType;
+import tgb.btc.rce.enums.properties.CommonProperties;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.impl.CalculateService;
 import tgb.btc.rce.service.schedule.DealDeleteScheduler;
@@ -73,8 +73,8 @@ public class ConfirmUserDeal extends Processor {
             BigDecimal referralBalance = BigDecimal.valueOf(user.getReferralBalance());
             BigDecimal sumWithDiscount;
             if (ReferralType.STANDARD.isCurrent() && FiatCurrency.BYN.equals(deal.getFiatCurrency())
-                    && BotProperties.VARIABLE.isNotBlank("course.rub.byn")) {
-                referralBalance = referralBalance.multiply(BotProperties.VARIABLE.getBigDecimal("course.rub.byn"));
+                    && CommonProperties.VARIABLE.isNotBlank("course.rub.byn")) {
+                referralBalance = referralBalance.multiply(CommonProperties.VARIABLE.getBigDecimal("course.rub.byn"));
             }
             if (referralBalance.compareTo(deal.getOriginalPrice()) < 1) {
                 sumWithDiscount = deal.getOriginalPrice().subtract(referralBalance);
@@ -83,8 +83,8 @@ public class ConfirmUserDeal extends Processor {
                 sumWithDiscount = BigDecimal.ZERO;
                 referralBalance = referralBalance.subtract(deal.getOriginalPrice()).setScale(0, RoundingMode.HALF_UP);
                 if (ReferralType.STANDARD.isCurrent() && FiatCurrency.BYN.equals(deal.getFiatCurrency())
-                        && BotProperties.VARIABLE.isNotBlank("course.byn.rub")) {
-                    referralBalance = referralBalance.divide(BotProperties.VARIABLE.getBigDecimal("course.byn.rub"), RoundingMode.HALF_UP);
+                        && CommonProperties.VARIABLE.isNotBlank("course.byn.rub")) {
+                    referralBalance = referralBalance.divide(CommonProperties.VARIABLE.getBigDecimal("course.byn.rub"), RoundingMode.HALF_UP);
                 }
             }
             user.setReferralBalance(referralBalance.intValue());
@@ -109,8 +109,8 @@ public class ConfirmUserDeal extends Processor {
             BigDecimal sumToAdd = BigDecimalUtil.multiplyHalfUp(deal.getAmount(),
                     calculateService.getPercentsFactor(referralPercent));
             if (ReferralType.STANDARD.isCurrent() && FiatCurrency.BYN.equals(deal.getFiatCurrency())
-                    && BotProperties.VARIABLE.isNotBlank("course.byn.rub")) {
-                sumToAdd = sumToAdd.divide(BotProperties.VARIABLE.getBigDecimal("course.byn.rub"), RoundingMode.HALF_UP);
+                    && CommonProperties.VARIABLE.isNotBlank("course.byn.rub")) {
+                sumToAdd = sumToAdd.divide(CommonProperties.VARIABLE.getBigDecimal("course.byn.rub"), RoundingMode.HALF_UP);
             }
             Integer total = refUser.getReferralBalance() + sumToAdd.intValue();
             userService.updateReferralBalanceByChatId(total, refUser.getChatId());

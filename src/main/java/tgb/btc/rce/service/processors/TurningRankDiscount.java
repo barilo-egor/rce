@@ -7,9 +7,9 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.constants.strings.FilePaths;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.constants.BotStringConstants;
-import tgb.btc.rce.enums.BotProperties;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.VariableType;
+import tgb.btc.rce.enums.properties.CommonProperties;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.util.UpdateUtil;
 
@@ -36,7 +36,7 @@ public class TurningRankDiscount extends Processor {
             responseSender.sendMessage(chatId, newValue ? "Скидка включена." : "Скидка выключена.");
             responseSender.deleteMessage(chatId, update.getCallbackQuery().getMessage().getMessageId());
             processToAdminMainPanel(chatId);
-            BotProperties.VARIABLE.reload();
+            CommonProperties.VARIABLE.reload();
         } catch (ConfigurationException e) {
             responseSender.sendMessage(chatId, "Ошибки при включении/выключении ранговой скидки: " + e.getMessage() + "\n"
                     + ExceptionUtils.getFullStackTrace(e));

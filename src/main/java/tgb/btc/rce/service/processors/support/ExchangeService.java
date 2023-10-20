@@ -23,6 +23,7 @@ import tgb.btc.library.service.bean.bot.PaymentRequisiteService;
 import tgb.btc.library.service.bean.bot.PaymentTypeService;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.*;
+import tgb.btc.rce.enums.properties.CommonProperties;
 import tgb.btc.rce.service.ICalculatorTypeService;
 import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.impl.*;
@@ -684,8 +685,8 @@ public class ExchangeService {
             message = "\uD83E\uDD11У вас есть " + referralBalance + "₽ на реферальном балансе. Использовать их в качестве скидки?";
         } else {
             BigDecimal refBalance = BigDecimal.valueOf(referralBalance);
-            if (BotProperties.VARIABLE.isNotBlank("course.rub.byn")) {
-                refBalance = BigDecimal.valueOf(referralBalance).multiply(BotProperties.VARIABLE.getBigDecimal("course.rub.byn"));
+            if (CommonProperties.VARIABLE.isNotBlank("course.rub.byn")) {
+                refBalance = BigDecimal.valueOf(referralBalance).multiply(CommonProperties.VARIABLE.getBigDecimal("course.rub.byn"));
             }
             if (refBalance.compareTo(dealAmount) < 1) {
                 sumWithDiscount = dealAmount.subtract(refBalance);
