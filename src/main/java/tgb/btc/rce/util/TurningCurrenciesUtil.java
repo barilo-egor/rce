@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.BooleanUtils;
 import tgb.btc.library.constants.enums.bot.CryptoCurrency;
 import tgb.btc.library.constants.enums.bot.DealType;
-import tgb.btc.rce.enums.properties.CommonProperties;
+import tgb.btc.library.constants.enums.properties.CommonProperties;
 
 import java.util.Arrays;
 import java.util.HashMap;
