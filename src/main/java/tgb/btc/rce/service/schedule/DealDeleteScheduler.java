@@ -5,12 +5,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import tgb.btc.rce.enums.BotVariableType;
+import tgb.btc.library.constants.enums.properties.VariableType;
 import tgb.btc.library.repository.bot.DealRepository;
-import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.library.service.bean.bot.UserService;
+import tgb.btc.library.util.properties.VariablePropertiesUtil;
+import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.processors.Start;
-import tgb.btc.rce.util.BotVariablePropertiesUtil;
 import tgb.btc.rce.util.MessagePropertiesUtil;
 
 import javax.annotation.PostConstruct;
@@ -75,7 +75,7 @@ public class DealDeleteScheduler {
     @Async
     public void deleteOverdueDeals() {
         if (NEW_CRYPTO_DEALS_PIDS.isEmpty()) return;
-        Integer dealActiveTime = BotVariablePropertiesUtil.getInt(BotVariableType.DEAL_ACTIVE_TIME);
+        Integer dealActiveTime = VariablePropertiesUtil.getInt(VariableType.DEAL_ACTIVE_TIME);
         Map<Long, Integer> bufferDealsPids = new HashMap<>(NEW_CRYPTO_DEALS_PIDS);
         for (Map.Entry<Long, Integer> dealData : bufferDealsPids.entrySet()) {
             Long dealPid = dealData.getKey();

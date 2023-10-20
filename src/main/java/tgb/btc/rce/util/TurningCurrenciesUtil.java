@@ -2,9 +2,9 @@ package tgb.btc.rce.util;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.BooleanUtils;
-import tgb.btc.rce.enums.BotProperties;
 import tgb.btc.library.constants.enums.bot.CryptoCurrency;
 import tgb.btc.library.constants.enums.bot.DealType;
+import tgb.btc.library.constants.enums.properties.CommonProperties;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -19,8 +19,8 @@ public class TurningCurrenciesUtil {
 
     static {
             for (CryptoCurrency currency : CryptoCurrency.values()) {
-                BUY_TURNING.put(currency, BotProperties.TURNING_CURRENCIES.getBoolean("buy." + currency.name()));
-                SELL_TURNING.put(currency, BotProperties.TURNING_CURRENCIES.getBoolean("sell." + currency.name()));
+                BUY_TURNING.put(currency, CommonProperties.TURNING_CURRENCIES.getBoolean("buy." + currency.name()));
+                SELL_TURNING.put(currency, CommonProperties.TURNING_CURRENCIES.getBoolean("sell." + currency.name()));
             }
     }
 

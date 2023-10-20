@@ -6,14 +6,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.bean.web.WebUser;
+import tgb.btc.library.constants.enums.properties.WebProperties;
+import tgb.btc.library.exception.BaseException;
+import tgb.btc.library.repository.web.WebUserRepository;
 import tgb.btc.rce.annotation.CommandProcessor;
-import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.InlineType;
 import tgb.btc.rce.enums.MessageProperties;
-import tgb.btc.rce.enums.WebProperties;
-import tgb.btc.library.exception.BaseException;
-import tgb.btc.library.repository.web.WebUserRepository;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.UpdateUtil;
@@ -46,7 +45,7 @@ public class WebAdminPanelProcessor extends Processor {
         String url;
         Optional<Message> optionalMessage;
         if (Objects.nonNull(webUser)) {
-            url = BotStringConstants.MAIN_URL + "/web/main?username=" + webUser.getUsername()
+            url = WebProperties.SERVER.getString("main.url") + "/web/main?username=" + webUser.getUsername()
                     + "&token=" + token + "&chatId=" + chatId;
             optionalMessage = responseSender.sendMessage(chatId, "Веб админ-панель. Доступ для автоматической авторизации открыт на " + AUTH_TIME + " секунд.",
                     KeyboardUtil.buildInline(List.of(InlineButton.builder()
@@ -55,7 +54,7 @@ public class WebAdminPanelProcessor extends Processor {
                             .inlineType(InlineType.WEB_APP)
                             .build())));
         } else {
-            url = BotStringConstants.MAIN_URL + "/web/registration?chatId=" + chatId;
+            url = WebProperties.SERVER.getString("main.url") + "/web/registration?chatId=" + chatId;
             responseSender.sendMessage(chatId, MessageProperties.INFO_MESSAGE.getString("web.user.not.found"),
                     KeyboardUtil.buildInline(List.of(InlineButton.builder()
                             .text("Зарегистрироваться")

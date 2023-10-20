@@ -5,22 +5,23 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-import tgb.btc.rce.annotation.CommandProcessor;
-import tgb.btc.library.constants.strings.FilePaths;
-import tgb.btc.rce.enums.BotProperties;
-import tgb.btc.rce.enums.Command;
 import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
+import tgb.btc.library.constants.enums.properties.CommonProperties;
+import tgb.btc.library.constants.strings.FilePaths;
 import tgb.btc.library.exception.PropertyValueNotFoundException;
+import tgb.btc.library.vo.BulkDiscount;
+import tgb.btc.rce.annotation.CommandProcessor;
+import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.util.UpdateUtil;
-import tgb.btc.rce.vo.BulkDiscount;
 
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Comparator;
 
-import static tgb.btc.rce.service.impl.BulkDiscountService.BULK_DISCOUNTS;
+import static tgb.btc.library.util.BulkDiscountUtil.BULK_DISCOUNTS;
+
 
 @CommandProcessor(command = Command.BULK_DISCOUNTS, step = 1)
 @Slf4j
@@ -47,7 +48,7 @@ public class UpdateBulkDiscounts extends Processor { // TODO удалить
             return;
         }
         try {
-            FileUtils.delete(BotProperties.BULK_DISCOUNT.getFile());
+            FileUtils.delete(CommonProperties.BULK_DISCOUNT.getFile());
         } catch (IOException e) {
             log.error("Ошибки при удалении " + FilePaths.BULK_DISCOUNT_PROPERTIES, e);
             responseSender.sendMessage(chatId, "Ошибки при удалении " + FilePaths.BULK_DISCOUNT_PROPERTIES + ":"
@@ -55,7 +56,7 @@ public class UpdateBulkDiscounts extends Processor { // TODO удалить
             return;
         }
         try {
-            FileUtils.moveFile(BotProperties.BULK_DISCOUNT_BUFFER.getFile(), BotProperties.BULK_DISCOUNT.getFile());
+            FileUtils.moveFile(CommonProperties.BULK_DISCOUNT_BUFFER.getFile(), CommonProperties.BULK_DISCOUNT.getFile());
         } catch (IOException e) {
             log.error("Ошибки при перемещении файла + " + FilePaths.BULK_DISCOUNT_BUFFER_PROPERTIES
                     + " в " + FilePaths.BULK_DISCOUNT_PROPERTIES, e);
@@ -63,9 +64,9 @@ public class UpdateBulkDiscounts extends Processor { // TODO удалить
                     + FilePaths.BULK_DISCOUNT_BUFFER_PROPERTIES + " в " + FilePaths.BULK_DISCOUNT_PROPERTIES);
             return;
         }
-        BotProperties.BULK_DISCOUNT.reload();
+        CommonProperties.BULK_DISCOUNT.reload();
         BULK_DISCOUNTS.clear();
-        for (String key : BotProperties.BULK_DISCOUNT.getKeys()) {
+        for (String key : CommonProperties.BULK_DISCOUNT.getKeys()) {
             int sum;
             if (StringUtils.isBlank(key)) {
                 throw new PropertyValueNotFoundException("Не указано название для одного из ключей" + key + ".");
@@ -75,7 +76,7 @@ public class UpdateBulkDiscounts extends Processor { // TODO удалить
             } catch (NumberFormatException e) {
                 throw new PropertyValueNotFoundException("Не корректное название для ключа " + key + ".");
             }
-            String value =  BotProperties.BULK_DISCOUNT.getString(key);
+            String value =  CommonProperties.BULK_DISCOUNT.getString(key);
             if (StringUtils.isBlank(value)) {
                 throw new PropertyValueNotFoundException("Не указано значение для ключа " + key + ".");
             }

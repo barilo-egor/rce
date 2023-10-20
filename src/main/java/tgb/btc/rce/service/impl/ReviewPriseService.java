@@ -1,9 +1,9 @@
 package tgb.btc.rce.service.impl;
 
 import org.apache.commons.lang.StringUtils;
-import tgb.btc.rce.enums.BotProperties;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
 import tgb.btc.library.exception.PropertyValueNotFoundException;
+import tgb.btc.rce.enums.properties.BotProperties;
 import tgb.btc.rce.service.IPropertyService;
 import tgb.btc.rce.vo.ReviewPrise;
 

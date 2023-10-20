@@ -4,7 +4,7 @@ import org.springframework.context.annotation.Condition;
 import org.springframework.context.annotation.ConditionContext;
 import org.springframework.core.type.AnnotatedTypeMetadata;
 import tgb.btc.rce.enums.AntiSpamType;
-import tgb.btc.rce.enums.BotProperties;
+import tgb.btc.rce.enums.properties.BotProperties;
 
 public class AntispamCondition implements Condition {
     @Override

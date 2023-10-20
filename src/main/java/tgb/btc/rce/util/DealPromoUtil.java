@@ -1,7 +1,7 @@
 package tgb.btc.rce.util;
 
-import tgb.btc.rce.enums.BotProperties;
 import tgb.btc.rce.enums.FirstDealPromoType;
+import tgb.btc.rce.enums.properties.BotProperties;
 
 public final class DealPromoUtil {
     private DealPromoUtil() {

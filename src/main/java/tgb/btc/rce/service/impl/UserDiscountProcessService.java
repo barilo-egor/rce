@@ -6,15 +6,16 @@ import org.springframework.stereotype.Service;
 import tgb.btc.library.bean.bot.Deal;
 import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
+import tgb.btc.library.constants.enums.properties.CommonProperties;
+import tgb.btc.library.constants.enums.properties.VariableType;
 import tgb.btc.library.repository.bot.DealRepository;
 import tgb.btc.library.repository.bot.UserDiscountRepository;
-import tgb.btc.rce.enums.BotProperties;
-import tgb.btc.rce.enums.BotVariableType;
+import tgb.btc.library.repository.bot.UserRepository;
+import tgb.btc.library.service.process.CalculateService;
+import tgb.btc.library.util.BigDecimalUtil;
+import tgb.btc.library.util.properties.VariablePropertiesUtil;
 import tgb.btc.rce.enums.Rank;
 import tgb.btc.rce.enums.ReferralType;
-import tgb.btc.library.repository.bot.UserRepository;
-import tgb.btc.rce.util.BigDecimalUtil;
-import tgb.btc.rce.util.BotVariablePropertiesUtil;
 
 import java.math.BigDecimal;
 
@@ -70,8 +71,8 @@ public class UserDiscountProcessService {
                     dealAmount = dealAmount.subtract(BigDecimal.valueOf(referralBalance));
                 else dealAmount = BigDecimal.ZERO;
             } else {
-                if (BotProperties.BOT_VARIABLE.isNotBlank("course.rub.byn")) {
-                    BigDecimal bynReferralBalance = BigDecimal.valueOf(referralBalance).multiply(BotProperties.BOT_VARIABLE.getBigDecimal("course.rub.byn"));
+                if (CommonProperties.VARIABLE.isNotBlank("course.rub.byn")) {
+                    BigDecimal bynReferralBalance = BigDecimal.valueOf(referralBalance).multiply(CommonProperties.VARIABLE.getBigDecimal("course.rub.byn"));
                     if (bynReferralBalance.compareTo(dealAmount) < 1)
                         dealAmount = dealAmount.subtract(bynReferralBalance);
                     else dealAmount = BigDecimal.ZERO;
@@ -89,7 +90,7 @@ public class UserDiscountProcessService {
     public BigDecimal applyRank(Rank rank, Deal deal) {
         BigDecimal newAmount = deal.getAmount();
         boolean isRankDiscountOn = BooleanUtils.isTrue(
-                BotVariablePropertiesUtil.getBoolean(BotVariableType.DEAL_RANK_DISCOUNT_ENABLE))
+                VariablePropertiesUtil.getBoolean(VariableType.DEAL_RANK_DISCOUNT_ENABLE))
                 && BooleanUtils.isNotFalse(userDiscountRepository.getRankDiscountByUserChatId(
                         dealRepository.getUserChatIdByDealPid(deal.getPid())));
         if (!Rank.FIRST.equals(rank) && isRankDiscountOn) {

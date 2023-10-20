@@ -2,15 +2,15 @@ package tgb.btc.rce.service.processors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import tgb.btc.rce.annotation.CommandProcessor;
-import tgb.btc.rce.enums.BotVariableType;
-import tgb.btc.rce.enums.Command;
 import tgb.btc.library.constants.enums.bot.DealStatus;
+import tgb.btc.library.constants.enums.properties.VariableType;
 import tgb.btc.library.repository.bot.DealRepository;
-import tgb.btc.rce.service.Processor;
 import tgb.btc.library.service.bean.bot.DealService;
+import tgb.btc.library.util.properties.VariablePropertiesUtil;
+import tgb.btc.rce.annotation.CommandProcessor;
+import tgb.btc.rce.enums.Command;
+import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.util.BotImageUtil;
-import tgb.btc.rce.util.BotVariablePropertiesUtil;
 import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.InlineButton;
@@ -59,7 +59,7 @@ public class UserAdditionalVerification extends Processor {
             responseSender.sendMessage(chatId, "Ты отказался от верификации. " +
                     "Дальнейшая связь через оператора.", KeyboardUtil.buildInline(List.of(
                     InlineButton.builder()
-                            .data(BotVariablePropertiesUtil.getVariable(BotVariableType.OPERATOR_LINK))
+                            .data(VariablePropertiesUtil.getVariable(VariableType.OPERATOR_LINK))
                             .text("Написать оператору")
                             .build()
             )));

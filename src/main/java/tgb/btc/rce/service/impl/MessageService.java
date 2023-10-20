@@ -6,12 +6,12 @@ import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import tgb.btc.library.constants.enums.bot.DealType;
+import tgb.btc.library.service.bean.bot.UserService;
+import tgb.btc.library.vo.calculate.DealAmount;
 import tgb.btc.rce.enums.PropertiesMessage;
 import tgb.btc.rce.service.IResponseSender;
-import tgb.btc.library.service.bean.bot.UserService;
 import tgb.btc.rce.util.MessagePropertiesUtil;
 import tgb.btc.rce.vo.InlineCalculatorVO;
-import tgb.btc.rce.vo.calculate.DealAmount;
 
 import java.util.Objects;
 

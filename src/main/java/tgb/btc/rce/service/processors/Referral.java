@@ -3,11 +3,16 @@ package tgb.btc.rce.service.processors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.bean.bot.ReferralUser;
-import tgb.btc.rce.annotation.CommandProcessor;
-import tgb.btc.rce.enums.*;
+import tgb.btc.library.constants.enums.properties.CommonProperties;
 import tgb.btc.library.repository.bot.DealRepository;
+import tgb.btc.library.util.BigDecimalUtil;
+import tgb.btc.rce.annotation.CommandProcessor;
+import tgb.btc.rce.enums.Command;
+import tgb.btc.rce.enums.InlineType;
+import tgb.btc.rce.enums.PropertiesMessage;
+import tgb.btc.rce.enums.Rank;
+import tgb.btc.rce.enums.properties.BotProperties;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.util.BigDecimalUtil;
 import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.MessagePropertiesUtil;
 import tgb.btc.rce.util.UpdateUtil;
@@ -44,8 +49,8 @@ public class Referral extends Processor {
         String resultMessage;
         String referralMessageFewFiat = MessagePropertiesUtil.getMessage("referral.main.few.fiat");
         if (Objects.nonNull(referralMessageFewFiat)) {
-            String refBalanceString = BotProperties.BOT_VARIABLE.isNotBlank("course.rub.byn")
-                    ? BigDecimalUtil.roundToPlainString(referralBalance.multiply(BotProperties.BOT_VARIABLE.getBigDecimal("course.rub.byn")), 2)
+            String refBalanceString = CommonProperties.VARIABLE.isNotBlank("course.rub.byn")
+                    ? BigDecimalUtil.roundToPlainString(referralBalance.multiply(CommonProperties.VARIABLE.getBigDecimal("course.rub.byn")), 2)
                     : BigDecimalUtil.roundToPlainString(referralBalance);
             resultMessage = String.format(referralMessageFewFiat,
                     refLink, currentBalance, refBalanceString,
