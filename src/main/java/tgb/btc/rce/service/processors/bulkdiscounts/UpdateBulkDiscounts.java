@@ -20,7 +20,8 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.Comparator;
 
-import static tgb.btc.rce.service.impl.BulkDiscountService.BULK_DISCOUNTS;
+import static tgb.btc.rce.util.BulkDiscountUtil.BULK_DISCOUNTS;
+
 
 @CommandProcessor(command = Command.BULK_DISCOUNTS, step = 1)
 @Slf4j

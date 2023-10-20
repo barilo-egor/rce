@@ -10,7 +10,6 @@ import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
 import tgb.btc.library.constants.enums.properties.CommonProperties;
 import tgb.btc.library.exception.PropertyValueNotFoundException;
-import tgb.btc.rce.service.impl.BulkDiscountService;
 import tgb.btc.rce.util.FiatCurrencyUtil;
 import tgb.btc.rce.vo.BulkDiscount;
 import tgb.btc.web.constant.ControllerMapping;
@@ -19,6 +18,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Objects;
 import java.util.stream.Collectors;
+
+import static tgb.btc.rce.util.BulkDiscountUtil.BULK_DISCOUNTS;
 
 @Controller
 @RequestMapping(ControllerMapping.BULK_DISCOUNTS)
@@ -38,7 +39,7 @@ public class BulkDiscountController {
                 dealType.put("name", dealTypeEnum.name());
                 dealType.put("displayName", StringUtils.capitalize(dealTypeEnum.getNominative()));
                 ArrayNode bulkDiscounts = objectMapper.createArrayNode();
-                for (BulkDiscount bulkDiscountVo : BulkDiscountService.BULK_DISCOUNTS.stream()
+                for (BulkDiscount bulkDiscountVo : BULK_DISCOUNTS.stream()
                         .filter(bulkDiscount -> bulkDiscount.getFiatCurrency().equals(fiatCurrencyEnum))
                         .filter(bulkDiscount -> bulkDiscount.getDealType().equals(dealTypeEnum))
                         .collect(Collectors.toList())) {
@@ -93,7 +94,7 @@ public class BulkDiscountController {
     }
 
     public void reload() {
-        BulkDiscountService.BULK_DISCOUNTS.clear();
+        BULK_DISCOUNTS.clear();
         for (String key : CommonProperties.BULK_DISCOUNT.getKeys()) {
             int sum;
             if (StringUtils.isBlank(key)) {
@@ -114,15 +115,15 @@ public class BulkDiscountController {
             } catch (NumberFormatException e) {
                 throw new PropertyValueNotFoundException("Не корректное значение для ключа " + key + ".");
             }
-            BulkDiscountService.BULK_DISCOUNTS.add(BulkDiscount.builder()
+            BULK_DISCOUNTS.add(BulkDiscount.builder()
                     .percent(percent)
                     .sum(sum)
                     .fiatCurrency(FiatCurrency.getByCode(key.split("\\.")[0]))
                     .dealType(DealType.findByKey((key.split("\\.")[1])))
                     .build());
         }
-        BulkDiscountService.BULK_DISCOUNTS.sort(Comparator.comparingInt(BulkDiscount::getSum));
-        Collections.reverse(BulkDiscountService.BULK_DISCOUNTS);
+        BULK_DISCOUNTS.sort(Comparator.comparingInt(BulkDiscount::getSum));
+        Collections.reverse(BULK_DISCOUNTS);
     }
 
 }
