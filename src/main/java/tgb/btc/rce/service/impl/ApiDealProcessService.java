@@ -15,7 +15,7 @@ import tgb.btc.library.repository.web.ApiUserRepository;
 import tgb.btc.library.util.BigDecimalUtil;
 import tgb.btc.library.util.properties.VariablePropertiesUtil;
 import tgb.btc.library.util.web.JacksonUtil;
-import tgb.btc.rce.vo.calculate.DealAmount;
+import tgb.btc.library.vo.calculate.DealAmount;
 import tgb.btc.rce.vo.web.CalculateDataForm;
 import tgb.btc.web.constant.enums.ApiStatusCode;
 import tgb.btc.web.util.ApiResponseUtil;

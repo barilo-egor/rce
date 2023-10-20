@@ -25,6 +25,7 @@ import tgb.btc.library.service.bean.bot.PaymentRequisiteService;
 import tgb.btc.library.service.bean.bot.PaymentTypeService;
 import tgb.btc.library.util.BigDecimalUtil;
 import tgb.btc.library.util.properties.VariablePropertiesUtil;
+import tgb.btc.library.vo.calculate.DealAmount;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.*;
 import tgb.btc.rce.service.ICalculatorTypeService;
@@ -34,7 +35,6 @@ import tgb.btc.rce.service.schedule.DealDeleteScheduler;
 import tgb.btc.rce.util.*;
 import tgb.btc.rce.vo.CalculatorQuery;
 import tgb.btc.rce.vo.InlineButton;
-import tgb.btc.rce.vo.calculate.DealAmount;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
