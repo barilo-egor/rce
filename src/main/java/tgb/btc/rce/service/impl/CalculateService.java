@@ -2,11 +2,11 @@ package tgb.btc.rce.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import tgb.btc.rce.enums.BotVariableType;
+import tgb.btc.library.constants.enums.bot.CryptoCurrency;
 import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
-import tgb.btc.library.constants.enums.bot.CryptoCurrency;
-import tgb.btc.rce.service.processors.support.PersonalDiscountsCache;
+import tgb.btc.library.service.process.PersonalDiscountsCache;
+import tgb.btc.rce.enums.BotVariableType;
 import tgb.btc.rce.util.BigDecimalUtil;
 import tgb.btc.rce.util.BotVariablePropertiesUtil;
 import tgb.btc.rce.util.BulkDiscountUtil;
