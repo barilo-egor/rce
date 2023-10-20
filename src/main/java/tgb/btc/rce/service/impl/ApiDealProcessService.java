@@ -12,6 +12,8 @@ import tgb.btc.library.constants.enums.properties.VariableType;
 import tgb.btc.library.constants.enums.web.ApiDealStatus;
 import tgb.btc.library.repository.web.ApiDealRepository;
 import tgb.btc.library.repository.web.ApiUserRepository;
+import tgb.btc.library.service.process.CalculateService;
+import tgb.btc.library.service.process.CryptoCurrencyService;
 import tgb.btc.library.util.BigDecimalUtil;
 import tgb.btc.library.util.properties.VariablePropertiesUtil;
 import tgb.btc.library.util.web.JacksonUtil;

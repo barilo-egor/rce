@@ -23,6 +23,7 @@ import tgb.btc.library.repository.bot.UserRepository;
 import tgb.btc.library.service.bean.bot.DealService;
 import tgb.btc.library.service.bean.bot.PaymentRequisiteService;
 import tgb.btc.library.service.bean.bot.PaymentTypeService;
+import tgb.btc.library.service.process.CalculateService;
 import tgb.btc.library.util.BigDecimalUtil;
 import tgb.btc.library.util.properties.VariablePropertiesUtil;
 import tgb.btc.library.vo.calculate.DealAmount;
