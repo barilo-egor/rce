@@ -10,7 +10,6 @@ import tgb.btc.library.repository.bot.DealRepository;
 import tgb.btc.library.service.bean.bot.UserService;
 import tgb.btc.library.util.properties.VariablePropertiesUtil;
 import tgb.btc.rce.service.IResponseSender;
-import tgb.btc.rce.service.processors.Start;
 import tgb.btc.rce.util.MessagePropertiesUtil;
 
 import javax.annotation.PostConstruct;
@@ -31,8 +30,6 @@ public class DealDeleteScheduler {
 
     private UserService userService;
 
-    private Start start;
-
     @PostConstruct
     public void post() {
         log.info("Автоматическое удаление недействительных заявок загружено в контекст.");
@@ -51,11 +48,6 @@ public class DealDeleteScheduler {
     @Autowired
     public void setResponseSender(IResponseSender responseSender) {
         this.responseSender = responseSender;
-    }
-
-    @Autowired
-    public void setStart(Start start) {
-        this.start = start;
     }
 
     public static void addNewCryptoDeal(Long pid, Integer messageId) {
@@ -86,7 +78,6 @@ public class DealDeleteScheduler {
                 userService.updateCurrentDealByChatId(null, chatId);
                 if (Objects.nonNull(dealData.getValue())) responseSender.deleteMessage(chatId, dealData.getValue());
                 responseSender.sendMessage(chatId, String.format(MessagePropertiesUtil.getMessage("deal.deleted.auto"), dealActiveTime));
-                start.run(chatId);
                 deleteCryptoDeal(dealPid);
                 log.debug("Автоматически удалена заявка №" + dealPid + " по истечению " + dealActiveTime + " минут.");
             }

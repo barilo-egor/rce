@@ -3,6 +3,7 @@ package tgb.btc.rce.service.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tgb.btc.library.repository.bot.UserRepository;
+import tgb.btc.library.service.process.BannedUserCache;
 
 @Service
 public class BanningUserService {
