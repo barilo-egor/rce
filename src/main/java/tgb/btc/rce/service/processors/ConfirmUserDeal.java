@@ -67,8 +67,9 @@ public class ConfirmUserDeal extends Processor {
     @Transactional
     public void run(Update update) {
         if (!update.hasCallbackQuery()) return;
-        Deal deal = dealService.getByPid(Long.parseLong(
-                update.getCallbackQuery().getData().split(BotStringConstants.CALLBACK_DATA_SPLITTER)[1]));
+        Long dealPid = Long.parseLong(
+                update.getCallbackQuery().getData().split(BotStringConstants.CALLBACK_DATA_SPLITTER)[1]);
+        Deal deal = dealService.getByPid(dealPid);
         User user = deal.getUser();
 
         deal.setActive(false);
@@ -147,7 +148,6 @@ public class ConfirmUserDeal extends Processor {
         responseSender.sendMessage(deal.getUser().getChatId(), message);
 
         if (ReferralType.STANDARD.isCurrent()) {
-            Integer reviewPrise = VariablePropertiesUtil.getInt(VariableType.REVIEW_PRISE); // TODO уточнить нужно ли 30 выводить или брать число из проперти
             String data;
             String amount;
         if (DYNAMIC.isCurrent()) {

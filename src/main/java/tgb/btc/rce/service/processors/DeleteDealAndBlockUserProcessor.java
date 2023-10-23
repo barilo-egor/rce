@@ -34,7 +34,6 @@ public class DeleteDealAndBlockUserProcessor extends Processor {
         Long dealPid = Long.parseLong(
                 update.getCallbackQuery().getData().split(BotStringConstants.CALLBACK_DATA_SPLITTER)[1]);
         dealService.deleteDeal(dealPid, true);
-        DealDeleteScheduler.deleteCryptoDeal(dealPid);
         responseSender.sendMessage(chatId, "Заявка №" + dealPid + " удалена.");
         responseSender.deleteMessage(chatId, update.getCallbackQuery().getMessage().getMessageId());
         start.run(dealService.getUserChatIdByDealPid(dealPid));
