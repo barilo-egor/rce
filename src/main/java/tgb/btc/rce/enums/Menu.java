@@ -1,5 +1,8 @@
 package tgb.btc.rce.enums;
 
+
+import tgb.btc.library.constants.enums.ReferralType;
+
 import java.util.List;
 
 public enum Menu {

@@ -4,6 +4,7 @@ import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tgb.btc.library.bean.bot.Deal;
+import tgb.btc.library.constants.enums.ReferralType;
 import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
 import tgb.btc.library.constants.enums.properties.CommonProperties;
@@ -15,7 +16,6 @@ import tgb.btc.library.service.process.CalculateService;
 import tgb.btc.library.util.BigDecimalUtil;
 import tgb.btc.library.util.properties.VariablePropertiesUtil;
 import tgb.btc.rce.enums.Rank;
-import tgb.btc.rce.enums.ReferralType;
 
 import java.math.BigDecimal;
 

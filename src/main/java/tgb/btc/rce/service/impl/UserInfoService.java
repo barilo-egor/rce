@@ -10,7 +10,7 @@ import tgb.btc.library.repository.bot.LotteryWinRepository;
 import tgb.btc.library.repository.bot.SpamBanRepository;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.PropertiesMessage;
-import tgb.btc.rce.enums.ReferralType;
+import tgb.btc.library.constants.enums.ReferralType;
 import tgb.btc.library.repository.bot.UserRepository;
 import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.util.CallbackQueryUtil;

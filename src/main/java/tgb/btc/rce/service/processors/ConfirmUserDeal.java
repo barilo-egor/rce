@@ -22,7 +22,7 @@ import tgb.btc.library.util.properties.VariablePropertiesUtil;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
-import tgb.btc.rce.enums.ReferralType;
+import tgb.btc.library.constants.enums.ReferralType;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.util.CallbackQueryUtil;
 import tgb.btc.rce.util.KeyboardUtil;

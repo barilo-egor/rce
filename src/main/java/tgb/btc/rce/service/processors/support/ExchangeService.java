@@ -11,6 +11,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import tgb.btc.library.bean.bot.Deal;
 import tgb.btc.library.bean.bot.PaymentReceipt;
 import tgb.btc.library.bean.bot.PaymentType;
+import tgb.btc.library.constants.enums.ReferralType;
 import tgb.btc.library.constants.enums.bot.*;
 import tgb.btc.library.constants.enums.properties.CommonProperties;
 import tgb.btc.library.constants.enums.properties.VariableType;

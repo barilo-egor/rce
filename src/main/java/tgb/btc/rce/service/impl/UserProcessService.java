@@ -13,7 +13,7 @@ import tgb.btc.library.repository.bot.UserDiscountRepository;
 import tgb.btc.library.repository.bot.UserRepository;
 import tgb.btc.library.service.bean.bot.ReferralUserService;
 import tgb.btc.rce.enums.Command;
-import tgb.btc.rce.enums.ReferralType;
+import tgb.btc.library.constants.enums.ReferralType;
 import tgb.btc.rce.util.CommandUtil;
 import tgb.btc.rce.util.UpdateUtil;
 
