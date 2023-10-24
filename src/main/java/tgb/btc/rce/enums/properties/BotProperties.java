@@ -7,7 +7,6 @@ public enum BotProperties implements PropertiesReader {
 
     ANTI_SPAM(FilePaths.ANTI_SPAM_PROPERTIES, ','),
     BOT_CONFIG(FilePaths.BOT_PROPERTIES, ','),
-    MODULES(FilePaths.MODULES_PROPERTIES, ','),
 
     FUNCTIONS(FilePaths.FUNCTIONS_PROPERTIES, ','),
     REVIEW_PRISE(FilePaths.REVIEW_PRISE_PROPERTIES, ';')

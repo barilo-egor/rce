@@ -104,7 +104,6 @@ public class ConfirmUserDeal extends Processor {
         else user.setLotteryCount(1);
         user.setCurrentDeal(null);
         userService.save(user);
-        responseSender.deleteMessage(UpdateUtil.getChatId(update), UpdateUtil.getMessage(update).getMessageId());
         if (user.getFromChatId() != null) {
             User refUser = userService.findByChatId(user.getFromChatId());
             BigDecimal refUserReferralPercent = userRepository.getReferralPercentByChatId(refUser.getChatId());
@@ -173,5 +172,6 @@ public class ConfirmUserDeal extends Processor {
                             )
                     ));
         }
+        responseSender.deleteMessage(UpdateUtil.getChatId(update), UpdateUtil.getMessage(update).getMessageId());
     }
 }

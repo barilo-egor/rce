@@ -1,6 +1,6 @@
 package tgb.btc.rce.enums;
 
-import tgb.btc.rce.enums.properties.BotProperties;
+import tgb.btc.library.constants.enums.properties.CommonProperties;
 import tgb.btc.rce.service.Module;
 
 public enum ReviewPriseType implements Module {
@@ -8,7 +8,7 @@ public enum ReviewPriseType implements Module {
     DYNAMIC;
 
     public static final ReviewPriseType CURRENT =
-            ReviewPriseType.valueOf(BotProperties.MODULES.getString("review.prise"));
+            ReviewPriseType.valueOf(CommonProperties.MODULES.getString("review.prise"));
 
     @Override
     public boolean isCurrent () {

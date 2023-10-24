@@ -1,6 +1,6 @@
 package tgb.btc.rce.enums;
 
-import tgb.btc.rce.enums.properties.BotProperties;
+import tgb.btc.library.constants.enums.properties.CommonProperties;
 import tgb.btc.rce.service.Module;
 
 public enum CalculatorType implements Module {
@@ -9,7 +9,7 @@ public enum CalculatorType implements Module {
     INLINE;
 
     public static final CalculatorType CURRENT =
-            CalculatorType.valueOf(BotProperties.MODULES.getString("calculator.type"));
+            CalculatorType.valueOf(CommonProperties.MODULES.getString("calculator.type"));
 
     public boolean isCurrent() {
         return this.equals(CURRENT);

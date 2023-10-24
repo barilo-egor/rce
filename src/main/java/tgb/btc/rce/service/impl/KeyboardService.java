@@ -6,6 +6,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
+import tgb.btc.library.constants.enums.properties.CommonProperties;
 import tgb.btc.library.repository.bot.PaymentTypeRepository;
 import tgb.btc.library.util.BigDecimalUtil;
 import tgb.btc.library.util.FiatCurrencyUtil;
@@ -33,7 +34,7 @@ import static tgb.btc.rce.enums.InlineCalculatorButton.*;
 public class KeyboardService {
 
     private static final CalculatorType CALCULATOR_TYPE =
-            CalculatorType.valueOf(BotProperties.MODULES.getString("calculator.type"));
+            CalculatorType.valueOf(CommonProperties.MODULES.getString("calculator.type"));
 
     private PaymentTypeRepository paymentTypeRepository;
 
