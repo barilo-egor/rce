@@ -47,4 +47,9 @@ public class Notifier implements INotifier {
         if (Objects.nonNull(integer)) responseSender.deleteMessage(chatId, integer);
         responseSender.sendMessage(chatId, String.format(MessagePropertiesUtil.getMessage("deal.deleted.auto"), dealActiveTime));
     }
+
+    @Override
+    public void sendNotify(Long chatId, String message) {
+        responseSender.sendMessage(chatId, message);
+    }
 }
