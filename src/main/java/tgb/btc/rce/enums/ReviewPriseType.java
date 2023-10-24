@@ -1,7 +1,7 @@
 package tgb.btc.rce.enums;
 
 import tgb.btc.library.constants.enums.properties.CommonProperties;
-import tgb.btc.rce.service.Module;
+import tgb.btc.library.interfaces.Module;
 
 public enum ReviewPriseType implements Module {
     STANDARD,
