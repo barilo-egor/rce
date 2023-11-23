@@ -604,7 +604,7 @@ public class ExchangeService {
         log.info("currencyShortName=" + currency.getShortName());
         log.info("currencyWallet=" + BotVariablePropertiesUtil.getWallet(currency));
         log.info("dealActiveTime=" + BotVariablePropertiesUtil.getVariable(BotVariableType.DEAL_ACTIVE_TIME));
-        return MessagePropertiesUtil.getMessage("deal.build.sell", deal.getPid(), BigDecimalUtil.roundToPlainString(deal.getAmount()), deal.getFiatCurrency().getCode(), deal.getPaymentType().getName(),
+        return MessagePropertiesUtil.getMessage("deal.build.sell", deal.getPid(), BigDecimalUtil.roundToPlainString(deal.getAmount(), deal.getCryptoCurrency().getScale()), deal.getFiatCurrency().getCode(), deal.getPaymentType().getName(),
                 deal.getWallet(), rank.getSmile(), rank.getPercent(),
                 BigDecimalUtil.roundToPlainString(deal.getCryptoAmount()), currency.getShortName(), currency.getShortName(),
                 BotVariablePropertiesUtil.getWallet(currency),
@@ -615,7 +615,7 @@ public class ExchangeService {
         String message = MessagePropertiesUtil.getMessage("deal.build.buy");
         if (Objects.isNull(message)) return null;
         CryptoCurrency currency = deal.getCryptoCurrency();
-        return MessagePropertiesUtil.getMessage("deal.build.buy", deal.getPid(), BigDecimalUtil.roundToPlainString(deal.getCryptoAmount()), currency.getShortName(), currency.getDisplayName(),
+        return MessagePropertiesUtil.getMessage("deal.build.buy", deal.getPid(), BigDecimalUtil.roundToPlainString(deal.getCryptoAmount(), deal.getCryptoCurrency().getScale()), currency.getShortName(), currency.getDisplayName(),
                 deal.getWallet(), rank.getSmile(), rank.getPercent() + "%",
                 BigDecimalUtil.roundToPlainString(deal.getAmount()), deal.getFiatCurrency().getGenitive(), requisite,
                 BotVariablePropertiesUtil.getVariable(BotVariableType.DEAL_ACTIVE_TIME));
