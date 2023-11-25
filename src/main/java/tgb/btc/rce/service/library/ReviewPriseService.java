@@ -6,7 +6,7 @@ import tgb.btc.api.library.IReviewPriseService;
 import tgb.btc.library.bean.bot.Deal;
 import tgb.btc.library.constants.enums.ReferralType;
 import tgb.btc.library.constants.enums.properties.VariableType;
-import tgb.btc.library.service.bean.bot.DealService;
+import tgb.btc.library.repository.bot.DealRepository;
 import tgb.btc.library.util.properties.VariablePropertiesUtil;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.ReviewPriseType;
@@ -25,11 +25,11 @@ public class ReviewPriseService implements IReviewPriseService {
 
     private IResponseSender responseSender;
 
-    private DealService dealService;
+    private DealRepository dealRepository;
 
     @Autowired
-    public void setDealService(DealService dealService) {
-        this.dealService = dealService;
+    public void setDealRepository(DealRepository dealRepository) {
+        this.dealRepository = dealRepository;
     }
 
     @Autowired
@@ -39,7 +39,7 @@ public class ReviewPriseService implements IReviewPriseService {
 
     @Override
     public void processReviewPrise(Long dealPid) {
-        Deal deal = dealService.getByPid(dealPid);
+        Deal deal = dealRepository.getById(dealPid);
         if (ReferralType.STANDARD.isCurrent()) {
             String data;
             String amount;

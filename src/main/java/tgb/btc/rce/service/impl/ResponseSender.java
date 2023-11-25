@@ -22,6 +22,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import tgb.btc.library.bean.bot.BotMessage;
 import tgb.btc.library.constants.enums.bot.BotMessageType;
+import tgb.btc.library.exception.BaseException;
 import tgb.btc.rce.bot.RceBot;
 import tgb.btc.rce.enums.BotKeyboard;
 import tgb.btc.rce.enums.Menu;
@@ -261,6 +262,20 @@ public class ResponseSender implements IResponseSender {
         } catch (TelegramApiException e) {
             log.debug("Не получилось скачать файл:" + getFile.toString());
             return Optional.empty();
+        }
+    }
+
+    public void downloadFile(String fileId, String localFilePath) {
+        GetFile getFile = new GetFile();
+        getFile.setFileId(fileId);
+        org.telegram.telegrambots.meta.api.objects.File file = execute(getFile)
+                .orElseThrow(() -> new BaseException("Не получилось скачать файл " + fileId + " в " + localFilePath));
+        java.io.File localFile = new java.io.File(localFilePath);
+        try {
+            InputStream is = new URL(file.getFileUrl(bot.getBotToken())).openStream();
+            FileUtils.copyInputStreamToFile(is, localFile);
+        } catch (Exception e) {
+            throw new BaseException("Ошибки при скачивании файла.");
         }
     }
 

@@ -69,6 +69,8 @@ public interface IResponseSender {
 
     void downloadFile(Document document, String localFilePath) throws IOException, TelegramApiException;
 
+    void downloadFile(String fileId, String localFilePath);
+
     void execute(AnswerInlineQuery answerInlineQuery);
 
     void sendMedia(Long chatId, List<InputMedia> media);
