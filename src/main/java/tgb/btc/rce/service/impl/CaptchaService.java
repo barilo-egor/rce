@@ -8,7 +8,11 @@ import tgb.btc.rce.exception.BaseException;
 import tgb.btc.rce.vo.Captcha;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
+
+import static org.reflections.Reflections.log;
 
 @Slf4j
 @Service
@@ -24,8 +28,13 @@ public class CaptchaService {
 
     public static void loadPicturesNames() {
         File file = new File(FilePaths.CAPTCHA_PICTURES_PACKAGE);
-        PICTURES_NAMES.addAll(Arrays.asList(Objects.requireNonNull(file.list())));
-        //сделать
+
+        if (file.exists()) {
+            PICTURES_NAMES.addAll(Arrays.asList(Objects.requireNonNull(file.list())));
+            //throw new BaseException("Путь: 'config/antispam/picture' не определен.");
+        }
+
+        log.debug("Путь: 'config/antispam/picture' не определен.");
     }
 
     public Captcha getRandomCaptcha() {
