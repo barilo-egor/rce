@@ -25,6 +25,7 @@ public class CaptchaService {
     public static void loadPicturesNames() {
         File file = new File(FilePaths.CAPTCHA_PICTURES_PACKAGE);
         PICTURES_NAMES.addAll(Arrays.asList(Objects.requireNonNull(file.list())));
+        //сделать
     }
 
     public Captcha getRandomCaptcha() {
