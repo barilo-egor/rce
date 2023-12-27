@@ -33,7 +33,7 @@ public class WebAdminPanelProcessor extends Processor {
 
     private ITokenTransmitter tokenTransmitter;
 
-    @Autowired
+    @Autowired(required = false)
     public void setTokenTransmitter(ITokenTransmitter tokenTransmitter) {
         this.tokenTransmitter = tokenTransmitter;
     }
@@ -47,6 +47,7 @@ public class WebAdminPanelProcessor extends Processor {
     public void run(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
         String token = RandomStringUtils.randomAlphanumeric(40);
+        if (Objects.isNull(tokenTransmitter)) throw new BaseException("Отсутствует  bean ITokenTransmitter");
         tokenTransmitter.putWebLoginToken(chatId, token);
         WebUser webUser = webUserRepository.getByChatId(chatId);
         String url;
