@@ -27,7 +27,6 @@ import tgb.btc.library.service.bean.bot.PaymentTypeService;
 import tgb.btc.library.service.process.CalculateService;
 import tgb.btc.library.service.schedule.DealDeleteScheduler;
 import tgb.btc.library.util.BigDecimalUtil;
-import tgb.btc.library.util.CommonFileUtil;
 import tgb.btc.library.util.FiatCurrencyUtil;
 import tgb.btc.library.util.properties.VariablePropertiesUtil;
 import tgb.btc.library.vo.calculate.DealAmount;
@@ -671,9 +670,6 @@ public class ExchangeService {
         dealRepository.updateDealStatusByPid(DealStatus.PAID, currentDealPid);
         userRepository.setDefaultValues(chatId);
         responseSender.sendMessage(chatId, MessagePropertiesUtil.getMessage(PropertiesMessage.DEAL_CONFIRMED));
-        Deal deal = dealRepository.findByPid(currentDealPid);
-        PaymentReceipt paymentReceipt = deal.getPaymentReceipts().get(0);
-        responseSender.downloadFile(paymentReceipt.getReceipt(), CommonFileUtil.getReceipt(paymentReceipt, deal.getPid()));
         adminService.notify("Поступила новая заявка на " + dealType.getGenitive() + ".",
                 keyboardService.getShowDeal(currentDealPid));
     }
