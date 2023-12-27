@@ -39,6 +39,6 @@ build/
 
 src/main/resources/application.properties
 bot.properties
-config/picture
+config/antispam/picture
 *.log
 *.gz
