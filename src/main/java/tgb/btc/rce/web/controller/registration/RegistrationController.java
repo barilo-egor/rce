@@ -6,11 +6,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import tgb.btc.rce.bean.Role;
 import tgb.btc.rce.enums.RoleConstants;
+import tgb.btc.rce.repository.RoleRepository;
 import tgb.btc.rce.repository.WebUserRepository;
+import tgb.btc.rce.service.impl.RoleService;
 import tgb.btc.rce.service.impl.WebUserService;
 import tgb.btc.rce.vo.web.CredentialsVO;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
 
@@ -23,6 +27,14 @@ public class RegistrationController {
 
     private WebUserRepository webUserRepository;
 
+
+    private RoleService roleService;
+
+    @Autowired
+    public void setRoleService(RoleService roleService) {
+        this.roleService = roleService;
+    }
+
     @Autowired
     public void setWebUserRepository(WebUserRepository webUserRepository) {
         this.webUserRepository = webUserRepository;
@@ -31,6 +43,11 @@ public class RegistrationController {
     @Autowired
     public void setWebUserService(WebUserService webUserService) {
         this.webUserService = webUserService;
+    }
+
+    @PostConstruct
+    public void postConstruct(){
+        roleService.initRoles();
     }
 
     @GetMapping

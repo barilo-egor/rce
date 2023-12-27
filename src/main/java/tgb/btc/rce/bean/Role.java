@@ -20,6 +20,10 @@ public class Role extends BasePersist implements GrantedAuthority {
     public Role() {
     }
 
+    public Role(String name) {
+        this.name = name;
+    }
+
     public Role(Long pid) {
         super(pid);
     }
