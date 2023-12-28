@@ -6,6 +6,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Message;
+import org.telegram.telegrambots.meta.api.objects.PhotoSize;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import tgb.btc.library.bean.bot.Deal;
@@ -41,10 +42,7 @@ import tgb.btc.rce.vo.InlineButton;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -735,8 +733,10 @@ public class ExchangeService {
                     .receiptFormat(ReceiptFormat.PDF)
                     .build());
         } else if (update.getMessage().hasPhoto()) {
+            List<PhotoSize> photoSizes = update.getMessage().getPhoto();
+            photoSizes.sort((p1, p2) -> p2.getHeight().compareTo(p1.getHeight()));
             paymentReceipt = paymentReceiptRepository.save(PaymentReceipt.builder()
-                    .receipt(update.getMessage().getPhoto().get(0).getFileId())
+                    .receipt(photoSizes.get(0).getFileId())
                     .receiptFormat(ReceiptFormat.PICTURE)
                     .build());
         } else {
