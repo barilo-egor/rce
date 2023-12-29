@@ -20,7 +20,7 @@ public class TurningProcessDeliveryProcessor extends Processor {
     public void run(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
         String deliveryType = CallbackQueryUtil.getSplitData(update, 1);
-        CommonProperties.MODULES.setProperty("delivery.type", deliveryType);
+        CommonProperties.MODULES.setProperty("delivery.kind", deliveryType);
         responseSender.sendEditedMessageText(chatId, update.getCallbackQuery().getMessage().getMessageId(),
                 Command.TURNING_DELIVERY_TYPE.getText(),
                 KeyboardUtil.buildInline(List.of(KeyboardUtil.getDeliveryTypeButton())));
