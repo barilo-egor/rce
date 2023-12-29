@@ -69,6 +69,7 @@ public enum Command implements ICommand {
     DISCOUNTS("Скидки", true, true, false),
     USERS("Пользователи", true, true, false),
     QUIT_ADMIN_PANEL("Выйти", true, false, false),
+    TURNING_DELIVERY_TYPE("Вкл/выкл способов доставки", true, false, false),
 
     /** DISCOUNTS */
     RANK_DISCOUNT("Ранговая скидка(персональная)", true, false, false),
@@ -179,7 +180,10 @@ public enum Command implements ICommand {
      */
     CONFIRM_API_DEAL("confirm_api_deal", true, false, false),
     CANCEL_API_DEAL("cancel_api_deal", true, false, false),
-    NEW_API_DEALS("Новые API заявки", true, false, false)
+    NEW_API_DEALS("Новые API заявки", true, false, false),
+
+    /** TURNING DELIVERY */
+    TURN_PROCESS_DELIVERY("turn_process_delivery", true, false, false),
     ;
 
     final String text;
