@@ -70,6 +70,7 @@ public enum Command implements ICommand {
     USERS("Пользователи", true, true, false),
     QUIT_ADMIN_PANEL("Выйти", true, false, false),
     TURNING_DELIVERY_TYPE("Вкл/выкл способов доставки", true, false, false),
+    BACKUP_DB("/backupdb", true, false, false),
 
     /** DISCOUNTS */
     RANK_DISCOUNT("Ранговая скидка(персональная)", true, false, false),
