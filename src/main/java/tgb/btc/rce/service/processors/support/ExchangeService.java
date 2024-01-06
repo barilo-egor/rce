@@ -216,7 +216,7 @@ public class ExchangeService {
             if (DealType.isBuy(dealType)) {
                 message = "Сумма к получению: " + BigDecimalUtil.roundToPlainString(cryptoAmount, cryptoCurrency.getScale())
                         + " " + cryptoCurrency.getDisplayName() + "\n"
-                        + "Сумма к оплате: " + BigDecimalUtil.roundToPlainString(dealAmount) + " "
+                        + "Сумма к оплате: " + BigDecimalUtil.roundToPlainString(dealAmount, cryptoCurrency.getScale()) + " "
                         + fiatCurrency.getDisplayName() + "\n";
                 if (BooleanUtils.isTrue(FunctionPropertiesUtil.getSumToReceive(cryptoCurrency))) {
                     message = message.concat("Сумма к зачислению: "
