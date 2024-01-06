@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import tgb.btc.library.constants.enums.bot.CryptoCurrency;
 import tgb.btc.library.constants.enums.bot.DealType;
+import tgb.btc.library.constants.enums.bot.DeliveryType;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
 import tgb.btc.rce.conditional.calculator.InlineQueryCalculatorCondition;
 import tgb.btc.rce.enums.Command;
@@ -24,11 +25,13 @@ public class InlineQueryCalculatorService extends SimpleCalculatorService {
         FiatCurrency fiatCurrency = dealRepository.getFiatCurrencyByPid(currentDealPid);
         DealType dealType = dealRepository.getDealTypeByPid(currentDealPid);
         CryptoCurrency currency = dealRepository.getCryptoCurrencyByPid(currentDealPid);
+        DeliveryType deliveryType = dealRepository.getDeliveryTypeByPid(currentDealPid);
         sendMessage.setReplyMarkup(KeyboardUtil.buildInline(List.of(
                 InlineButton.builder()
                         .inlineType(InlineType.SWITCH_INLINE_QUERY_CURRENT_CHAT)
                         .text("Калькулятор")
-                        .data(fiatCurrency.getCode() + "-" + dealType.getKey() + "-" + currency.getShortName() + " ")
+                        .data(fiatCurrency.getCode() + "-" + dealType.getKey() + "-" + currency.getShortName() + "-"
+                                + deliveryType.name() + " ")
                         .build(),
                 KeyboardUtil.INLINE_BACK_BUTTON), 1));
     }

@@ -5,6 +5,7 @@ import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.bean.bot.User;
+import tgb.btc.library.constants.enums.DeliveryKind;
 import tgb.btc.library.constants.enums.bot.BotMessageType;
 import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.repository.bot.DealRepository;
@@ -31,7 +32,7 @@ import java.util.Objects;
 @Slf4j
 public class DealProcessor extends Processor {
 
-    public static final int AFTER_CALCULATOR_STEP = 3;
+    public static final int AFTER_CALCULATOR_STEP = 4;
 
     private IUpdateDispatcher updateDispatcher;
 
@@ -143,9 +144,20 @@ public class DealProcessor extends Processor {
                     responseSender.deleteCallbackMessageIfExists(update);
                     if (!exchangeService.saveCryptoCurrency(update)) return;
                 }
-                calculatorTypeService.run(update);
+                if (DeliveryKind.STANDARD.isCurrent()) {
+                    userRepository.nextStep(chatId);
+                    exchangeService.askForDeliveryType(update);
+                    break;
+                }
+                recursiveSwitch(update, chatId, isBack);
                 break;
             case 3:
+                if (!isBack) {
+                    exchangeService.saveDeliveryType(update);
+                }
+                calculatorTypeService.run(update);
+                break;
+            case 4:
                 Long currentDealPid = userRepository.getCurrentDealByChatId(chatId);
                 dealType = dealService.getDealTypeByPid(userRepository.getCurrentDealByChatId(chatId));
                 if (!isBack) exchangeService.sendTotalDealAmount(chatId, dealType, dealService.getCryptoCurrencyByPid(currentDealPid),
@@ -157,7 +169,7 @@ public class DealProcessor extends Processor {
                 exchangeService.askForUserPromoCode(chatId);
                 userRepository.nextStep(chatId);
                 break;
-            case 4:
+            case 5:
                 dealType = dealService.getDealTypeByPid(userRepository.getCurrentDealByChatId(chatId));
                 if (!isBack && DealType.isBuy(dealType) && dealProcessService.isAvailableForPromo(chatId)) {
                     responseSender.deleteCallbackMessageIfExists(update);
@@ -170,7 +182,7 @@ public class DealProcessor extends Processor {
                 userRepository.nextStep(chatId);
                 exchangeService.askForReferralDiscount(update);
                 break;
-            case 5:
+            case 6:
                 dealType = dealService.getDealTypeByPid(userRepository.getCurrentDealByChatId(chatId));
                 if (!isBack && DealType.isBuy(dealType) && !userService.isReferralBalanceEmpty(chatId)) {
                     if (!exchangeService.processReferralDiscount(update)) return;
@@ -183,28 +195,28 @@ public class DealProcessor extends Processor {
                 }
                 recursiveSwitch(update, chatId, isBack);
                 break;
-            case 6:
+            case 7:
                 if (!isBack) {
                     if (!exchangeService.savePaymentType(update)) return;
                 }
                 exchangeService.askForUserRequisites(update);
                 userRepository.nextStep(chatId);
                 break;
-            case 7:
+            case 8:
                 if (!isBack) {
                     if (!exchangeService.saveRequisites(update)) return;
                 }
                 userRepository.nextStep(chatId);
                 exchangeService.buildDeal(update);
                 break;
-            case 8:
+            case 9:
                 Boolean result = exchangeService.isPaid(update);
                 if (Objects.isNull(result)) {
                     return;
                 }
                 if (BooleanUtils.isFalse(result)) processToStart(chatId, update);
                 break;
-            case 9:
+            case 10:
                 if (!hasCheck(update)) {
                     exchangeService.askForReceipts(update);
                     return;

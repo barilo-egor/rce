@@ -66,6 +66,7 @@ public class InlineCalculatorService implements ICalculatorTypeService {
         inlineCalculatorVO.setFiatCurrency(dealRepository.getFiatCurrencyByPid(currentDealPid));
         inlineCalculatorVO.setSwitched(false);
         inlineCalculatorVO.setOn(true);
+        inlineCalculatorVO.setDeliveryType(dealRepository.getDeliveryTypeByPid(currentDealPid));
         InlineCalculator.cache.put(chatId, inlineCalculatorVO);
         responseSender.sendMessage(chatId, messageService.getInlineCalculatorMessage(dealType, inlineCalculatorVO),
                 keyboardService.getInlineCalculator(chatId));

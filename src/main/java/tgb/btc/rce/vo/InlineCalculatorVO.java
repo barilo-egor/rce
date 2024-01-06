@@ -1,6 +1,7 @@
 package tgb.btc.rce.vo;
 
 import tgb.btc.library.constants.enums.bot.CryptoCurrency;
+import tgb.btc.library.constants.enums.bot.DeliveryType;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
 
 public class InlineCalculatorVO {
@@ -10,6 +11,7 @@ public class InlineCalculatorVO {
     private Boolean isSwitched;
     private String sum;
     private Boolean isOn;
+    private DeliveryType deliveryType;
 
     public Boolean getOn() {
         return isOn;
@@ -49,5 +51,13 @@ public class InlineCalculatorVO {
 
     public void setSum(String sum) {
         this.sum = sum;
+    }
+
+    public DeliveryType getDeliveryType() {
+        return deliveryType;
+    }
+
+    public void setDeliveryType(DeliveryType deliveryType) {
+        this.deliveryType = deliveryType;
     }
 }

@@ -12,7 +12,9 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import tgb.btc.library.bean.bot.Deal;
 import tgb.btc.library.bean.bot.PaymentReceipt;
 import tgb.btc.library.bean.bot.PaymentType;
+import tgb.btc.library.constants.enums.DeliveryKind;
 import tgb.btc.library.constants.enums.ReferralType;
+import tgb.btc.library.constants.enums.bot.DeliveryType;
 import tgb.btc.library.constants.enums.bot.*;
 import tgb.btc.library.constants.enums.properties.CommonProperties;
 import tgb.btc.library.constants.enums.properties.VariableType;
@@ -42,7 +44,10 @@ import tgb.btc.rce.vo.InlineButton;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -259,7 +264,7 @@ public class ExchangeService {
         Deal deal = dealRepository.findByPid(userRepository.getCurrentDealByChatId(chatId));
         DealAmount dealAmount = calculateService.calculate(chatId, enteredAmount,
                 deal.getCryptoCurrency(), deal.getFiatCurrency(),
-                deal.getDealType(), isEnteredInCrypto);
+                deal.getDealType(), isEnteredInCrypto, deal.getDeliveryType());
         if (isLessThanMin(chatId, deal.getDealType(), deal.getCryptoCurrency(), dealAmount.getCryptoAmount())) {
             return false;
         }
@@ -296,7 +301,8 @@ public class ExchangeService {
         DealAmount dealAmount = calculateService.calculate(chatId, enteredAmount,
                 calculatorQuery.getCurrency(),
                 calculatorQuery.getFiatCurrency(),
-                calculatorQuery.getDealType());
+                calculatorQuery.getDealType(),
+                calculatorQuery.getDeliveryType());
         Long currentDealPid = userRepository.getCurrentDealByChatId(chatId);
         DealType dealType = dealRepository.getDealTypeByPid(currentDealPid);
         CryptoCurrency cryptoCurrency = dealRepository.getCryptoCurrencyByPid(currentDealPid);
@@ -748,6 +754,21 @@ public class ExchangeService {
         deal.setPaymentReceipts(paymentReceipts);
         dealService.save(deal);
         return true;
+    }
+
+    public void askForDeliveryType(Update update) {
+        Long chatId = UpdateUtil.getChatId(update);
+        responseSender.sendMessage(chatId, MessagePropertiesUtil.getMessage(PropertiesMessage.DELIVERY_TYPE_ASK),
+                keyboardService.getDeliveryTypes());
+    }
+
+    public void saveDeliveryType(Update update) {
+        Long chatId = UpdateUtil.getChatId(update);
+        DeliveryType deliveryType =  DeliveryKind.STANDARD.isCurrent()
+                ? DeliveryType.valueOf(update.getCallbackQuery().getData())
+                : DeliveryType.STANDARD;
+        dealRepository.updateDeliveryTypeByPid(userRepository.getCurrentDealByChatId(chatId),
+                deliveryType);
     }
 
 }
