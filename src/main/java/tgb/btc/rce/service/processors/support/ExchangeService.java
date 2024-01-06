@@ -563,7 +563,7 @@ public class ExchangeService {
                         currency.getScale()) + " " + currency.getShortName() + "\n"
                         + "<b>" + paymentType.getName() + " реквизиты</b>:" + "<code>" + deal.getWallet() + "</code>" + "\n\n"
                         + "Ваш ранг: " + rank.getSmile() + ", скидка " + rank.getPercent() + "%" + "\n\n"
-                        + "\uD83D\uDCB5<b>Получаете</b>: <code>" + BigDecimalUtil.roundToPlainString(dealAmount)
+                        + "\uD83D\uDCB5<b>Получаете</b>: <code>" + BigDecimalUtil.roundToPlainString(dealAmount, deal.getCryptoCurrency().getScale())
                         + " " + deal.getFiatCurrency().getDisplayName() + "</code>" + "\n"
                         + "<b>Реквизиты для перевода " + currency.getShortName() + ":</b>" + "\n\n"
                         + "<code>" + BotVariablePropertiesUtil.getWallet(currency) + "</code>" + "\n\n"
@@ -606,7 +606,7 @@ public class ExchangeService {
         log.info("dealActiveTime=" + BotVariablePropertiesUtil.getVariable(BotVariableType.DEAL_ACTIVE_TIME));
         return MessagePropertiesUtil.getMessage("deal.build.sell", deal.getPid(), BigDecimalUtil.roundToPlainString(deal.getAmount(), deal.getCryptoCurrency().getScale()), deal.getFiatCurrency().getCode(), deal.getPaymentType().getName(),
                 deal.getWallet(), rank.getSmile(), rank.getPercent(),
-                BigDecimalUtil.roundToPlainString(deal.getCryptoAmount()), currency.getShortName(), currency.getShortName(),
+                BigDecimalUtil.roundToPlainString(deal.getCryptoAmount(), deal.getCryptoCurrency().getScale()), currency.getShortName(), currency.getShortName(),
                 BotVariablePropertiesUtil.getWallet(currency),
                 BotVariablePropertiesUtil.getVariable(BotVariableType.DEAL_ACTIVE_TIME));
     }
