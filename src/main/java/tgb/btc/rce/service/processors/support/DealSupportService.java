@@ -26,7 +26,7 @@ import java.util.Objects;
 public class DealSupportService {
 
     private static final String DEAL_INFO = "Заявка на %s №%s\n" + "Дата,время: %s\n" + "Тип оплаты: %s\n" + "Кошелек: %s\n" + "Контакт: %s\n"
-            + "Количество сделок: %s\n" + "ID: %s\n" + "Сумма %s: %s\n" + "Сумма: %s %s";
+            + "Количество сделок: %s\n" + "ID: %s\n" + "Сумма %s: %s\n" + "Сумма: %s %s\n" + "Способ доставки: %s";
 
     private final DealService dealService;
 
@@ -74,7 +74,8 @@ public class DealSupportService {
                 deal.getCryptoAmount().setScale(8, RoundingMode.FLOOR).stripTrailingZeros()
                         .toPlainString(),
                 deal.getAmount().setScale(0, RoundingMode.HALF_UP).stripTrailingZeros().toPlainString(),
-                Objects.nonNull(fiatCurrency) ? fiatCurrency.getGenitive() : "отсутствует"
+                Objects.nonNull(fiatCurrency) ? fiatCurrency.getGenitive() : "отсутствует",
+                deal.getDeliveryType().getDisplayName()
         );
     }
 

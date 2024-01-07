@@ -5,6 +5,7 @@ import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.PhotoSize;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -12,7 +13,9 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import tgb.btc.library.bean.bot.Deal;
 import tgb.btc.library.bean.bot.PaymentReceipt;
 import tgb.btc.library.bean.bot.PaymentType;
+import tgb.btc.library.constants.enums.DeliveryKind;
 import tgb.btc.library.constants.enums.ReferralType;
+import tgb.btc.library.constants.enums.bot.DeliveryType;
 import tgb.btc.library.constants.enums.bot.*;
 import tgb.btc.library.constants.enums.properties.CommonProperties;
 import tgb.btc.library.constants.enums.properties.VariableType;
@@ -42,7 +45,10 @@ import tgb.btc.rce.vo.InlineButton;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -557,6 +563,7 @@ public class ExchangeService {
                         + "<code>" + requisite + "</code>" + "\n\n"
                         + "<b>⏳Заявка действительна</b>: " + VariablePropertiesUtil.getVariable(
                         VariableType.DEAL_ACTIVE_TIME) + " минут" + "\n\n"
+                        + "Способ доставки: " + deal.getDeliveryType().getDisplayName() + "\n\n"
                         + "☑️После успешного перевода денег по указанным реквизитам нажмите на кнопку <b>\""
                         + Command.PAID.getText() + "\"</b> или же вы можете отменить данную заявку, нажав на кнопку <b>\""
                         + Command.CANCEL_DEAL.getText() + "\"</b>."
@@ -578,6 +585,7 @@ public class ExchangeService {
                         + "<code>" + VariablePropertiesUtil.getWallet(currency) + "</code>" + "\n\n"
                         + "⏳<b>Заявка действительна</b>: " + VariablePropertiesUtil.getVariable(
                         VariableType.DEAL_ACTIVE_TIME) + " минут" + "\n\n"
+                        + "Способ доставки: " + deal.getDeliveryType().getDisplayName() + "\n\n"
                         + "☑️После успешного перевода денег по указанному кошельку нажмите на кнопку <b>\""
                         + Command.PAID.getText() + "\"</b> или же вы можете отменить данную заявку, нажав на кнопку <b>\""
                         + Command.CANCEL_DEAL.getText() + "\"</b>."
@@ -748,6 +756,46 @@ public class ExchangeService {
         deal.setPaymentReceipts(paymentReceipts);
         dealService.save(deal);
         return true;
+    }
+
+    public void askForDeliveryType(Update update) {
+        Long chatId = UpdateUtil.getChatId(update);
+        responseSender.sendMessage(chatId, MessagePropertiesUtil.getMessage(PropertiesMessage.DELIVERY_TYPE_ASK),
+                keyboardService.getDeliveryTypes());
+    }
+
+//    public void saveDeliveryType(Update update) {
+//        Long chatId = UpdateUtil.getChatId(update);
+//        DeliveryType deliveryType =  DeliveryKind.STANDARD.isCurrent()
+//                ? DeliveryType.valueOf(update.getCallbackQuery().getData())
+//                : DeliveryType.STANDARD;
+//        dealRepository.updateDeliveryTypeByPid(userRepository.getCurrentDealByChatId(chatId),
+//                deliveryType);
+//    }
+
+    public void saveDeliveryTypeAndUpdateAmount(Update update) {
+        Long chatId = UpdateUtil.getChatId(update);
+        DeliveryType deliveryType;
+        if (DeliveryKind.STANDARD.isCurrent()) {
+            CallbackQuery query = update.getCallbackQuery();
+            if (Objects.nonNull(query)) {
+                deliveryType = DeliveryType.valueOf(query.getData());
+                if (DeliveryType.VIP.equals(deliveryType)) {
+                    Long dealPid = userRepository.getCurrentDealByChatId(chatId);
+                    BigDecimal fix = VariablePropertiesUtil.getBigDecimal(VariableType.FIX_COMMISSION_VIP,
+                            dealRepository.getFiatCurrencyByPid(dealPid),
+                            dealRepository.getDealTypeByPid(dealPid),
+                            dealRepository.getCryptoCurrencyByPid(dealPid));
+                    dealRepository.updateAmountByPid(dealRepository.getAmountByPid(dealPid).add(fix), dealPid);
+                }
+            } else {
+                deliveryType = DeliveryType.STANDARD;
+            }
+        } else {
+            deliveryType = DeliveryType.STANDARD;
+        }
+        dealRepository.updateDeliveryTypeByPid(userRepository.getCurrentDealByChatId(chatId),
+                deliveryType);
     }
 
 }
