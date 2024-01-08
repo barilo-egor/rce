@@ -767,20 +767,17 @@ public class ExchangeService {
     public void saveDeliveryTypeAndUpdateAmount(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
         DeliveryType deliveryType;
-        if (DeliveryKind.STANDARD.isCurrent()) {
-            CallbackQuery query = update.getCallbackQuery();
-            if (Objects.nonNull(query)) {
-                deliveryType = DeliveryType.valueOf(query.getData());
-                if (DeliveryType.VIP.equals(deliveryType)) {
-                    Long dealPid = userRepository.getCurrentDealByChatId(chatId);
-                    BigDecimal fix = VariablePropertiesUtil.getBigDecimal(VariableType.FIX_COMMISSION_VIP,
-                            dealRepository.getFiatCurrencyByPid(dealPid),
-                            dealRepository.getDealTypeByPid(dealPid),
-                            dealRepository.getCryptoCurrencyByPid(dealPid));
-                    dealRepository.updateAmountByPid(dealRepository.getAmountByPid(dealPid).add(fix), dealPid);
-                }
-            } else {
-                deliveryType = DeliveryType.STANDARD;
+        Long dealPid = userRepository.getCurrentDealByChatId(chatId);
+        DealType dealType = dealService.getDealTypeByPid(dealPid);
+        CryptoCurrency cryptoCurrency = dealService.getCryptoCurrencyByPid(dealPid);
+        if (DeliveryKind.STANDARD.isCurrent() && DealType.isBuy(dealType) && CryptoCurrency.BITCOIN.equals(cryptoCurrency)) {
+            deliveryType = DeliveryType.valueOf(update.getCallbackQuery().getData());
+            if (DeliveryType.VIP.equals(deliveryType)) {
+                BigDecimal fix = VariablePropertiesUtil.getBigDecimal(VariableType.FIX_COMMISSION_VIP,
+                        dealRepository.getFiatCurrencyByPid(dealPid),
+                        dealRepository.getDealTypeByPid(dealPid),
+                        dealRepository.getCryptoCurrencyByPid(dealPid));
+                dealRepository.updateAmountByPid(dealRepository.getAmountByPid(dealPid).add(fix), dealPid);
             }
         } else {
             deliveryType = DeliveryType.STANDARD;
