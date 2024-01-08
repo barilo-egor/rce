@@ -764,15 +764,6 @@ public class ExchangeService {
                 keyboardService.getDeliveryTypes());
     }
 
-//    public void saveDeliveryType(Update update) {
-//        Long chatId = UpdateUtil.getChatId(update);
-//        DeliveryType deliveryType =  DeliveryKind.STANDARD.isCurrent()
-//                ? DeliveryType.valueOf(update.getCallbackQuery().getData())
-//                : DeliveryType.STANDARD;
-//        dealRepository.updateDeliveryTypeByPid(userRepository.getCurrentDealByChatId(chatId),
-//                deliveryType);
-//    }
-
     public void saveDeliveryTypeAndUpdateAmount(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
         DeliveryType deliveryType;

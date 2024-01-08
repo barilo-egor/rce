@@ -169,17 +169,19 @@ public class KeyboardService {
     }
 
     public InlineButton getDeliveryTypeButton() {
+        String text;
+        DeliveryKind deliveryKind;
         if (DeliveryKind.NONE.isCurrent()) {
-            return InlineButton.builder()
-                    .text("вкл")
-                    .data(CallbackQueryUtil.buildCallbackData(Command.TURN_PROCESS_DELIVERY.getText(), DeliveryKind.STANDARD.name()))
-                    .build();
+            text = "Включить";
+            deliveryKind = DeliveryKind.STANDARD;
         } else {
-            return InlineButton.builder()
-                    .text("выкл")
-                    .data(CallbackQueryUtil.buildCallbackData(Command.TURN_PROCESS_DELIVERY.getText(), DeliveryKind.NONE.name()))
-                    .build();
+            text = "Выключить";
+            deliveryKind = DeliveryKind.NONE;
         }
+        return InlineButton.builder()
+                .text(text)
+                .data(CallbackQueryUtil.buildCallbackData(Command.TURN_PROCESS_DELIVERY.getText(), deliveryKind.name()))
+                .build();
     }
 
 }
