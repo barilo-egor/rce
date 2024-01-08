@@ -536,6 +536,13 @@ public class ExchangeService {
         PaymentType paymentType = deal.getPaymentType();
         deal.setDateTime(LocalDateTime.now());
         String message;
+        String deliveryTypeText;
+        if (DeliveryKind.STANDARD.isCurrent()) {
+            deliveryTypeText = "<b>Способ доставки</b>: " + deal.getDeliveryType().getDisplayName() + "\n\n";
+            responseSender.deleteCallbackMessageIfExists(update);
+        } else {
+            deliveryTypeText = "";
+        }
         if (DealType.isBuy(deal.getDealType())) {
             dealAmount = userDiscountProcessService.applyDealDiscounts(chatId, dealAmount, deal.getUsedPromo(),
                     deal.getUsedReferralDiscount(), deal.getDiscount(), deal.getFiatCurrency());
@@ -563,7 +570,7 @@ public class ExchangeService {
                         + "<code>" + requisite + "</code>" + "\n\n"
                         + "<b>⏳Заявка действительна</b>: " + VariablePropertiesUtil.getVariable(
                         VariableType.DEAL_ACTIVE_TIME) + " минут" + "\n\n"
-                        + "Способ доставки: " + deal.getDeliveryType().getDisplayName() + "\n\n"
+                        + deliveryTypeText
                         + "☑️После успешного перевода денег по указанным реквизитам нажмите на кнопку <b>\""
                         + Command.PAID.getText() + "\"</b> или же вы можете отменить данную заявку, нажав на кнопку <b>\""
                         + Command.CANCEL_DEAL.getText() + "\"</b>."
@@ -585,7 +592,7 @@ public class ExchangeService {
                         + "<code>" + VariablePropertiesUtil.getWallet(currency) + "</code>" + "\n\n"
                         + "⏳<b>Заявка действительна</b>: " + VariablePropertiesUtil.getVariable(
                         VariableType.DEAL_ACTIVE_TIME) + " минут" + "\n\n"
-                        + "Способ доставки: " + deal.getDeliveryType().getDisplayName() + "\n\n"
+                        + deliveryTypeText
                         + "☑️После успешного перевода денег по указанному кошельку нажмите на кнопку <b>\""
                         + Command.PAID.getText() + "\"</b> или же вы можете отменить данную заявку, нажав на кнопку <b>\""
                         + Command.CANCEL_DEAL.getText() + "\"</b>."
