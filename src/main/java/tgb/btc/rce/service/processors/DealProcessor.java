@@ -5,7 +5,9 @@ import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.bean.bot.User;
+import tgb.btc.library.constants.enums.DeliveryKind;
 import tgb.btc.library.constants.enums.bot.BotMessageType;
+import tgb.btc.library.constants.enums.bot.CryptoCurrency;
 import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.repository.bot.DealRepository;
 import tgb.btc.library.service.bean.bot.DealService;
@@ -194,17 +196,31 @@ public class DealProcessor extends Processor {
                 if (!isBack) {
                     if (!exchangeService.saveRequisites(update)) return;
                 }
+                Long dealPid = userRepository.getCurrentDealByChatId(chatId);
+                dealType = dealService.getDealTypeByPid(dealPid);
+                CryptoCurrency cryptoCurrency = dealService.getCryptoCurrencyByPid(dealPid);
+                if (DeliveryKind.STANDARD.isCurrent() && DealType.isBuy(dealType) && CryptoCurrency.BITCOIN.equals(cryptoCurrency)) {
+                    userRepository.nextStep(chatId);
+                    exchangeService.askForDeliveryType(update);
+                    break;
+                }
+                recursiveSwitch(update, chatId, isBack);
+                break;
+            case 8:
+                if (!isBack) {
+                    exchangeService.saveDeliveryTypeAndUpdateAmount(update);
+                }
                 userRepository.nextStep(chatId);
                 exchangeService.buildDeal(update);
                 break;
-            case 8:
+            case 9:
                 Boolean result = exchangeService.isPaid(update);
                 if (Objects.isNull(result)) {
                     return;
                 }
                 if (BooleanUtils.isFalse(result)) processToStart(chatId, update);
                 break;
-            case 9:
+            case 10:
                 if (!hasCheck(update)) {
                     exchangeService.askForReceipts(update);
                     return;

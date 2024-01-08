@@ -8,7 +8,6 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.Keyboard
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.meta.api.objects.webapp.WebAppInfo;
 import tgb.btc.library.bean.bot.Contact;
-import tgb.btc.library.constants.enums.DeliveryKind;
 import tgb.btc.library.constants.enums.bot.CryptoCurrency;
 import tgb.btc.rce.enums.BotReplyButton;
 import tgb.btc.rce.enums.Command;
@@ -174,20 +173,6 @@ public final class KeyboardUtil {
 
     public static InlineButton createCallBackDataButton (InlineCalculatorButton inlineCalculatorButton) {
         return KeyboardUtil.createCallBackDataButton(inlineCalculatorButton.getData(), Command.INLINE_CALCULATOR, inlineCalculatorButton.getData());
-    }
-
-    public static InlineButton getDeliveryTypeButton() {
-        if (DeliveryKind.NONE.isCurrent()) {
-            return InlineButton.builder()
-                    .text("вкл")
-                    .data(CallbackQueryUtil.buildCallbackData(Command.TURN_PROCESS_DELIVERY.getText(), DeliveryKind.STANDARD.name()))
-                    .build();
-        } else {
-            return InlineButton.builder()
-                    .text("выкл")
-                    .data(CallbackQueryUtil.buildCallbackData(Command.TURN_PROCESS_DELIVERY.getText(), DeliveryKind.NONE.name()))
-                    .build();
-        }
     }
 
 }

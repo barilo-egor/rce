@@ -4,17 +4,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
+import tgb.btc.library.constants.enums.DeliveryKind;
 import tgb.btc.library.constants.enums.bot.DealType;
+import tgb.btc.library.constants.enums.bot.DeliveryType;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
 import tgb.btc.library.constants.enums.properties.CommonProperties;
 import tgb.btc.library.repository.bot.PaymentTypeRepository;
 import tgb.btc.library.util.BigDecimalUtil;
 import tgb.btc.library.util.FiatCurrencyUtil;
 import tgb.btc.rce.constants.BotStringConstants;
-import tgb.btc.rce.enums.BotInlineButton;
-import tgb.btc.rce.enums.CalculatorType;
-import tgb.btc.rce.enums.Command;
-import tgb.btc.rce.enums.InlineType;
+import tgb.btc.rce.enums.*;
 import tgb.btc.rce.enums.properties.BotProperties;
 import tgb.btc.rce.service.processors.InlineCalculator;
 import tgb.btc.rce.util.*;
@@ -22,10 +21,7 @@ import tgb.btc.rce.vo.InlineButton;
 import tgb.btc.rce.vo.InlineCalculatorVO;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static tgb.btc.rce.enums.InlineCalculatorButton.*;
@@ -161,4 +157,31 @@ public class KeyboardService {
         buttons.add(KeyboardUtil.INLINE_BACK_BUTTON);
         return KeyboardUtil.buildInline(buttons);
     }
+
+    public ReplyKeyboard getDeliveryTypes() {
+        List<InlineButton> buttons = new ArrayList<>();
+        Arrays.stream(DeliveryType.values()).forEach(x -> buttons.add(InlineButton.builder()
+                .text(DesignProperties.BUTTONS_DESIGN.getString(x.name()))
+                .data(x.name())
+                .inlineType(InlineType.CALLBACK_DATA)
+                .build()));
+        return KeyboardUtil.buildInlineSingleLast(buttons, 1, KeyboardUtil.INLINE_BACK_BUTTON);
+    }
+
+    public InlineButton getDeliveryTypeButton() {
+        String text;
+        DeliveryKind deliveryKind;
+        if (DeliveryKind.NONE.isCurrent()) {
+            text = "Включить";
+            deliveryKind = DeliveryKind.STANDARD;
+        } else {
+            text = "Выключить";
+            deliveryKind = DeliveryKind.NONE;
+        }
+        return InlineButton.builder()
+                .text(text)
+                .data(CallbackQueryUtil.buildCallbackData(Command.TURN_PROCESS_DELIVERY.getText(), deliveryKind.name()))
+                .build();
+    }
+
 }
