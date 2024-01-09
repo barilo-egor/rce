@@ -536,6 +536,13 @@ public class ExchangeService {
         PaymentType paymentType = deal.getPaymentType();
         deal.setDateTime(LocalDateTime.now());
         String message;
+        String deliveryTypeText;
+        if (DeliveryKind.STANDARD.isCurrent()) {
+            deliveryTypeText = "<b>Способ доставки</b>: " + deal.getDeliveryType().getDisplayName() + "\n\n";
+            responseSender.deleteCallbackMessageIfExists(update);
+        } else {
+            deliveryTypeText = "";
+        }
         if (DealType.isBuy(deal.getDealType())) {
             dealAmount = userDiscountProcessService.applyDealDiscounts(chatId, dealAmount, deal.getUsedPromo(),
                     deal.getUsedReferralDiscount(), deal.getDiscount(), deal.getFiatCurrency());
@@ -563,7 +570,7 @@ public class ExchangeService {
                         + "<code>" + requisite + "</code>" + "\n\n"
                         + "<b>⏳Заявка действительна</b>: " + VariablePropertiesUtil.getVariable(
                         VariableType.DEAL_ACTIVE_TIME) + " минут" + "\n\n"
-                        + "Способ доставки: " + deal.getDeliveryType().getDisplayName() + "\n\n"
+                        + deliveryTypeText
                         + "☑️После успешного перевода денег по указанным реквизитам нажмите на кнопку <b>\""
                         + Command.PAID.getText() + "\"</b> или же вы можете отменить данную заявку, нажав на кнопку <b>\""
                         + Command.CANCEL_DEAL.getText() + "\"</b>."
@@ -585,7 +592,7 @@ public class ExchangeService {
                         + "<code>" + VariablePropertiesUtil.getWallet(currency) + "</code>" + "\n\n"
                         + "⏳<b>Заявка действительна</b>: " + VariablePropertiesUtil.getVariable(
                         VariableType.DEAL_ACTIVE_TIME) + " минут" + "\n\n"
-                        + "Способ доставки: " + deal.getDeliveryType().getDisplayName() + "\n\n"
+                        + deliveryTypeText
                         + "☑️После успешного перевода денег по указанному кошельку нажмите на кнопку <b>\""
                         + Command.PAID.getText() + "\"</b> или же вы можете отменить данную заявку, нажав на кнопку <b>\""
                         + Command.CANCEL_DEAL.getText() + "\"</b>."
@@ -767,20 +774,17 @@ public class ExchangeService {
     public void saveDeliveryTypeAndUpdateAmount(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
         DeliveryType deliveryType;
-        if (DeliveryKind.STANDARD.isCurrent()) {
-            CallbackQuery query = update.getCallbackQuery();
-            if (Objects.nonNull(query)) {
-                deliveryType = DeliveryType.valueOf(query.getData());
-                if (DeliveryType.VIP.equals(deliveryType)) {
-                    Long dealPid = userRepository.getCurrentDealByChatId(chatId);
-                    BigDecimal fix = VariablePropertiesUtil.getBigDecimal(VariableType.FIX_COMMISSION_VIP,
-                            dealRepository.getFiatCurrencyByPid(dealPid),
-                            dealRepository.getDealTypeByPid(dealPid),
-                            dealRepository.getCryptoCurrencyByPid(dealPid));
-                    dealRepository.updateAmountByPid(dealRepository.getAmountByPid(dealPid).add(fix), dealPid);
-                }
-            } else {
-                deliveryType = DeliveryType.STANDARD;
+        Long dealPid = userRepository.getCurrentDealByChatId(chatId);
+        DealType dealType = dealService.getDealTypeByPid(dealPid);
+        CryptoCurrency cryptoCurrency = dealService.getCryptoCurrencyByPid(dealPid);
+        if (DeliveryKind.STANDARD.isCurrent() && DealType.isBuy(dealType) && CryptoCurrency.BITCOIN.equals(cryptoCurrency)) {
+            deliveryType = DeliveryType.valueOf(update.getCallbackQuery().getData());
+            if (DeliveryType.VIP.equals(deliveryType)) {
+                BigDecimal fix = VariablePropertiesUtil.getBigDecimal(VariableType.FIX_COMMISSION_VIP,
+                        dealRepository.getFiatCurrencyByPid(dealPid),
+                        dealRepository.getDealTypeByPid(dealPid),
+                        dealRepository.getCryptoCurrencyByPid(dealPid));
+                dealRepository.updateAmountByPid(dealRepository.getAmountByPid(dealPid).add(fix), dealPid);
             }
         } else {
             deliveryType = DeliveryType.STANDARD;
