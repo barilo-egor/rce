@@ -13,6 +13,8 @@ import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.util.UpdateUtil;
 
+import static tgb.btc.rce.enums.ReviewPriseType.DYNAMIC;
+
 @CommandProcessor(command = Command.PUBLISH_REVIEW)
 @Slf4j
 public class PublishReview extends Processor {
@@ -39,7 +41,9 @@ public class PublishReview extends Processor {
         responseSender.sendMessage(chatId, "Отзыв опубликован.");
         review.setPublished(true);
         reviewService.save(review);
-        Integer reviewPrise = VariablePropertiesUtil.getInt(VariableType.REVIEW_PRISE);
+        Integer reviewPrise = DYNAMIC.isCurrent()
+                ? review.getAmount()
+                : VariablePropertiesUtil.getInt(VariableType.REVIEW_PRISE);
         Integer referralBalance = userService.getReferralBalanceByChatId(review.getChatId());
         int total = referralBalance + reviewPrise;
         log.info("Обновление реф баланса за отзыв : chatId = " + review.getChatId() + "; reviewPrise = "
