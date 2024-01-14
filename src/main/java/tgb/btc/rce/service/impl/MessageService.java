@@ -7,6 +7,7 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.service.bean.bot.UserService;
+import tgb.btc.library.util.BigDecimalUtil;
 import tgb.btc.library.vo.calculate.DealAmount;
 import tgb.btc.rce.enums.PropertiesMessage;
 import tgb.btc.rce.service.IResponseSender;
@@ -43,28 +44,24 @@ public class MessageService {
     }
 
     public String getInlineCalculatorMessage(DealType dealType, InlineCalculatorVO calculator, DealAmount dealAmount) {
+        String cryptoCode = calculator.getCryptoCurrency().getShortName().toUpperCase();
+        String fiatCode = calculator.getFiatCurrency().getCode().toUpperCase();
+        String fiatFlag = calculator.getFiatCurrency().getFlag();
         if (Objects.isNull(dealAmount)) {
             return DealType.BUY.equals(dealType)
-                    ? MessagePropertiesUtil.getMessage(PropertiesMessage.DEAL_INPUT_SUM_TO_BUY,
-                    calculator.getCryptoCurrency().getShortName().toUpperCase(),
-                    calculator.getFiatCurrency().getCode().toUpperCase(), StringUtils.EMPTY,
-                    calculator.getFiatCurrency().getFlag(),StringUtils.EMPTY,
-                    calculator.getFiatCurrency().getFlag(), StringUtils.EMPTY)
-                    : MessagePropertiesUtil.getMessage(PropertiesMessage.DEAL_INPUT_SUM_TO_SELL,
-                    calculator.getCryptoCurrency().getShortName().toUpperCase(),
-                    calculator.getFiatCurrency().getCode().toUpperCase(), StringUtils.EMPTY,
-                    calculator.getFiatCurrency().getFlag(), StringUtils.EMPTY);
+                    ? MessagePropertiesUtil.getMessage(PropertiesMessage.DEAL_INPUT_SUM_TO_BUY, cryptoCode, fiatCode,
+                    StringUtils.EMPTY, fiatFlag,StringUtils.EMPTY, fiatFlag, StringUtils.EMPTY)
+                    : MessagePropertiesUtil.getMessage(PropertiesMessage.DEAL_INPUT_SUM_TO_SELL, cryptoCode, fiatCode,
+                    StringUtils.EMPTY, fiatFlag, StringUtils.EMPTY);
         } else {
             return DealType.BUY.equals(dealType)
-                    ? MessagePropertiesUtil.getMessage(PropertiesMessage.DEAL_INPUT_SUM_TO_BUY,
-                    calculator.getCryptoCurrency().getShortName().toUpperCase(),
-                    calculator.getFiatCurrency().getCode().toUpperCase(), dealAmount.getCryptoAmount(),
-                    calculator.getFiatCurrency().getFlag(), dealAmount.getAmount(),
-                    calculator.getFiatCurrency().getFlag(), dealAmount.getAmountWithoutCommission())
-                    : MessagePropertiesUtil.getMessage(PropertiesMessage.DEAL_INPUT_SUM_TO_SELL,
-                    calculator.getCryptoCurrency().getShortName().toUpperCase(),
-                    calculator.getFiatCurrency().getCode().toUpperCase(),
-                    dealAmount.getCryptoAmount(), calculator.getFiatCurrency().getFlag(), dealAmount.getAmount());
+                    ? MessagePropertiesUtil.getMessage(PropertiesMessage.DEAL_INPUT_SUM_TO_BUY, cryptoCode, fiatCode,
+                    BigDecimalUtil.roundToPlainString(dealAmount.getCryptoAmount(), calculator.getCryptoCurrency().getScale()) + " " + cryptoCode,
+                    fiatFlag, BigDecimalUtil.roundToPlainString(dealAmount.getAmount()) + " " + fiatCode, fiatFlag,
+                    BigDecimalUtil.roundToPlainString(dealAmount.getAmountWithoutCommission()) + " " + fiatCode)
+                    : MessagePropertiesUtil.getMessage(PropertiesMessage.DEAL_INPUT_SUM_TO_SELL, cryptoCode, fiatCode,
+                    BigDecimalUtil.roundToPlainString(dealAmount.getCryptoAmount(), calculator.getCryptoCurrency().getScale()) + " " + cryptoCode,
+                    fiatFlag, BigDecimalUtil.roundToPlainString(dealAmount.getAmount()) + " " + fiatCode);
         }
     }
 
