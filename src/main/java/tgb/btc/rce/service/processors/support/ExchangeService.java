@@ -5,7 +5,6 @@ import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.PhotoSize;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -17,7 +16,7 @@ import tgb.btc.library.constants.enums.DeliveryKind;
 import tgb.btc.library.constants.enums.ReferralType;
 import tgb.btc.library.constants.enums.bot.DeliveryType;
 import tgb.btc.library.constants.enums.bot.*;
-import tgb.btc.library.constants.enums.properties.CommonProperties;
+import tgb.btc.library.constants.enums.properties.PropertiesPath;
 import tgb.btc.library.constants.enums.properties.VariableType;
 import tgb.btc.library.exception.BaseException;
 import tgb.btc.library.exception.CalculatorQueryException;
@@ -45,10 +44,7 @@ import tgb.btc.rce.vo.InlineButton;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -213,13 +209,16 @@ public class ExchangeService {
         return true;
     }
 
-    public boolean alreadyHasDeal(Long chatId) {
-        if (dealRepository.getActiveDealsCountByUserChatId(chatId) > 0) {
-            responseSender.sendMessage(chatId, "У вас уже есть активная заявка.",
-                    InlineButton.buildData("Удалить", Command.DELETE_DEAL.getText()));
-            return true;
-        }
-        return false;
+    public Integer getCountFinishedDeal(Long chatId) {
+        return dealRepository.getCountFinishedDeal(chatId, Arrays.asList(DealStatus.NEW, DealStatus.CONFIRMED));
+    }
+
+    public List<Long> getListNewDeal(Long chatId) {
+        return dealRepository.getListNewDeal(chatId, DealStatus.NEW);
+    }
+
+    public void deleteByPidIn(List<Long> pidList) {
+        dealRepository.deleteByPidIn(pidList);
     }
 
     public void sendTotalDealAmount(Long chatId, DealType dealType, CryptoCurrency cryptoCurrency, FiatCurrency fiatCurrency) {
@@ -348,7 +347,7 @@ public class ExchangeService {
                         DealType.BUY,
                         cryptoCurrency);
                 String lastWalletMessage = MessagePropertiesUtil.getMessage("send.wallet.last");
-                if (Objects. isNull(lastWalletMessage))
+                if (Objects.isNull(lastWalletMessage))
                     message = message.concat("\n\nВы можете использовать ваш сохраненный адрес:\n" + wallet);
                 else message = message.concat("\n\n" + lastWalletMessage + "\n" + wallet);
                 buttons.add(BotInlineButton.USE_SAVED_WALLET.getButton());
@@ -424,7 +423,8 @@ public class ExchangeService {
                 }
             } else {
                 if (!update.hasCallbackQuery()
-                        || !update.getCallbackQuery().getData().equals(BotStringConstants.USE_SAVED_WALLET)) return false;
+                        || !update.getCallbackQuery().getData().equals(BotStringConstants.USE_SAVED_WALLET))
+                    return false;
                 wallet = dealRepository.getWalletFromLastPassedByChatIdAndDealTypeAndCryptoCurrency(
                         chatId, dealType, dealRepository.getCryptoCurrencyByPid(currentDealPid));
             }
@@ -530,7 +530,7 @@ public class ExchangeService {
 
         String promoCodeText = Boolean.TRUE.equals(deal.getUsedPromo())
                 ? "\n\n<b> Использован скидочный промокод</b>: "
-                        + VariablePropertiesUtil.getVariable(VariableType.PROMO_CODE_NAME) + "\n\n"
+                + VariablePropertiesUtil.getVariable(VariableType.PROMO_CODE_NAME) + "\n\n"
                 : "\n\n";
 
         PaymentType paymentType = deal.getPaymentType();
@@ -706,8 +706,8 @@ public class ExchangeService {
             message = "\uD83E\uDD11У вас есть " + referralBalance + "₽ на реферальном балансе. Использовать их в качестве скидки?";
         } else {
             BigDecimal refBalance = BigDecimal.valueOf(referralBalance);
-            if (CommonProperties.VARIABLE.isNotBlank("course.rub.byn")) {
-                refBalance = BigDecimal.valueOf(referralBalance).multiply(CommonProperties.VARIABLE.getBigDecimal("course.rub.byn"));
+            if (PropertiesPath.VARIABLE_PROPERTIES.isNotBlank("course.rub.byn")) {
+                refBalance = BigDecimal.valueOf(referralBalance).multiply(PropertiesPath.VARIABLE_PROPERTIES.getBigDecimal("course.rub.byn"));
             }
             if (refBalance.compareTo(dealAmount) < 1) {
                 sumWithDiscount = dealAmount.subtract(refBalance);

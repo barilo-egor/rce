@@ -7,7 +7,7 @@ import tgb.btc.library.bean.bot.Deal;
 import tgb.btc.library.constants.enums.ReferralType;
 import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
-import tgb.btc.library.constants.enums.properties.CommonProperties;
+import tgb.btc.library.constants.enums.properties.PropertiesPath;
 import tgb.btc.library.constants.enums.properties.VariableType;
 import tgb.btc.library.repository.bot.DealRepository;
 import tgb.btc.library.repository.bot.UserDiscountRepository;
@@ -71,8 +71,8 @@ public class UserDiscountProcessService {
                     dealAmount = dealAmount.subtract(BigDecimal.valueOf(referralBalance));
                 else dealAmount = BigDecimal.ZERO;
             } else {
-                if (CommonProperties.VARIABLE.isNotBlank("course.rub.byn")) {
-                    BigDecimal bynReferralBalance = BigDecimal.valueOf(referralBalance).multiply(CommonProperties.VARIABLE.getBigDecimal("course.rub.byn"));
+                if (PropertiesPath.VARIABLE_PROPERTIES.isNotBlank("course.rub.byn")) {
+                    BigDecimal bynReferralBalance = BigDecimal.valueOf(referralBalance).multiply(PropertiesPath.VARIABLE_PROPERTIES.getBigDecimal("course.rub.byn"));
                     if (bynReferralBalance.compareTo(dealAmount) < 1)
                         dealAmount = dealAmount.subtract(bynReferralBalance);
                     else dealAmount = BigDecimal.ZERO;
@@ -92,7 +92,7 @@ public class UserDiscountProcessService {
         boolean isRankDiscountOn = BooleanUtils.isTrue(
                 VariablePropertiesUtil.getBoolean(VariableType.DEAL_RANK_DISCOUNT_ENABLE))
                 && BooleanUtils.isNotFalse(userDiscountRepository.getRankDiscountByUserChatId(
-                        dealRepository.getUserChatIdByDealPid(deal.getPid())));
+                dealRepository.getUserChatIdByDealPid(deal.getPid())));
         if (!Rank.FIRST.equals(rank) && isRankDiscountOn) {
             BigDecimal commission = deal.getCommission();
             BigDecimal rankDiscount = BigDecimalUtil.multiplyHalfUp(commission, calculateService.getPercentsFactor(

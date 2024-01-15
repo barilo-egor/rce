@@ -7,12 +7,12 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import tgb.btc.library.constants.enums.properties.PropertiesPath;
 import tgb.btc.library.repository.bot.UserRepository;
 import tgb.btc.library.service.bean.bot.UserService;
 import tgb.btc.library.service.process.BannedUserCache;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.SimpleCommand;
-import tgb.btc.rce.enums.properties.BotProperties;
 import tgb.btc.rce.service.AntiSpam;
 import tgb.btc.rce.service.IUpdateDispatcher;
 import tgb.btc.rce.service.Processor;
@@ -29,7 +29,7 @@ public class UpdateDispatcher implements IUpdateDispatcher {
     public static ApplicationContext applicationContext;
     private static boolean IS_ON = false; // TODO
 
-    private static final boolean IS_LOG_UDPATES = BotProperties.FUNCTIONS.getBoolean("log.updates", false);
+    private static final boolean IS_LOG_UDPATES = PropertiesPath.FUNCTIONS_PROPERTIES.getBoolean("log.updates", false);
     private final UserService userService;
 
     private final UserProcessService userProcessService;

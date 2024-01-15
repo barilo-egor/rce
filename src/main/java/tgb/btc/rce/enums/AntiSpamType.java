@@ -1,6 +1,6 @@
 package tgb.btc.rce.enums;
 
-import tgb.btc.library.constants.enums.properties.CommonProperties;
+import tgb.btc.library.constants.enums.properties.PropertiesPath;
 import tgb.btc.library.interfaces.Module;
 
 public enum AntiSpamType implements Module {
@@ -9,7 +9,7 @@ public enum AntiSpamType implements Module {
     EMOJI;
 
     public static final AntiSpamType CURRENT =
-            AntiSpamType.valueOf(CommonProperties.MODULES.getString("anti.spam"));
+            AntiSpamType.valueOf(PropertiesPath.MODULES_PROPERTIES.getString("anti.spam"));
 
     @Override
     public boolean isCurrent() {
