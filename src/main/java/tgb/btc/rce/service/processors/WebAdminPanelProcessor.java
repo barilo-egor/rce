@@ -7,13 +7,12 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.api.bot.ITokenTransmitter;
 import tgb.btc.library.bean.web.WebUser;
-import tgb.btc.library.constants.enums.properties.WebProperties;
+import tgb.btc.library.constants.enums.properties.PropertiesPath;
 import tgb.btc.library.exception.BaseException;
 import tgb.btc.library.repository.web.WebUserRepository;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.InlineType;
-import tgb.btc.rce.enums.MessageProperties;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.UpdateUtil;
@@ -27,7 +26,7 @@ import java.util.Optional;
 @Slf4j
 public class WebAdminPanelProcessor extends Processor {
 
-    private static final Long AUTH_TIME = WebProperties.LOGIN.getLong("auth.time", 10L);
+    private static final Long AUTH_TIME = PropertiesPath.LOGIN_PROPERTIES.getLong("auth.time", 10L);
 
     private WebUserRepository webUserRepository;
 
@@ -53,7 +52,7 @@ public class WebAdminPanelProcessor extends Processor {
         String url;
         Optional<Message> optionalMessage;
         if (Objects.nonNull(webUser)) {
-            url = WebProperties.SERVER.getString("main.url") + "/web/main?username=" + webUser.getUsername()
+            url = PropertiesPath.SERVER_PROPERTIES.getString("main.url") + "/web/main?username=" + webUser.getUsername()
                     + "&token=" + token + "&chatId=" + chatId;
             optionalMessage = responseSender.sendMessage(chatId, "Веб админ-панель. Доступ для автоматической авторизации открыт на " + AUTH_TIME + " секунд.",
                     KeyboardUtil.buildInline(List.of(InlineButton.builder()
@@ -62,8 +61,8 @@ public class WebAdminPanelProcessor extends Processor {
                             .inlineType(InlineType.WEB_APP)
                             .build())));
         } else {
-            url = WebProperties.SERVER.getString("main.url") + "/web/registration?chatId=" + chatId;
-            responseSender.sendMessage(chatId, MessageProperties.INFO_MESSAGE.getString("web.user.not.found"),
+            url = PropertiesPath.SERVER_PROPERTIES.getString("main.url") + "/web/registration?chatId=" + chatId;
+            responseSender.sendMessage(chatId, PropertiesPath.INFO_MESSAGE_PROPERTIES.getString("web.user.not.found"),
                     KeyboardUtil.buildInline(List.of(InlineButton.builder()
                             .text("Зарегистрироваться")
                             .data(url)

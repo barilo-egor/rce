@@ -4,9 +4,8 @@ import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import tgb.btc.library.constants.enums.properties.CommonProperties;
+import tgb.btc.library.constants.enums.properties.PropertiesPath;
 import tgb.btc.library.constants.enums.properties.VariableType;
-import tgb.btc.library.constants.strings.FilePaths;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
@@ -23,9 +22,9 @@ public class TurningRankDiscount extends Processor {
         Boolean newValue = Boolean.valueOf(values[1]);
         PropertiesConfiguration conf;
         try {
-            conf = new PropertiesConfiguration(FilePaths.VARIABLE_PROPERTIES);
+            conf = new PropertiesConfiguration(PropertiesPath.VARIABLE_PROPERTIES.getFileName());
         } catch (ConfigurationException e) {
-            responseSender.sendMessage(chatId, "Ошибки при открытии " + FilePaths.VARIABLE_PROPERTIES
+            responseSender.sendMessage(chatId, "Ошибки при открытии " + PropertiesPath.VARIABLE_PROPERTIES.getFileName()
                     + ": " + e.getMessage() + "\n" + ExceptionUtils.getFullStackTrace(e));
             userService.setDefaultValues(chatId);
             return;
@@ -36,7 +35,7 @@ public class TurningRankDiscount extends Processor {
             responseSender.sendMessage(chatId, newValue ? "Скидка включена." : "Скидка выключена.");
             responseSender.deleteMessage(chatId, update.getCallbackQuery().getMessage().getMessageId());
             processToAdminMainPanel(chatId);
-            CommonProperties.VARIABLE.reload();
+            PropertiesPath.VARIABLE_PROPERTIES.reload();
         } catch (ConfigurationException e) {
             responseSender.sendMessage(chatId, "Ошибки при включении/выключении ранговой скидки: " + e.getMessage() + "\n"
                     + ExceptionUtils.getFullStackTrace(e));

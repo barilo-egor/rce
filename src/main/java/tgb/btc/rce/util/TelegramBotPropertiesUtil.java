@@ -1,8 +1,8 @@
 package tgb.btc.rce.util;
 
 import lombok.extern.slf4j.Slf4j;
+import tgb.btc.library.constants.enums.properties.PropertiesPath;
 import tgb.btc.library.exception.BaseException;
-import tgb.btc.rce.enums.properties.BotProperties;
 
 import java.util.Objects;
 
@@ -17,7 +17,7 @@ public final class TelegramBotPropertiesUtil {
 
     public static String getToken() {
         if (Objects.isNull(BOT_TOKEN)) {
-            BOT_TOKEN = BotProperties.BOT_CONFIG.getString("bot.token");
+            BOT_TOKEN = PropertiesPath.BOT_PROPERTIES.getString("bot.token");
             if (Objects.isNull(BOT_TOKEN)) throw new BaseException("Токен бота не найден.");
         }
         return BOT_TOKEN;
@@ -25,7 +25,7 @@ public final class TelegramBotPropertiesUtil {
 
     public static String getUsername() {
         if (Objects.isNull(BOT_USERNAME)) {
-            BOT_USERNAME = BotProperties.BOT_CONFIG.getString("bot.username");
+            BOT_USERNAME = PropertiesPath.BOT_PROPERTIES.getString("bot.username");
             if (Objects.isNull(BOT_TOKEN)) throw new BaseException("Юзернейм бота не найден.");
         }
         return BOT_USERNAME;

@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.constants.enums.bot.CryptoCurrency;
 import tgb.btc.library.constants.enums.bot.DealType;
-import tgb.btc.library.constants.enums.properties.CommonProperties;
+import tgb.btc.library.constants.enums.properties.PropertiesPath;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
@@ -30,10 +30,10 @@ public class TurnOffCurrencyProcessor extends Processor {
 
         if (DealType.BUY.equals(dealType)) {
             TurningCurrenciesUtil.BUY_TURNING.put(currency, false);
-            CommonProperties.TURNING_CURRENCIES.setProperty("buy." + currency.name(), false);
+            PropertiesPath.CURRENCIES_TURNING_PROPERTIES.setProperty("buy." + currency.name(), false);
         } else {
             TurningCurrenciesUtil.SELL_TURNING.put(currency, false);
-            CommonProperties.TURNING_CURRENCIES.setProperty("sell." + currency.name(), false);
+            PropertiesPath.CURRENCIES_TURNING_PROPERTIES.setProperty("sell." + currency.name(), false);
         }
         responseSender.deleteMessage(UpdateUtil.getChatId(update), update.getCallbackQuery().getMessage().getMessageId());
         turningCurrencyProcessor.run(update);

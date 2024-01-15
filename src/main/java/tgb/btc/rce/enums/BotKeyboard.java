@@ -4,7 +4,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
-import tgb.btc.library.constants.enums.properties.CommonProperties;
+import tgb.btc.library.constants.enums.properties.PropertiesPath;
 import tgb.btc.library.constants.enums.properties.VariableType;
 import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.vo.InlineButton;
@@ -30,7 +30,7 @@ public enum BotKeyboard {
     OPERATOR(KeyboardUtil.buildInline(List.of(
             InlineButton.builder()
                     .text("Связь с оператором")
-                    .data(CommonProperties.VARIABLE.getString(VariableType.OPERATOR_LINK.getKey()))
+                    .data(PropertiesPath.VARIABLE_PROPERTIES.getString(VariableType.OPERATOR_LINK.getKey()))
                     .inlineType(InlineType.URL)
                     .build()
     ))),

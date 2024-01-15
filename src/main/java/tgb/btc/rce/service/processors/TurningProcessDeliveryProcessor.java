@@ -3,7 +3,7 @@ package tgb.btc.rce.service.processors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import tgb.btc.library.constants.enums.properties.CommonProperties;
+import tgb.btc.library.constants.enums.properties.PropertiesPath;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.Processor;
@@ -29,7 +29,7 @@ public class TurningProcessDeliveryProcessor extends Processor {
     public void run(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
         String deliveryType = CallbackQueryUtil.getSplitData(update, 1);
-        CommonProperties.MODULES.setProperty("delivery.kind", deliveryType);
+        PropertiesPath.MODULES_PROPERTIES.setProperty("delivery.kind", deliveryType);
         responseSender.sendEditedMessageText(chatId, update.getCallbackQuery().getMessage().getMessageId(),
                 Command.TURNING_DELIVERY_TYPE.getText(),
                 KeyboardUtil.buildInline(List.of(keyboardService.getDeliveryTypeButton())));

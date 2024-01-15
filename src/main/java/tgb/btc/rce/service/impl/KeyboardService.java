@@ -8,13 +8,15 @@ import tgb.btc.library.constants.enums.DeliveryKind;
 import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.constants.enums.bot.DeliveryType;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
-import tgb.btc.library.constants.enums.properties.CommonProperties;
+import tgb.btc.library.constants.enums.properties.PropertiesPath;
 import tgb.btc.library.repository.bot.PaymentTypeRepository;
 import tgb.btc.library.util.BigDecimalUtil;
 import tgb.btc.library.util.FiatCurrencyUtil;
 import tgb.btc.rce.constants.BotStringConstants;
-import tgb.btc.rce.enums.*;
-import tgb.btc.rce.enums.properties.BotProperties;
+import tgb.btc.rce.enums.BotInlineButton;
+import tgb.btc.rce.enums.CalculatorType;
+import tgb.btc.rce.enums.Command;
+import tgb.btc.rce.enums.InlineType;
 import tgb.btc.rce.service.processors.InlineCalculator;
 import tgb.btc.rce.util.*;
 import tgb.btc.rce.vo.InlineButton;
@@ -30,7 +32,7 @@ import static tgb.btc.rce.enums.InlineCalculatorButton.*;
 public class KeyboardService {
 
     private static final CalculatorType CALCULATOR_TYPE =
-            CalculatorType.valueOf(CommonProperties.MODULES.getString("calculator.type"));
+            CalculatorType.valueOf(PropertiesPath.MODULES_PROPERTIES.getString("calculator.type"));
 
     private PaymentTypeRepository paymentTypeRepository;
 
@@ -61,13 +63,13 @@ public class KeyboardService {
     public ReplyKeyboard getPaymentTypes(DealType dealType, FiatCurrency fiatCurrency) {
         List<InlineButton> buttons =
                 paymentTypeRepository.getByDealTypeAndIsOnAndFiatCurrency(dealType, true, fiatCurrency).stream()
-                .map(paymentType -> InlineButton.builder()
-                        .text(paymentType.getName())
-                        .data(paymentType.getPid().toString())
-                        .inlineType(InlineType.CALLBACK_DATA)
-                        .build())
-                .collect(Collectors.toList());
-        Integer numberOfColumns = BotProperties.FUNCTIONS.getInteger("payment.types.columns", null);
+                        .map(paymentType -> InlineButton.builder()
+                                .text(paymentType.getName())
+                                .data(paymentType.getPid().toString())
+                                .inlineType(InlineType.CALLBACK_DATA)
+                                .build())
+                        .collect(Collectors.toList());
+        Integer numberOfColumns = PropertiesPath.FUNCTIONS_PROPERTIES.getInteger("payment.types.columns", null);
         if (Objects.nonNull(numberOfColumns)) {
             return KeyboardUtil.buildInlineSingleLast(buttons, numberOfColumns, KeyboardUtil.INLINE_BACK_BUTTON);
         }
@@ -80,7 +82,7 @@ public class KeyboardService {
                 InlineButton.builder()
                         .text(Command.SHOW_DEAL.getText())
                         .data(Command.SHOW_DEAL.getText() + BotStringConstants.CALLBACK_DATA_SPLITTER
-                                      + dealPid)
+                                + dealPid)
                         .build()
         ));
     }
@@ -142,12 +144,12 @@ public class KeyboardService {
         inlineButtons.add(KeyboardUtil.createCallBackDataButton(READY));
         InlineCalculatorVO calculator = InlineCalculator.cache.get(chaId);
         String text = !calculator.getSwitched()
-               ? calculator.getFiatCurrency().getFlag() + "Ввод суммы в " + calculator.getFiatCurrency().getCode().toUpperCase()
-               : "\uD83D\uDD38Ввод суммы в " + calculator.getCryptoCurrency().getShortName().toUpperCase();
+                ? calculator.getFiatCurrency().getFlag() + "Ввод суммы в " + calculator.getFiatCurrency().getCode().toUpperCase()
+                : "\uD83D\uDD38Ввод суммы в " + calculator.getCryptoCurrency().getShortName().toUpperCase();
         List<InlineButton> currencySwitcher = Collections.singletonList(KeyboardUtil.createCallBackDataButton(text,
-                           Command.INLINE_CALCULATOR, CURRENCY_SWITCHER.getData()));
+                Command.INLINE_CALCULATOR, CURRENCY_SWITCHER.getData()));
         List<List<InlineKeyboardButton>> rows = KeyboardUtil.buildInlineRows(inlineButtons, 3);
-        rows.add(4, KeyboardUtil.buildInlineRows(currencySwitcher,1).get(0));
+        rows.add(4, KeyboardUtil.buildInlineRows(currencySwitcher, 1).get(0));
         return KeyboardUtil.buildInlineByRows(rows);
     }
 
@@ -161,7 +163,7 @@ public class KeyboardService {
     public ReplyKeyboard getDeliveryTypes() {
         List<InlineButton> buttons = new ArrayList<>();
         Arrays.stream(DeliveryType.values()).forEach(x -> buttons.add(InlineButton.builder()
-                .text(DesignProperties.BUTTONS_DESIGN.getString(x.name()))
+                .text(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.getString(x.name()))
                 .data(x.name())
                 .inlineType(InlineType.CALLBACK_DATA)
                 .build()));

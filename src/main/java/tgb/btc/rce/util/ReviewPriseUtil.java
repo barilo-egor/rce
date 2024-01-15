@@ -2,8 +2,8 @@ package tgb.btc.rce.util;
 
 import org.apache.commons.lang.StringUtils;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
+import tgb.btc.library.constants.enums.properties.PropertiesPath;
 import tgb.btc.library.exception.PropertyValueNotFoundException;
-import tgb.btc.rce.enums.properties.BotProperties;
 import tgb.btc.rce.vo.ReviewPrise;
 
 import java.math.BigDecimal;
@@ -33,7 +33,7 @@ public class ReviewPriseUtil {
 
     public static void load() {
         REVIEW_PRISES.clear();
-        for (String key : BotProperties.REVIEW_PRISE.getKeys()) {
+        for (String key : PropertiesPath.REVIEW_PRISE_PROPERTIES.getKeys()) {
             int sum;
             if (StringUtils.isBlank(key)) {
                 throw new PropertyValueNotFoundException("Не указано название для одного из ключей" + key + ".");
@@ -43,7 +43,7 @@ public class ReviewPriseUtil {
             } catch (NumberFormatException e) {
                 throw new PropertyValueNotFoundException("Не корректное название для ключа " + key + ".");
             }
-            String[] priseValues =  BotProperties.REVIEW_PRISE.getStringArray(key);
+            String[] priseValues = PropertiesPath.REVIEW_PRISE_PROPERTIES.getStringArray(key);
             if (priseValues.length == 0) {
                 throw new PropertyValueNotFoundException("Не указано значение для ключа " + key + ".");
             }

@@ -4,8 +4,8 @@ import org.springframework.context.annotation.Conditional;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import tgb.btc.library.constants.enums.properties.PropertiesPath;
 import tgb.btc.rce.conditional.AntispamCondition;
-import tgb.btc.rce.enums.properties.BotProperties;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +25,7 @@ public class AntiSpam {
 
     public boolean isSpamUser(Long chatId) {
         synchronized (SPAM_USERS) {
-            for (Long userChatId: SPAM_USERS) {
+            for (Long userChatId : SPAM_USERS) {
                 if (userChatId.equals(chatId)) return true;
             }
             return false;
@@ -46,7 +46,7 @@ public class AntiSpam {
     @Async
     public void check() {
         synchronized (this) {
-            int allowedCount = BotProperties.ANTI_SPAM.getInteger("allowed.count",20);
+            int allowedCount = PropertiesPath.ANTI_SPAM_PROPERTIES.getInteger("allowed.count", 20);
             for (Map.Entry<Long, Integer> entry : MESSAGES_COUNTER.entrySet()) {
                 if (entry.getValue() > allowedCount) addUser(entry.getKey());
             }

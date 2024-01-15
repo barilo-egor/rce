@@ -3,7 +3,7 @@ package tgb.btc.rce.service.processors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.bean.bot.ReferralUser;
-import tgb.btc.library.constants.enums.properties.CommonProperties;
+import tgb.btc.library.constants.enums.properties.PropertiesPath;
 import tgb.btc.library.repository.bot.DealRepository;
 import tgb.btc.library.util.BigDecimalUtil;
 import tgb.btc.rce.annotation.CommandProcessor;
@@ -11,7 +11,6 @@ import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.InlineType;
 import tgb.btc.rce.enums.PropertiesMessage;
 import tgb.btc.rce.enums.Rank;
-import tgb.btc.rce.enums.properties.BotProperties;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.MessagePropertiesUtil;
@@ -36,7 +35,7 @@ public class Referral extends Processor {
     public void run(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
         String startParameter = "?start=" + chatId;
-        String refLink = BotProperties.BOT_CONFIG.getString("bot.link").concat(startParameter);
+        String refLink = PropertiesPath.BOT_PROPERTIES.getString("bot.link").concat(startParameter);
         BigDecimal referralBalance = BigDecimal.valueOf(userService.getReferralBalanceByChatId(chatId));
         String currentBalance = BigDecimalUtil.roundToPlainString(referralBalance);
         List<ReferralUser> referralUsers = userService.getUserReferralsByChatId(chatId);
@@ -49,13 +48,13 @@ public class Referral extends Processor {
         String resultMessage;
         String referralMessageFewFiat = MessagePropertiesUtil.getMessage("referral.main.few.fiat");
         if (Objects.nonNull(referralMessageFewFiat)) {
-            String refBalanceString = CommonProperties.VARIABLE.isNotBlank("course.rub.byn")
-                    ? BigDecimalUtil.roundToPlainString(referralBalance.multiply(CommonProperties.VARIABLE.getBigDecimal("course.rub.byn")), 2)
+            String refBalanceString = PropertiesPath.VARIABLE_PROPERTIES.isNotBlank("course.rub.byn")
+                    ? BigDecimalUtil.roundToPlainString(referralBalance.multiply(PropertiesPath.VARIABLE_PROPERTIES.getBigDecimal("course.rub.byn")), 2)
                     : BigDecimalUtil.roundToPlainString(referralBalance);
             resultMessage = String.format(referralMessageFewFiat,
                     refLink, currentBalance, refBalanceString,
                     numberOfReferrals, numberOfActiveReferrals,
-                    userService.getChargesByChatId(chatId), dealsCount, rank.getSmile(), rank.getPercent()).concat("%");;
+                    userService.getChargesByChatId(chatId), dealsCount, rank.getSmile(), rank.getPercent()).concat("%");
         } else {
             resultMessage = String.format(MessagePropertiesUtil.getMessage(PropertiesMessage.REFERRAL_MAIN),
                     refLink, currentBalance, numberOfReferrals, numberOfActiveReferrals,
