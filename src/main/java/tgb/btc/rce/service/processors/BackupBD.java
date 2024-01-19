@@ -9,6 +9,8 @@ import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.util.UpdateUtil;
 
+import java.util.Objects;
+
 @CommandProcessor(command = Command.BACKUP_DB)
 public class BackupBD extends Processor {
 
@@ -22,7 +24,7 @@ public class BackupBD extends Processor {
         this.responseSender = responseSender;
     }
 
-    @Autowired
+    @Autowired(required = false)
     public void setBackupService(BackupService backupService) {
         this.backupService = backupService;
     }
@@ -30,6 +32,10 @@ public class BackupBD extends Processor {
     @Override
     public void run(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
+        if (Objects.isNull(backupService)) {
+            responseSender.sendMessage(chatId, "Отсутствует бин BackUpService.");
+            return;
+        }
         backupService.backup();
         responseSender.sendMessage(chatId, "Процесс резервного копирования запущен");
     }
