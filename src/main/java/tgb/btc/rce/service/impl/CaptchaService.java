@@ -5,10 +5,13 @@ import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
 import tgb.btc.library.constants.strings.FilePaths;
 import tgb.btc.library.exception.BaseException;
+import tgb.btc.rce.exception.PicturesNotFoundException;
 import tgb.btc.rce.vo.Captcha;
 
 import java.io.File;
 import java.util.*;
+
+import static org.reflections.Reflections.log;
 
 @Slf4j
 @Service
@@ -24,8 +27,13 @@ public class CaptchaService {
 
     public static void loadPicturesNames() {
         File file = new File(FilePaths.CAPTCHA_PICTURES_PACKAGE);
-        PICTURES_NAMES.addAll(Arrays.asList(Objects.requireNonNull(file.list())));
-        //сделать
+        if (!file.exists()) {
+            throw new PicturesNotFoundException("Папка для изображений капчи не найдена.");
+        }
+        if (file.list().length == 0) {
+            throw new PicturesNotFoundException("Не найдено ни одного изображения капчи.");
+        }
+        PICTURES_NAMES.addAll(Arrays.asList(file.list()));
     }
 
     public Captcha getRandomCaptcha() {
