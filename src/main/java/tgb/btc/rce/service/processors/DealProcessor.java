@@ -201,7 +201,7 @@ public class DealProcessor extends Processor {
                 CryptoCurrency cryptoCurrency = dealService.getCryptoCurrencyByPid(dealPid);
                 if (DeliveryKind.STANDARD.isCurrent() && DealType.isBuy(dealType) && CryptoCurrency.BITCOIN.equals(cryptoCurrency)) {
                     userRepository.nextStep(chatId);
-                    exchangeService.askForDeliveryType(update);
+                    exchangeService.askForDeliveryType(chatId, dealRepository.getFiatCurrencyByPid(dealPid),dealType, cryptoCurrency);
                     break;
                 }
                 recursiveSwitch(update, chatId, isBack);

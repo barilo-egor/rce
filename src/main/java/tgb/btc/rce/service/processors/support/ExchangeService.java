@@ -541,7 +541,6 @@ public class ExchangeService {
         String deliveryTypeText;
         if (DeliveryKind.STANDARD.isCurrent()) {
             deliveryTypeText = "<b>Способ доставки</b>: " + deal.getDeliveryType().getDisplayName() + "\n\n";
-            responseSender.deleteCallbackMessageIfExists(update);
         } else {
             deliveryTypeText = "";
         }
@@ -767,10 +766,9 @@ public class ExchangeService {
         return true;
     }
 
-    public void askForDeliveryType(Update update) {
-        Long chatId = UpdateUtil.getChatId(update);
+    public void askForDeliveryType(Long chatId, FiatCurrency fiatCurrency, DealType dealType, CryptoCurrency cryptoCurrency) {
         responseSender.sendMessage(chatId, MessagePropertiesUtil.getMessage(PropertiesMessage.DELIVERY_TYPE_ASK),
-                keyboardService.getDeliveryTypes());
+                keyboardService.getDeliveryTypes(fiatCurrency, dealType, cryptoCurrency));
     }
 
     public void saveDeliveryTypeAndUpdateAmount(Update update) {
@@ -781,6 +779,7 @@ public class ExchangeService {
         CryptoCurrency cryptoCurrency = dealService.getCryptoCurrencyByPid(dealPid);
         if (DeliveryKind.STANDARD.isCurrent() && DealType.isBuy(dealType) && CryptoCurrency.BITCOIN.equals(cryptoCurrency)) {
             deliveryType = DeliveryType.valueOf(update.getCallbackQuery().getData());
+            responseSender.deleteCallbackMessageIfExists(update);
             if (DeliveryType.VIP.equals(deliveryType)) {
                 BigDecimal fix = VariablePropertiesUtil.getBigDecimal(VariableType.FIX_COMMISSION_VIP,
                         dealRepository.getFiatCurrencyByPid(dealPid),
