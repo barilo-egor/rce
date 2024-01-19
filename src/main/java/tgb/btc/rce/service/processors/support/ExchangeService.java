@@ -417,6 +417,7 @@ public class ExchangeService {
                 wallet = UpdateUtil.getMessageText(update);
                 try {
                     validateWallet(wallet);
+                    responseSender.deleteMessage(chatId, update.getMessage().getMessageId());
                 } catch (BaseException e) {
                     responseSender.sendMessage(chatId, e.getMessage());
                     return false;
@@ -427,6 +428,7 @@ public class ExchangeService {
                     return false;
                 wallet = dealRepository.getWalletFromLastPassedByChatIdAndDealTypeAndCryptoCurrency(
                         chatId, dealType, dealRepository.getCryptoCurrencyByPid(currentDealPid));
+                responseSender.deleteCallbackMessageIfExists(update);
             }
         } else {
             wallet = UpdateUtil.getMessageText(update);
