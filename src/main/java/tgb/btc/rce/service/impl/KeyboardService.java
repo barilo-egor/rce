@@ -167,7 +167,7 @@ public class KeyboardService {
     public ReplyKeyboard getDeliveryTypes(FiatCurrency fiatCurrency, DealType dealType, CryptoCurrency cryptoCurrency) {
         List<InlineButton> buttons = new ArrayList<>();
         Arrays.stream(DeliveryType.values()).forEach(x -> {
-            String text = PropertiesPath.BUTTONS_DESIGN_PROPERTIES.getString(x.name());
+            String text = PropertiesPath.DESIGN_PROPERTIES.getString(x.name());
             if (DeliveryType.VIP.equals(x) &&
                     PropertiesPath.FUNCTIONS_PROPERTIES.getBoolean("vip.button.add.sum", false)) {
                 Integer fix;
