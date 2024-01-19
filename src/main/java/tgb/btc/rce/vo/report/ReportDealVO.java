@@ -3,9 +3,9 @@ package tgb.btc.rce.vo.report;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
-import tgb.btc.rce.enums.CryptoCurrency;
-import tgb.btc.rce.enums.DealType;
-import tgb.btc.rce.enums.FiatCurrency;
+import tgb.btc.library.constants.enums.bot.CryptoCurrency;
+import tgb.btc.library.constants.enums.bot.DealType;
+import tgb.btc.library.constants.enums.bot.FiatCurrency;
 
 import java.math.BigDecimal;
 

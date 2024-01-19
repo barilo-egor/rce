@@ -5,7 +5,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
-import tgb.btc.rce.exception.BaseException;
+import tgb.btc.library.exception.BaseException;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.UpdateUtil;
@@ -36,7 +36,7 @@ public class ChangeReferralBalance extends Processor {
                                         .build())));
                 userService.updateBufferVariable(chatId,
                         update.getCallbackQuery().getData().split(BotStringConstants.CALLBACK_DATA_SPLITTER)[1]);
-                userService.nextStep(chatId, Command.CHANGE_REFERRAL_BALANCE);
+                userRepository.nextStep(chatId, Command.CHANGE_REFERRAL_BALANCE.name());
                 break;
             case 1:
                 if (!update.hasMessage() || !update.getMessage().hasText()) throw new BaseException("Не найден текст.");

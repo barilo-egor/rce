@@ -4,15 +4,16 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import tgb.btc.library.constants.enums.bot.DealType;
+import tgb.btc.library.repository.bot.DealRepository;
+import tgb.btc.library.service.process.CalculateService;
+import tgb.btc.library.vo.calculate.DealAmount;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
-import tgb.btc.rce.enums.DealType;
 import tgb.btc.rce.enums.InlineCalculatorButton;
 import tgb.btc.rce.enums.PropertiesMessage;
-import tgb.btc.rce.repository.DealRepository;
 import tgb.btc.rce.service.IUpdateDispatcher;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.service.impl.CalculateService;
 import tgb.btc.rce.service.impl.KeyboardService;
 import tgb.btc.rce.service.impl.MessageService;
 import tgb.btc.rce.service.processors.support.ExchangeService;
@@ -21,7 +22,6 @@ import tgb.btc.rce.util.MessagePropertiesUtil;
 import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.InlineCalculatorData;
 import tgb.btc.rce.vo.InlineCalculatorVO;
-import tgb.btc.rce.vo.calculate.DealAmount;
 
 import java.math.BigDecimal;
 import java.util.concurrent.ConcurrentHashMap;
@@ -87,14 +87,14 @@ public class InlineCalculator extends Processor {
     public void run(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
         if (CallbackQueryUtil.isBack(update)) {
-            userRepository.updateStepAndCommandByChatId(chatId, Command.DEAL, DealProcessor.AFTER_CALCULATOR_STEP);
+            userRepository.updateStepAndCommandByChatId(chatId, Command.DEAL.name(), DealProcessor.AFTER_CALCULATOR_STEP);
             dealProcessor.run(update);
             return;
         }
         InlineCalculatorVO calculator = cache.get(chatId);
         if (update.hasMessage() && !calculator.getOn()) {
             if (!exchangeService.calculateDealAmount(chatId, UpdateUtil.getBigDecimalFromText(update))) return;
-            userRepository.updateStepAndCommandByChatId(chatId, Command.DEAL, DealProcessor.AFTER_CALCULATOR_STEP);
+            userRepository.updateStepAndCommandByChatId(chatId, Command.DEAL.name(), DealProcessor.AFTER_CALCULATOR_STEP);
             updateDispatcher.runProcessor(Command.DEAL, chatId, update);
             return;
         } else if (update.hasMessage()) {
@@ -145,7 +145,7 @@ public class InlineCalculator extends Processor {
                 break;
             case READY:
                 if (!exchangeService.calculateDealAmount(chatId, new BigDecimal(sum), !isSwitched)) return;
-                userRepository.updateStepAndCommandByChatId(chatId, Command.DEAL, DealProcessor.AFTER_CALCULATOR_STEP);
+                userRepository.updateStepAndCommandByChatId(chatId, Command.DEAL.name(), DealProcessor.AFTER_CALCULATOR_STEP);
                 updateDispatcher.runProcessor(Command.DEAL, chatId, update);
                 return;
         }

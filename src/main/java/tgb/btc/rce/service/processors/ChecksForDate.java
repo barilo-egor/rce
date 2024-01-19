@@ -13,7 +13,7 @@ public class ChecksForDate extends Processor {
     @Override
     public void run(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
-        userService.nextStep(chatId, Command.SEND_CHECKS_FOR_DATE);
+        userRepository.nextStep(chatId, Command.SEND_CHECKS_FOR_DATE.name());
         responseSender.sendMessage(chatId, "Введите дату в формате 01.01.2000", BotKeyboard.REPLY_CANCEL);
     }
 

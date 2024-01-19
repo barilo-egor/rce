@@ -1,8 +1,8 @@
 package tgb.btc.rce.util;
 
 import lombok.extern.slf4j.Slf4j;
-import tgb.btc.rce.enums.BotProperties;
-import tgb.btc.rce.enums.DealType;
+import tgb.btc.library.constants.enums.bot.DealType;
+import tgb.btc.library.constants.enums.properties.PropertiesPath;
 import tgb.btc.rce.enums.PropertiesMessage;
 
 import java.util.Objects;
@@ -15,7 +15,7 @@ public class MessagePropertiesUtil {
     public static String getMessage(PropertiesMessage message) {
         String text;
         try {
-            String propertiesMessage = BotProperties.MESSAGE.getString(message.getKey());
+            String propertiesMessage = PropertiesPath.MESSAGE_PROPERTIES.getString(message.getKey());
             if (Objects.isNull(propertiesMessage)) return null;
             text = propertiesMessage.replaceAll("<ln>", "\n");
         } catch (Exception e) {
@@ -40,7 +40,7 @@ public class MessagePropertiesUtil {
     public static String getMessage(String key) {
         String text;
         try {
-            String message = BotProperties.MESSAGE.getString(key);
+            String message = PropertiesPath.MESSAGE_PROPERTIES.getString(key);
             if (Objects.isNull(message)) return null;
             text = message.replaceAll("<ln>", "\n");
         } catch (Exception e) {
@@ -54,7 +54,7 @@ public class MessagePropertiesUtil {
     public static String getMessageForFormat(String key) {
         String text;
         try {
-            String message = BotProperties.MESSAGE.getString(key);
+            String message = PropertiesPath.MESSAGE_PROPERTIES.getString(key);
             if (Objects.isNull(message)) return null;
             text = message.replaceAll("<ln>", "%n");
         } catch (Exception e) {

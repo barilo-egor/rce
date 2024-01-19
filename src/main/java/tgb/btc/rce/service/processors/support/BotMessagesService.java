@@ -3,14 +3,15 @@ package tgb.btc.rce.service.processors.support;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import tgb.btc.rce.bean.BotMessage;
-import tgb.btc.rce.enums.BotMessageType;
+import tgb.btc.library.bean.bot.BotMessage;
+import tgb.btc.library.constants.enums.bot.BotMessageType;
+import tgb.btc.library.constants.enums.bot.MessageType;
+import tgb.btc.library.repository.bot.UserRepository;
 import tgb.btc.rce.enums.Command;
-import tgb.btc.rce.enums.MessageType;
-import tgb.btc.rce.exception.BaseException;
+import tgb.btc.library.exception.BaseException;
 import tgb.btc.rce.service.impl.BotMessageService;
 import tgb.btc.rce.service.impl.ResponseSender;
-import tgb.btc.rce.service.impl.UserService;
+import tgb.btc.library.service.bean.bot.UserService;
 import tgb.btc.rce.util.BotImageUtil;
 import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.UpdateUtil;
@@ -27,6 +28,13 @@ public class BotMessagesService {
     private final ResponseSender responseSender;
     private final BotMessageService botMessageService;
 
+    private UserRepository userRepository;
+
+    @Autowired
+    public void setUserRepository(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
     @Autowired
     public BotMessagesService(UserService userService, ResponseSender responseSender,
                               BotMessageService botMessageService) {
@@ -36,7 +44,7 @@ public class BotMessagesService {
     }
 
     public void askForType(Long chatId, Command command) {
-        userService.nextStep(chatId, Command.BOT_MESSAGES);
+        userRepository.nextStep(chatId, Command.BOT_MESSAGES.name());
 
         BotMessageType[] values = BotMessageType.values();
 

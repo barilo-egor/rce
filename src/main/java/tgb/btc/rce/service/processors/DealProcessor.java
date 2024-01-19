@@ -4,22 +4,25 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import tgb.btc.library.bean.bot.User;
+import tgb.btc.library.constants.enums.DeliveryKind;
+import tgb.btc.library.constants.enums.bot.BotMessageType;
+import tgb.btc.library.constants.enums.bot.CryptoCurrency;
+import tgb.btc.library.constants.enums.bot.DealType;
+import tgb.btc.library.repository.bot.DealRepository;
+import tgb.btc.library.service.bean.bot.DealService;
+import tgb.btc.library.service.bean.bot.PaymentTypeService;
+import tgb.btc.library.util.FiatCurrencyUtil;
 import tgb.btc.rce.annotation.CommandProcessor;
-import tgb.btc.rce.bean.User;
-import tgb.btc.rce.enums.BotMessageType;
 import tgb.btc.rce.enums.Command;
-import tgb.btc.rce.enums.DealType;
 import tgb.btc.rce.enums.Menu;
-import tgb.btc.rce.repository.DealRepository;
 import tgb.btc.rce.service.ICalculatorTypeService;
 import tgb.btc.rce.service.IUpdateDispatcher;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.impl.BotMessageService;
-import tgb.btc.rce.service.impl.DealService;
-import tgb.btc.rce.service.impl.PaymentTypeService;
+import tgb.btc.rce.service.impl.DealProcessService;
 import tgb.btc.rce.service.processors.support.ExchangeService;
 import tgb.btc.rce.util.CallbackQueryUtil;
-import tgb.btc.rce.util.FiatCurrencyUtil;
 import tgb.btc.rce.util.UpdateUtil;
 
 import java.util.ArrayList;
@@ -45,6 +48,13 @@ public class DealProcessor extends Processor {
     private DealRepository dealRepository;
 
     private BotMessageService botMessageService;
+
+    private DealProcessService dealProcessService;
+
+    @Autowired
+    public void setDealProcessService(DealProcessService dealProcessService) {
+        this.dealProcessService = dealProcessService;
+    }
 
     @Autowired
     public void setBotMessageService(BotMessageService botMessageService) {
@@ -110,7 +120,7 @@ public class DealProcessor extends Processor {
         DealType dealType;
         switch (userStep) {
             case 0:
-                if (!isBack) userRepository.updateCommandByChatId(Command.DEAL, chatId);
+                if (!isBack) userRepository.updateCommandByChatId(Command.DEAL.name(), chatId);
                 if (!FiatCurrencyUtil.isFew()) {
                     recursiveSwitch(update, chatId, isBack);
                     break;
@@ -142,7 +152,7 @@ public class DealProcessor extends Processor {
                 dealType = dealService.getDealTypeByPid(userRepository.getCurrentDealByChatId(chatId));
                 if (!isBack) exchangeService.sendTotalDealAmount(chatId, dealType, dealService.getCryptoCurrencyByPid(currentDealPid),
                         dealRepository.getFiatCurrencyByPid(currentDealPid));
-                if (!DealType.isBuy(dealType) || !dealService.isAvailableForPromo(chatId)) {
+                if (!DealType.isBuy(dealType) || !dealProcessService.isAvailableForPromo(chatId)) {
                     recursiveSwitch(update, chatId, isBack);
                     break;
                 }
@@ -151,7 +161,7 @@ public class DealProcessor extends Processor {
                 break;
             case 4:
                 dealType = dealService.getDealTypeByPid(userRepository.getCurrentDealByChatId(chatId));
-                if (!isBack && DealType.isBuy(dealType) && dealService.isAvailableForPromo(chatId)) {
+                if (!isBack && DealType.isBuy(dealType) && dealProcessService.isAvailableForPromo(chatId)) {
                     responseSender.deleteCallbackMessageIfExists(update);
                     exchangeService.processPromoCode(update);
                 }
@@ -186,17 +196,31 @@ public class DealProcessor extends Processor {
                 if (!isBack) {
                     if (!exchangeService.saveRequisites(update)) return;
                 }
+                Long dealPid = userRepository.getCurrentDealByChatId(chatId);
+                dealType = dealService.getDealTypeByPid(dealPid);
+                CryptoCurrency cryptoCurrency = dealService.getCryptoCurrencyByPid(dealPid);
+                if (DeliveryKind.STANDARD.isCurrent() && DealType.isBuy(dealType) && CryptoCurrency.BITCOIN.equals(cryptoCurrency)) {
+                    userRepository.nextStep(chatId);
+                    exchangeService.askForDeliveryType(chatId, dealRepository.getFiatCurrencyByPid(dealPid),dealType, cryptoCurrency);
+                    break;
+                }
+                recursiveSwitch(update, chatId, isBack);
+                break;
+            case 8:
+                if (!isBack) {
+                    exchangeService.saveDeliveryTypeAndUpdateAmount(update);
+                }
                 userRepository.nextStep(chatId);
                 exchangeService.buildDeal(update);
                 break;
-            case 8:
+            case 9:
                 Boolean result = exchangeService.isPaid(update);
                 if (Objects.isNull(result)) {
                     return;
                 }
                 if (BooleanUtils.isFalse(result)) processToStart(chatId, update);
                 break;
-            case 9:
+            case 10:
                 if (!hasCheck(update)) {
                     exchangeService.askForReceipts(update);
                     return;

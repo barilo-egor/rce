@@ -26,7 +26,9 @@ public enum PropertiesMessage {
     DEAL_INPUT_SUM_TO_SELL("deal.input.sum.to.sell"),
     DEAL_CONFIRMED("deal.confirmed"),
     USER_INFORMATION_MAIN("user.information.main"),
-    USER_INFORMATION_WITHOUT_REFERRAL_MAIN("user.information.without.referral.main");
+    USER_INFORMATION_WITHOUT_REFERRAL_MAIN("user.information.without.referral.main"),
+
+    DELIVERY_TYPE_ASK("delivery.type.ask");
 
     final String key;
 

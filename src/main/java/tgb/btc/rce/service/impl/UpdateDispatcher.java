@@ -7,7 +7,10 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import tgb.btc.rce.enums.BotProperties;
+import tgb.btc.library.constants.enums.properties.PropertiesPath;
+import tgb.btc.library.repository.bot.UserRepository;
+import tgb.btc.library.service.bean.bot.UserService;
+import tgb.btc.library.service.process.BannedUserCache;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.SimpleCommand;
 import tgb.btc.rce.service.AntiSpam;
@@ -26,11 +29,20 @@ public class UpdateDispatcher implements IUpdateDispatcher {
     public static ApplicationContext applicationContext;
     private static boolean IS_ON = false; // TODO
 
-    private static final boolean IS_LOG_UDPATES = BotProperties.FUNCTIONS.getBoolean("log.updates", false);
+    private static final boolean IS_LOG_UDPATES = PropertiesPath.FUNCTIONS_PROPERTIES.getBoolean("log.updates", false);
     private final UserService userService;
+
+    private final UserProcessService userProcessService;
     private AntiSpam antiSpam;
 
     private BannedUserCache bannedUserCache;
+
+    private UserRepository userRepository;
+
+    @Autowired
+    public void setUserRepository(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     @Autowired
     public void setBannedUserCache(BannedUserCache bannedUserCache) {
@@ -43,8 +55,9 @@ public class UpdateDispatcher implements IUpdateDispatcher {
     }
 
     @Autowired
-    public UpdateDispatcher(UserService userService) {
+    public UpdateDispatcher(UserService userService, UserProcessService userProcessService) {
         this.userService = userService;
+        this.userProcessService = userProcessService;
     }
 
     public void dispatch(Update update) {
@@ -67,18 +80,18 @@ public class UpdateDispatcher implements IUpdateDispatcher {
         if (Objects.nonNull(antiSpam)) {
             if (isCaptcha(update)) return Command.CAPTCHA;
             antiSpam.saveTime(chatId);
-        } else userService.registerIfNotExists(update);
+        } else userProcessService.registerIfNotExists(update);
         if (isOffed(chatId)) return Command.BOT_OFFED;
         if (CommandUtil.isStartCommand(update)) return Command.START;
         Command command;
         if (userService.isDefaultStep(chatId)) command = Command.fromUpdate(update);
-        else command = userService.getCommandByChatId(chatId);
+        else command = Command.valueOf(userRepository.getCommandByChatId(chatId));
         if (Objects.isNull(command) || !hasAccess(command, chatId)) return Command.START;
         else return command;
     }
 
     private boolean isCaptcha(Update update) {
-        return !userService.registerIfNotExists(update) || antiSpam.isSpamUser(UpdateUtil.getChatId(update));
+        return !userProcessService.registerIfNotExists(update) || antiSpam.isSpamUser(UpdateUtil.getChatId(update));
     }
 
     private boolean isOffed(Long chatId) {

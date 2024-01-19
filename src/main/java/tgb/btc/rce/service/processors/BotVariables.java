@@ -4,10 +4,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import tgb.btc.library.constants.enums.properties.PropertiesPath;
 import tgb.btc.rce.annotation.CommandProcessor;
-import tgb.btc.rce.constants.FilePaths;
 import tgb.btc.rce.enums.BotKeyboard;
-import tgb.btc.rce.enums.BotProperties;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.util.UpdateUtil;
@@ -27,8 +26,8 @@ public class BotVariables extends Processor {
             case 0:
                 responseSender.sendMessage(chatId, "Измените нужные значения и отправьте исправленный файл. " +
                         "Обязательно закройте файл, перед тем как отправлять.", BotKeyboard.REPLY_CANCEL);
-                responseSender.sendFile(chatId, new File(FilePaths.BOT_VARIABLE_PROPERTIES));
-                userService.nextStep(chatId, Command.BOT_VARIABLES);
+                responseSender.sendFile(chatId, new File(PropertiesPath.VARIABLE_PROPERTIES.getFileName()));
+                userRepository.nextStep(chatId, Command.BOT_VARIABLES.name());
                 break;
             case 1:
                 if (!update.hasMessage() || !update.getMessage().hasDocument()) {
@@ -44,30 +43,30 @@ public class BotVariables extends Processor {
     private void updateProperties(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
         try {
-            responseSender.downloadFile(update.getMessage().getDocument(), FilePaths.BOT_VARIABLE_BUFFER_PROPERTIES);
+            responseSender.downloadFile(update.getMessage().getDocument(), PropertiesPath.VARIABLE_BUFFER_PROPERTIES.getFileName());
         } catch (IOException | TelegramApiException e) {
             log.error("Ошибка при скачивании новых переменных: ", e);
             responseSender.sendMessage(chatId, "Ошибка при скачивании новых переменных: " + e.getMessage());
             return;
         }
         try {
-            FileUtils.delete(BotProperties.BOT_VARIABLE.getFile());
+            FileUtils.delete(PropertiesPath.VARIABLE_PROPERTIES.getFile());
         } catch (IOException e) {
-            log.error("Ошибки при удалении " + FilePaths.BOT_VARIABLE_PROPERTIES, e);
-            responseSender.sendMessage(chatId, "Ошибки при удалении " + FilePaths.BOT_VARIABLE_PROPERTIES + ":"
+            log.error("Ошибки при удалении " + PropertiesPath.VARIABLE_PROPERTIES.getFileName(), e);
+            responseSender.sendMessage(chatId, "Ошибки при удалении " + PropertiesPath.VARIABLE_PROPERTIES.getFileName() + ":"
                     + e.getMessage());
             return;
         }
         try {
-            FileUtils.moveFile(BotProperties.BOT_VARIABLE_BUFFER.getFile(), BotProperties.BOT_VARIABLE.getFile());
+            FileUtils.moveFile(PropertiesPath.VARIABLE_BUFFER_PROPERTIES.getFile(), PropertiesPath.VARIABLE_PROPERTIES.getFile());
         } catch (IOException e) {
-            log.error("Ошибки при перемещении файла + " + FilePaths.BOT_VARIABLE_BUFFER_PROPERTIES
-                    + " в " + FilePaths.BOT_VARIABLE_PROPERTIES, e);
+            log.error("Ошибки при перемещении файла + " + PropertiesPath.VARIABLE_BUFFER_PROPERTIES.getFileName()
+                    + " в " + PropertiesPath.VARIABLE_PROPERTIES.getFileName(), e);
             responseSender.sendMessage(chatId, "Ошибки при перемещении файла + "
-                    + FilePaths.BOT_VARIABLE_BUFFER_PROPERTIES + " в " + FilePaths.BOT_VARIABLE_PROPERTIES);
+                    + PropertiesPath.VARIABLE_BUFFER_PROPERTIES.getFileName() + " в " + PropertiesPath.VARIABLE_PROPERTIES.getFileName());
             return;
         }
-        BotProperties.BOT_VARIABLE.reload();
+        PropertiesPath.VARIABLE_PROPERTIES.reload();
         responseSender.sendMessage(chatId, "Переменные обновлены.");
     }
 }

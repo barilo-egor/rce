@@ -2,13 +2,13 @@ package tgb.btc.rce.service.processors.paymenttypes.requisite.dynamic;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import tgb.btc.library.bean.bot.PaymentRequisite;
+import tgb.btc.library.bean.bot.PaymentType;
 import tgb.btc.rce.annotation.CommandProcessor;
-import tgb.btc.rce.bean.PaymentRequisite;
-import tgb.btc.rce.bean.PaymentType;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
-import tgb.btc.rce.repository.PaymentRequisiteRepository;
-import tgb.btc.rce.repository.PaymentTypeRepository;
+import tgb.btc.library.repository.bot.PaymentRequisiteRepository;
+import tgb.btc.library.repository.bot.PaymentTypeRepository;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.util.UpdateUtil;
 
@@ -54,7 +54,7 @@ public class TurningDynamic extends Processor {
             responseSender.sendMessage(chatId, "Динамические реквизиты для " + paymentType.getName() + " выключены.");
             turnDynamicRequisites.sendPaymentTypes(chatId, paymentType.getDealType(), paymentType.getFiatCurrency());
         } else {
-            List<PaymentRequisite> paymentRequisites = paymentRequisiteRepository.getByPaymentTypePid(pid);
+            List<PaymentRequisite> paymentRequisites = paymentRequisiteRepository.getByPaymentType_Pid(pid);
             if (paymentRequisites.size() <= 1) {
                 responseSender.sendMessage(chatId, "Недостаточно реквизитов для включения. Количество реквизитов: "
                         + paymentRequisites.size() + ".");

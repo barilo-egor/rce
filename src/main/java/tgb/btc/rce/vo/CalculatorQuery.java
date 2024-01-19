@@ -1,10 +1,10 @@
 package tgb.btc.rce.vo;
 
-import tgb.btc.rce.enums.CryptoCurrency;
-import tgb.btc.rce.enums.DealType;
-import tgb.btc.rce.enums.FiatCurrency;
-import tgb.btc.rce.exception.CalculatorQueryException;
-import tgb.btc.rce.exception.EnumTypeNotFoundException;
+import tgb.btc.library.constants.enums.bot.CryptoCurrency;
+import tgb.btc.library.constants.enums.bot.DealType;
+import tgb.btc.library.constants.enums.bot.FiatCurrency;
+import tgb.btc.library.exception.CalculatorQueryException;
+import tgb.btc.library.exception.EnumTypeNotFoundException;
 
 import java.math.BigDecimal;
 

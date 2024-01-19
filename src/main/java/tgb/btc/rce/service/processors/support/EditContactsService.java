@@ -4,14 +4,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import tgb.btc.rce.bean.Contact;
+import tgb.btc.library.bean.bot.Contact;
+import tgb.btc.library.exception.BaseException;
+import tgb.btc.library.repository.bot.UserRepository;
+import tgb.btc.library.service.bean.bot.ContactService;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.Menu;
 import tgb.btc.rce.enums.PropertiesMessage;
-import tgb.btc.rce.exception.BaseException;
-import tgb.btc.rce.service.impl.ContactService;
 import tgb.btc.rce.service.impl.ResponseSender;
-import tgb.btc.rce.service.impl.UserService;
+import tgb.btc.library.service.bean.bot.UserService;
 import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.MenuFactory;
 import tgb.btc.rce.util.MessagePropertiesUtil;
@@ -22,7 +23,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static tgb.btc.rce.constants.BotStringConstants.*;
+import static tgb.btc.rce.constants.BotStringConstants.CALLBACK_DATA_SPLITTER;
 
 @Service
 public class EditContactsService {
@@ -33,6 +34,13 @@ public class EditContactsService {
 
     private final UserService userService;
 
+    private UserRepository userRepository;
+
+    @Autowired
+    public void setUserRepository(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
     @Autowired
     public EditContactsService(ResponseSender responseSender, ContactService contactService, UserService userService) {
         this.responseSender = responseSender;
@@ -41,7 +49,7 @@ public class EditContactsService {
     }
 
     public void askInput(Long chatId) {
-        userService.nextStep(chatId, Command.ADD_CONTACT);
+        userRepository.nextStep(chatId, Command.ADD_CONTACT.name());
         responseSender.sendMessage(chatId, MessagePropertiesUtil.getMessage(PropertiesMessage.CONTACT_ASK_INPUT),
                 MenuFactory.build(Menu.ADMIN_BACK, userService.isAdminByChatId(chatId)));
     }

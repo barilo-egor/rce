@@ -42,3 +42,4 @@ bot.properties
 config/antispam/picture
 *.log
 *.gz
+/config/local.properties

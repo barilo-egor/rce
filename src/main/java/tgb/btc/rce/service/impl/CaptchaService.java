@@ -3,8 +3,8 @@ package tgb.btc.rce.service.impl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
-import tgb.btc.rce.constants.FilePaths;
-import tgb.btc.rce.exception.BaseException;
+import tgb.btc.library.constants.strings.FilePaths;
+import tgb.btc.library.exception.BaseException;
 import tgb.btc.rce.exception.PicturesNotFoundException;
 import tgb.btc.rce.vo.Captcha;
 

@@ -1,6 +1,6 @@
 package tgb.btc.rce.enums;
 
-import tgb.btc.rce.exception.BaseException;
+import tgb.btc.library.exception.BaseException;
 
 public enum DeliveryType {
     ROCKET("\uD83D\uDE80 Приоритет"),

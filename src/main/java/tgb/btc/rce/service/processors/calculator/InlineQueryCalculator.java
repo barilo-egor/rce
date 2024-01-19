@@ -32,13 +32,13 @@ public class InlineQueryCalculator extends Processor {
         if (dealProcessor.isMainMenuCommand(update)) return;
         Long chatId = UpdateUtil.getChatId(update);
         if (CallbackQueryUtil.isBack(update)) {
-            userRepository.updateStepAndCommandByChatId(chatId, Command.DEAL, DealProcessor.AFTER_CALCULATOR_STEP);
+            userRepository.updateStepAndCommandByChatId(chatId, Command.DEAL.name(), DealProcessor.AFTER_CALCULATOR_STEP);
             dealProcessor.run(update);
             return;
         }
         if (update.hasMessage()) {
             if (!exchangeService.calculateDealAmount(chatId, UpdateUtil.getBigDecimalFromText(update))) return;
-            userRepository.updateStepAndCommandByChatId(chatId, Command.DEAL, DealProcessor.AFTER_CALCULATOR_STEP);
+            userRepository.updateStepAndCommandByChatId(chatId, Command.DEAL.name(), DealProcessor.AFTER_CALCULATOR_STEP);
             dealProcessor.run(update);
         } else if (update.hasInlineQuery()) exchangeService.calculateForInlineQuery(update);
     }

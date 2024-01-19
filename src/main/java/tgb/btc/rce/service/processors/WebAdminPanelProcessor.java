@@ -5,19 +5,18 @@ import org.apache.commons.lang.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import tgb.btc.api.bot.ITokenTransmitter;
+import tgb.btc.library.bean.web.WebUser;
+import tgb.btc.library.constants.enums.properties.PropertiesPath;
+import tgb.btc.library.exception.BaseException;
+import tgb.btc.library.repository.web.WebUserRepository;
 import tgb.btc.rce.annotation.CommandProcessor;
-import tgb.btc.rce.bean.WebUser;
-import tgb.btc.rce.constants.BotStringConstants;
-import tgb.btc.rce.enums.BotProperties;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.InlineType;
-import tgb.btc.rce.exception.BaseException;
-import tgb.btc.rce.repository.WebUserRepository;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.InlineButton;
-import tgb.btc.rce.web.controller.MainWebController;
 
 import java.util.List;
 import java.util.Objects;
@@ -27,9 +26,16 @@ import java.util.Optional;
 @Slf4j
 public class WebAdminPanelProcessor extends Processor {
 
-    private static final Long AUTH_TIME = BotProperties.LOGIN.getLong("auth.time", 10L);
+    private static final Long AUTH_TIME = PropertiesPath.LOGIN_PROPERTIES.getLong("auth.time", 10L);
 
     private WebUserRepository webUserRepository;
+
+    private ITokenTransmitter tokenTransmitter;
+
+    @Autowired(required = false)
+    public void setTokenTransmitter(ITokenTransmitter tokenTransmitter) {
+        this.tokenTransmitter = tokenTransmitter;
+    }
 
     @Autowired
     public void setWebUserRepository(WebUserRepository webUserRepository) {
@@ -40,12 +46,13 @@ public class WebAdminPanelProcessor extends Processor {
     public void run(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
         String token = RandomStringUtils.randomAlphanumeric(40);
-        MainWebController.AVAILABLE_TOKENS.put(chatId, token);
+        if (Objects.isNull(tokenTransmitter)) throw new BaseException("Отсутствует  bean ITokenTransmitter");
+        tokenTransmitter.putWebLoginToken(chatId, token);
         WebUser webUser = webUserRepository.getByChatId(chatId);
         String url;
         Optional<Message> optionalMessage;
         if (Objects.nonNull(webUser)) {
-            url = BotStringConstants.MAIN_URL + "/web/main?username=" + webUser.getUsername()
+            url = PropertiesPath.SERVER_PROPERTIES.getString("main.url") + "/web/main?username=" + webUser.getUsername()
                     + "&token=" + token + "&chatId=" + chatId;
             optionalMessage = responseSender.sendMessage(chatId, "Веб админ-панель. Доступ для автоматической авторизации открыт на " + AUTH_TIME + " секунд.",
                     KeyboardUtil.buildInline(List.of(InlineButton.builder()
@@ -54,8 +61,8 @@ public class WebAdminPanelProcessor extends Processor {
                             .inlineType(InlineType.WEB_APP)
                             .build())));
         } else {
-            url = BotStringConstants.MAIN_URL + "/web/registration?chatId=" + chatId;
-            responseSender.sendMessage(chatId, BotProperties.INFO_MESSAGE.getString("web.user.not.found"),
+            url = PropertiesPath.SERVER_PROPERTIES.getString("main.url") + "/web/registration?chatId=" + chatId;
+            responseSender.sendMessage(chatId, PropertiesPath.INFO_MESSAGE_PROPERTIES.getString("web.user.not.found"),
                     KeyboardUtil.buildInline(List.of(InlineButton.builder()
                             .text("Зарегистрироваться")
                             .data(url)
@@ -75,8 +82,6 @@ public class WebAdminPanelProcessor extends Processor {
             }
             optionalMessage.ifPresent(message -> {
                 responseSender.deleteMessage(message.getChatId(), message.getMessageId());
-                MainWebController.AVAILABLE_TOKENS.remove(message.getChatId());
-                System.out.println();
             });
         });
         thread.start();
