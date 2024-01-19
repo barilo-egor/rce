@@ -5,13 +5,16 @@ import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import tgb.btc.library.constants.enums.DeliveryKind;
+import tgb.btc.library.constants.enums.bot.CryptoCurrency;
 import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.constants.enums.bot.DeliveryType;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
 import tgb.btc.library.constants.enums.properties.PropertiesPath;
+import tgb.btc.library.constants.enums.properties.VariableType;
 import tgb.btc.library.repository.bot.PaymentTypeRepository;
 import tgb.btc.library.util.BigDecimalUtil;
 import tgb.btc.library.util.FiatCurrencyUtil;
+import tgb.btc.library.util.properties.VariablePropertiesUtil;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.BotInlineButton;
 import tgb.btc.rce.enums.CalculatorType;
@@ -160,13 +163,22 @@ public class KeyboardService {
         return KeyboardUtil.buildInline(buttons);
     }
 
-    public ReplyKeyboard getDeliveryTypes() {
+    public ReplyKeyboard getDeliveryTypes(FiatCurrency fiatCurrency, DealType dealType, CryptoCurrency cryptoCurrency) {
         List<InlineButton> buttons = new ArrayList<>();
-        Arrays.stream(DeliveryType.values()).forEach(x -> buttons.add(InlineButton.builder()
-                .text(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.getString(x.name()))
-                .data(x.name())
-                .inlineType(InlineType.CALLBACK_DATA)
-                .build()));
+        Arrays.stream(DeliveryType.values()).forEach(x -> {
+            String text = PropertiesPath.BUTTONS_DESIGN_PROPERTIES.getString(x.name());
+            if (DeliveryType.VIP.equals(x) &&
+                    PropertiesPath.FUNCTIONS_PROPERTIES.getBoolean("vip.button.add.sum", false)) {
+                BigDecimal fix = VariablePropertiesUtil.getBigDecimal(VariableType.FIX_COMMISSION_VIP,
+                        fiatCurrency, dealType, cryptoCurrency);
+                text = text +  "(+" + fix + fiatCurrency.getGenitive() + ")";
+            }
+            buttons.add(InlineButton.builder()
+                    .text(text)
+                    .data(x.name())
+                    .inlineType(InlineType.CALLBACK_DATA)
+                    .build());
+        });
         return KeyboardUtil.buildInlineSingleLast(buttons, 1, KeyboardUtil.INLINE_BACK_BUTTON);
     }
 
