@@ -11,6 +11,7 @@ import tgb.btc.library.constants.enums.bot.DeliveryType;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
 import tgb.btc.library.constants.enums.properties.PropertiesPath;
 import tgb.btc.library.constants.enums.properties.VariableType;
+import tgb.btc.library.exception.BaseException;
 import tgb.btc.library.repository.bot.PaymentTypeRepository;
 import tgb.btc.library.util.BigDecimalUtil;
 import tgb.btc.library.util.FiatCurrencyUtil;
@@ -169,8 +170,13 @@ public class KeyboardService {
             String text = PropertiesPath.BUTTONS_DESIGN_PROPERTIES.getString(x.name());
             if (DeliveryType.VIP.equals(x) &&
                     PropertiesPath.FUNCTIONS_PROPERTIES.getBoolean("vip.button.add.sum", false)) {
-                BigDecimal fix = VariablePropertiesUtil.getBigDecimal(VariableType.FIX_COMMISSION_VIP,
-                        fiatCurrency, dealType, cryptoCurrency);
+                Integer fix;
+                try {
+                    fix = VariablePropertiesUtil.getInt(VariableType.FIX_COMMISSION_VIP,
+                            fiatCurrency, dealType, cryptoCurrency);
+                } catch (NumberFormatException e) {
+                    throw new BaseException("Значение фиксированной комиссии для " + DeliveryType.VIP.getDisplayName() + " должно быть целочисленным.");
+                }
                 text = text +  "(+" + fix + fiatCurrency.getGenitive() + ")";
             }
             buttons.add(InlineButton.builder()
