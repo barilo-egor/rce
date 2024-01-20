@@ -43,6 +43,7 @@ public class AskForNewRequisite extends Processor {
         Long chatId = UpdateUtil.getChatId(update);
         String requisite = UpdateUtil.getMessageText(update);
         PaymentRequisite paymentRequisite = new PaymentRequisite();
+        paymentRequisite.setOn(true);
         paymentRequisite.setRequisite(requisite);
         PaymentType paymentType = paymentTypeRepository.getByPid(
                 userDataRepository.getLongByUserPid(userRepository.getPidByChatId(chatId)));
