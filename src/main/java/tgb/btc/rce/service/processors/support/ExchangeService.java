@@ -659,7 +659,9 @@ public class ExchangeService {
         Long dealPid = userRepository.getCurrentDealByChatId(chatId);
         DealDeleteScheduler.deleteCryptoDeal(dealPid);
         if (Command.PAID.name().equals(update.getCallbackQuery().getData())) {
-            responseSender.deleteMessage(chatId, update.getCallbackQuery().getMessage().getMessageId());
+            responseSender.sendEditedMessageText(chatId, update.getCallbackQuery().getMessage().getMessageId(),
+                    update.getCallbackQuery().getMessage().getText(), null);
+//            responseSender.deleteMessage(chatId, update.getCallbackQuery().getMessage().getMessageId());
             askForReceipts(update);
             userRepository.nextStep(chatId);
             return true;
