@@ -1,7 +1,9 @@
 package tgb.btc.rce.exception;
 
 
-public class CaptchaException extends BaseException{
+import tgb.btc.library.exception.BaseException;
+
+public class CaptchaException extends BaseException {
     public CaptchaException(){
     }
 
