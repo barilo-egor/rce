@@ -3,7 +3,6 @@ package tgb.btc.rce.service.processors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.service.bean.bot.DealService;
-import tgb.btc.library.service.schedule.DealDeleteScheduler;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
@@ -33,9 +32,10 @@ public class DeleteDealAndBlockUserProcessor extends Processor {
         Long chatId = UpdateUtil.getChatId(update);
         Long dealPid = Long.parseLong(
                 update.getCallbackQuery().getData().split(BotStringConstants.CALLBACK_DATA_SPLITTER)[1]);
+        Long userChatId = dealService.getUserChatIdByDealPid(dealPid);
         dealService.deleteDeal(dealPid, true);
         responseSender.sendMessage(chatId, "Заявка №" + dealPid + " удалена.");
         responseSender.deleteMessage(chatId, update.getCallbackQuery().getMessage().getMessageId());
-        start.run(dealService.getUserChatIdByDealPid(dealPid));
+        start.run(userChatId);
     }
 }
