@@ -70,10 +70,10 @@ public class WebAdminPanelProcessor extends Processor {
                             .build())));
             return;
         }
-        deleteMessageAndToken(optionalMessage);
+        deleteMessageAndToken(optionalMessage, chatId);
     }
 
-    protected void deleteMessageAndToken(Optional<Message> optionalMessage) {
+    protected void deleteMessageAndToken(Optional<Message> optionalMessage, Long chatId) {
         Thread thread = new Thread(() -> {
             try {
                 Thread.sleep(AUTH_TIME * 1000);
@@ -81,8 +81,9 @@ public class WebAdminPanelProcessor extends Processor {
                 throw new BaseException();
             }
             optionalMessage.ifPresent(message -> {
-                responseSender.deleteMessage(message.getChatId(), message.getMessageId());
+                responseSender.deleteMessage(chatId, message.getMessageId());
             });
+            tokenTransmitter.remove(chatId);
         });
         thread.start();
     }
