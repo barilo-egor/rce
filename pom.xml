@@ -28,17 +28,17 @@
                 <dependency>
                     <groupId>tgb.btc</groupId>
                     <artifactId>rce-library</artifactId>
-                    <version>1.0-SNAPSHOT</version>
+                    <version>1.0</version>
                 </dependency>
                 <dependency>
                     <groupId>tgb.btc</groupId>
                     <artifactId>rce-web</artifactId>
-                    <version>1.0-SNAPSHOT</version>
+                    <version>1.0</version>
                 </dependency>
                 <dependency>
                     <groupId>tgb.btc</groupId>
                     <artifactId>rce-api</artifactId>
-                    <version>1.0-SNAPSHOT</version>
+                    <version>1.0</version>
                 </dependency>
             </dependencies>
         </profile>
