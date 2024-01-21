@@ -3,15 +3,15 @@ package tgb.btc.rce.service.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
-import tgb.btc.rce.bean.ReferralUser;
-import tgb.btc.rce.bean.User;
+import tgb.btc.library.bean.bot.ReferralUser;
+import tgb.btc.library.bean.bot.User;
+import tgb.btc.library.repository.bot.DealRepository;
+import tgb.btc.library.repository.bot.LotteryWinRepository;
+import tgb.btc.library.repository.bot.SpamBanRepository;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.PropertiesMessage;
-import tgb.btc.rce.enums.ReferralType;
-import tgb.btc.rce.repository.DealRepository;
-import tgb.btc.rce.repository.LotteryWinRepository;
-import tgb.btc.rce.repository.SpamBanRepository;
-import tgb.btc.rce.repository.UserRepository;
+import tgb.btc.library.constants.enums.ReferralType;
+import tgb.btc.library.repository.bot.UserRepository;
 import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.util.CallbackQueryUtil;
 import tgb.btc.rce.util.KeyboardUtil;
@@ -77,7 +77,7 @@ public class UserInfoService {
         Long lotteryWinCount = lotteryWinRepository.getLotteryWinCount(chatId);
         String fromChatId = Objects.nonNull(user.getFromChatId()) ? String.valueOf(user.getFromChatId()) : "отсутствует";
         String result = null;
-        if (ReferralType.STANDARD.equals(UserService.REFERRAL_TYPE)) {
+        if (ReferralType.STANDARD.isCurrent()) {
             int numberOfReferrals = referralUsers.size();
             int numberOfActiveReferrals = (int) referralUsers.stream()
                     .filter(usr -> dealRepository.getCountPassedByUserChatId(usr.getChatId()) > 0).count();

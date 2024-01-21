@@ -1,8 +1,8 @@
 package tgb.btc.rce.util;
 
 import lombok.extern.slf4j.Slf4j;
-import tgb.btc.rce.enums.BotProperties;
-import tgb.btc.rce.enums.DealType;
+import tgb.btc.library.constants.enums.bot.DealType;
+import tgb.btc.library.constants.enums.properties.PropertiesPath;
 import tgb.btc.rce.enums.PropertiesMessage;
 
 import java.util.Objects;
@@ -15,7 +15,9 @@ public class MessagePropertiesUtil {
     public static String getMessage(PropertiesMessage message) {
         String text;
         try {
-            text = BotProperties.MESSAGE.getString(message.getKey()).replaceAll("<ln>", "\n");
+            String propertiesMessage = PropertiesPath.MESSAGE_PROPERTIES.getString(message.getKey());
+            if (Objects.isNull(propertiesMessage)) return null;
+            text = propertiesMessage.replaceAll("<ln>", "\n");
         } catch (Exception e) {
             text = getErrorText(message.getKey());
         }
@@ -24,13 +26,37 @@ public class MessagePropertiesUtil {
     }
 
     public static String getMessage(PropertiesMessage message, Object... variables) {
-        return String.format(getMessage(message), variables);
+        String propertiesMessage = getMessage(message);
+        if (Objects.isNull(propertiesMessage)) return null; // TODO переделать на наллсейф,и не налл сейф
+        return String.format(propertiesMessage, variables);
+    }
+
+    public static String getMessage(String key, Object... variables) {
+        String propertiesMessage = getMessageForFormat(key);
+        if (Objects.isNull(propertiesMessage)) return null; // TODO переделать на наллсейф,и не налл сейф
+        return String.format(propertiesMessage, variables);
     }
 
     public static String getMessage(String key) {
         String text;
         try {
-            text = BotProperties.MESSAGE.getString(key).replaceAll("<ln>", "\n");
+            String message = PropertiesPath.MESSAGE_PROPERTIES.getString(key);
+            if (Objects.isNull(message)) return null;
+            text = message.replaceAll("<ln>", "\n");
+        } catch (Exception e) {
+            text = getErrorText(key);
+        }
+        if (Objects.isNull(text)) text = getErrorText(key);
+        return text;
+    }
+
+
+    public static String getMessageForFormat(String key) {
+        String text;
+        try {
+            String message = PropertiesPath.MESSAGE_PROPERTIES.getString(key);
+            if (Objects.isNull(message)) return null;
+            text = message.replaceAll("<ln>", "%n");
         } catch (Exception e) {
             text = getErrorText(key);
         }

@@ -1,7 +1,7 @@
 package tgb.btc.rce.util;
 
-import tgb.btc.rce.exception.BaseException;
-import tgb.btc.rce.exception.NumberParseException;
+
+import tgb.btc.library.exception.NumberParseException;
 
 public final class NumberUtil {
     private NumberUtil() {

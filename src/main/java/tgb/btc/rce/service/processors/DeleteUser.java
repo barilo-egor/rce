@@ -4,10 +4,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import tgb.btc.library.bean.bot.User;
+import tgb.btc.library.repository.bot.*;
 import tgb.btc.rce.annotation.CommandProcessor;
-import tgb.btc.rce.bean.User;
 import tgb.btc.rce.enums.Command;
-import tgb.btc.rce.repository.*;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.util.UpdateUtil;
 
@@ -56,14 +56,14 @@ public class DeleteUser extends Processor {
         Long chatId = UpdateUtil.getChatId(update);
         try {
             Long userChatId = Long.parseLong(UpdateUtil.getMessageText(update).split(" ")[1]);
-            userDiscountRepository.deleteByUserChatId(userChatId);
-            userDataRepository.deleteByUserChatId(userChatId);
-            withdrawalRequestRepository.deleteByUserChatId(userChatId);
-            lotteryWinRepository.deleteByUserChatId(userChatId);
+            userDiscountRepository.deleteByUser_ChatId(userChatId);
+            userDataRepository.deleteByUser_ChatId(userChatId);
+            withdrawalRequestRepository.deleteByUser_ChatId(userChatId);
+            lotteryWinRepository.deleteByUser_ChatId(userChatId);
             paymentReceiptRepository.getByDealsPids(userChatId);
-            dealRepository.deleteByUserChatId(userChatId);
+            dealRepository.deleteByUser_ChatId(userChatId);
             User user = userRepository.getByChatId(userChatId);
-            spamBanRepository.deleteByUserPid(user.getPid());
+            spamBanRepository.deleteByUser_Pid(user.getPid());
             userRepository.delete(user);
             referralUserRepository.deleteAll(user.getReferralUsers());
             responseSender.sendMessage(chatId, "Пользователь " + userChatId + " удален.");

@@ -37,7 +37,9 @@ build/
 /.mvn/wrapper/maven-wrapper.jar
 /.mvn/wrapper/maven-wrapper.properties
 
-application.properties
+src/main/resources/application.properties
 bot.properties
 config/antispam/picture
-*.png
+*.log
+*.gz
+/config/local.properties

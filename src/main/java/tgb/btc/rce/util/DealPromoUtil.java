@@ -1,6 +1,6 @@
 package tgb.btc.rce.util;
 
-import tgb.btc.rce.enums.BotProperties;
+import tgb.btc.library.constants.enums.properties.PropertiesPath;
 import tgb.btc.rce.enums.FirstDealPromoType;
 
 public final class DealPromoUtil {
@@ -9,6 +9,6 @@ public final class DealPromoUtil {
 
     public static boolean isNone() {
         return FirstDealPromoType.NONE.equals(FirstDealPromoType.valueOf(
-                BotProperties.MODULES.getString("first.deal.promo.type")));
+                PropertiesPath.MODULES_PROPERTIES.getString("first.deal.promo.type")));
     }
 }

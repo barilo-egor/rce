@@ -4,18 +4,17 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import tgb.btc.library.bean.bot.LotteryWin;
+import tgb.btc.library.bean.bot.User;
+import tgb.btc.library.constants.enums.bot.BotMessageType;
+import tgb.btc.library.constants.enums.properties.VariableType;
+import tgb.btc.library.repository.bot.LotteryWinRepository;
+import tgb.btc.library.util.properties.VariablePropertiesUtil;
 import tgb.btc.rce.annotation.CommandProcessor;
-import tgb.btc.rce.bean.LotteryWin;
-import tgb.btc.rce.bean.User;
-import tgb.btc.rce.constants.BotStringConstants;
-import tgb.btc.rce.enums.BotMessageType;
-import tgb.btc.rce.enums.BotVariableType;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.PropertiesMessage;
-import tgb.btc.rce.repository.LotteryWinRepository;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.impl.BotMessageService;
-import tgb.btc.rce.util.BotVariablePropertiesUtil;
 import tgb.btc.rce.util.MenuFactory;
 import tgb.btc.rce.util.MessagePropertiesUtil;
 import tgb.btc.rce.util.UpdateUtil;
@@ -44,7 +43,7 @@ public class Lottery extends Processor {
 
     @Override
     public void run(Update update) {
-        User user = userService.findByChatId(update);
+        User user = userRepository.findByChatId(UpdateUtil.getChatId(update));
         if(Objects.isNull(user.getLotteryCount()) || user.getLotteryCount() == 0) {
             responseSender.sendMessage(user.getChatId(),
                     MessagePropertiesUtil.getMessage(PropertiesMessage.NO_LOTTERY_ATTEMPTS));
@@ -54,11 +53,11 @@ public class Lottery extends Processor {
     }
 
     private void processLottery(Update update, User user) {
-        float probability = BotVariablePropertiesUtil.getFloat(BotVariableType.PROBABILITY);
+        float probability = VariablePropertiesUtil.getFloat(VariableType.PROBABILITY);
         if (((double) new Random().nextInt(101) < ((double) probability))) {
             responseSender.sendBotMessage(botMessageService.findByType(BotMessageType.WON_LOTTERY), user.getChatId(),
-                    MenuFactory.getLink(BotStringConstants.WRITE_TO_OPERATOR_BUTTON_LABEL,
-                            BotVariablePropertiesUtil.getVariable(BotVariableType.OPERATOR_LINK)));
+                    MenuFactory.getLink("Написать оператору",
+                            VariablePropertiesUtil.getVariable(VariableType.OPERATOR_LINK)));
             Long chatId = UpdateUtil.getChatId(update);
             String username = userRepository.getUsernameByChatId(chatId);
             userRepository.getAdminsChatIds()

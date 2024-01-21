@@ -2,11 +2,13 @@ package tgb.btc.rce.enums;
 
 import lombok.extern.slf4j.Slf4j;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import tgb.btc.library.constants.enums.properties.PropertiesPath;
+import tgb.btc.library.interfaces.ICommand;
 
 import java.util.Arrays;
 
 @Slf4j
-public enum Command {
+public enum Command implements ICommand {
     /*
      * CallbackQuery
      */
@@ -18,8 +20,10 @@ public enum Command {
       Reply
      */
 
-    /** UTIL */
-    BACK(BotProperties.BUTTONS_DESIGN.getString("BACK"), false, true, false),
+    /**
+     * UTIL
+     */
+    BACK(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.getString("BACK"), false, true, false),
     ADMIN_BACK("Назад", true, false, false),
     CANCEL("Отмена", false, false, false),
     SHARE_CONTACT("Поделиться контактом", false, false, false),
@@ -35,27 +39,35 @@ public enum Command {
     MAKE_ADMIN("/makeadmin", true, false, true),
     HELP("/help", true, false, true),
 
-    /** MAIN */
-    BUY_BITCOIN(BotProperties.BUTTONS_DESIGN.getString("BUY_BITCOIN"), false, false, false),
-    SELL_BITCOIN(BotProperties.BUTTONS_DESIGN.getString("SELL_BITCOIN"), false, false, false),
-    CONTACTS(BotProperties.BUTTONS_DESIGN.getString("CONTACTS"), false, true, false),
-    DRAWS(BotProperties.BUTTONS_DESIGN.getString("DRAWS"), false, true, false),
-    REFERRAL(BotProperties.BUTTONS_DESIGN.getString("REFERRAL"), false, false, false),
+    /**
+     * MAIN
+     */
+    BUY_BITCOIN(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.getString("BUY_BITCOIN"), false, false, false),
+    SELL_BITCOIN(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.getString("SELL_BITCOIN"), false, false, false),
+    CONTACTS(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.getString("CONTACTS"), false, true, false),
+    DRAWS(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.getString("DRAWS"), false, true, false),
+    REFERRAL(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.getString("REFERRAL"), false, false, false),
     ADMIN_PANEL("Админ панель", true, true, false),
 
-    /** DRAWS */
-    LOTTERY(BotProperties.BUTTONS_DESIGN.getString("LOTTERY"), false, false, false),
-    ROULETTE(BotProperties.BUTTONS_DESIGN.getString("ROULETTE"), false, true, false),
+    /**
+     * DRAWS
+     */
+    LOTTERY(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.getString("LOTTERY"), false, false, false),
+    ROULETTE(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.getString("ROULETTE"), false, true, false),
 
-    /** REFERRAL */
+    /**
+     * REFERRAL
+     */
     WITHDRAWAL_OF_FUNDS("withdrawal", false, false, false),
     SHOW_WITHDRAWAL_REQUEST("show_withdrawal", false, false, false),
-    SEND_LINK(BotProperties.BOT_CONFIG.getString("bot.link"), false, false, false),
+    SEND_LINK(PropertiesPath.BOT_PROPERTIES.getString("bot.link"), false, false, false),
     HIDE_WITHDRAWAL("hide_withdrawal", true, false, false),
     CHANGE_REFERRAL_BALANCE("change_ref", true, false, false),
     DELETE_WITHDRAWAL_REQUEST("withdrawal_delete", false, false, false),
 
-    /** ADMIN PANEL */
+    /**
+     * ADMIN PANEL
+     */
     REQUESTS("Заявки", true, true, false),
     SEND_MESSAGES("Отправка сообщений", true, true, false),
     BAN_UNBAN("Бан/разбан", true, false, false),
@@ -63,13 +75,18 @@ public enum Command {
     REPORTS("Отчеты", true, true, false),
     EDIT_CONTACTS("Редактирование контактов", true, true, false),
     USER_REFERRAL_BALANCE("Реф.баланс юзера", true, false, false),
-    CHANGE_USD_COURSE("Курс доллара", true, false, false),
     TURNING_CURRENCY("Включение криптовалют", true, false, false),
     DISCOUNTS("Скидки", true, true, false),
     USERS("Пользователи", true, true, false),
     QUIT_ADMIN_PANEL("Выйти", true, false, false),
+    TURNING_DELIVERY_TYPE("Вкл/выкл способов доставки", true, false, false),
+    BACKUP_DB("/backupdb", true, false, false),
 
-    /** DISCOUNTS */
+    DEALS_COUNT("Кол-во возможных сделок", true, false, false),
+
+    /**
+     * DISCOUNTS
+     */
     RANK_DISCOUNT("Ранговая скидка(персональная)", true, false, false),
     CHANGE_RANK_DISCOUNT("change_rank_discount", true, false, false),
     PERSONAL_BUY_DISCOUNT("Персональная, покупка", true, false, false),
@@ -79,19 +96,27 @@ public enum Command {
     TURN_RANK_DISCOUNT("Ранговая скидка(для всех)", true, false, false),
     TURNING_RANK_DISCOUNT("turning_rd", true, false, false),
 
-    /** TURNING CURRENCIES */
+    /**
+     * TURNING CURRENCIES
+     */
     TURN_ON_CURRENCY("turn_on_currency", true, false, false),
     TURN_OFF_CURRENCY("turn_off_currency", true, false, false),
 
-    /** EDIT CONTACTS */
+    /**
+     * EDIT CONTACTS
+     */
     ADD_CONTACT("Добавить контакт", true, false, false),
     DELETE_CONTACT("Удалить контакт", true, false, false),
 
-    /** SEND MESSAGES */
+    /**
+     * SEND MESSAGES
+     */
     MAILING_LIST("Рассылка", true, false, false),
     SEND_MESSAGE_TO_USER("Сообщение пользователю", true, false, false),
 
-    /** BOT SETTINGS */
+    /**
+     * BOT SETTINGS
+     */
     CURRENT_DATA("Текущие данные", true, false, false),
     ON_BOT("Вкл.бота", true, false, false),
     OFF_BOT("Выкл.бота", true, false, false),
@@ -100,12 +125,15 @@ public enum Command {
     SYSTEM_MESSAGES("Сис.сообщения", true, false, false),
     PAYMENT_TYPES("Типы оплаты", true, false, false),
 
-    /** DEAL */
+    /**
+     * DEAL
+     */
     DEAL("deal_proc", false, false, false),
-    PAID("Я оплатил(а)", false, false, false),
+    PAID(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.getString("PAID"), false, false, false),
     CANCEL_DEAL("Отменить заявку", false, false, false),
     DELETE_DEAL("Удалить заявку", false, false, false),
     SHOW_DEAL("Показать", true, false, false),
+    SHOW_API_DEAL("show_api_deal", true, false, false),
     DELETE_USER_DEAL("delete_deal", true, false, false),
     DELETE_DEAL_AND_BLOCK_USER("deleteDeal_and_block_user", true, false, false),
     CONFIRM_USER_DEAL("confirm_deal", true, false, false),
@@ -113,8 +141,12 @@ public enum Command {
     USER_ADDITIONAL_VERIFICATION("user_verification", false, false, false),
     SHARE_REVIEW("share_review", false, false, false),
     CHOOSING_FIAT_CURRENCY("chs_fc", false, false, false),
+    USE_PROMO(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.getString("USE_PROMO"), false, false, false),
+    DONT_USE_PROMO(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.getString("DONT_USE_PROMO"), false, false, false),
 
-    /** REQUESTS */
+    /**
+     * REQUESTS
+     */
     NEW_DEALS("Новые заявки", true, false, false),
     NEW_WITHDRAWALS("Вывод средств", true, false, false),
     NEW_REVIEWS("Новые отзывы", true, false, false),
@@ -122,7 +154,9 @@ public enum Command {
     PUBLISH_REVIEW("pub_review", true, false, false),
     DELETE_REVIEW("del_review", true, false, false),
 
-    /** REPORTS */
+    /**
+     * REPORTS
+     */
     USERS_REPORT("Отчет по пользователям", true, false, false),
     USER_INFORMATION("Информация о пользователе", true, false, false),
     USERS_DEALS_REPORT("Отчет сделки пользователей", true, false, false),
@@ -134,7 +168,9 @@ public enum Command {
 
     CHANNEL_POST("channel_post", false, false, false),
 
-    /** RECEIPTS */
+    /**
+     * RECEIPTS
+     */
     CONTINUE("Продолжить", true, false, false),
     RECEIPTS_CANCEL_DEAL("Отменить сделку", true, false, false),
 
@@ -166,7 +202,21 @@ public enum Command {
      */
     NONE_CALCULATOR("none_calc", false, false, false),
     INLINE_QUERY_CALCULATOR("inline_q_calc", false, false, false),
-    INLINE_CALCULATOR("inline_calculator", false, false, false)
+    INLINE_CALCULATOR("inline_calculator", false, false, false),
+
+    WEB_ADMIN_PANEL("Веб админ-панель", true, false, false),
+
+    /**
+     * API DEALS
+     */
+    CONFIRM_API_DEAL("confirm_api_deal", true, false, false),
+    CANCEL_API_DEAL("cancel_api_deal", true, false, false),
+    NEW_API_DEALS("Новые API заявки", true, false, false),
+
+    /**
+     * TURNING DELIVERY
+     */
+    TURN_PROCESS_DELIVERY("turn_process_delivery", true, false, false),
     ;
 
     final String text;

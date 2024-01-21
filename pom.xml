@@ -8,15 +8,77 @@
         <version>2.6.7</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
+
     <groupId>tgb.btc</groupId>
     <artifactId>rce</artifactId>
-    <version>1.1</version>
+    <version>1.2</version>
     <name>rce</name>
     <description>rce</description>
+    <packaging>jar</packaging>
+
+    <profiles>
+        <profile>
+            <id>local-getting-libraries</id>
+            <activation>
+                <file>
+                    <exists>config/local.properties</exists>
+                </file>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>tgb.btc</groupId>
+                    <artifactId>rce-library</artifactId>
+                    <version>1.0-SNAPSHOT</version>
+                </dependency>
+                <dependency>
+                    <groupId>tgb.btc</groupId>
+                    <artifactId>rce-web</artifactId>
+                    <version>1.0-SNAPSHOT</version>
+                </dependency>
+                <dependency>
+                    <groupId>tgb.btc</groupId>
+                    <artifactId>rce-api</artifactId>
+                    <version>1.0-SNAPSHOT</version>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>jitpack-getting-libraries</id>
+            <activation>
+                <file>
+                    <missing>config/local.properties</missing>
+                </file>
+            </activation>
+            <repositories>
+                <repository>
+                    <id>jitpack.io</id>
+                    <url>https://jitpack.io</url>
+                </repository>
+            </repositories>
+            <dependencies>
+                <dependency>
+                    <groupId>com.github.barilo-egor</groupId>
+                    <artifactId>rce-library</artifactId>
+                    <version>150645d762</version>
+                </dependency>
+                <dependency>
+                    <groupId>com.github.barilo-egor</groupId>
+                    <artifactId>rce-web</artifactId>
+                    <version>721440b9fc</version>
+                </dependency>
+                <dependency>
+                    <groupId>com.github.barilo-egor</groupId>
+                    <artifactId>rce-api</artifactId>
+                    <version>d9a71be872</version>
+                </dependency>
+            </dependencies>
+        </profile>
+    </profiles>
+
     <properties>
         <java.version>11</java.version>
     </properties>
-    <packaging>jar</packaging>
+
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -26,7 +88,14 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-jdbc</artifactId>
         </dependency>
-
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-thymeleaf</artifactId>
+        </dependency>
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
@@ -75,6 +144,14 @@
             <groupId>commons-configuration</groupId>
             <artifactId>commons-configuration</artifactId>
             <version>1.10</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-mail</artifactId>
         </dependency>
     </dependencies>
 

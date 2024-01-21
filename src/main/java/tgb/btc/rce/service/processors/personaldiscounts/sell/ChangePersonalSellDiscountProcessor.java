@@ -14,6 +14,6 @@ public class ChangePersonalSellDiscountProcessor extends Processor {
     public void run(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
         responseSender.sendMessage(chatId, MessageTemplate.ASK_CHAT_ID);
-        userRepository.nextStep(chatId, Command.PERSONAL_SELL_DISCOUNT);
+        userRepository.nextStep(chatId, Command.PERSONAL_SELL_DISCOUNT.name());
     }
 }

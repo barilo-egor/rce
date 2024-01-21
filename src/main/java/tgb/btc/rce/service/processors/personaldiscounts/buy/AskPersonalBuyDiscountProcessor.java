@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
-import tgb.btc.rce.repository.UserDiscountRepository;
+import tgb.btc.library.repository.bot.UserDiscountRepository;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.util.UpdateUtil;
 
@@ -35,7 +35,7 @@ public class AskPersonalBuyDiscountProcessor extends Processor {
 
         responseSender.sendMessage(chatId, "У пользователя " + userChatId + " текущее значение скидки на покупку = "
                 + personalBuy.stripTrailingZeros().toPlainString());
-        responseSender.sendMessage(chatId, "Введите отрицательное значение для скидки, либо положительное для надбавки.");
+        responseSender.sendMessage(chatId, "Введите положительное значение для скидки, либо отрицательное для надбавки.");
         userRepository.nextStep(chatId);
     }
 

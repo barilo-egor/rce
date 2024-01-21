@@ -2,9 +2,9 @@ package tgb.btc.rce.util;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.BooleanUtils;
-import tgb.btc.rce.enums.BotProperties;
-import tgb.btc.rce.enums.CryptoCurrency;
-import tgb.btc.rce.enums.DealType;
+import tgb.btc.library.constants.enums.bot.CryptoCurrency;
+import tgb.btc.library.constants.enums.bot.DealType;
+import tgb.btc.library.constants.enums.properties.PropertiesPath;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -18,10 +18,10 @@ public class TurningCurrenciesUtil {
     public static Map<CryptoCurrency, Boolean> SELL_TURNING = new HashMap<>();
 
     static {
-            for (CryptoCurrency currency : CryptoCurrency.values()) {
-                BUY_TURNING.put(currency, BotProperties.TURNING_CURRENCIES.getBoolean("buy." + currency.name()));
-                SELL_TURNING.put(currency, BotProperties.TURNING_CURRENCIES.getBoolean("sell." + currency.name()));
-            }
+        for (CryptoCurrency currency : CryptoCurrency.values()) {
+            BUY_TURNING.put(currency, PropertiesPath.CURRENCIES_TURNING_PROPERTIES.getBoolean("buy." + currency.name()));
+            SELL_TURNING.put(currency, PropertiesPath.CURRENCIES_TURNING_PROPERTIES.getBoolean("sell." + currency.name()));
+        }
     }
 
     public static boolean getIsOn(CryptoCurrency cryptoCurrency, DealType dealType) {

@@ -2,22 +2,24 @@ package tgb.btc.rce.service.processors;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import tgb.btc.library.bean.bot.Deal;
+import tgb.btc.library.constants.enums.bot.CryptoCurrency;
+import tgb.btc.library.constants.enums.bot.DealType;
+import tgb.btc.library.constants.enums.bot.FiatCurrency;
+import tgb.btc.library.exception.BaseException;
+import tgb.btc.library.service.bean.bot.DealService;
+import tgb.btc.library.util.BigDecimalUtil;
 import tgb.btc.rce.annotation.CommandProcessor;
-import tgb.btc.rce.bean.Deal;
 import tgb.btc.rce.enums.Command;
-import tgb.btc.rce.enums.CryptoCurrency;
-import tgb.btc.rce.enums.DealType;
-import tgb.btc.rce.enums.FiatCurrency;
-import tgb.btc.rce.exception.BaseException;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.service.impl.DealService;
-import tgb.btc.rce.util.BigDecimalUtil;
+import tgb.btc.rce.util.CryptoCurrenciesDesignUtil;
 import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.MessageTextUtil;
 import tgb.btc.rce.util.UpdateUtil;
@@ -73,19 +75,31 @@ public class DealReports extends Processor {
                                                 .text(Command.ADMIN_BACK.getText())
                                                 .build()
                                 )));
-                userService.nextStep(chatId, Command.DEAL_REPORTS);
+                userRepository.nextStep(chatId, Command.DEAL_REPORTS.name());
                 break;
             case 1:
                 String period = UpdateUtil.getMessageText(update);
                 switch (period) {
                     case TODAY:
-                        loadReport(dealService.getByDate(LocalDate.now()), chatId, period);
+                        try {
+                            loadReport(dealService.getByDate(LocalDate.now()), chatId, period);
+                        } catch (Exception e) {
+                            log.error("ОШибка при выгрузке отчета.", e);
+                        }
                         break;
                     case TEN_DAYS:
-                        loadReport(dealService.getByDateBetween(LocalDate.now().minusDays(10), LocalDate.now()), chatId, period);
+                        try {
+                            loadReport(dealService.getByDateBetween(LocalDate.now().minusDays(10), LocalDate.now()), chatId, period);
+                        } catch (Exception e) {
+                            log.error("ОШибка при выгрузке отчета.", e);
+                        }
                         break;
                     case MONTH:
-                        loadReport(dealService.getByDateBetween(LocalDate.now().minusDays(30), LocalDate.now()), chatId, period);
+                        try {
+                            loadReport(dealService.getByDateBetween(LocalDate.now().minusDays(30), LocalDate.now()), chatId, period);
+                        } catch (Exception e) {
+                            log.error("ОШибка при выгрузке отчета.", e);
+                        }
                         break;
                     case DATE:
                         responseSender.sendMessage(chatId, "Введите дату в формате дд.мм.гггг");
@@ -178,12 +192,12 @@ public class DealReports extends Processor {
                     ? totalBuyCryptoAmountMap : totalSellCryptoAmountMap;
             totalCryptoAmountMap.put(deal.getCryptoCurrency(), totalCryptoAmountMap.get(deal.getCryptoCurrency()).add(deal.getCryptoAmount()));
             cell = row.createCell(6);
-            cell.setCellValue(deal.getCryptoCurrency().getDisplayName());
+            cell.setCellValue(CryptoCurrenciesDesignUtil.getDisplayName(deal.getCryptoCurrency()));
             cell = row.createCell(7);
             // getPaymentTypeEnum используется для старых сделок
-            String paymentTypeName = Objects.nonNull(deal.getPaymentTypeEnum())
-                    ? deal.getPaymentTypeEnum().getDisplayName()
-                    : deal.getPaymentType().getName();
+            String paymentTypeName = Objects.nonNull(deal.getPaymentType())
+                    ? deal.getPaymentType().getName()
+                    : StringUtils.EMPTY;
             cell.setCellValue(paymentTypeName);
             cell = row.createCell(8);
             cell.setCellValue(deal.getUser().getChatId());
@@ -247,7 +261,7 @@ public class DealReports extends Processor {
         Cell cell = row.createCell(3);
         cell.setCellValue(BigDecimalUtil.roundToPlainString(totalFiatAmountMap.get(fiatCurrency)));
         cell = row.createCell(4);
-        cell.setCellValue(fiatCurrency.getDisplayName());
+        cell.setCellValue(fiatCurrency.getGenitive());
     }
 
 
@@ -256,6 +270,6 @@ public class DealReports extends Processor {
         cell.setCellValue(BigDecimalUtil.roundToPlainString(totalFiatAmountMap.get(cryptoCurrency),
                 cryptoCurrency.getScale()));
         cell = row.createCell(6);
-        cell.setCellValue(cryptoCurrency.getDisplayName());
+        cell.setCellValue(CryptoCurrenciesDesignUtil.getDisplayName(cryptoCurrency));
     }
 }

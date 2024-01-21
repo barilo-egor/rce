@@ -4,14 +4,14 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import tgb.btc.library.bean.bot.Deal;
+import tgb.btc.library.bean.bot.PaymentReceipt;
 import tgb.btc.rce.annotation.CommandProcessor;
-import tgb.btc.rce.bean.Deal;
-import tgb.btc.rce.bean.PaymentReceipt;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
-import tgb.btc.rce.enums.ReceiptFormat;
+import tgb.btc.library.constants.enums.bot.ReceiptFormat;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.service.impl.DealService;
+import tgb.btc.library.service.bean.bot.DealService;
 import tgb.btc.rce.service.processors.support.DealSupportService;
 import tgb.btc.rce.util.UpdateUtil;
 

@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Service;
 import tgb.btc.rce.conditional.AntispamCondition;
 import tgb.btc.rce.service.AntiSpam;
+import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.impl.CaptchaService;
 import tgb.btc.rce.service.impl.ResponseSender;
 import tgb.btc.rce.vo.Captcha;
@@ -15,7 +16,7 @@ public class CaptchaSender {
 
     private CaptchaService captchaService;
 
-    private ResponseSender responseSender;
+    private IResponseSender responseSender;
 
     @Autowired
     public void setResponseSender(ResponseSender responseSender) {

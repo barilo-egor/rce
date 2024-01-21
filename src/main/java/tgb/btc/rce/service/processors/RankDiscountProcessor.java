@@ -6,7 +6,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
-import tgb.btc.rce.repository.UserDiscountRepository;
+import tgb.btc.library.repository.bot.UserDiscountRepository;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.UpdateUtil;
@@ -35,7 +35,7 @@ public class RankDiscountProcessor extends Processor {
                                 ReplyButton.builder()
                                         .text(Command.CANCEL.getText())
                                         .build())));
-                userService.nextStep(chatId, Command.RANK_DISCOUNT);
+                userRepository.nextStep(chatId, Command.RANK_DISCOUNT.name());
                 break;
             case 1:
                 if (UpdateUtil.hasMessageText(update) && Command.CANCEL.getText().equals(UpdateUtil.getMessageText(update))) {
