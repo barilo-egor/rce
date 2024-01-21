@@ -618,22 +618,11 @@ public class ExchangeService {
         String message = MessagePropertiesUtil.getMessage("deal.build.sell");
         if (Objects.isNull(message)) return null;
         CryptoCurrency currency = deal.getCryptoCurrency();
-        log.info("dealPid=" + deal.getPid());
-        log.info("dealAmount=" + BigDecimalUtil.roundToPlainString(deal.getAmount()));
-        log.info("fiatCurrencyCode=" + deal.getFiatCurrency().getCode());
-        log.info("paymentType=" + deal.getPaymentType().getName());
-        log.info("wallet=" + deal.getWallet());
-        log.info("smile=" + rank.getSmile());
-        log.info("rank=" + rank.getPercent());
-        log.info("cryptoAmount=" + BigDecimalUtil.roundToPlainString(deal.getCryptoAmount()));
-        log.info("currencyShortName=" + currency.getShortName());
-        log.info("currencyWallet=" + VariablePropertiesUtil.getWallet(currency));
-        log.info("dealActiveTime=" + VariablePropertiesUtil.getVariable(VariableType.DEAL_ACTIVE_TIME));
         return MessagePropertiesUtil.getMessage("deal.build.sell", deal.getPid(),
                 BigDecimalUtil.roundToPlainString(deal.getAmount(), deal.getCryptoCurrency().getScale()),
                 deal.getFiatCurrency().getCode(), deal.getPaymentType().getName(),
                 deal.getWallet(), rank.getSmile(), rank.getPercent(),
-                BigDecimalUtil.roundToPlainString(deal.getCryptoAmount()), currency.getShortName(), currency.getShortName(),
+                BigDecimalUtil.roundToPlainString(deal.getCryptoAmount(), currency.getScale()), currency.getShortName(), currency.getShortName(),
                 VariablePropertiesUtil.getWallet(currency),
                 VariablePropertiesUtil.getVariable(VariableType.DEAL_ACTIVE_TIME));
     }
