@@ -6,8 +6,8 @@ import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.BotKeyboard;
 import tgb.btc.rce.enums.Command;
-import tgb.btc.rce.enums.FiatCurrency;
-import tgb.btc.rce.repository.UserDataRepository;
+import tgb.btc.library.constants.enums.bot.FiatCurrency;
+import tgb.btc.library.repository.bot.UserDataRepository;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.util.UpdateUtil;
 

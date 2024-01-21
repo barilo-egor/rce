@@ -3,12 +3,9 @@ package tgb.btc.rce.service.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
-import tgb.btc.rce.constants.BotStringConstants;
-import tgb.btc.rce.enums.InlineType;
-import tgb.btc.rce.util.KeyboardUtil;
+import tgb.btc.library.service.bean.bot.UserService;
+import tgb.btc.rce.enums.BotInlineButton;
 import tgb.btc.rce.vo.InlineButton;
-
-import java.util.List;
 
 @Service
 public class AdminService {
@@ -31,11 +28,9 @@ public class AdminService {
     }
 
     public void notify(String message, String data) {
+        InlineButton button = BotInlineButton.SHOW.getButton();
+        button.setData(data);
         userService.getAdminsChatIds().forEach(chatId ->
-                responseSender.sendMessage(chatId, message, KeyboardUtil.buildInline(List.of(InlineButton.builder()
-                        .text(BotStringConstants.SHOW_BUTTON)
-                        .data(data)
-                        .inlineType(InlineType.CALLBACK_DATA)
-                        .build()))));
+                responseSender.sendMessage(chatId, message, button));
     }
 }

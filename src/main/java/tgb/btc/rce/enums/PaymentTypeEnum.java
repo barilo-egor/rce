@@ -1,6 +1,6 @@
 package tgb.btc.rce.enums;
 
-import tgb.btc.rce.exception.BaseException;
+import tgb.btc.library.exception.BaseException;
 
 public enum PaymentTypeEnum {
     RF_CARD("\uD83D\uDCB3 Карта РФ СБП"),

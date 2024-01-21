@@ -4,7 +4,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.InlineType;
 import tgb.btc.rce.enums.Menu;
-import tgb.btc.rce.exception.BaseException;
+import tgb.btc.library.exception.BaseException;
 import tgb.btc.rce.service.impl.UpdateDispatcher;
 import tgb.btc.rce.vo.InlineButton;
 import tgb.btc.rce.vo.ReplyButton;
@@ -61,6 +61,7 @@ public final class MenuFactory {
         List<Command> commands = new ArrayList<>(Menu.MAIN.getCommands());
         if (isAdmin) {
             commands.add(Command.ADMIN_PANEL);
+            commands.add(Command.WEB_ADMIN_PANEL);
         }
         return fillReply(commands);
     }

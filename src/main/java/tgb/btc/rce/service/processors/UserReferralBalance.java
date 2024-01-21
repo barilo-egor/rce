@@ -26,7 +26,7 @@ public class UserReferralBalance extends Processor {
         switch (userService.getStepByChatId(chatId)) {
             case 0:
                 responseSender.sendMessage(chatId, MessageTemplate.ASK_CHAT_ID);
-                userService.nextStep(chatId, Command.USER_REFERRAL_BALANCE);
+                userRepository.nextStep(chatId, Command.USER_REFERRAL_BALANCE.name());
                 break;
             case 1:
                 Long userChatId = Long.parseLong(update.getMessage().getText());

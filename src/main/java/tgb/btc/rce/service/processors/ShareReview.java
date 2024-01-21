@@ -3,14 +3,14 @@ package tgb.btc.rce.service.processors;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import tgb.btc.library.bean.bot.Review;
+import tgb.btc.library.constants.enums.properties.VariableType;
+import tgb.btc.library.service.bean.bot.ReviewService;
+import tgb.btc.library.util.properties.VariablePropertiesUtil;
 import tgb.btc.rce.annotation.CommandProcessor;
-import tgb.btc.rce.bean.Review;
-import tgb.btc.rce.enums.BotVariableType;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.InlineType;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.service.impl.ReviewService;
-import tgb.btc.rce.util.BotVariablePropertiesUtil;
 import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.InlineButton;
@@ -44,7 +44,7 @@ public class ShareReview extends Processor {
             case 0:
                 responseSender.deleteMessage(chatId, update.getCallbackQuery().getMessage().getMessageId());
                 responseSender.sendMessage(chatId, "Напишите ваш отзыв.");
-                userService.nextStep(chatId, Command.SHARE_REVIEW);
+                userRepository.nextStep(chatId, Command.SHARE_REVIEW.name());
                 if (DYNAMIC.isCurrent()) reviewPrisesMap.put(chatId, new ReviewPrise(update.getCallbackQuery().getData()));
                 return;
             case 1:
@@ -67,7 +67,7 @@ public class ShareReview extends Processor {
                 String author = "Анонимный отзыв\n\n";
                 Integer amount = DYNAMIC.isCurrent()
                                  ? getRandomAmount(chatId)
-                                 : BotVariablePropertiesUtil.getInt(BotVariableType.REVIEW_PRISE);
+                                 : VariablePropertiesUtil.getInt(VariableType.REVIEW_PRISE);
                 if (update.hasMessage()) {
                     reviewService.save(Review.builder()
                             .text(author + UpdateUtil.getMessageText(update))

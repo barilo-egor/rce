@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
 import tgb.btc.rce.constants.BotStringConstants;
-import tgb.btc.rce.enums.FiatCurrency;
+import tgb.btc.library.constants.enums.bot.FiatCurrency;
 
 @Builder
 @AllArgsConstructor

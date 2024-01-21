@@ -5,15 +5,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import tgb.btc.rce.enums.CryptoCurrency;
-import tgb.btc.rce.enums.DealType;
-import tgb.btc.rce.enums.FiatCurrency;
-import tgb.btc.rce.repository.DealRepository;
-import tgb.btc.rce.repository.UserRepository;
+import tgb.btc.library.constants.enums.bot.CryptoCurrency;
+import tgb.btc.library.constants.enums.bot.DealType;
+import tgb.btc.library.constants.enums.bot.FiatCurrency;
+import tgb.btc.library.repository.bot.DealRepository;
+import tgb.btc.library.repository.bot.UserRepository;
+import tgb.btc.library.util.BigDecimalUtil;
+import tgb.btc.library.util.FiatCurrencyUtil;
 import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.impl.AdminService;
-import tgb.btc.rce.util.BigDecimalUtil;
-import tgb.btc.rce.util.FiatCurrencyUtil;
+import tgb.btc.rce.util.CryptoCurrenciesDesignUtil;
 import tgb.btc.rce.vo.DealReportData;
 
 import java.math.BigDecimal;
@@ -123,7 +124,7 @@ public class DealAutoReport {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("Отчет за ").append(data.getPeriod()).append(":\n");
             for (CryptoCurrency cryptoCurrency : CryptoCurrency.values()) {
-                stringBuilder.append("Куплено ").append(cryptoCurrency.getDisplayName()).append(": ")
+                stringBuilder.append("Куплено ").append(CryptoCurrenciesDesignUtil.getDisplayName(cryptoCurrency)).append(": ")
                         .append(getBuyCryptoAmount(cryptoCurrency, cryptoCurrency.getScale(), dateTimeBegin,
                                                    dateTimeEnd).toPlainString())
                         .append("\n");
@@ -137,7 +138,7 @@ public class DealAutoReport {
                                                            fiatCurrency);
                     totalSum = totalSum.add(cryptoAmount);
                     stringBuilder.append("Получено ").append(fiatCurrency.getCode()).append(" от ")
-                            .append(cryptoCurrency.getDisplayName()).append(": ")
+                            .append(CryptoCurrenciesDesignUtil.getDisplayName(cryptoCurrency)).append(": ")
                             .append(BigDecimalUtil.roundToPlainString(cryptoAmount, cryptoCurrency.getScale())).append("\n");
                 }
                 totalAmounts.put(fiatCurrency, totalSum);
@@ -147,7 +148,7 @@ public class DealAutoReport {
             for (CryptoCurrency cryptoCurrency : CryptoCurrency.values()) {
                 BigDecimal cryptoAmount =
                         getSellCryptoAmount(cryptoCurrency, cryptoCurrency.getScale(), dateTimeBegin, dateTimeEnd);
-                stringBuilder.append("Продано ").append(cryptoCurrency.getDisplayName()).append(": ")
+                stringBuilder.append("Продано ").append(CryptoCurrenciesDesignUtil.getDisplayName(cryptoCurrency)).append(": ")
                         .append(cryptoAmount.toPlainString())
                         .append("\n");
             }

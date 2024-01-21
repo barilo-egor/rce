@@ -2,14 +2,15 @@ package tgb.btc.rce.service.processors.personaldiscounts.buy;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import tgb.btc.library.bean.bot.User;
+import tgb.btc.library.bean.bot.UserDiscount;
+import tgb.btc.library.repository.bot.UserDiscountRepository;
+import tgb.btc.library.service.bean.bot.UserDiscountService;
+import tgb.btc.library.service.process.PersonalDiscountsCache;
 import tgb.btc.rce.annotation.CommandProcessor;
-import tgb.btc.rce.bean.User;
-import tgb.btc.rce.bean.UserDiscount;
 import tgb.btc.rce.enums.Command;
-import tgb.btc.rce.repository.UserDiscountRepository;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.service.impl.UserDiscountService;
-import tgb.btc.rce.service.processors.support.PersonalDiscountsCache;
+import tgb.btc.rce.service.impl.UserDiscountProcessService;
 import tgb.btc.rce.util.UpdateUtil;
 
 import java.math.BigDecimal;
@@ -19,9 +20,21 @@ public class SavePersonalBuyDiscountProcessor extends Processor {
 
     private UserDiscountRepository userDiscountRepository;
 
-    private UserDiscountService userDiscountService;
+    private UserDiscountProcessService userDiscountProcessService;
 
     private PersonalDiscountsCache personalDiscountsCache;
+
+    private UserDiscountService userDiscountService;
+
+    @Autowired
+    public void setUserDiscountProcessService(UserDiscountProcessService userDiscountProcessService) {
+        this.userDiscountProcessService = userDiscountProcessService;
+    }
+
+    @Autowired
+    public void setUserDiscountService(UserDiscountService userDiscountService) {
+        this.userDiscountService = userDiscountService;
+    }
 
     @Autowired
     public void setPersonalDiscountsCache(PersonalDiscountsCache personalDiscountsCache) {
@@ -31,11 +44,6 @@ public class SavePersonalBuyDiscountProcessor extends Processor {
     @Autowired
     public void setUserDiscountRepository(UserDiscountRepository userDiscountRepository) {
         this.userDiscountRepository = userDiscountRepository;
-    }
-
-    @Autowired
-    public void setUserDiscountService(UserDiscountService userDiscountService) {
-        this.userDiscountService = userDiscountService;
     }
 
     @Override

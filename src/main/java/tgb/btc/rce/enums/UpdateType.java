@@ -1,7 +1,7 @@
 package tgb.btc.rce.enums;
 
 import org.telegram.telegrambots.meta.api.objects.Update;
-import tgb.btc.rce.exception.BaseException;
+import tgb.btc.library.exception.BaseException;
 
 public enum UpdateType {
     MESSAGE,

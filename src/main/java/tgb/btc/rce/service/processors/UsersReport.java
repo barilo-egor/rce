@@ -9,17 +9,17 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import tgb.btc.library.constants.enums.bot.CryptoCurrency;
+import tgb.btc.library.constants.enums.bot.DealType;
+import tgb.btc.library.constants.enums.bot.FiatCurrency;
+import tgb.btc.library.exception.BaseException;
+import tgb.btc.library.repository.bot.DealRepository;
+import tgb.btc.library.service.bean.bot.DealService;
+import tgb.btc.library.util.BigDecimalUtil;
+import tgb.btc.library.util.FiatCurrencyUtil;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
-import tgb.btc.rce.enums.CryptoCurrency;
-import tgb.btc.rce.enums.DealType;
-import tgb.btc.rce.enums.FiatCurrency;
-import tgb.btc.rce.exception.BaseException;
-import tgb.btc.rce.repository.DealRepository;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.service.impl.DealService;
-import tgb.btc.rce.util.BigDecimalUtil;
-import tgb.btc.rce.util.FiatCurrencyUtil;
 import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.report.ReportDealVO;
 import tgb.btc.rce.vo.report.ReportUserVO;
@@ -76,9 +76,30 @@ public class UsersReport extends Processor {
 
             int i = 2;
             log.info("Загрузка пользователей");
-            List<ReportUserVO> users = userService.findAllForUsersReport();
+            List<Object[]> rawsUsers = userRepository.findAllForUsersReport();
+            List<ReportUserVO> users = new ArrayList<>();
+            for (Object[] raw : rawsUsers) {
+                users.add(ReportUserVO.builder()
+                        .pid((Long) raw[0])
+                        .chatId((Long) raw[1])
+                        .username((String) raw[2])
+                        .build());
+            }
             log.info("Загрузка сделок.");
-            List<ReportDealVO> deals = dealService.findAllForUsersReport();
+            List<Object[]> raws = dealRepository.findAllForUsersReport();
+            List<ReportDealVO> deals = new ArrayList<>();
+            log.info("Маппинг сделок.");
+            for (Object[] raw : raws) {
+                deals.add(ReportDealVO.builder()
+                        .pid((Long) raw[0])
+                        .userPid((Long) raw[1])
+                        .dealType((DealType) raw[2])
+                        .cryptoCurrency((CryptoCurrency) raw[3])
+                        .cryptoAmount((BigDecimal) raw[4])
+                        .fiatCurrency((FiatCurrency) raw[5])
+                        .amount((BigDecimal) raw[6])
+                        .build());
+            }
             Map<Long, List<ReportDealVO>> usersDeals = new HashMap<>();
             log.info("Сортировка сделок по пользователям.");
             for (ReportUserVO user : users) {

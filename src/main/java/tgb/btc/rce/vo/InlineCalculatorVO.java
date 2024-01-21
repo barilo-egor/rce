@@ -1,7 +1,7 @@
 package tgb.btc.rce.vo;
 
-import tgb.btc.rce.enums.CryptoCurrency;
-import tgb.btc.rce.enums.FiatCurrency;
+import tgb.btc.library.constants.enums.bot.CryptoCurrency;
+import tgb.btc.library.constants.enums.bot.FiatCurrency;
 
 public class InlineCalculatorVO {
 

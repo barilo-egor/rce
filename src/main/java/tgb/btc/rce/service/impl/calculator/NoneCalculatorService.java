@@ -3,7 +3,7 @@ package tgb.btc.rce.service.impl.calculator;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import tgb.btc.rce.conditional.calculkator.NoneCalculatorCondition;
+import tgb.btc.rce.conditional.calculator.NoneCalculatorCondition;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.util.KeyboardUtil;
 
@@ -20,7 +20,7 @@ public class NoneCalculatorService extends SimpleCalculatorService {
 
     @Override
     public void setCommand(Long chatId) {
-        userRepository.updateStepAndCommandByChatId(chatId, Command.NONE_CALCULATOR, 1);
+        userRepository.updateStepAndCommandByChatId(chatId, Command.NONE_CALCULATOR.name(), 1);
     }
 
 }

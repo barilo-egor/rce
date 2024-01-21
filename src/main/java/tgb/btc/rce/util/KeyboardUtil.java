@@ -6,8 +6,13 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMar
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
-import tgb.btc.rce.bean.Contact;
-import tgb.btc.rce.enums.*;
+import org.telegram.telegrambots.meta.api.objects.webapp.WebAppInfo;
+import tgb.btc.library.bean.bot.Contact;
+import tgb.btc.library.constants.enums.bot.CryptoCurrency;
+import tgb.btc.rce.enums.BotReplyButton;
+import tgb.btc.rce.enums.Command;
+import tgb.btc.rce.enums.InlineCalculatorButton;
+import tgb.btc.rce.enums.InlineType;
 import tgb.btc.rce.vo.InlineButton;
 import tgb.btc.rce.vo.ReplyButton;
 
@@ -84,6 +89,9 @@ public final class KeyboardUtil {
             case SWITCH_INLINE_QUERY_CURRENT_CHAT:
                 inlineKeyboardButton.setSwitchInlineQueryCurrentChat(data);
                 break;
+            case WEB_APP:
+                inlineKeyboardButton.setWebApp(WebAppInfo.builder().url(data).build());
+                break;
         }
         return inlineKeyboardButton;
     }
@@ -135,7 +143,7 @@ public final class KeyboardUtil {
         int i = 0;
         for (CryptoCurrency cryptoCurrency : CryptoCurrency.values()) {
             ReplyButton replyButton = ReplyButton.builder()
-                    .text(cryptoCurrency.getDisplayName())
+                    .text(CryptoCurrenciesDesignUtil.getDisplayName(cryptoCurrency))
                     .build();
             replyButtons[i] = replyButton;
             i++;
@@ -166,4 +174,5 @@ public final class KeyboardUtil {
     public static InlineButton createCallBackDataButton (InlineCalculatorButton inlineCalculatorButton) {
         return KeyboardUtil.createCallBackDataButton(inlineCalculatorButton.getData(), Command.INLINE_CALCULATOR, inlineCalculatorButton.getData());
     }
+
 }
