@@ -56,11 +56,11 @@ public class MessageService {
         } else {
             return DealType.BUY.equals(dealType)
                     ? MessagePropertiesUtil.getMessage(PropertiesMessage.DEAL_INPUT_SUM_TO_BUY, cryptoCode, fiatCode,
-                    BigDecimalUtil.roundToPlainString(dealAmount.getCryptoAmount(), calculator.getCryptoCurrency().getScale()) + " " + cryptoCode,
+                    dealAmount.getCryptoAmount() + " " + cryptoCode,
                     fiatFlag, BigDecimalUtil.roundToPlainString(dealAmount.getAmount()) + " " + fiatCode, fiatFlag,
                     BigDecimalUtil.roundToPlainString(dealAmount.getCreditedAmount()) + " " + fiatCode)
                     : MessagePropertiesUtil.getMessage(PropertiesMessage.DEAL_INPUT_SUM_TO_SELL, cryptoCode, fiatCode,
-                    BigDecimalUtil.roundToPlainString(dealAmount.getCryptoAmount(), calculator.getCryptoCurrency().getScale()) + " " + cryptoCode,
+                    dealAmount.getCryptoAmount() + " " + cryptoCode,
                     fiatFlag, BigDecimalUtil.roundToPlainString(dealAmount.getAmount()) + " " + fiatCode);
         }
     }
