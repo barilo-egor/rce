@@ -41,17 +41,19 @@ public class RceBot extends TelegramLongPollingBot {
                 updateDispatcher.dispatch(update);
             } catch (NumberParseException e) {
                 execute(SendMessage.builder()
-                                .chatId(UpdateUtil.getChatId(update).toString())
-                                .text("Неверный формат.")
-                                .build());
+                        .chatId(UpdateUtil.getChatId(update).toString())
+                        .text("Неверный формат.")
+                        .build());
             } catch (Exception e) {
-                execute(SendMessage.builder()
-                                .chatId(UpdateUtil.getChatId(update).toString())
-                                .text("Что-то пошло не так: " + e.getMessage() + "\n" + ExceptionUtils.getFullStackTrace(
-                                        e))
-                                .build());
-                log.error("Ошибка", e);
+                Long time = System.currentTimeMillis();
+                String message = "Произошла ошибка." + System.lineSeparator() +
+                        time + System.lineSeparator() +
+                        "Пожалуйста, отправьте это сообщение оператору." + System.lineSeparator() +
+                        "Введите /start для выхода в главное меню.";
 
+                execute(SendMessage.builder().chatId(UpdateUtil.getChatId(update).toString()).text(message).build());
+                log.debug(String.format("Произошла ошибка. %s. Описание ошибки: %s", time, e.getMessage()
+                        + System.lineSeparator() + ExceptionUtils.getFullStackTrace(e)));
             }
         } catch (TelegramApiException ignored) {
         }
