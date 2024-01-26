@@ -58,7 +58,7 @@ public class MessageService {
                     ? MessagePropertiesUtil.getMessage(PropertiesMessage.DEAL_INPUT_SUM_TO_BUY, cryptoCode, fiatCode,
                     dealAmount.getCryptoAmount() + " " + cryptoCode,
                     fiatFlag, BigDecimalUtil.roundToPlainString(dealAmount.getAmount()) + " " + fiatCode, fiatFlag,
-                    BigDecimalUtil.roundToPlainString(dealAmount.getAmountWithoutCommission()) + " " + fiatCode)
+                    BigDecimalUtil.roundToPlainString(dealAmount.getCreditedAmount()) + " " + fiatCode)
                     : MessagePropertiesUtil.getMessage(PropertiesMessage.DEAL_INPUT_SUM_TO_SELL, cryptoCode, fiatCode,
                     dealAmount.getCryptoAmount() + " " + cryptoCode,
                     fiatFlag, BigDecimalUtil.roundToPlainString(dealAmount.getAmount()) + " " + fiatCode);

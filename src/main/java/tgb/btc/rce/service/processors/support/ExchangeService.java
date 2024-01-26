@@ -234,10 +234,7 @@ public class ExchangeService {
                         + fiatCurrency.getGenitive() + "\n";
                 if (BooleanUtils.isTrue(FunctionPropertiesUtil.getSumToReceive(cryptoCurrency))) {
                     message = message.concat("Сумма к зачислению: "
-                            + BigDecimalUtil.roundToPlainString(calculateService.convertToFiat(
-                            dealRepository.getCryptoCurrencyByPid(currentDealPid),
-                            dealRepository.getFiatCurrencyByPid(currentDealPid),
-                            cryptoAmount))
+                            + BigDecimalUtil.roundToPlainString(dealRepository.getCreditedAmountByPid(currentDealPid))
                             + " " + fiatCurrency.getGenitive());
                 }
             } else message = "Сумма к получению: " + BigDecimalUtil.roundToPlainString(dealAmount) + " "
