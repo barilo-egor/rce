@@ -72,7 +72,7 @@ public class CaptchaProcessor extends Processor {
     @Override
     public void run(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
-        if (!Command.CAPTCHA.equals(userRepository.getCommandByChatId(chatId))) userService.setDefaultValues(chatId);
+        if (!Command.CAPTCHA.name().equals(userRepository.getCommandByChatId(chatId))) userService.setDefaultValues(chatId);
         switch (userService.getStepByChatId(chatId)) {
             case 0:
                 if (update.hasCallbackQuery())
