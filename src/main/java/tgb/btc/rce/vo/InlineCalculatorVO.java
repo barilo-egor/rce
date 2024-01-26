@@ -2,14 +2,21 @@ package tgb.btc.rce.vo;
 
 import tgb.btc.library.constants.enums.bot.CryptoCurrency;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
+import tgb.btc.library.vo.calculate.DealAmount;
 
 public class InlineCalculatorVO {
 
     private CryptoCurrency cryptoCurrency;
+
     private FiatCurrency fiatCurrency;
+
     private Boolean isSwitched;
+
     private String sum;
+
     private Boolean isOn;
+
+    private DealAmount dealAmount;
 
     public Boolean getOn() {
         return isOn;
@@ -49,5 +56,13 @@ public class InlineCalculatorVO {
 
     public void setSum(String sum) {
         this.sum = sum;
+    }
+
+    public DealAmount getDealAmount() {
+        return dealAmount;
+    }
+
+    public void setDealAmount(DealAmount dealAmount) {
+        this.dealAmount = dealAmount;
     }
 }
