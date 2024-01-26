@@ -54,14 +54,20 @@ public class MessageService {
                     : MessagePropertiesUtil.getMessage(PropertiesMessage.DEAL_INPUT_SUM_TO_SELL, cryptoCode, fiatCode,
                     StringUtils.EMPTY, fiatFlag, StringUtils.EMPTY);
         } else {
+            String cryptoAmount = !calculator.getSwitched()
+                    ? calculator.getSum()
+                    : BigDecimalUtil.roundToPlainString(dealAmount.getCryptoAmount(), calculator.getCryptoCurrency().getScale());
+            String amount = calculator.getSwitched()
+                    ? calculator.getSum()
+                    : BigDecimalUtil.roundToPlainString(dealAmount.getAmount());
             return DealType.BUY.equals(dealType)
                     ? MessagePropertiesUtil.getMessage(PropertiesMessage.DEAL_INPUT_SUM_TO_BUY, cryptoCode, fiatCode,
-                    dealAmount.getCryptoAmount() + " " + cryptoCode,
-                    fiatFlag, BigDecimalUtil.roundToPlainString(dealAmount.getAmount()) + " " + fiatCode, fiatFlag,
+                    cryptoAmount + " " + cryptoCode,
+                    fiatFlag, amount + " " + fiatCode, fiatFlag,
                     BigDecimalUtil.roundToPlainString(dealAmount.getCreditedAmount()) + " " + fiatCode)
                     : MessagePropertiesUtil.getMessage(PropertiesMessage.DEAL_INPUT_SUM_TO_SELL, cryptoCode, fiatCode,
-                    dealAmount.getCryptoAmount() + " " + cryptoCode,
-                    fiatFlag, BigDecimalUtil.roundToPlainString(dealAmount.getAmount()) + " " + fiatCode);
+                    cryptoAmount + " " + cryptoCode,
+                    fiatFlag, amount + " " + fiatCode);
         }
     }
 
