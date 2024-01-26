@@ -26,8 +26,7 @@ import tgb.btc.rce.vo.InlineCalculatorVO;
 import java.math.BigDecimal;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static tgb.btc.rce.enums.InlineCalculatorButton.COMMA;
-import static tgb.btc.rce.enums.InlineCalculatorButton.SWITCH_CALCULATOR;
+import static tgb.btc.rce.enums.InlineCalculatorButton.*;
 
 @CommandProcessor(command = Command.INLINE_CALCULATOR, step = 1)
 public class InlineCalculator extends Processor {
@@ -106,7 +105,8 @@ public class InlineCalculator extends Processor {
         String sum = calculator.getSum();
         Boolean isSwitched = calculator.getSwitched();
         Integer messageId = callbackQuery.getMessage().getMessageId();
-        switch (InlineCalculatorButton.getByData(data.getButtonData())) {
+        InlineCalculatorButton button = InlineCalculatorButton.getByData(data.getButtonData());
+        switch (button) {
             case NUMBER:
                 if (StringUtils.isNotBlank(sum)) {
                     if (!sum.equals("0")) sum = sum.concat(data.getNumber());
@@ -120,7 +120,7 @@ public class InlineCalculator extends Processor {
                 if (StringUtils.isBlank(sum) || sum.contains(COMMA.getData())) return;
                 else sum = sum.concat(data.getButtonData());
                 calculator.setSum(sum);
-                return;
+                break;
             case DEL:
                 if (StringUtils.isNotBlank(sum)) sum = StringUtils.chop(sum);
                 else return;
@@ -151,9 +151,15 @@ public class InlineCalculator extends Processor {
         }
         Long currentDealPid = userService.getCurrentDealByChatId(chatId);
         DealType dealType = dealRepository.getDealTypeByPid(currentDealPid);
-        DealAmount dealAmount = StringUtils.isNotEmpty(sum)
-                ? calculateService.calculate(chatId, new BigDecimal(sum), calculator.getCryptoCurrency(), calculator.getFiatCurrency(), dealType, !isSwitched)
-                : null;
+        DealAmount dealAmount;
+        if (COMMA.equals(button) || (NUMBER.equals(button) && (sum.contains(COMMA.getData()) && sum.endsWith("0")))) {
+            dealAmount = calculator.getDealAmount();
+        } else {
+            dealAmount = StringUtils.isNotEmpty(sum)
+                    ? calculateService.calculate(chatId, new BigDecimal(sum), calculator.getCryptoCurrency(), calculator.getFiatCurrency(), dealType, !isSwitched)
+                    : null;
+            calculator.setDealAmount(dealAmount);
+        }
         responseSender.sendEditedMessageText(chatId, messageId,
                 messageService.getInlineCalculatorMessage(dealType, calculator, dealAmount),
                 keyboardService.getInlineCalculator(chatId));
