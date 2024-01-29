@@ -199,6 +199,7 @@ public final class CommandProcessorLoader {
         commandProcessors.add(TurningProcessDeliveryProcessor.class);
         commandProcessors.add(BackupBD.class);
         commandProcessors.add(DealsCount.class);
+        commandProcessors.add(SlotReel.class);
         commandProcessors.stream()
                 .filter(processor -> !extendsProcessor(processor))
                 .findFirst()

@@ -2,6 +2,7 @@ package tgb.btc.rce.service;
 
 import org.telegram.telegrambots.meta.api.methods.AnswerInlineQuery;
 import org.telegram.telegrambots.meta.api.methods.GetFile;
+import org.telegram.telegrambots.meta.api.methods.send.SendDice;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Document;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
@@ -72,6 +73,8 @@ public interface IResponseSender {
     void downloadFile(String fileId, String localFilePath);
 
     void execute(AnswerInlineQuery answerInlineQuery);
+
+    Message execute(SendDice sendDice);
 
     void sendMedia(Long chatId, List<InputMedia> media);
 

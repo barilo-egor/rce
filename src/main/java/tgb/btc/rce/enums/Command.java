@@ -54,6 +54,7 @@ public enum Command implements ICommand {
      */
     LOTTERY(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.getString("LOTTERY"), false, false, false),
     ROULETTE(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.getString("ROULETTE"), false, true, false),
+    SLOT_REEL(PropertiesPath.SLOT_REEL_PROPERTIES.getString("SLOT_REEL"), false, false, false),
 
     /**
      * REFERRAL

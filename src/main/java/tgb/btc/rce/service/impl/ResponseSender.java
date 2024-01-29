@@ -23,12 +23,12 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import tgb.btc.library.bean.bot.BotMessage;
 import tgb.btc.library.constants.enums.bot.BotMessageType;
 import tgb.btc.library.exception.BaseException;
+import tgb.btc.library.repository.bot.UserRepository;
 import tgb.btc.rce.bot.RceBot;
 import tgb.btc.rce.enums.BotKeyboard;
 import tgb.btc.rce.enums.Menu;
 import tgb.btc.rce.enums.MessageTemplate;
 import tgb.btc.rce.enums.PropertiesMessage;
-import tgb.btc.library.repository.bot.UserRepository;
 import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.util.*;
 import tgb.btc.rce.vo.InlineButton;
@@ -69,6 +69,14 @@ public class ResponseSender implements IResponseSender {
         return Optional.ofNullable(executeSendMessage(SendMessage.builder()
                 .chatId(chatId.toString())
                 .text(text)
+                .build()));
+    }
+
+    public Optional<Message> sendMessageParseNode(Long chatId, String text, String parseNode) {
+        return Optional.ofNullable(executeSendMessage(SendMessage.builder()
+                .chatId(chatId.toString())
+                .text(text)
+                .parseMode(parseNode)
                 .build()));
     }
 
@@ -279,7 +287,7 @@ public class ResponseSender implements IResponseSender {
         }
     }
 
-    public void downloadFile(Document document, String localFilePath) throws IOException{
+    public void downloadFile(Document document, String localFilePath) throws IOException {
         org.telegram.telegrambots.meta.api.objects.File file = getFilePath(document);
 
         java.io.File localFile = new java.io.File(localFilePath);
@@ -301,6 +309,16 @@ public class ResponseSender implements IResponseSender {
         } catch (TelegramApiException e) {
             log.debug("Не получилось отправить answerInlineQuery: " + answerInlineQuery.toString(), e);
         }
+    }
+
+    @Override
+    public Message execute(SendDice sendDice) {
+        try {
+            return bot.execute(sendDice);
+        } catch (TelegramApiException e) {
+            log.debug("Не получилось отправить sendDice: " + sendDice.toString(), e);
+        }
+        return null;
     }
 
     @Override
