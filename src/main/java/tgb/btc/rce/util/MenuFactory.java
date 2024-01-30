@@ -1,15 +1,12 @@
 package tgb.btc.rce.util;
 
-import org.checkerframework.checker.units.qual.C;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import tgb.btc.library.constants.enums.SlotReelType;
-import tgb.btc.library.constants.enums.properties.PropertiesPath;
+import tgb.btc.library.exception.BaseException;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.InlineType;
 import tgb.btc.rce.enums.Menu;
-import tgb.btc.library.exception.BaseException;
 import tgb.btc.rce.service.impl.UpdateDispatcher;
-import tgb.btc.rce.service.processors.SlotReel;
 import tgb.btc.rce.vo.InlineButton;
 import tgb.btc.rce.vo.ReplyButton;
 
@@ -72,7 +69,7 @@ public final class MenuFactory {
 
     private static List<ReplyButton> draws(boolean isAdmin) {
         List<Command> commands = new ArrayList<>(Menu.DRAWS.getCommands());
-        if(SlotReelType.NONE.isCurrent() || (SlotReelType.STANDARD_ADMIN.isCurrent() && !isAdmin)) {
+        if (SlotReelType.NONE.isCurrent() || (SlotReelType.STANDARD_ADMIN.isCurrent() && !isAdmin)) {
             commands.remove(Command.SLOT_REEL);
         }
         return fillReply(commands);
