@@ -1,6 +1,5 @@
 package tgb.btc.rce.service.processors;
 
-import com.vdurmont.emoji.EmojiParser;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,24 +68,17 @@ public class SlotReel extends Processor {
             return;
         }
 
-        Integer userStep = userRepository.getStepByChatId(chatId);
-        switch (userStep) {
-            case 0:
-                drawSlotButtons(chatId, slotReelService.startMessage());
-                userRepository.updateCommandByChatId(Command.SLOT_REEL.name(), chatId);
-                userRepository.updateStepByChatId(chatId, 1);
-                break;
-            case 1:
-                if (isDrawsCommand(update)) return;
-                if (!update.hasCallbackQuery()) return;
-                if (PropertiesPath.SLOT_REEL_PROPERTIES.getString("button.try.text")
-                        .equals(CallbackQueryUtil.getSplitData(update.getCallbackQuery(), 1))) {
-                    scroll(chatId);
-                } else {
-                    responseSender.deleteCallbackMessageIfExists(update);
-                }
+        if(!update.hasCallbackQuery()){
+            drawSlotButtons(chatId, slotReelService.startMessage());
+            return;
         }
-
+        if (isDrawsCommand(update)) return;
+        if (PropertiesPath.SLOT_REEL_PROPERTIES.getString("button.try.text")
+                .equals(CallbackQueryUtil.getSplitData(update.getCallbackQuery(), 1))) {
+            scroll(chatId);
+        } else {
+            responseSender.deleteCallbackMessageIfExists(update);
+        }
     }
 
     private boolean isDrawsCommand(Update update) {
@@ -99,7 +91,6 @@ public class SlotReel extends Processor {
             if (command.equals(commandFromUpdate)) drawsCommand = command;
         }
         if (Objects.isNull(drawsCommand)) return false;
-        userRepository.setDefaultValues(chatId);
         responseSender.deleteCallbackMessageIfExists(update);
         updateDispatcher.runProcessor(drawsCommand, chatId, update);
         return true;
@@ -107,7 +98,7 @@ public class SlotReel extends Processor {
 
 
     private void scroll(Long chatId) {
-        log.debug("Пользователь " + chatId + " крутит барабан");
+        log.trace("Пользователь " + chatId + " крутит барабан");
         if (userService.getReferralBalanceByChatId(chatId) < PropertiesPath.SLOT_REEL_PROPERTIES.getInteger("try", 10)) {
             responseSender.sendMessage(chatId, PropertiesPath.SLOT_REEL_MESSAGE.getString("balance.empty"));
             return;
@@ -121,13 +112,13 @@ public class SlotReel extends Processor {
             return;
         }
         Integer referralBalance = userService.getReferralBalanceByChatId(chatId);
-        log.debug("Исходный баланс пользователя " + chatId + " :" + referralBalance);
+        log.trace("Исходный баланс пользователя " + chatId + " :" + referralBalance);
         referralBalance -= PropertiesPath.SLOT_REEL_PROPERTIES.getInteger("try", 10);
         int diceValue = message.getDice().getValue();
         ScrollResult scrollResult = slotReelService.scrollResult(diceValue);
-        log.debug("Пользователь " + chatId + " зароллил " + Arrays.toString(scrollResult.getSlotValues()) + "(" + diceValue + ")");
+        log.trace("Пользователь " + chatId + " зароллил " + Arrays.toString(scrollResult.getSlotValues()) + "(" + diceValue + ")");
         StringBuilder sb = new StringBuilder();
-        sb.append(EmojiParser.parseToUnicode(":information_source:")).append(" *Ваша комбинация:* ")
+        sb.append("ℹ *Ваша комбинация:* ")
                 .append(slotReelService.slotCombinationToText(scrollResult.getSlotValues(), ", ")).append(System.lineSeparator()).append(System.lineSeparator());
         if (scrollResult.getWinAmount() != null) {
             referralBalance += Integer.parseInt(scrollResult.getWinAmount());
@@ -136,9 +127,9 @@ public class SlotReel extends Processor {
         } else {
             sb.append(PropertiesPath.SLOT_REEL_MESSAGE.getString("lose")).append(System.lineSeparator()).append(System.lineSeparator());
         }
-        log.debug("Сохранение баланса пользователя " + chatId + " :" + referralBalance);
+        log.trace("Сохранение баланса пользователя " + chatId + " :" + referralBalance);
         userService.updateReferralBalanceByChatId(referralBalance, chatId);
-        sb.append(EmojiParser.parseToUnicode(":money_with_wings: ")).append("*Ваш текущий баланс:* ").append(referralBalance).append("₽");
+        sb.append("\uD83D\uDCB8 *Ваш текущий баланс:* ").append(referralBalance).append("₽");
         drawSlotButtons(chatId, sb.toString());
 
     }
@@ -149,11 +140,11 @@ public class SlotReel extends Processor {
         List<InlineButton> buttons = new ArrayList<>();
         buttons.add(InlineButton.builder()
                 .text(tryText)
-                .data(CallbackQueryUtil.buildCallbackData(Command.SLOT_REEL.name(), tryText))
+                .data(CallbackQueryUtil.buildCallbackData(Command.SLOT_REEL.getText(), tryText))
                 .build());
         buttons.add(InlineButton.builder()
                 .text(closeText)
-                .data(CallbackQueryUtil.buildCallbackData(Command.SLOT_REEL.name(), closeText))
+                .data(CallbackQueryUtil.buildCallbackData(Command.SLOT_REEL.getText(), closeText))
                 .build());
         responseSender.sendMessage(chatId, StringUtils.defaultIfBlank(text, "Выберите действие"),
                 KeyboardUtil.buildInline(buttons), "Markdown");
