@@ -672,6 +672,7 @@ public class ExchangeService {
     public void confirmDeal(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
         Long currentDealPid = userRepository.getCurrentDealByChatId(chatId);
+        DealDeleteScheduler.deleteCryptoDeal(currentDealPid);
         DealType dealType = dealRepository.getDealTypeByPid(currentDealPid);
         dealRepository.updateIsActiveByPid(true, currentDealPid);
         dealRepository.updateDealStatusByPid(DealStatus.PAID, currentDealPid);
