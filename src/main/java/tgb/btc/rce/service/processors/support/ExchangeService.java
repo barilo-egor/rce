@@ -261,7 +261,7 @@ public class ExchangeService {
         Deal deal = dealRepository.findByPid(userRepository.getCurrentDealByChatId(chatId));
         DealAmount dealAmount = calculateService.calculate(chatId, enteredAmount,
                 deal.getCryptoCurrency(), deal.getFiatCurrency(),
-                deal.getDealType(), isEnteredInCrypto);
+                deal.getDealType(), isEnteredInCrypto, BooleanUtils.isTrue(FunctionPropertiesUtil.getSumToReceive(deal.getCryptoCurrency())));
         if (isLessThanMin(chatId, deal.getDealType(), deal.getCryptoCurrency(), dealAmount.getCryptoAmount())) {
             return false;
         }
@@ -298,7 +298,8 @@ public class ExchangeService {
         DealAmount dealAmount = calculateService.calculate(chatId, enteredAmount,
                 calculatorQuery.getCurrency(),
                 calculatorQuery.getFiatCurrency(),
-                calculatorQuery.getDealType());
+                calculatorQuery.getDealType(),
+                BooleanUtils.isTrue(FunctionPropertiesUtil.getSumToReceive(calculatorQuery.getCurrency())));
         Long currentDealPid = userRepository.getCurrentDealByChatId(chatId);
         DealType dealType = dealRepository.getDealTypeByPid(currentDealPid);
         CryptoCurrency cryptoCurrency = dealRepository.getCryptoCurrencyByPid(currentDealPid);
@@ -672,6 +673,7 @@ public class ExchangeService {
     public void confirmDeal(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
         Long currentDealPid = userRepository.getCurrentDealByChatId(chatId);
+        DealDeleteScheduler.deleteCryptoDeal(currentDealPid);
         DealType dealType = dealRepository.getDealTypeByPid(currentDealPid);
         dealRepository.updateIsActiveByPid(true, currentDealPid);
         dealRepository.updateDealStatusByPid(DealStatus.PAID, currentDealPid);
