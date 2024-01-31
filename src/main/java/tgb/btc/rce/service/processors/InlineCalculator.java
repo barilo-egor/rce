@@ -1,5 +1,6 @@
 package tgb.btc.rce.service.processors;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
@@ -18,6 +19,7 @@ import tgb.btc.rce.service.impl.KeyboardService;
 import tgb.btc.rce.service.impl.MessageService;
 import tgb.btc.rce.service.processors.support.ExchangeService;
 import tgb.btc.rce.util.CallbackQueryUtil;
+import tgb.btc.rce.util.FunctionPropertiesUtil;
 import tgb.btc.rce.util.MessagePropertiesUtil;
 import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.InlineCalculatorData;
@@ -156,7 +158,8 @@ public class InlineCalculator extends Processor {
             dealAmount = calculator.getDealAmount();
         } else {
             dealAmount = StringUtils.isNotEmpty(sum)
-                    ? calculateService.calculate(chatId, new BigDecimal(sum), calculator.getCryptoCurrency(), calculator.getFiatCurrency(), dealType, !isSwitched)
+                    ? calculateService.calculate(chatId, new BigDecimal(sum), calculator.getCryptoCurrency(),
+                    calculator.getFiatCurrency(), dealType, !isSwitched, BooleanUtils.isTrue(FunctionPropertiesUtil.getSumToReceive(calculator.getCryptoCurrency())))
                     : null;
             calculator.setDealAmount(dealAmount);
         }
