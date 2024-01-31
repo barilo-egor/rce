@@ -644,6 +644,11 @@ public class ExchangeService {
         }
         Long dealPid = userRepository.getCurrentDealByChatId(chatId);
         DealDeleteScheduler.deleteCryptoDeal(dealPid);
+        if (!dealRepository.existsById(dealPid)) {
+            Integer dealActiveTime = VariablePropertiesUtil.getInt(VariableType.DEAL_ACTIVE_TIME);
+            responseSender.sendMessage(chatId, String.format(MessagePropertiesUtil.getMessage("deal.deleted.auto"), dealActiveTime));
+            return false;
+        }
         if (Command.PAID.name().equals(update.getCallbackQuery().getData())) {
             responseSender.sendEditedMessageText(chatId, update.getCallbackQuery().getMessage().getMessageId(),
                     update.getCallbackQuery().getMessage().getText(), null);
