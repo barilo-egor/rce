@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import tgb.btc.library.constants.enums.DeliveryKind;
+import tgb.btc.library.constants.enums.RPSElement;
 import tgb.btc.library.constants.enums.bot.CryptoCurrency;
 import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.constants.enums.bot.DeliveryType;
@@ -30,6 +31,7 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static tgb.btc.library.constants.enums.properties.PropertiesPath.RPS_PROPERTIES;
 import static tgb.btc.rce.enums.InlineCalculatorButton.*;
 
 @Service
@@ -202,6 +204,31 @@ public class KeyboardService {
                 .text(text)
                 .data(CallbackQueryUtil.buildCallbackData(Command.TURN_PROCESS_DELIVERY.getText(), deliveryKind.name()))
                 .build();
+    }
+
+    public ReplyKeyboard getRPSRates() {
+        List<InlineButton> buttons = new ArrayList<>();
+        String[] sums = RPS_PROPERTIES.getString("sums").split(",");
+        Arrays.asList(sums).forEach(sum -> buttons.add(InlineButton.builder()
+                .text(sum)
+                .data(sum)
+                .inlineType(InlineType.CALLBACK_DATA)
+                .build()));
+        String close = PropertiesPath.RPS_MESSAGE.getString("close");
+        buttons.add(InlineButton.builder()
+                .text(close)
+                .data(close)
+                .build());
+        return KeyboardUtil.buildInline(buttons);
+    }
+
+    public ReplyKeyboard getRPSElements() {
+        List<InlineButton> buttons = new ArrayList<>();
+        Arrays.stream(RPSElement.values()).forEach(element -> buttons.add(InlineButton.builder()
+                .text(element.getSymbol())
+                .data(element.name())
+                .build()));
+        return KeyboardUtil.buildInline(buttons);
     }
 
 }

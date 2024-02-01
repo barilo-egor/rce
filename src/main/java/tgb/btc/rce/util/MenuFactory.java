@@ -1,6 +1,7 @@
 package tgb.btc.rce.util;
 
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
+import tgb.btc.library.constants.enums.RPS;
 import tgb.btc.library.constants.enums.SlotReelType;
 import tgb.btc.library.exception.BaseException;
 import tgb.btc.rce.enums.Command;
@@ -71,6 +72,9 @@ public final class MenuFactory {
         List<Command> commands = new ArrayList<>(Menu.DRAWS.getCommands());
         if (SlotReelType.NONE.isCurrent() || (SlotReelType.STANDARD_ADMIN.isCurrent() && !isAdmin)) {
             commands.remove(Command.SLOT_REEL);
+        }
+        if (RPS.NONE.isCurrent() || (RPS.STANDARD_ADMIN.isCurrent() && !isAdmin)) {
+            commands.remove(Command.RPS);
         }
         return fillReply(commands);
     }
