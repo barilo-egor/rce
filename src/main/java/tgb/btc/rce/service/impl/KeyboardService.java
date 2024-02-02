@@ -214,12 +214,7 @@ public class KeyboardService {
                 .data(sum)
                 .inlineType(InlineType.CALLBACK_DATA)
                 .build()));
-        String close = PropertiesPath.RPS_MESSAGE.getString("close");
-        buttons.add(InlineButton.builder()
-                .text(close)
-                .data(close)
-                .build());
-        return KeyboardUtil.buildInline(buttons);
+        return KeyboardUtil.buildInlineSingleLast(buttons, 1, KeyboardUtil.INLINE_BACK_BUTTON);
     }
 
     public ReplyKeyboard getRPSElements() {
@@ -228,7 +223,7 @@ public class KeyboardService {
                 .text(element.getSymbol())
                 .data(element.name())
                 .build()));
-        return KeyboardUtil.buildInline(buttons);
+        return KeyboardUtil.buildInlineSingleLast(buttons, 1, KeyboardUtil.INLINE_BACK_BUTTON);
     }
 
 }
