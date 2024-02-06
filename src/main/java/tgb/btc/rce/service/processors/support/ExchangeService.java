@@ -522,6 +522,7 @@ public class ExchangeService {
         Long chatId = UpdateUtil.getChatId(update);
         Deal deal = dealRepository.findByPid(userRepository.getCurrentDealByChatId(chatId));
         CryptoCurrency currency = deal.getCryptoCurrency();
+        DealType dealType = deal.getDealType();
         Long countPassed = dealRepository.getCountPassedByUserChatId(chatId);
         Rank rank = Objects.nonNull(countPassed)
                 ? Rank.getByDealsNumber(countPassed.intValue())
@@ -537,12 +538,12 @@ public class ExchangeService {
         deal.setDateTime(LocalDateTime.now());
         String message;
         String deliveryTypeText;
-        if (DeliveryKind.STANDARD.isCurrent()) {
+        if (DeliveryKind.STANDARD.isCurrent() && DealType.isBuy(dealType) && CryptoCurrency.BITCOIN.equals(currency)) {
             deliveryTypeText = "<b>Способ доставки</b>: " + deal.getDeliveryType().getDisplayName() + "\n\n";
         } else {
             deliveryTypeText = "";
         }
-        if (DealType.isBuy(deal.getDealType())) {
+        if (DealType.isBuy(dealType)) {
             dealAmount = userDiscountProcessService.applyDealDiscounts(chatId, dealAmount, deal.getUsedPromo(),
                     deal.getUsedReferralDiscount(), deal.getDiscount(), deal.getFiatCurrency());
             deal.setAmount(dealAmount);
@@ -602,7 +603,7 @@ public class ExchangeService {
 
         Optional<Message> optionalMessage = responseSender.sendMessage(chatId, message,
                 BotKeyboard.BUILD_DEAL.getKeyboard(), "HTML");
-        if (DealType.isBuy(deal.getDealType())) {
+        if (DealType.isBuy(dealType)) {
             DealDeleteScheduler.addNewCryptoDeal(deal.getPid(),
                     optionalMessage.map(
                                     Message::getMessageId)
