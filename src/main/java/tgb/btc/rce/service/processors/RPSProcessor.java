@@ -46,13 +46,20 @@ public class RPSProcessor extends Processor {
             userRepository.previousStep(chatId);
             if (userStep == 0) {
                 // TODO
+                responseSender.deleteCallbackMessageButtonsIfExists(update);
+                userRepository.updateCommandByChatId(Command.DRAWS.name(), chatId);
                 return;
+            } else {
+                responseSender.deleteCallbackMessageIfExists(update);
             }
             userRepository.previousStep(chatId);
         }
         switch (userRepository.getStepByChatId(chatId)) {
             case 0:
-                sendStartMessage(chatId);
+                if (!isBack) {
+                    sendStartMessage(chatId);
+                }
+                sendRatesMessage(chatId);
                 userRepository.updateCommandByChatId(Command.RPS.name(), chatId);
                 userRepository.updateStepByChatId(chatId, 1);
                 break;
@@ -61,7 +68,7 @@ public class RPSProcessor extends Processor {
                 if (Objects.nonNull(query)) {
                     if (!CallbackQueryUtil.isBack(update)) {
                         localCache.put(chatId, query.getData());
-                        responseSender.deleteCallbackMessageButtonsIfExists(update);
+                        responseSender.deleteCallbackMessageIfExists(update);
                     }
                     sendAskMessage(chatId);
                     userRepository.updateStepByChatId(chatId, 2);
@@ -72,6 +79,7 @@ public class RPSProcessor extends Processor {
                 if (Objects.nonNull(query)) {
                     sendResultMessage(chatId, query.getData());
                     sendStartMessage(chatId);
+                    sendRatesMessage(chatId);
                     userRepository.updateStepByChatId(chatId, 1);
                 } else {
                     sendAskMessage(chatId);
@@ -84,15 +92,20 @@ public class RPSProcessor extends Processor {
     }
 
     private void sendStartMessage(Long chatId) {
-        responseSender.sendMessage(chatId, String.format(RPS_MESSAGE.getString("start"),
-                        String.format(RPS_MESSAGE.getString("referral.balance"),
-                                userService.getReferralBalanceByChatId(chatId))), keyboardService.getRPSRates());
+        String sb = RPS_MESSAGE.getString("start") + System.lineSeparator() +
+                RPS_MESSAGE.getString("referral.balance") + " " +
+                userService.getReferralBalanceByChatId(chatId) + "₽";
+        responseSender.sendMessage(chatId, sb);
+    }
+
+    private void sendRatesMessage(Long chatId) {
+        responseSender.sendMessage(chatId, RPS_MESSAGE.getString("select.rate"), keyboardService.getRPSRates());
     }
 
     private void sendResultMessage(Long chatId, String elementName) {
-        String sb = rpsService.getResultMessageText(elementName, localCache.get(chatId), chatId) +
-                System.lineSeparator() + String.format(RPS_MESSAGE.getString("referral.balance"),
-                userService.getReferralBalanceByChatId(chatId));
+        String sb = rpsService.getResultMessageText(elementName, localCache.get(chatId), chatId);
+//                + System.lineSeparator() + String.format(RPS_MESSAGE.getString("referral.balance"),
+//                userService.getReferralBalanceByChatId(chatId));
         responseSender.sendMessage(chatId, sb);
     }
 
