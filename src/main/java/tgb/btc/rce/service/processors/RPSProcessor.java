@@ -45,7 +45,6 @@ public class RPSProcessor extends Processor {
             userStep--;
             userRepository.previousStep(chatId);
             if (userStep == 0) {
-                // TODO
                 responseSender.deleteCallbackMessageButtonsIfExists(update);
                 userRepository.updateCommandByChatId(Command.DRAWS.name(), chatId);
                 return;
@@ -104,8 +103,6 @@ public class RPSProcessor extends Processor {
 
     private void sendResultMessage(Long chatId, String elementName) {
         String sb = rpsService.getResultMessageText(elementName, localCache.get(chatId), chatId);
-//                + System.lineSeparator() + String.format(RPS_MESSAGE.getString("referral.balance"),
-//                userService.getReferralBalanceByChatId(chatId));
         responseSender.sendMessage(chatId, sb);
     }
 
