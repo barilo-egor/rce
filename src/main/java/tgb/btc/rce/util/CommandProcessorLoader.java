@@ -200,6 +200,7 @@ public final class CommandProcessorLoader {
         commandProcessors.add(BackupBD.class);
         commandProcessors.add(DealsCount.class);
         commandProcessors.add(SlotReel.class);
+        commandProcessors.add(Dice.class);
         commandProcessors.add(RPSProcessor.class);
         commandProcessors.stream()
                 .filter(processor -> !extendsProcessor(processor))
