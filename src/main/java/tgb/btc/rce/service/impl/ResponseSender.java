@@ -378,4 +378,14 @@ public class ResponseSender implements IResponseSender {
     public void deleteCallbackMessageIfExists(Update update) {
         if (update.hasCallbackQuery()) deleteMessage(UpdateUtil.getChatId(update), CallbackQueryUtil.messageId(update));
     }
+
+    @Override
+    public void deleteCallbackMessageButtonsIfExists(Update update) {
+        if (update.hasCallbackQuery()) {
+            String text = update.getCallbackQuery().getMessage().getText();
+            deleteMessage(UpdateUtil.getChatId(update), CallbackQueryUtil.messageId(update));
+            sendMessage(UpdateUtil.getChatId(update), text);
+        }
+    }
+
 }

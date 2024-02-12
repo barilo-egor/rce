@@ -2,6 +2,7 @@ package tgb.btc.rce.util;
 
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import tgb.btc.library.constants.enums.DiceType;
+import tgb.btc.library.constants.enums.RPS;
 import tgb.btc.library.constants.enums.SlotReelType;
 import tgb.btc.library.exception.BaseException;
 import tgb.btc.rce.enums.Command;
@@ -75,6 +76,9 @@ public final class MenuFactory {
         }
         if (DiceType.NONE.isCurrent() || (DiceType.STANDARD_ADMIN.isCurrent() && !isAdmin)) {
             commands.remove(Command.DICE);
+        }
+        if (RPS.NONE.isCurrent() || (RPS.STANDARD_ADMIN.isCurrent() && !isAdmin)) {
+            commands.remove(Command.RPS);
         }
         return fillReply(commands);
     }
