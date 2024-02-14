@@ -32,7 +32,7 @@ public final class CallbackQueryUtil {
     }
 
     public static String buildCallbackData(Command command, String... variables) {
-        return command.getText().concat(BotStringConstants.CALLBACK_DATA_SPLITTER).concat(String.join(BotStringConstants.CALLBACK_DATA_SPLITTER, variables));
+        return command.name().concat(BotStringConstants.CALLBACK_DATA_SPLITTER).concat(String.join(BotStringConstants.CALLBACK_DATA_SPLITTER, variables));
     }
 
     public static boolean isBack(Update update) {

@@ -27,7 +27,7 @@ public final class KeyboardUtil {
 
     public static InlineButton INLINE_BACK_BUTTON = InlineButton.builder().text("Назад")
             .inlineType(InlineType.CALLBACK_DATA)
-            .data(Command.BACK.getText())
+            .data(Command.BACK.name())
             .build();
 
     public static InlineKeyboardMarkup buildInline(List<InlineButton> buttons) {

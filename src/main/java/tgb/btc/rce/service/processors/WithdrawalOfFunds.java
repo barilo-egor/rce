@@ -38,7 +38,7 @@ public class WithdrawalOfFunds extends Processor {
                             KeyboardUtil.buildInline(List.of(
                                     InlineButton.builder()
                                             .text("Удалить")
-                                            .data(Command.DELETE_WITHDRAWAL_REQUEST.getText()
+                                            .data(Command.DELETE_WITHDRAWAL_REQUEST.name()
                                                     + BotStringConstants.CALLBACK_DATA_SPLITTER
                                                     + withdrawalRequestService.getPidByUserChatId(chatId))
                                             .build()

@@ -52,7 +52,7 @@ public class TurnDynamicRequisites extends Processor {
             boolean isDynamicOn = BooleanUtils.isTrue(paymentType.getDynamicOn());
             String text = paymentType.getName() + " - " +
                     (isDynamicOn ? "выключить" : "включить");
-            String data = Command.TURNING_DYNAMIC_REQUISITES.getText()
+            String data = Command.TURNING_DYNAMIC_REQUISITES.name()
                     + BotStringConstants.CALLBACK_DATA_SPLITTER + paymentType.getPid()
                     + BotStringConstants.CALLBACK_DATA_SPLITTER + (isDynamicOn ? Boolean.FALSE.toString() : Boolean.TRUE.toString());
             buttons.add(InlineButton.builder()
@@ -62,7 +62,7 @@ public class TurnDynamicRequisites extends Processor {
         }
         buttons.add(InlineButton.builder()
                 .text("❌ Закрыть")
-                .data(Command.INLINE_DELETE.getText())
+                .data(Command.INLINE_DELETE.name())
                 .build());
         responseSender.sendMessage(chatId, "Выберите тип оплаты для включения/выключения динамических реквизитов.",
                 KeyboardUtil.buildInline(buttons));

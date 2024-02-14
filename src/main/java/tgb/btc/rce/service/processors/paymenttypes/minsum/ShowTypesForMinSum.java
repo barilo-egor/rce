@@ -67,7 +67,7 @@ public class ShowTypesForMinSum extends Processor {
         List<InlineButton> buttons = paymentTypes.stream()
                 .map(paymentType -> InlineButton.builder()
                         .text(paymentType.getName())
-                        .data(Command.CHANGE_MIN_SUM.getText()
+                        .data(Command.CHANGE_MIN_SUM.name()
                                 + BotStringConstants.CALLBACK_DATA_SPLITTER + paymentType.getPid())
                         .build())
                 .collect(Collectors.toList());

@@ -50,7 +50,7 @@ public class TurningCurrencyProcessor extends Processor {
         Command command = isCurrencyOn ? Command.TURN_OFF_CURRENCY : Command.TURN_ON_CURRENCY;
         return InlineButton.builder()
                 .text(isCurrencyOn ? "Выключить " + currency.getShortName() : "Включить " + currency.getShortName())
-                .data(CallbackQueryUtil.buildCallbackData(command.getText(), dealType.name(), currency.name()))
+                .data(CallbackQueryUtil.buildCallbackData(command.name(), dealType.name(), currency.name()))
                 .build();
     }
 }

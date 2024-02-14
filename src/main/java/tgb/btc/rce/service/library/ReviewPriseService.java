@@ -52,7 +52,7 @@ public class ReviewPriseService implements IReviewPriseService {
                 }
                 else return;
             } else {
-                data = Command.SHARE_REVIEW.getText();
+                data = Command.SHARE_REVIEW.name();
                 amount = VariablePropertiesUtil.getInt(VariableType.REVIEW_PRISE) +"₽";
             }
             responseSender.sendMessage(deal.getUser().getChatId(), "Хотите оставить отзыв?\n" +
