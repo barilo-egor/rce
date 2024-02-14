@@ -678,8 +678,10 @@ public class ExchangeService {
         DealType dealType = dealRepository.getDealTypeByPid(currentDealPid);
         dealRepository.updateIsActiveByPid(true, currentDealPid);
         dealRepository.updateDealStatusByPid(DealStatus.PAID, currentDealPid);
+        userRepository.updateCurrentDealByChatId(null, chatId);
         userRepository.setDefaultValues(chatId);
         responseSender.sendMessage(chatId, MessagePropertiesUtil.getMessage(PropertiesMessage.DEAL_CONFIRMED));
+        log.info("Сделка " + currentDealPid + " пользователя " + chatId + " переведена в статус PAID");
         adminService.notify("Поступила новая заявка на " + dealType.getGenitive() + ".",
                 keyboardService.getShowDeal(currentDealPid));
     }

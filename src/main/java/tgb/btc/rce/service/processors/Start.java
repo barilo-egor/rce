@@ -1,5 +1,6 @@
 package tgb.btc.rce.service.processors;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.constants.enums.bot.BotMessageType;
@@ -13,6 +14,7 @@ import tgb.btc.rce.util.UpdateUtil;
 import java.util.Objects;
 
 @CommandProcessor(command = Command.START)
+@Slf4j
 public class Start extends Processor {
 
     private BotMessageService botMessageService;
@@ -41,6 +43,7 @@ public class Start extends Processor {
         Long currentDealPid = userRepository.getCurrentDealByChatId(chatId);
         if (Objects.nonNull(currentDealPid)) {
             if (dealRepository.existsById(currentDealPid)) {
+                log.info("Сделка " + currentDealPid + " удалена по команде /start");
                 dealRepository.deleteById(currentDealPid);
             }
             userRepository.updateCurrentDealByChatId(null, chatId);
