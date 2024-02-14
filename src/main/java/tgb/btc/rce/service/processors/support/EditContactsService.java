@@ -77,7 +77,7 @@ public class EditContactsService {
         return contactService.findAll().stream()
                 .map(c -> InlineButton.builder()
                         .text(c.getLabel())
-                        .data(Command.DELETE_CONTACT.getText() + CALLBACK_DATA_SPLITTER
+                        .data(Command.DELETE_CONTACT.name() + CALLBACK_DATA_SPLITTER
                                 + c.getPid() + CALLBACK_DATA_SPLITTER
                                 + messageId).build())
                 .collect(Collectors.toList());

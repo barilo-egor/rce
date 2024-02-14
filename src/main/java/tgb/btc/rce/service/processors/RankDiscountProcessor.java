@@ -57,7 +57,7 @@ public class RankDiscountProcessor extends Processor {
         responseSender.sendMessage(chatId, "Пользователь chat id=" + userChatId + ".",
                 KeyboardUtil.buildInline(List.of(InlineButton.builder()
                         .text(isRankDiscountOn ? "Выключить" : "Включить")
-                        .data(Command.CHANGE_RANK_DISCOUNT.getText()
+                        .data(Command.CHANGE_RANK_DISCOUNT.name()
                                 + BotStringConstants.CALLBACK_DATA_SPLITTER + userChatId
                                 + BotStringConstants.CALLBACK_DATA_SPLITTER + (!isRankDiscountOn))
                         .build())));

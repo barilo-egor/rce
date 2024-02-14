@@ -45,7 +45,7 @@ public class FiatCurrenciesDeleteRequisite extends Processor {
             List<InlineButton> buttons = paymentTypes.stream()
                     .map(paymentType -> InlineButton.builder()
                             .text(paymentType.getName())
-                            .data(Command.DELETE_PAYMENT_TYPE_REQUISITE.getText()
+                            .data(Command.DELETE_PAYMENT_TYPE_REQUISITE.name()
                                     + BotStringConstants.CALLBACK_DATA_SPLITTER + paymentType.getPid())
                             .build())
                     .collect(Collectors.toList());
