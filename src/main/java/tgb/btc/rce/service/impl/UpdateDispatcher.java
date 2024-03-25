@@ -77,7 +77,7 @@ public class UpdateDispatcher implements IUpdateDispatcher {
     }
 
     private Command getCommand(Update update, Long chatId) {
-        if (Objects.nonNull(antiSpam)) {
+        if (Objects.nonNull(antiSpam) && !antiSpam.isVerifiedUser(chatId)) {
             if (isCaptcha(update)) return Command.CAPTCHA;
             antiSpam.saveTime(chatId);
         } else userProcessService.registerIfNotExists(update);

@@ -1,10 +1,12 @@
 package tgb.btc.rce.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import tgb.btc.library.constants.enums.properties.PropertiesPath;
+import tgb.btc.library.service.process.VerifiedUserCache;
 import tgb.btc.rce.conditional.AntispamCondition;
 
 import java.util.ArrayList;
@@ -22,6 +24,17 @@ public class AntiSpam {
     private static final Map<Long, Integer> MESSAGES_COUNTER = new ConcurrentHashMap<>();
 
     public static final Map<Long, String> CAPTCHA_CASH = new ConcurrentHashMap<>();
+
+    private VerifiedUserCache verifiedUserCache;
+
+    @Autowired
+    public void setVerifiedUserCache(VerifiedUserCache verifiedUserCache) {
+        this.verifiedUserCache = verifiedUserCache;
+    }
+
+    public boolean isVerifiedUser(Long chatId) {
+        return verifiedUserCache.check(chatId);
+    }
 
     public boolean isSpamUser(Long chatId) {
         synchronized (SPAM_USERS) {
