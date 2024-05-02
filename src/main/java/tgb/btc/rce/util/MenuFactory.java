@@ -3,6 +3,7 @@ package tgb.btc.rce.util;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import tgb.btc.library.constants.enums.DiceType;
 import tgb.btc.library.constants.enums.RPS;
+import tgb.btc.library.constants.enums.ReferralType;
 import tgb.btc.library.constants.enums.SlotReelType;
 import tgb.btc.library.exception.BaseException;
 import tgb.btc.rce.enums.Command;
@@ -62,6 +63,9 @@ public final class MenuFactory {
 
     private static List<ReplyButton> main(boolean isAdmin) {
         List<Command> commands = new ArrayList<>(Menu.MAIN.getCommands());
+        if (ReferralType.STANDARD.isCurrent()) {
+            commands.add(Command.REFERRAL);
+        }
         if (isAdmin) {
             commands.add(Command.ADMIN_PANEL);
             commands.add(Command.WEB_ADMIN_PANEL);

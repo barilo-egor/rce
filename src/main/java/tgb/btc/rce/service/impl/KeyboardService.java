@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
+import tgb.btc.library.constants.enums.CabinetButton;
 import tgb.btc.library.constants.enums.DeliveryKind;
 import tgb.btc.library.constants.enums.RPSElement;
 import tgb.btc.library.constants.enums.bot.CryptoCurrency;
@@ -224,6 +225,15 @@ public class KeyboardService {
                 .data(element.name())
                 .build()));
         return KeyboardUtil.buildInlineSingleLast(buttons, 1, KeyboardUtil.INLINE_BACK_BUTTON);
+    }
+
+    public static ReplyKeyboard getCabinetButtons() {
+        List<InlineButton> buttons = new ArrayList<>();
+        Arrays.stream(CabinetButton.values()).forEach(button -> buttons.add(InlineButton.builder()
+                .text(button.getText())
+                .data(button.name())
+                .build()));
+        return KeyboardUtil.buildInline(buttons, 1);
     }
 
 }

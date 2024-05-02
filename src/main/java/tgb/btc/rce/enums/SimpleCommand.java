@@ -4,7 +4,9 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.constants.enums.bot.BotMessageType;
 import tgb.btc.library.exception.BaseException;
 import tgb.btc.rce.service.BeanHolder;
+import tgb.btc.rce.service.impl.KeyboardService;
 import tgb.btc.rce.util.KeyboardUtil;
+import tgb.btc.rce.util.MessagePropertiesUtil;
 import tgb.btc.rce.util.UpdateUtil;
 
 import java.util.function.Consumer;
@@ -53,7 +55,11 @@ public enum SimpleCommand {
             BeanHolder.RESPONSE_SENDER.sendMessage(UpdateUtil.getChatId(update), PropertiesMessage.SEND_MESSAGES_MENU, Menu.SEND_MESSAGES)),
 
     USERS(Command.USERS, update ->
-            BeanHolder.RESPONSE_SENDER.sendMessage(UpdateUtil.getChatId(update), "Меню для работы с пользователем", Menu.USERS));
+            BeanHolder.RESPONSE_SENDER.sendMessage(UpdateUtil.getChatId(update), "Меню для работы с пользователем", Menu.USERS)),
+
+    CABINET(Command.CABINET, update ->
+            BeanHolder.RESPONSE_SENDER.sendMessage(UpdateUtil.getChatId(update),
+                    MessagePropertiesUtil.getMessage("menu.main.cabinet.message"), KeyboardService.getCabinetButtons()));
 
     final Command command;
 

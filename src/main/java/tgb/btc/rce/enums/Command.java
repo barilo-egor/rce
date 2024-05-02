@@ -44,6 +44,7 @@ public enum Command implements ICommand {
      */
     BUY_BITCOIN(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.getString("BUY_BITCOIN"), false, false, false),
     SELL_BITCOIN(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.getString("SELL_BITCOIN"), false, false, false),
+    CABINET(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.getString("CABINET"), false, true, false),
     CONTACTS(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.getString("CONTACTS"), false, true, false),
     DRAWS(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.getString("DRAWS"), false, true, false),
     REFERRAL(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.getString("REFERRAL"), false, false, false),
