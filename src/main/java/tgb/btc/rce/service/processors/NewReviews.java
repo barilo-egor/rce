@@ -40,11 +40,11 @@ public class NewReviews extends Processor {
 
             buttons.add(InlineButton.builder()
                     .text("Опубликовать")
-                    .data(Command.PUBLISH_REVIEW.name() + BotStringConstants.CALLBACK_DATA_SPLITTER + review.getPid())
+                    .data(Command.PUBLISH_REVIEW.getText() + BotStringConstants.CALLBACK_DATA_SPLITTER + review.getPid())
                     .build());
             buttons.add(InlineButton.builder()
                     .text("Удалить")
-                    .data(Command.DELETE_REVIEW.name() + BotStringConstants.CALLBACK_DATA_SPLITTER + review.getPid())
+                    .data(Command.DELETE_REVIEW.getText() + BotStringConstants.CALLBACK_DATA_SPLITTER + review.getPid())
                     .build());
 
             responseSender.sendMessage(chatId, review.getText()

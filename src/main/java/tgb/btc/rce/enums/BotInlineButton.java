@@ -7,7 +7,7 @@ import tgb.btc.rce.vo.InlineButton;
 public enum BotInlineButton {
     CANCEL(InlineButton.builder().text("Назад")
             .inlineType(InlineType.CALLBACK_DATA)
-            .data(Command.BACK.name())
+            .data(Command.BACK.getText())
             .build()),
     USE_SAVED_WALLET(InlineButton.builder()
             .text(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.getString("USE_SAVED_WALLET"))

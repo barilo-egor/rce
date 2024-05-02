@@ -56,7 +56,7 @@ public class ShowRequisitesForDelete extends Processor {
                     .append("\n").append("---------------\n");
             buttons.add(InlineButton.builder()
                                 .text(String.valueOf(counter))
-                                .data(Command.DELETING_PAYMENT_TYPE_REQUISITE.name()
+                                .data(Command.DELETING_PAYMENT_TYPE_REQUISITE.getText()
                                               + BotStringConstants.CALLBACK_DATA_SPLITTER + paymentRequisite.getPid())
                                 .build());
             counter++;

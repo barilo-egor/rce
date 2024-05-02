@@ -71,13 +71,13 @@ public class ShowPaymentTypesForDelete extends Processor {
         List<InlineButton> buttons = paymentTypes.stream()
                 .map(paymentType -> InlineButton.builder()
                         .text(paymentType.getName())
-                        .data(Command.DELETING_PAYMENT_TYPE.name()
+                        .data(Command.DELETING_PAYMENT_TYPE.getText()
                                       + BotStringConstants.CALLBACK_DATA_SPLITTER + paymentType.getPid())
                         .build())
                 .collect(Collectors.toList());
         buttons.add(InlineButton.builder()
                             .text("❌ Закрыть")
-                            .data(Command.INLINE_DELETE.name())
+                            .data(Command.INLINE_DELETE.getText())
                             .build());
         responseSender.sendMessage(chatId, "Выберите тип оплаты для удаления.", KeyboardUtil.buildInline(buttons));
     }

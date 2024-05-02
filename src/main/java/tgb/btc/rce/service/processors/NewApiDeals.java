@@ -47,11 +47,11 @@ public class NewApiDeals extends Processor {
             responseSender.sendMessage(chatId, dealInfo, KeyboardUtil.buildInline(List.of(
                     InlineButton.builder()
                             .text("Подтвердить")
-                            .data(Command.CONFIRM_API_DEAL.name() + CALLBACK_DATA_SPLITTER + pid)
+                            .data(Command.CONFIRM_API_DEAL.getText() + CALLBACK_DATA_SPLITTER + pid)
                             .build(),
                     InlineButton.builder()
                             .text("Отклонить")
-                            .data(Command.CANCEL_API_DEAL.name() + CALLBACK_DATA_SPLITTER + pid)
+                            .data(Command.CANCEL_API_DEAL.getText() + CALLBACK_DATA_SPLITTER + pid)
                             .build()
             )));
         });

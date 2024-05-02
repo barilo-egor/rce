@@ -43,7 +43,7 @@ public class NewPaymentTypeRequisite extends Processor {
         List<InlineButton> buttons = paymentTypes.stream()
                 .map(paymentType -> InlineButton.builder()
                         .text(paymentType.getName())
-                        .data(Command.NEW_PAYMENT_TYPE_REQUISITE.name()
+                        .data(Command.NEW_PAYMENT_TYPE_REQUISITE.getText()
                                 + BotStringConstants.CALLBACK_DATA_SPLITTER + paymentType.getPid())
                         .build())
                 .collect(Collectors.toList());

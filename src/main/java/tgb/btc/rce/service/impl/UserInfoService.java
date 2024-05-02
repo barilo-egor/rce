@@ -100,13 +100,13 @@ public class UserInfoService {
                                     InlineButton.builder()
                                             .text("Оставить в бане")
                                             .data(CallbackQueryUtil.buildCallbackData(
-                                                    Command.KEEP_SPAM_BAN.name(), spamBanPid.toString()
+                                                    Command.KEEP_SPAM_BAN.getText(), spamBanPid.toString()
                                             ))
                                             .build(),
                                     InlineButton.builder()
                                             .text("Разблокировать")
                                             .data(CallbackQueryUtil.buildCallbackData(
-                                                    Command.SPAM_UNBAN.name(), spamBanPid.toString()
+                                                    Command.SPAM_UNBAN.getText(), spamBanPid.toString()
                                             ))
                                             .build()
                             )));

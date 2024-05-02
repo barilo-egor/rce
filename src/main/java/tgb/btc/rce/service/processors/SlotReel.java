@@ -140,11 +140,11 @@ public class SlotReel extends Processor {
         List<InlineButton> buttons = new ArrayList<>();
         buttons.add(InlineButton.builder()
                 .text(tryText)
-                .data(CallbackQueryUtil.buildCallbackData(Command.SLOT_REEL.name(), tryText))
+                .data(CallbackQueryUtil.buildCallbackData(Command.SLOT_REEL.getText(), tryText))
                 .build());
         buttons.add(InlineButton.builder()
                 .text(closeText)
-                .data(CallbackQueryUtil.buildCallbackData(Command.SLOT_REEL.name(), closeText))
+                .data(CallbackQueryUtil.buildCallbackData(Command.SLOT_REEL.getText(), closeText))
                 .build());
         responseSender.sendMessage(chatId, StringUtils.defaultIfBlank(text, "Выберите действие"),
                 KeyboardUtil.buildInline(buttons), "Markdown");

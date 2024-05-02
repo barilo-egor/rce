@@ -37,7 +37,7 @@ public class UserReferralBalance extends Processor {
                                     InlineButton.builder()
                                             .inlineType(InlineType.CALLBACK_DATA)
                                             .text("Изменить")
-                                            .data(Command.CHANGE_REFERRAL_BALANCE.name()
+                                            .data(Command.CHANGE_REFERRAL_BALANCE.getText()
                                                     + BotStringConstants.CALLBACK_DATA_SPLITTER + userChatId)
                                             .build()
                             )));

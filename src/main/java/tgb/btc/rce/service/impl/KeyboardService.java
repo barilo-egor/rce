@@ -60,7 +60,7 @@ public class KeyboardService {
         List<InlineButton> buttons = FiatCurrencyUtil.getFiatCurrencies().stream()
                 .map(fiatCurrency -> InlineButton.builder()
                         .text(FiatCurrenciesDesignUtil.getDisplayData(fiatCurrency))
-                        .data(CallbackQueryUtil.buildCallbackData(Command.CHOOSING_FIAT_CURRENCY.name(), fiatCurrency.name()))
+                        .data(CallbackQueryUtil.buildCallbackData(Command.CHOOSING_FIAT_CURRENCY.getText(), fiatCurrency.name()))
                         .build())
                 .collect(Collectors.toList());
         buttons.add(KeyboardUtil.INLINE_BACK_BUTTON);
@@ -88,7 +88,7 @@ public class KeyboardService {
         return KeyboardUtil.buildInline(List.of(
                 InlineButton.builder()
                         .text(Command.SHOW_DEAL.getText())
-                        .data(Command.SHOW_DEAL.name() + BotStringConstants.CALLBACK_DATA_SPLITTER
+                        .data(Command.SHOW_DEAL.getText() + BotStringConstants.CALLBACK_DATA_SPLITTER
                                 + dealPid)
                         .build()
         ));
@@ -98,7 +98,7 @@ public class KeyboardService {
         return KeyboardUtil.buildInline(List.of(
                 InlineButton.builder()
                         .text("Показать")
-                        .data(Command.SHOW_API_DEAL.name() + BotStringConstants.CALLBACK_DATA_SPLITTER
+                        .data(Command.SHOW_API_DEAL.getText() + BotStringConstants.CALLBACK_DATA_SPLITTER
                                 + pid)
                         .build()
         ));
@@ -203,7 +203,7 @@ public class KeyboardService {
         }
         return InlineButton.builder()
                 .text(text)
-                .data(CallbackQueryUtil.buildCallbackData(Command.TURN_PROCESS_DELIVERY.name(), deliveryKind.name()))
+                .data(CallbackQueryUtil.buildCallbackData(Command.TURN_PROCESS_DELIVERY.getText(), deliveryKind.name()))
                 .build();
     }
 

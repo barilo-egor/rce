@@ -43,7 +43,7 @@ public class ShowPaymentTypesForDeleteRequisite extends Processor {
         List<InlineButton> buttons = paymentTypes.stream()
                 .map(paymentType -> InlineButton.builder()
                         .text(paymentType.getName())
-                        .data(Command.DELETE_PAYMENT_TYPE_REQUISITE.name()
+                        .data(Command.DELETE_PAYMENT_TYPE_REQUISITE.getText()
                                       + BotStringConstants.CALLBACK_DATA_SPLITTER + paymentType.getPid())
                         .build())
                 .collect(Collectors.toList());
