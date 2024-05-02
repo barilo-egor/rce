@@ -1,5 +1,6 @@
 package tgb.btc.rce.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
@@ -16,6 +17,7 @@ import tgb.btc.rce.util.MenuFactory;
 import tgb.btc.rce.util.MessagePropertiesUtil;
 import tgb.btc.rce.util.UpdateUtil;
 
+@Slf4j
 public abstract class Processor {
     @Autowired
     protected IResponseSender responseSender;
@@ -29,7 +31,12 @@ public abstract class Processor {
             beforeCancel(update);
             return;
         }
-        run(update);
+        try {
+            run(update);
+        } catch (Exception e) {
+            log.error("Ошибка Processor.run.", e);
+            throw e;
+        }
     }
 
     public void beforeCancel(Update update) {
