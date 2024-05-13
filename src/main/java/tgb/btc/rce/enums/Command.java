@@ -221,6 +221,12 @@ public enum Command implements ICommand {
      * TURNING DELIVERY
      */
     TURN_PROCESS_DELIVERY("turn_process_delivery", true, false, false),
+
+    /**
+     * WEB
+     */
+    SUBMIT_LOGIN("Подтвердить", false, false, false),
+    LOGOUT("Закрыть сессию", false, false, false)
     ;
 
     final String text;
@@ -268,7 +274,7 @@ public enum Command implements ICommand {
 
     public static Command findByText(String value) {
         return Arrays.stream(Command.values())
-                .filter(command -> value.startsWith(command.getText()))
+                .filter(command -> value.startsWith(command.getText()) || value.startsWith(command.name()))
                 .findFirst()
                 .orElse(null);
     }
