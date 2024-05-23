@@ -9,6 +9,7 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.PhotoSize;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
+import tgb.btc.api.bot.DealNotifier;
 import tgb.btc.library.bean.bot.Deal;
 import tgb.btc.library.bean.bot.PaymentReceipt;
 import tgb.btc.library.bean.bot.PaymentType;
@@ -80,6 +81,18 @@ public class ExchangeService {
     private DealService dealService;
 
     private ICalculatorTypeService calculatorTypeService;
+
+    private DealNotifier dealNotifier;
+
+    @Autowired
+    public void setDealNotifier(DealNotifier dealNotifier) {
+        this.dealNotifier = dealNotifier;
+    }
+
+    @Autowired
+    public void setUserDiscountProcessService(UserDiscountProcessService userDiscountProcessService) {
+        this.userDiscountProcessService = userDiscountProcessService;
+    }
 
     @Autowired
     public void setCalculatorTypeService(ICalculatorTypeService calculatorTypeService) {
@@ -684,6 +697,7 @@ public class ExchangeService {
         log.info("Сделка " + currentDealPid + " пользователя " + chatId + " переведена в статус PAID");
         adminService.notify("Поступила новая заявка на " + dealType.getGenitive() + ".",
                 keyboardService.getShowDeal(currentDealPid));
+        dealNotifier.reloadStore();
     }
 
     public void askForReferralDiscount(Update update) {
