@@ -2,6 +2,8 @@ package tgb.btc.rce.service.processors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import tgb.btc.api.web.IEmitterAPI;
+import tgb.btc.api.web.constants.EmitterMessageType;
 import tgb.btc.library.constants.enums.bot.DealStatus;
 import tgb.btc.library.constants.enums.properties.VariableType;
 import tgb.btc.library.repository.bot.DealRepository;
@@ -23,6 +25,13 @@ public class UserAdditionalVerification extends Processor {
     private DealService dealService;
 
     private DealRepository dealRepository;
+
+    private IEmitterAPI emitterAPI;
+
+    @Autowired
+    public void setEmitterAPI(IEmitterAPI emitterAPI) {
+        this.emitterAPI = emitterAPI;
+    }
 
     @Autowired
     public void setDealRepository(DealRepository dealRepository) {
@@ -48,6 +57,7 @@ public class UserAdditionalVerification extends Processor {
             String imageId = BotImageUtil.getImageId(update.getMessage().getPhoto());
             userService.getAdminsChatIds().forEach(adminChatId -> responseSender.sendPhoto(adminChatId,
                     "Верификация по заявке №" + dealPid, imageId));
+            emitterAPI.message(EmitterMessageType.NEW_ADDITIONAL_VERIFICATION);
             dealRepository.updateAdditionalVerificationImageIdByPid(dealPid, imageId);
             responseSender.sendMessage(UpdateUtil.getChatId(update),
                     "Спасибо, твоя верификация отправлена администратору.");
