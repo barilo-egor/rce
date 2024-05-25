@@ -55,14 +55,14 @@ public class UserAdditionalVerification extends Processor {
         }
         if (update.getMessage().hasPhoto()) {
             String imageId = BotImageUtil.getImageId(update.getMessage().getPhoto());
-            userService.getAdminsChatIds().forEach(adminChatId -> responseSender.sendPhoto(adminChatId,
-                    "Верификация по заявке №" + dealPid, imageId));
-            emitterAPI.message(EmitterMessageType.NEW_ADDITIONAL_VERIFICATION);
             dealRepository.updateAdditionalVerificationImageIdByPid(dealPid, imageId);
-            responseSender.sendMessage(UpdateUtil.getChatId(update),
-                    "Спасибо, твоя верификация отправлена администратору.");
             userService.setDefaultValues(chatId);
             dealRepository.updateDealStatusByPid(DealStatus.VERIFICATION_RECEIVED, dealPid);
+            emitterAPI.message(EmitterMessageType.NEW_ADDITIONAL_VERIFICATION);
+            responseSender.sendMessage(UpdateUtil.getChatId(update),
+                    "Спасибо, твоя верификация отправлена администратору.");
+            userService.getAdminsChatIds().forEach(adminChatId -> responseSender.sendPhoto(adminChatId,
+                    "Верификация по заявке №" + dealPid, imageId));
             processToMainMenu(chatId);
             return;
         } else if (update.getMessage().hasText() && update.getMessage().getText().equals("Отказаться от верификации")) {
