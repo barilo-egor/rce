@@ -76,6 +76,7 @@ public class UserAdditionalVerification extends Processor {
                     responseSender.sendMessage(adminChatId, "Отказ от верификации по заявке №" + dealPid));
             userService.setDefaultValues(chatId);
             dealRepository.updateDealStatusByPid(DealStatus.VERIFICATION_REJECTED, dealPid);
+            notificationsAPI.declinedVerificationReceived(dealPid);
             processToMainMenu(chatId);
             return;
         }
