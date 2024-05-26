@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tgb.btc.api.web.INotifier;
 import tgb.btc.library.constants.enums.properties.VariableType;
+import tgb.btc.library.repository.bot.DealRepository;
 import tgb.btc.library.util.properties.VariablePropertiesUtil;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
@@ -24,6 +25,13 @@ public class Notifier implements INotifier {
     private KeyboardService keyboardService;
 
     private IResponseSender responseSender;
+
+    private DealRepository dealRepository;
+
+    @Autowired
+    public void setDealRepository(DealRepository dealRepository) {
+        this.dealRepository = dealRepository;
+    }
 
     @Autowired
     public void setResponseSender(IResponseSender responseSender) {
@@ -50,6 +58,11 @@ public class Notifier implements INotifier {
         Integer dealActiveTime = VariablePropertiesUtil.getInt(VariableType.DEAL_ACTIVE_TIME);
         if (Objects.nonNull(integer)) responseSender.deleteMessage(chatId, integer);
         responseSender.sendMessage(chatId, String.format(MessagePropertiesUtil.getMessage("deal.deleted.auto"), dealActiveTime));
+    }
+
+    @Override
+    public void notifyDealDeletedByAdmin(Long dealPid) {
+        responseSender.sendMessage(dealRepository.getUserChatIdByDealPid(dealPid), MessagePropertiesUtil.getMessage("deal.deleted.by.admin"));
     }
 
     @Override
