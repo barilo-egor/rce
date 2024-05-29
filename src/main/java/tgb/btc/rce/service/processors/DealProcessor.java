@@ -268,7 +268,7 @@ public class DealProcessor extends Processor {
         if (Objects.isNull(mainMenuCommand)) return false;
         userRepository.setDefaultValues(chatId);
         Long currentDealPid = userRepository.getCurrentDealByChatId(chatId);
-        if (Objects.nonNull(currentDealPid) && !dealRepository.getIsActiveByPid(currentDealPid)) {
+        if (Objects.nonNull(currentDealPid)) {
             if (dealRepository.existsById(currentDealPid)) {
                 log.info("Сделка " + currentDealPid + " удалена по команде главного меню.");
                 dealRepository.deleteById(currentDealPid);

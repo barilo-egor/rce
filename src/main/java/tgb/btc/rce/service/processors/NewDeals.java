@@ -7,6 +7,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.media.InputMedia;
 import tgb.btc.library.bean.bot.PaymentReceipt;
 import tgb.btc.library.constants.enums.bot.ReceiptFormat;
+import tgb.btc.library.repository.bot.DealRepository;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.Processor;
@@ -24,6 +25,8 @@ public class NewDeals extends Processor {
 
     private DealSupportService dealSupportService;
 
+    private DealRepository dealRepository;
+
     @Autowired
     public void setDealService(DealService dealService) {
         this.dealService = dealService;
@@ -37,7 +40,7 @@ public class NewDeals extends Processor {
     @Override
     public void run(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
-        List<Long> activeDeals = dealService.getActiveDealPids();
+        List<Long> activeDeals = dealRepository.getPaidDealsPids();
 
         if (activeDeals.isEmpty()) {
             responseSender.sendMessage(chatId, "Новых заявок нет.");
