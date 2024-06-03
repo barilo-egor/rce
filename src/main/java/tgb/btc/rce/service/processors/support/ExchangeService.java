@@ -9,8 +9,7 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.PhotoSize;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
-import tgb.btc.api.web.IEmitterAPI;
-import tgb.btc.api.web.constants.EmitterMessageType;
+import tgb.btc.api.web.INotificationsAPI;
 import tgb.btc.library.bean.bot.Deal;
 import tgb.btc.library.bean.bot.PaymentReceipt;
 import tgb.btc.library.bean.bot.PaymentType;
@@ -83,11 +82,11 @@ public class ExchangeService {
 
     private ICalculatorTypeService calculatorTypeService;
 
-    private IEmitterAPI emitterAPI;
+    private INotificationsAPI notificationsAPI;
 
     @Autowired
-    public void setEmitterAPI(IEmitterAPI emitterAPI) {
-        this.emitterAPI = emitterAPI;
+    public void setNotificationsAPI(INotificationsAPI notificationsAPI) {
+        this.notificationsAPI = notificationsAPI;
     }
 
     @Autowired
@@ -690,7 +689,6 @@ public class ExchangeService {
         Long currentDealPid = userRepository.getCurrentDealByChatId(chatId);
         DealDeleteScheduler.deleteCryptoDeal(currentDealPid);
         DealType dealType = dealRepository.getDealTypeByPid(currentDealPid);
-        dealRepository.updateIsActiveByPid(true, currentDealPid);
         dealRepository.updateDealStatusByPid(DealStatus.PAID, currentDealPid);
         userRepository.updateCurrentDealByChatId(null, chatId);
         userRepository.setDefaultValues(chatId);
@@ -698,7 +696,7 @@ public class ExchangeService {
         log.info("Сделка " + currentDealPid + " пользователя " + chatId + " переведена в статус PAID");
         adminService.notify("Поступила новая заявка на " + dealType.getGenitive() + ".",
                 keyboardService.getShowDeal(currentDealPid));
-        emitterAPI.message(EmitterMessageType.NEW_BOT_DEAL);
+        notificationsAPI.newBotDeal(currentDealPid);
     }
 
     public void askForReferralDiscount(Update update) {

@@ -25,7 +25,7 @@ public class DeleteDeal extends Processor {
     public void run(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
         responseSender.deleteMessage(chatId, update.getCallbackQuery().getMessage().getMessageId());
-        Long dealPid = dealService.getPidActiveDealByChatId(chatId);
+        Long dealPid = null;
         Long userChatId = dealService.getUserChatIdByDealPid(dealPid);
         dealService.deleteById(dealPid);
         log.info("Админ " + chatId + " удалил заявку " + dealPid + " пользователя " + userChatId);

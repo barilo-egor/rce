@@ -2,8 +2,7 @@ package tgb.btc.rce.service.processors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import tgb.btc.api.web.IEmitterAPI;
-import tgb.btc.api.web.constants.EmitterMessageType;
+import tgb.btc.api.web.INotificationsAPI;
 import tgb.btc.library.constants.enums.bot.DealStatus;
 import tgb.btc.library.constants.enums.properties.VariableType;
 import tgb.btc.library.repository.bot.DealRepository;
@@ -26,11 +25,11 @@ public class UserAdditionalVerification extends Processor {
 
     private DealRepository dealRepository;
 
-    private IEmitterAPI emitterAPI;
+    private INotificationsAPI notificationsAPI;
 
     @Autowired
-    public void setEmitterAPI(IEmitterAPI emitterAPI) {
-        this.emitterAPI = emitterAPI;
+    public void setNotificationsAPI(INotificationsAPI notificationsAPI) {
+        this.notificationsAPI = notificationsAPI;
     }
 
     @Autowired
@@ -55,14 +54,14 @@ public class UserAdditionalVerification extends Processor {
         }
         if (update.getMessage().hasPhoto()) {
             String imageId = BotImageUtil.getImageId(update.getMessage().getPhoto());
-            userService.getAdminsChatIds().forEach(adminChatId -> responseSender.sendPhoto(adminChatId,
-                    "Верификация по заявке №" + dealPid, imageId));
-            emitterAPI.message(EmitterMessageType.NEW_ADDITIONAL_VERIFICATION);
             dealRepository.updateAdditionalVerificationImageIdByPid(dealPid, imageId);
-            responseSender.sendMessage(UpdateUtil.getChatId(update),
-                    "Спасибо, твоя верификация отправлена администратору.");
             userService.setDefaultValues(chatId);
             dealRepository.updateDealStatusByPid(DealStatus.VERIFICATION_RECEIVED, dealPid);
+            notificationsAPI.additionalVerificationReceived(dealPid);
+            responseSender.sendMessage(UpdateUtil.getChatId(update),
+                    "Спасибо, твоя верификация отправлена администратору.");
+            userService.getAdminsChatIds().forEach(adminChatId -> responseSender.sendPhoto(adminChatId,
+                    "Верификация по заявке №" + dealPid, imageId));
             processToMainMenu(chatId);
             return;
         } else if (update.getMessage().hasText() && update.getMessage().getText().equals("Отказаться от верификации")) {
@@ -77,6 +76,7 @@ public class UserAdditionalVerification extends Processor {
                     responseSender.sendMessage(adminChatId, "Отказ от верификации по заявке №" + dealPid));
             userService.setDefaultValues(chatId);
             dealRepository.updateDealStatusByPid(DealStatus.VERIFICATION_REJECTED, dealPid);
+            notificationsAPI.declinedVerificationReceived(dealPid);
             processToMainMenu(chatId);
             return;
         }
