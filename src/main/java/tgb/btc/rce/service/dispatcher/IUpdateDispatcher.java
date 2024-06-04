@@ -1,4 +1,4 @@
-package tgb.btc.rce.service;
+package tgb.btc.rce.service.dispatcher;
 
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.enums.Command;

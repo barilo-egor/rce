@@ -3,8 +3,8 @@ package tgb.btc.rce.service;
 import lombok.extern.slf4j.Slf4j;
 import tgb.btc.library.repository.bot.ContactRepository;
 import tgb.btc.library.repository.bot.UserRepository;
+import tgb.btc.rce.service.dispatcher.UpdateDispatcher;
 import tgb.btc.rce.service.impl.BotMessageService;
-import tgb.btc.rce.service.impl.UpdateDispatcher;
 
 @Slf4j
 public class BeanHolder {
