@@ -1,5 +1,6 @@
 package tgb.btc.rce.service.processors.spamban;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.repository.bot.SpamBanRepository;
@@ -11,6 +12,7 @@ import tgb.btc.rce.util.CallbackQueryUtil;
 import tgb.btc.rce.util.UpdateUtil;
 
 @CommandProcessor(command = Command.SPAM_UNBAN)
+@Slf4j
 public class SpamUnban extends Processor {
 
     private SpamBanRepository spamBanRepository;
@@ -38,6 +40,7 @@ public class SpamUnban extends Processor {
         responseSender.sendMessage(userChatId,
                                    "Вы были разблокированы из спам блока администратором.");
         responseSender.sendMessage(chatId, "Пользователь " + userChatId + " был разблокирован.");
+        log.debug("Админ chatId={} разблокировал пользователя {} после спам блокировки.", chatId, userChatId);
     }
 
 }

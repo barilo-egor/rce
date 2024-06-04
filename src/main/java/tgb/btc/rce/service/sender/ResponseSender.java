@@ -1,4 +1,4 @@
-package tgb.btc.rce.service.impl;
+package tgb.btc.rce.service.sender;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
@@ -29,7 +29,7 @@ import tgb.btc.rce.enums.BotKeyboard;
 import tgb.btc.rce.enums.Menu;
 import tgb.btc.rce.enums.MessageTemplate;
 import tgb.btc.rce.enums.PropertiesMessage;
-import tgb.btc.rce.service.IResponseSender;
+import tgb.btc.rce.service.impl.BotMessageService;
 import tgb.btc.rce.util.*;
 import tgb.btc.rce.vo.InlineButton;
 

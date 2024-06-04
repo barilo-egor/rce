@@ -1,5 +1,6 @@
 package tgb.btc.rce.service.schedule;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
@@ -12,8 +13,8 @@ import tgb.btc.library.repository.bot.DealRepository;
 import tgb.btc.library.repository.bot.UserRepository;
 import tgb.btc.library.util.BigDecimalUtil;
 import tgb.btc.library.util.FiatCurrencyUtil;
-import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.impl.AdminService;
+import tgb.btc.rce.service.sender.IResponseSender;
 import tgb.btc.rce.util.CryptoCurrenciesDesignUtil;
 import tgb.btc.rce.vo.DealReportData;
 
@@ -28,6 +29,7 @@ import java.util.Map;
 import java.util.Objects;
 
 @Service
+@Slf4j
 public class DealAutoReport {
 
     public DealRepository dealRepository;

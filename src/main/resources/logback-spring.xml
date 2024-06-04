@@ -30,6 +30,18 @@
         </encoder>
     </appender>
 
+    <!-- RollingFileAppender для tgb.btc.rce.bot с ежедневной ротацией и сохранением логов на 3 дня -->
+    <appender name="FILE_TGB_BTC_RCE_SENDER" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/tgb.btc.rce.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>logs/tgb.btc.rce.service.sender.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>3</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level [%logger] - %msg%n</pattern>
+        </encoder>
+    </appender>
+
     <!-- RollingFileAppender для tgb.btc.library с ежедневной ротацией и сохранением логов на 3 дня -->
     <appender name="FILE_TGB_BTC_LIBRARY" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>logs/tgb.btc.library.log</file>
@@ -74,6 +86,11 @@
 
     <logger name="tgb.btc.rce.bot" level="DEBUG" additivity="false">
         <appender-ref ref="FILE_TGB_BTC_RCE_BOT" />
+        <appender-ref ref="COLOR_CONSOLE" />
+    </logger>
+
+    <logger name="tgb.btc.rce.service.sender.bot" level="DEBUG" additivity="false">
+        <appender-ref ref="FILE_TGB_BTC_RCE_SENDER" />
         <appender-ref ref="COLOR_CONSOLE" />
     </logger>
 

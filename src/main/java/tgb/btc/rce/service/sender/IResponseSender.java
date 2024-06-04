@@ -1,4 +1,4 @@
-package tgb.btc.rce.service;
+package tgb.btc.rce.service.sender;
 
 import org.telegram.telegrambots.meta.api.methods.AnswerInlineQuery;
 import org.telegram.telegrambots.meta.api.methods.GetFile;

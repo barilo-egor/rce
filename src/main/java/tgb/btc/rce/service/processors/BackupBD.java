@@ -5,8 +5,8 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.service.process.BackupService;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
-import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.Processor;
+import tgb.btc.rce.service.sender.IResponseSender;
 import tgb.btc.rce.util.UpdateUtil;
 
 import java.util.Objects;

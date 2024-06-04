@@ -9,9 +9,9 @@ import tgb.btc.library.util.properties.VariablePropertiesUtil;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.InlineType;
-import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.impl.AdminService;
 import tgb.btc.rce.service.impl.KeyboardService;
+import tgb.btc.rce.service.sender.IResponseSender;
 import tgb.btc.rce.util.MessagePropertiesUtil;
 import tgb.btc.rce.vo.InlineButton;
 

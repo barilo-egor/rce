@@ -1,5 +1,6 @@
 package tgb.btc.rce.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.scheduling.annotation.Async;
@@ -17,6 +18,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 @Conditional(AntispamCondition.class)
+@Slf4j
 public class AntiSpam {
 
     private static final List<Long> SPAM_USERS = new ArrayList<>();
@@ -70,6 +72,7 @@ public class AntiSpam {
     public void addUser(Long chatId) {
         synchronized (SPAM_USERS) {
             SPAM_USERS.add(chatId);
+            log.debug("Пользователь chatId={} добавлен в спам-контроль.", chatId);
         }
     }
 

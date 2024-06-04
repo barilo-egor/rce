@@ -75,7 +75,6 @@ public class UsersReport extends Processor {
             }
 
             int i = 2;
-            log.info("Загрузка пользователей");
             List<Object[]> rawsUsers = userRepository.findAllForUsersReport();
             List<ReportUserVO> users = new ArrayList<>();
             for (Object[] raw : rawsUsers) {
@@ -85,10 +84,8 @@ public class UsersReport extends Processor {
                         .username((String) raw[2])
                         .build());
             }
-            log.info("Загрузка сделок.");
             List<Object[]> raws = dealRepository.findAllForUsersReport();
             List<ReportDealVO> deals = new ArrayList<>();
-            log.info("Маппинг сделок.");
             for (Object[] raw : raws) {
                 deals.add(ReportDealVO.builder()
                         .pid((Long) raw[0])
@@ -101,14 +98,12 @@ public class UsersReport extends Processor {
                         .build());
             }
             Map<Long, List<ReportDealVO>> usersDeals = new HashMap<>();
-            log.info("Сортировка сделок по пользователям.");
             for (ReportUserVO user : users) {
                 usersDeals.put(user.getChatId(), deals.stream()
                         .filter(deal -> deal.getUserPid().equals(user.getPid()))
                         .collect(Collectors.toList())
                 );
             }
-            log.info("Начало заполнения данных.");
             for (ReportUserVO user : users) {
                 int cellCount = 0;
                 Row row = sheet.createRow(i);
@@ -151,14 +146,12 @@ public class UsersReport extends Processor {
                 }
                 i++;
             }
-            log.info("Данные заполнены.");
             String fileName = "users.xlsx";
             FileOutputStream outputStream = new FileOutputStream(fileName);
             book.write(outputStream);
             book.close();
             outputStream.close();
             File file = new File(fileName);
-            log.info("Файл создан.");
             responseSender.sendFile(chatId, file);
             log.debug("Админ " + chatId + " выгрузил отчет по пользователям.");
             if (file.delete()) log.trace("Файл успешно удален.");
@@ -167,7 +160,6 @@ public class UsersReport extends Processor {
             log.error("Ошибка при выгрузке отчета по пользователям. " + this.getClass().getSimpleName(), e);
             throw new BaseException("Ошибка при выгрузке файла: " + e.getMessage());
         }
-        log.info("Конец отчета по пользователям.");
     }
 
     private boolean isErrorDeal(ReportDealVO reportDealVO) {

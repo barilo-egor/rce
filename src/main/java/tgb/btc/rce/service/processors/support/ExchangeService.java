@@ -37,8 +37,8 @@ import tgb.btc.library.vo.calculate.DealAmount;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.*;
 import tgb.btc.rce.service.ICalculatorTypeService;
-import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.impl.*;
+import tgb.btc.rce.service.sender.IResponseSender;
 import tgb.btc.rce.util.*;
 import tgb.btc.rce.vo.CalculatorQuery;
 import tgb.btc.rce.vo.InlineButton;
@@ -194,13 +194,9 @@ public class ExchangeService {
             fiatCurrency = FiatCurrency.valueOf(CallbackQueryUtil.getSplitData(update.getCallbackQuery(), 1));
         } else {
             fiatCurrency = FiatCurrencyUtil.getFirst();
-            if (Objects.isNull(fiatCurrency)) log.debug("FiatCurrencyUtil.getFirst() == null");
-            else log.debug("fiatCurrency = " + fiatCurrency.name());
         }
         Long currentDealPid = userRepository.getCurrentDealByChatId(chatId);
-        log.debug("currentDealPid=" + currentDealPid);
         dealRepository.updateFiatCurrencyByPid(currentDealPid, fiatCurrency);
-        log.debug("сохранен фиат");
         return true;
     }
 

@@ -94,7 +94,7 @@ public class DealReports extends Processor {
                         try {
                             loadReport(dealService.getByDate(LocalDate.now()), chatId, period, apiDealService.getAcceptedByDate(LocalDateTime.now()));
                         } catch (Exception e) {
-                            log.error("ОШибка при выгрузке отчета.", e);
+                            log.error("Ошибка при выгрузке отчета.", e);
                         }
                         break;
                     case TEN_DAYS:
@@ -102,7 +102,7 @@ public class DealReports extends Processor {
                             loadReport(dealService.getByDateBetween(LocalDate.now().minusDays(10), LocalDate.now()),
                                     chatId, period, apiDealService.getAcceptedByDateBetween(LocalDateTime.now().minusDays(10), LocalDateTime.now()));
                         } catch (Exception e) {
-                            log.error("ОШибка при выгрузке отчета.", e);
+                            log.error("Ошибка при выгрузке отчета.", e);
                         }
                         break;
                     case MONTH:
@@ -110,7 +110,7 @@ public class DealReports extends Processor {
                             loadReport(dealService.getByDateBetween(LocalDate.now().minusDays(30), LocalDate.now()), chatId, period,
                                     apiDealService.getAcceptedByDateBetween(LocalDateTime.now().minusDays(30), LocalDateTime.now()));
                         } catch (Exception e) {
-                            log.error("ОШибка при выгрузке отчета.", e);
+                            log.error("Ошибка при выгрузке отчета.", e);
                         }
                         break;
                     case DATE:

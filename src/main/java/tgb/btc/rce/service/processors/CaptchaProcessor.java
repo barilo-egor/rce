@@ -1,5 +1,6 @@
 package tgb.btc.rce.service.processors;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Conditional;
@@ -25,6 +26,7 @@ import java.util.List;
 
 @CommandProcessor(command = Command.CAPTCHA)
 @Conditional(AntispamCondition.class)
+@Slf4j
 public class CaptchaProcessor extends Processor {
 
     private CaptchaSender captchaSender;
@@ -95,6 +97,7 @@ public class CaptchaProcessor extends Processor {
                     removeUserFromSpam(chatId);
                 } else {
                     banningUserService.ban(chatId);
+                    log.debug("Пользователь chatId={} был заблокирован после неправильных вводов капчи.", chatId);
                     responseSender.sendMessage(chatId, "Вы были заблокированы.", BotKeyboard.OPERATOR);
                     SpamBan spamBan = spamBanService.save(chatId);
                     adminService.notify("Антиспам система заблокировала пользователя.",

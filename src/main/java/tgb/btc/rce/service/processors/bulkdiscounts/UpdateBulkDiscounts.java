@@ -97,5 +97,6 @@ public class UpdateBulkDiscounts extends Processor { // TODO удалить
         BULK_DISCOUNTS.sort(Comparator.comparingInt(BulkDiscount::getSum));
         Collections.reverse(BULK_DISCOUNTS);
         responseSender.sendMessage(chatId, "Оптовые скидки обновлены.");
+        log.debug("Админ chatId={} обновил оптовые сделки.", chatId);
     }
 }

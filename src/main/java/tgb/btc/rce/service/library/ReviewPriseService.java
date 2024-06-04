@@ -10,7 +10,7 @@ import tgb.btc.library.repository.bot.DealRepository;
 import tgb.btc.library.util.properties.VariablePropertiesUtil;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.ReviewPriseType;
-import tgb.btc.rce.service.IResponseSender;
+import tgb.btc.rce.service.sender.IResponseSender;
 import tgb.btc.rce.util.CallbackQueryUtil;
 import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.ReviewPriseUtil;
