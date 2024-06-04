@@ -42,6 +42,18 @@
         </encoder>
     </appender>
 
+    <!-- RollingFileAppender для tgb.btc.web.api с ежедневной ротацией и сохранением логов на 3 дня -->
+    <appender name="FILE_TGB_BTC_WEB_API" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/tgb.btc.web.api.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>logs/tgb.btc.web.api.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>3</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level [%logger] - %msg%n</pattern>
+        </encoder>
+    </appender>
+
     <!-- Конфигурация логгеров для пакетов -->
     <logger name="tgb.btc.rce" level="DEBUG" additivity="false">
         <appender-ref ref="FILE_TGB_BTC_RCE" />
@@ -55,6 +67,11 @@
 
     <logger name="tgb.btc.web" level="DEBUG" additivity="false">
         <appender-ref ref="FILE_TGB_BTC_WEB" />
+        <appender-ref ref="COLOR_CONSOLE" />
+    </logger>
+
+    <logger name="tgb.btc.web.api" level="DEBUG" additivity="false">
+        <appender-ref ref="FILE_TGB_BTC_WEB_API" />
         <appender-ref ref="COLOR_CONSOLE" />
     </logger>
 
