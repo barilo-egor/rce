@@ -1,4 +1,4 @@
-package tgb.btc.rce.service.dispatcher;
+package tgb.btc.rce.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.BooleanUtils;
@@ -14,8 +14,8 @@ import tgb.btc.library.service.process.BannedUserCache;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.SimpleCommand;
 import tgb.btc.rce.service.AntiSpam;
+import tgb.btc.rce.service.IUpdateDispatcher;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.service.impl.UserProcessService;
 import tgb.btc.rce.util.CommandProcessorLoader;
 import tgb.btc.rce.util.CommandUtil;
 import tgb.btc.rce.util.UpdateUtil;
