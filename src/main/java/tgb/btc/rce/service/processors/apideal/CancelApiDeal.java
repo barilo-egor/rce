@@ -24,7 +24,7 @@ public class CancelApiDeal extends Processor {
     public void run(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
         responseSender.deleteMessage(chatId, CallbackQueryUtil.messageId(update));
-        apiDealRepository.updateApiDealStatusByPid(ApiDealStatus.CANCELED, CallbackQueryUtil.getSplitLongData(update, 1));
+        apiDealRepository.updateApiDealStatusByPid(ApiDealStatus.DECLINED, CallbackQueryUtil.getSplitLongData(update, 1));
         responseSender.sendMessage(chatId, "API сделка отменена.");
     }
 }
