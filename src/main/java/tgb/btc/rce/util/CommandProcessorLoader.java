@@ -203,6 +203,7 @@ public final class CommandProcessorLoader {
         commandProcessors.add(Dice.class);
         commandProcessors.add(RPSProcessor.class);
         commandProcessors.add(SubmitLoginProcessor.class);
+        commandProcessors.add(SubmitRegisterProcessor.class);
         commandProcessors.add(WebLogoutProcessor.class);
         commandProcessors.stream()
                 .filter(processor -> !extendsProcessor(processor))

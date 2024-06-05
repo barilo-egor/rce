@@ -225,7 +225,8 @@ public enum Command implements ICommand {
     /**
      * WEB
      */
-    SUBMIT_LOGIN("Подтвердить", false, false, false),
+    SUBMIT_LOGIN("Подтвердить вход", false, false, false),
+    SUBMIT_REGISTER("Подтвердить регистрацию", false, false, false),
     LOGOUT("Закрыть сессию", false, false, false)
     ;
 

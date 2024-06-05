@@ -79,4 +79,14 @@ public class Notifier implements INotifier {
                         .data(Command.SUBMIT_LOGIN.getText() + BotStringConstants.CALLBACK_DATA_SPLITTER + chatId)
                         .build());
     }
+
+    @Override
+    public void sendChatIdConfirmRequest(Long chatId) {
+        responseSender.sendMessage(chatId, "Кто-то пытается зарегистрироваться на сайте под вашим chat id. Если это не вы, то проигнорируйте это сообщение.",
+                InlineButton.builder()
+                        .inlineType(InlineType.CALLBACK_DATA)
+                        .text(Command.SUBMIT_REGISTER.getText())
+                        .data(Command.SUBMIT_REGISTER.getText() + BotStringConstants.CALLBACK_DATA_SPLITTER + chatId)
+                        .build());
+    }
 }
