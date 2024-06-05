@@ -1,5 +1,6 @@
 package tgb.btc.rce.service.processors.apideal;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.constants.enums.web.ApiDealStatus;
