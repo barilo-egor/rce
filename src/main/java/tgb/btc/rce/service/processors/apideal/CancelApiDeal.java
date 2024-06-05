@@ -1,6 +1,5 @@
 package tgb.btc.rce.service.processors.apideal;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.constants.enums.web.ApiDealStatus;
@@ -27,7 +26,7 @@ public class CancelApiDeal extends Processor {
         Long chatId = UpdateUtil.getChatId(update);
         responseSender.deleteMessage(chatId, CallbackQueryUtil.messageId(update));
         Long dealPid = CallbackQueryUtil.getSplitLongData(update, 1);
-        apiDealRepository.updateApiDealStatusByPid(ApiDealStatus.CANCELED, dealPid);
+        apiDealRepository.updateApiDealStatusByPid(ApiDealStatus.DECLINED, dealPid);
         log.debug("Админ chatId={} отменил АПИ сделку={}.", chatId, dealPid);
         responseSender.sendMessage(chatId, "API сделка отменена.");
     }
