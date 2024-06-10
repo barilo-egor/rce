@@ -15,6 +15,7 @@ public enum Command implements ICommand {
 
     START("/start", false, false, false),
     NONE("none", false, true, false),
+    CHAT_ID("/chatid", false, true, false),
 
     /*
       Reply

@@ -59,7 +59,11 @@ public enum SimpleCommand {
 
     CABINET(Command.CABINET, update ->
             BeanHolder.RESPONSE_SENDER.sendMessage(UpdateUtil.getChatId(update),
-                    MessagePropertiesUtil.getMessage("menu.main.cabinet.message"), KeyboardService.getCabinetButtons()));
+                    MessagePropertiesUtil.getMessage("menu.main.cabinet.message"), KeyboardService.getCabinetButtons())),
+    CHAT_ID(Command.CHAT_ID, update -> {
+        Long chatId = UpdateUtil.getChatId(update);
+        BeanHolder.RESPONSE_SENDER.sendMessage(chatId, "Ваш chat id - <code>" + chatId + "</code>.", "html");
+    });
 
     final Command command;
 
