@@ -164,6 +164,11 @@
             <artifactId>google-api-services-drive</artifactId>
             <version>v3-rev20230212-2.0.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>42.3.8</version>
+        </dependency>
     </dependencies>
 
     <build>
