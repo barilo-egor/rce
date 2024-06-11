@@ -18,6 +18,52 @@
 
     <profiles>
         <profile>
+            <id>copyToServer</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.springframework.boot</groupId>
+                        <artifactId>spring-boot-maven-plugin</artifactId>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <version>1.8</version>
+                        <executions>
+                            <execution>
+                                <id>copy-to-server</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <tasks>
+                                        <scp file="target/rce.jar"
+                                             todir="root@45.83.122.132:/home/rce/application"
+                                             keyfile="/home/barilo/.ssh/id_rsa"
+                                             trust="true"/>
+                                        <sshexec host="45.83.122.132"
+                                                 username="root"
+                                                 keyfile="/home/barilo/.ssh/id_rsa"
+                                                 trust="true"
+                                                 command="/home/rce/application/run.sh"/>
+                                    </tasks>
+                                </configuration>
+                            </execution>
+                        </executions>
+                        <dependencies>
+                            <dependency>
+                                <groupId>org.apache.ant</groupId>
+                                <artifactId>ant-jsch</artifactId>
+                                <version>1.10.9</version>
+                            </dependency>
+                        </dependencies>
+                    </plugin>
+                </plugins>
+                <finalName>rce</finalName>
+            </build>
+        </profile>
+        <profile>
             <id>local-getting-libraries</id>
             <activation>
                 <file>
@@ -165,15 +211,5 @@
             <version>v3-rev20230212-2.0.0</version>
         </dependency>
     </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
-        </plugins>
-        <finalName>rce</finalName>
-    </build>
 
 </project>
