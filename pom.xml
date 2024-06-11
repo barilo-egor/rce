@@ -32,21 +32,64 @@
                         <executions>
                             <execution>
                                 <id>copy-to-server</id>
-                                <phase>package</phase>
+                                <phase>install</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <target>
+                                        <property name="ssh.keyfile" value="C:\Users\User\.ssh\id_rsa"/>
+                                        <!-- Check OS and set keyfile -->
+                                        <condition property="ssh.keyfile" value="/home/barilo/.ssh/id_rsa" else="${ssh.keyfile}">
+                                            <os family="unix"/>
+                                        </condition>
+                                        <scp file="target/rce.jar"
+                                             todir="root@45.83.122.132:/home/rce/application"
+                                             keyfile="${ssh.keyfile}"
+                                             trust="true"/>
+                                        <sshexec host="45.83.122.132"
+                                                 username="root"
+                                                 keyfile="${ssh.keyfile}"
+                                                 trust="true"
+                                                 command="/home/rce/application/run.sh"/>
+                                    </target>
+                                </configuration>
+                            </execution>
+                        </executions>
+
+                    </plugin>
+                </plugins>
+                <finalName>rce</finalName>
+            </build>
+        </profile>
+        <profile>
+            <id>windows</id>
+            <activation>
+                <os>
+                    <family>Windows</family>
+                </os>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <version>1.8</version>
+                        <executions>
+                            <execution>
+                                <id>pre-clean-install-windows</id>
+                                <phase>initialize</phase>
                                 <goals>
                                     <goal>run</goal>
                                 </goals>
                                 <configuration>
                                     <tasks>
-                                        <scp file="target/rce.jar"
-                                             todir="root@45.83.122.132:/home/rce/application"
-                                             keyfile="/home/barilo/.ssh/id_rsa"
-                                             trust="true"/>
-                                        <sshexec host="45.83.122.132"
-                                                 username="root"
-                                                 keyfile="/home/barilo/.ssh/id_rsa"
-                                                 trust="true"
-                                                 command="/home/rce/application/run.sh"/>
+                                        <exec executable="mvn.cmd">
+                                            <arg value="clean"/>
+                                            <arg value="install"/>
+                                            <arg value="-f"/>
+                                            <arg value="../rce-web/pom.xml"/>
+                                        </exec>
                                     </tasks>
                                 </configuration>
                             </execution>
@@ -60,64 +103,50 @@
                         </dependencies>
                     </plugin>
                 </plugins>
-                <finalName>rce</finalName>
             </build>
         </profile>
         <profile>
-            <id>local-getting-libraries</id>
+            <id>unix</id>
             <activation>
-                <file>
-                    <exists>config/local.properties</exists>
-                </file>
+                <os>
+                    <family>unix</family>
+                </os>
             </activation>
-            <dependencies>
-                <dependency>
-                    <groupId>tgb.btc</groupId>
-                    <artifactId>rce-library</artifactId>
-                    <version>1.1</version>
-                </dependency>
-                <dependency>
-                    <groupId>tgb.btc</groupId>
-                    <artifactId>rce-web</artifactId>
-                    <version>1.1</version>
-                </dependency>
-                <dependency>
-                    <groupId>tgb.btc</groupId>
-                    <artifactId>rce-api</artifactId>
-                    <version>1.1</version>
-                </dependency>
-            </dependencies>
-        </profile>
-        <profile>
-            <id>jitpack-getting-libraries</id>
-            <activation>
-                <file>
-                    <missing>config/local.properties</missing>
-                </file>
-            </activation>
-            <repositories>
-                <repository>
-                    <id>jitpack.io</id>
-                    <url>https://jitpack.io</url>
-                </repository>
-            </repositories>
-            <dependencies>
-                <dependency>
-                    <groupId>com.github.barilo-egor</groupId>
-                    <artifactId>rce-library</artifactId>
-                    <version>150645d762</version>
-                </dependency>
-                <dependency>
-                    <groupId>com.github.barilo-egor</groupId>
-                    <artifactId>rce-web</artifactId>
-                    <version>721440b9fc</version>
-                </dependency>
-                <dependency>
-                    <groupId>com.github.barilo-egor</groupId>
-                    <artifactId>rce-api</artifactId>
-                    <version>d9a71be872</version>
-                </dependency>
-            </dependencies>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <version>1.8</version>
+                        <executions>
+                            <execution>
+                                <id>pre-clean-install-windows</id>
+                                <phase>initialize</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <tasks>
+                                        <exec executable="mvn">
+                                            <arg value="clean"/>
+                                            <arg value="install"/>
+                                            <arg value="-f"/>
+                                            <arg value="../rce-web/pom.xml"/>
+                                        </exec>
+                                    </tasks>
+                                </configuration>
+                            </execution>
+                        </executions>
+                        <dependencies>
+                            <dependency>
+                                <groupId>org.apache.ant</groupId>
+                                <artifactId>ant-jsch</artifactId>
+                                <version>1.10.9</version>
+                            </dependency>
+                        </dependencies>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
     </profiles>
 
@@ -209,6 +238,21 @@
             <groupId>com.google.apis</groupId>
             <artifactId>google-api-services-drive</artifactId>
             <version>v3-rev20230212-2.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>tgb.btc</groupId>
+            <artifactId>rce-library</artifactId>
+            <version>1.1</version>
+        </dependency>
+        <dependency>
+            <groupId>tgb.btc</groupId>
+            <artifactId>rce-web</artifactId>
+            <version>1.1</version>
+        </dependency>
+        <dependency>
+            <groupId>tgb.btc</groupId>
+            <artifactId>rce-api</artifactId>
+            <version>1.1</version>
         </dependency>
     </dependencies>
 
