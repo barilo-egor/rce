@@ -6,6 +6,7 @@ import tgb.btc.library.constants.enums.properties.PropertiesPath;
 import tgb.btc.library.interfaces.ICommand;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 @Slf4j
 public enum Command implements ICommand {
@@ -276,7 +277,7 @@ public enum Command implements ICommand {
 
     public static Command findByText(String value) {
         return Arrays.stream(Command.values())
-                .filter(command -> value.startsWith(command.getText()) || value.startsWith(command.name()))
+                .filter(command -> (Objects.nonNull(command.getText()) && value.startsWith(command.getText())) || value.startsWith(command.name()))
                 .findFirst()
                 .orElse(null);
     }
