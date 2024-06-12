@@ -41,7 +41,7 @@ public class BackupBD extends Processor {
 
         String strChatIds = PropertiesPath.CONFIG_PROPERTIES.getString("backup.chatIds");
         if (StringUtils.isBlank(strChatIds)) {
-            log.info("Не найден ни один chatId для рассылки ежедневного бэкапа.");
+            log.info("Не найден ни один chatId доступных для выгрузки бэкапа.");
             return;
         }
         List<Long> chatIds = new ArrayList<>();
