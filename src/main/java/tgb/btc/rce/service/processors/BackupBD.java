@@ -40,6 +40,6 @@ public class BackupBD extends Processor {
         }
         backupService.backup(file -> responseSender.sendFile(chatId, file));
         log.debug("Пользователь chatId={} выгрузил бэкап БД вручную.", chatId);
-        responseSender.sendMessage(chatId, "Процесс резервного копирования запущен");
+        responseSender.sendMessage(chatId, "Процесс резервного копирования запущен. По окончанию вам будет отправлен файл.");
     }
 }
