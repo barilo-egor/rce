@@ -48,7 +48,6 @@ public class RceBot extends TelegramLongPollingBot {
                 Long time = System.currentTimeMillis();
                 String message = "Произошла ошибка." + System.lineSeparator() +
                         time + System.lineSeparator() +
-                        "Пожалуйста, отправьте это сообщение оператору." + System.lineSeparator() +
                         "Введите /start для выхода в главное меню.";
 
                 execute(SendMessage.builder().chatId(UpdateUtil.getChatId(update).toString()).text(message).build());
