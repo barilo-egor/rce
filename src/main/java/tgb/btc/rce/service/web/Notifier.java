@@ -15,6 +15,8 @@ import tgb.btc.rce.service.sender.IResponseSender;
 import tgb.btc.rce.util.MessagePropertiesUtil;
 import tgb.btc.rce.vo.InlineButton;
 
+import java.io.File;
+import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -88,5 +90,10 @@ public class Notifier implements INotifier {
                         .text(Command.SUBMIT_REGISTER.getText())
                         .data(Command.SUBMIT_REGISTER.name() + BotStringConstants.CALLBACK_DATA_SPLITTER + chatId)
                         .build());
+    }
+
+    @Override
+    public void sendFile(List<Long> list, File file) {
+        list.forEach(chatId -> responseSender.sendFile(chatId, file));
     }
 }

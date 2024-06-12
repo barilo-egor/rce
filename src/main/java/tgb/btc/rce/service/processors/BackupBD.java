@@ -1,5 +1,6 @@
 package tgb.btc.rce.service.processors;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.service.process.BackupService;
@@ -12,6 +13,7 @@ import tgb.btc.rce.util.UpdateUtil;
 import java.util.Objects;
 
 @CommandProcessor(command = Command.BACKUP_DB)
+@Slf4j
 public class BackupBD extends Processor {
 
 
@@ -32,11 +34,12 @@ public class BackupBD extends Processor {
     @Override
     public void run(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
+        log.debug("Пользователь chatId={} выгрузил бэкап БД вручную.", chatId);
         if (Objects.isNull(backupService)) {
             responseSender.sendMessage(chatId, "Отсутствует бин BackUpService.");
             return;
         }
-        backupService.backup();
+        backupService.backup(file -> responseSender.sendFile(chatId, file));
         responseSender.sendMessage(chatId, "Процесс резервного копирования запущен");
     }
 }
