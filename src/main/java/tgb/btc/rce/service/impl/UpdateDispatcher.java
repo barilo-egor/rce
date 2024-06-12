@@ -81,7 +81,7 @@ public class UpdateDispatcher implements IUpdateDispatcher {
             if (isCaptcha(update)) return Command.CAPTCHA;
             antiSpam.saveTime(chatId);
         } else userProcessService.registerIfNotExists(update);
-        if (isOffed(chatId)) return Command.BOT_OFFED;
+        if (isOffed(chatId) && !CommandUtil.isSubmitCommand(update)) return Command.BOT_OFFED;
         if (CommandUtil.isStartCommand(update)) return Command.START;
         Command command;
         if (userService.isDefaultStep(chatId)) command = Command.fromUpdate(update);

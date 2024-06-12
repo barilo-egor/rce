@@ -76,7 +76,7 @@ public class Notifier implements INotifier {
                 InlineButton.builder()
                         .inlineType(InlineType.CALLBACK_DATA)
                         .text(Command.SUBMIT_LOGIN.getText())
-                        .data(Command.SUBMIT_LOGIN.getText() + BotStringConstants.CALLBACK_DATA_SPLITTER + chatId)
+                        .data(Command.SUBMIT_LOGIN.name() + BotStringConstants.CALLBACK_DATA_SPLITTER + chatId)
                         .build());
     }
 
@@ -86,7 +86,7 @@ public class Notifier implements INotifier {
                 InlineButton.builder()
                         .inlineType(InlineType.CALLBACK_DATA)
                         .text(Command.SUBMIT_REGISTER.getText())
-                        .data(Command.SUBMIT_REGISTER.getText() + BotStringConstants.CALLBACK_DATA_SPLITTER + chatId)
+                        .data(Command.SUBMIT_REGISTER.name() + BotStringConstants.CALLBACK_DATA_SPLITTER + chatId)
                         .build());
     }
 }
