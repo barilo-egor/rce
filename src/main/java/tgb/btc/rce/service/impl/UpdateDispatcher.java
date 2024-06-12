@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.constants.enums.properties.PropertiesPath;
@@ -20,6 +19,7 @@ import tgb.btc.rce.util.CommandProcessorLoader;
 import tgb.btc.rce.util.CommandUtil;
 import tgb.btc.rce.util.UpdateUtil;
 
+import javax.annotation.PostConstruct;
 import java.util.Objects;
 
 @Service
@@ -27,7 +27,7 @@ import java.util.Objects;
 public class UpdateDispatcher implements IUpdateDispatcher {
 
     public static ApplicationContext applicationContext;
-    private static boolean IS_ON = false; // TODO
+    private static boolean IS_ON = true;
 
     private static final boolean IS_LOG_UDPATES = PropertiesPath.FUNCTIONS_PROPERTIES.getBoolean("log.updates", false);
     private final UserService userService;
@@ -60,6 +60,12 @@ public class UpdateDispatcher implements IUpdateDispatcher {
         this.userProcessService = userProcessService;
     }
 
+    @PostConstruct
+    public void setIsOn() {
+        Boolean turnOffOnStart = PropertiesPath.CONFIG_PROPERTIES.getBoolean("turn.off.on.start");
+        if (BooleanUtils.isTrue(turnOffOnStart)) setIsOn(false);
+    }
+
     public void dispatch(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
         if (IS_LOG_UDPATES) log.info(chatId.toString());
@@ -67,7 +73,6 @@ public class UpdateDispatcher implements IUpdateDispatcher {
         runProcessor(getCommand(update, chatId), chatId, update);
     }
 
-    @Async
     public void runProcessor(Command command, Long chatId, Update update) {
         if (!command.isSimple())
             ((Processor) applicationContext
