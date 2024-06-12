@@ -260,7 +260,7 @@ public class ResponseSender implements IResponseSender {
                     .document(new InputFile(file))
                     .build());
         } catch (TelegramApiException e) {
-            log.debug("Не получилось отправить файл: chatId=" + chatId + ", fileName=" + file.getName());
+            log.debug("Не получилось отправить файл: chatId=" + chatId + ", fileName=" + file.getName(), e);
         }
     }
 

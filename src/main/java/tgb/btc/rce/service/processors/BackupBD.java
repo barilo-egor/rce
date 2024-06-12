@@ -34,12 +34,12 @@ public class BackupBD extends Processor {
     @Override
     public void run(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
-        log.debug("Пользователь chatId={} выгрузил бэкап БД вручную.", chatId);
         if (Objects.isNull(backupService)) {
             responseSender.sendMessage(chatId, "Отсутствует бин BackUpService.");
             return;
         }
         backupService.backup(file -> responseSender.sendFile(chatId, file));
+        log.debug("Пользователь chatId={} выгрузил бэкап БД вручную.", chatId);
         responseSender.sendMessage(chatId, "Процесс резервного копирования запущен");
     }
 }
