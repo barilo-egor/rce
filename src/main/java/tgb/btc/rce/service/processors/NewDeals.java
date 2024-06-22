@@ -37,6 +37,11 @@ public class NewDeals extends Processor {
         this.dealSupportService = dealSupportService;
     }
 
+    @Autowired
+    public void setDealRepository(DealRepository dealRepository) {
+        this.dealRepository = dealRepository;
+    }
+
     @Override
     public void run(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
