@@ -24,7 +24,7 @@ public class WebAdminPanelProcessor extends Processor {
                 KeyboardUtil.buildInline(List.of(InlineButton.builder()
                         .text("Перейти")
                         .data(PropertiesPath.SERVER_PROPERTIES.getString("main.url"))
-                        .inlineType(InlineType.WEB_APP)
+                        .inlineType(InlineType.URL)
                         .build())));
     }
 }
