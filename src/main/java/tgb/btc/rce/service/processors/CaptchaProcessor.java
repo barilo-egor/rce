@@ -84,13 +84,14 @@ public class CaptchaProcessor extends Processor {
                 break;
             case 1:
             case 2:
-                if (!UpdateUtil.hasMessageText(update)) return;
+                if (!UpdateUtil.hasMessageText(update) && !update.hasCallbackQuery()) return;
                 String cashedCaptcha = AntiSpam.CAPTCHA_CASH.get(chatId);
                 if (StringUtils.isEmpty(cashedCaptcha))
                     throw new BaseException("Не найдена строка капчи в кэше.");
                 if (isEnteredCaptchaIsRight(update)) {
                     removeUserFromSpam(chatId);
                 } else send(chatId);
+                if (update.hasCallbackQuery()) responseSender.deleteCallbackMessageIfExists(update);
                 break;
             case 3:
                 if (isEnteredCaptchaIsRight(update)) {
@@ -112,6 +113,7 @@ public class CaptchaProcessor extends Processor {
                     userService.setDefaultValues(chatId);
                     antiSpam.removeUser(chatId);
                 }
+                if (update.hasCallbackQuery()) responseSender.deleteCallbackMessageIfExists(update);
                 break;
         }
     }
@@ -123,7 +125,13 @@ public class CaptchaProcessor extends Processor {
     }
 
     private boolean isEnteredCaptchaIsRight(Update update) {
-        return UpdateUtil.getMessageText(update).equals(AntiSpam.CAPTCHA_CASH.get(UpdateUtil.getChatId(update)));
+        String text;
+        if (UpdateUtil.hasMessageText(update)) {
+            text = UpdateUtil.getMessageText(update);
+        } else {
+            text = CallbackQueryUtil.getSplitData(update, 1);
+        }
+        return text.equals(AntiSpam.CAPTCHA_CASH.get(UpdateUtil.getChatId(update)));
     }
 
     public void send(Long chatId) {
