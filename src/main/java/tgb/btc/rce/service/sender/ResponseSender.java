@@ -108,6 +108,10 @@ public class ResponseSender implements IResponseSender {
         return sendMessage(chatId, text, KeyboardUtil.buildInline(List.of(inlineButtons)));
     }
 
+    public Optional<Message> sendMessage(Long chatId, String text, List<InlineButton> buttons) {
+        return sendMessage(chatId, text, KeyboardUtil.buildInline(buttons));
+    }
+
     public Optional<Message> sendMessage(Long chatId, String text, BotKeyboard botKeyboard) {
         return sendMessage(chatId, text, botKeyboard.getKeyboard(), null);
     }
