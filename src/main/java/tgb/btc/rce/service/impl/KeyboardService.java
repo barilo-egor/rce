@@ -215,7 +215,7 @@ public class KeyboardService {
                 .data(sum)
                 .inlineType(InlineType.CALLBACK_DATA)
                 .build()));
-        return KeyboardUtil.buildInlineSingleLast(buttons, 1, KeyboardUtil.INLINE_BACK_BUTTON);
+        return KeyboardUtil.buildInline(buttons, 1);
     }
 
     public ReplyKeyboard getRPSElements() {
