@@ -28,7 +28,7 @@ public enum SimpleCommand {
 
     CONTACTS(Command.CONTACTS, update -> BeanHolder.RESPONSE_SENDER.sendBotMessage(BotMessageType.CONTACTS,
             UpdateUtil.getChatId(update),
-            KeyboardUtil.buildContacts(BeanHolder.CONTACTS_REPOSITORY.findAll()))),
+            KeyboardUtil.buildContacts(BeanHolder.CONTACTS_SERVICE.findAll()))),
 
     DISCOUNTS(Command.DISCOUNTS, update ->
             BeanHolder.RESPONSE_SENDER.sendMessage(UpdateUtil.getChatId(update), "Меню управления скидками.", Menu.DISCOUNTS)),
