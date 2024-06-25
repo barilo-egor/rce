@@ -24,12 +24,12 @@ import tgb.btc.library.bean.bot.BotMessage;
 import tgb.btc.library.constants.enums.bot.BotMessageType;
 import tgb.btc.library.exception.BaseException;
 import tgb.btc.library.repository.bot.UserRepository;
+import tgb.btc.library.service.bean.bot.BotMessageService;
 import tgb.btc.rce.bot.RceBot;
 import tgb.btc.rce.enums.BotKeyboard;
 import tgb.btc.rce.enums.Menu;
 import tgb.btc.rce.enums.MessageTemplate;
 import tgb.btc.rce.enums.PropertiesMessage;
-import tgb.btc.rce.service.impl.BotMessageService;
 import tgb.btc.rce.util.*;
 import tgb.btc.rce.vo.InlineButton;
 

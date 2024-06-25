@@ -38,6 +38,7 @@ import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.*;
 import tgb.btc.rce.service.ICalculatorTypeService;
 import tgb.btc.rce.service.impl.*;
+import tgb.btc.library.service.bean.bot.BotMessageService;
 import tgb.btc.rce.service.sender.IResponseSender;
 import tgb.btc.rce.util.*;
 import tgb.btc.rce.vo.CalculatorQuery;

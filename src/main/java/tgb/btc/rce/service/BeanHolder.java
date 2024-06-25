@@ -3,7 +3,7 @@ package tgb.btc.rce.service;
 import lombok.extern.slf4j.Slf4j;
 import tgb.btc.library.repository.bot.ContactRepository;
 import tgb.btc.library.repository.bot.UserRepository;
-import tgb.btc.rce.service.impl.BotMessageService;
+import tgb.btc.library.service.bean.bot.BotMessageService;
 import tgb.btc.rce.service.impl.UpdateDispatcher;
 import tgb.btc.rce.service.sender.IResponseSender;
 
