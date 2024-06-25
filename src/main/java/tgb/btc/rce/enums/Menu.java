@@ -9,7 +9,7 @@ public enum Menu {
     MAIN(ReferralType.STANDARD.isCurrent()
             ? List.of(Command.BUY_BITCOIN, Command.SELL_BITCOIN, Command.CONTACTS, Command.DRAWS, Command.REFERRAL)
             : List.of(Command.BUY_BITCOIN, Command.SELL_BITCOIN, Command.CONTACTS, Command.DRAWS)),
-    DRAWS(List.of(Command.DICE, Command.SLOT_REEL, Command.LOTTERY, Command.ROULETTE, Command.RPS, Command.BACK)),
+    DRAWS(List.of(Command.LOTTERY, Command.ROULETTE, Command.BACK)),
     ASK_CONTACT(List.of(Command.SHARE_CONTACT, Command.CANCEL)),
     ADMIN_PANEL(List.of(Command.REQUESTS, Command.BOT_SETTINGS, Command.REPORTS, Command.DISCOUNTS,
             Command.USERS, Command.DEALS_COUNT, Command.QUIT_ADMIN_PANEL)),
