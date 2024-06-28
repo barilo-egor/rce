@@ -20,10 +20,10 @@ public class InlineQueryCalculatorService extends SimpleCalculatorService {
 
     @Override
     public void addKeyboard(SendMessage sendMessage) {
-        Long currentDealPid = userRepository.getCurrentDealByChatId(Long.parseLong(sendMessage.getChatId()));
-        FiatCurrency fiatCurrency = dealRepository.getFiatCurrencyByPid(currentDealPid);
-        DealType dealType = dealRepository.getDealTypeByPid(currentDealPid);
-        CryptoCurrency currency = dealRepository.getCryptoCurrencyByPid(currentDealPid);
+        Long currentDealPid = readUserService.getCurrentDealByChatId(Long.parseLong(sendMessage.getChatId()));
+        FiatCurrency fiatCurrency = dealPropertyService.getFiatCurrencyByPid(currentDealPid);
+        DealType dealType = dealPropertyService.getDealTypeByPid(currentDealPid);
+        CryptoCurrency currency = dealPropertyService.getCryptoCurrencyByPid(currentDealPid);
         sendMessage.setReplyMarkup(KeyboardUtil.buildInline(List.of(
                 InlineButton.builder()
                         .inlineType(InlineType.SWITCH_INLINE_QUERY_CURRENT_CHAT)
@@ -35,7 +35,7 @@ public class InlineQueryCalculatorService extends SimpleCalculatorService {
 
     @Override
     public void setCommand(Long chatId) {
-        userRepository.updateStepAndCommandByChatId(chatId, Command.INLINE_QUERY_CALCULATOR.name(), 1);
+        modifyUserService.updateStepAndCommandByChatId(chatId, Command.INLINE_QUERY_CALCULATOR.name(), 1);
     }
 
 }
