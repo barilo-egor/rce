@@ -21,13 +21,16 @@ import tgb.btc.library.constants.enums.properties.PropertiesPath;
 import tgb.btc.library.constants.enums.properties.VariableType;
 import tgb.btc.library.exception.BaseException;
 import tgb.btc.library.exception.CalculatorQueryException;
-import tgb.btc.library.repository.bot.DealRepository;
-import tgb.btc.library.repository.bot.PaymentReceiptRepository;
-import tgb.btc.library.repository.bot.PaymentTypeRepository;
-import tgb.btc.library.repository.bot.UserRepository;
-import tgb.btc.library.service.bean.bot.DealService;
-import tgb.btc.library.service.bean.bot.PaymentRequisiteService;
-import tgb.btc.library.service.bean.bot.PaymentTypeService;
+import tgb.btc.library.interfaces.service.bean.bot.IBotMessageService;
+import tgb.btc.library.interfaces.service.bean.bot.IPaymentReceiptService;
+import tgb.btc.library.interfaces.service.bean.bot.IPaymentRequisiteService;
+import tgb.btc.library.interfaces.service.bean.bot.IPaymentTypeService;
+import tgb.btc.library.interfaces.service.bean.bot.deal.IModifyDealService;
+import tgb.btc.library.interfaces.service.bean.bot.deal.IReadDealService;
+import tgb.btc.library.interfaces.service.bean.bot.deal.read.IDealCountService;
+import tgb.btc.library.interfaces.service.bean.bot.deal.read.IDealPropertyService;
+import tgb.btc.library.interfaces.service.bean.bot.user.IModifyUserService;
+import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.library.service.process.CalculateService;
 import tgb.btc.library.service.schedule.DealDeleteScheduler;
 import tgb.btc.library.util.BigDecimalUtil;
@@ -38,7 +41,6 @@ import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.*;
 import tgb.btc.rce.service.ICalculatorTypeService;
 import tgb.btc.rce.service.impl.*;
-import tgb.btc.library.service.bean.bot.BotMessageService;
 import tgb.btc.rce.service.sender.IResponseSender;
 import tgb.btc.rce.util.*;
 import tgb.btc.rce.vo.CalculatorQuery;
@@ -55,9 +57,17 @@ public class ExchangeService {
 
     private MessageService messageService;
 
-    private DealRepository dealRepository;
+    private IReadDealService readDealService;
 
-    private UserRepository userRepository;
+    private IDealCountService dealCountService;
+
+    private IDealPropertyService dealPropertyService;
+
+    private IModifyDealService modifyDealService;
+
+    private IReadUserService readUserService;
+
+    private IModifyUserService modifyUserService;
 
     private IResponseSender responseSender;
 
@@ -67,23 +77,64 @@ public class ExchangeService {
 
     private InlineQueryService queryCalculatorService;
 
-    private BotMessageService botMessageService;
+    private IBotMessageService botMessageService;
 
-    private PaymentTypeRepository paymentTypeRepository;
+    private IPaymentTypeService paymentTypeService;
 
-    private PaymentTypeService paymentTypeService;
-
-    private PaymentRequisiteService paymentRequisiteService;
+    private IPaymentRequisiteService paymentRequisiteService;
 
     private AdminService adminService;
 
-    private PaymentReceiptRepository paymentReceiptRepository;
-
-    private DealService dealService;
+    private IPaymentReceiptService paymentReceiptService;
 
     private ICalculatorTypeService calculatorTypeService;
 
     private INotificationsAPI notificationsAPI;
+
+    @Autowired
+    public void setBotMessageService(IBotMessageService botMessageService) {
+        this.botMessageService = botMessageService;
+    }
+
+    @Autowired
+    public void setPaymentRequisiteService(IPaymentRequisiteService paymentRequisiteService) {
+        this.paymentRequisiteService = paymentRequisiteService;
+    }
+
+    @Autowired
+    public void setPaymentReceiptService(IPaymentReceiptService paymentReceiptService) {
+        this.paymentReceiptService = paymentReceiptService;
+    }
+
+    @Autowired
+    public void setReadUserService(IReadUserService readUserService) {
+        this.readUserService = readUserService;
+    }
+
+    @Autowired
+    public void setModifyUserService(IModifyUserService modifyUserService) {
+        this.modifyUserService = modifyUserService;
+    }
+
+    @Autowired
+    public void setDealCountService(IDealCountService dealCountService) {
+        this.dealCountService = dealCountService;
+    }
+
+    @Autowired
+    public void setDealPropertyService(IDealPropertyService dealPropertyService) {
+        this.dealPropertyService = dealPropertyService;
+    }
+
+    @Autowired
+    public void setModifyDealService(IModifyDealService modifyDealService) {
+        this.modifyDealService = modifyDealService;
+    }
+
+    @Autowired
+    public void setReadDealService(IReadDealService readDealService) {
+        this.readDealService = readDealService;
+    }
 
     @Autowired
     public void setNotificationsAPI(INotificationsAPI notificationsAPI) {
@@ -101,38 +152,13 @@ public class ExchangeService {
     }
 
     @Autowired
-    public void setDealService(DealService dealService) {
-        this.dealService = dealService;
-    }
-
-    @Autowired
-    public void setPaymentReceiptRepository(PaymentReceiptRepository paymentReceiptRepository) {
-        this.paymentReceiptRepository = paymentReceiptRepository;
-    }
-
-    @Autowired
-    public void setPaymentTypeService(PaymentTypeService paymentTypeService) {
+    public void setPaymentTypeService(IPaymentTypeService paymentTypeService) {
         this.paymentTypeService = paymentTypeService;
     }
 
     @Autowired
     public void setAdminService(AdminService adminService) {
         this.adminService = adminService;
-    }
-
-    @Autowired
-    public void setPaymentRequisiteService(PaymentRequisiteService paymentRequisiteService) {
-        this.paymentRequisiteService = paymentRequisiteService;
-    }
-
-    @Autowired
-    public void setBotMessageService(BotMessageService botMessageService) {
-        this.botMessageService = botMessageService;
-    }
-
-    @Autowired
-    public void setPaymentTypeRepository(PaymentTypeRepository paymentTypeRepository) {
-        this.paymentTypeRepository = paymentTypeRepository;
     }
 
     @Autowired
@@ -146,11 +172,6 @@ public class ExchangeService {
     }
 
     @Autowired
-    public void setUserRepository(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
-
-    @Autowired
     public void setUserDiscountService(UserDiscountProcessService userDiscountProcessService) {
         this.userDiscountProcessService = userDiscountProcessService;
     }
@@ -158,12 +179,6 @@ public class ExchangeService {
     @Autowired
     public void setResponseSender(IResponseSender responseSender) {
         this.responseSender = responseSender;
-    }
-
-
-    @Autowired
-    public void setDealRepository(DealRepository dealRepository) {
-        this.dealRepository = dealRepository;
     }
 
     @Autowired
@@ -196,13 +211,13 @@ public class ExchangeService {
         } else {
             fiatCurrency = FiatCurrencyUtil.getFirst();
         }
-        Long currentDealPid = userRepository.getCurrentDealByChatId(chatId);
-        dealRepository.updateFiatCurrencyByPid(currentDealPid, fiatCurrency);
+        Long currentDealPid = readUserService.getCurrentDealByChatId(chatId);
+        modifyDealService.updateFiatCurrencyByPid(currentDealPid, fiatCurrency);
         return true;
     }
 
     public void askForCryptoCurrency(Long chatId) {
-        DealType dealType = dealRepository.getDealTypeByPid(userRepository.getCurrentDealByChatId(chatId));
+        DealType dealType = dealPropertyService.getDealTypeByPid(readUserService.getCurrentDealByChatId(chatId));
         messageService.sendMessageAndSaveMessageId(chatId, MessagePropertiesUtil.getChooseCurrency(dealType),
                 keyboardService.getCurrencies(dealType));
     }
@@ -214,27 +229,27 @@ public class ExchangeService {
             return false;
         }
         CryptoCurrency currency = CryptoCurrency.valueOf(update.getCallbackQuery().getData());
-        Long currentDealPid = userRepository.getCurrentDealByChatId(chatId);
-        dealRepository.updateCryptoCurrencyByPid(currentDealPid, currency);
+        Long currentDealPid = readUserService.getCurrentDealByChatId(chatId);
+        modifyDealService.updateCryptoCurrencyByPid(currentDealPid, currency);
         return true;
     }
 
     public Integer getCountFinishedDeal(Long chatId) {
-        return dealRepository.getCountFinishedDeal(chatId, Arrays.asList(DealStatus.NEW, DealStatus.CONFIRMED));
+        return dealCountService.getCountFinishedDeal(chatId, Arrays.asList(DealStatus.NEW, DealStatus.CONFIRMED));
     }
 
     public List<Long> getListNewDeal(Long chatId) {
-        return dealRepository.getListNewDeal(chatId, DealStatus.NEW);
+        return readDealService.getListNewDeal(chatId, DealStatus.NEW);
     }
 
     public void deleteByPidIn(List<Long> pidList) {
-        dealRepository.deleteByPidIn(pidList);
+        modifyDealService.deleteByPidIn(pidList);
     }
 
     public void sendTotalDealAmount(Long chatId, DealType dealType, CryptoCurrency cryptoCurrency, FiatCurrency fiatCurrency) {
-        Long currentDealPid = userRepository.getCurrentDealByChatId(chatId);
-        BigDecimal dealAmount = dealRepository.getAmountByPid(currentDealPid);
-        BigDecimal cryptoAmount = dealRepository.getCryptoAmountByPid(currentDealPid);
+        Long currentDealPid = readUserService.getCurrentDealByChatId(chatId);
+        BigDecimal dealAmount = dealPropertyService.getAmountByPid(currentDealPid);
+        BigDecimal cryptoAmount = dealPropertyService.getCryptoAmountByPid(currentDealPid);
         String message = MessagePropertiesUtil.getMessage("sum.info");
         if (Objects.isNull(message)) {
             if (DealType.isBuy(dealType)) {
@@ -244,7 +259,7 @@ public class ExchangeService {
                         + fiatCurrency.getGenitive() + "\n";
                 if (BooleanUtils.isTrue(FunctionPropertiesUtil.getSumToReceive(cryptoCurrency))) {
                     message = message.concat("Сумма к зачислению: "
-                            + BigDecimalUtil.roundToPlainString(dealRepository.getCreditedAmountByPid(currentDealPid))
+                            + BigDecimalUtil.roundToPlainString(dealPropertyService.getCreditedAmountByPid(currentDealPid))
                             + " " + fiatCurrency.getGenitive());
                 }
             } else message = "Сумма к получению: " + BigDecimalUtil.roundToPlainString(dealAmount) + " "
@@ -268,7 +283,7 @@ public class ExchangeService {
     }
 
     public boolean calculateDealAmount(Long chatId, BigDecimal enteredAmount, Boolean isEnteredInCrypto) {
-        Deal deal = dealRepository.findByPid(userRepository.getCurrentDealByChatId(chatId));
+        Deal deal = readDealService.findByPid(readUserService.getCurrentDealByChatId(chatId));
         DealAmount dealAmount = calculateService.calculate(chatId, enteredAmount,
                 deal.getCryptoCurrency(), deal.getFiatCurrency(),
                 deal.getDealType(), isEnteredInCrypto, BooleanUtils.isTrue(FunctionPropertiesUtil.getSumToReceive(deal.getCryptoCurrency())));
@@ -276,7 +291,7 @@ public class ExchangeService {
             return false;
         }
         dealAmount.updateDeal(deal);
-        dealRepository.save(deal);
+        modifyDealService.save(deal);
         return true;
     }
 
@@ -310,9 +325,9 @@ public class ExchangeService {
                 calculatorQuery.getFiatCurrency(),
                 calculatorQuery.getDealType(),
                 BooleanUtils.isTrue(FunctionPropertiesUtil.getSumToReceive(calculatorQuery.getCurrency())));
-        Long currentDealPid = userRepository.getCurrentDealByChatId(chatId);
-        DealType dealType = dealRepository.getDealTypeByPid(currentDealPid);
-        CryptoCurrency cryptoCurrency = dealRepository.getCryptoCurrencyByPid(currentDealPid);
+        Long currentDealPid = readUserService.getCurrentDealByChatId(chatId);
+        DealType dealType = dealPropertyService.getDealTypeByPid(currentDealPid);
+        CryptoCurrency cryptoCurrency = dealPropertyService.getCryptoCurrencyByPid(currentDealPid);
         BigDecimal minSum = VariablePropertiesUtil.getBigDecimal(VariableType.MIN_SUM,
                 dealType, cryptoCurrency);
         if (dealAmount.getCryptoAmount().compareTo(minSum) < 0) {
@@ -331,7 +346,7 @@ public class ExchangeService {
 
     public void askForUserRequisites(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
-        Deal deal = dealRepository.findByPid(userRepository.getCurrentDealByChatId(chatId));
+        Deal deal = readDealService.findByPid(readUserService.getCurrentDealByChatId(chatId));
         CryptoCurrency cryptoCurrency = deal.getCryptoCurrency();
         ReplyKeyboard keyboard;
         String message;
@@ -349,9 +364,9 @@ public class ExchangeService {
             }
             List<InlineButton> buttons = new ArrayList<>();
 
-            if (dealRepository.getPassedDealsCountByUserChatIdAndDealTypeAndCryptoCurrency(chatId, DealType.BUY,
+            if (dealCountService.getPassedDealsCountByUserChatIdAndDealTypeAndCryptoCurrency(chatId, DealType.BUY,
                     cryptoCurrency) > 0) {
-                String wallet = dealRepository.getWalletFromLastPassedByChatIdAndDealTypeAndCryptoCurrency(chatId,
+                String wallet = readDealService.getWalletFromLastPassedByChatIdAndDealTypeAndCryptoCurrency(chatId,
                         DealType.BUY,
                         cryptoCurrency);
                 String lastWalletMessage = MessagePropertiesUtil.getMessage("send.wallet.last");
@@ -374,19 +389,19 @@ public class ExchangeService {
             keyboard = BotKeyboard.INLINE_CANCEL.getKeyboard();
         }
         responseSender.sendMessage(chatId, message, keyboard, "HTML")
-                .ifPresent(sentMessage -> userRepository.updateBufferVariable(chatId,
+                .ifPresent(sentMessage -> modifyUserService.updateBufferVariable(chatId,
                         sentMessage.getMessageId().toString()));
     }
 
     public void askForUserPromoCode(Long chatId) {
-        Deal deal = dealRepository.findByPid(userRepository.getCurrentDealByChatId(chatId));
+        Deal deal = readDealService.findByPid(readUserService.getCurrentDealByChatId(chatId));
         CryptoCurrency cryptoCurrency = deal.getCryptoCurrency();
         BigDecimal dealAmount = deal.getAmount();
         BigDecimal promoCodeDiscount = VariablePropertiesUtil.getBigDecimal(
                 VariableType.PROMO_CODE_DISCOUNT.getKey());
         BigDecimal discount = BigDecimalUtil.multiplyHalfUp(deal.getCommission(),
                 calculateService.getPercentsFactor(promoCodeDiscount));
-        dealRepository.updateDiscountByPid(discount, deal.getPid());
+        modifyDealService.updateDiscountByPid(discount, deal.getPid());
         BigDecimal sumWithDiscount = dealAmount.subtract(discount);
 
         String message = "<b>Покупка " + CryptoCurrenciesDesignUtil.getDisplayName(cryptoCurrency) + "</b>: "
@@ -407,8 +422,8 @@ public class ExchangeService {
             throw new BaseException("Ожидался CallbackQuery с USE_PROMO.");
         }
         boolean isUsed = isUsePromoData(update.getCallbackQuery().getData());
-        dealRepository.updateIsUsedPromoByPid(isUsed,
-                userRepository.getCurrentDealByChatId(UpdateUtil.getChatId(update)));
+        modifyDealService.updateIsUsedPromoByPid(isUsed,
+                readUserService.getCurrentDealByChatId(UpdateUtil.getChatId(update)));
     }
 
     private boolean isUsePromoData(String data) {
@@ -417,8 +432,8 @@ public class ExchangeService {
 
     public boolean saveRequisites(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
-        Long currentDealPid = userRepository.getCurrentDealByChatId(UpdateUtil.getChatId(update));
-        DealType dealType = dealRepository.getDealTypeByPid(currentDealPid);
+        Long currentDealPid = readUserService.getCurrentDealByChatId(UpdateUtil.getChatId(update));
+        DealType dealType = dealPropertyService.getDealTypeByPid(currentDealPid);
         String wallet;
         if (DealType.isBuy(dealType)) {
             if (update.hasMessage()) {
@@ -434,14 +449,14 @@ public class ExchangeService {
                 if (!update.hasCallbackQuery()
                         || !update.getCallbackQuery().getData().equals(BotStringConstants.USE_SAVED_WALLET))
                     return false;
-                wallet = dealRepository.getWalletFromLastPassedByChatIdAndDealTypeAndCryptoCurrency(
-                        chatId, dealType, dealRepository.getCryptoCurrencyByPid(currentDealPid));
+                wallet = readDealService.getWalletFromLastPassedByChatIdAndDealTypeAndCryptoCurrency(
+                        chatId, dealType, dealPropertyService.getCryptoCurrencyByPid(currentDealPid));
                 responseSender.deleteCallbackMessageIfExists(update);
             }
         } else {
             wallet = UpdateUtil.getMessageText(update);
         }
-        dealRepository.updateWalletByPid(wallet, currentDealPid);
+        modifyDealService.updateWalletByPid(wallet, currentDealPid);
         return true;
     }
 
@@ -454,7 +469,7 @@ public class ExchangeService {
 
     public void askForPaymentType(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
-        Deal deal = dealRepository.findByPid(userRepository.getCurrentDealByChatId(chatId));
+        Deal deal = readDealService.findByPid(readUserService.getCurrentDealByChatId(chatId));
         BigDecimal dealAmount = deal.getAmount();
         String displayCurrencyName = CryptoCurrenciesDesignUtil.getDisplayName(deal.getCryptoCurrency());
         String additionalText;
@@ -498,7 +513,7 @@ public class ExchangeService {
         PaymentType paymentType;
         if (!isFewPaymentTypes(chatId)) {
             try {
-                paymentType = paymentTypeService.getFirstTurned(userRepository.getCurrentDealByChatId(chatId));
+                paymentType = paymentTypeService.getFirstTurned(readUserService.getCurrentDealByChatId(chatId));
             } catch (BaseException e) {
                 responseSender.sendMessage(chatId, e.getMessage());
                 return false;
@@ -509,18 +524,18 @@ public class ExchangeService {
                 return false;
             }
             responseSender.deleteCallbackMessageIfExists(update);
-            paymentType = paymentTypeRepository.getByPid(Long.parseLong(update.getCallbackQuery().getData()));
+            paymentType = paymentTypeService.findById(Long.parseLong(update.getCallbackQuery().getData()));
         }
-        Long currentDealPid = userRepository.getCurrentDealByChatId(chatId);
-        DealType dealType = dealRepository.getDealTypeByPid(currentDealPid);
-        if (paymentType.getMinSum().compareTo(dealRepository.getAmountByPid(currentDealPid)) > 0) {
+        Long currentDealPid = readUserService.getCurrentDealByChatId(chatId);
+        DealType dealType = dealPropertyService.getDealTypeByPid(currentDealPid);
+        if (paymentType.getMinSum().compareTo(dealPropertyService.getAmountByPid(currentDealPid)) > 0) {
             responseSender.sendMessage(chatId, "Минимальная сумма для " + dealType.getGenitive() + " через "
                     + paymentType.getName() + " равна " + paymentType.getMinSum().toPlainString());
-            userRepository.updateStepByChatId(chatId, 2);
+            modifyUserService.updateStepByChatId(chatId, 2);
             calculatorTypeService.run(update);
             return false;
         }
-        dealRepository.updatePaymentTypeByPid(paymentType, currentDealPid);
+        modifyDealService.updatePaymentTypeByPid(paymentType, currentDealPid);
         return true;
     }
 
@@ -530,10 +545,10 @@ public class ExchangeService {
 
     public void buildDeal(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
-        Deal deal = dealRepository.findByPid(userRepository.getCurrentDealByChatId(chatId));
+        Deal deal = readDealService.findByPid(readUserService.getCurrentDealByChatId(chatId));
         CryptoCurrency currency = deal.getCryptoCurrency();
         DealType dealType = deal.getDealType();
-        Long countPassed = dealRepository.getCountPassedByUserChatId(chatId);
+        Long countPassed = dealCountService.getCountPassedByUserChatId(chatId);
         Rank rank = Objects.nonNull(countPassed)
                 ? Rank.getByDealsNumber(countPassed.intValue())
                 : Rank.FIRST;
@@ -609,7 +624,7 @@ public class ExchangeService {
                         + promoCodeText;
             }
         }
-        dealRepository.save(deal);
+        modifyDealService.save(deal);
 
         Optional<Message> optionalMessage = responseSender.sendMessage(chatId, message,
                 BotKeyboard.BUILD_DEAL.getKeyboard(), "HTML");
@@ -654,9 +669,9 @@ public class ExchangeService {
             responseSender.sendMessage(chatId, "Для отмены сделки нажми \"Отменить сделку\".");
             return null;
         }
-        Long dealPid = userRepository.getCurrentDealByChatId(chatId);
+        Long dealPid = readUserService.getCurrentDealByChatId(chatId);
         DealDeleteScheduler.deleteCryptoDeal(dealPid);
-        if (!dealRepository.existsById(dealPid)) {
+        if (readDealService.existsById(dealPid)) {
             Integer dealActiveTime = VariablePropertiesUtil.getInt(VariableType.DEAL_ACTIVE_TIME);
             responseSender.sendMessage(chatId, String.format(MessagePropertiesUtil.getMessage("deal.deleted.auto"), dealActiveTime));
             return false;
@@ -666,7 +681,7 @@ public class ExchangeService {
                     update.getCallbackQuery().getMessage().getText(), null);
 //            responseSender.deleteMessage(chatId, update.getCallbackQuery().getMessage().getMessageId());
             askForReceipts(update);
-            userRepository.nextStep(chatId);
+            modifyUserService.nextStep(chatId);
             return true;
         } else {
             cancelDeal(CallbackQueryUtil.messageId(update), chatId, dealPid);
@@ -676,19 +691,19 @@ public class ExchangeService {
 
     public void cancelDeal(Integer messageId, Long chatId, Long dealPid) {
         responseSender.deleteMessage(chatId, messageId);
-        dealRepository.deleteById(dealPid);
-        userRepository.updateCurrentDealByChatId(null, chatId);
+        modifyDealService.deleteById(dealPid);
+        modifyUserService.updateCurrentDealByChatId(null, chatId);
         responseSender.sendMessage(chatId, "Заявка отменена.");
     }
 
     public void confirmDeal(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
-        Long currentDealPid = userRepository.getCurrentDealByChatId(chatId);
+        Long currentDealPid = readUserService.getCurrentDealByChatId(chatId);
         DealDeleteScheduler.deleteCryptoDeal(currentDealPid);
-        DealType dealType = dealRepository.getDealTypeByPid(currentDealPid);
-        dealRepository.updateDealStatusByPid(DealStatus.PAID, currentDealPid);
-        userRepository.updateCurrentDealByChatId(null, chatId);
-        userRepository.setDefaultValues(chatId);
+        DealType dealType = dealPropertyService.getDealTypeByPid(currentDealPid);
+        modifyDealService.updateDealStatusByPid(DealStatus.PAID, currentDealPid);
+        modifyUserService.updateCurrentDealByChatId(null, chatId);
+        modifyUserService.setDefaultValues(chatId);
         responseSender.sendMessage(chatId, MessagePropertiesUtil.getMessage(PropertiesMessage.DEAL_CONFIRMED));
         log.info("Сделка " + currentDealPid + " пользователя " + chatId + " переведена в статус PAID");
         adminService.notify("Поступила новая заявка на " + dealType.getGenitive() + ".",
@@ -698,15 +713,15 @@ public class ExchangeService {
 
     public void askForReferralDiscount(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
-        Long currentDealPid = userRepository.getCurrentDealByChatId(chatId);
-        BigDecimal dealAmount = dealRepository.getAmountByPid(currentDealPid);
-        if (BooleanUtils.isTrue(dealRepository.getIsUsedPromoByPid(currentDealPid))) {
-            dealAmount = dealAmount.subtract(dealRepository.getDiscountByPid(currentDealPid));
+        Long currentDealPid = readUserService.getCurrentDealByChatId(chatId);
+        BigDecimal dealAmount = dealPropertyService.getAmountByPid(currentDealPid);
+        if (BooleanUtils.isTrue(dealPropertyService.getIsUsedPromoByPid(currentDealPid))) {
+            dealAmount = dealAmount.subtract(dealPropertyService.getDiscountByPid(currentDealPid));
         }
         BigDecimal sumWithDiscount;
         String message;
-        Integer referralBalance = userRepository.getReferralBalanceByChatId(chatId);
-        if (ReferralType.STANDARD.isCurrent() && !FiatCurrency.BYN.equals(dealService.getByPid(currentDealPid).getFiatCurrency())) {
+        Integer referralBalance = readUserService.getReferralBalanceByChatId(chatId);
+        if (ReferralType.STANDARD.isCurrent() && !FiatCurrency.BYN.equals(readDealService.findByPid(currentDealPid).getFiatCurrency())) {
             if (referralBalance <= dealAmount.intValue()) {
                 sumWithDiscount = dealAmount.subtract(BigDecimal.valueOf(referralBalance));
             } else {
@@ -738,7 +753,7 @@ public class ExchangeService {
             return false;
         }
         Boolean isUsedReferralDiscount = update.getCallbackQuery().getData().equals(BotStringConstants.USE_REFERRAL_DISCOUNT);
-        dealRepository.updateUsedReferralDiscountByPid(isUsedReferralDiscount, userRepository.getCurrentDealByChatId(chatId));
+        modifyDealService.updateUsedReferralDiscountByPid(isUsedReferralDiscount, readUserService.getCurrentDealByChatId(chatId));
         return true;
     }
 
@@ -749,17 +764,17 @@ public class ExchangeService {
 
     public boolean saveReceipts(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
-        Deal deal = dealRepository.findByPid(userRepository.getCurrentDealByChatId(chatId));
+        Deal deal = readDealService.findByPid(readUserService.getCurrentDealByChatId(chatId));
         PaymentReceipt paymentReceipt;
         if (update.getMessage().hasDocument()) {
-            paymentReceipt = paymentReceiptRepository.save(PaymentReceipt.builder()
+            paymentReceipt = paymentReceiptService.save(PaymentReceipt.builder()
                     .receipt(update.getMessage().getDocument().getFileId())
                     .receiptFormat(ReceiptFormat.PDF)
                     .build());
         } else if (update.getMessage().hasPhoto()) {
             List<PhotoSize> photoSizes = update.getMessage().getPhoto();
             photoSizes.sort((p1, p2) -> p2.getHeight().compareTo(p1.getHeight()));
-            paymentReceipt = paymentReceiptRepository.save(PaymentReceipt.builder()
+            paymentReceipt = paymentReceiptService.save(PaymentReceipt.builder()
                     .receipt(photoSizes.get(0).getFileId())
                     .receiptFormat(ReceiptFormat.PICTURE)
                     .build());
@@ -767,10 +782,10 @@ public class ExchangeService {
             responseSender.sendMessage(chatId, "Отправьте чек.");
             return false;
         }
-        List<PaymentReceipt> paymentReceipts = dealService.getPaymentReceipts(deal.getPid());
+        List<PaymentReceipt> paymentReceipts = readDealService.getPaymentReceipts(deal.getPid());
         paymentReceipts.add(paymentReceipt);
         deal.setPaymentReceipts(paymentReceipts);
-        dealService.save(deal);
+        modifyDealService.save(deal);
         return true;
     }
 
@@ -782,23 +797,23 @@ public class ExchangeService {
     public void saveDeliveryTypeAndUpdateAmount(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
         DeliveryType deliveryType;
-        Long dealPid = userRepository.getCurrentDealByChatId(chatId);
-        DealType dealType = dealService.getDealTypeByPid(dealPid);
-        CryptoCurrency cryptoCurrency = dealService.getCryptoCurrencyByPid(dealPid);
+        Long dealPid = readUserService.getCurrentDealByChatId(chatId);
+        DealType dealType = dealPropertyService.getDealTypeByPid(dealPid);
+        CryptoCurrency cryptoCurrency = dealPropertyService.getCryptoCurrencyByPid(dealPid);
         if (DeliveryKind.STANDARD.isCurrent() && DealType.isBuy(dealType) && CryptoCurrency.BITCOIN.equals(cryptoCurrency)) {
             deliveryType = DeliveryType.valueOf(update.getCallbackQuery().getData());
             responseSender.deleteCallbackMessageIfExists(update);
             if (DeliveryType.VIP.equals(deliveryType)) {
                 BigDecimal fix = VariablePropertiesUtil.getBigDecimal(VariableType.FIX_COMMISSION_VIP,
-                        dealRepository.getFiatCurrencyByPid(dealPid),
-                        dealRepository.getDealTypeByPid(dealPid),
-                        dealRepository.getCryptoCurrencyByPid(dealPid));
-                dealRepository.updateAmountByPid(dealRepository.getAmountByPid(dealPid).add(fix), dealPid);
+                        dealPropertyService.getFiatCurrencyByPid(dealPid),
+                        dealPropertyService.getDealTypeByPid(dealPid),
+                        dealPropertyService.getCryptoCurrencyByPid(dealPid));
+                modifyDealService.updateAmountByPid(dealPropertyService.getAmountByPid(dealPid).add(fix), dealPid);
             }
         } else {
             deliveryType = DeliveryType.STANDARD;
         }
-        dealRepository.updateDeliveryTypeByPid(userRepository.getCurrentDealByChatId(chatId),
+        modifyDealService.updateDeliveryTypeByPid(readUserService.getCurrentDealByChatId(chatId),
                 deliveryType);
     }
 

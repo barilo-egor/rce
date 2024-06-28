@@ -9,9 +9,10 @@ import tgb.btc.library.bean.bot.User;
 import tgb.btc.library.bean.web.api.ApiDeal;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
 import tgb.btc.library.constants.enums.web.ApiDealStatus;
+import tgb.btc.library.interfaces.service.bean.bot.deal.IReadDealService;
+import tgb.btc.library.interfaces.service.bean.bot.deal.read.IDealCountService;
 import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.library.interfaces.service.bean.web.IApiDealService;
-import tgb.btc.library.service.bean.bot.DealService;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.util.KeyboardUtil;
@@ -28,15 +29,22 @@ public class DealSupportService {
     private static final String DEAL_INFO = "Заявка на %s №%s\n" + "Дата,время: %s\n" + "Тип оплаты: %s\n" + "Кошелек: %s\n" + "Контакт: %s\n"
             + "Количество сделок: %s\n" + "ID: %s\n" + "Сумма %s: %s\n" + "Сумма: %s %s\n" + "Способ доставки: %s";
 
-    private DealService dealService;
-
     private IReadUserService readUserService;
 
     private IApiDealService apiDealService;
 
+    private IReadDealService readDealService;
+
+    private IDealCountService dealCountService;
+
     @Autowired
-    public void setDealService(DealService dealService) {
-        this.dealService = dealService;
+    public void setDealCountService(IDealCountService dealCountService) {
+        this.dealCountService = dealCountService;
+    }
+
+    @Autowired
+    public void setReadDealService(IReadDealService readDealService) {
+        this.readDealService = readDealService;
     }
 
     @Autowired
@@ -62,7 +70,7 @@ public class DealSupportService {
     }
 
     public String dealToString(Long pid) {
-        Deal deal = dealService.getByPid(pid);
+        Deal deal = readDealService.findByPid(pid);
         User user = deal.getUser();
         String paymentTypeName = Objects.nonNull(deal.getPaymentType()) ? deal.getPaymentType().getName() : "Не установлен тип оплаты.";
         FiatCurrency fiatCurrency = deal.getFiatCurrency();
@@ -73,7 +81,7 @@ public class DealSupportService {
                 deal.getWallet(),
                 StringUtils.defaultIfEmpty(readUserService.getUsernameByChatId(user.getChatId()),
                         "Отсутствует"),
-                dealService.getCountPassedByUserChatId(user.getChatId()), user.getChatId(),
+                dealCountService.getCountPassedByUserChatId(user.getChatId()), user.getChatId(),
                 deal.getCryptoCurrency().getShortName(),
                 deal.getCryptoAmount().setScale(8, RoundingMode.FLOOR).stripTrailingZeros()
                         .toPlainString(),
