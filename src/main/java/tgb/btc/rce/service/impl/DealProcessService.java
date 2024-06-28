@@ -2,7 +2,7 @@ package tgb.btc.rce.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import tgb.btc.library.interfaces.process.IDealCommonService;
+import tgb.btc.library.interfaces.service.common.bot.IDealCommonService;
 import tgb.btc.rce.util.DealPromoUtil;
 
 @Service

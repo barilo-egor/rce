@@ -7,8 +7,8 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.constants.enums.properties.PropertiesPath;
-import tgb.btc.library.repository.bot.UserRepository;
-import tgb.btc.library.service.bean.bot.UserService;
+import tgb.btc.library.interfaces.service.bot.user.IReadUserService;
+import tgb.btc.library.interfaces.service.common.bot.IUserCommonService;
 import tgb.btc.library.service.process.BannedUserCache;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.SimpleCommand;
@@ -30,18 +30,24 @@ public class UpdateDispatcher implements IUpdateDispatcher {
     private static boolean IS_ON = true;
 
     private static final boolean IS_LOG_UDPATES = PropertiesPath.FUNCTIONS_PROPERTIES.getBoolean("log.updates", false);
-    private final UserService userService;
 
-    private final UserProcessService userProcessService;
+    private IReadUserService readUserService;
+
+    private UserProcessService userProcessService;
     private AntiSpam antiSpam;
 
     private BannedUserCache bannedUserCache;
 
-    private UserRepository userRepository;
+    private IUserCommonService userCommonService;
 
     @Autowired
-    public void setUserRepository(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public void setReadUserService(IReadUserService readUserService) {
+        this.readUserService = readUserService;
+    }
+
+    @Autowired
+    public void setUserCommonService(IUserCommonService userCommonService) {
+        this.userCommonService = userCommonService;
     }
 
     @Autowired
@@ -55,8 +61,7 @@ public class UpdateDispatcher implements IUpdateDispatcher {
     }
 
     @Autowired
-    public UpdateDispatcher(UserService userService, UserProcessService userProcessService) {
-        this.userService = userService;
+    public void setUserProcessService(UserProcessService userProcessService) {
         this.userProcessService = userProcessService;
     }
 
@@ -76,7 +81,7 @@ public class UpdateDispatcher implements IUpdateDispatcher {
     public void runProcessor(Command command, Long chatId, Update update) {
         if (!command.isSimple())
             ((Processor) applicationContext
-                    .getBean(CommandProcessorLoader.getByCommand(command, userService.getStepByChatId(chatId))))
+                    .getBean(CommandProcessorLoader.getByCommand(command, readUserService.getStepByChatId(chatId))))
                     .process(update);
         else SimpleCommand.run(command, update);
     }
@@ -89,8 +94,8 @@ public class UpdateDispatcher implements IUpdateDispatcher {
         if (isOffed(chatId) && !CommandUtil.isSubmitCommand(update)) return Command.BOT_OFFED;
         if (CommandUtil.isStartCommand(update)) return Command.START;
         Command command;
-        if (userService.isDefaultStep(chatId)) command = Command.fromUpdate(update);
-        else command = Command.valueOf(userRepository.getCommandByChatId(chatId));
+        if (userCommonService.isDefaultStep(chatId)) command = Command.fromUpdate(update);
+        else command = Command.valueOf(readUserService.getCommandByChatId(chatId));
         if (Objects.isNull(command) || !hasAccess(command, chatId)) return Command.START;
         else return command;
     }
@@ -100,12 +105,12 @@ public class UpdateDispatcher implements IUpdateDispatcher {
     }
 
     private boolean isOffed(Long chatId) {
-        return !isOn() && BooleanUtils.isNotTrue(userService.isAdminByChatId(chatId));
+        return !isOn() && BooleanUtils.isNotTrue(readUserService.isAdminByChatId(chatId));
     }
 
     private boolean hasAccess(Command command, Long chatId) {
         if (!command.isAdmin()) return true;
-        else return userService.isAdminByChatId(chatId);
+        else return readUserService.isAdminByChatId(chatId);
     }
 
     public static boolean isOn() {
