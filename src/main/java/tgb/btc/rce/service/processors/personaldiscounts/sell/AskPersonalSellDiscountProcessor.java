@@ -2,9 +2,9 @@ package tgb.btc.rce.service.processors.personaldiscounts.sell;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import tgb.btc.library.interfaces.service.bean.bot.IUserDiscountService;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
-import tgb.btc.library.repository.bot.UserDiscountRepository;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.util.UpdateUtil;
 
@@ -14,11 +14,11 @@ import java.util.Objects;
 @CommandProcessor(command = Command.PERSONAL_SELL_DISCOUNT, step = 1)
 public class AskPersonalSellDiscountProcessor extends Processor {
 
-    private UserDiscountRepository userDiscountRepository;
+    private IUserDiscountService userDiscountService;
 
     @Autowired
-    public void setUserDiscountRepository(UserDiscountRepository userDiscountRepository) {
-        this.userDiscountRepository = userDiscountRepository;
+    public void setUserDiscountService(IUserDiscountService userDiscountService) {
+        this.userDiscountService = userDiscountService;
     }
 
     @Override
@@ -29,7 +29,7 @@ public class AskPersonalSellDiscountProcessor extends Processor {
             responseSender.sendMessage(chatId, "Пользователь не найден.");
             return;
         }
-        BigDecimal personalSell = userDiscountRepository.getPersonalSellByChatId(userChatId);
+        BigDecimal personalSell = userDiscountService.getPersonalSellByChatId(userChatId);
         userRepository.updateBufferVariable(chatId, userChatId.toString());
         if (Objects.isNull(personalSell)) personalSell = BigDecimal.ZERO;
 

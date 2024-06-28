@@ -4,13 +4,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.bean.bot.User;
 import tgb.btc.library.bean.bot.UserDiscount;
-import tgb.btc.library.repository.bot.UserDiscountRepository;
+import tgb.btc.library.interfaces.service.bean.bot.IUserDiscountService;
 import tgb.btc.library.service.bean.bot.UserDiscountService;
 import tgb.btc.library.service.process.PersonalDiscountsCache;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.service.impl.UserDiscountProcessService;
 import tgb.btc.rce.util.UpdateUtil;
 
 import java.math.BigDecimal;
@@ -18,18 +17,9 @@ import java.math.BigDecimal;
 @CommandProcessor(command = Command.PERSONAL_BUY_DISCOUNT, step = 2)
 public class SavePersonalBuyDiscountProcessor extends Processor {
 
-    private UserDiscountRepository userDiscountRepository;
-
-    private UserDiscountProcessService userDiscountProcessService;
+    private IUserDiscountService userDiscountService;
 
     private PersonalDiscountsCache personalDiscountsCache;
-
-    private UserDiscountService userDiscountService;
-
-    @Autowired
-    public void setUserDiscountProcessService(UserDiscountProcessService userDiscountProcessService) {
-        this.userDiscountProcessService = userDiscountProcessService;
-    }
 
     @Autowired
     public void setUserDiscountService(UserDiscountService userDiscountService) {
@@ -39,11 +29,6 @@ public class SavePersonalBuyDiscountProcessor extends Processor {
     @Autowired
     public void setPersonalDiscountsCache(PersonalDiscountsCache personalDiscountsCache) {
         this.personalDiscountsCache = personalDiscountsCache;
-    }
-
-    @Autowired
-    public void setUserDiscountRepository(UserDiscountRepository userDiscountRepository) {
-        this.userDiscountRepository = userDiscountRepository;
     }
 
     @Override
@@ -57,8 +42,8 @@ public class SavePersonalBuyDiscountProcessor extends Processor {
             UserDiscount userDiscount = new UserDiscount();
             userDiscount.setUser(new User(userPid));
             userDiscount.setPersonalBuy(newPersonalBuy);
-            userDiscountRepository.save(userDiscount);
-        } else userDiscountRepository.updatePersonalBuyByUserPid(newPersonalBuy, userPid);
+            userDiscountService.save(userDiscount);
+        } else userDiscountService.updatePersonalBuyByUserPid(newPersonalBuy, userPid);
         personalDiscountsCache.putToBuy(userChatId, newPersonalBuy);
         responseSender.sendMessage(chatId, "Персональная скидка на покупку обновлена.");
         processToAdminMainPanel(chatId);
