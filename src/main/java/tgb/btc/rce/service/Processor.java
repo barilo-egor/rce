@@ -6,6 +6,8 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import tgb.btc.library.bean.bot.User;
 import tgb.btc.library.exception.BaseException;
+import tgb.btc.library.interfaces.service.bean.bot.user.IModifyUserService;
+import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.library.repository.bot.UserRepository;
 import tgb.btc.library.service.bean.bot.UserService;
 import tgb.btc.rce.annotation.CommandProcessor;
@@ -20,12 +22,29 @@ import tgb.btc.rce.util.UpdateUtil;
 
 @Slf4j
 public abstract class Processor {
+
     @Autowired
     protected IResponseSender responseSender;
+
     @Autowired
     protected UserService userService;
+
     @Autowired
     protected UserRepository userRepository;
+
+    protected IReadUserService readUserService;
+
+    protected IModifyUserService modifyUserService;
+
+    @Autowired
+    public void setReadUserService(IReadUserService readUserService) {
+        this.readUserService = readUserService;
+    }
+
+    @Autowired
+    public void setModifyUserService(IModifyUserService modifyUserService) {
+        this.modifyUserService = modifyUserService;
+    }
 
     public void process(Update update) {
         if (checkForCancel(update)) {
