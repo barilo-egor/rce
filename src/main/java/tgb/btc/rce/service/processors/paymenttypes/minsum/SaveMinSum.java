@@ -2,10 +2,10 @@ package tgb.btc.rce.service.processors.paymenttypes.minsum;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import tgb.btc.library.interfaces.service.bean.bot.IPaymentTypeService;
+import tgb.btc.library.interfaces.service.bean.bot.IUserDataService;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
-import tgb.btc.library.repository.bot.PaymentTypeRepository;
-import tgb.btc.library.repository.bot.UserDataRepository;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.util.UpdateUtil;
 
@@ -14,18 +14,18 @@ import java.math.BigDecimal;
 @CommandProcessor(command = Command.CHANGE_MIN_SUM, step = 4)
 public class SaveMinSum extends Processor {
 
-    private PaymentTypeRepository paymentTypeRepository;
+    private IPaymentTypeService paymentTypeService;
 
-    private UserDataRepository userDataRepository;
+    private IUserDataService userDataService;
 
     @Autowired
-    public void setUserDataRepository(UserDataRepository userDataRepository) {
-        this.userDataRepository = userDataRepository;
+    public void setPaymentTypeService(IPaymentTypeService paymentTypeService) {
+        this.paymentTypeService = paymentTypeService;
     }
 
     @Autowired
-    public void setPaymentTypeRepository(PaymentTypeRepository paymentTypeRepository) {
-        this.paymentTypeRepository = paymentTypeRepository;
+    public void setUserDataService(IUserDataService userDataService) {
+        this.userDataService = userDataService;
     }
 
     @Override
@@ -38,8 +38,8 @@ public class SaveMinSum extends Processor {
             responseSender.sendMessage(chatId, "Ошибка. Введите новую минимальную сумму.");
             return;
         }
-        paymentTypeRepository.updateMinSumByPid(BigDecimal.valueOf(minSum),
-                                                userDataRepository.getLongByUserPid(userRepository.getPidByChatId(chatId)));
+        paymentTypeService.updateMinSumByPid(BigDecimal.valueOf(minSum),
+                userDataService.getLongByUserPid(userRepository.getPidByChatId(chatId)));
         responseSender.sendMessage(chatId, "Минимальная сумма обновлена.");
         processToAdminMainPanel(chatId);
     }
