@@ -23,7 +23,7 @@ public class Back extends Processor {
     @Override
     public void run(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
-        responseSender.sendBotMessage(botMessageService.findByType(BotMessageType.START),
+        responseSender.sendBotMessage(botMessageService.findByTypeNullSafe(BotMessageType.START),
                 chatId,
                 MenuFactory.build(Menu.MAIN, userService.isAdminByChatId(chatId)));
     }

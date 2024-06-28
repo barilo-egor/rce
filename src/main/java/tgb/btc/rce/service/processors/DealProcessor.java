@@ -229,7 +229,7 @@ public class DealProcessor extends Processor {
                 }
                 if (!exchangeService.saveReceipts(update)) return;
                 exchangeService.confirmDeal(update);
-                responseSender.sendBotMessage(botMessageService.findByType(BotMessageType.START), chatId);
+                responseSender.sendBotMessage(botMessageService.findByTypeNullSafe(BotMessageType.START), chatId);
                 processToMainMenu(chatId);
                 break;
         }

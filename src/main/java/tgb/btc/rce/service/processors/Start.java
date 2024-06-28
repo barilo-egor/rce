@@ -39,7 +39,7 @@ public class Start extends Processor {
 
     public void run(Long chatId) {
         userService.updateIsActiveByChatId(true, chatId);
-        responseSender.sendBotMessage(botMessageService.findByType(BotMessageType.START), chatId);
+        responseSender.sendBotMessage(botMessageService.findByTypeNullSafe(BotMessageType.START), chatId);
         Long currentDealPid = userRepository.getCurrentDealByChatId(chatId);
         if (Objects.nonNull(currentDealPid)) {
             if (dealRepository.existsById(currentDealPid)) {

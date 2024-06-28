@@ -25,7 +25,7 @@ public class CurrentData extends Processor {
         responseSender.sendMessage(UpdateUtil.getChatId(update), "Сообщения:");
         BotMessageType[] messageTypes = BotMessageType.values();
         for(BotMessageType botMessageType : messageTypes) {
-            BotMessage botMessage = botMessageService.findByType(botMessageType);
+            BotMessage botMessage = botMessageService.findByTypeNullSafe(botMessageType);
             responseSender.sendMessage(UpdateUtil.getChatId(update), botMessageType.getDisplayName());
             switch (botMessage.getMessageType()) {
                 case TEXT:

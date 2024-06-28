@@ -146,7 +146,7 @@ public class ResponseSender implements IResponseSender {
     }
 
     public Optional<Message> sendBotMessage(BotMessageType botMessageType, Long chatId) {
-        return sendBotMessage(botMessageService.findByType(botMessageType), chatId, null);
+        return sendBotMessage(botMessageService.findByTypeNullSafe(botMessageType), chatId, null);
     }
 
     public Optional<Message> sendBotMessage(BotMessage botMessage, Long chatId) {
@@ -158,7 +158,7 @@ public class ResponseSender implements IResponseSender {
     }
 
     public Optional<Message> sendBotMessage(BotMessageType botMessageType, Long chatId, ReplyKeyboard replyKeyboard) {
-        BotMessage botMessage = botMessageService.findByType(botMessageType);
+        BotMessage botMessage = botMessageService.findByTypeNullSafe(botMessageType);
         return sendBotMessage(botMessage, chatId, replyKeyboard);
     }
 

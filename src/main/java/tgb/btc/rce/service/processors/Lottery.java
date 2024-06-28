@@ -55,7 +55,7 @@ public class Lottery extends Processor {
     private void processLottery(Update update, User user) {
         float probability = VariablePropertiesUtil.getFloat(VariableType.PROBABILITY);
         if (((double) new Random().nextInt(101) < ((double) probability))) {
-            responseSender.sendBotMessage(botMessageService.findByType(BotMessageType.WON_LOTTERY), user.getChatId(),
+            responseSender.sendBotMessage(botMessageService.findByTypeNullSafe(BotMessageType.WON_LOTTERY), user.getChatId(),
                     MenuFactory.getLink("Написать оператору",
                             VariablePropertiesUtil.getVariable(VariableType.OPERATOR_LINK)));
             Long chatId = UpdateUtil.getChatId(update);
@@ -69,7 +69,7 @@ public class Lottery extends Processor {
             log.debug("Пользователь " + UpdateUtil.getChatId(update) + " выиграл лотерею. Probability=" + probability);
             lotteryWinRepository.save(new LotteryWin(user, LocalDateTime.now()));
         } else {
-            responseSender.sendBotMessage(botMessageService.findByType(BotMessageType.LOSE_LOTTERY), user.getChatId());
+            responseSender.sendBotMessage(botMessageService.findByTypeNullSafe(BotMessageType.LOSE_LOTTERY), user.getChatId());
             log.trace("Пользователь " + UpdateUtil.getChatId(update) + " проиграл лотерею.");
         }
         user.setLotteryCount(user.getLotteryCount() - 1);
