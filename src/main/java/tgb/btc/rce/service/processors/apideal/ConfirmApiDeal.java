@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.constants.enums.web.ApiDealStatus;
-import tgb.btc.library.repository.web.ApiDealRepository;
+import tgb.btc.library.interfaces.service.bean.web.IApiDealService;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.Processor;
@@ -15,11 +15,11 @@ import tgb.btc.rce.util.UpdateUtil;
 @Slf4j
 public class ConfirmApiDeal extends Processor {
 
-    private ApiDealRepository apiDealRepository;
+    private IApiDealService apiDealService;
 
     @Autowired
-    public void setApiDealRepository(ApiDealRepository apiDealRepository) {
-        this.apiDealRepository = apiDealRepository;
+    public void setApiDealService(IApiDealService apiDealService) {
+        this.apiDealService = apiDealService;
     }
 
     @Override
@@ -27,7 +27,7 @@ public class ConfirmApiDeal extends Processor {
         Long chatId = UpdateUtil.getChatId(update);
         responseSender.deleteMessage(chatId, CallbackQueryUtil.messageId(update));
         Long dealPid = CallbackQueryUtil.getSplitLongData(update, 1);
-        apiDealRepository.updateApiDealStatusByPid(ApiDealStatus.ACCEPTED, dealPid);
+        apiDealService.updateApiDealStatusByPid(ApiDealStatus.ACCEPTED, dealPid);
         log.debug("Админ chatId={} подтвердил АПИ сделку={}.", chatId, dealPid);
         responseSender.sendMessage(chatId, "API сделка подтверждена.");
     }
