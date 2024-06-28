@@ -9,10 +9,11 @@ import tgb.btc.library.bean.bot.UserData;
 import tgb.btc.library.bean.bot.UserDiscount;
 import tgb.btc.library.constants.enums.ReferralType;
 import tgb.btc.library.exception.BaseException;
+import tgb.btc.library.interfaces.service.bean.bot.IReferralUserService;
+import tgb.btc.library.interfaces.service.bean.bot.IUserDataService;
+import tgb.btc.library.interfaces.service.bean.bot.IUserDiscountService;
 import tgb.btc.library.interfaces.service.bean.bot.user.IModifyUserService;
 import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
-import tgb.btc.library.repository.bot.UserDataRepository;
-import tgb.btc.library.repository.bot.UserDiscountRepository;
 import tgb.btc.library.service.bean.bot.ReferralUserService;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.util.CommandUtil;
@@ -29,11 +30,21 @@ public class UserProcessService {
 
     private IModifyUserService modifyUserService;
 
-    private UserDataRepository userDataRepository;
+    private IUserDataService userDataService;
 
-    private ReferralUserService referralUserService;
+    private IReferralUserService referralUserService;
 
-    private UserDiscountRepository userDiscountRepository;
+    private IUserDiscountService userDiscountService;
+
+    @Autowired
+    public void setUserDiscountService(IUserDiscountService userDiscountService) {
+        this.userDiscountService = userDiscountService;
+    }
+
+    @Autowired
+    public void setUserDataService(IUserDataService userDataService) {
+        this.userDataService = userDataService;
+    }
 
     @Autowired
     public void setReadUserService(IReadUserService readUserService) {
@@ -48,16 +59,6 @@ public class UserProcessService {
     @Autowired
     public void setReferralUserService(ReferralUserService referralUserService) {
         this.referralUserService = referralUserService;
-    }
-
-    @Autowired
-    public void setUserDiscountRepository(UserDiscountRepository userDiscountRepository) {
-        this.userDiscountRepository = userDiscountRepository;
-    }
-
-    @Autowired
-    public void setUserDataRepository(UserDataRepository userDataRepository) {
-        this.userDataRepository = userDataRepository;
     }
 
     public boolean registerIfNotExists(Update update) {
@@ -99,10 +100,10 @@ public class UserProcessService {
         UserDiscount userDiscount = new UserDiscount();
         userDiscount.setUser(newUser);
         userDiscount.setRankDiscountOn(true);
-        userDiscountRepository.save(userDiscount);
+        userDiscountService.save(userDiscount);
         UserData userData = new UserData();
         userData.setUser(newUser);
-        userDataRepository.save(userData);
+        userDataService.save(userData);
         return savedNewUser;
     }
 }
