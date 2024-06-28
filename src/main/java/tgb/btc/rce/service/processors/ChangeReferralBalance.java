@@ -24,7 +24,7 @@ public class ChangeReferralBalance extends Processor {
             processToAdminMainPanel(chatId);
             return;
         }
-        switch (userService.getStepByChatId(chatId)) {
+        switch (readUserService.getStepByChatId(chatId)) {
             case 0:
                 responseSender.sendMessage(chatId, "Введите новую сумму для пользователя.\n" +
                                 "Для того, чтобы полностью заменить значение, отправьте новое число без знаков. Пример:\n1750\n\n" +
@@ -34,37 +34,37 @@ public class ChangeReferralBalance extends Processor {
                                 ReplyButton.builder()
                                         .text(Command.CANCEL.getText())
                                         .build())));
-                userService.updateBufferVariable(chatId,
+                modifyUserService.updateBufferVariable(chatId,
                         update.getCallbackQuery().getData().split(BotStringConstants.CALLBACK_DATA_SPLITTER)[1]);
                 userRepository.nextStep(chatId, Command.CHANGE_REFERRAL_BALANCE.name());
                 break;
             case 1:
                 if (!update.hasMessage() || !update.getMessage().hasText()) throw new BaseException("Не найден текст.");
                 String text = UpdateUtil.getMessageText(update);
-                Long userChatId = Long.parseLong(userService.getBufferVariable(chatId));
+                Long userChatId = Long.parseLong(readUserService.getBufferVariable(chatId));
                 if (text.startsWith("+")) {
-                    Integer userReferralBalance = userService.getReferralBalanceByChatId(userChatId);
+                    Integer userReferralBalance = readUserService.getReferralBalanceByChatId(userChatId);
                     Integer enteredSum = Integer.parseInt(text.substring(1));
                     Integer total = userReferralBalance + enteredSum;
                     log.info("Админ с чат айди " + chatId + " добавил на баланс пользователю с чат айди " + userChatId
                             + " - " + enteredSum + " рублей. enteredSum = " + enteredSum + "; userReferralBalance = " + userReferralBalance + "; total = " + total);
-                    userService.updateReferralBalanceByChatId(total, userChatId);
+                    modifyUserService.updateReferralBalanceByChatId(total, userChatId);
                     responseSender.sendMessage(userChatId, "На ваш реферальный баланс было зачислено " + Integer.parseInt(text.substring(1)) + "₽.");
                 }
                 else if (text.startsWith("-")) {
-                    Integer userReferralBalance = userService.getReferralBalanceByChatId(userChatId);
+                    Integer userReferralBalance = readUserService.getReferralBalanceByChatId(userChatId);
                     Integer enteredSum = Integer.parseInt(text.substring(1));
                     int total = userReferralBalance - enteredSum;
                     log.info("Админ с чат айди " + chatId + " убрал с баланса пользователю с чат айди " + userChatId
                             + " - " + enteredSum + " рублей. enteredSum = " + enteredSum + "; userReferralBalance = " + userReferralBalance + "; total = " + total);
-                    userService.updateReferralBalanceByChatId(
+                    modifyUserService.updateReferralBalanceByChatId(
                             userReferralBalance
                                     - enteredSum, userChatId);
                     responseSender.sendMessage(userChatId, "С вашего реферального баланса списано " + Integer.parseInt(text.substring(1)) + "₽.");
                 } else {
                     log.info("Админ с чат айди " + chatId + " засетал баланс пользователю с чат айди " + userChatId
                             + " - " + Integer.parseInt(text) + " рублей");
-                    userService.updateReferralBalanceByChatId(Integer.parseInt(text), userChatId);
+                    modifyUserService.updateReferralBalanceByChatId(Integer.parseInt(text), userChatId);
                 }
                 responseSender.sendMessage(chatId, "Баланс изменен.");
                 processToAdminMainPanel(chatId);

@@ -15,6 +15,9 @@ import tgb.btc.library.constants.enums.bot.CryptoCurrency;
 import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
 import tgb.btc.library.exception.BaseException;
+import tgb.btc.library.interfaces.service.bean.bot.deal.read.IDateDealService;
+import tgb.btc.library.interfaces.service.bean.bot.deal.read.IReportDealService;
+import tgb.btc.library.interfaces.service.bean.web.IApiDealService;
 import tgb.btc.library.service.bean.bot.DealService;
 import tgb.btc.library.service.bean.web.ApiDealService;
 import tgb.btc.library.util.BigDecimalUtil;
@@ -46,17 +49,17 @@ public class DealReports extends Processor {
     private final static String MONTH = "За месяц";
     private final static String DATE = "За дату";
 
-    private DealService dealService;
+    private IDateDealService dateDealService;
 
-    private ApiDealService apiDealService;
+    private IApiDealService apiDealService;
 
     @Autowired
-    public void setDealService(DealService dealService) {
-        this.dealService = dealService;
+    public void setDateDealService(IDateDealService dateDealService) {
+        this.dateDealService = dateDealService;
     }
 
     @Autowired
-    public void setApiDealService(ApiDealService apiDealService) {
+    public void setApiDealService(IApiDealService apiDealService) {
         this.apiDealService = apiDealService;
     }
 
@@ -92,14 +95,14 @@ public class DealReports extends Processor {
                 switch (period) {
                     case TODAY:
                         try {
-                            loadReport(dealService.getByDate(LocalDate.now()), chatId, period, apiDealService.getAcceptedByDate(LocalDateTime.now()));
+                            loadReport(dateDealService.getByDate(LocalDate.now()), chatId, period, apiDealService.getAcceptedByDate(LocalDateTime.now()));
                         } catch (Exception e) {
                             log.error("Ошибка при выгрузке отчета.", e);
                         }
                         break;
                     case TEN_DAYS:
                         try {
-                            loadReport(dealService.getByDateBetween(LocalDate.now().minusDays(10), LocalDate.now()),
+                            loadReport(dateDealService.getByDateBetween(LocalDate.now().minusDays(10), LocalDate.now()),
                                     chatId, period, apiDealService.getAcceptedByDateBetween(LocalDateTime.now().minusDays(10), LocalDateTime.now()));
                         } catch (Exception e) {
                             log.error("Ошибка при выгрузке отчета.", e);
@@ -107,7 +110,7 @@ public class DealReports extends Processor {
                         break;
                     case MONTH:
                         try {
-                            loadReport(dealService.getByDateBetween(LocalDate.now().minusDays(30), LocalDate.now()), chatId, period,
+                            loadReport(dateDealService.getByDateBetween(LocalDate.now().minusDays(30), LocalDate.now()), chatId, period,
                                     apiDealService.getAcceptedByDateBetween(LocalDateTime.now().minusDays(30), LocalDateTime.now()));
                         } catch (Exception e) {
                             log.error("Ошибка при выгрузке отчета.", e);
@@ -130,7 +133,7 @@ public class DealReports extends Processor {
                 try {
                     LocalDate date = MessageTextUtil.getDate(update);
                     LocalDateTime dateTime = date.atStartOfDay();
-                    loadReport(dealService.getByDate(date), chatId, date.format(DateTimeFormatter.ISO_DATE), apiDealService.getAcceptedByDate(dateTime));
+                    loadReport(dateDealService.getByDate(date), chatId, date.format(DateTimeFormatter.ISO_DATE), apiDealService.getAcceptedByDate(dateTime));
                     processToAdminMainPanel(chatId);
                 } catch (Exception e) {
                     responseSender.sendMessage(chatId, e.getMessage());

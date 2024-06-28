@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Conditional;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.bean.bot.SpamBan;
 import tgb.btc.library.exception.BaseException;
-import tgb.btc.library.service.bean.bot.SpamBanService;
+import tgb.btc.library.interfaces.service.bean.bot.ISpamBanService;
 import tgb.btc.library.service.process.BanningUserService;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.conditional.AntispamCondition;
@@ -35,7 +35,7 @@ public class CaptchaProcessor extends Processor {
 
     private AntiSpam antiSpam;
 
-    private SpamBanService spamBanService;
+    private ISpamBanService spamBanService;
 
     private AdminService adminService;
 
@@ -52,7 +52,7 @@ public class CaptchaProcessor extends Processor {
     }
 
     @Autowired
-    public void setSpamBanService(SpamBanService spamBanService) {
+    public void setSpamBanService(ISpamBanService spamBanService) {
         this.spamBanService = spamBanService;
     }
 
@@ -110,7 +110,7 @@ public class CaptchaProcessor extends Processor {
                                             )
                                             .build()
                             )));
-                    userService.setDefaultValues(chatId);
+                    modifyUserService.setDefaultValues(chatId);
                     antiSpam.removeUser(chatId);
                 }
                 if (update.hasCallbackQuery()) responseSender.deleteCallbackMessageIfExists(update);
@@ -136,6 +136,6 @@ public class CaptchaProcessor extends Processor {
 
     public void send(Long chatId) {
         captchaSender.sendCaptcha(chatId);
-        userRepository.nextStep(chatId, Command.CAPTCHA.name());
+        modifyUserService.nextStep(chatId, Command.CAPTCHA.name());
     }
 }

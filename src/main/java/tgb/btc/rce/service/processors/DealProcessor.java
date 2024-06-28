@@ -9,10 +9,11 @@ import tgb.btc.library.constants.enums.DeliveryKind;
 import tgb.btc.library.constants.enums.bot.BotMessageType;
 import tgb.btc.library.constants.enums.bot.CryptoCurrency;
 import tgb.btc.library.constants.enums.bot.DealType;
-import tgb.btc.library.repository.bot.DealRepository;
+import tgb.btc.library.interfaces.service.bean.bot.IBotMessageService;
+import tgb.btc.library.interfaces.service.bean.bot.deal.IModifyDealService;
+import tgb.btc.library.interfaces.service.bean.bot.deal.IReadDealService;
+import tgb.btc.library.interfaces.service.bean.bot.deal.read.IDealPropertyService;
 import tgb.btc.library.service.bean.bot.BotMessageService;
-import tgb.btc.library.service.bean.bot.DealService;
-import tgb.btc.library.service.bean.bot.PaymentTypeService;
 import tgb.btc.library.util.FiatCurrencyUtil;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
@@ -41,15 +42,30 @@ public class DealProcessor extends Processor {
 
     private ICalculatorTypeService calculatorTypeService;
 
-    private DealService dealService;
+    private IDealPropertyService dealPropertyService;
 
-    private PaymentTypeService paymentTypeService;
+    private IReadDealService readDealService;
 
-    private DealRepository dealRepository;
+    private IModifyDealService modifyDealService;
 
-    private BotMessageService botMessageService;
+    private IBotMessageService botMessageService;
 
     private DealProcessService dealProcessService;
+
+    @Autowired
+    public void setReadDealService(IReadDealService readDealService) {
+        this.readDealService = readDealService;
+    }
+
+    @Autowired
+    public void setModifyDealService(IModifyDealService modifyDealService) {
+        this.modifyDealService = modifyDealService;
+    }
+
+    @Autowired
+    public void setDealPropertyService(IDealPropertyService dealPropertyService) {
+        this.dealPropertyService = dealPropertyService;
+    }
 
     @Autowired
     public void setDealProcessService(DealProcessService dealProcessService) {
@@ -59,21 +75,6 @@ public class DealProcessor extends Processor {
     @Autowired
     public void setBotMessageService(BotMessageService botMessageService) {
         this.botMessageService = botMessageService;
-    }
-
-    @Autowired
-    public void setDealRepository(DealRepository dealRepository) {
-        this.dealRepository = dealRepository;
-    }
-
-    @Autowired
-    public void setPaymentTypeService(PaymentTypeService paymentTypeService) {
-        this.paymentTypeService = paymentTypeService;
-    }
-
-    @Autowired
-    public void setDealService(DealService dealService) {
-        this.dealService = dealService;
     }
 
     @Autowired
@@ -145,9 +146,9 @@ public class DealProcessor extends Processor {
                 break;
             case 3:
                 Long currentDealPid = userRepository.getCurrentDealByChatId(chatId);
-                dealType = dealService.getDealTypeByPid(userRepository.getCurrentDealByChatId(chatId));
-                if (!isBack) exchangeService.sendTotalDealAmount(chatId, dealType, dealService.getCryptoCurrencyByPid(currentDealPid),
-                        dealRepository.getFiatCurrencyByPid(currentDealPid));
+                dealType = dealPropertyService.getDealTypeByPid(userRepository.getCurrentDealByChatId(chatId));
+                if (!isBack) exchangeService.sendTotalDealAmount(chatId, dealType, dealPropertyService.getCryptoCurrencyByPid(currentDealPid),
+                        dealPropertyService.getFiatCurrencyByPid(currentDealPid));
                 if (!DealType.isBuy(dealType) || !dealProcessService.isAvailableForPromo(chatId)) {
                     recursiveSwitch(update, chatId, isBack);
                     break;
@@ -156,7 +157,7 @@ public class DealProcessor extends Processor {
                 userRepository.nextStep(chatId);
                 break;
             case 4:
-                dealType = dealService.getDealTypeByPid(userRepository.getCurrentDealByChatId(chatId));
+                dealType = dealPropertyService.getDealTypeByPid(userRepository.getCurrentDealByChatId(chatId));
                 if (!isBack && DealType.isBuy(dealType) && dealProcessService.isAvailableForPromo(chatId)) {
                     responseSender.deleteCallbackMessageIfExists(update);
                     exchangeService.processPromoCode(update);
@@ -169,7 +170,7 @@ public class DealProcessor extends Processor {
                 exchangeService.askForReferralDiscount(update);
                 break;
             case 5:
-                dealType = dealService.getDealTypeByPid(userRepository.getCurrentDealByChatId(chatId));
+                dealType = dealPropertyService.getDealTypeByPid(userRepository.getCurrentDealByChatId(chatId));
                 if (!isBack && DealType.isBuy(dealType) && !userService.isReferralBalanceEmpty(chatId)) {
                     if (!exchangeService.processReferralDiscount(update)) return;
                 }
@@ -193,11 +194,11 @@ public class DealProcessor extends Processor {
                     if (!exchangeService.saveRequisites(update)) return;
                 }
                 Long dealPid = userRepository.getCurrentDealByChatId(chatId);
-                dealType = dealService.getDealTypeByPid(dealPid);
-                CryptoCurrency cryptoCurrency = dealService.getCryptoCurrencyByPid(dealPid);
+                dealType = dealPropertyService.getDealTypeByPid(dealPid);
+                CryptoCurrency cryptoCurrency = dealPropertyService.getCryptoCurrencyByPid(dealPid);
                 if (DeliveryKind.STANDARD.isCurrent() && DealType.isBuy(dealType) && CryptoCurrency.BITCOIN.equals(cryptoCurrency)) {
                     userRepository.nextStep(chatId);
-                    exchangeService.askForDeliveryType(chatId, dealRepository.getFiatCurrencyByPid(dealPid),dealType, cryptoCurrency);
+                    exchangeService.askForDeliveryType(chatId, dealPropertyService.getFiatCurrencyByPid(dealPid),dealType, cryptoCurrency);
                     break;
                 }
                 recursiveSwitch(update, chatId, isBack);
@@ -269,9 +270,9 @@ public class DealProcessor extends Processor {
         userRepository.setDefaultValues(chatId);
         Long currentDealPid = userRepository.getCurrentDealByChatId(chatId);
         if (Objects.nonNull(currentDealPid)) {
-            if (dealRepository.existsById(currentDealPid)) {
+            if (readDealService.existsById(currentDealPid)) {
                 log.info("Сделка " + currentDealPid + " удалена по команде главного меню.");
-                dealRepository.deleteById(currentDealPid);
+                modifyDealService.deleteById(currentDealPid);
             }
             userRepository.updateCurrentDealByChatId(null, chatId);
         }

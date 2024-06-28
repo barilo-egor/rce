@@ -4,8 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.api.bot.AdditionalVerificationProcessor;
 import tgb.btc.library.constants.enums.bot.DealStatus;
+import tgb.btc.library.interfaces.service.bean.bot.deal.read.IDealUserService;
 import tgb.btc.library.repository.bot.DealRepository;
-import tgb.btc.library.service.bean.bot.DealService;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
@@ -19,7 +19,7 @@ import java.util.List;
 @CommandProcessor(command = Command.ADDITIONAL_VERIFICATION)
 public class AdditionalVerification extends Processor implements AdditionalVerificationProcessor {
 
-    private DealService dealService;
+    private IDealUserService dealUserService;
 
     private DealRepository dealRepository;
 
@@ -29,8 +29,8 @@ public class AdditionalVerification extends Processor implements AdditionalVerif
     }
 
     @Autowired
-    public void setDealService(DealService dealService) {
-        this.dealService = dealService;
+    public void setDealUserService(IDealUserService dealUserService) {
+        this.dealUserService = dealUserService;
     }
 
     @Override
@@ -41,7 +41,7 @@ public class AdditionalVerification extends Processor implements AdditionalVerif
     }
 
     public void ask(Long dealPid) {
-        Long userChatId = dealService.getUserChatIdByDealPid(dealPid);
+        Long userChatId = dealUserService.getUserChatIdByDealPid(dealPid);
         dealRepository.updateDealStatusByPid(DealStatus.AWAITING_VERIFICATION, dealPid);
         userRepository.nextStep(userChatId, Command.USER_ADDITIONAL_VERIFICATION.name());
         userService.updateBufferVariable(userChatId, dealPid.toString());

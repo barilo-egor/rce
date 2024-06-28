@@ -7,7 +7,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.constants.enums.properties.PropertiesPath;
 import tgb.btc.library.exception.BaseException;
-import tgb.btc.library.service.bean.bot.DealService;
+import tgb.btc.library.interfaces.service.bean.bot.deal.IModifyDealService;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.Processor;
@@ -20,7 +20,7 @@ import java.util.List;
 @Slf4j
 public class BuyBitcoin extends Processor {
 
-    private DealService dealService;
+    private IModifyDealService modifyDealService;
 
     private DealProcessor dealProcessor;
 
@@ -37,8 +37,8 @@ public class BuyBitcoin extends Processor {
     }
 
     @Autowired
-    public void setDealService(DealService dealService) {
-        this.dealService = dealService;
+    public void setModifyDealService(IModifyDealService modifyDealService) {
+        this.modifyDealService = modifyDealService;
     }
 
     @Override
@@ -50,7 +50,7 @@ public class BuyBitcoin extends Processor {
         }
         deleteUnfinishedDeal(chatId);
 
-        dealService.createNewDeal(DealType.BUY, chatId);
+        modifyDealService.createNewDeal(DealType.BUY, chatId);
         dealProcessor.run(update);
     }
 
