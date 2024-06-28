@@ -14,13 +14,12 @@ import tgb.btc.library.constants.enums.bot.FiatCurrency;
 import tgb.btc.library.constants.enums.properties.PropertiesPath;
 import tgb.btc.library.constants.enums.properties.VariableType;
 import tgb.btc.library.exception.BaseException;
-import tgb.btc.library.repository.bot.PaymentTypeRepository;
+import tgb.btc.library.interfaces.service.bot.IPaymentTypeService;
 import tgb.btc.library.util.BigDecimalUtil;
 import tgb.btc.library.util.FiatCurrencyUtil;
 import tgb.btc.library.util.properties.VariablePropertiesUtil;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.BotInlineButton;
-import tgb.btc.rce.enums.CalculatorType;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.InlineType;
 import tgb.btc.rce.service.processors.InlineCalculator;
@@ -38,14 +37,11 @@ import static tgb.btc.rce.enums.InlineCalculatorButton.*;
 @Service
 public class KeyboardService {
 
-    private static final CalculatorType CALCULATOR_TYPE =
-            CalculatorType.valueOf(PropertiesPath.MODULES_PROPERTIES.getString("calculator.type"));
-
-    private PaymentTypeRepository paymentTypeRepository;
+    private IPaymentTypeService paymentTypeService;
 
     @Autowired
-    public void setPaymentTypeRepository(PaymentTypeRepository paymentTypeRepository) {
-        this.paymentTypeRepository = paymentTypeRepository;
+    public void setPaymentTypeService(IPaymentTypeService paymentTypeService) {
+        this.paymentTypeService = paymentTypeService;
     }
 
     public ReplyKeyboard getCurrencies(DealType dealType) {
@@ -69,7 +65,7 @@ public class KeyboardService {
 
     public ReplyKeyboard getPaymentTypes(DealType dealType, FiatCurrency fiatCurrency) {
         List<InlineButton> buttons =
-                paymentTypeRepository.getByDealTypeAndIsOnAndFiatCurrency(dealType, true, fiatCurrency).stream()
+                paymentTypeService.getByDealTypeAndIsOnAndFiatCurrency(dealType, true, fiatCurrency).stream()
                         .map(paymentType -> InlineButton.builder()
                                 .text(paymentType.getName())
                                 .data(paymentType.getPid().toString())
