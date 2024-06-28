@@ -5,9 +5,9 @@ import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.constants.enums.bot.DealType;
-import tgb.btc.library.repository.bot.DealRepository;
-import tgb.btc.library.repository.bot.UserRepository;
-import tgb.btc.library.service.bean.bot.UserService;
+import tgb.btc.library.interfaces.service.bot.deal.read.IDealPropertyService;
+import tgb.btc.library.interfaces.service.bot.user.IModifyUserService;
+import tgb.btc.library.interfaces.service.bot.user.IReadUserService;
 import tgb.btc.rce.conditional.calculator.InlineCalculatorCondition;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.ICalculatorTypeService;
@@ -21,19 +21,30 @@ import tgb.btc.rce.vo.InlineCalculatorVO;
 public class InlineCalculatorService implements ICalculatorTypeService {
 
     private IResponseSender responseSender;
-    private UserService userService;
-    private DealRepository dealRepository;
+
+    private IReadUserService readUserService;
+
+    private IModifyUserService modifyUserService;
+
+    private IDealPropertyService dealPropertyService;
+
     private KeyboardService keyboardService;
-    private UserRepository userRepository;
+
     private MessageService messageService;
+
     @Autowired
-    public void setUserService(UserService userService) {
-        this.userService = userService;
+    public void setModifyUserService(IModifyUserService modifyUserService) {
+        this.modifyUserService = modifyUserService;
     }
 
     @Autowired
-    public void setDealRepository(DealRepository dealRepository) {
-        this.dealRepository = dealRepository;
+    public void setReadUserService(IReadUserService readUserService) {
+        this.readUserService = readUserService;
+    }
+
+    @Autowired
+    public void setDealPropertyService(IDealPropertyService dealPropertyService) {
+        this.dealPropertyService = dealPropertyService;
     }
 
     @Autowired
@@ -47,11 +58,6 @@ public class InlineCalculatorService implements ICalculatorTypeService {
     }
 
     @Autowired
-    public void setUserRepository(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
-
-    @Autowired
     public void setMessageService(MessageService messageService) {
         this.messageService = messageService;
     }
@@ -59,17 +65,17 @@ public class InlineCalculatorService implements ICalculatorTypeService {
     @Override
     public void run(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
-        Long currentDealPid = userService.getCurrentDealByChatId(chatId);
-        DealType dealType = dealRepository.getDealTypeByPid(currentDealPid);
+        Long currentDealPid = readUserService.getCurrentDealByChatId(chatId);
+        DealType dealType = dealPropertyService.getDealTypeByPid(currentDealPid);
         InlineCalculatorVO inlineCalculatorVO = new InlineCalculatorVO();
-        inlineCalculatorVO.setCryptoCurrency(dealRepository.getCryptoCurrencyByPid(currentDealPid));
-        inlineCalculatorVO.setFiatCurrency(dealRepository.getFiatCurrencyByPid(currentDealPid));
+        inlineCalculatorVO.setCryptoCurrency(dealPropertyService.getCryptoCurrencyByPid(currentDealPid));
+        inlineCalculatorVO.setFiatCurrency(dealPropertyService.getFiatCurrencyByPid(currentDealPid));
         inlineCalculatorVO.setSwitched(false);
         inlineCalculatorVO.setOn(true);
         InlineCalculator.cache.put(chatId, inlineCalculatorVO);
         responseSender.sendMessage(chatId, messageService.getInlineCalculatorMessage(dealType, inlineCalculatorVO),
                 keyboardService.getInlineCalculator(chatId));
-        userRepository.updateStepAndCommandByChatId(chatId, Command.INLINE_CALCULATOR.name(), 1);
+        modifyUserService.updateStepAndCommandByChatId(chatId, Command.INLINE_CALCULATOR.name(), 1);
     }
 
 }
