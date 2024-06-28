@@ -14,6 +14,6 @@ public class ReferralPercent extends Processor {
     public void run(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
         responseSender.sendMessage(chatId, MessageTemplate.ASK_CHAT_ID);
-        userRepository.nextStep(chatId, Command.REFERRAL_PERCENT.name());
+        modifyUserService.nextStep(chatId, Command.REFERRAL_PERCENT.name());
     }
 }

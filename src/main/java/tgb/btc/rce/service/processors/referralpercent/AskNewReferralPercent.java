@@ -16,11 +16,11 @@ public class AskNewReferralPercent extends Processor {
     public void run(Update update) {
         Long userChatId = UpdateUtil.getLongFromText(update);
         Long chatId = UpdateUtil.getChatId(update);
-        if (!userRepository.existsByChatId(userChatId)) {
+        if (!readUserService.existsByChatId(userChatId)) {
             responseSender.sendMessage(chatId, "Пользователь не найден.");
             return;
         }
-        userRepository.updateBufferVariable(chatId, userChatId.toString());
+        modifyUserService.updateBufferVariable(chatId, userChatId.toString());
         BigDecimal referralPercent = userRepository.getReferralPercentByChatId(userChatId);
         if (Objects.isNull(referralPercent)) referralPercent = BigDecimal.ZERO;
 

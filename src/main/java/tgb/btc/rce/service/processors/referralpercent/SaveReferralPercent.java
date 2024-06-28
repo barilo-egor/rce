@@ -19,8 +19,8 @@ public class SaveReferralPercent extends Processor {
         Long chatId = UpdateUtil.getChatId(update);
         String enteredValue = UpdateUtil.getMessageText(update).replaceAll(",", ".");
         BigDecimal newReferralPercent = BigDecimal.valueOf(Double.parseDouble(enteredValue));
-        Long userChatId = Long.parseLong(userRepository.getBufferVariable(chatId));
-        userRepository.updateReferralPercent(newReferralPercent, userChatId);
+        Long userChatId = Long.parseLong(readUserService.getBufferVariable(chatId));
+        modifyUserService.updateReferralPercent(newReferralPercent, userChatId);
         responseSender.sendMessage(chatId, "Процент по реферальным отчислениям обновлен.");
         log.debug("Админ chatId={} обновил процент по реферальным отчислениям={} .", chatId, BigDecimalUtil.roundToPlainString(newReferralPercent, 2));
         processToAdminMainPanel(chatId);
