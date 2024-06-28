@@ -5,8 +5,8 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.bean.bot.PaymentType;
 import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
-import tgb.btc.library.repository.bot.PaymentTypeRepository;
-import tgb.btc.library.repository.bot.UserDataRepository;
+import tgb.btc.library.interfaces.service.bean.bot.IPaymentTypeService;
+import tgb.btc.library.interfaces.service.bean.bot.IUserDataService;
 import tgb.btc.library.util.FiatCurrencyUtil;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.constants.BotStringConstants;
@@ -19,18 +19,18 @@ import java.math.BigDecimal;
 @CommandProcessor(command = Command.NEW_PAYMENT_TYPE, step = 3)
 public class CreateNewPaymentType extends Processor {
 
-    private PaymentTypeRepository paymentTypeRepository;
+    private IPaymentTypeService paymentTypeService;
 
-    private UserDataRepository userDataRepository;
+    private IUserDataService userDataService;
 
     @Autowired
-    public void setUserDataRepository(UserDataRepository userDataRepository) {
-        this.userDataRepository = userDataRepository;
+    public void setPaymentTypeService(IPaymentTypeService paymentTypeService) {
+        this.paymentTypeService = paymentTypeService;
     }
 
     @Autowired
-    public void setPaymentTypeRepository(PaymentTypeRepository paymentTypeRepository) {
-        this.paymentTypeRepository = paymentTypeRepository;
+    public void setUserDataService(IUserDataService userDataService) {
+        this.userDataService = userDataService;
     }
 
     @Override
@@ -46,16 +46,16 @@ public class CreateNewPaymentType extends Processor {
             return;
         }
         if (FiatCurrencyUtil.isFew()) {
-            fiatCurrency = userDataRepository.getFiatCurrencyByChatId(chatId);
+            fiatCurrency = userDataService.getFiatCurrencyByChatId(chatId);
         } else {
             fiatCurrency = FiatCurrencyUtil.getFirst();
         }
         PaymentType paymentType = new PaymentType();
-        paymentType.setName(userDataRepository.getStringByUserChatId(chatId));
+        paymentType.setName(userDataService.getStringByUserChatId(chatId));
         paymentType.setDealType(dealType);
         paymentType.setMinSum(BigDecimal.ZERO);
         paymentType.setFiatCurrency(fiatCurrency);
-        paymentTypeRepository.save(paymentType);
+        paymentTypeService.save(paymentType);
         responseSender.sendMessage(chatId, "Новый тип оплаты сохранен. " +
                 "Не забудьте установить минимальную сумму, добавить реквизиты и включить по необходимости.");
         userService.setDefaultValues(chatId);
