@@ -3,7 +3,7 @@ package tgb.btc.rce.service.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
-import tgb.btc.library.interfaces.service.bot.user.IReadUserService;
+import tgb.btc.library.interfaces.service.botbot.user.IReadUserService;
 import tgb.btc.rce.enums.BotInlineButton;
 import tgb.btc.rce.service.sender.ResponseSender;
 import tgb.btc.rce.vo.InlineButton;
