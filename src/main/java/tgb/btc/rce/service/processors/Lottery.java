@@ -8,8 +8,8 @@ import tgb.btc.library.bean.bot.LotteryWin;
 import tgb.btc.library.bean.bot.User;
 import tgb.btc.library.constants.enums.bot.BotMessageType;
 import tgb.btc.library.constants.enums.properties.VariableType;
-import tgb.btc.library.repository.bot.LotteryWinRepository;
-import tgb.btc.library.service.bean.bot.BotMessageService;
+import tgb.btc.library.interfaces.service.bean.bot.IBotMessageService;
+import tgb.btc.library.interfaces.service.bean.bot.ILotteryWinService;
 import tgb.btc.library.util.properties.VariablePropertiesUtil;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
@@ -27,23 +27,23 @@ import java.util.Random;
 @Slf4j
 public class Lottery extends Processor {
 
-    private BotMessageService botMessageService;
+    private IBotMessageService botMessageService;
 
-    private LotteryWinRepository lotteryWinRepository;
+    private ILotteryWinService lotteryWinService;
 
     @Autowired
-    public void setLotteryWinRepository(LotteryWinRepository lotteryWinRepository) {
-        this.lotteryWinRepository = lotteryWinRepository;
+    public void setLotteryWinService(ILotteryWinService lotteryWinService) {
+        this.lotteryWinService = lotteryWinService;
     }
 
     @Autowired
-    public void setBotMessageService(BotMessageService botMessageService) {
+    public void setBotMessageService(IBotMessageService botMessageService) {
         this.botMessageService = botMessageService;
     }
 
     @Override
     public void run(Update update) {
-        User user = userRepository.findByChatId(UpdateUtil.getChatId(update));
+        User user = readUserService.findByChatId(UpdateUtil.getChatId(update));
         if(Objects.isNull(user.getLotteryCount()) || user.getLotteryCount() == 0) {
             responseSender.sendMessage(user.getChatId(),
                     MessagePropertiesUtil.getMessage(PropertiesMessage.NO_LOTTERY_ATTEMPTS));
@@ -58,21 +58,20 @@ public class Lottery extends Processor {
             responseSender.sendBotMessage(botMessageService.findByTypeNullSafe(BotMessageType.WON_LOTTERY), user.getChatId(),
                     MenuFactory.getLink("Написать оператору",
                             VariablePropertiesUtil.getVariable(VariableType.OPERATOR_LINK)));
-            Long chatId = UpdateUtil.getChatId(update);
-            String username = userRepository.getUsernameByChatId(chatId);
-            userRepository.getAdminsChatIds()
+            String username = user.getUsername();
+            readUserService.getAdminsChatIds()
                     .forEach(adminChatId -> responseSender.sendMessage(
                             adminChatId, "Пользователь id=" + UpdateUtil.getChatId(update)
                                                  + ", username=" + (StringUtils.isNotEmpty(username) ? username : "скрыт")
                                     + " выиграл лотерею.")
                     );
             log.debug("Пользователь " + UpdateUtil.getChatId(update) + " выиграл лотерею. Probability=" + probability);
-            lotteryWinRepository.save(new LotteryWin(user, LocalDateTime.now()));
+            lotteryWinService.save(new LotteryWin(user, LocalDateTime.now()));
         } else {
             responseSender.sendBotMessage(botMessageService.findByTypeNullSafe(BotMessageType.LOSE_LOTTERY), user.getChatId());
             log.trace("Пользователь " + UpdateUtil.getChatId(update) + " проиграл лотерею.");
         }
         user.setLotteryCount(user.getLotteryCount() - 1);
-        userService.save(user);
+        modifyUserService.save(user);
     }
 }

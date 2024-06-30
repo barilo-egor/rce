@@ -39,28 +39,28 @@ public class RPSProcessor extends Processor {
     public void run(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
         CallbackQuery query;
-        Integer userStep = userRepository.getStepByChatId(chatId);
+        Integer userStep = readUserService.getStepByChatId(chatId);
         boolean isBack = CallbackQueryUtil.isBack(update);
         if (isBack) {
             userStep--;
-            userRepository.previousStep(chatId);
+            modifyUserService.previousStep(chatId);
             if (userStep == 0) {
                 responseSender.deleteCallbackMessageButtonsIfExists(update);
-                userRepository.updateCommandByChatId(Command.DRAWS.name(), chatId);
+                modifyUserService.updateCommandByChatId(Command.DRAWS.name(), chatId);
                 return;
             } else {
                 responseSender.deleteCallbackMessageIfExists(update);
             }
-            userRepository.previousStep(chatId);
+            modifyUserService.previousStep(chatId);
         }
-        switch (userRepository.getStepByChatId(chatId)) {
+        switch (readUserService.getStepByChatId(chatId)) {
             case 0:
                 if (!isBack) {
                     sendStartMessage(chatId);
                 }
                 sendRatesMessage(chatId);
-                userRepository.updateCommandByChatId(Command.RPS.name(), chatId);
-                userRepository.updateStepByChatId(chatId, 1);
+                modifyUserService.updateCommandByChatId(Command.RPS.name(), chatId);
+                modifyUserService.updateStepByChatId(chatId, 1);
                 break;
             case 1:
                  query = update.getCallbackQuery();
@@ -70,7 +70,7 @@ public class RPSProcessor extends Processor {
                         responseSender.deleteCallbackMessageIfExists(update);
                     }
                     sendAskMessage(chatId);
-                    userRepository.updateStepByChatId(chatId, 2);
+                    modifyUserService.updateStepByChatId(chatId, 2);
                 }
                 break;
             case 2:
@@ -79,7 +79,7 @@ public class RPSProcessor extends Processor {
                     sendResultMessage(chatId, query.getData());
                     sendStartMessage(chatId);
                     sendRatesMessage(chatId);
-                    userRepository.updateStepByChatId(chatId, 1);
+                    modifyUserService.updateStepByChatId(chatId, 1);
                 } else {
                     sendAskMessage(chatId);
                 }
@@ -93,7 +93,7 @@ public class RPSProcessor extends Processor {
     private void sendStartMessage(Long chatId) {
         String sb = RPS_MESSAGE.getString("start") + System.lineSeparator() +
                 RPS_MESSAGE.getString("referral.balance") + " " +
-                userService.getReferralBalanceByChatId(chatId) + "₽";
+                readUserService.getReferralBalanceByChatId(chatId) + "₽";
         responseSender.sendMessage(chatId, sb);
     }
 

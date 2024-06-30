@@ -10,7 +10,6 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMa
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import tgb.btc.library.constants.enums.DiceType;
 import tgb.btc.library.constants.enums.properties.PropertiesPath;
-import tgb.btc.library.service.bean.bot.UserService;
 import tgb.btc.library.service.process.DiceService;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
@@ -31,8 +30,6 @@ public class Dice extends Processor {
 
     private IResponseSender responseSender;
 
-    private UserService userService;
-
     private DiceService diceService;
 
     private IUpdateDispatcher updateDispatcher;
@@ -40,11 +37,6 @@ public class Dice extends Processor {
     @Autowired
     public void setDiceService(DiceService diceService) {
         this.diceService = diceService;
-    }
-
-    @Autowired
-    public void setUserService(UserService userService) {
-        this.userService = userService;
     }
 
     @Autowired
@@ -60,14 +52,14 @@ public class Dice extends Processor {
     @Override
     public void run(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
-        boolean isAdmin = userService.isAdminByChatId(chatId);
+        boolean isAdmin = readUserService.isAdminByChatId(chatId);
         if (DiceType.NONE.isCurrent() || (DiceType.STANDARD_ADMIN.isCurrent() && !isAdmin)) {
             processToStart(chatId, update);
             return;
         }
 
         if (!update.hasCallbackQuery()) {
-            Integer referralBalance = userService.getReferralBalanceByChatId(chatId);
+            Integer referralBalance = readUserService.getReferralBalanceByChatId(chatId);
             drawDiceBetButtons(chatId, String.format(diceService.selectBetMessage(), referralBalance));
             return;
         }
@@ -86,7 +78,7 @@ public class Dice extends Processor {
         Long chatId = UpdateUtil.getChatId(update);
         if (PropertiesPath.DICE_PROPERTIES.getString("button.back.text").equals(CallbackQueryUtil.getSplitData(update.getCallbackQuery(), 2))) {
             responseSender.deleteCallbackMessageIfExists(update);
-            Integer referralBalance = userService.getReferralBalanceByChatId(chatId);
+            Integer referralBalance = readUserService.getReferralBalanceByChatId(chatId);
             drawDiceBetButtons(chatId, String.format(diceService.selectBetMessage(), referralBalance));
         } else {
             Integer selectedNumber = Integer.parseInt(CallbackQueryUtil.getSplitData(update.getCallbackQuery(), 2));
@@ -103,13 +95,13 @@ public class Dice extends Processor {
         } else {
             Long chatId = UpdateUtil.getChatId(update);
             Integer bet = Integer.parseInt(CallbackQueryUtil.getSplitData(update.getCallbackQuery(), 2));
-            if (userService.getReferralBalanceByChatId(chatId) < bet) {
+            if (readUserService.getReferralBalanceByChatId(chatId) < bet) {
                 responseSender.sendMessage(chatId, PropertiesPath.DICE_MESSAGE.getString("balance.empty"));
                 return;
             }
             responseSender.deleteCallbackMessageIfExists(update);
 
-            Integer referralBalance = userService.getReferralBalanceByChatId(chatId);
+            Integer referralBalance = readUserService.getReferralBalanceByChatId(chatId);
             String text = PropertiesPath.DICE_MESSAGE.getString("selected.bet") + " " + bet + "₽" +
                     System.lineSeparator() + System.lineSeparator() +
                     "Выберите число:";
@@ -119,7 +111,7 @@ public class Dice extends Processor {
 
 
     private void rollDice(Long chatId, Integer selectedNumber, Integer bet) {
-        if (userService.getReferralBalanceByChatId(chatId) < bet) {
+        if (readUserService.getReferralBalanceByChatId(chatId) < bet) {
             responseSender.sendMessage(chatId, PropertiesPath.DICE_MESSAGE.getString("balance.empty"));
             return;
         }
@@ -131,7 +123,7 @@ public class Dice extends Processor {
         if (message == null) {
             return;
         }
-        Integer referralBalance = userService.getReferralBalanceByChatId(chatId);
+        Integer referralBalance = readUserService.getReferralBalanceByChatId(chatId);
         log.trace("Исходный баланс пользователя " + chatId + " :" + referralBalance);
         referralBalance -= bet;
         int diceValue = message.getDice().getValue();
@@ -145,10 +137,10 @@ public class Dice extends Processor {
             resultText = String.format(diceService.loseMessage(),diceValue, selectedNumber, referralBalance);
         }
         log.trace("Сохранение баланса пользователя " + chatId + " :" + referralBalance);
-        userService.updateReferralBalanceByChatId(referralBalance, chatId);
+        modifyUserService.updateReferralBalanceByChatId(referralBalance, chatId);
 
         responseSender.sendMessage(chatId,resultText,"Markdown");
-        referralBalance = userService.getReferralBalanceByChatId(chatId);
+        referralBalance = readUserService.getReferralBalanceByChatId(chatId);
         drawDiceBetButtons(chatId, String.format(diceService.selectBetMessage(), referralBalance));
     }
 

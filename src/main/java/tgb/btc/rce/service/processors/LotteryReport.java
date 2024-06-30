@@ -10,10 +10,10 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.bean.bot.LotteryWin;
+import tgb.btc.library.exception.BaseException;
+import tgb.btc.library.interfaces.service.bean.bot.ILotteryWinService;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
-import tgb.btc.library.exception.BaseException;
-import tgb.btc.library.repository.bot.LotteryWinRepository;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.util.UpdateUtil;
 
@@ -26,17 +26,17 @@ import java.util.List;
 @Slf4j
 public class LotteryReport extends Processor {
 
-    private LotteryWinRepository lotteryWinRepository;
+    private ILotteryWinService lotteryWinService;
 
     @Autowired
-    public void setLotteryWinRepository(LotteryWinRepository lotteryWinRepository) {
-        this.lotteryWinRepository = lotteryWinRepository;
+    public void setLotteryWinService(ILotteryWinService lotteryWinService) {
+        this.lotteryWinService = lotteryWinService;
     }
 
     @Override
     public void run(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
-        List<LotteryWin> lotteryWins = lotteryWinRepository.findAll();
+        List<LotteryWin> lotteryWins = lotteryWinService.findAll();
         if (CollectionUtils.isEmpty(lotteryWins)) {
             responseSender.sendMessage(chatId, "Список выигрышей пуст.");
             return;

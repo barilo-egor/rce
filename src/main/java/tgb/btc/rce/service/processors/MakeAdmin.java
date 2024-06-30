@@ -16,15 +16,15 @@ public class MakeAdmin extends Processor {
     public void run(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
         Long userChatId = Long.parseLong(UpdateUtil.getMessageText(update).split(" ")[1]);
-        if (!userService.existByChatId(userChatId)) {
+        if (!readUserService.existsByChatId(userChatId)) {
             responseSender.sendMessage(chatId, "Пользователь с таким ID не найден.");
             return;
         }
-        if (BooleanUtils.isTrue(userRepository.isAdminByChatId(userChatId))) {
+        if (BooleanUtils.isTrue(readUserService.isAdminByChatId(userChatId))) {
             responseSender.sendMessage(chatId, "Пользователь " + userChatId + " уже является админом.");
             return;
         }
-        userRepository.updateIsAdminByChatId(userChatId, true);
+        modifyUserService.updateIsAdminByChatId(userChatId, true);
         responseSender.sendMessage(chatId, "Пользователь " + userChatId + " стал админом.");
         log.debug("Админ {} сделал пользователя {} админом.", chatId, userChatId);
     }

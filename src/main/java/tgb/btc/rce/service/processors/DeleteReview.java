@@ -2,7 +2,7 @@ package tgb.btc.rce.service.processors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import tgb.btc.library.service.bean.bot.ReviewService;
+import tgb.btc.library.interfaces.service.bean.bot.IReviewService;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
@@ -12,10 +12,10 @@ import tgb.btc.rce.util.UpdateUtil;
 @CommandProcessor(command = Command.DELETE_REVIEW)
 public class DeleteReview extends Processor {
 
-    private ReviewService reviewService;
+    private IReviewService reviewService;
 
     @Autowired
-    public void setReviewService(ReviewService reviewService) {
+    public void setReviewService(IReviewService reviewService) {
         this.reviewService = reviewService;
     }
 

@@ -24,7 +24,7 @@ public class DealsCount extends Processor {
     public void run(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
         if (checkForCancel(update)) return;
-        switch (userService.getStepByChatId(chatId)) {
+        switch (readUserService.getStepByChatId(chatId)) {
             case 0:
                 messagesService.askForDealsCount(update, Command.DEALS_COUNT);
                 break;

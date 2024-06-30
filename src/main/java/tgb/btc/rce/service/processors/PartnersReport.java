@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.bean.bot.User;
 import tgb.btc.library.exception.BaseException;
-import tgb.btc.library.repository.bot.DealRepository;
+import tgb.btc.library.interfaces.service.bean.bot.deal.read.IDealCountService;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.Processor;
@@ -27,17 +27,17 @@ import java.util.stream.Collectors;
 @Slf4j
 public class PartnersReport extends Processor {
 
-    private DealRepository dealRepository;
+    private IDealCountService dealCountService;
 
     @Autowired
-    public void setDealRepository(DealRepository dealRepository) {
-        this.dealRepository = dealRepository;
+    public void setDealCountService(IDealCountService dealCountService) {
+        this.dealCountService = dealCountService;
     }
 
     @Override
     public void run(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
-        List<User> users = userService.findAll().stream().filter(user -> !user.getReferralUsers().isEmpty()).collect(Collectors.toList());
+        List<User> users = readUserService.findAll().stream().filter(user -> !user.getReferralUsers().isEmpty()).collect(Collectors.toList());
         if (users.isEmpty()) {
             responseSender.sendMessage(chatId, "Нет пользователей с рефералами.");
             return;
@@ -75,7 +75,7 @@ public class PartnersReport extends Processor {
                 cell3.setCellValue(user.getReferralUsers().size());
                 Cell cell4 = row.createCell(3);
                 cell4.setCellValue((int) user.getReferralUsers().stream()
-                        .filter(usr -> dealRepository.getCountPassedByUserChatId(usr.getChatId()) > 0).count());
+                        .filter(usr -> dealCountService.getCountPassedByUserChatId(usr.getChatId()) > 0).count());
                 Cell cell5 = row.createCell(4);
                 cell5.setCellValue(user.getCharges());
                 Cell cell6 = row.createCell(5);

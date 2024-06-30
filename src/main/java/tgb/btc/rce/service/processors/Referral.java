@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.bean.bot.ReferralUser;
 import tgb.btc.library.constants.enums.properties.PropertiesPath;
-import tgb.btc.library.repository.bot.DealRepository;
+import tgb.btc.library.interfaces.service.bean.bot.deal.read.IDealCountService;
 import tgb.btc.library.util.BigDecimalUtil;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
@@ -24,11 +24,11 @@ import java.util.Objects;
 @CommandProcessor(command = Command.REFERRAL)
 public class Referral extends Processor {
 
-    private DealRepository dealRepository;
+    private IDealCountService dealCountService;
 
     @Autowired
-    public void setDealRepository(DealRepository dealRepository) {
-        this.dealRepository = dealRepository;
+    public void setDealCountService(IDealCountService dealCountService) {
+        this.dealCountService = dealCountService;
     }
 
     @Override
@@ -41,9 +41,9 @@ public class Referral extends Processor {
         List<ReferralUser> referralUsers = userService.getUserReferralsByChatId(chatId);
         String numberOfReferrals = String.valueOf(referralUsers.size());
         int numberOfActiveReferrals = (int) referralUsers.stream()
-                .filter(usr -> dealRepository.getCountPassedByUserChatId(usr.getChatId()) > 0).count();
+                .filter(usr -> dealCountService.getCountPassedByUserChatId(usr.getChatId()) > 0).count();
 
-        Long dealsCount = dealRepository.getCountPassedByUserChatId(chatId);
+        Long dealsCount = dealCountService.getCountPassedByUserChatId(chatId);
         Rank rank = Rank.getByDealsNumber(dealsCount.intValue());
         String resultMessage;
         String referralMessageFewFiat = MessagePropertiesUtil.getMessage("referral.main.few.fiat");

@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.constants.enums.bot.DealType;
-import tgb.btc.library.repository.bot.DealRepository;
+import tgb.btc.library.interfaces.service.bean.bot.deal.read.IDealPropertyService;
 import tgb.btc.library.service.process.CalculateService;
 import tgb.btc.library.vo.calculate.DealAmount;
 import tgb.btc.rce.annotation.CommandProcessor;
@@ -33,7 +33,7 @@ import static tgb.btc.rce.enums.InlineCalculatorButton.*;
 @CommandProcessor(command = Command.INLINE_CALCULATOR, step = 1)
 public class InlineCalculator extends Processor {
 
-    private DealRepository dealRepository;
+    private IDealPropertyService dealPropertyService;
 
     private ExchangeService exchangeService;
 
@@ -50,6 +50,11 @@ public class InlineCalculator extends Processor {
     public static ConcurrentHashMap<Long, InlineCalculatorVO> cache = new ConcurrentHashMap<>();
 
     @Autowired
+    public void setDealPropertyService(IDealPropertyService dealPropertyService) {
+        this.dealPropertyService = dealPropertyService;
+    }
+
+    @Autowired
     public void setDealProcessor(DealProcessor dealProcessor) {
         this.dealProcessor = dealProcessor;
     }
@@ -62,11 +67,6 @@ public class InlineCalculator extends Processor {
     @Autowired
     public void setExchangeService(ExchangeService exchangeService) {
         this.exchangeService = exchangeService;
-    }
-
-    @Autowired
-    public void setDealRepository(DealRepository dealRepository) {
-        this.dealRepository = dealRepository;
     }
 
     @Autowired
@@ -88,14 +88,14 @@ public class InlineCalculator extends Processor {
     public void run(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
         if (CallbackQueryUtil.isBack(update)) {
-            userRepository.updateStepAndCommandByChatId(chatId, Command.DEAL.name(), DealProcessor.AFTER_CALCULATOR_STEP);
+            modifyUserService.updateStepAndCommandByChatId(chatId, Command.DEAL.name(), DealProcessor.AFTER_CALCULATOR_STEP);
             dealProcessor.run(update);
             return;
         }
         InlineCalculatorVO calculator = cache.get(chatId);
         if (update.hasMessage() && !calculator.getOn()) {
             if (!exchangeService.calculateDealAmount(chatId, UpdateUtil.getBigDecimalFromText(update))) return;
-            userRepository.updateStepAndCommandByChatId(chatId, Command.DEAL.name(), DealProcessor.AFTER_CALCULATOR_STEP);
+            modifyUserService.updateStepAndCommandByChatId(chatId, Command.DEAL.name(), DealProcessor.AFTER_CALCULATOR_STEP);
             updateDispatcher.runProcessor(Command.DEAL, chatId, update);
             return;
         } else if (update.hasMessage()) {
@@ -147,12 +147,12 @@ public class InlineCalculator extends Processor {
                 break;
             case READY:
                 if (!exchangeService.calculateDealAmount(chatId, new BigDecimal(sum), !isSwitched)) return;
-                userRepository.updateStepAndCommandByChatId(chatId, Command.DEAL.name(), DealProcessor.AFTER_CALCULATOR_STEP);
+                modifyUserService.updateStepAndCommandByChatId(chatId, Command.DEAL.name(), DealProcessor.AFTER_CALCULATOR_STEP);
                 updateDispatcher.runProcessor(Command.DEAL, chatId, update);
                 return;
         }
         Long currentDealPid = userService.getCurrentDealByChatId(chatId);
-        DealType dealType = dealRepository.getDealTypeByPid(currentDealPid);
+        DealType dealType = dealPropertyService.getDealTypeByPid(currentDealPid);
         DealAmount dealAmount;
         if (COMMA.equals(button) || (NUMBER.equals(button) && (sum.contains(COMMA.getData()) && sum.endsWith("0")))) {
             dealAmount = calculator.getDealAmount();

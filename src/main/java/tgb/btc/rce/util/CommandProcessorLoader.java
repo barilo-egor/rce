@@ -95,7 +95,6 @@ public final class CommandProcessorLoader {
         commandProcessors.add(CurrentData.class);
         commandProcessors.add(DealReports.class);
         commandProcessors.add(DeleteContact.class);
-        commandProcessors.add(DeleteDeal.class);
         commandProcessors.add(DeleteReview.class);
         commandProcessors.add(DeleteUserDeal.class);
         commandProcessors.add(DeleteWithdrawalRequest.class);
