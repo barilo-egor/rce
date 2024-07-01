@@ -671,7 +671,7 @@ public class ExchangeService {
         }
         Long dealPid = readUserService.getCurrentDealByChatId(chatId);
         DealDeleteScheduler.deleteCryptoDeal(dealPid);
-        if (readDealService.existsById(dealPid)) {
+        if (!readDealService.existsById(dealPid)) {
             Integer dealActiveTime = VariablePropertiesUtil.getInt(VariableType.DEAL_ACTIVE_TIME);
             responseSender.sendMessage(chatId, String.format(MessagePropertiesUtil.getMessage("deal.deleted.auto"), dealActiveTime));
             return false;
