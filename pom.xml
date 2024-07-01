@@ -24,6 +24,9 @@
                     <plugin>
                         <groupId>org.springframework.boot</groupId>
                         <artifactId>spring-boot-maven-plugin</artifactId>
+                        <configuration>
+                            <mainClass>tgb.btc.rce.RceApplication</mainClass>
+                        </configuration>
                     </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
@@ -70,6 +73,13 @@
             <build>
                 <plugins>
                     <plugin>
+                        <groupId>org.springframework.boot</groupId>
+                        <artifactId>spring-boot-maven-plugin</artifactId>
+                        <configuration>
+                            <mainClass>tgb.btc.rce.RceApplication</mainClass>
+                        </configuration>
+                    </plugin>
+                    <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-antrun-plugin</artifactId>
                         <version>1.8</version>
@@ -113,14 +123,10 @@
             <build>
                 <plugins>
                     <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-compiler-plugin</artifactId>
-                        <version>3.8.0</version>
+                        <groupId>org.springframework.boot</groupId>
+                        <artifactId>spring-boot-maven-plugin</artifactId>
                         <configuration>
-                            <source>11</source>
-                            <target>11</target>
-                            <fork>true</fork>
-                            <executable>/usr/lib/jvm/java-1.11.0-openjdk-amd64/bin/javac</executable> <!--PATH TO JAVAC -->
+                            <mainClass>tgb.btc.rce.RceApplication</mainClass>
                         </configuration>
                     </plugin>
                     <plugin>
@@ -155,6 +161,7 @@
                         </dependencies>
                     </plugin>
                 </plugins>
+                <finalName>rce</finalName>
             </build>
         </profile>
     </profiles>
