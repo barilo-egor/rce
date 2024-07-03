@@ -16,6 +16,19 @@
     <description>rce</description>
     <packaging>jar</packaging>
 
+    <build>
+        <finalName>rce</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <mainClass>tgb.btc.rce.RceApplication</mainClass>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
     <profiles>
         <profile>
             <id>rub</id>
@@ -106,7 +119,6 @@
 
                     </plugin>
                 </plugins>
-                <finalName>rce</finalName>
             </build>
         </profile>
         <profile>
