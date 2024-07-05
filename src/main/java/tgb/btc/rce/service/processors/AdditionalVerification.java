@@ -4,8 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.api.bot.AdditionalVerificationProcessor;
 import tgb.btc.library.constants.enums.bot.DealStatus;
+import tgb.btc.library.interfaces.service.bean.bot.deal.IModifyDealService;
 import tgb.btc.library.interfaces.service.bean.bot.deal.read.IDealUserService;
-import tgb.btc.library.repository.bot.DealRepository;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
@@ -21,11 +21,11 @@ public class AdditionalVerification extends Processor implements AdditionalVerif
 
     private IDealUserService dealUserService;
 
-    private DealRepository dealRepository;
+    private IModifyDealService modifyDealService;
 
     @Autowired
-    public void setDealRepository(DealRepository dealRepository) {
-        this.dealRepository = dealRepository;
+    public void setModifyDealService(IModifyDealService modifyDealService) {
+        this.modifyDealService = modifyDealService;
     }
 
     @Autowired
@@ -42,9 +42,9 @@ public class AdditionalVerification extends Processor implements AdditionalVerif
 
     public void ask(Long dealPid) {
         Long userChatId = dealUserService.getUserChatIdByDealPid(dealPid);
-        dealRepository.updateDealStatusByPid(DealStatus.AWAITING_VERIFICATION, dealPid);
-        userRepository.nextStep(userChatId, Command.USER_ADDITIONAL_VERIFICATION.name());
-        userService.updateBufferVariable(userChatId, dealPid.toString());
+        modifyDealService.updateDealStatusByPid(DealStatus.AWAITING_VERIFICATION, dealPid);
+        modifyUserService.nextStep(userChatId, Command.USER_ADDITIONAL_VERIFICATION.name());
+        modifyUserService.updateBufferVariable(userChatId, dealPid.toString());
         responseSender.sendMessage(userChatId,
                 "⚠️Уважаемый клиент, необходимо пройти дополнительную верификацию. Предоставьте фото карты " +
                         "с которой была оплата на фоне переписки с ботом, либо бумажного чека на фоне переписки с " +

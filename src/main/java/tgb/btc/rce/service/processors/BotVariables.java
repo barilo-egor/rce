@@ -22,12 +22,12 @@ public class BotVariables extends Processor {
     public void run(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
         if (checkForCancel(update)) return;
-        switch (userService.getStepByChatId(chatId)) {
+        switch (readUserService.getStepByChatId(chatId)) {
             case 0:
                 responseSender.sendMessage(chatId, "Измените нужные значения и отправьте исправленный файл. " +
                         "Обязательно закройте файл, перед тем как отправлять.", BotKeyboard.REPLY_CANCEL);
                 responseSender.sendFile(chatId, new File(PropertiesPath.VARIABLE_PROPERTIES.getFileName()));
-                userRepository.nextStep(chatId, Command.BOT_VARIABLES.name());
+                modifyUserService.nextStep(chatId, Command.BOT_VARIABLES.name());
                 break;
             case 1:
                 if (!update.hasMessage() || !update.getMessage().hasDocument()) {

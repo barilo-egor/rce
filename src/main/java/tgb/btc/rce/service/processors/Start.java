@@ -46,15 +46,15 @@ public class Start extends Processor {
     }
 
     public void run(Long chatId) {
-        userService.updateIsActiveByChatId(true, chatId);
+        modifyUserService.updateIsActiveByChatId(true, chatId);
         responseSender.sendBotMessage(botMessageService.findByTypeNullSafe(BotMessageType.START), chatId);
-        Long currentDealPid = userRepository.getCurrentDealByChatId(chatId);
+        Long currentDealPid = readUserService.getCurrentDealByChatId(chatId);
         if (Objects.nonNull(currentDealPid)) {
             if (readDealService.existsById(currentDealPid)) {
                 log.info("Сделка " + currentDealPid + " удалена по команде /start");
                 modifyDealService.deleteById(currentDealPid);
             }
-            userRepository.updateCurrentDealByChatId(null, chatId);
+            modifyUserService.updateCurrentDealByChatId(null, chatId);
         }
         processToMainMenu(chatId);
     }

@@ -36,8 +36,8 @@ public class SavePersonalBuyDiscountProcessor extends Processor {
         Long chatId = UpdateUtil.getChatId(update);
         String enteredValue = UpdateUtil.getMessageText(update).replaceAll(",", ".");
         BigDecimal newPersonalBuy = BigDecimal.valueOf(Double.parseDouble(enteredValue));
-        Long userChatId = Long.parseLong(userRepository.getBufferVariable(chatId));
-        Long userPid = userRepository.getPidByChatId(userChatId);
+        Long userChatId = Long.parseLong(readUserService.getBufferVariable(chatId));
+        Long userPid = readUserService.getPidByChatId(userChatId);
         if (!userDiscountService.isExistByUserPid(userPid)) {
             UserDiscount userDiscount = new UserDiscount();
             userDiscount.setUser(new User(userPid));

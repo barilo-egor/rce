@@ -3,7 +3,6 @@ package tgb.btc.rce.service.processors.spamban;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.interfaces.service.bean.bot.ISpamBanService;
-import tgb.btc.library.service.bean.bot.UserService;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.Processor;
@@ -26,11 +25,6 @@ public class ShowSpamBannedUser extends Processor {
     @Autowired
     public void setUserInfoService(UserInfoService userInfoService) {
         this.userInfoService = userInfoService;
-    }
-
-    @Autowired
-    public void setUserService(UserService userService) {
-        this.userService = userService;
     }
 
     @Override

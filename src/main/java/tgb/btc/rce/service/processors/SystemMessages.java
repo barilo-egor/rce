@@ -26,7 +26,7 @@ public class SystemMessages extends Processor {
                 responseSender.sendMessage(chatId, "Измените нужные сообщения и отправьте исправленный файл. " +
                         "Обязательно закройте файл, перед тем как отправлять.");
                 responseSender.sendFile(chatId, new File(PropertiesPath.MESSAGE_PROPERTIES.getFileName()));
-                userRepository.nextStep(chatId, Command.SYSTEM_MESSAGES.name());
+                modifyUserService.nextStep(chatId, Command.SYSTEM_MESSAGES.name());
                 break;
             case 1:
                 if (!update.hasMessage() || !update.getMessage().hasDocument()) {

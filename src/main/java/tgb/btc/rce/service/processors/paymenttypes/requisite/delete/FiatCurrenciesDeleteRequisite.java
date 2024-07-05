@@ -52,8 +52,8 @@ public class FiatCurrenciesDeleteRequisite extends Processor {
             responseSender.sendMessage(chatId, "Выберите тип оплаты для удаления реквизита.",
                     KeyboardUtil.buildInline(buttons));
             responseSender.sendMessage(chatId, "Для возвращения в меню нажмите \"Отмена\".", BotKeyboard.REPLY_CANCEL);
-            userRepository.nextStep(chatId, Command.DELETE_PAYMENT_TYPE_REQUISITE.name());
+            modifyUserService.nextStep(chatId, Command.DELETE_PAYMENT_TYPE_REQUISITE.name());
         }
-        userRepository.nextStep(chatId, Command.DELETE_PAYMENT_TYPE_REQUISITE.name());
+        modifyUserService.nextStep(chatId, Command.DELETE_PAYMENT_TYPE_REQUISITE.name());
     }
 }

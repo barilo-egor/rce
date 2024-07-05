@@ -40,16 +40,16 @@ public class ShareReview extends Processor {
         if (checkForCancel(update)) {
             return;
         }
-        switch (userService.getStepByChatId(chatId)) {
+        switch (readUserService.getStepByChatId(chatId)) {
             case 0:
                 responseSender.deleteMessage(chatId, update.getCallbackQuery().getMessage().getMessageId());
                 responseSender.sendMessage(chatId, "Напишите ваш отзыв.");
-                userRepository.nextStep(chatId, Command.SHARE_REVIEW.name());
+                modifyUserService.nextStep(chatId, Command.SHARE_REVIEW.name());
                 if (DYNAMIC.isCurrent()) reviewPrisesMap.put(chatId, new ReviewPrise(update.getCallbackQuery().getData()));
                 return;
             case 1:
                 if (update.hasMessage() && StringUtils.isNotEmpty(update.getMessage().getFrom().getUserName())) {
-                    userService.updateBufferVariable(chatId, UpdateUtil.getMessageText(update));
+                    modifyUserService.updateBufferVariable(chatId, UpdateUtil.getMessageText(update));
                     responseSender.sendMessage(chatId, "Оставить отзыв публично или анонимно?",
                             KeyboardUtil.buildInline(List.of(InlineButton.builder()
                                             .inlineType(InlineType.CALLBACK_DATA)
@@ -80,7 +80,7 @@ public class ShareReview extends Processor {
                     if (update.getCallbackQuery().getData().equals("public"))
                         author = "Отзыв от " + update.getCallbackQuery().getFrom().getFirstName() + "\n\n";
                     reviewService.save(Review.builder()
-                            .text(author + userService.getBufferVariable(chatId))
+                            .text(author + readUserService.getBufferVariable(chatId))
                             .username(update.getCallbackQuery().getFrom().getFirstName())
                             .isPublished(false)
                             .chatId(chatId)
@@ -88,7 +88,7 @@ public class ShareReview extends Processor {
                             .build());
                 }
                 responseSender.sendMessage(chatId, "Спасибо, ваш отзыв сохранен.");
-                userService.getAdminsChatIds().forEach(adminChatId ->
+                readUserService.getAdminsChatIds().forEach(adminChatId ->
                         responseSender.sendMessage(adminChatId, "Поступил новый отзыв."));
                 processToMainMenu(chatId);
                 break;

@@ -36,9 +36,9 @@ public class Referral extends Processor {
         Long chatId = UpdateUtil.getChatId(update);
         String startParameter = "?start=" + chatId;
         String refLink = PropertiesPath.BOT_PROPERTIES.getString("bot.link").concat(startParameter);
-        BigDecimal referralBalance = BigDecimal.valueOf(userService.getReferralBalanceByChatId(chatId));
+        BigDecimal referralBalance = BigDecimal.valueOf(readUserService.getReferralBalanceByChatId(chatId));
         String currentBalance = BigDecimalUtil.roundToPlainString(referralBalance);
-        List<ReferralUser> referralUsers = userService.getUserReferralsByChatId(chatId);
+        List<ReferralUser> referralUsers = readUserService.getUserReferralsByChatId(chatId);
         String numberOfReferrals = String.valueOf(referralUsers.size());
         int numberOfActiveReferrals = (int) referralUsers.stream()
                 .filter(usr -> dealCountService.getCountPassedByUserChatId(usr.getChatId()) > 0).count();
@@ -54,11 +54,11 @@ public class Referral extends Processor {
             resultMessage = String.format(referralMessageFewFiat,
                     refLink, currentBalance, refBalanceString,
                     numberOfReferrals, numberOfActiveReferrals,
-                    userService.getChargesByChatId(chatId), dealsCount, rank.getSmile(), rank.getPercent()).concat("%");
+                    readUserService.getChargesByChatId(chatId), dealsCount, rank.getSmile(), rank.getPercent()).concat("%");
         } else {
             resultMessage = String.format(MessagePropertiesUtil.getMessage(PropertiesMessage.REFERRAL_MAIN),
                     refLink, currentBalance, numberOfReferrals, numberOfActiveReferrals,
-                    userService.getChargesByChatId(chatId), dealsCount, rank.getSmile(), rank.getPercent()).concat("%");
+                    readUserService.getChargesByChatId(chatId), dealsCount, rank.getSmile(), rank.getPercent()).concat("%");
         }
 
         responseSender.sendMessage(chatId, resultMessage, KeyboardUtil.buildInline(getButtons(refLink)));

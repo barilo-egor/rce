@@ -45,22 +45,22 @@ public class UserAdditionalVerification extends Processor {
     @Override
     public void run(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
-        Long dealPid = Long.parseLong(userService.getBufferVariable(chatId));
+        Long dealPid = Long.parseLong(readUserService.getBufferVariable(chatId));
         if (!readDealService.existsById(dealPid)) {
             responseSender.sendMessage(chatId, "Заявки не существует.");
-            userService.setDefaultValues(chatId);
+            modifyUserService.setDefaultValues(chatId);
             processToMainMenu(chatId);
             return;
         }
         if (update.getMessage().hasPhoto()) {
             String imageId = BotImageUtil.getImageId(update.getMessage().getPhoto());
             modifyDealService.updateAdditionalVerificationImageIdByPid(dealPid, imageId);
-            userService.setDefaultValues(chatId);
+            modifyUserService.setDefaultValues(chatId);
             modifyDealService.updateDealStatusByPid(DealStatus.VERIFICATION_RECEIVED, dealPid);
             notificationsAPI.additionalVerificationReceived(dealPid);
             responseSender.sendMessage(UpdateUtil.getChatId(update),
                     "Спасибо, твоя верификация отправлена администратору.");
-            userService.getAdminsChatIds().forEach(adminChatId -> responseSender.sendPhoto(adminChatId,
+            readUserService.getAdminsChatIds().forEach(adminChatId -> responseSender.sendPhoto(adminChatId,
                     "Верификация по заявке №" + dealPid, imageId));
             processToMainMenu(chatId);
             return;
@@ -72,9 +72,9 @@ public class UserAdditionalVerification extends Processor {
                             .text("Написать оператору")
                             .build()
             )));
-            userService.getAdminsChatIds().forEach(adminChatId ->
+            readUserService.getAdminsChatIds().forEach(adminChatId ->
                     responseSender.sendMessage(adminChatId, "Отказ от верификации по заявке №" + dealPid));
-            userService.setDefaultValues(chatId);
+            modifyUserService.setDefaultValues(chatId);
             modifyDealService.updateDealStatusByPid(DealStatus.VERIFICATION_REJECTED, dealPid);
             notificationsAPI.declinedVerificationReceived(dealPid);
             processToMainMenu(chatId);

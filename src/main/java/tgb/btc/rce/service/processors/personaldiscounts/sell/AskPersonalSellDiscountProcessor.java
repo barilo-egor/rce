@@ -25,18 +25,18 @@ public class AskPersonalSellDiscountProcessor extends Processor {
     public void run(Update update) {
         Long userChatId = UpdateUtil.getLongFromText(update);
         Long chatId = UpdateUtil.getChatId(update);
-        if (!userRepository.existsByChatId(userChatId)) {
+        if (!readUserService.existsByChatId(userChatId)) {
             responseSender.sendMessage(chatId, "Пользователь не найден.");
             return;
         }
         BigDecimal personalSell = userDiscountService.getPersonalSellByChatId(userChatId);
-        userRepository.updateBufferVariable(chatId, userChatId.toString());
+        modifyUserService.updateBufferVariable(chatId, userChatId.toString());
         if (Objects.isNull(personalSell)) personalSell = BigDecimal.ZERO;
 
         responseSender.sendMessage(chatId, "У пользователя " + userChatId + " текущее значение скидки на продажу = "
                 + personalSell.stripTrailingZeros().toPlainString());
         responseSender.sendMessage(chatId, "Введите положительное значение для скидки, либо отрицательное для надбавки.");
-        userRepository.nextStep(chatId);
+        modifyUserService.nextStep(chatId);
     }
 
 }

@@ -44,7 +44,7 @@ public class AskForNewRequisite extends Processor {
         paymentRequisite.setOn(true);
         paymentRequisite.setRequisite(requisite);
         PaymentType paymentType = paymentTypeService.getByPid(
-                userDataService.getLongByUserPid(userRepository.getPidByChatId(chatId)));
+                userDataService.getLongByUserPid(readUserService.getPidByChatId(chatId)));
         paymentRequisite.setPaymentType(paymentType);
         paymentRequisiteService.save(paymentRequisite);
         responseSender.sendMessage(chatId, "Реквизит сохранен.");

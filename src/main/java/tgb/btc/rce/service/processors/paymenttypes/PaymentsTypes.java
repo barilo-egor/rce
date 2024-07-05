@@ -16,7 +16,7 @@ public class PaymentsTypes extends Processor {
         Long chatId = UpdateUtil.getChatId(update);
         responseSender.sendMessage(chatId,
                                    "Меню управления типами оплаты.",
-                                   MenuFactory.build(Menu.PAYMENT_TYPES, userService.isAdminByChatId(chatId)));
+                                   MenuFactory.build(Menu.PAYMENT_TYPES, readUserService.isAdminByChatId(chatId)));
     }
 
 }

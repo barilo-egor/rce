@@ -26,7 +26,7 @@ public class TurningRankDiscount extends Processor {
         } catch (ConfigurationException e) {
             responseSender.sendMessage(chatId, "Ошибки при открытии " + PropertiesPath.VARIABLE_PROPERTIES.getFileName()
                     + ": " + e.getMessage() + "\n" + ExceptionUtils.getFullStackTrace(e));
-            userService.setDefaultValues(chatId);
+            modifyUserService.setDefaultValues(chatId);
             return;
         }
         conf.setProperty(VariableType.DEAL_RANK_DISCOUNT_ENABLE.getKey(), newValue);
@@ -39,7 +39,7 @@ public class TurningRankDiscount extends Processor {
         } catch (ConfigurationException e) {
             responseSender.sendMessage(chatId, "Ошибки при включении/выключении ранговой скидки: " + e.getMessage() + "\n"
                     + ExceptionUtils.getFullStackTrace(e));
-            userService.setDefaultValues(chatId);
+            modifyUserService.setDefaultValues(chatId);
             processToAdminMainPanel(chatId);
         }
     }

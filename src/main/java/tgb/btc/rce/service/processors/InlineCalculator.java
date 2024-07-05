@@ -151,7 +151,7 @@ public class InlineCalculator extends Processor {
                 updateDispatcher.runProcessor(Command.DEAL, chatId, update);
                 return;
         }
-        Long currentDealPid = userService.getCurrentDealByChatId(chatId);
+        Long currentDealPid = readUserService.getCurrentDealByChatId(chatId);
         DealType dealType = dealPropertyService.getDealTypeByPid(currentDealPid);
         DealAmount dealAmount;
         if (COMMA.equals(button) || (NUMBER.equals(button) && (sum.contains(COMMA.getData()) && sum.endsWith("0")))) {

@@ -36,7 +36,7 @@ public class ChangeReferralBalance extends Processor {
                                         .build())));
                 modifyUserService.updateBufferVariable(chatId,
                         update.getCallbackQuery().getData().split(BotStringConstants.CALLBACK_DATA_SPLITTER)[1]);
-                userRepository.nextStep(chatId, Command.CHANGE_REFERRAL_BALANCE.name());
+                modifyUserService.nextStep(chatId, Command.CHANGE_REFERRAL_BALANCE.name());
                 break;
             case 1:
                 if (!update.hasMessage() || !update.getMessage().hasText()) throw new BaseException("Не найден текст.");

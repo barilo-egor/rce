@@ -29,9 +29,9 @@ public class ShowPaymentTypesForCreateRequisite extends Processor {
             return;
         }
         String[] values = update.getCallbackQuery().getData().split(BotStringConstants.CALLBACK_DATA_SPLITTER);
-        userDataService.updateLongByUserPid(userRepository.getPidByChatId(chatId), Long.parseLong(values[1]));
+        userDataService.updateLongByUserPid(readUserService.getPidByChatId(chatId), Long.parseLong(values[1]));
         responseSender.deleteMessage(chatId, update.getCallbackQuery().getMessage().getMessageId());
-        userService.nextStep(chatId);
+        modifyUserService.nextStep(chatId);
         responseSender.sendMessage(chatId, "Введите реквизит.");
     }
 

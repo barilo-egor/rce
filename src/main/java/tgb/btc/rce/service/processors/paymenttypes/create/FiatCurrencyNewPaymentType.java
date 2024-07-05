@@ -29,6 +29,6 @@ public class FiatCurrencyNewPaymentType extends Processor {
         FiatCurrency fiatCurrency = FiatCurrency.getByCode(message);
         userDataService.updateFiatCurrencyByUserChatId(chatId, fiatCurrency);
         responseSender.sendMessage(chatId, BotStringConstants.BUY_OR_SELL, BotKeyboard.BUY_OR_SELL);
-        userService.nextStep(chatId);
+        modifyUserService.nextStep(chatId);
     }
 }

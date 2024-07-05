@@ -8,8 +8,7 @@ import tgb.btc.library.bean.bot.User;
 import tgb.btc.library.exception.BaseException;
 import tgb.btc.library.interfaces.service.bean.bot.user.IModifyUserService;
 import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
-import tgb.btc.library.repository.bot.UserRepository;
-import tgb.btc.library.service.bean.bot.UserService;
+import tgb.btc.library.interfaces.service.bean.common.bot.IUserCommonService;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.Menu;
@@ -23,18 +22,23 @@ import tgb.btc.rce.util.UpdateUtil;
 @Slf4j
 public abstract class Processor {
 
-    @Autowired
     protected IResponseSender responseSender;
-
-    @Autowired
-    protected UserService userService;
-
-    @Autowired
-    protected UserRepository userRepository;
 
     protected IReadUserService readUserService;
 
     protected IModifyUserService modifyUserService;
+
+    protected IUserCommonService userCommonService;
+
+    @Autowired
+    public void setResponseSender(IResponseSender responseSender) {
+        this.responseSender = responseSender;
+    }
+
+    @Autowired
+    public void setUserCommonService(IUserCommonService userCommonService) {
+        this.userCommonService = userCommonService;
+    }
 
     @Autowired
     public void setReadUserService(IReadUserService readUserService) {
@@ -60,14 +64,14 @@ public abstract class Processor {
     }
 
     public void beforeCancel(Update update) {
-        userService.setDefaultValues(UpdateUtil.getChatId(update));
+        modifyUserService.setDefaultValues(UpdateUtil.getChatId(update));
     }
 
     public abstract void run(Update update);
 
     public boolean checkForCancel(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
-        if (User.DEFAULT_STEP == userService.getStepByChatId(chatId)) return false;
+        if (User.DEFAULT_STEP == readUserService.getStepByChatId(chatId)) return false;
         if (this.getClass().getAnnotation(CommandProcessor.class).command().isAdmin() &&
                 (isCommand(update, Command.ADMIN_BACK) || isCommand(update, Command.CANCEL))) {
             processToAdminMainPanel(chatId);
@@ -91,25 +95,25 @@ public abstract class Processor {
     }
 
     public void processToMainMenu(Long chatId) {
-        userService.setDefaultValues(chatId);
+        modifyUserService.setDefaultValues(chatId);
         responseSender.sendMessage(chatId,
                 MessagePropertiesUtil.getMessage(PropertiesMessage.MENU_MAIN),
                 getMainMenuKeyboard(chatId), "HTML");
     }
 
     public void processToAdminMainPanel(Long chatId) {
-        userService.setDefaultValues(chatId);
+        modifyUserService.setDefaultValues(chatId);
         responseSender.sendMessage(chatId,
                 MessagePropertiesUtil.getMessage(PropertiesMessage.MENU_MAIN_ADMIN),
                 getAdminMainPanel(chatId));
     }
 
     protected ReplyKeyboard getAdminMainPanel(Long chatId) {
-        return MenuFactory.build(Menu.ADMIN_PANEL, userService.isAdminByChatId(chatId));
+        return MenuFactory.build(Menu.ADMIN_PANEL, readUserService.isAdminByChatId(chatId));
     }
 
     protected ReplyKeyboard getMainMenuKeyboard(Long chatId) {
-        return MenuFactory.build(Menu.MAIN, userService.isAdminByChatId(chatId));
+        return MenuFactory.build(Menu.MAIN, readUserService.isAdminByChatId(chatId));
     }
 
     protected boolean hasMessageText(Update update, String message) {

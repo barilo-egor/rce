@@ -44,7 +44,7 @@ public class BanUnban extends Processor {
     public void run(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
         if (checkForCancel(update)) return;
-        switch (userService.getStepByChatId(chatId)) {
+        switch (readUserService.getStepByChatId(chatId)) {
             case 0:
                 messagesService.askForChatId(update, Command.BAN_UNBAN);
                 break;
@@ -58,9 +58,9 @@ public class BanUnban extends Processor {
     private void banUser(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
         Long inputChatId = NumberUtil.getInputLong(UpdateUtil.getMessageText(update));
-        if (!userService.existByChatId(inputChatId)) {
+        if (!readUserService.existsByChatId(inputChatId)) {
             responseSender.sendMessage(chatId, "Пользователь с таким ID не найден.",
-                    MenuFactory.build(Menu.ADMIN_BACK, userService.isAdminByChatId(chatId)));
+                    MenuFactory.build(Menu.ADMIN_BACK, readUserService.isAdminByChatId(chatId)));
             return;
         }
         if (BooleanUtils.isNotTrue(bannedUserCache.get(inputChatId))) {

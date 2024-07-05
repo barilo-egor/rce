@@ -28,7 +28,7 @@ public class RankDiscountProcessor extends Processor {
     @Override
     public void run(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
-        switch (userService.getStepByChatId(chatId)) {
+        switch (readUserService.getStepByChatId(chatId)) {
             case 0:
                 responseSender.sendMessage(chatId, "Введите chat id пользователя для включения/выключения реферальной скидки",
                         KeyboardUtil.buildReply(List.of(

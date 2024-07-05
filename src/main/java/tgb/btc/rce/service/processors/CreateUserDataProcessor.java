@@ -28,7 +28,7 @@ public class CreateUserDataProcessor extends Processor {
     public void run(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
         responseSender.sendMessage(chatId, "Начало создания UserData.");
-        List<Long> userPids = userRepository.getPids();
+        List<Long> userPids = readUserService.getPids();
         for (Long userPid : userPids) {
             if (userDataService.countByUserPid(userPid) < 1) {
                 UserData userData = new UserData();

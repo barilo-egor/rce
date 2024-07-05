@@ -29,8 +29,8 @@ public class AskForMinSum extends Processor {
         String[] values = update.getCallbackQuery().getData().split(BotStringConstants.CALLBACK_DATA_SPLITTER);
         Long paymentTypePid = Long.parseLong(values[1]);
         responseSender.deleteMessage(chatId, update.getCallbackQuery().getMessage().getMessageId());
-        userDataService.updateLongByUserPid(userRepository.getPidByChatId(chatId), paymentTypePid);
+        userDataService.updateLongByUserPid(readUserService.getPidByChatId(chatId), paymentTypePid);
         responseSender.sendMessage(chatId, "Введите минимальную сумму в рублях.");
-        userService.nextStep(chatId);
+        modifyUserService.nextStep(chatId);
     }
 }

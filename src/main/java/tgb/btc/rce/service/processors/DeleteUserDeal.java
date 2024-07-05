@@ -40,7 +40,7 @@ public class DeleteUserDeal extends Processor {
         Long userChatId = dealUserService.getUserChatIdByDealPid(dealPid);
         modifyDealService.deleteById(dealPid);
         log.info("Админ " + chatId + " удалил сделку " + dealPid + " пользователя " + userChatId);
-        userService.updateCurrentDealByChatId(null, userChatId);
+        modifyUserService.updateCurrentDealByChatId(null, userChatId);
         DealDeleteScheduler.deleteCryptoDeal(dealPid);
         responseSender.sendMessage(chatId, "Заявка №" + dealPid + " удалена.");
         responseSender.deleteMessage(chatId, update.getCallbackQuery().getMessage().getMessageId());

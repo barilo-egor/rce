@@ -58,7 +58,7 @@ public class CreateNewPaymentType extends Processor {
         paymentTypeService.save(paymentType);
         responseSender.sendMessage(chatId, "Новый тип оплаты сохранен. " +
                 "Не забудьте установить минимальную сумму, добавить реквизиты и включить по необходимости.");
-        userService.setDefaultValues(chatId);
+        modifyUserService.setDefaultValues(chatId);
         processToAdminMainPanel(chatId);
     }
 

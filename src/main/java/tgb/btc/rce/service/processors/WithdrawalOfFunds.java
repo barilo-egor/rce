@@ -37,7 +37,7 @@ public class WithdrawalOfFunds extends Processor {
     public void run(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
         if (checkForCancel(update)) return;
-        switch (userService.getStepByChatId(chatId)) {
+        switch (readUserService.getStepByChatId(chatId)) {
             case 0:
                 if (withdrawalRequestService.getActiveByUserChatId(chatId) > 0) {
                     responseSender.sendMessage(chatId, "У вас уже есть активная заявка.",
@@ -52,7 +52,7 @@ public class WithdrawalOfFunds extends Processor {
                     return;
                 }
                 int minSum = VariablePropertiesUtil.getInt(VariableType.REFERRAL_MIN_SUM);
-                if (userService.getReferralBalanceByChatId(chatId) < minSum) {
+                if (readUserService.getReferralBalanceByChatId(chatId) < minSum) {
                     responseSender.sendMessage(chatId, "Минимальная сумма для вывода средств равна " + minSum + "₽");
                     return;
                 }

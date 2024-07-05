@@ -74,6 +74,6 @@ public class ShowTypesForMinSum extends Processor {
         responseSender.sendMessage(chatId, "Выберите тип оплаты для изменения минимальной суммы.",
                 KeyboardUtil.buildInline(buttons));
         responseSender.sendMessage(chatId, "Для возвращения в меню нажмите \"Отмена\".", BotKeyboard.REPLY_CANCEL);
-        userService.nextStep(chatId);
+        modifyUserService.nextStep(chatId);
     }
 }

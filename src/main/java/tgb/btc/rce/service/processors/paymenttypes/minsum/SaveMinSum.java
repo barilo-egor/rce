@@ -39,7 +39,7 @@ public class SaveMinSum extends Processor {
             return;
         }
         paymentTypeService.updateMinSumByPid(BigDecimal.valueOf(minSum),
-                userDataService.getLongByUserPid(userRepository.getPidByChatId(chatId)));
+                userDataService.getLongByUserPid(readUserService.getPidByChatId(chatId)));
         responseSender.sendMessage(chatId, "Минимальная сумма обновлена.");
         processToAdminMainPanel(chatId);
     }

@@ -44,11 +44,11 @@ public class PublishReview extends Processor {
         Integer reviewPrise = DYNAMIC.isCurrent()
                 ? review.getAmount()
                 : VariablePropertiesUtil.getInt(VariableType.REVIEW_PRISE);
-        Integer referralBalance = userService.getReferralBalanceByChatId(review.getChatId());
+        Integer referralBalance = readUserService.getReferralBalanceByChatId(review.getChatId());
         int total = referralBalance + reviewPrise;
         log.info("Обновление реф баланса за отзыв : chatId = " + review.getChatId() + "; reviewPrise = "
                 + reviewPrise + "; referralBalance = " + referralBalance + "; total = " + total);
-        userService.updateReferralBalanceByChatId(total, review.getChatId());
+        modifyUserService.updateReferralBalanceByChatId(total, review.getChatId());
         responseSender.sendMessage(review.getChatId(), "Ваш отзыв опубликован.\n\nНа ваш реферальный баланс зачислено "
                 + reviewPrise + "₽.");
     }

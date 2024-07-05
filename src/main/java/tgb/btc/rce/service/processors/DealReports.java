@@ -16,10 +16,7 @@ import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
 import tgb.btc.library.exception.BaseException;
 import tgb.btc.library.interfaces.service.bean.bot.deal.read.IDateDealService;
-import tgb.btc.library.interfaces.service.bean.bot.deal.read.IReportDealService;
 import tgb.btc.library.interfaces.service.bean.web.IApiDealService;
-import tgb.btc.library.service.bean.bot.DealService;
-import tgb.btc.library.service.bean.web.ApiDealService;
 import tgb.btc.library.util.BigDecimalUtil;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
@@ -67,7 +64,7 @@ public class DealReports extends Processor {
     public void run(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
         if (checkForCancel(update)) return;
-        switch (userService.getStepByChatId(chatId)) {
+        switch (readUserService.getStepByChatId(chatId)) {
             case 0:
                 responseSender.sendMessage(chatId, "Выберите период.",
                         KeyboardUtil.buildReply(2,
@@ -88,7 +85,7 @@ public class DealReports extends Processor {
                                                 .text(Command.ADMIN_BACK.getText())
                                                 .build()
                                 )));
-                userRepository.nextStep(chatId, Command.DEAL_REPORTS.name());
+                modifyUserService.nextStep(chatId, Command.DEAL_REPORTS.name());
                 break;
             case 1:
                 String period = UpdateUtil.getMessageText(update);
@@ -118,7 +115,7 @@ public class DealReports extends Processor {
                         break;
                     case DATE:
                         responseSender.sendMessage(chatId, "Введите дату в формате дд.мм.гггг");
-                        userService.nextStep(chatId);
+                        modifyUserService.nextStep(chatId);
                         return;
                     case "Назад":
                         processToAdminMainPanel(chatId);
