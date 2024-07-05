@@ -33,8 +33,6 @@ public class SlotReel extends Processor {
 
     private IResponseSender responseSender;
 
-    private UserService userService;
-
     private SlotReelService slotReelService;
 
     private IUpdateDispatcher updateDispatcher;
@@ -99,7 +97,7 @@ public class SlotReel extends Processor {
 
     private void scroll(Long chatId) {
         log.trace("Пользователь " + chatId + " крутит барабан");
-        if (userService.getReferralBalanceByChatId(chatId) < PropertiesPath.SLOT_REEL_PROPERTIES.getInteger("try", 10)) {
+        if (readUserService.getReferralBalanceByChatId(chatId) < PropertiesPath.SLOT_REEL_PROPERTIES.getInteger("try", 10)) {
             responseSender.sendMessage(chatId, PropertiesPath.SLOT_REEL_MESSAGE.getString("balance.empty"));
             return;
         }
@@ -111,7 +109,7 @@ public class SlotReel extends Processor {
         if (message == null) {
             return;
         }
-        Integer referralBalance = userService.getReferralBalanceByChatId(chatId);
+        Integer referralBalance = readUserService.getReferralBalanceByChatId(chatId);
         log.trace("Исходный баланс пользователя " + chatId + " :" + referralBalance);
         referralBalance -= PropertiesPath.SLOT_REEL_PROPERTIES.getInteger("try", 10);
         int diceValue = message.getDice().getValue();
@@ -128,7 +126,7 @@ public class SlotReel extends Processor {
             sb.append(PropertiesPath.SLOT_REEL_MESSAGE.getString("lose")).append(System.lineSeparator()).append(System.lineSeparator());
         }
         log.trace("Сохранение баланса пользователя " + chatId + " :" + referralBalance);
-        userService.updateReferralBalanceByChatId(referralBalance, chatId);
+        modifyUserService.updateReferralBalanceByChatId(referralBalance, chatId);
         sb.append("\uD83D\uDCB8 *Ваш текущий баланс:* ").append(referralBalance).append("₽");
         drawSlotButtons(chatId, sb.toString());
 

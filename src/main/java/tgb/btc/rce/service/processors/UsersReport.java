@@ -13,8 +13,7 @@ import tgb.btc.library.constants.enums.bot.CryptoCurrency;
 import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
 import tgb.btc.library.exception.BaseException;
-import tgb.btc.library.repository.bot.DealRepository;
-import tgb.btc.library.service.bean.bot.DealService;
+import tgb.btc.library.interfaces.service.bean.bot.deal.read.IReportDealService;
 import tgb.btc.library.util.BigDecimalUtil;
 import tgb.btc.library.util.FiatCurrencyUtil;
 import tgb.btc.rce.annotation.CommandProcessor;
@@ -35,18 +34,11 @@ import java.util.stream.Collectors;
 @Slf4j
 public class UsersReport extends Processor {
 
-    private DealRepository dealRepository;
-
-    private DealService dealService;
+    private IReportDealService reportDealService;
 
     @Autowired
-    public void setDealService(DealService dealService) {
-        this.dealService = dealService;
-    }
-
-    @Autowired
-    public void setDealRepository(DealRepository dealRepository) {
-        this.dealRepository = dealRepository;
+    public void setReportDealService(IReportDealService reportDealService) {
+        this.reportDealService = reportDealService;
     }
 
     @Override
@@ -75,7 +67,7 @@ public class UsersReport extends Processor {
             }
 
             int i = 2;
-            List<Object[]> rawsUsers = userRepository.findAllForUsersReport();
+            List<Object[]> rawsUsers = readUserService.findAllForUsersReport();
             List<ReportUserVO> users = new ArrayList<>();
             for (Object[] raw : rawsUsers) {
                 users.add(ReportUserVO.builder()
@@ -84,7 +76,7 @@ public class UsersReport extends Processor {
                         .username((String) raw[2])
                         .build());
             }
-            List<Object[]> raws = dealRepository.findAllForUsersReport();
+            List<Object[]> raws = reportDealService.findAllForUsersReport();
             List<ReportDealVO> deals = new ArrayList<>();
             for (Object[] raw : raws) {
                 deals.add(ReportDealVO.builder()

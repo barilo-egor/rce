@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.bean.bot.Review;
 import tgb.btc.library.constants.enums.properties.VariableType;
-import tgb.btc.library.service.bean.bot.ReviewService;
+import tgb.btc.library.interfaces.service.bean.bot.IReviewService;
 import tgb.btc.library.util.properties.VariablePropertiesUtil;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
@@ -25,12 +25,12 @@ import static tgb.btc.rce.enums.ReviewPriseType.DYNAMIC;
 @CommandProcessor(command = Command.SHARE_REVIEW)
 public class ShareReview extends Processor {
 
-    private ReviewService reviewService;
+    private IReviewService reviewService;
 
     public static Map<Long, ReviewPrise> reviewPrisesMap = new ConcurrentHashMap<>();
 
     @Autowired
-    public void setReviewService(ReviewService reviewService) {
+    public void setReviewService(IReviewService reviewService) {
         this.reviewService = reviewService;
     }
 

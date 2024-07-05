@@ -11,7 +11,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.bean.bot.User;
 import tgb.btc.library.exception.BaseException;
-import tgb.btc.library.service.bean.bot.DealService;
+import tgb.btc.library.interfaces.service.bean.bot.deal.read.IDealCountService;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.Processor;
@@ -26,11 +26,11 @@ import java.util.stream.Collectors;
 @CommandProcessor(command = Command.USERS_DEALS_REPORT)
 @Slf4j
 public class UsersDealsReport extends Processor {
-    private DealService dealService;
+    private IDealCountService dealCountService;
 
     @Autowired
-    public void setDealService(DealService dealService) {
-        this.dealService = dealService;
+    public void setDealCountService(IDealCountService dealCountService) {
+        this.dealCountService = dealCountService;
     }
 
     @Async
@@ -54,7 +54,7 @@ public class UsersDealsReport extends Processor {
             List<User> users = userService.findAll();
             Map<Long, Long> map = new HashMap<>();
             users.forEach(user -> {
-                Long count = dealService.getCountPassedByUserChatId(user.getChatId());
+                Long count = dealCountService.getCountPassedByUserChatId(user.getChatId());
                 if (Objects.isNull(count)) map.put(user.getChatId(), 0L);
                 if (count != 0) map.put(user.getChatId(), count);
             });

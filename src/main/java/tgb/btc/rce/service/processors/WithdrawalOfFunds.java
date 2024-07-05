@@ -3,7 +3,7 @@ package tgb.btc.rce.service.processors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.constants.enums.properties.VariableType;
-import tgb.btc.library.service.bean.bot.WithdrawalRequestService;
+import tgb.btc.library.interfaces.service.bean.bot.IWithdrawalRequestService;
 import tgb.btc.library.util.properties.VariablePropertiesUtil;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.constants.BotStringConstants;
@@ -18,12 +18,18 @@ import java.util.List;
 
 @CommandProcessor(command = Command.WITHDRAWAL_OF_FUNDS)
 public class WithdrawalOfFunds extends Processor {
-    private final WithdrawalOfFundsService withdrawalOfFundsService;
-    private final WithdrawalRequestService withdrawalRequestService;
+
+    private WithdrawalOfFundsService withdrawalOfFundsService;
+
+    private IWithdrawalRequestService withdrawalRequestService;
 
     @Autowired
-    public WithdrawalOfFunds(WithdrawalOfFundsService withdrawalOfFundsService, WithdrawalRequestService withdrawalRequestService) {
+    public void setWithdrawalOfFundsService(WithdrawalOfFundsService withdrawalOfFundsService) {
         this.withdrawalOfFundsService = withdrawalOfFundsService;
+    }
+
+    @Autowired
+    public void setWithdrawalRequestService(IWithdrawalRequestService withdrawalRequestService) {
         this.withdrawalRequestService = withdrawalRequestService;
     }
 
