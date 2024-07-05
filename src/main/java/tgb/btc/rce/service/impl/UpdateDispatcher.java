@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.constants.enums.properties.PropertiesPath;
@@ -13,9 +14,8 @@ import tgb.btc.library.service.process.BannedUserCache;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.SimpleCommand;
 import tgb.btc.rce.service.AntiSpam;
+import tgb.btc.rce.service.ICommandProcessorLoader;
 import tgb.btc.rce.service.IUpdateDispatcher;
-import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.util.CommandProcessorLoader;
 import tgb.btc.rce.util.CommandUtil;
 import tgb.btc.rce.util.UpdateUtil;
 
@@ -27,6 +27,7 @@ import java.util.Objects;
 public class UpdateDispatcher implements IUpdateDispatcher {
 
     public static ApplicationContext applicationContext;
+
     private static boolean IS_ON = true;
 
     private static final boolean IS_LOG_UDPATES = PropertiesPath.FUNCTIONS_PROPERTIES.getBoolean("log.updates", false);
@@ -34,11 +35,19 @@ public class UpdateDispatcher implements IUpdateDispatcher {
     private IReadUserService readUserService;
 
     private UserProcessService userProcessService;
+
     private AntiSpam antiSpam;
 
     private BannedUserCache bannedUserCache;
 
     private IUserCommonService userCommonService;
+
+    private ICommandProcessorLoader commandProcessorLoader;
+
+    @Autowired
+    public void setCommandProcessorLoader(@Lazy ICommandProcessorLoader commandProcessorLoader) {
+        this.commandProcessorLoader = commandProcessorLoader;
+    }
 
     @Autowired
     public void setReadUserService(IReadUserService readUserService) {
@@ -80,9 +89,7 @@ public class UpdateDispatcher implements IUpdateDispatcher {
 
     public void runProcessor(Command command, Long chatId, Update update) {
         if (!command.isSimple())
-            ((Processor) applicationContext
-                    .getBean(CommandProcessorLoader.getByCommand(command, readUserService.getStepByChatId(chatId))))
-                    .process(update);
+            commandProcessorLoader.getByCommand(command, readUserService.getStepByChatId(chatId)).process(update);
         else SimpleCommand.run(command, update);
     }
 

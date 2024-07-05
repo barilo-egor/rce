@@ -87,7 +87,7 @@ public class DealSupportService {
                         .toPlainString(),
                 deal.getAmount().setScale(0, RoundingMode.HALF_UP).stripTrailingZeros().toPlainString(),
                 Objects.nonNull(fiatCurrency) ? fiatCurrency.getGenitive() : "отсутствует",
-                deal.getDeliveryType().getDisplayName()
+                Objects.nonNull(deal.getDeliveryType()) ? deal.getDeliveryType().getDisplayName() : "Отсутствует"
         );
     }
 
