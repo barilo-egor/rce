@@ -96,4 +96,9 @@ public class Notifier implements INotifier {
     public void sendFile(List<Long> list, File file) {
         list.forEach(chatId -> responseSender.sendFile(chatId, file));
     }
+
+    @Override
+    public void notifyAdmins(String s) {
+        adminService.notify(s);
+    }
 }
