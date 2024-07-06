@@ -2,9 +2,9 @@ package tgb.btc.rce.service.processors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import tgb.btc.library.interfaces.service.bean.web.IApiDealService;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
-import tgb.btc.library.repository.web.ApiDealRepository;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.processors.support.DealSupportService;
 import tgb.btc.rce.util.KeyboardUtil;
@@ -18,24 +18,24 @@ import static tgb.btc.rce.constants.BotStringConstants.CALLBACK_DATA_SPLITTER;
 @CommandProcessor(command = Command.NEW_API_DEALS)
 public class NewApiDeals extends Processor {
 
-    private ApiDealRepository apiDealRepository;
+    private IApiDealService apiDealService;
 
     private DealSupportService dealSupportService;
+
+    @Autowired
+    public void setApiDealService(IApiDealService apiDealService) {
+        this.apiDealService = apiDealService;
+    }
 
     @Autowired
     public void setDealSupportService(DealSupportService dealSupportService) {
         this.dealSupportService = dealSupportService;
     }
 
-    @Autowired
-    public void setApiDealRepository(ApiDealRepository apiDealRepository) {
-        this.apiDealRepository = apiDealRepository;
-    }
-
     @Override
     public void run(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
-        List<Long> activeDeals = apiDealRepository.getActiveDealsPids();
+        List<Long> activeDeals = apiDealService.getActiveDealsPids();
 
         if (activeDeals.isEmpty()) {
             responseSender.sendMessage(chatId, "Новых заявок нет.");

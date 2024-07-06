@@ -6,11 +6,12 @@ import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import tgb.btc.library.constants.enums.bot.DealType;
-import tgb.btc.library.service.bean.bot.UserService;
+import tgb.btc.library.interfaces.service.bean.bot.user.IModifyUserService;
 import tgb.btc.library.util.BigDecimalUtil;
 import tgb.btc.library.vo.calculate.DealAmount;
 import tgb.btc.rce.enums.PropertiesMessage;
-import tgb.btc.rce.service.IResponseSender;
+import tgb.btc.rce.service.sender.IResponseSender;
+import tgb.btc.rce.service.sender.ResponseSender;
 import tgb.btc.rce.util.MessagePropertiesUtil;
 import tgb.btc.rce.vo.InlineCalculatorVO;
 
@@ -21,11 +22,11 @@ public class MessageService {
 
     private IResponseSender responseSender;
 
-    private UserService userService;
+    private IModifyUserService modifyUserService;
 
     @Autowired
-    public void setUserService(UserService userService) {
-        this.userService = userService;
+    public void setModifyUserService(IModifyUserService modifyUserService) {
+        this.modifyUserService = modifyUserService;
     }
 
     @Autowired
@@ -35,12 +36,12 @@ public class MessageService {
 
     public void sendMessageAndSaveMessageId(Long chatId, String text, ReplyKeyboard keyboard) {
         responseSender.sendMessage(chatId, text, keyboard)
-                .ifPresent(message -> userService.updateBufferVariable(chatId, message.getMessageId().toString()));
+                .ifPresent(message -> modifyUserService.updateBufferVariable(chatId, message.getMessageId().toString()));
     }
 
     public void sendMessageAndSaveMessageId(SendMessage sendMessage) {
         responseSender.sendMessage(sendMessage)
-                .ifPresent(message -> userService.updateBufferVariable(Long.parseLong(sendMessage.getChatId()), message.getMessageId().toString()));
+                .ifPresent(message -> modifyUserService.updateBufferVariable(Long.parseLong(sendMessage.getChatId()), message.getMessageId().toString()));
     }
 
     public String getInlineCalculatorMessage(DealType dealType, InlineCalculatorVO calculator, DealAmount dealAmount) {

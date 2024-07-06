@@ -9,9 +9,9 @@ import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
 import tgb.btc.library.constants.enums.properties.PropertiesPath;
 import tgb.btc.library.constants.enums.properties.VariableType;
-import tgb.btc.library.repository.bot.DealRepository;
-import tgb.btc.library.repository.bot.UserDiscountRepository;
-import tgb.btc.library.repository.bot.UserRepository;
+import tgb.btc.library.interfaces.service.bean.bot.IUserDiscountService;
+import tgb.btc.library.interfaces.service.bean.bot.deal.read.IDealUserService;
+import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.library.service.process.CalculateService;
 import tgb.btc.library.util.BigDecimalUtil;
 import tgb.btc.library.util.properties.VariablePropertiesUtil;
@@ -21,32 +21,33 @@ import java.math.BigDecimal;
 
 @Service
 public class UserDiscountProcessService {
-    private UserDiscountRepository userDiscountRepository;
+
+    private IUserDiscountService userDiscountService;
 
     private CalculateService calculateService;
 
-    private UserRepository userRepository;
+    private IReadUserService readUserService;
 
-    private DealRepository dealRepository;
+    private IDealUserService dealUserService;
 
     @Autowired
-    public void setDealRepository(DealRepository dealRepository) {
-        this.dealRepository = dealRepository;
+    public void setDealUserService(IDealUserService dealUserService) {
+        this.dealUserService = dealUserService;
     }
 
     @Autowired
-    public void setUserRepository(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public void setReadUserService(IReadUserService readUserService) {
+        this.readUserService = readUserService;
+    }
+
+    @Autowired
+    public void setUserDiscountService(IUserDiscountService userDiscountService) {
+        this.userDiscountService = userDiscountService;
     }
 
     @Autowired
     public void setCalculateService(CalculateService calculateService) {
         this.calculateService = calculateService;
-    }
-
-    @Autowired
-    public void setUserDiscountRepository(UserDiscountRepository userDiscountRepository) {
-        this.userDiscountRepository = userDiscountRepository;
     }
 
     public BigDecimal applyDealDiscounts(Long chatId, BigDecimal dealAmount, Boolean isUsedPromo,
@@ -65,7 +66,7 @@ public class UserDiscountProcessService {
 
     private BigDecimal applyReferralDiscount(Long chatId, BigDecimal dealAmount, Boolean isUsedReferralDiscount, FiatCurrency fiatCurrency) {
         if (BooleanUtils.isTrue(isUsedReferralDiscount)) {
-            Integer referralBalance = userRepository.getReferralBalanceByChatId(chatId);
+            Integer referralBalance = readUserService.getReferralBalanceByChatId(chatId);
             if (ReferralType.CURRENT.isCurrent() && !FiatCurrency.BYN.equals(fiatCurrency)) {
                 if (referralBalance <= dealAmount.intValue())
                     dealAmount = dealAmount.subtract(BigDecimal.valueOf(referralBalance));
@@ -91,8 +92,8 @@ public class UserDiscountProcessService {
         BigDecimal newAmount = deal.getAmount();
         boolean isRankDiscountOn = BooleanUtils.isTrue(
                 VariablePropertiesUtil.getBoolean(VariableType.DEAL_RANK_DISCOUNT_ENABLE))
-                && BooleanUtils.isNotFalse(userDiscountRepository.getRankDiscountByUserChatId(
-                dealRepository.getUserChatIdByDealPid(deal.getPid())));
+                && BooleanUtils.isNotFalse(userDiscountService.getRankDiscountByUserChatId(
+                dealUserService.getUserChatIdByDealPid(deal.getPid())));
         if (!Rank.FIRST.equals(rank) && isRankDiscountOn) {
             BigDecimal commission = deal.getCommission();
             BigDecimal rankDiscount = BigDecimalUtil.multiplyHalfUp(commission, calculateService.getPercentsFactor(

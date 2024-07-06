@@ -3,7 +3,7 @@ package tgb.btc.rce.service.processors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.constants.enums.properties.VariableType;
-import tgb.btc.library.service.bean.bot.WithdrawalRequestService;
+import tgb.btc.library.interfaces.service.bean.bot.IWithdrawalRequestService;
 import tgb.btc.library.util.properties.VariablePropertiesUtil;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.constants.BotStringConstants;
@@ -18,12 +18,18 @@ import java.util.List;
 
 @CommandProcessor(command = Command.WITHDRAWAL_OF_FUNDS)
 public class WithdrawalOfFunds extends Processor {
-    private final WithdrawalOfFundsService withdrawalOfFundsService;
-    private final WithdrawalRequestService withdrawalRequestService;
+
+    private WithdrawalOfFundsService withdrawalOfFundsService;
+
+    private IWithdrawalRequestService withdrawalRequestService;
 
     @Autowired
-    public WithdrawalOfFunds(WithdrawalOfFundsService withdrawalOfFundsService, WithdrawalRequestService withdrawalRequestService) {
+    public void setWithdrawalOfFundsService(WithdrawalOfFundsService withdrawalOfFundsService) {
         this.withdrawalOfFundsService = withdrawalOfFundsService;
+    }
+
+    @Autowired
+    public void setWithdrawalRequestService(IWithdrawalRequestService withdrawalRequestService) {
         this.withdrawalRequestService = withdrawalRequestService;
     }
 
@@ -31,7 +37,7 @@ public class WithdrawalOfFunds extends Processor {
     public void run(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
         if (checkForCancel(update)) return;
-        switch (userService.getStepByChatId(chatId)) {
+        switch (readUserService.getStepByChatId(chatId)) {
             case 0:
                 if (withdrawalRequestService.getActiveByUserChatId(chatId) > 0) {
                     responseSender.sendMessage(chatId, "У вас уже есть активная заявка.",
@@ -46,7 +52,7 @@ public class WithdrawalOfFunds extends Processor {
                     return;
                 }
                 int minSum = VariablePropertiesUtil.getInt(VariableType.REFERRAL_MIN_SUM);
-                if (userService.getReferralBalanceByChatId(chatId) < minSum) {
+                if (readUserService.getReferralBalanceByChatId(chatId) < minSum) {
                     responseSender.sendMessage(chatId, "Минимальная сумма для вывода средств равна " + minSum + "₽");
                     return;
                 }

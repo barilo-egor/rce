@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.bean.bot.Review;
 import tgb.btc.library.constants.enums.properties.VariableType;
-import tgb.btc.library.service.bean.bot.ReviewService;
+import tgb.btc.library.interfaces.service.bean.bot.IReviewService;
 import tgb.btc.library.util.properties.VariablePropertiesUtil;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.constants.BotStringConstants;
@@ -19,10 +19,10 @@ import static tgb.btc.rce.enums.ReviewPriseType.DYNAMIC;
 @Slf4j
 public class PublishReview extends Processor {
 
-    private ReviewService reviewService;
+    private IReviewService reviewService;
 
     @Autowired
-    public void setReviewService(ReviewService reviewService) {
+    public void setReviewService(IReviewService reviewService) {
         this.reviewService = reviewService;
     }
 
@@ -44,11 +44,11 @@ public class PublishReview extends Processor {
         Integer reviewPrise = DYNAMIC.isCurrent()
                 ? review.getAmount()
                 : VariablePropertiesUtil.getInt(VariableType.REVIEW_PRISE);
-        Integer referralBalance = userService.getReferralBalanceByChatId(review.getChatId());
+        Integer referralBalance = readUserService.getReferralBalanceByChatId(review.getChatId());
         int total = referralBalance + reviewPrise;
         log.info("Обновление реф баланса за отзыв : chatId = " + review.getChatId() + "; reviewPrise = "
                 + reviewPrise + "; referralBalance = " + referralBalance + "; total = " + total);
-        userService.updateReferralBalanceByChatId(total, review.getChatId());
+        modifyUserService.updateReferralBalanceByChatId(total, review.getChatId());
         responseSender.sendMessage(review.getChatId(), "Ваш отзыв опубликован.\n\nНа ваш реферальный баланс зачислено "
                 + reviewPrise + "₽.");
     }

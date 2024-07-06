@@ -6,6 +6,7 @@ import tgb.btc.library.constants.enums.properties.PropertiesPath;
 import tgb.btc.library.interfaces.ICommand;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 @Slf4j
 public enum Command implements ICommand {
@@ -15,6 +16,7 @@ public enum Command implements ICommand {
 
     START("/start", false, false, false),
     NONE("none", false, true, false),
+    CHAT_ID("/chatid", false, true, false),
 
     /*
       Reply
@@ -44,6 +46,7 @@ public enum Command implements ICommand {
      */
     BUY_BITCOIN(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.getString("BUY_BITCOIN"), false, false, false),
     SELL_BITCOIN(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.getString("SELL_BITCOIN"), false, false, false),
+    CABINET(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.getString("CABINET"), false, true, false),
     CONTACTS(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.getString("CONTACTS"), false, true, false),
     DRAWS(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.getString("DRAWS"), false, true, false),
     REFERRAL(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.getString("REFERRAL"), false, false, false),
@@ -54,6 +57,9 @@ public enum Command implements ICommand {
      */
     LOTTERY(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.getString("LOTTERY"), false, false, false),
     ROULETTE(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.getString("ROULETTE"), false, true, false),
+    SLOT_REEL(PropertiesPath.SLOT_REEL_PROPERTIES.getString("SLOT_REEL"), false, false, false),
+    DICE(PropertiesPath.DICE_PROPERTIES.getString("DICE"), false, false, false),
+    RPS(PropertiesPath.RPS_PROPERTIES.getString("button.text"), false, false, false),
 
     /**
      * REFERRAL
@@ -217,6 +223,13 @@ public enum Command implements ICommand {
      * TURNING DELIVERY
      */
     TURN_PROCESS_DELIVERY("turn_process_delivery", true, false, false),
+
+    /**
+     * WEB
+     */
+    SUBMIT_LOGIN("Подтвердить вход", false, false, false),
+    SUBMIT_REGISTER("Подтвердить регистрацию", false, false, false),
+    LOGOUT("Закрыть сессию", false, false, false)
     ;
 
     final String text;
@@ -264,7 +277,7 @@ public enum Command implements ICommand {
 
     public static Command findByText(String value) {
         return Arrays.stream(Command.values())
-                .filter(command -> value.startsWith(command.getText()))
+                .filter(command -> (Objects.nonNull(command.getText()) && value.startsWith(command.getText())) || value.startsWith(command.name()))
                 .findFirst()
                 .orElse(null);
     }

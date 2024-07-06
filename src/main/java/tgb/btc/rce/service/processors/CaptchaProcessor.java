@@ -1,12 +1,13 @@
 package tgb.btc.rce.service.processors;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Conditional;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.bean.bot.SpamBan;
 import tgb.btc.library.exception.BaseException;
-import tgb.btc.library.service.bean.bot.SpamBanService;
+import tgb.btc.library.interfaces.service.bean.bot.ISpamBanService;
 import tgb.btc.library.service.process.BanningUserService;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.conditional.AntispamCondition;
@@ -25,6 +26,7 @@ import java.util.List;
 
 @CommandProcessor(command = Command.CAPTCHA)
 @Conditional(AntispamCondition.class)
+@Slf4j
 public class CaptchaProcessor extends Processor {
 
     private CaptchaSender captchaSender;
@@ -33,7 +35,7 @@ public class CaptchaProcessor extends Processor {
 
     private AntiSpam antiSpam;
 
-    private SpamBanService spamBanService;
+    private ISpamBanService spamBanService;
 
     private AdminService adminService;
 
@@ -50,7 +52,7 @@ public class CaptchaProcessor extends Processor {
     }
 
     @Autowired
-    public void setSpamBanService(SpamBanService spamBanService) {
+    public void setSpamBanService(ISpamBanService spamBanService) {
         this.spamBanService = spamBanService;
     }
 
@@ -72,8 +74,9 @@ public class CaptchaProcessor extends Processor {
     @Override
     public void run(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
-        if (!Command.CAPTCHA.name().equals(userRepository.getCommandByChatId(chatId))) userService.setDefaultValues(chatId);
-        switch (userService.getStepByChatId(chatId)) {
+        if (!Command.CAPTCHA.name().equals(readUserService.getCommandByChatId(chatId)))
+            modifyUserService.setDefaultValues(chatId);
+        switch (readUserService.getStepByChatId(chatId)) {
             case 0:
                 if (update.hasCallbackQuery())
                     responseSender.deleteMessage(chatId, update.getCallbackQuery().getMessage().getMessageId());
@@ -81,19 +84,21 @@ public class CaptchaProcessor extends Processor {
                 break;
             case 1:
             case 2:
-                if (!UpdateUtil.hasMessageText(update)) return;
+                if (!UpdateUtil.hasMessageText(update) && !update.hasCallbackQuery()) return;
                 String cashedCaptcha = AntiSpam.CAPTCHA_CASH.get(chatId);
                 if (StringUtils.isEmpty(cashedCaptcha))
                     throw new BaseException("Не найдена строка капчи в кэше.");
                 if (isEnteredCaptchaIsRight(update)) {
                     removeUserFromSpam(chatId);
                 } else send(chatId);
+                if (update.hasCallbackQuery()) responseSender.deleteCallbackMessageIfExists(update);
                 break;
             case 3:
                 if (isEnteredCaptchaIsRight(update)) {
                     removeUserFromSpam(chatId);
                 } else {
                     banningUserService.ban(chatId);
+                    log.debug("Пользователь chatId={} был заблокирован после неправильных вводов капчи.", chatId);
                     responseSender.sendMessage(chatId, "Вы были заблокированы.", BotKeyboard.OPERATOR);
                     SpamBan spamBan = spamBanService.save(chatId);
                     adminService.notify("Антиспам система заблокировала пользователя.",
@@ -105,9 +110,10 @@ public class CaptchaProcessor extends Processor {
                                             )
                                             .build()
                             )));
-                    userService.setDefaultValues(chatId);
+                    modifyUserService.setDefaultValues(chatId);
                     antiSpam.removeUser(chatId);
                 }
+                if (update.hasCallbackQuery()) responseSender.deleteCallbackMessageIfExists(update);
                 break;
         }
     }
@@ -119,11 +125,17 @@ public class CaptchaProcessor extends Processor {
     }
 
     private boolean isEnteredCaptchaIsRight(Update update) {
-        return UpdateUtil.getMessageText(update).equals(AntiSpam.CAPTCHA_CASH.get(UpdateUtil.getChatId(update)));
+        String text;
+        if (UpdateUtil.hasMessageText(update)) {
+            text = UpdateUtil.getMessageText(update);
+        } else {
+            text = CallbackQueryUtil.getSplitData(update, 1);
+        }
+        return text.equals(AntiSpam.CAPTCHA_CASH.get(UpdateUtil.getChatId(update)));
     }
 
     public void send(Long chatId) {
         captchaSender.sendCaptcha(chatId);
-        userRepository.nextStep(chatId, Command.CAPTCHA.name());
+        modifyUserService.nextStep(chatId, Command.CAPTCHA.name());
     }
 }

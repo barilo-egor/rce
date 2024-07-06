@@ -3,11 +3,10 @@ package tgb.btc.rce.service.processors.paymenttypes.requisite.create;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import tgb.btc.library.interfaces.service.bean.bot.IUserDataService;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
-import tgb.btc.library.repository.bot.UserDataRepository;
-import tgb.btc.library.repository.bot.UserRepository;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.util.UpdateUtil;
 
@@ -15,18 +14,11 @@ import tgb.btc.rce.util.UpdateUtil;
 @Slf4j
 public class ShowPaymentTypesForCreateRequisite extends Processor {
 
-    private UserDataRepository userDataRepository;
-
-    private UserRepository userRepository;
+    private IUserDataService userDataService;
 
     @Autowired
-    public void setUserRepository(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
-
-    @Autowired
-    public void setUserDataRepository(UserDataRepository userDataRepository) {
-        this.userDataRepository = userDataRepository;
+    public void setUserDataService(IUserDataService userDataService) {
+        this.userDataService = userDataService;
     }
 
     @Override
@@ -37,10 +29,9 @@ public class ShowPaymentTypesForCreateRequisite extends Processor {
             return;
         }
         String[] values = update.getCallbackQuery().getData().split(BotStringConstants.CALLBACK_DATA_SPLITTER);
-        userDataRepository.updateLongByUserPid(userRepository.getPidByChatId(chatId), Long.parseLong(values[1]));
-        log.info("Пид типа оплаты=" + Long.parseLong(values[1]));
+        userDataService.updateLongByUserPid(readUserService.getPidByChatId(chatId), Long.parseLong(values[1]));
         responseSender.deleteMessage(chatId, update.getCallbackQuery().getMessage().getMessageId());
-        userService.nextStep(chatId);
+        modifyUserService.nextStep(chatId);
         responseSender.sendMessage(chatId, "Введите реквизит.");
     }
 

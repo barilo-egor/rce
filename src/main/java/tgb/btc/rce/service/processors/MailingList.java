@@ -22,7 +22,7 @@ public class MailingList extends Processor {
     public void run(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
         if (checkForCancel(update)) return;
-        switch (userService.getStepByChatId(chatId)) {
+        switch (readUserService.getStepByChatId(chatId)) {
             case 0:
                 messagesService.askForMessageText(update, Command.MAILING_LIST);
                 break;

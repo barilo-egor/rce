@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.bean.bot.PaymentType;
 import tgb.btc.library.constants.enums.bot.DealType;
-import tgb.btc.library.repository.bot.PaymentTypeRepository;
+import tgb.btc.library.interfaces.service.bean.bot.IPaymentTypeService;
 import tgb.btc.library.util.FiatCurrencyUtil;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.constants.BotStringConstants;
@@ -22,11 +22,11 @@ import java.util.stream.Collectors;
 @CommandProcessor(command = Command.DELETE_PAYMENT_TYPE_REQUISITE)
 public class FiatCurrenciesDeleteRequisite extends Processor {
 
-    private PaymentTypeRepository paymentTypeRepository;
+    private IPaymentTypeService paymentTypeService;
 
     @Autowired
-    public void setPaymentTypeRepository(PaymentTypeRepository paymentTypeRepository) {
-        this.paymentTypeRepository = paymentTypeRepository;
+    public void setPaymentTypeService(IPaymentTypeService paymentTypeService) {
+        this.paymentTypeService = paymentTypeService;
     }
 
     @Override
@@ -35,7 +35,7 @@ public class FiatCurrenciesDeleteRequisite extends Processor {
         if (FiatCurrencyUtil.isFew()) {
             responseSender.sendMessage(chatId, BotStringConstants.FIAT_CURRENCY_CHOOSE, BotKeyboard.FIAT_CURRENCIES);
         } else {
-            List<PaymentType> paymentTypes = paymentTypeRepository.getByDealTypeAndFiatCurrency(DealType.BUY, FiatCurrencyUtil.getFirst());  // todo рефактор
+            List<PaymentType> paymentTypes = paymentTypeService.getByDealTypeAndFiatCurrency(DealType.BUY, FiatCurrencyUtil.getFirst());  // todo рефактор
             if (CollectionUtils.isEmpty(paymentTypes)) {
                 responseSender.sendMessage(chatId, "Список тип оплат на " + DealType.BUY.getAccusative() + "-" + FiatCurrencyUtil.getFirst().getCode() + " пуст.");
                 processToAdminMainPanel(chatId);
@@ -52,8 +52,8 @@ public class FiatCurrenciesDeleteRequisite extends Processor {
             responseSender.sendMessage(chatId, "Выберите тип оплаты для удаления реквизита.",
                     KeyboardUtil.buildInline(buttons));
             responseSender.sendMessage(chatId, "Для возвращения в меню нажмите \"Отмена\".", BotKeyboard.REPLY_CANCEL);
-            userRepository.nextStep(chatId, Command.DELETE_PAYMENT_TYPE_REQUISITE.name());
+            modifyUserService.nextStep(chatId, Command.DELETE_PAYMENT_TYPE_REQUISITE.name());
         }
-        userRepository.nextStep(chatId, Command.DELETE_PAYMENT_TYPE_REQUISITE.name());
+        modifyUserService.nextStep(chatId, Command.DELETE_PAYMENT_TYPE_REQUISITE.name());
     }
 }

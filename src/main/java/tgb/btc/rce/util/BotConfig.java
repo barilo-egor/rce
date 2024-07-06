@@ -9,7 +9,6 @@ public final class BotConfig {
     }
 
     public static void init() {
-        CommandProcessorLoader.scan();
         BeanHolder.load();
     }
 }

@@ -11,67 +11,308 @@
 
     <groupId>tgb.btc</groupId>
     <artifactId>rce</artifactId>
-    <version>1.2</version>
+    <version>1.4</version>
     <name>rce</name>
     <description>rce</description>
     <packaging>jar</packaging>
 
+    <build>
+        <finalName>rce</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <mainClass>tgb.btc.rce.RceApplication</mainClass>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
     <profiles>
         <profile>
-            <id>local-getting-libraries</id>
-            <activation>
-                <file>
-                    <exists>config/local.properties</exists>
-                </file>
-            </activation>
-            <dependencies>
-                <dependency>
-                    <groupId>tgb.btc</groupId>
-                    <artifactId>rce-library</artifactId>
-                    <version>1.0</version>
-                </dependency>
-                <dependency>
-                    <groupId>tgb.btc</groupId>
-                    <artifactId>rce-web</artifactId>
-                    <version>1.0</version>
-                </dependency>
-                <dependency>
-                    <groupId>tgb.btc</groupId>
-                    <artifactId>rce-api</artifactId>
-                    <version>1.0</version>
-                </dependency>
-            </dependencies>
+            <id>rub</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.springframework.boot</groupId>
+                        <artifactId>spring-boot-maven-plugin</artifactId>
+                        <configuration>
+                            <mainClass>tgb.btc.rce.RceApplication</mainClass>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <version>1.8</version>
+                        <executions>
+                            <execution>
+                                <id>copy-to-rub</id>
+                                <phase>install</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <target>
+                                        <condition property="ssh.keyfile" value="/home/barilo/.ssh/id_rsa" else="C:\Users\User\.ssh\id_rsa">
+                                            <os family="unix"/>
+                                        </condition>
+                                        <scp file="target/rce.jar"
+                                             todir="root@45.83.122.132:/home/rce/application"
+                                             keyfile="${ssh.keyfile}"
+                                             trust="true"/>
+                                        <sshexec host="45.83.122.132"
+                                                 username="root"
+                                                 keyfile="${ssh.keyfile}"
+                                                 trust="true"
+                                                 command="/home/rce/application/run.sh"/>
+                                    </target>
+                                </configuration>
+                            </execution>
+                        </executions>
+
+                    </plugin>
+                </plugins>
+                <finalName>rce</finalName>
+            </build>
         </profile>
         <profile>
-            <id>jitpack-getting-libraries</id>
+            <id>money</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.springframework.boot</groupId>
+                        <artifactId>spring-boot-maven-plugin</artifactId>
+                        <configuration>
+                            <mainClass>tgb.btc.rce.RceApplication</mainClass>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <version>1.8</version>
+                        <executions>
+                            <execution>
+                                <id>copy-to-money</id>
+                                <phase>install</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <target>
+                                        <condition property="ssh.keyfile" value="/home/barilo/.ssh/id_rsa" else="C:\Users\User\.ssh\id_rsa">
+                                            <os family="unix"/>
+                                        </condition>
+                                        <scp file="target/rce.jar"
+                                             todir="root@45.83.123.33:/home/rce/application"
+                                             keyfile="${ssh.keyfile}"
+                                             trust="true"/>
+                                        <sshexec host="45.83.123.33"
+                                                 username="root"
+                                                 keyfile="${ssh.keyfile}"
+                                                 trust="true"
+                                                 command="/home/rce/application/run.sh"/>
+                                    </target>
+                                </configuration>
+                            </execution>
+                        </executions>
+
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>bel</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.springframework.boot</groupId>
+                        <artifactId>spring-boot-maven-plugin</artifactId>
+                        <configuration>
+                            <mainClass>tgb.btc.rce.RceApplication</mainClass>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <version>1.8</version>
+                        <executions>
+                            <execution>
+                                <id>copy-to-rub</id>
+                                <phase>install</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <target>
+                                        <condition property="ssh.keyfile" value="/home/barilo/.ssh/id_rsa" else="C:\Users\User\.ssh\id_rsa">
+                                            <os family="unix"/>
+                                        </condition>
+                                        <scp file="target/rce.jar"
+                                             todir="root@45.83.122.247:/home/rce/application"
+                                             keyfile="${ssh.keyfile}"
+                                             trust="true"/>
+                                        <sshexec host="45.83.122.247"
+                                                 username="root"
+                                                 keyfile="${ssh.keyfile}"
+                                                 trust="true"
+                                                 command="/home/rce/application/run.sh"/>
+                                    </target>
+                                </configuration>
+                            </execution>
+                        </executions>
+
+                    </plugin>
+                </plugins>
+                <finalName>rce</finalName>
+            </build>
+        </profile>
+        <profile>
+            <id>bulba</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.springframework.boot</groupId>
+                        <artifactId>spring-boot-maven-plugin</artifactId>
+                        <configuration>
+                            <mainClass>tgb.btc.rce.RceApplication</mainClass>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <version>1.8</version>
+                        <executions>
+                            <execution>
+                                <id>copy-to-rub</id>
+                                <phase>install</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <target>
+                                        <condition property="ssh.keyfile" value="/home/barilo/.ssh/id_rsa" else="C:\Users\User\.ssh\id_rsa">
+                                            <os family="unix"/>
+                                        </condition>
+                                        <scp file="target/rce.jar"
+                                             todir="root@45.83.122.228:/home/rce/application"
+                                             keyfile="${ssh.keyfile}"
+                                             trust="true"/>
+                                        <sshexec host="45.83.122.228"
+                                                 username="root"
+                                                 keyfile="${ssh.keyfile}"
+                                                 trust="true"
+                                                 command="/home/rce/application/run.sh"/>
+                                    </target>
+                                </configuration>
+                            </execution>
+                        </executions>
+
+                    </plugin>
+                </plugins>
+                <finalName>rce</finalName>
+            </build>
+        </profile>
+        <profile>
+            <id>windows</id>
             <activation>
-                <file>
-                    <missing>config/local.properties</missing>
-                </file>
+                <os>
+                    <family>Windows</family>
+                </os>
             </activation>
-            <repositories>
-                <repository>
-                    <id>jitpack.io</id>
-                    <url>https://jitpack.io</url>
-                </repository>
-            </repositories>
-            <dependencies>
-                <dependency>
-                    <groupId>com.github.barilo-egor</groupId>
-                    <artifactId>rce-library</artifactId>
-                    <version>150645d762</version>
-                </dependency>
-                <dependency>
-                    <groupId>com.github.barilo-egor</groupId>
-                    <artifactId>rce-web</artifactId>
-                    <version>721440b9fc</version>
-                </dependency>
-                <dependency>
-                    <groupId>com.github.barilo-egor</groupId>
-                    <artifactId>rce-api</artifactId>
-                    <version>d9a71be872</version>
-                </dependency>
-            </dependencies>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.springframework.boot</groupId>
+                        <artifactId>spring-boot-maven-plugin</artifactId>
+                        <configuration>
+                            <mainClass>tgb.btc.rce.RceApplication</mainClass>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <version>1.8</version>
+                        <executions>
+                            <execution>
+                                <id>pre-clean-install-windows</id>
+                                <phase>initialize</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <tasks>
+                                        <exec executable="mvn.cmd">
+                                            <arg value="clean"/>
+                                            <arg value="install"/>
+                                            <arg value="-f"/>
+                                            <arg value="../rce-web/pom.xml"/>
+                                        </exec>
+                                    </tasks>
+                                </configuration>
+                            </execution>
+                        </executions>
+                        <dependencies>
+                            <dependency>
+                                <groupId>org.apache.ant</groupId>
+                                <artifactId>ant-jsch</artifactId>
+                                <version>1.10.9</version>
+                            </dependency>
+                        </dependencies>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>unix</id>
+            <activation>
+                <os>
+                    <family>unix</family>
+                </os>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.springframework.boot</groupId>
+                        <artifactId>spring-boot-maven-plugin</artifactId>
+                        <configuration>
+                            <mainClass>tgb.btc.rce.RceApplication</mainClass>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <version>1.8</version>
+                        <executions>
+                            <execution>
+                                <id>pre-clean-install-windows</id>
+                                <phase>initialize</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <tasks>
+                                        <exec executable="mvn">
+                                            <arg value="clean"/>
+                                            <arg value="install"/>
+                                            <arg value="-f"/>
+                                            <arg value="../rce-web/pom.xml"/>
+                                        </exec>
+                                    </tasks>
+                                </configuration>
+                            </execution>
+                        </executions>
+                        <dependencies>
+                            <dependency>
+                                <groupId>org.apache.ant</groupId>
+                                <artifactId>ant-jsch</artifactId>
+                                <version>1.10.9</version>
+                            </dependency>
+                        </dependencies>
+                    </plugin>
+                </plugins>
+                <finalName>rce</finalName>
+            </build>
         </profile>
     </profiles>
 
@@ -150,19 +391,35 @@
             <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-mail</artifactId>
+            <groupId>com.google.api-client</groupId>
+            <artifactId>google-api-client</artifactId>
+            <version>2.2.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.oauth-client</groupId>
+            <artifactId>google-oauth-client-jetty</artifactId>
+            <version>1.35.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.apis</groupId>
+            <artifactId>google-api-services-drive</artifactId>
+            <version>v3-rev20230212-2.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>tgb.btc</groupId>
+            <artifactId>rce-library</artifactId>
+            <version>1.2</version>
+        </dependency>
+        <dependency>
+            <groupId>tgb.btc</groupId>
+            <artifactId>rce-web</artifactId>
+            <version>1.2</version>
+        </dependency>
+        <dependency>
+            <groupId>tgb.btc</groupId>
+            <artifactId>rce-api</artifactId>
+            <version>1.2</version>
         </dependency>
     </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
-        </plugins>
-        <finalName>rce</finalName>
-    </build>
 
 </project>

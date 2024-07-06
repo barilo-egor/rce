@@ -1,21 +1,33 @@
 package tgb.btc.rce.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
 import tgb.btc.library.constants.strings.FilePaths;
 import tgb.btc.library.exception.BaseException;
+import tgb.btc.rce.conditional.PictureCaptchaCondition;
 import tgb.btc.rce.exception.PicturesNotFoundException;
+import tgb.btc.rce.service.AntiSpam;
+import tgb.btc.rce.service.ICaptchaService;
+import tgb.btc.rce.service.sender.ResponseSender;
 import tgb.btc.rce.vo.Captcha;
 
 import java.io.File;
 import java.util.*;
 
-import static org.reflections.Reflections.log;
-
 @Slf4j
 @Service
-public class CaptchaService {
+@Conditional(PictureCaptchaCondition.class)
+public class PictureCaptchaService implements ICaptchaService {
+
+    private ResponseSender responseSender;
+
+    @Autowired
+    public void setResponseSender(ResponseSender responseSender) {
+        this.responseSender = responseSender;
+    }
 
     private static List<String> PICTURES_NAMES = new ArrayList<>();
 
@@ -43,5 +55,13 @@ public class CaptchaService {
 
         File picture = new File(FilePaths.CAPTCHA_PICTURES_PACKAGE + "/" + pictureName);
         return new Captcha(pictureName.substring(0, pictureName.indexOf(".")), new InputFile(picture));
+    }
+
+    @Override
+    public void send(Long chatId) {
+        Captcha captcha = getRandomCaptcha();
+        responseSender.sendPhoto(chatId, "Сработала антиспам система. Введите капчу, чтобы продолжить.",
+                captcha.getImage());
+        AntiSpam.CAPTCHA_CASH.put(chatId, captcha.getStr());
     }
 }

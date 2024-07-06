@@ -23,16 +23,16 @@ public class UserReferralBalance extends Processor {
             processToAdminMainPanel(chatId);
             return;
         }
-        switch (userService.getStepByChatId(chatId)) {
+        switch (readUserService.getStepByChatId(chatId)) {
             case 0:
                 responseSender.sendMessage(chatId, MessageTemplate.ASK_CHAT_ID);
-                userRepository.nextStep(chatId, Command.USER_REFERRAL_BALANCE.name());
+                modifyUserService.nextStep(chatId, Command.USER_REFERRAL_BALANCE.name());
                 break;
             case 1:
                 Long userChatId = Long.parseLong(update.getMessage().getText());
-                if (userService.existByChatId(userChatId)) {
+                if (readUserService.existsByChatId(userChatId)) {
                     responseSender.sendMessage(chatId, "У пользователя с чат айди " + userChatId
-                            + " на реферальном балансе " + userService.getReferralBalanceByChatId(userChatId) + "₽",
+                            + " на реферальном балансе " + readUserService.getReferralBalanceByChatId(userChatId) + "₽",
                             KeyboardUtil.buildInline(List.of(
                                     InlineButton.builder()
                                             .inlineType(InlineType.CALLBACK_DATA)

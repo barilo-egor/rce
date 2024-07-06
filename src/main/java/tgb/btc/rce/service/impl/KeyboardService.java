@@ -4,7 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
+import tgb.btc.library.constants.enums.CabinetButton;
 import tgb.btc.library.constants.enums.DeliveryKind;
+import tgb.btc.library.constants.enums.RPSElement;
 import tgb.btc.library.constants.enums.bot.CryptoCurrency;
 import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.constants.enums.bot.DeliveryType;
@@ -12,13 +14,12 @@ import tgb.btc.library.constants.enums.bot.FiatCurrency;
 import tgb.btc.library.constants.enums.properties.PropertiesPath;
 import tgb.btc.library.constants.enums.properties.VariableType;
 import tgb.btc.library.exception.BaseException;
-import tgb.btc.library.repository.bot.PaymentTypeRepository;
+import tgb.btc.library.interfaces.service.bean.bot.IPaymentTypeService;
 import tgb.btc.library.util.BigDecimalUtil;
 import tgb.btc.library.util.FiatCurrencyUtil;
 import tgb.btc.library.util.properties.VariablePropertiesUtil;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.BotInlineButton;
-import tgb.btc.rce.enums.CalculatorType;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.InlineType;
 import tgb.btc.rce.service.processors.InlineCalculator;
@@ -30,19 +31,17 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static tgb.btc.library.constants.enums.properties.PropertiesPath.RPS_PROPERTIES;
 import static tgb.btc.rce.enums.InlineCalculatorButton.*;
 
 @Service
 public class KeyboardService {
 
-    private static final CalculatorType CALCULATOR_TYPE =
-            CalculatorType.valueOf(PropertiesPath.MODULES_PROPERTIES.getString("calculator.type"));
-
-    private PaymentTypeRepository paymentTypeRepository;
+    private IPaymentTypeService paymentTypeService;
 
     @Autowired
-    public void setPaymentTypeRepository(PaymentTypeRepository paymentTypeRepository) {
-        this.paymentTypeRepository = paymentTypeRepository;
+    public void setPaymentTypeService(IPaymentTypeService paymentTypeService) {
+        this.paymentTypeService = paymentTypeService;
     }
 
     public ReplyKeyboard getCurrencies(DealType dealType) {
@@ -66,7 +65,7 @@ public class KeyboardService {
 
     public ReplyKeyboard getPaymentTypes(DealType dealType, FiatCurrency fiatCurrency) {
         List<InlineButton> buttons =
-                paymentTypeRepository.getByDealTypeAndIsOnAndFiatCurrency(dealType, true, fiatCurrency).stream()
+                paymentTypeService.getByDealTypeAndIsOnAndFiatCurrency(dealType, true, fiatCurrency).stream()
                         .map(paymentType -> InlineButton.builder()
                                 .text(paymentType.getName())
                                 .data(paymentType.getPid().toString())
@@ -202,6 +201,35 @@ public class KeyboardService {
                 .text(text)
                 .data(CallbackQueryUtil.buildCallbackData(Command.TURN_PROCESS_DELIVERY.getText(), deliveryKind.name()))
                 .build();
+    }
+
+    public ReplyKeyboard getRPSRates() {
+        List<InlineButton> buttons = new ArrayList<>();
+        String[] sums = RPS_PROPERTIES.getString("sums").split(",");
+        Arrays.asList(sums).forEach(sum -> buttons.add(InlineButton.builder()
+                .text(sum)
+                .data(sum)
+                .inlineType(InlineType.CALLBACK_DATA)
+                .build()));
+        return KeyboardUtil.buildInlineSingleLast(buttons, 1, KeyboardUtil.INLINE_BACK_BUTTON);
+    }
+
+    public ReplyKeyboard getRPSElements() {
+        List<InlineButton> buttons = new ArrayList<>();
+        Arrays.stream(RPSElement.values()).forEach(element -> buttons.add(InlineButton.builder()
+                .text(element.getSymbol())
+                .data(element.name())
+                .build()));
+        return KeyboardUtil.buildInlineSingleLast(buttons, 1, KeyboardUtil.INLINE_BACK_BUTTON);
+    }
+
+    public static ReplyKeyboard getCabinetButtons() {
+        List<InlineButton> buttons = new ArrayList<>();
+        Arrays.stream(CabinetButton.values()).forEach(button -> buttons.add(InlineButton.builder()
+                .text(button.getText())
+                .data(button.name())
+                .build()));
+        return KeyboardUtil.buildInline(buttons, 1);
     }
 
 }

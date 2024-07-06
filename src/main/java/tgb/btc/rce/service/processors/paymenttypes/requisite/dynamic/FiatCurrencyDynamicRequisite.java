@@ -25,7 +25,7 @@ public class FiatCurrencyDynamicRequisite extends Processor {
         Long chatId = UpdateUtil.getChatId(update);
         if (FiatCurrencyUtil.isFew()) {
             responseSender.sendMessage(chatId, BotStringConstants.FIAT_CURRENCY_CHOOSE, BotKeyboard.FIAT_CURRENCIES);
-            userRepository.nextStep(chatId, Command.TURN_DYNAMIC_REQUISITES.name());
+            modifyUserService.nextStep(chatId, Command.TURN_DYNAMIC_REQUISITES.name());
         } else {
             turnDynamicRequisites.run(update);
         }

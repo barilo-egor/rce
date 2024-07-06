@@ -4,13 +4,13 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.bean.bot.PaymentType;
+import tgb.btc.library.constants.enums.bot.DealType;
+import tgb.btc.library.constants.enums.bot.FiatCurrency;
+import tgb.btc.library.interfaces.service.bean.bot.IPaymentTypeService;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.BotKeyboard;
 import tgb.btc.rce.enums.Command;
-import tgb.btc.library.constants.enums.bot.DealType;
-import tgb.btc.library.constants.enums.bot.FiatCurrency;
-import tgb.btc.library.repository.bot.PaymentTypeRepository;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.UpdateUtil;
@@ -22,17 +22,17 @@ import java.util.stream.Collectors;
 @CommandProcessor(command = Command.DELETE_PAYMENT_TYPE_REQUISITE, step = 1)
 public class ShowPaymentTypesForDeleteRequisite extends Processor {
 
-    private PaymentTypeRepository paymentTypeRepository;
+    private IPaymentTypeService paymentTypeService;
 
     @Autowired
-    public void setPaymentTypeRepository(PaymentTypeRepository paymentTypeRepository) {
-        this.paymentTypeRepository = paymentTypeRepository;
+    public void setPaymentTypeService(IPaymentTypeService paymentTypeService) {
+        this.paymentTypeService = paymentTypeService;
     }
 
     @Override
     public void run(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
-        List<PaymentType> paymentTypes = paymentTypeRepository.getByDealTypeAndFiatCurrency(DealType.BUY,
+        List<PaymentType> paymentTypes = paymentTypeService.getByDealTypeAndFiatCurrency(DealType.BUY,
                 FiatCurrency.getByCode(UpdateUtil.getMessageText(update)));
         if (CollectionUtils.isEmpty(paymentTypes)) {
             responseSender.sendMessage(chatId, "Список тип оплат на " + DealType.BUY.getAccusative() + " пуст."); // todo добавить фиат карренси
@@ -50,7 +50,7 @@ public class ShowPaymentTypesForDeleteRequisite extends Processor {
         responseSender.sendMessage(chatId, "Выберите тип оплаты для удаления реквизита.",
                                    KeyboardUtil.buildInline(buttons));
         responseSender.sendMessage(chatId, "Для возвращения в меню нажмите \"Отмена\".", BotKeyboard.REPLY_CANCEL);
-        userRepository.nextStep(chatId, Command.DELETE_PAYMENT_TYPE_REQUISITE.name());
+        modifyUserService.nextStep(chatId, Command.DELETE_PAYMENT_TYPE_REQUISITE.name());
     }
 
 }

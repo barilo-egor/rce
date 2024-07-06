@@ -5,7 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.bean.bot.User;
-import tgb.btc.library.repository.bot.*;
+import tgb.btc.library.interfaces.service.bean.bot.*;
+import tgb.btc.library.interfaces.service.bean.bot.deal.IModifyDealService;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.Processor;
@@ -15,39 +16,60 @@ import tgb.btc.rce.util.UpdateUtil;
 @CommandProcessor(command = Command.DELETE_USER)
 public class DeleteUser extends Processor {
 
-    private final UserRepository userRepository;
+    private IModifyDealService modifyDealService;
 
-    private final DealRepository dealRepository;
+    private IUserDiscountService userDiscountService;
 
-    private final UserDiscountRepository userDiscountRepository;
+    private IUserDataService userDataService;
 
-    private final UserDataRepository userDataRepository;
+    private IPaymentReceiptService paymentReceiptService;
 
-    private final PaymentReceiptRepository paymentReceiptRepository;
+    private IWithdrawalRequestService withdrawalRequestService;
 
-    private final WithdrawalRequestRepository withdrawalRequestRepository;
+    private ILotteryWinService lotteryWinService;
 
-    private final LotteryWinRepository lotteryWinRepository;
+    private IReferralUserService referralUserService;
 
-    private final ReferralUserRepository referralUserRepository;
-
-    private final SpamBanRepository spamBanRepository;
+    private ISpamBanService spamBanService;
 
     @Autowired
-    public DeleteUser(UserRepository userRepository, DealRepository dealRepository,
-                      UserDiscountRepository userDiscountRepository, UserDataRepository userDataRepository,
-                      PaymentReceiptRepository paymentReceiptRepository,
-                      WithdrawalRequestRepository withdrawalRequestRepository, LotteryWinRepository lotteryWinRepository,
-                      ReferralUserRepository referralUserRepository, SpamBanRepository spamBanRepository) {
-        this.userRepository = userRepository;
-        this.dealRepository = dealRepository;
-        this.userDiscountRepository = userDiscountRepository;
-        this.userDataRepository = userDataRepository;
-        this.paymentReceiptRepository = paymentReceiptRepository;
-        this.withdrawalRequestRepository = withdrawalRequestRepository;
-        this.lotteryWinRepository = lotteryWinRepository;
-        this.referralUserRepository = referralUserRepository;
-        this.spamBanRepository = spamBanRepository;
+    public void setModifyDealService(IModifyDealService modifyDealService) {
+        this.modifyDealService = modifyDealService;
+    }
+
+    @Autowired
+    public void setUserDiscountService(IUserDiscountService userDiscountService) {
+        this.userDiscountService = userDiscountService;
+    }
+
+    @Autowired
+    public void setUserDataService(IUserDataService userDataService) {
+        this.userDataService = userDataService;
+    }
+
+    @Autowired
+    public void setPaymentReceiptService(IPaymentReceiptService paymentReceiptService) {
+        this.paymentReceiptService = paymentReceiptService;
+    }
+
+    @Autowired
+    public void setWithdrawalRequestService(IWithdrawalRequestService withdrawalRequestService) {
+        this.withdrawalRequestService = withdrawalRequestService;
+    }
+
+    @Autowired
+    public void setLotteryWinService(ILotteryWinService lotteryWinService) {
+        this.lotteryWinService = lotteryWinService;
+    }
+
+    @Autowired
+    public void setReferralUserService(IReferralUserService referralUserService) {
+        this.referralUserService = referralUserService;
+    }
+
+    @Autowired
+    public void setSpamBanService(ISpamBanService spamBanService) {
+        this.spamBanService = spamBanService;
     }
 
     @Override
@@ -56,16 +78,16 @@ public class DeleteUser extends Processor {
         Long chatId = UpdateUtil.getChatId(update);
         try {
             Long userChatId = Long.parseLong(UpdateUtil.getMessageText(update).split(" ")[1]);
-            userDiscountRepository.deleteByUser_ChatId(userChatId);
-            userDataRepository.deleteByUser_ChatId(userChatId);
-            withdrawalRequestRepository.deleteByUser_ChatId(userChatId);
-            lotteryWinRepository.deleteByUser_ChatId(userChatId);
-            paymentReceiptRepository.getByDealsPids(userChatId);
-            dealRepository.deleteByUser_ChatId(userChatId);
-            User user = userRepository.getByChatId(userChatId);
-            spamBanRepository.deleteByUser_Pid(user.getPid());
-            userRepository.delete(user);
-            referralUserRepository.deleteAll(user.getReferralUsers());
+            userDiscountService.deleteByUser_ChatId(userChatId);
+            userDataService.deleteByUser_ChatId(userChatId);
+            withdrawalRequestService.deleteByUser_ChatId(userChatId);
+            lotteryWinService.deleteByUser_ChatId(userChatId);
+            paymentReceiptService.getByDealsPids(userChatId);
+            modifyDealService.deleteByUser_ChatId(userChatId);
+            User user = readUserService.getByChatId(userChatId);
+            spamBanService.deleteByUser_Pid(user.getPid());
+            modifyUserService.delete(user);
+            referralUserService.deleteAll(user.getReferralUsers());
             responseSender.sendMessage(chatId, "Пользователь " + userChatId + " удален.");
         } catch (Exception e) {
             log.error("Ошибки при удалении пользователя.", e);

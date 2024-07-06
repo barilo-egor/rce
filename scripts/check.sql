@@ -1,0 +1,1 @@
+ALTER TABLE user ADD CONSTRAINT check_referral_balance CHECK (REFERRAL_BALANCE >= 0);

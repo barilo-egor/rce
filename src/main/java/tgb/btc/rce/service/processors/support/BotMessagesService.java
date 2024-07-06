@@ -6,12 +6,12 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.bean.bot.BotMessage;
 import tgb.btc.library.constants.enums.bot.BotMessageType;
 import tgb.btc.library.constants.enums.bot.MessageType;
-import tgb.btc.library.repository.bot.UserRepository;
-import tgb.btc.rce.enums.Command;
 import tgb.btc.library.exception.BaseException;
-import tgb.btc.rce.service.impl.BotMessageService;
-import tgb.btc.rce.service.impl.ResponseSender;
-import tgb.btc.library.service.bean.bot.UserService;
+import tgb.btc.library.interfaces.service.bean.bot.IBotMessageService;
+import tgb.btc.library.interfaces.service.bean.bot.user.IModifyUserService;
+import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
+import tgb.btc.rce.enums.Command;
+import tgb.btc.rce.service.sender.ResponseSender;
 import tgb.btc.rce.util.BotImageUtil;
 import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.UpdateUtil;
@@ -24,27 +24,36 @@ import java.util.stream.Collectors;
 @Service
 public class BotMessagesService {
 
-    private final UserService userService;
-    private final ResponseSender responseSender;
-    private final BotMessageService botMessageService;
+    private IBotMessageService botMessageService;
 
-    private UserRepository userRepository;
+    private IReadUserService readUserService;
+
+    private IModifyUserService modifyUserService;
+
+    private ResponseSender responseSender;
 
     @Autowired
-    public void setUserRepository(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public void setModifyUserService(IModifyUserService modifyUserService) {
+        this.modifyUserService = modifyUserService;
     }
 
     @Autowired
-    public BotMessagesService(UserService userService, ResponseSender responseSender,
-                              BotMessageService botMessageService) {
-        this.userService = userService;
-        this.responseSender = responseSender;
+    public void setBotMessageService(IBotMessageService botMessageService) {
         this.botMessageService = botMessageService;
     }
 
+    @Autowired
+    public void setReadUserService(IReadUserService readUserService) {
+        this.readUserService = readUserService;
+    }
+
+    @Autowired
+    public void setResponseSender(ResponseSender responseSender) {
+        this.responseSender = responseSender;
+    }
+
     public void askForType(Long chatId, Command command) {
-        userRepository.nextStep(chatId, Command.BOT_MESSAGES.name());
+        modifyUserService.nextStep(chatId, Command.BOT_MESSAGES.name());
 
         BotMessageType[] values = BotMessageType.values();
 
@@ -65,15 +74,15 @@ public class BotMessagesService {
             responseSender.sendMessage(chatId, "Тип сообщения не найден.");
             return;
         }
-        userService.updateBufferVariable(chatId, type.name());
+        modifyUserService.updateBufferVariable(chatId, type.name());
         responseSender.sendMessage(chatId, "Отправьте новое сообщение.");
-        userService.nextStep(chatId);
+        modifyUserService.nextStep(chatId);
     }
 
     public void updateValue(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
         BotMessage botMessage;
-        BotMessageType type = BotMessageType.getByName(userService.getBufferVariable(chatId));
+        BotMessageType type = BotMessageType.getByName(readUserService.getBufferVariable(chatId));
         try {
             botMessage = botMessageService.findByTypeThrows(type);
         } catch (BaseException e) {

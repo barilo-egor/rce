@@ -4,19 +4,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.bean.bot.BotMessage;
 import tgb.btc.library.constants.enums.bot.BotMessageType;
+import tgb.btc.library.interfaces.service.bean.bot.IBotMessageService;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.service.impl.BotMessageService;
 import tgb.btc.rce.util.UpdateUtil;
 
 @CommandProcessor(command = Command.CURRENT_DATA)
 public class CurrentData extends Processor {
 
-    private BotMessageService botMessageService;
+    private IBotMessageService botMessageService;
 
     @Autowired
-    public void setBotMessageService(BotMessageService botMessageService) {
+    public void setBotMessageService(IBotMessageService botMessageService) {
         this.botMessageService = botMessageService;
     }
 
@@ -25,7 +25,7 @@ public class CurrentData extends Processor {
         responseSender.sendMessage(UpdateUtil.getChatId(update), "Сообщения:");
         BotMessageType[] messageTypes = BotMessageType.values();
         for(BotMessageType botMessageType : messageTypes) {
-            BotMessage botMessage = botMessageService.findByType(botMessageType);
+            BotMessage botMessage = botMessageService.findByTypeNullSafe(botMessageType);
             responseSender.sendMessage(UpdateUtil.getChatId(update), botMessageType.getDisplayName());
             switch (botMessage.getMessageType()) {
                 case TEXT:

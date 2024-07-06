@@ -22,6 +22,6 @@ public class BulkDiscounts extends Processor {
         responseSender.sendMessage(chatId, "Измените нужные значения и отправьте исправленный файл. " +
                 "Обязательно закройте файл, перед тем как отправлять.", BotKeyboard.REPLY_CANCEL);
         responseSender.sendFile(chatId, new File(PropertiesPath.BULK_DISCOUNT_PROPERTIES.getFileName()));
-        userRepository.nextStep(chatId, Command.BULK_DISCOUNTS.name());
+        modifyUserService.nextStep(chatId, Command.BULK_DISCOUNTS.name());
     }
 }

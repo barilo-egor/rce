@@ -2,20 +2,20 @@ package tgb.btc.rce.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import tgb.btc.library.service.bean.bot.DealService;
+import tgb.btc.library.interfaces.service.bean.common.bot.IDealCommonService;
 import tgb.btc.rce.util.DealPromoUtil;
 
 @Service
 public class DealProcessService {
 
-    private DealService dealService;
+    private IDealCommonService dealCommonService;
 
     @Autowired
-    public void setDealService(DealService dealService) {
-        this.dealService = dealService;
+    public void setDealCommonService(IDealCommonService dealCommonService) {
+        this.dealCommonService = dealCommonService;
     }
 
     public boolean isAvailableForPromo(Long chatId) {
-        return !DealPromoUtil.isNone() && dealService.isFirstDeal(chatId);
+        return !DealPromoUtil.isNone() && dealCommonService.isFirstDeal(chatId);
     }
 }

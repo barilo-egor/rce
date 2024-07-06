@@ -22,7 +22,7 @@ public class BotMessages extends Processor {
     public void run(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
         if (checkForCancel(update)) return;
-        switch (userService.getStepByChatId(chatId)) {
+        switch (readUserService.getStepByChatId(chatId)) {
             case 0:
                 botMessagesService.askForType(chatId, Command.BOT_MESSAGES);
                 break;

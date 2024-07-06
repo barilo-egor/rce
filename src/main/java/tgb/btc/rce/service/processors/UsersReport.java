@@ -13,8 +13,7 @@ import tgb.btc.library.constants.enums.bot.CryptoCurrency;
 import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
 import tgb.btc.library.exception.BaseException;
-import tgb.btc.library.repository.bot.DealRepository;
-import tgb.btc.library.service.bean.bot.DealService;
+import tgb.btc.library.interfaces.service.bean.bot.deal.read.IReportDealService;
 import tgb.btc.library.util.BigDecimalUtil;
 import tgb.btc.library.util.FiatCurrencyUtil;
 import tgb.btc.rce.annotation.CommandProcessor;
@@ -35,18 +34,11 @@ import java.util.stream.Collectors;
 @Slf4j
 public class UsersReport extends Processor {
 
-    private DealRepository dealRepository;
-
-    private DealService dealService;
+    private IReportDealService reportDealService;
 
     @Autowired
-    public void setDealService(DealService dealService) {
-        this.dealService = dealService;
-    }
-
-    @Autowired
-    public void setDealRepository(DealRepository dealRepository) {
-        this.dealRepository = dealRepository;
+    public void setReportDealService(IReportDealService reportDealService) {
+        this.reportDealService = reportDealService;
     }
 
     @Override
@@ -75,8 +67,7 @@ public class UsersReport extends Processor {
             }
 
             int i = 2;
-            log.info("Загрузка пользователей");
-            List<Object[]> rawsUsers = userRepository.findAllForUsersReport();
+            List<Object[]> rawsUsers = readUserService.findAllForUsersReport();
             List<ReportUserVO> users = new ArrayList<>();
             for (Object[] raw : rawsUsers) {
                 users.add(ReportUserVO.builder()
@@ -85,10 +76,8 @@ public class UsersReport extends Processor {
                         .username((String) raw[2])
                         .build());
             }
-            log.info("Загрузка сделок.");
-            List<Object[]> raws = dealRepository.findAllForUsersReport();
+            List<Object[]> raws = reportDealService.findAllForUsersReport();
             List<ReportDealVO> deals = new ArrayList<>();
-            log.info("Маппинг сделок.");
             for (Object[] raw : raws) {
                 deals.add(ReportDealVO.builder()
                         .pid((Long) raw[0])
@@ -101,14 +90,12 @@ public class UsersReport extends Processor {
                         .build());
             }
             Map<Long, List<ReportDealVO>> usersDeals = new HashMap<>();
-            log.info("Сортировка сделок по пользователям.");
             for (ReportUserVO user : users) {
                 usersDeals.put(user.getChatId(), deals.stream()
                         .filter(deal -> deal.getUserPid().equals(user.getPid()))
                         .collect(Collectors.toList())
                 );
             }
-            log.info("Начало заполнения данных.");
             for (ReportUserVO user : users) {
                 int cellCount = 0;
                 Row row = sheet.createRow(i);
@@ -151,14 +138,12 @@ public class UsersReport extends Processor {
                 }
                 i++;
             }
-            log.info("Данные заполнены.");
             String fileName = "users.xlsx";
             FileOutputStream outputStream = new FileOutputStream(fileName);
             book.write(outputStream);
             book.close();
             outputStream.close();
             File file = new File(fileName);
-            log.info("Файл создан.");
             responseSender.sendFile(chatId, file);
             log.debug("Админ " + chatId + " выгрузил отчет по пользователям.");
             if (file.delete()) log.trace("Файл успешно удален.");
@@ -167,7 +152,6 @@ public class UsersReport extends Processor {
             log.error("Ошибка при выгрузке отчета по пользователям. " + this.getClass().getSimpleName(), e);
             throw new BaseException("Ошибка при выгрузке файла: " + e.getMessage());
         }
-        log.info("Конец отчета по пользователям.");
     }
 
     private boolean isErrorDeal(ReportDealVO reportDealVO) {

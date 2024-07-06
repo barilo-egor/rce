@@ -1,4 +1,4 @@
-package tgb.btc.rce.service.impl;
+package tgb.btc.rce.service.sender;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
@@ -23,13 +23,13 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import tgb.btc.library.bean.bot.BotMessage;
 import tgb.btc.library.constants.enums.bot.BotMessageType;
 import tgb.btc.library.exception.BaseException;
+import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
+import tgb.btc.library.service.bean.bot.BotMessageService;
 import tgb.btc.rce.bot.RceBot;
 import tgb.btc.rce.enums.BotKeyboard;
 import tgb.btc.rce.enums.Menu;
 import tgb.btc.rce.enums.MessageTemplate;
 import tgb.btc.rce.enums.PropertiesMessage;
-import tgb.btc.library.repository.bot.UserRepository;
-import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.util.*;
 import tgb.btc.rce.vo.InlineButton;
 
@@ -48,11 +48,11 @@ public class ResponseSender implements IResponseSender {
 
     private BotMessageService botMessageService;
 
-    private UserRepository userRepository;
+    private IReadUserService readUserService;
 
     @Autowired
-    public void setUserRepository(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public void setReadUserService(IReadUserService readUserService) {
+        this.readUserService = readUserService;
     }
 
     @Autowired
@@ -72,6 +72,14 @@ public class ResponseSender implements IResponseSender {
                 .build()));
     }
 
+    public Optional<Message> sendMessageParseNode(Long chatId, String text, String parseNode) {
+        return Optional.ofNullable(executeSendMessage(SendMessage.builder()
+                .chatId(chatId.toString())
+                .text(text)
+                .parseMode(parseNode)
+                .build()));
+    }
+
 
     public Optional<Message> sendMessageThrows(Long chatId, String text) throws TelegramApiException {
         return Optional.ofNullable(executeSendMessageThrows(SendMessage.builder()
@@ -81,7 +89,7 @@ public class ResponseSender implements IResponseSender {
     }
 
     public Optional<Message> sendMessage(Long chatId, String text, Menu menu) {
-        return sendMessage(chatId, text, MenuFactory.build(menu, userRepository.isAdminByChatId(chatId)), null);
+        return sendMessage(chatId, text, MenuFactory.build(menu, readUserService.isAdminByChatId(chatId)), null);
     }
 
     public Optional<Message> sendMessage(Long chatId, PropertiesMessage propertiesMessage, Menu menu) {
@@ -98,6 +106,10 @@ public class ResponseSender implements IResponseSender {
 
     public Optional<Message> sendMessage(Long chatId, String text, InlineButton... inlineButtons) {
         return sendMessage(chatId, text, KeyboardUtil.buildInline(List.of(inlineButtons)));
+    }
+
+    public Optional<Message> sendMessage(Long chatId, String text, List<InlineButton> buttons) {
+        return sendMessage(chatId, text, KeyboardUtil.buildInline(buttons));
     }
 
     public Optional<Message> sendMessage(Long chatId, String text, BotKeyboard botKeyboard) {
@@ -134,7 +146,7 @@ public class ResponseSender implements IResponseSender {
     }
 
     public Optional<Message> sendBotMessage(BotMessageType botMessageType, Long chatId) {
-        return sendBotMessage(botMessageService.findByType(botMessageType), chatId, null);
+        return sendBotMessage(botMessageService.findByTypeNullSafe(botMessageType), chatId, null);
     }
 
     public Optional<Message> sendBotMessage(BotMessage botMessage, Long chatId) {
@@ -142,11 +154,11 @@ public class ResponseSender implements IResponseSender {
     }
 
     public Optional<Message> sendBotMessage(BotMessageType botMessageType, Long chatId, Menu menu) {
-        return sendBotMessage(botMessageType, chatId, MenuFactory.build(menu, userRepository.isAdminByChatId(chatId)));
+        return sendBotMessage(botMessageType, chatId, MenuFactory.build(menu, readUserService.isAdminByChatId(chatId)));
     }
 
     public Optional<Message> sendBotMessage(BotMessageType botMessageType, Long chatId, ReplyKeyboard replyKeyboard) {
-        BotMessage botMessage = botMessageService.findByType(botMessageType);
+        BotMessage botMessage = botMessageService.findByTypeNullSafe(botMessageType);
         return sendBotMessage(botMessage, chatId, replyKeyboard);
     }
 
@@ -252,7 +264,7 @@ public class ResponseSender implements IResponseSender {
                     .document(new InputFile(file))
                     .build());
         } catch (TelegramApiException e) {
-            log.debug("Не получилось отправить файл: chatId=" + chatId + ", fileName=" + file.getName());
+            log.debug("Не получилось отправить файл: chatId=" + chatId + ", fileName=" + file.getName(), e);
         }
     }
 
@@ -279,7 +291,7 @@ public class ResponseSender implements IResponseSender {
         }
     }
 
-    public void downloadFile(Document document, String localFilePath) throws IOException{
+    public void downloadFile(Document document, String localFilePath) throws IOException {
         org.telegram.telegrambots.meta.api.objects.File file = getFilePath(document);
 
         java.io.File localFile = new java.io.File(localFilePath);
@@ -301,6 +313,16 @@ public class ResponseSender implements IResponseSender {
         } catch (TelegramApiException e) {
             log.debug("Не получилось отправить answerInlineQuery: " + answerInlineQuery.toString(), e);
         }
+    }
+
+    @Override
+    public Message execute(SendDice sendDice) {
+        try {
+            return bot.execute(sendDice);
+        } catch (TelegramApiException e) {
+            log.debug("Не получилось отправить sendDice: " + sendDice.toString(), e);
+        }
+        return null;
     }
 
     @Override
@@ -360,4 +382,14 @@ public class ResponseSender implements IResponseSender {
     public void deleteCallbackMessageIfExists(Update update) {
         if (update.hasCallbackQuery()) deleteMessage(UpdateUtil.getChatId(update), CallbackQueryUtil.messageId(update));
     }
+
+    @Override
+    public void deleteCallbackMessageButtonsIfExists(Update update) {
+        if (update.hasCallbackQuery()) {
+            String text = update.getCallbackQuery().getMessage().getText();
+            deleteMessage(UpdateUtil.getChatId(update), CallbackQueryUtil.messageId(update));
+            sendMessage(UpdateUtil.getChatId(update), text);
+        }
+    }
+
 }

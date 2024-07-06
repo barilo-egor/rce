@@ -7,13 +7,16 @@ import tgb.btc.library.bean.bot.ReferralUser;
 import tgb.btc.library.bean.bot.User;
 import tgb.btc.library.bean.bot.UserData;
 import tgb.btc.library.bean.bot.UserDiscount;
+import tgb.btc.library.constants.enums.ReferralType;
+import tgb.btc.library.constants.enums.bot.UserRole;
 import tgb.btc.library.exception.BaseException;
-import tgb.btc.library.repository.bot.UserDataRepository;
-import tgb.btc.library.repository.bot.UserDiscountRepository;
-import tgb.btc.library.repository.bot.UserRepository;
+import tgb.btc.library.interfaces.service.bean.bot.IReferralUserService;
+import tgb.btc.library.interfaces.service.bean.bot.IUserDataService;
+import tgb.btc.library.interfaces.service.bean.bot.IUserDiscountService;
+import tgb.btc.library.interfaces.service.bean.bot.user.IModifyUserService;
+import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.library.service.bean.bot.ReferralUserService;
 import tgb.btc.rce.enums.Command;
-import tgb.btc.library.constants.enums.ReferralType;
 import tgb.btc.rce.util.CommandUtil;
 import tgb.btc.rce.util.UpdateUtil;
 
@@ -24,36 +27,43 @@ import java.util.Objects;
 @Service
 public class UserProcessService {
 
-    private UserRepository userRepository;
+    private IReadUserService readUserService;
 
-    private UserDataRepository userDataRepository;
+    private IModifyUserService modifyUserService;
 
-    private ReferralUserService referralUserService;
+    private IUserDataService userDataService;
 
-    private UserDiscountRepository userDiscountRepository;
+    private IReferralUserService referralUserService;
+
+    private IUserDiscountService userDiscountService;
+
+    @Autowired
+    public void setUserDiscountService(IUserDiscountService userDiscountService) {
+        this.userDiscountService = userDiscountService;
+    }
+
+    @Autowired
+    public void setUserDataService(IUserDataService userDataService) {
+        this.userDataService = userDataService;
+    }
+
+    @Autowired
+    public void setReadUserService(IReadUserService readUserService) {
+        this.readUserService = readUserService;
+    }
+
+    @Autowired
+    public void setModifyUserService(IModifyUserService modifyUserService) {
+        this.modifyUserService = modifyUserService;
+    }
 
     @Autowired
     public void setReferralUserService(ReferralUserService referralUserService) {
         this.referralUserService = referralUserService;
     }
 
-    @Autowired
-    public void setUserDiscountRepository(UserDiscountRepository userDiscountRepository) {
-        this.userDiscountRepository = userDiscountRepository;
-    }
-
-    @Autowired
-    public void setUserRepository(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
-
-    @Autowired
-    public void setUserDataRepository(UserDataRepository userDataRepository) {
-        this.userDataRepository = userDataRepository;
-    }
-
     public boolean registerIfNotExists(Update update) {
-        boolean isUserExists = userRepository.existsByChatId(UpdateUtil.getChatId(update));
+        boolean isUserExists = readUserService.existsByChatId(UpdateUtil.getChatId(update));
         if (!isUserExists) register(update);
         return isUserExists;
     }
@@ -65,7 +75,7 @@ public class UserProcessService {
         newUser.setCommand(Command.START);
         newUser.setRegistrationDate(LocalDateTime.now());
         newUser.setStep(User.DEFAULT_STEP);
-        newUser.setAdmin(false);
+        newUser.setUserRole(UserRole.USER);
         newUser.setLotteryCount(0);
         newUser.setReferralBalance(0);
         newUser.setActive(true);
@@ -77,24 +87,24 @@ public class UserProcessService {
             try {
                 Long chatIdFrom = Long.parseLong(update.getMessage().getText()
                         .replaceAll(Command.START.getText(), "").trim());
-                if (!userRepository.existsByChatId(chatIdFrom)) throw new BaseException();
-                inviter = userRepository.getByChatId(chatIdFrom);
+                if (!readUserService.existsByChatId(chatIdFrom)) throw new BaseException();
+                inviter = readUserService.getByChatId(chatIdFrom);
                 newUser.setFromChatId(chatIdFrom);
             } catch (NumberFormatException | BaseException ignored) {
             }
         }
-        User savedNewUser = userRepository.save(newUser);
+        User savedNewUser = modifyUserService.save(newUser);
         if (Objects.nonNull(inviter)) {
             inviter.getReferralUsers().add(referralUserService.save(ReferralUser.buildDefault(newUser.getChatId())));
-            userRepository.save(inviter);
+            modifyUserService.save(inviter);
         }
         UserDiscount userDiscount = new UserDiscount();
         userDiscount.setUser(newUser);
         userDiscount.setRankDiscountOn(true);
-        userDiscountRepository.save(userDiscount);
+        userDiscountService.save(userDiscount);
         UserData userData = new UserData();
         userData.setUser(newUser);
-        userDataRepository.save(userData);
+        userDataService.save(userData);
         return savedNewUser;
     }
 }

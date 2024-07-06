@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.bean.bot.PaymentRequisite;
 import tgb.btc.library.bean.bot.PaymentType;
-import tgb.btc.library.repository.bot.PaymentRequisiteRepository;
+import tgb.btc.library.interfaces.service.bean.bot.IPaymentRequisiteService;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
@@ -16,16 +16,16 @@ public class DeletingPaymentRequisite extends Processor {
 
     private ShowRequisitesForDelete showRequisitesForDelete;
 
-    private PaymentRequisiteRepository paymentRequisiteRepository;
+    private IPaymentRequisiteService paymentRequisiteService;
+
+    @Autowired
+    public void setPaymentRequisiteService(IPaymentRequisiteService paymentRequisiteService) {
+        this.paymentRequisiteService = paymentRequisiteService;
+    }
 
     @Autowired
     public void setShowRequisitesForDelete(ShowRequisitesForDelete showRequisitesForDelete) {
         this.showRequisitesForDelete = showRequisitesForDelete;
-    }
-
-    @Autowired
-    public void setPaymentRequisiteRepository(PaymentRequisiteRepository paymentRequisiteRepository) {
-        this.paymentRequisiteRepository = paymentRequisiteRepository;
     }
 
     @Override
@@ -35,10 +35,10 @@ public class DeletingPaymentRequisite extends Processor {
         }
         String[] values = update.getCallbackQuery().getData().split(BotStringConstants.CALLBACK_DATA_SPLITTER);
 
-        PaymentRequisite paymentRequisite = paymentRequisiteRepository.getById(Long.parseLong(values[1]));
-        PaymentType paymentType = paymentRequisiteRepository.getPaymentTypeByPid(paymentRequisite.getPid());
+        PaymentRequisite paymentRequisite = paymentRequisiteService.findById(Long.parseLong(values[1]));
+        PaymentType paymentType = paymentRequisiteService.getPaymentTypeByPid(paymentRequisite.getPid());
 
-        paymentRequisiteRepository.delete(paymentRequisite);
+        paymentRequisiteService.delete(paymentRequisite);
         responseSender.deleteMessage(UpdateUtil.getChatId(update), update.getCallbackQuery().getMessage().getMessageId());
         showRequisitesForDelete.sendRequisites(UpdateUtil.getChatId(update), paymentType.getPid());
     }

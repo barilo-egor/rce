@@ -5,14 +5,14 @@ import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import tgb.btc.library.bean.bot.ReferralUser;
 import tgb.btc.library.bean.bot.User;
-import tgb.btc.library.repository.bot.DealRepository;
-import tgb.btc.library.repository.bot.LotteryWinRepository;
-import tgb.btc.library.repository.bot.SpamBanRepository;
+import tgb.btc.library.constants.enums.ReferralType;
+import tgb.btc.library.interfaces.service.bean.bot.ILotteryWinService;
+import tgb.btc.library.interfaces.service.bean.bot.ISpamBanService;
+import tgb.btc.library.interfaces.service.bean.bot.deal.read.IDealCountService;
+import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.PropertiesMessage;
-import tgb.btc.library.constants.enums.ReferralType;
-import tgb.btc.library.repository.bot.UserRepository;
-import tgb.btc.rce.service.IResponseSender;
+import tgb.btc.rce.service.sender.IResponseSender;
 import tgb.btc.rce.util.CallbackQueryUtil;
 import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.MessagePropertiesUtil;
@@ -24,39 +24,39 @@ import java.util.Objects;
 @Service
 public class UserInfoService {
 
-    private UserRepository userRepository;
+    private IReadUserService readUserService;
 
     private IResponseSender responseSender;
 
-    private SpamBanRepository spamBanRepository;
+    private ISpamBanService spamBanService;
 
-    private DealRepository dealRepository;
+    private IDealCountService dealCountService;
 
-    private LotteryWinRepository lotteryWinRepository;
+    private ILotteryWinService lotteryWinService;
 
     @Autowired
-    public void setLotteryWinRepository(LotteryWinRepository lotteryWinRepository) {
-        this.lotteryWinRepository = lotteryWinRepository;
+    public void setLotteryWinService(ILotteryWinService lotteryWinService) {
+        this.lotteryWinService = lotteryWinService;
     }
 
     @Autowired
-    public void setUserRepository(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public void setSpamBanService(ISpamBanService spamBanService) {
+        this.spamBanService = spamBanService;
+    }
+
+    @Autowired
+    public void setDealCountService(IDealCountService dealCountService) {
+        this.dealCountService = dealCountService;
+    }
+
+    @Autowired
+    public void setReadUserService(IReadUserService readUserService) {
+        this.readUserService = readUserService;
     }
 
     @Autowired
     public void setResponseSender(IResponseSender responseSender) {
         this.responseSender = responseSender;
-    }
-
-    @Autowired
-    public void setSpamBanRepository(SpamBanRepository spamBanRepository) {
-        this.spamBanRepository = spamBanRepository;
-    }
-
-    @Autowired
-    public void setDealRepository(DealRepository dealRepository) {
-        this.dealRepository = dealRepository;
     }
 
     public void sendUserInformation(Long messageChatId, Long userChatId) {
@@ -68,34 +68,34 @@ public class UserInfoService {
     }
 
     private String getUserInformation(Long chatId) {
-        User user = userRepository.findByChatId(chatId);
+        User user = readUserService.findByChatId(chatId);
         String userName = Objects.nonNull(user.getUsername()) ? user.getUsername() : "скрыт";
-        Long dealsCount = dealRepository.getCountPassedByUserChatId(chatId);
-        List<ReferralUser> referralUsers = userRepository.getUserReferralsByChatId(chatId);
-        String isAdmin = user.getAdmin() ? "да" : "нет";
+        Long dealsCount = dealCountService.getCountPassedByUserChatId(chatId);
+        List<ReferralUser> referralUsers = readUserService.getUserReferralsByChatId(chatId);
+        String role = user.getUserRole().getDisplayName();
         String isBanned = user.getBanned() ? "да" : "нет";
-        Long lotteryWinCount = lotteryWinRepository.getLotteryWinCount(chatId);
+        Long lotteryWinCount = lotteryWinService.getLotteryWinCount(chatId);
         String fromChatId = Objects.nonNull(user.getFromChatId()) ? String.valueOf(user.getFromChatId()) : "отсутствует";
         String result = null;
         if (ReferralType.STANDARD.isCurrent()) {
             int numberOfReferrals = referralUsers.size();
             int numberOfActiveReferrals = (int) referralUsers.stream()
-                    .filter(usr -> dealRepository.getCountPassedByUserChatId(usr.getChatId()) > 0).count();
-            String currentBalance = userRepository.getReferralBalanceByChatId(chatId).toString();
+                    .filter(usr -> dealCountService.getCountPassedByUserChatId(usr.getChatId()) > 0).count();
+            String currentBalance = readUserService.getReferralBalanceByChatId(chatId).toString();
             result = String.format(MessagePropertiesUtil.getMessage(PropertiesMessage.USER_INFORMATION_MAIN),
                     chatId, userName, dealsCount, numberOfReferrals,
-                    numberOfActiveReferrals, currentBalance, isBanned, isAdmin,
+                    numberOfActiveReferrals, currentBalance, isBanned, role,
                     lotteryWinCount, fromChatId);
         } else {
             result = String.format(MessagePropertiesUtil.getMessage(PropertiesMessage.USER_INFORMATION_WITHOUT_REFERRAL_MAIN),
-                    chatId, userName, dealsCount, isBanned, isAdmin,
+                    chatId, userName, dealsCount, isBanned, role,
                     lotteryWinCount, fromChatId);
         }
         return result;
     }
 
     public void sendSpamBannedUser(Long messageChatId, Long spamBanPid) {
-        sendUserInformation(messageChatId, spamBanRepository.getUserChatIdByPid(spamBanPid),
+        sendUserInformation(messageChatId, spamBanService.getUserChatIdByPid(spamBanPid),
                             KeyboardUtil.buildInline(List.of(
                                     InlineButton.builder()
                                             .text("Оставить в бане")

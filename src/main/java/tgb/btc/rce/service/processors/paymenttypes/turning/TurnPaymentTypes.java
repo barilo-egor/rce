@@ -19,9 +19,9 @@ public class TurnPaymentTypes extends Processor {
             responseSender.sendMessage(chatId, BotStringConstants.FIAT_CURRENCY_CHOOSE, BotKeyboard.FIAT_CURRENCIES);
         } else {
             responseSender.sendMessage(chatId, BotStringConstants.BUY_OR_SELL, BotKeyboard.BUY_OR_SELL);
-            userRepository.nextStep(chatId, Command.TURN_PAYMENT_TYPES.name());
+            modifyUserService.nextStep(chatId, Command.TURN_PAYMENT_TYPES.name());
         }
-        userRepository.nextStep(chatId, Command.TURN_PAYMENT_TYPES.name());
+        modifyUserService.nextStep(chatId, Command.TURN_PAYMENT_TYPES.name());
     }
 
 }

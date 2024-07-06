@@ -2,10 +2,11 @@ package tgb.btc.rce.service.processors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import tgb.btc.api.web.INotificationsAPI;
 import tgb.btc.library.constants.enums.bot.DealStatus;
 import tgb.btc.library.constants.enums.properties.VariableType;
-import tgb.btc.library.repository.bot.DealRepository;
-import tgb.btc.library.service.bean.bot.DealService;
+import tgb.btc.library.interfaces.service.bean.bot.deal.IModifyDealService;
+import tgb.btc.library.interfaces.service.bean.bot.deal.IReadDealService;
 import tgb.btc.library.util.properties.VariablePropertiesUtil;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
@@ -20,39 +21,47 @@ import java.util.List;
 @CommandProcessor(command = Command.USER_ADDITIONAL_VERIFICATION)
 public class UserAdditionalVerification extends Processor {
 
-    private DealService dealService;
+    private IReadDealService readDealService;
 
-    private DealRepository dealRepository;
+    private IModifyDealService modifyDealService;
+
+    private INotificationsAPI notificationsAPI;
 
     @Autowired
-    public void setDealRepository(DealRepository dealRepository) {
-        this.dealRepository = dealRepository;
+    public void setNotificationsAPI(INotificationsAPI notificationsAPI) {
+        this.notificationsAPI = notificationsAPI;
     }
 
     @Autowired
-    public void setDealService(DealService dealService) {
-        this.dealService = dealService;
+    public void setReadDealService(IReadDealService readDealService) {
+        this.readDealService = readDealService;
+    }
+
+    @Autowired
+    public void setModifyDealService(IModifyDealService modifyDealService) {
+        this.modifyDealService = modifyDealService;
     }
 
     @Override
     public void run(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
-        Long dealPid = Long.parseLong(userService.getBufferVariable(chatId));
-        if (!dealService.existByPid(dealPid)) {
+        Long dealPid = Long.parseLong(readUserService.getBufferVariable(chatId));
+        if (!readDealService.existsById(dealPid)) {
             responseSender.sendMessage(chatId, "Заявки не существует.");
-            userService.setDefaultValues(chatId);
+            modifyUserService.setDefaultValues(chatId);
             processToMainMenu(chatId);
             return;
         }
         if (update.getMessage().hasPhoto()) {
             String imageId = BotImageUtil.getImageId(update.getMessage().getPhoto());
-            userService.getAdminsChatIds().forEach(adminChatId -> responseSender.sendPhoto(adminChatId,
-                    "Верификация по заявке №" + dealPid, imageId));
-            dealRepository.updateAdditionalVerificationImageIdByPid(dealPid, imageId);
+            modifyDealService.updateAdditionalVerificationImageIdByPid(dealPid, imageId);
+            modifyUserService.setDefaultValues(chatId);
+            modifyDealService.updateDealStatusByPid(DealStatus.VERIFICATION_RECEIVED, dealPid);
+            notificationsAPI.additionalVerificationReceived(dealPid);
             responseSender.sendMessage(UpdateUtil.getChatId(update),
                     "Спасибо, твоя верификация отправлена администратору.");
-            userService.setDefaultValues(chatId);
-            dealRepository.updateDealStatusByPid(DealStatus.VERIFICATION_RECEIVED, dealPid);
+            readUserService.getAdminsChatIds().forEach(adminChatId -> responseSender.sendPhoto(adminChatId,
+                    "Верификация по заявке №" + dealPid, imageId));
             processToMainMenu(chatId);
             return;
         } else if (update.getMessage().hasText() && update.getMessage().getText().equals("Отказаться от верификации")) {
@@ -63,10 +72,11 @@ public class UserAdditionalVerification extends Processor {
                             .text("Написать оператору")
                             .build()
             )));
-            userService.getAdminsChatIds().forEach(adminChatId ->
+            readUserService.getAdminsChatIds().forEach(adminChatId ->
                     responseSender.sendMessage(adminChatId, "Отказ от верификации по заявке №" + dealPid));
-            userService.setDefaultValues(chatId);
-            dealRepository.updateDealStatusByPid(DealStatus.VERIFICATION_REJECTED, dealPid);
+            modifyUserService.setDefaultValues(chatId);
+            modifyDealService.updateDealStatusByPid(DealStatus.VERIFICATION_REJECTED, dealPid);
+            notificationsAPI.declinedVerificationReceived(dealPid);
             processToMainMenu(chatId);
             return;
         }

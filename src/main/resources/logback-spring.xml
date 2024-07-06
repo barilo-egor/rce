@@ -1,0 +1,135 @@
+<configuration>
+    <!-- Консольный аппендер с цветным выводом -->
+    <appender name="COLOR_CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %highlight(%-5level) [%logger] - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- RollingFileAppender для tgb.btc.rce с ежедневной ротацией и сохранением логов на 3 дня -->
+    <appender name="FILE_TGB_BTC_RCE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/tgb.btc.rce.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>logs/tgb.btc.rce.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>3</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level [%logger] - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- RollingFileAppender для tgb.btc.rce.bot с ежедневной ротацией и сохранением логов на 3 дня -->
+    <appender name="FILE_TGB_BTC_RCE_BOT" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/tgb.btc.rce.bot.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>logs/tgb.btc.rce.bot.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>3</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level [%logger] - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- RollingFileAppender для tgb.btc.rce.service.sender с ежедневной ротацией и сохранением логов на 3 дня -->
+    <appender name="FILE_TGB_BTC_RCE_SENDER" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/tgb.btc.rce.service.sender.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>logs/tgb.btc.rce.service.sender.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>3</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level [%logger] - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- RollingFileAppender для tgb.btc.library с ежедневной ротацией и сохранением логов на 3 дня -->
+    <appender name="FILE_TGB_BTC_LIBRARY" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/tgb.btc.library.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>logs/tgb.btc.library.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>3</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level [%logger] - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- RollingFileAppender для tgb.btc.web с ежедневной ротацией и сохранением логов на 3 дня -->
+    <appender name="FILE_TGB_BTC_WEB" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/tgb.btc.web.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>logs/tgb.btc.web.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>3</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level [%logger] - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- RollingFileAppender для tgb.btc.web.api с ежедневной ротацией и сохранением логов на 3 дня -->
+    <appender name="FILE_TGB_BTC_WEB_API" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/tgb.btc.web.api.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>logs/tgb.btc.web.api.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>3</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level [%logger] - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Аппендер для всех остальных логов -->
+    <appender name="FILE_ALL" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/all.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>logs/all.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>3</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] [%logger] - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Конфигурация логгеров для пакетов -->
+    <logger name="tgb.btc.rce" level="DEBUG" additivity="false">
+        <appender-ref ref="FILE_TGB_BTC_RCE" />
+        <appender-ref ref="COLOR_CONSOLE" />
+    </logger>
+
+    <logger name="tgb.btc.rce.bot" level="DEBUG" additivity="false">
+        <appender-ref ref="FILE_TGB_BTC_RCE_BOT" />
+        <appender-ref ref="COLOR_CONSOLE" />
+    </logger>
+
+    <logger name="tgb.btc.rce.service.sender" level="DEBUG" additivity="false">
+        <appender-ref ref="FILE_TGB_BTC_RCE_SENDER" />
+        <appender-ref ref="COLOR_CONSOLE" />
+    </logger>
+
+    <logger name="tgb.btc.library" level="DEBUG" additivity="false">
+        <appender-ref ref="FILE_TGB_BTC_LIBRARY" />
+        <appender-ref ref="COLOR_CONSOLE" />
+    </logger>
+
+    <logger name="tgb.btc.web" level="DEBUG" additivity="false">
+        <appender-ref ref="FILE_TGB_BTC_WEB" />
+        <appender-ref ref="COLOR_CONSOLE" />
+    </logger>
+
+    <logger name="tgb.btc.web.api" level="DEBUG" additivity="false">
+        <appender-ref ref="FILE_TGB_BTC_WEB_API" />
+        <appender-ref ref="COLOR_CONSOLE" />
+    </logger>
+
+    <!-- Логгер для всех остальных пакетов -->
+    <root level="DEBUG">
+        <appender-ref ref="FILE_ALL" />
+        <appender-ref ref="COLOR_CONSOLE" />
+    </root>
+
+
+    <!-- Root логгер -->
+    <root level="INFO">
+        <appender-ref ref="COLOR_CONSOLE" />
+    </root>
+</configuration>

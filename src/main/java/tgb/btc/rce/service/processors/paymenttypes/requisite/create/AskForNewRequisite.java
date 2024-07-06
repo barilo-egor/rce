@@ -4,9 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.bean.bot.PaymentRequisite;
 import tgb.btc.library.bean.bot.PaymentType;
-import tgb.btc.library.repository.bot.PaymentRequisiteRepository;
-import tgb.btc.library.repository.bot.PaymentTypeRepository;
-import tgb.btc.library.repository.bot.UserDataRepository;
+import tgb.btc.library.interfaces.service.bean.bot.IPaymentRequisiteService;
+import tgb.btc.library.interfaces.service.bean.bot.IPaymentTypeService;
+import tgb.btc.library.interfaces.service.bean.bot.IUserDataService;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.Processor;
@@ -15,25 +15,25 @@ import tgb.btc.rce.util.UpdateUtil;
 @CommandProcessor(command = Command.NEW_PAYMENT_TYPE_REQUISITE, step = 3)
 public class AskForNewRequisite extends Processor {
 
-    private PaymentTypeRepository paymentTypeRepository;
+    private IPaymentTypeService paymentTypeService;
 
-    private UserDataRepository userDataRepository;
+    private IUserDataService userDataService;
 
-    private PaymentRequisiteRepository paymentRequisiteRepository;
+    private IPaymentRequisiteService paymentRequisiteService;
 
     @Autowired
-    public void setPaymentTypeRepository(PaymentTypeRepository paymentTypeRepository) {
-        this.paymentTypeRepository = paymentTypeRepository;
+    public void setPaymentTypeService(IPaymentTypeService paymentTypeService) {
+        this.paymentTypeService = paymentTypeService;
     }
 
     @Autowired
-    public void setUserDataRepository(UserDataRepository userDataRepository) {
-        this.userDataRepository = userDataRepository;
+    public void setUserDataService(IUserDataService userDataService) {
+        this.userDataService = userDataService;
     }
 
     @Autowired
-    public void setPaymentRequisiteRepository(PaymentRequisiteRepository paymentRequisiteRepository) {
-        this.paymentRequisiteRepository = paymentRequisiteRepository;
+    public void setPaymentRequisiteService(IPaymentRequisiteService paymentRequisiteService) {
+        this.paymentRequisiteService = paymentRequisiteService;
     }
 
     @Override
@@ -43,10 +43,10 @@ public class AskForNewRequisite extends Processor {
         PaymentRequisite paymentRequisite = new PaymentRequisite();
         paymentRequisite.setOn(true);
         paymentRequisite.setRequisite(requisite);
-        PaymentType paymentType = paymentTypeRepository.getByPid(
-                userDataRepository.getLongByUserPid(userRepository.getPidByChatId(chatId)));
+        PaymentType paymentType = paymentTypeService.getByPid(
+                userDataService.getLongByUserPid(readUserService.getPidByChatId(chatId)));
         paymentRequisite.setPaymentType(paymentType);
-        paymentRequisiteRepository.save(paymentRequisite);
+        paymentRequisiteService.save(paymentRequisite);
         responseSender.sendMessage(chatId, "Реквизит сохранен.");
         processToAdminMainPanel(chatId);
     }

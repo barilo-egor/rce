@@ -1,5 +1,6 @@
 package tgb.btc.rce.service.schedule;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
@@ -8,12 +9,12 @@ import org.springframework.stereotype.Service;
 import tgb.btc.library.constants.enums.bot.CryptoCurrency;
 import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
+import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.library.repository.bot.DealRepository;
-import tgb.btc.library.repository.bot.UserRepository;
 import tgb.btc.library.util.BigDecimalUtil;
 import tgb.btc.library.util.FiatCurrencyUtil;
-import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.impl.AdminService;
+import tgb.btc.rce.service.sender.IResponseSender;
 import tgb.btc.rce.util.CryptoCurrenciesDesignUtil;
 import tgb.btc.rce.vo.DealReportData;
 
@@ -28,16 +29,23 @@ import java.util.Map;
 import java.util.Objects;
 
 @Service
+@Slf4j
 public class DealAutoReport {
 
     public DealRepository dealRepository;
 
-    public UserRepository userRepository;
+    private IReadUserService readUserService;
 
     public IResponseSender responseSender;
 
     public AdminService adminService;
+
     public static LocalDate YESTERDAY;
+
+    @Autowired
+    public void setReadUserService(IReadUserService readUserService) {
+        this.readUserService = readUserService;
+    }
 
     @Autowired
     public void setAdminService(AdminService adminService) {
@@ -52,11 +60,6 @@ public class DealAutoReport {
     @Autowired
     public void setDealRepository(DealRepository dealRepository) {
         this.dealRepository = dealRepository;
-    }
-
-    @Autowired
-    public void setUserRepository(UserRepository userRepository) {
-        this.userRepository = userRepository;
     }
 
     @Scheduled(cron = "0 5 0 * * *")
@@ -106,8 +109,8 @@ public class DealAutoReport {
                 adminService.notify("Нет сделок за " + data.getPeriod() + ".");
                 return;
             }
-            Integer newUsersCount = userRepository.countByRegistrationDate(dateTimeBegin, dateTimeEnd);
-            List<Long> allNewPartnersChatIds = userRepository.getChatIdsByRegistrationDateAndFromChatIdNotNull(
+            Integer newUsersCount = readUserService.countByRegistrationDate(dateTimeBegin, dateTimeEnd);
+            List<Long> allNewPartnersChatIds = readUserService.getChatIdsByRegistrationDateAndFromChatIdNotNull(
                     dateTimeBegin, dateTimeEnd);
             int allNewPartnersCount = (Objects.nonNull(allNewPartnersChatIds)
                                        ? allNewPartnersChatIds.size()
@@ -160,13 +163,13 @@ public class DealAutoReport {
             stringBuilder.append("\n" + "Количество новых пользователей: ").append(newUsersCount).append("\n")
                     .append("Количество новых партнеров: ").append(allNewPartnersCount).append("\n")
                     .append("Количество активных новых партнеров: ").append(newActivePartnersCount);
-            userRepository.getAdminsChatIds()
+            readUserService.getAdminsChatIds()
                     .forEach(chatId -> responseSender.sendMessage(chatId, stringBuilder.toString()));
         } catch (Exception e) {
             String message = "Ошибка при формировании периодического отчета за " + data.getPeriod() + ":\n"
                     + e.getMessage() + "\n"
                     + ExceptionUtils.getFullStackTrace(e);
-            userRepository.getAdminsChatIds().forEach(chatId -> responseSender.sendMessage(chatId, message));
+            readUserService.getAdminsChatIds().forEach(chatId -> responseSender.sendMessage(chatId, message));
         }
     }
 
@@ -180,7 +183,7 @@ public class DealAutoReport {
 
     private BigDecimal getCryptoAmount(DealType dealType, CryptoCurrency cryptoCurrency, int scale, LocalDateTime dateFrom, LocalDateTime dateTo) {
         // TODO поправить scale для usdt, выводит 2.6E+2 место 260
-        BigDecimal totalCryptoAmount = dealRepository.getCryptoAmountSum(true, dealType, dateFrom, dateTo,
+        BigDecimal totalCryptoAmount = dealRepository.getCryptoAmountSum(dealType, dateFrom, dateTo,
                                                                          cryptoCurrency);
         return Objects.nonNull(totalCryptoAmount)
                ? totalCryptoAmount.setScale(scale, RoundingMode.HALF_DOWN).stripTrailingZeros()
@@ -194,10 +197,10 @@ public class DealAutoReport {
     private BigDecimal getAmount(CryptoCurrency cryptoCurrency, LocalDateTime dateFrom, LocalDateTime dateTo, DealType dealType, FiatCurrency fiatCurrency) {
         BigDecimal totalAmount;
         if (Objects.nonNull(dateTo)) {
-            totalAmount = dealRepository.getTotalAmountSum(true, dealType, dateFrom, dateTo, cryptoCurrency,
+            totalAmount = dealRepository.getTotalAmountSum(dealType, dateFrom, dateTo, cryptoCurrency,
                                                            fiatCurrency);
         } else {
-            totalAmount = dealRepository.getTotalAmountSum(true, dealType, dateFrom, cryptoCurrency, fiatCurrency);
+            totalAmount = dealRepository.getTotalAmountSum(dealType, dateFrom, cryptoCurrency, fiatCurrency);
         }
         return Objects.nonNull(totalAmount)
                ? totalAmount.setScale(0, RoundingMode.HALF_DOWN).stripTrailingZeros()

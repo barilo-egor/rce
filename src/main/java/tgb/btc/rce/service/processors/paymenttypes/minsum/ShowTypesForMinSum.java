@@ -6,8 +6,8 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.bean.bot.PaymentType;
 import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
-import tgb.btc.library.repository.bot.PaymentTypeRepository;
-import tgb.btc.library.repository.bot.UserDataRepository;
+import tgb.btc.library.interfaces.service.bean.bot.IPaymentTypeService;
+import tgb.btc.library.interfaces.service.bean.bot.IUserDataService;
 import tgb.btc.library.util.FiatCurrencyUtil;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.constants.BotStringConstants;
@@ -24,18 +24,18 @@ import java.util.stream.Collectors;
 @CommandProcessor(command = Command.CHANGE_MIN_SUM, step = 2)
 public class ShowTypesForMinSum extends Processor {
 
-    private PaymentTypeRepository paymentTypeRepository;
+    private IPaymentTypeService paymentTypeService;
 
-    private UserDataRepository userDataRepository;
+    private IUserDataService userDataService;
 
     @Autowired
-    public void setUserDataRepository(UserDataRepository userDataRepository) {
-        this.userDataRepository = userDataRepository;
+    public void setPaymentTypeService(IPaymentTypeService paymentTypeService) {
+        this.paymentTypeService = paymentTypeService;
     }
 
     @Autowired
-    public void setPaymentTypeRepository(PaymentTypeRepository paymentTypeRepository) {
-        this.paymentTypeRepository = paymentTypeRepository;
+    public void setUserDataService(IUserDataService userDataService) {
+        this.userDataService = userDataService;
     }
 
     @Override
@@ -55,9 +55,9 @@ public class ShowTypesForMinSum extends Processor {
             return;
         }
         FiatCurrency fiatCurrency = FiatCurrencyUtil.isFew()
-                ? userDataRepository.getFiatCurrencyByChatId(chatId)
+                ? userDataService.getFiatCurrencyByChatId(chatId)
                 : FiatCurrencyUtil.getFirst();
-        List<PaymentType> paymentTypes = paymentTypeRepository.getByDealTypeAndFiatCurrency(dealType, fiatCurrency);
+        List<PaymentType> paymentTypes = paymentTypeService.getByDealTypeAndFiatCurrency(dealType, fiatCurrency);
         if (CollectionUtils.isEmpty(paymentTypes)) {
             responseSender.sendMessage(chatId, "Список тип оплат на " + dealType.getAccusative() + " пуст."); //todo add fiat
             processToAdminMainPanel(chatId);
@@ -74,6 +74,6 @@ public class ShowTypesForMinSum extends Processor {
         responseSender.sendMessage(chatId, "Выберите тип оплаты для изменения минимальной суммы.",
                 KeyboardUtil.buildInline(buttons));
         responseSender.sendMessage(chatId, "Для возвращения в меню нажмите \"Отмена\".", BotKeyboard.REPLY_CANCEL);
-        userService.nextStep(chatId);
+        modifyUserService.nextStep(chatId);
     }
 }

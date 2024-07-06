@@ -6,13 +6,13 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.bean.bot.Contact;
 import tgb.btc.library.exception.BaseException;
-import tgb.btc.library.repository.bot.UserRepository;
-import tgb.btc.library.service.bean.bot.ContactService;
+import tgb.btc.library.interfaces.service.bean.bot.IContactService;
+import tgb.btc.library.interfaces.service.bean.bot.user.IModifyUserService;
+import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.Menu;
 import tgb.btc.rce.enums.PropertiesMessage;
-import tgb.btc.rce.service.impl.ResponseSender;
-import tgb.btc.library.service.bean.bot.UserService;
+import tgb.btc.rce.service.sender.ResponseSender;
 import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.MenuFactory;
 import tgb.btc.rce.util.MessagePropertiesUtil;
@@ -28,30 +28,38 @@ import static tgb.btc.rce.constants.BotStringConstants.CALLBACK_DATA_SPLITTER;
 @Service
 public class EditContactsService {
 
-    private final ResponseSender responseSender;
+    private ResponseSender responseSender;
 
-    private final ContactService contactService;
+    private IContactService contactService;
 
-    private final UserService userService;
+    private IReadUserService readUserService;
 
-    private UserRepository userRepository;
+    private IModifyUserService modifyUserService;
 
     @Autowired
-    public void setUserRepository(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public void setModifyUserService(IModifyUserService modifyUserService) {
+        this.modifyUserService = modifyUserService;
     }
 
     @Autowired
-    public EditContactsService(ResponseSender responseSender, ContactService contactService, UserService userService) {
+    public void setReadUserService(IReadUserService readUserService) {
+        this.readUserService = readUserService;
+    }
+
+    @Autowired
+    public void setResponseSender(ResponseSender responseSender) {
         this.responseSender = responseSender;
+    }
+
+    @Autowired
+    public void setContactService(IContactService contactService) {
         this.contactService = contactService;
-        this.userService = userService;
     }
 
     public void askInput(Long chatId) {
-        userRepository.nextStep(chatId, Command.ADD_CONTACT.name());
+        modifyUserService.nextStep(chatId, Command.ADD_CONTACT.name());
         responseSender.sendMessage(chatId, MessagePropertiesUtil.getMessage(PropertiesMessage.CONTACT_ASK_INPUT),
-                MenuFactory.build(Menu.ADMIN_BACK, userService.isAdminByChatId(chatId)));
+                MenuFactory.build(Menu.ADMIN_BACK, readUserService.isAdminByChatId(chatId)));
     }
 
     public void save(Update update) {

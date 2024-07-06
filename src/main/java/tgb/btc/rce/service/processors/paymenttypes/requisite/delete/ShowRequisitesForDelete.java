@@ -4,10 +4,10 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.bean.bot.PaymentRequisite;
+import tgb.btc.library.interfaces.service.bean.bot.IPaymentRequisiteService;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
-import tgb.btc.library.repository.bot.PaymentRequisiteRepository;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.UpdateUtil;
@@ -19,11 +19,11 @@ import java.util.List;
 @CommandProcessor(command = Command.DELETE_PAYMENT_TYPE_REQUISITE, step = 2)
 public class ShowRequisitesForDelete extends Processor {
 
-    private PaymentRequisiteRepository paymentRequisiteRepository;
+    private IPaymentRequisiteService paymentRequisiteService;
 
     @Autowired
-    public void setPaymentRequisiteRepository(PaymentRequisiteRepository paymentRequisiteRepository) {
-        this.paymentRequisiteRepository = paymentRequisiteRepository;
+    public void setPaymentRequisiteService(IPaymentRequisiteService paymentRequisiteService) {
+        this.paymentRequisiteService = paymentRequisiteService;
     }
 
     @Override
@@ -40,7 +40,7 @@ public class ShowRequisitesForDelete extends Processor {
 
 
     public void sendRequisites(Long chatId, Long paymentTypePid) {
-        List<PaymentRequisite> paymentRequisites = paymentRequisiteRepository.getByPaymentType_Pid(paymentTypePid);
+        List<PaymentRequisite> paymentRequisites = paymentRequisiteService.getByPaymentType_Pid(paymentTypePid);
         if (CollectionUtils.isEmpty(paymentRequisites)) {
             responseSender.sendMessage(chatId, "Реквизиты в этом типе оплаты отсутствуют.");
             processToAdminMainPanel(chatId);

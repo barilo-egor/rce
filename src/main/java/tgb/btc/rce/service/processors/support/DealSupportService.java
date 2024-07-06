@@ -9,9 +9,10 @@ import tgb.btc.library.bean.bot.User;
 import tgb.btc.library.bean.web.api.ApiDeal;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
 import tgb.btc.library.constants.enums.web.ApiDealStatus;
-import tgb.btc.library.repository.web.ApiDealRepository;
-import tgb.btc.library.service.bean.bot.DealService;
-import tgb.btc.library.service.bean.bot.UserService;
+import tgb.btc.library.interfaces.service.bean.bot.deal.IReadDealService;
+import tgb.btc.library.interfaces.service.bean.bot.deal.read.IDealCountService;
+import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
+import tgb.btc.library.interfaces.service.bean.web.IApiDealService;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.util.KeyboardUtil;
@@ -28,37 +29,48 @@ public class DealSupportService {
     private static final String DEAL_INFO = "Заявка на %s №%s\n" + "Дата,время: %s\n" + "Тип оплаты: %s\n" + "Кошелек: %s\n" + "Контакт: %s\n"
             + "Количество сделок: %s\n" + "ID: %s\n" + "Сумма %s: %s\n" + "Сумма: %s %s\n" + "Способ доставки: %s";
 
-    private final DealService dealService;
+    private IReadUserService readUserService;
 
-    private final UserService userService;
+    private IApiDealService apiDealService;
 
-    private ApiDealRepository apiDealRepository;
+    private IReadDealService readDealService;
+
+    private IDealCountService dealCountService;
 
     @Autowired
-    public void setApiDealRepository(ApiDealRepository apiDealRepository) {
-        this.apiDealRepository = apiDealRepository;
+    public void setDealCountService(IDealCountService dealCountService) {
+        this.dealCountService = dealCountService;
     }
 
     @Autowired
-    public DealSupportService(DealService dealService, UserService userService) {
-        this.dealService = dealService;
-        this.userService = userService;
+    public void setReadDealService(IReadDealService readDealService) {
+        this.readDealService = readDealService;
+    }
+
+    @Autowired
+    public void setReadUserService(IReadUserService readUserService) {
+        this.readUserService = readUserService;
+    }
+
+    @Autowired
+    public void setApiDealService(IApiDealService apiDealService) {
+        this.apiDealService = apiDealService;
     }
 
     public String apiDealToString(Long pid) {
-        ApiDeal apiDeal = apiDealRepository.getByPid(pid);
+        ApiDeal apiDeal = apiDealService.getByPid(pid);
         return "API заявка на " + apiDeal.getDealType().getGenitive() + " №" + apiDeal.getPid() + "\n"
                 + "Идентификатор клиента: " + apiDeal.getApiUser().getId() + "\n"
                 + "Дата, время: " + apiDeal.getDateTime().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")) + "\n"
                 + "Рекзвизиты клиента: " + apiDeal.getRequisite() + "\n"
                 + "Реквизиты оплаты: " + apiDeal.getApiUser().getRequisite(apiDeal.getDealType()) + "\n"
-                + "Количество сделок: " + apiDealRepository.countByApiDealStatusAndApiUser_Pid(ApiDealStatus.ACCEPTED, apiDeal.getApiUser().getPid()) + "\n"
+                + "Количество сделок: " + apiDealService.countByApiDealStatusAndApiUser_Pid(ApiDealStatus.ACCEPTED, apiDeal.getApiUser().getPid()) + "\n"
                 + "Сумма " + apiDeal.getCryptoCurrency().getShortName() + ": " + apiDeal.getCryptoAmount() + "\n"
                 + "Сумма " + apiDeal.getApiUser().getFiatCurrency().getDisplayName() + ": " + apiDeal.getAmount();
     }
 
     public String dealToString(Long pid) {
-        Deal deal = dealService.getByPid(pid);
+        Deal deal = readDealService.findByPid(pid);
         User user = deal.getUser();
         String paymentTypeName = Objects.nonNull(deal.getPaymentType()) ? deal.getPaymentType().getName() : "Не установлен тип оплаты.";
         FiatCurrency fiatCurrency = deal.getFiatCurrency();
@@ -67,15 +79,15 @@ public class DealSupportService {
                 deal.getDateTime().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")),
                 paymentTypeName,
                 deal.getWallet(),
-                StringUtils.defaultIfEmpty(userService.getUsernameByChatId(user.getChatId()),
+                StringUtils.defaultIfEmpty(readUserService.getUsernameByChatId(user.getChatId()),
                         "Отсутствует"),
-                dealService.getCountPassedByUserChatId(user.getChatId()), user.getChatId(),
+                dealCountService.getCountPassedByUserChatId(user.getChatId()), user.getChatId(),
                 deal.getCryptoCurrency().getShortName(),
                 deal.getCryptoAmount().setScale(8, RoundingMode.FLOOR).stripTrailingZeros()
                         .toPlainString(),
                 deal.getAmount().setScale(0, RoundingMode.HALF_UP).stripTrailingZeros().toPlainString(),
                 Objects.nonNull(fiatCurrency) ? fiatCurrency.getGenitive() : "отсутствует",
-                deal.getDeliveryType().getDisplayName()
+                Objects.nonNull(deal.getDeliveryType()) ? deal.getDeliveryType().getDisplayName() : "Отсутствует"
         );
     }
 
