@@ -9,8 +9,8 @@ import org.springframework.stereotype.Service;
 import tgb.btc.library.constants.enums.bot.CryptoCurrency;
 import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
+import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.library.repository.bot.DealRepository;
-import tgb.btc.library.repository.bot.UserRepository;
 import tgb.btc.library.util.BigDecimalUtil;
 import tgb.btc.library.util.FiatCurrencyUtil;
 import tgb.btc.rce.service.impl.AdminService;
@@ -34,12 +34,18 @@ public class DealAutoReport {
 
     public DealRepository dealRepository;
 
-    public UserRepository userRepository;
+    private IReadUserService readUserService;
 
     public IResponseSender responseSender;
 
     public AdminService adminService;
+
     public static LocalDate YESTERDAY;
+
+    @Autowired
+    public void setReadUserService(IReadUserService readUserService) {
+        this.readUserService = readUserService;
+    }
 
     @Autowired
     public void setAdminService(AdminService adminService) {
@@ -54,11 +60,6 @@ public class DealAutoReport {
     @Autowired
     public void setDealRepository(DealRepository dealRepository) {
         this.dealRepository = dealRepository;
-    }
-
-    @Autowired
-    public void setUserRepository(UserRepository userRepository) {
-        this.userRepository = userRepository;
     }
 
     @Scheduled(cron = "0 5 0 * * *")
@@ -108,8 +109,8 @@ public class DealAutoReport {
                 adminService.notify("Нет сделок за " + data.getPeriod() + ".");
                 return;
             }
-            Integer newUsersCount = userRepository.countByRegistrationDate(dateTimeBegin, dateTimeEnd);
-            List<Long> allNewPartnersChatIds = userRepository.getChatIdsByRegistrationDateAndFromChatIdNotNull(
+            Integer newUsersCount = readUserService.countByRegistrationDate(dateTimeBegin, dateTimeEnd);
+            List<Long> allNewPartnersChatIds = readUserService.getChatIdsByRegistrationDateAndFromChatIdNotNull(
                     dateTimeBegin, dateTimeEnd);
             int allNewPartnersCount = (Objects.nonNull(allNewPartnersChatIds)
                                        ? allNewPartnersChatIds.size()
@@ -162,13 +163,13 @@ public class DealAutoReport {
             stringBuilder.append("\n" + "Количество новых пользователей: ").append(newUsersCount).append("\n")
                     .append("Количество новых партнеров: ").append(allNewPartnersCount).append("\n")
                     .append("Количество активных новых партнеров: ").append(newActivePartnersCount);
-            userRepository.getAdminsChatIds()
+            readUserService.getAdminsChatIds()
                     .forEach(chatId -> responseSender.sendMessage(chatId, stringBuilder.toString()));
         } catch (Exception e) {
             String message = "Ошибка при формировании периодического отчета за " + data.getPeriod() + ":\n"
                     + e.getMessage() + "\n"
                     + ExceptionUtils.getFullStackTrace(e);
-            userRepository.getAdminsChatIds().forEach(chatId -> responseSender.sendMessage(chatId, message));
+            readUserService.getAdminsChatIds().forEach(chatId -> responseSender.sendMessage(chatId, message));
         }
     }
 

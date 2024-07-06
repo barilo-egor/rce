@@ -23,7 +23,7 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import tgb.btc.library.bean.bot.BotMessage;
 import tgb.btc.library.constants.enums.bot.BotMessageType;
 import tgb.btc.library.exception.BaseException;
-import tgb.btc.library.repository.bot.UserRepository;
+import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.library.service.bean.bot.BotMessageService;
 import tgb.btc.rce.bot.RceBot;
 import tgb.btc.rce.enums.BotKeyboard;
@@ -48,11 +48,11 @@ public class ResponseSender implements IResponseSender {
 
     private BotMessageService botMessageService;
 
-    private UserRepository userRepository;
+    private IReadUserService readUserService;
 
     @Autowired
-    public void setUserRepository(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public void setReadUserService(IReadUserService readUserService) {
+        this.readUserService = readUserService;
     }
 
     @Autowired
@@ -89,7 +89,7 @@ public class ResponseSender implements IResponseSender {
     }
 
     public Optional<Message> sendMessage(Long chatId, String text, Menu menu) {
-        return sendMessage(chatId, text, MenuFactory.build(menu, userRepository.isAdminByChatId(chatId)), null);
+        return sendMessage(chatId, text, MenuFactory.build(menu, readUserService.isAdminByChatId(chatId)), null);
     }
 
     public Optional<Message> sendMessage(Long chatId, PropertiesMessage propertiesMessage, Menu menu) {
@@ -154,7 +154,7 @@ public class ResponseSender implements IResponseSender {
     }
 
     public Optional<Message> sendBotMessage(BotMessageType botMessageType, Long chatId, Menu menu) {
-        return sendBotMessage(botMessageType, chatId, MenuFactory.build(menu, userRepository.isAdminByChatId(chatId)));
+        return sendBotMessage(botMessageType, chatId, MenuFactory.build(menu, readUserService.isAdminByChatId(chatId)));
     }
 
     public Optional<Message> sendBotMessage(BotMessageType botMessageType, Long chatId, ReplyKeyboard replyKeyboard) {

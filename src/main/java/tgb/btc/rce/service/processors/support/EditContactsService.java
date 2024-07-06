@@ -7,8 +7,8 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.bean.bot.Contact;
 import tgb.btc.library.exception.BaseException;
 import tgb.btc.library.interfaces.service.bean.bot.IContactService;
+import tgb.btc.library.interfaces.service.bean.bot.user.IModifyUserService;
 import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
-import tgb.btc.library.repository.bot.UserRepository;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.Menu;
 import tgb.btc.rce.enums.PropertiesMessage;
@@ -34,7 +34,12 @@ public class EditContactsService {
 
     private IReadUserService readUserService;
 
-    private UserRepository userRepository;
+    private IModifyUserService modifyUserService;
+
+    @Autowired
+    public void setModifyUserService(IModifyUserService modifyUserService) {
+        this.modifyUserService = modifyUserService;
+    }
 
     @Autowired
     public void setReadUserService(IReadUserService readUserService) {
@@ -51,13 +56,8 @@ public class EditContactsService {
         this.contactService = contactService;
     }
 
-    @Autowired
-    public void setUserRepository(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
-
     public void askInput(Long chatId) {
-        userRepository.nextStep(chatId, Command.ADD_CONTACT.name());
+        modifyUserService.nextStep(chatId, Command.ADD_CONTACT.name());
         responseSender.sendMessage(chatId, MessagePropertiesUtil.getMessage(PropertiesMessage.CONTACT_ASK_INPUT),
                 MenuFactory.build(Menu.ADMIN_BACK, readUserService.isAdminByChatId(chatId)));
     }
