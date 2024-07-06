@@ -14,7 +14,7 @@ public class Help extends Processor {
     public void run(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
         StringBuilder text = new StringBuilder();
-        text.append("<b>Нажмите на команду для её копирования в буфер обмена.</b>\n\n");
+        text.append("<b>Нажмите на команду для копирования в буфер обмена.</b>\n\n");
         for (Command command : Command.HIDDEN_COMMANDS) {
             if (command.hasAccess(readUserService.getUserRoleByChatId(chatId))) {
                 text.append("<code>").append(command.getText()).append("</code>").append(HelpCommand.getDescription(command)).append("\n");
