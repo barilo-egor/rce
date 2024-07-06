@@ -72,7 +72,7 @@ public class UserInfoService {
         String userName = Objects.nonNull(user.getUsername()) ? user.getUsername() : "скрыт";
         Long dealsCount = dealCountService.getCountPassedByUserChatId(chatId);
         List<ReferralUser> referralUsers = readUserService.getUserReferralsByChatId(chatId);
-        String isAdmin = user.getAdmin() ? "да" : "нет";
+        String role = user.getUserRole().getDisplayName();
         String isBanned = user.getBanned() ? "да" : "нет";
         Long lotteryWinCount = lotteryWinService.getLotteryWinCount(chatId);
         String fromChatId = Objects.nonNull(user.getFromChatId()) ? String.valueOf(user.getFromChatId()) : "отсутствует";
@@ -84,11 +84,11 @@ public class UserInfoService {
             String currentBalance = readUserService.getReferralBalanceByChatId(chatId).toString();
             result = String.format(MessagePropertiesUtil.getMessage(PropertiesMessage.USER_INFORMATION_MAIN),
                     chatId, userName, dealsCount, numberOfReferrals,
-                    numberOfActiveReferrals, currentBalance, isBanned, isAdmin,
+                    numberOfActiveReferrals, currentBalance, isBanned, role,
                     lotteryWinCount, fromChatId);
         } else {
             result = String.format(MessagePropertiesUtil.getMessage(PropertiesMessage.USER_INFORMATION_WITHOUT_REFERRAL_MAIN),
-                    chatId, userName, dealsCount, isBanned, isAdmin,
+                    chatId, userName, dealsCount, isBanned, role,
                     lotteryWinCount, fromChatId);
         }
         return result;

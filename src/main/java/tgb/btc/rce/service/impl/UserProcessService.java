@@ -8,6 +8,7 @@ import tgb.btc.library.bean.bot.User;
 import tgb.btc.library.bean.bot.UserData;
 import tgb.btc.library.bean.bot.UserDiscount;
 import tgb.btc.library.constants.enums.ReferralType;
+import tgb.btc.library.constants.enums.bot.UserRole;
 import tgb.btc.library.exception.BaseException;
 import tgb.btc.library.interfaces.service.bean.bot.IReferralUserService;
 import tgb.btc.library.interfaces.service.bean.bot.IUserDataService;
@@ -74,7 +75,7 @@ public class UserProcessService {
         newUser.setCommand(Command.START);
         newUser.setRegistrationDate(LocalDateTime.now());
         newUser.setStep(User.DEFAULT_STEP);
-        newUser.setAdmin(false);
+        newUser.setUserRole(UserRole.USER);
         newUser.setLotteryCount(0);
         newUser.setReferralBalance(0);
         newUser.setActive(true);
