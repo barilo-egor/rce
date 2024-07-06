@@ -83,7 +83,7 @@ public class MessagesService {
     @Async
     public void sendMessageToUsers(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
-        readUserService.getChatIdsNotAdminsAndIsActiveAndNotBanned()
+        readUserService.getChatIdsForMailing()
                 .forEach(userChatId -> {
                     try {
                         responseSender.sendMessageThrows(userChatId, UpdateUtil.getMessageText(update));
