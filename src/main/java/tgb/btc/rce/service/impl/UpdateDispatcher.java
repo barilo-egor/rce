@@ -116,7 +116,7 @@ public class UpdateDispatcher implements IUpdateDispatcher {
     }
 
     private boolean hasAccess(Command command, Long chatId) {
-        if (!command.isAdmin()) return true;
+        if (!command.hasAccess(readUserService.getUserRoleByChatId(chatId))) return true;
         else return readUserService.isAdminByChatId(chatId);
     }
 
