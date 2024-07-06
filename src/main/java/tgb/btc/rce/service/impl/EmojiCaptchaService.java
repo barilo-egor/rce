@@ -8,7 +8,6 @@ import tgb.btc.rce.conditional.EmojiCaptchaCondition;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.AntiSpam;
 import tgb.btc.rce.service.ICaptchaService;
-import tgb.btc.rce.service.sender.ResponseSender;
 import tgb.btc.rce.vo.EmojiCaptcha;
 import tgb.btc.rce.vo.InlineButton;
 

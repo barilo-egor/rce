@@ -11,8 +11,8 @@ import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.rce.conditional.calculator.InlineCalculatorCondition;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.ICalculatorTypeService;
-import tgb.btc.rce.service.processors.InlineCalculator;
-import tgb.btc.rce.service.sender.IResponseSender;
+import tgb.btc.rce.service.impl.processors.InlineCalculator;
+import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.InlineCalculatorVO;
 

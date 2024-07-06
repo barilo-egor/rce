@@ -5,7 +5,6 @@ import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.library.service.bean.bot.BotMessageService;
 import tgb.btc.library.service.bean.bot.ContactService;
 import tgb.btc.rce.service.impl.UpdateDispatcher;
-import tgb.btc.rce.service.sender.IResponseSender;
 
 @Slf4j
 public class BeanHolder {

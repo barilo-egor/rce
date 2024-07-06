@@ -11,7 +11,6 @@ import tgb.btc.rce.conditional.PictureCaptchaCondition;
 import tgb.btc.rce.exception.PicturesNotFoundException;
 import tgb.btc.rce.service.AntiSpam;
 import tgb.btc.rce.service.ICaptchaService;
-import tgb.btc.rce.service.sender.ResponseSender;
 import tgb.btc.rce.vo.Captcha;
 
 import java.io.File;

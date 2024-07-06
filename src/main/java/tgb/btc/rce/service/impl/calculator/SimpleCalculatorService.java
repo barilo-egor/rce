@@ -12,7 +12,7 @@ import tgb.btc.rce.enums.PropertiesMessage;
 import tgb.btc.rce.service.ICalculatorTypeService;
 import tgb.btc.rce.service.IUpdateDispatcher;
 import tgb.btc.rce.service.impl.KeyboardService;
-import tgb.btc.rce.service.sender.IResponseSender;
+import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.util.MessagePropertiesUtil;
 import tgb.btc.rce.util.UpdateUtil;
 

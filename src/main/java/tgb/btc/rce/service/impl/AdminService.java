@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.rce.enums.BotInlineButton;
-import tgb.btc.rce.service.sender.ResponseSender;
 import tgb.btc.rce.vo.InlineButton;
 
 @Service
