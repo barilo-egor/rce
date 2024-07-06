@@ -11,7 +11,7 @@
 
     <groupId>tgb.btc</groupId>
     <artifactId>rce</artifactId>
-    <version>1.3</version>
+    <version>1.4</version>
     <name>rce</name>
     <description>rce</description>
     <packaging>jar</packaging>
@@ -408,17 +408,17 @@
         <dependency>
             <groupId>tgb.btc</groupId>
             <artifactId>rce-library</artifactId>
-            <version>1.1</version>
+            <version>1.2</version>
         </dependency>
         <dependency>
             <groupId>tgb.btc</groupId>
             <artifactId>rce-web</artifactId>
-            <version>1.1</version>
+            <version>1.2</version>
         </dependency>
         <dependency>
             <groupId>tgb.btc</groupId>
             <artifactId>rce-api</artifactId>
-            <version>1.1</version>
+            <version>1.2</version>
         </dependency>
     </dependencies>
 
