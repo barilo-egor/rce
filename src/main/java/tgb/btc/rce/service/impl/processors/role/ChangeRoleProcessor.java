@@ -21,6 +21,7 @@ public abstract class ChangeRoleProcessor extends Processor {
         }
         modifyUserService.updateUserRoleByChatId(userRole, userChatId);
         responseSender.sendMessage(chatId, "Пользователю " + userChatId + " сменена роль на \"" + userRole.getDisplayName() + "\".");
+        responseSender.sendMessage(chatId, "Вы были переведены в роль \"" + userRole.getDisplayName() + "\".");
         getLogger().debug("Админ {} сменил пользователю {} роль на {}.", chatId, userChatId, userRole.getDisplayName());
     }
 
