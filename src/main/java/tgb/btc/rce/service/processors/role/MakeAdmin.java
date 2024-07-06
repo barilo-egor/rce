@@ -1,4 +1,4 @@
-package tgb.btc.rce.service.processors;
+package tgb.btc.rce.service.processors.role;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.BooleanUtils;

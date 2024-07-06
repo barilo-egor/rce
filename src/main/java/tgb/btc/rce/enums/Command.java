@@ -41,6 +41,7 @@ public enum Command implements ICommand {
     DELETE_USER("/deleteuser", false, true, Set.of(UserRole.ADMIN)),
     CREATE_USER_DATA("/createuserdata", false, true, Set.of(UserRole.ADMIN)),
     MAKE_ADMIN("/makeadmin", false, true, Set.of(UserRole.ADMIN)),
+    MAKE_OPERATOR("/makeoperator", false, true, Set.of(UserRole.ADMIN)),
     HELP("/help", false, true, Set.of(UserRole.ADMIN)),
 
     /**
