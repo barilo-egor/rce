@@ -9,6 +9,7 @@ import tgb.btc.library.interfaces.ICommand;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Slf4j
 public enum Command implements ICommand {
@@ -41,7 +42,8 @@ public enum Command implements ICommand {
     DELETE_USER("/deleteuser", false, true, Set.of(UserRole.ADMIN)),
     MAKE_ADMIN("/makeadmin", false, true, Set.of(UserRole.ADMIN)),
     MAKE_OPERATOR("/makeoperator", false, true, Set.of(UserRole.ADMIN)),
-    HELP("/help", false, true, Set.of(UserRole.ADMIN)),
+    MAKE_USER("/makeuser", false, true, Set.of(UserRole.ADMIN)),
+    HELP("/help", false, false, Set.of(UserRole.ADMIN)),
 
     /**
      * MAIN
@@ -231,8 +233,11 @@ public enum Command implements ICommand {
      */
     SUBMIT_LOGIN("Подтвердить вход", false, false, Set.of(UserRole.USER, UserRole.OPERATOR, UserRole.ADMIN)),
     SUBMIT_REGISTER("Подтвердить регистрацию", false, false, Set.of(UserRole.USER, UserRole.OPERATOR, UserRole.ADMIN)),
-    LOGOUT("Закрыть сессию",  false, false, Set.of(UserRole.USER, UserRole.OPERATOR, UserRole.ADMIN))
-    ;
+    LOGOUT("Закрыть сессию", false, false, Set.of(UserRole.USER, UserRole.OPERATOR, UserRole.ADMIN));
+
+    public static final Set<Command> HIDDEN_COMMANDS = Arrays.stream(Command.values())
+            .filter(Command::isHidden)
+            .collect(Collectors.toSet());
 
     final String text;
     final boolean isSimple;
