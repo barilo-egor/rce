@@ -3,13 +3,14 @@ package tgb.btc.rce.service.impl.web;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tgb.btc.api.web.INotifier;
+import tgb.btc.library.constants.enums.bot.UserRole;
 import tgb.btc.library.constants.enums.properties.VariableType;
 import tgb.btc.library.repository.bot.DealRepository;
 import tgb.btc.library.util.properties.VariablePropertiesUtil;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.InlineType;
-import tgb.btc.rce.service.impl.AdminService;
+import tgb.btc.rce.service.impl.NotifyService;
 import tgb.btc.rce.service.impl.KeyboardService;
 import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.util.MessagePropertiesUtil;
@@ -18,11 +19,12 @@ import tgb.btc.rce.vo.InlineButton;
 import java.io.File;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 @Service
 public class Notifier implements INotifier {
 
-    private AdminService adminService;
+    private NotifyService notifyService;
 
     private KeyboardService keyboardService;
 
@@ -46,13 +48,14 @@ public class Notifier implements INotifier {
     }
 
     @Autowired
-    public void setAdminService(AdminService adminService) {
-        this.adminService = adminService;
+    public void setAdminService(NotifyService notifyService) {
+        this.notifyService = notifyService;
     }
 
     @Override
     public void notifyNewApiDeal(Long apiDealPid) {
-        adminService.notify("Поступила новая api сделка.", keyboardService.getShowApiDeal(apiDealPid));
+        notifyService.notifyMessage("Поступила новая api сделка.", keyboardService.getShowApiDeal(apiDealPid),
+                Set.of(UserRole.OPERATOR, UserRole.ADMIN));
     }
 
     @Override
@@ -99,6 +102,6 @@ public class Notifier implements INotifier {
 
     @Override
     public void notifyAdmins(String s) {
-        adminService.notify(s);
+        notifyService.notifyMessage(s, Set.of(UserRole.ADMIN));
     }
 }

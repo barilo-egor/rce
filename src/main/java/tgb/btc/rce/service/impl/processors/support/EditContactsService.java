@@ -59,7 +59,7 @@ public class EditContactsService {
     public void askInput(Long chatId) {
         modifyUserService.nextStep(chatId, Command.ADD_CONTACT.name());
         responseSender.sendMessage(chatId, MessagePropertiesUtil.getMessage(PropertiesMessage.CONTACT_ASK_INPUT),
-                MenuFactory.build(Menu.ADMIN_BACK, readUserService.isAdminByChatId(chatId)));
+                MenuFactory.build(Menu.ADMIN_BACK, readUserService.getUserRoleByChatId(chatId)));
     }
 
     public void save(Update update) {

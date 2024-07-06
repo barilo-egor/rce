@@ -83,7 +83,7 @@ public class ExchangeService {
 
     private IPaymentRequisiteService paymentRequisiteService;
 
-    private AdminService adminService;
+    private NotifyService notifyService;
 
     private IPaymentReceiptService paymentReceiptService;
 
@@ -157,8 +157,8 @@ public class ExchangeService {
     }
 
     @Autowired
-    public void setAdminService(AdminService adminService) {
-        this.adminService = adminService;
+    public void setAdminService(NotifyService notifyService) {
+        this.notifyService = notifyService;
     }
 
     @Autowired
@@ -706,8 +706,8 @@ public class ExchangeService {
         modifyUserService.setDefaultValues(chatId);
         responseSender.sendMessage(chatId, MessagePropertiesUtil.getMessage(PropertiesMessage.DEAL_CONFIRMED));
         log.info("Сделка " + currentDealPid + " пользователя " + chatId + " переведена в статус PAID");
-        adminService.notify("Поступила новая заявка на " + dealType.getGenitive() + ".",
-                keyboardService.getShowDeal(currentDealPid));
+        notifyService.notifyMessage("Поступила новая заявка на " + dealType.getGenitive() + ".",
+                keyboardService.getShowDeal(currentDealPid), Set.of(UserRole.OPERATOR, UserRole.ADMIN));
         notificationsAPI.newBotDeal(currentDealPid);
     }
 

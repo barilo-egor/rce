@@ -9,11 +9,12 @@ import org.springframework.stereotype.Service;
 import tgb.btc.library.constants.enums.bot.CryptoCurrency;
 import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
+import tgb.btc.library.constants.enums.bot.UserRole;
 import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.library.repository.bot.DealRepository;
 import tgb.btc.library.util.BigDecimalUtil;
 import tgb.btc.library.util.FiatCurrencyUtil;
-import tgb.btc.rce.service.impl.AdminService;
+import tgb.btc.rce.service.impl.NotifyService;
 import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.util.CryptoCurrenciesDesignUtil;
 import tgb.btc.rce.vo.DealReportData;
@@ -23,10 +24,7 @@ import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -38,7 +36,7 @@ public class DealAutoReport {
 
     public IResponseSender responseSender;
 
-    public AdminService adminService;
+    public NotifyService notifyService;
 
     public static LocalDate YESTERDAY;
 
@@ -48,8 +46,8 @@ public class DealAutoReport {
     }
 
     @Autowired
-    public void setAdminService(AdminService adminService) {
-        this.adminService = adminService;
+    public void setAdminService(NotifyService notifyService) {
+        this.notifyService = notifyService;
     }
 
     @Autowired
@@ -106,7 +104,7 @@ public class DealAutoReport {
             LocalDateTime dateTimeEnd = LocalDateTime.of(data.getLastDay(), LocalTime.of(23, 59, 59));
 
             if (dealRepository.getCountByPeriod(dateTimeBegin, dateTimeEnd) == 0) {
-                adminService.notify("Нет сделок за " + data.getPeriod() + ".");
+                notifyService.notifyMessage("Нет сделок за " + data.getPeriod() + ".", Set.of(UserRole.OPERATOR, UserRole.ADMIN));
                 return;
             }
             Integer newUsersCount = readUserService.countByRegistrationDate(dateTimeBegin, dateTimeEnd);
@@ -163,13 +161,12 @@ public class DealAutoReport {
             stringBuilder.append("\n" + "Количество новых пользователей: ").append(newUsersCount).append("\n")
                     .append("Количество новых партнеров: ").append(allNewPartnersCount).append("\n")
                     .append("Количество активных новых партнеров: ").append(newActivePartnersCount);
-            readUserService.getAdminsChatIds()
-                    .forEach(chatId -> responseSender.sendMessage(chatId, stringBuilder.toString()));
+            notifyService.notifyMessage(stringBuilder.toString(), Set.of(UserRole.ADMIN));
         } catch (Exception e) {
             String message = "Ошибка при формировании периодического отчета за " + data.getPeriod() + ":\n"
                     + e.getMessage() + "\n"
                     + ExceptionUtils.getFullStackTrace(e);
-            readUserService.getAdminsChatIds().forEach(chatId -> responseSender.sendMessage(chatId, message));
+            notifyService.notifyMessage(message, Set.of(UserRole.ADMIN));
         }
     }
 

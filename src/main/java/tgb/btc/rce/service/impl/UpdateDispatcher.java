@@ -7,6 +7,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import tgb.btc.library.constants.enums.bot.UserRole;
 import tgb.btc.library.constants.enums.properties.PropertiesPath;
 import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.library.interfaces.service.bean.common.bot.IUserCommonService;
@@ -103,7 +104,7 @@ public class UpdateDispatcher implements IUpdateDispatcher {
         Command command;
         if (userCommonService.isDefaultStep(chatId)) command = Command.fromUpdate(update);
         else command = Command.valueOf(readUserService.getCommandByChatId(chatId));
-        if (Objects.isNull(command) || !hasAccess(command, chatId)) return Command.START;
+        if (Objects.isNull(command) || !command.hasAccess(readUserService.getUserRoleByChatId(chatId))) return Command.START;
         else return command;
     }
 
@@ -112,12 +113,7 @@ public class UpdateDispatcher implements IUpdateDispatcher {
     }
 
     private boolean isOffed(Long chatId) {
-        return !isOn() && BooleanUtils.isNotTrue(readUserService.isAdminByChatId(chatId));
-    }
-
-    private boolean hasAccess(Command command, Long chatId) {
-        if (!command.hasAccess(readUserService.getUserRoleByChatId(chatId))) return true;
-        else return readUserService.isAdminByChatId(chatId);
+        return !isOn() && UserRole.USER.equals(readUserService.getUserRoleByChatId(chatId));
     }
 
     public static boolean isOn() {

@@ -3,8 +3,8 @@ package tgb.btc.rce.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import tgb.btc.library.bean.bot.User;
+import tgb.btc.library.constants.enums.bot.UserRole;
 import tgb.btc.library.exception.BaseException;
 import tgb.btc.library.interfaces.service.bean.bot.user.IModifyUserService;
 import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
@@ -85,7 +85,8 @@ public abstract class Processor {
     private boolean isCommand(Update update, Command command) {
         Command enteredCommand;
         try {
-            if(update.hasCallbackQuery() || (update.hasMessage() && update.getMessage().hasText())) enteredCommand = Command.fromUpdate(update);
+            if (update.hasCallbackQuery() || (update.hasMessage() && update.getMessage().hasText()))
+                enteredCommand = Command.fromUpdate(update);
             else return false;
         } catch (BaseException e) {
             return false;
@@ -97,22 +98,20 @@ public abstract class Processor {
         modifyUserService.setDefaultValues(chatId);
         responseSender.sendMessage(chatId,
                 MessagePropertiesUtil.getMessage(PropertiesMessage.MENU_MAIN),
-                getMainMenuKeyboard(chatId), "HTML");
+                MenuFactory.build(Menu.MAIN, readUserService.getUserRoleByChatId(chatId)), "HTML");
     }
 
     public void processToAdminMainPanel(Long chatId) {
         modifyUserService.setDefaultValues(chatId);
-        responseSender.sendMessage(chatId,
-                MessagePropertiesUtil.getMessage(PropertiesMessage.MENU_MAIN_ADMIN),
-                getAdminMainPanel(chatId));
-    }
-
-    protected ReplyKeyboard getAdminMainPanel(Long chatId) {
-        return MenuFactory.build(Menu.ADMIN_PANEL, readUserService.isAdminByChatId(chatId));
-    }
-
-    protected ReplyKeyboard getMainMenuKeyboard(Long chatId) {
-        return MenuFactory.build(Menu.MAIN, readUserService.isAdminByChatId(chatId));
+        UserRole role = readUserService.getUserRoleByChatId(chatId);
+        if (UserRole.ADMIN.equals(role))
+            responseSender.sendMessage(chatId,
+                    MessagePropertiesUtil.getMessage(PropertiesMessage.MENU_MAIN_ADMIN),
+                    MenuFactory.build(Menu.ADMIN_PANEL, role));
+        else if (UserRole.OPERATOR.equals(role))
+            responseSender.sendMessage(chatId,
+                    MessagePropertiesUtil.getMessage(PropertiesMessage.MENU_MAIN_OPERATOR),
+                    MenuFactory.build(Menu.OPERATOR_PANEL, role));
     }
 
     protected boolean hasMessageText(Update update, String message) {

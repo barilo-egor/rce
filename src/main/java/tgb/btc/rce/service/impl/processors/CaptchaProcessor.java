@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Conditional;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.bean.bot.SpamBan;
+import tgb.btc.library.constants.enums.bot.UserRole;
 import tgb.btc.library.exception.BaseException;
 import tgb.btc.library.interfaces.service.bean.bot.ISpamBanService;
 import tgb.btc.library.service.process.BanningUserService;
@@ -15,7 +16,7 @@ import tgb.btc.rce.enums.BotKeyboard;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.AntiSpam;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.service.impl.AdminService;
+import tgb.btc.rce.service.impl.NotifyService;
 import tgb.btc.rce.service.impl.schedule.CaptchaSender;
 import tgb.btc.rce.util.CallbackQueryUtil;
 import tgb.btc.rce.util.KeyboardUtil;
@@ -23,6 +24,7 @@ import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.InlineButton;
 
 import java.util.List;
+import java.util.Set;
 
 @CommandProcessor(command = Command.CAPTCHA)
 @Conditional(AntispamCondition.class)
@@ -37,7 +39,7 @@ public class CaptchaProcessor extends Processor {
 
     private ISpamBanService spamBanService;
 
-    private AdminService adminService;
+    private NotifyService notifyService;
 
     private BanningUserService banningUserService;
 
@@ -47,8 +49,8 @@ public class CaptchaProcessor extends Processor {
     }
 
     @Autowired
-    public void setAdminService(AdminService adminService) {
-        this.adminService = adminService;
+    public void setAdminService(NotifyService notifyService) {
+        this.notifyService = notifyService;
     }
 
     @Autowired
@@ -101,7 +103,7 @@ public class CaptchaProcessor extends Processor {
                     log.debug("Пользователь chatId={} был заблокирован после неправильных вводов капчи.", chatId);
                     responseSender.sendMessage(chatId, "Вы были заблокированы.", BotKeyboard.OPERATOR);
                     SpamBan spamBan = spamBanService.save(chatId);
-                    adminService.notify("Антиспам система заблокировала пользователя.",
+                    notifyService.notifyMessage("Антиспам система заблокировала пользователя.",
                             KeyboardUtil.buildInline(List.of(
                                     InlineButton.builder()
                                             .text("Показать")
@@ -109,7 +111,7 @@ public class CaptchaProcessor extends Processor {
                                                     Command.SHOW_SPAM_BANNED_USER.getText(), spamBan.getPid().toString())
                                             )
                                             .build()
-                            )));
+                            )), Set.of(UserRole.ADMIN, UserRole.OPERATOR));
                     modifyUserService.setDefaultValues(chatId);
                     antiSpam.removeUser(chatId);
                 }

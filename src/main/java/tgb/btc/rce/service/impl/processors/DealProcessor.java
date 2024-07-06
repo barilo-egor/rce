@@ -26,9 +26,7 @@ import tgb.btc.rce.service.impl.processors.support.ExchangeService;
 import tgb.btc.rce.util.CallbackQueryUtil;
 import tgb.btc.rce.util.UpdateUtil;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @CommandProcessor(command = Command.DEAL)
 @Slf4j
@@ -261,8 +259,9 @@ public class DealProcessor extends Processor {
         Long chatId = UpdateUtil.getChatId(update);
         Command commandFromUpdate = Command.fromUpdate(update);
         Command mainMenuCommand = null;
-        List<Command> commands = new ArrayList<>(Menu.MAIN.getCommands());
+        Set<Command> commands = new HashSet<>(Menu.MAIN.getCommands());
         commands.add(Command.ADMIN_PANEL);
+        commands.add(Command.OPERATOR_PANEL);
         commands.add(Command.START);
         for (Command command : commands) {
             if (command.equals(commandFromUpdate)) mainMenuCommand = command;

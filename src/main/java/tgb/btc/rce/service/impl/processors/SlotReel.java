@@ -7,6 +7,7 @@ import org.telegram.telegrambots.meta.api.methods.send.SendDice;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.constants.enums.SlotReelType;
+import tgb.btc.library.constants.enums.bot.UserRole;
 import tgb.btc.library.constants.enums.properties.PropertiesPath;
 import tgb.btc.library.service.process.SlotReelService;
 import tgb.btc.library.vo.slotReel.ScrollResult;
@@ -54,8 +55,7 @@ public class SlotReel extends Processor {
     @Override
     public void run(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
-        boolean isAdmin = readUserService.isAdminByChatId(chatId);
-        if (SlotReelType.NONE.isCurrent() || (SlotReelType.STANDARD_ADMIN.isCurrent() && !isAdmin)) {
+        if (SlotReelType.NONE.isCurrent() || (SlotReelType.STANDARD_ADMIN.isCurrent() && UserRole.USER.equals(readUserService.getUserRoleByChatId(chatId)))) {
             processToStart(chatId, update);
             return;
         }

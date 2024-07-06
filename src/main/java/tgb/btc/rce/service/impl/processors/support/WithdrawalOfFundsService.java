@@ -5,13 +5,14 @@ import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import tgb.btc.library.bean.bot.WithdrawalRequest;
+import tgb.btc.library.constants.enums.bot.UserRole;
 import tgb.btc.library.interfaces.service.bean.bot.IWithdrawalRequestService;
 import tgb.btc.library.interfaces.service.bean.bot.user.IModifyUserService;
 import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.PropertiesMessage;
-import tgb.btc.rce.service.impl.AdminService;
+import tgb.btc.rce.service.impl.NotifyService;
 import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.MessagePropertiesUtil;
@@ -20,6 +21,7 @@ import tgb.btc.rce.util.WithdrawalRequestUtil;
 import tgb.btc.rce.vo.ReplyButton;
 
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class WithdrawalOfFundsService {
@@ -28,7 +30,7 @@ public class WithdrawalOfFundsService {
 
     private IWithdrawalRequestService withdrawalRequestService;
 
-    private AdminService adminService;
+    private NotifyService notifyService;
 
     private IReadUserService readUserService;
 
@@ -45,8 +47,8 @@ public class WithdrawalOfFundsService {
     }
 
     @Autowired
-    public void setAdminService(AdminService adminService) {
-        this.adminService = adminService;
+    public void setAdminService(NotifyService notifyService) {
+        this.notifyService = notifyService;
     }
 
     @Autowired
@@ -68,9 +70,9 @@ public class WithdrawalOfFundsService {
         }
         WithdrawalRequest request = withdrawalRequestService.save(
                 WithdrawalRequestUtil.buildFromUpdate(readUserService.findByChatId(UpdateUtil.getChatId(update)), update));
-        adminService.notify(MessagePropertiesUtil.getMessage(PropertiesMessage.ADMIN_NOTIFY_WITHDRAWAL_NEW),
+        notifyService.notifyMessage(MessagePropertiesUtil.getMessage(PropertiesMessage.ADMIN_NOTIFY_WITHDRAWAL_NEW),
                 Command.SHOW_WITHDRAWAL_REQUEST.getText() + BotStringConstants.CALLBACK_DATA_SPLITTER +
-                        request.getPid());
+                        request.getPid(), Set.of(UserRole.OPERATOR, UserRole.ADMIN));
         responseSender.sendMessage(chatId,
                 MessagePropertiesUtil.getMessage(PropertiesMessage.USER_RESPONSE_WITHDRAWAL_REQUEST_CREATED));
         return true;

@@ -44,14 +44,14 @@ public class MessagesService {
         Long chatId = UpdateUtil.getChatId(update);
         modifyUserService.nextStep(chatId, command.name());
         responseSender.sendMessage(chatId, "Введите ID пользователя.",
-                MenuFactory.build(Menu.ADMIN_BACK, readUserService.isAdminByChatId(chatId)));
+                MenuFactory.build(Menu.ADMIN_BACK, readUserService.getUserRoleByChatId(chatId)));
     }
 
     public void askForDealsCount(Update update, Command command) {
         Long chatId = UpdateUtil.getChatId(update);
         modifyUserService.nextStep(chatId, command.name());
         responseSender.sendMessage(chatId, "Введите кол-во возможных сделок.",
-                MenuFactory.build(Menu.ADMIN_BACK, readUserService.isAdminByChatId(chatId)));
+                MenuFactory.build(Menu.ADMIN_BACK, readUserService.getUserRoleByChatId(chatId)));
     }
 
     public boolean isUserExist(Update update) {
@@ -66,7 +66,7 @@ public class MessagesService {
         Long chatId = UpdateUtil.getChatId(update);
         modifyUserService.nextStep(chatId, command.name());
         responseSender.sendMessage(chatId, "Введите текст сообщения.",
-                MenuFactory.build(Menu.ADMIN_BACK, readUserService.isAdminByChatId(chatId)));
+                MenuFactory.build(Menu.ADMIN_BACK, readUserService.getUserRoleByChatId(chatId)));
     }
 
     public void sendMessageToUser(Update update) {

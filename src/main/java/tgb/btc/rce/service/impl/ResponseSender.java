@@ -90,7 +90,7 @@ public class ResponseSender implements IResponseSender {
     }
 
     public Optional<Message> sendMessage(Long chatId, String text, Menu menu) {
-        return sendMessage(chatId, text, MenuFactory.build(menu, readUserService.isAdminByChatId(chatId)), null);
+        return sendMessage(chatId, text, MenuFactory.build(menu, readUserService.getUserRoleByChatId(chatId)), null);
     }
 
     public Optional<Message> sendMessage(Long chatId, PropertiesMessage propertiesMessage, Menu menu) {
@@ -155,7 +155,7 @@ public class ResponseSender implements IResponseSender {
     }
 
     public Optional<Message> sendBotMessage(BotMessageType botMessageType, Long chatId, Menu menu) {
-        return sendBotMessage(botMessageType, chatId, MenuFactory.build(menu, readUserService.isAdminByChatId(chatId)));
+        return sendBotMessage(botMessageType, chatId, MenuFactory.build(menu, readUserService.getUserRoleByChatId(chatId)));
     }
 
     public Optional<Message> sendBotMessage(BotMessageType botMessageType, Long chatId, ReplyKeyboard replyKeyboard) {

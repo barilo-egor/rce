@@ -60,7 +60,7 @@ public class BanUnban extends Processor {
         Long inputChatId = NumberUtil.getInputLong(UpdateUtil.getMessageText(update));
         if (!readUserService.existsByChatId(inputChatId)) {
             responseSender.sendMessage(chatId, "Пользователь с таким ID не найден.",
-                    MenuFactory.build(Menu.ADMIN_BACK, readUserService.isAdminByChatId(chatId)));
+                    MenuFactory.build(Menu.ADMIN_BACK, readUserService.getUserRoleByChatId(chatId)));
             return;
         }
         if (BooleanUtils.isNotTrue(bannedUserCache.get(inputChatId))) {

@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.api.web.INotificationsAPI;
 import tgb.btc.library.constants.enums.bot.DealStatus;
+import tgb.btc.library.constants.enums.bot.UserRole;
 import tgb.btc.library.constants.enums.properties.VariableType;
 import tgb.btc.library.interfaces.service.bean.bot.deal.IModifyDealService;
 import tgb.btc.library.interfaces.service.bean.bot.deal.IReadDealService;
@@ -11,12 +12,14 @@ import tgb.btc.library.util.properties.VariablePropertiesUtil;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.Processor;
+import tgb.btc.rce.service.impl.NotifyService;
 import tgb.btc.rce.util.BotImageUtil;
 import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.InlineButton;
 
 import java.util.List;
+import java.util.Set;
 
 @CommandProcessor(command = Command.USER_ADDITIONAL_VERIFICATION)
 public class UserAdditionalVerification extends Processor {
@@ -26,6 +29,13 @@ public class UserAdditionalVerification extends Processor {
     private IModifyDealService modifyDealService;
 
     private INotificationsAPI notificationsAPI;
+
+    private NotifyService notifyService;
+
+    @Autowired
+    public void setAdminService(NotifyService notifyService) {
+        this.notifyService = notifyService;
+    }
 
     @Autowired
     public void setNotificationsAPI(INotificationsAPI notificationsAPI) {
@@ -60,8 +70,7 @@ public class UserAdditionalVerification extends Processor {
             notificationsAPI.additionalVerificationReceived(dealPid);
             responseSender.sendMessage(UpdateUtil.getChatId(update),
                     "Спасибо, твоя верификация отправлена администратору.");
-            readUserService.getAdminsChatIds().forEach(adminChatId -> responseSender.sendPhoto(adminChatId,
-                    "Верификация по заявке №" + dealPid, imageId));
+            notifyService.notifyMessageAndPhoto("Верификация по заявке №" + dealPid, imageId, Set.of(UserRole.OPERATOR, UserRole.ADMIN));
             processToMainMenu(chatId);
             return;
         } else if (update.getMessage().hasText() && update.getMessage().getText().equals("Отказаться от верификации")) {
@@ -72,8 +81,7 @@ public class UserAdditionalVerification extends Processor {
                             .text("Написать оператору")
                             .build()
             )));
-            readUserService.getAdminsChatIds().forEach(adminChatId ->
-                    responseSender.sendMessage(adminChatId, "Отказ от верификации по заявке №" + dealPid));
+            notifyService.notifyMessage("Отказ от верификации по заявке №" + dealPid, Set.of(UserRole.OPERATOR, UserRole.ADMIN));
             modifyUserService.setDefaultValues(chatId);
             modifyDealService.updateDealStatusByPid(DealStatus.VERIFICATION_REJECTED, dealPid);
             notificationsAPI.declinedVerificationReceived(dealPid);

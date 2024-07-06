@@ -4,6 +4,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.bean.bot.Review;
+import tgb.btc.library.constants.enums.bot.UserRole;
 import tgb.btc.library.constants.enums.properties.VariableType;
 import tgb.btc.library.interfaces.service.bean.bot.IReviewService;
 import tgb.btc.library.util.properties.VariablePropertiesUtil;
@@ -11,6 +12,7 @@ import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.InlineType;
 import tgb.btc.rce.service.Processor;
+import tgb.btc.rce.service.impl.NotifyService;
 import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.InlineButton;
@@ -18,6 +20,7 @@ import tgb.btc.rce.vo.ReviewPrise;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static tgb.btc.rce.enums.ReviewPriseType.DYNAMIC;
@@ -26,6 +29,13 @@ import static tgb.btc.rce.enums.ReviewPriseType.DYNAMIC;
 public class ShareReview extends Processor {
 
     private IReviewService reviewService;
+
+    private NotifyService notifyService;
+
+    @Autowired
+    public void setAdminService(NotifyService notifyService) {
+        this.notifyService = notifyService;
+    }
 
     public static Map<Long, ReviewPrise> reviewPrisesMap = new ConcurrentHashMap<>();
 
@@ -88,8 +98,7 @@ public class ShareReview extends Processor {
                             .build());
                 }
                 responseSender.sendMessage(chatId, "Спасибо, ваш отзыв сохранен.");
-                readUserService.getAdminsChatIds().forEach(adminChatId ->
-                        responseSender.sendMessage(adminChatId, "Поступил новый отзыв."));
+                notifyService.notifyMessage("Поступил новый отзыв.", Set.of(UserRole.OPERATOR, UserRole.ADMIN));
                 processToMainMenu(chatId);
                 break;
         }

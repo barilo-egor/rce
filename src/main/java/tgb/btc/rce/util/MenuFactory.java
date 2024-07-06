@@ -4,6 +4,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import tgb.btc.library.constants.enums.DiceType;
 import tgb.btc.library.constants.enums.RPS;
 import tgb.btc.library.constants.enums.SlotReelType;
+import tgb.btc.library.constants.enums.bot.UserRole;
 import tgb.btc.library.exception.BaseException;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.InlineType;
@@ -21,14 +22,16 @@ public final class MenuFactory {
     }
 
     // TODO
-    public static ReplyKeyboard build(Menu menu, boolean isAdmin) {
+    public static ReplyKeyboard build(Menu menu, UserRole userRole) {
         switch (menu) {
             case MAIN:
-                return KeyboardUtil.buildReply(2, main(isAdmin), false);
+                return KeyboardUtil.buildReply(2, main(userRole), false);
             case DRAWS:
-                return KeyboardUtil.buildReply(2, draws(isAdmin), false);
+                return KeyboardUtil.buildReply(2, draws(userRole), false);
             case ADMIN_PANEL:
                 return KeyboardUtil.buildReply(2, fillReply(Menu.ADMIN_PANEL.getCommands()), false);
+            case OPERATOR_PANEL:
+                return KeyboardUtil.buildReply(2, fillReply(Menu.OPERATOR_PANEL.getCommands()), false);
             case ASK_CONTACT:
                 return KeyboardUtil.buildReply(1, fillReply(Menu.ASK_CONTACT.getCommands()), false);
             case ADMIN_BACK:
@@ -60,24 +63,27 @@ public final class MenuFactory {
         return KeyboardUtil.buildReply(2, fillReply(commands), true);
     }
 
-    private static List<ReplyButton> main(boolean isAdmin) {
+    private static List<ReplyButton> main(UserRole userRole) {
         List<Command> commands = new ArrayList<>(Menu.MAIN.getCommands());
-        if (isAdmin) {
+        if (UserRole.ADMIN.equals(userRole)) {
             commands.add(Command.ADMIN_PANEL);
             commands.add(Command.WEB_ADMIN_PANEL);
+        }
+        if (UserRole.OPERATOR.equals(userRole)) {
+            commands.add(Command.OPERATOR_PANEL);
         }
         return fillReply(commands);
     }
 
-    private static List<ReplyButton> draws(boolean isAdmin) {
+    private static List<ReplyButton> draws(UserRole userRole) {
         List<Command> commands = new ArrayList<>(Menu.DRAWS.getCommands());
-        if (SlotReelType.NONE.isCurrent() || (SlotReelType.STANDARD_ADMIN.isCurrent() && !isAdmin)) {
+        if (SlotReelType.NONE.isCurrent() || (SlotReelType.STANDARD_ADMIN.isCurrent() && UserRole.USER.equals(userRole))) {
             commands.remove(Command.SLOT_REEL);
         }
-        if (DiceType.NONE.isCurrent() || (DiceType.STANDARD_ADMIN.isCurrent() && !isAdmin)) {
+        if (DiceType.NONE.isCurrent() || (DiceType.STANDARD_ADMIN.isCurrent() && UserRole.USER.equals(userRole))) {
             commands.remove(Command.DICE);
         }
-        if (RPS.NONE.isCurrent() || (RPS.STANDARD_ADMIN.isCurrent() && !isAdmin)) {
+        if (RPS.NONE.isCurrent() || (RPS.STANDARD_ADMIN.isCurrent() && UserRole.USER.equals(userRole))) {
             commands.remove(Command.RPS);
         }
         return fillReply(commands);

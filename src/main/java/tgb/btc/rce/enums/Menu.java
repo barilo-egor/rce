@@ -13,6 +13,8 @@ public enum Menu {
     ASK_CONTACT(List.of(Command.SHARE_CONTACT, Command.CANCEL)),
     ADMIN_PANEL(List.of(Command.REQUESTS, Command.BOT_SETTINGS, Command.REPORTS, Command.DISCOUNTS,
             Command.USERS, Command.DEALS_COUNT, Command.QUIT_ADMIN_PANEL)),
+    OPERATOR_PANEL(List.of(Command.NEW_DEALS, Command.NEW_API_DEALS, Command.NEW_REVIEWS, Command.NEW_WITHDRAWALS, Command.NEW_SPAM_BANS,
+            Command.PAYMENT_TYPES, Command.QUIT_ADMIN_PANEL)),
     DISCOUNTS(ReferralType.STANDARD.isCurrent()
             ? List.of(Command.RANK_DISCOUNT, Command.TURN_RANK_DISCOUNT, Command.PERSONAL_BUY_DISCOUNT,
             Command.PERSONAL_SELL_DISCOUNT, Command.REFERRAL_PERCENT, Command.ADMIN_BACK)

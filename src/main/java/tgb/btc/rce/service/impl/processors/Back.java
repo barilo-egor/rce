@@ -26,6 +26,6 @@ public class Back extends Processor {
         Long chatId = UpdateUtil.getChatId(update);
         responseSender.sendBotMessage(botMessageService.findByTypeNullSafe(BotMessageType.START),
                 chatId,
-                MenuFactory.build(Menu.MAIN, readUserService.isAdminByChatId(chatId)));
+                MenuFactory.build(Menu.MAIN, readUserService.getUserRoleByChatId(chatId)));
     }
 }
