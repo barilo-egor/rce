@@ -15,13 +15,13 @@ public abstract class ChangeRoleProcessor extends Processor {
             responseSender.sendMessage(chatId, "Пользователь с таким ID не найден.");
             return;
         }
-        if (readUserService.getUserRoleByChatId(chatId).equals(userRole)) {
+        if (readUserService.getUserRoleByChatId(userChatId).equals(userRole)) {
             responseSender.sendMessage(chatId, "Пользователь " + userChatId + " уже в роли \"" + userRole.getDisplayName() + "\".");
             return;
         }
         modifyUserService.updateUserRoleByChatId(userRole, userChatId);
         responseSender.sendMessage(chatId, "Пользователю " + userChatId + " сменена роль на \"" + userRole.getDisplayName() + "\".");
-        responseSender.sendMessage(chatId, "Вы были переведены в роль \"" + userRole.getDisplayName() + "\".");
+        responseSender.sendMessage(userChatId, "Вы были переведены в роль \"" + userRole.getDisplayName() + "\".");
         getLogger().debug("Админ {} сменил пользователю {} роль на {}.", chatId, userChatId, userRole.getDisplayName());
     }
 
