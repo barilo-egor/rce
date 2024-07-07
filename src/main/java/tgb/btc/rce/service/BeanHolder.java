@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.library.service.bean.bot.BotMessageService;
 import tgb.btc.library.service.bean.bot.ContactService;
-import tgb.btc.rce.service.impl.UpdateDispatcher;
+import tgb.btc.rce.RceApplication;
 
 @Slf4j
 public class BeanHolder {
@@ -19,10 +19,10 @@ public class BeanHolder {
 
     public static void load() {
         log.info("Загрузка бинов в BeanHolder.");
-        RESPONSE_SENDER = UpdateDispatcher.applicationContext.getBean(IResponseSender.class);
-        BOT_MESSAGE_SERVICE = UpdateDispatcher.applicationContext.getBean(BotMessageService.class);
-        CONTACTS_SERVICE = UpdateDispatcher.applicationContext.getBean(ContactService.class);
-        READ_USER_SERVICE = UpdateDispatcher.applicationContext.getBean(IReadUserService.class);
+        RESPONSE_SENDER = RceApplication.SPRING_CONTEXT.getBean(IResponseSender.class);
+        BOT_MESSAGE_SERVICE = RceApplication.SPRING_CONTEXT.getBean(BotMessageService.class);
+        CONTACTS_SERVICE = RceApplication.SPRING_CONTEXT.getBean(ContactService.class);
+        READ_USER_SERVICE = RceApplication.SPRING_CONTEXT.getBean(IReadUserService.class);
         log.info("Загрузка бинов BeanHolder завершена.");
     }
 }
