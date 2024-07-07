@@ -11,8 +11,8 @@ import tgb.btc.library.interfaces.service.bean.bot.deal.IReadDealService;
 import tgb.btc.library.util.properties.VariablePropertiesUtil;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
+import tgb.btc.rce.service.INotifyService;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.service.impl.NotifyService;
 import tgb.btc.rce.util.BotImageUtil;
 import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.UpdateUtil;
@@ -30,10 +30,10 @@ public class UserAdditionalVerification extends Processor {
 
     private INotificationsAPI notificationsAPI;
 
-    private NotifyService notifyService;
+    private INotifyService notifyService;
 
     @Autowired
-    public void setAdminService(NotifyService notifyService) {
+    public void setAdminService(INotifyService notifyService) {
         this.notifyService = notifyService;
     }
 

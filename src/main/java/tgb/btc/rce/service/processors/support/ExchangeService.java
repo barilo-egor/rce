@@ -39,11 +39,7 @@ import tgb.btc.library.util.properties.VariablePropertiesUtil;
 import tgb.btc.library.vo.calculate.DealAmount;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.*;
-import tgb.btc.rce.service.ICalculatorTypeService;
-import tgb.btc.rce.service.IKeyboardService;
-import tgb.btc.rce.service.IMessageService;
-import tgb.btc.rce.service.IResponseSender;
-import tgb.btc.rce.service.impl.NotifyService;
+import tgb.btc.rce.service.*;
 import tgb.btc.rce.service.process.IUserDiscountProcessService;
 import tgb.btc.rce.util.*;
 import tgb.btc.rce.vo.CalculatorQuery;
@@ -84,7 +80,7 @@ public class ExchangeService {
 
     private IPaymentRequisiteService paymentRequisiteService;
 
-    private NotifyService notifyService;
+    private INotifyService notifyService;
 
     private IPaymentReceiptService paymentReceiptService;
 
@@ -158,7 +154,7 @@ public class ExchangeService {
     }
 
     @Autowired
-    public void setAdminService(NotifyService notifyService) {
+    public void setAdminService(INotifyService notifyService) {
         this.notifyService = notifyService;
     }
 

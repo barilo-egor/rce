@@ -14,8 +14,8 @@ import tgb.btc.library.interfaces.service.bean.bot.deal.read.IReportDealService;
 import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.library.util.BigDecimalUtil;
 import tgb.btc.library.util.FiatCurrencyUtil;
+import tgb.btc.rce.service.INotifyService;
 import tgb.btc.rce.service.IResponseSender;
-import tgb.btc.rce.service.impl.NotifyService;
 import tgb.btc.rce.util.CryptoCurrenciesDesignUtil;
 import tgb.btc.rce.vo.DealReportData;
 
@@ -36,7 +36,7 @@ public class DealAutoReport {
 
     public IResponseSender responseSender;
 
-    public NotifyService notifyService;
+    private INotifyService notifyService;
 
     public static LocalDate YESTERDAY;
 
@@ -51,7 +51,7 @@ public class DealAutoReport {
     }
 
     @Autowired
-    public void setAdminService(NotifyService notifyService) {
+    public void setAdminService(INotifyService notifyService) {
         this.notifyService = notifyService;
     }
 

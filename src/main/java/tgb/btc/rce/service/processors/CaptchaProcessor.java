@@ -15,9 +15,9 @@ import tgb.btc.rce.conditional.AntispamCondition;
 import tgb.btc.rce.enums.BotKeyboard;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.ICaptchaSender;
+import tgb.btc.rce.service.INotifyService;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.captcha.IAntiSpam;
-import tgb.btc.rce.service.impl.NotifyService;
 import tgb.btc.rce.service.impl.captcha.AntiSpam;
 import tgb.btc.rce.service.processors.tool.Start;
 import tgb.btc.rce.util.CallbackQueryUtil;
@@ -41,7 +41,7 @@ public class CaptchaProcessor extends Processor {
 
     private ISpamBanService spamBanService;
 
-    private NotifyService notifyService;
+    private INotifyService notifyService;
 
     private BanningUserService banningUserService;
 
@@ -51,7 +51,7 @@ public class CaptchaProcessor extends Processor {
     }
 
     @Autowired
-    public void setAdminService(NotifyService notifyService) {
+    public void setAdminService(INotifyService notifyService) {
         this.notifyService = notifyService;
     }
 

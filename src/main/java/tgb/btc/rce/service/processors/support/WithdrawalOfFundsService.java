@@ -12,7 +12,7 @@ import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.PropertiesMessage;
-import tgb.btc.rce.service.impl.NotifyService;
+import tgb.btc.rce.service.INotifyService;
 import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.MessagePropertiesUtil;
@@ -30,7 +30,7 @@ public class WithdrawalOfFundsService {
 
     private IWithdrawalRequestService withdrawalRequestService;
 
-    private NotifyService notifyService;
+    private INotifyService notifyService;
 
     private IReadUserService readUserService;
 
@@ -47,7 +47,7 @@ public class WithdrawalOfFundsService {
     }
 
     @Autowired
-    public void setAdminService(NotifyService notifyService) {
+    public void setAdminService(INotifyService notifyService) {
         this.notifyService = notifyService;
     }
 

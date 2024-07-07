@@ -11,8 +11,8 @@ import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.InlineType;
 import tgb.btc.rce.service.IKeyboardService;
+import tgb.btc.rce.service.INotifyService;
 import tgb.btc.rce.service.IResponseSender;
-import tgb.btc.rce.service.impl.NotifyService;
 import tgb.btc.rce.util.MessagePropertiesUtil;
 import tgb.btc.rce.vo.InlineButton;
 
@@ -24,7 +24,7 @@ import java.util.Set;
 @Service
 public class Notifier implements INotifier {
 
-    private NotifyService notifyService;
+    private INotifyService notifyService;
 
     private IKeyboardService keyboardService;
 
@@ -33,7 +33,7 @@ public class Notifier implements INotifier {
     private IDealUserService dealUserService;
 
     @Autowired
-    public void setNotifyService(NotifyService notifyService) {
+    public void setNotifyService(INotifyService notifyService) {
         this.notifyService = notifyService;
     }
 
@@ -50,11 +50,6 @@ public class Notifier implements INotifier {
     @Autowired
     public void setKeyboardService(IKeyboardService keyboardService) {
         this.keyboardService = keyboardService;
-    }
-
-    @Autowired
-    public void setAdminService(NotifyService notifyService) {
-        this.notifyService = notifyService;
     }
 
     @Override

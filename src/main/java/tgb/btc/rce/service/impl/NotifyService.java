@@ -6,12 +6,13 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import tgb.btc.library.constants.enums.bot.UserRole;
 import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.rce.enums.BotInlineButton;
+import tgb.btc.rce.service.INotifyService;
 import tgb.btc.rce.vo.InlineButton;
 
 import java.util.Set;
 
 @Service
-public class NotifyService {
+public class NotifyService implements INotifyService {
 
     private IReadUserService readUserService;
 
@@ -27,22 +28,22 @@ public class NotifyService {
         this.responseSender = responseSender;
     }
 
-    public void notifyMessage(String message) {
-        readUserService.getAdminsChatIds().forEach(chatId -> responseSender.sendMessage(chatId, message));
-    }
-
+    @Override
     public void notifyMessage(String message, Set<UserRole> roles) {
         readUserService.getChatIdsByRoles(roles).forEach(chatId -> responseSender.sendMessage(chatId, message));
     }
 
+    @Override
     public void notifyMessageAndPhoto(String message, String imageId, Set<UserRole> roles) {
         readUserService.getChatIdsByRoles(roles).forEach(chatId -> responseSender.sendPhoto(chatId, message, imageId));
     }
 
+    @Override
     public void notifyMessage(String message, ReplyKeyboard replyKeyboard, Set<UserRole> roles) {
         readUserService.getChatIdsByRoles(roles).forEach(chatId -> responseSender.sendMessage(chatId, message, replyKeyboard));
     }
 
+    @Override
     public void notifyMessage(String message, String data, Set<UserRole> roles) {
         InlineButton button = BotInlineButton.SHOW.getButton();
         button.setData(data);
