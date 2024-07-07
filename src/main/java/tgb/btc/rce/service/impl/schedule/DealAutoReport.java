@@ -10,12 +10,12 @@ import tgb.btc.library.constants.enums.bot.CryptoCurrency;
 import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
 import tgb.btc.library.constants.enums.bot.UserRole;
+import tgb.btc.library.interfaces.service.bean.bot.deal.read.IReportDealService;
 import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
-import tgb.btc.library.repository.bot.DealRepository;
 import tgb.btc.library.util.BigDecimalUtil;
 import tgb.btc.library.util.FiatCurrencyUtil;
-import tgb.btc.rce.service.impl.NotifyService;
 import tgb.btc.rce.service.IResponseSender;
+import tgb.btc.rce.service.impl.NotifyService;
 import tgb.btc.rce.util.CryptoCurrenciesDesignUtil;
 import tgb.btc.rce.vo.DealReportData;
 
@@ -30,7 +30,7 @@ import java.util.*;
 @Slf4j
 public class DealAutoReport {
 
-    public DealRepository dealRepository;
+    private IReportDealService reportDealService;
 
     private IReadUserService readUserService;
 
@@ -39,6 +39,11 @@ public class DealAutoReport {
     public NotifyService notifyService;
 
     public static LocalDate YESTERDAY;
+
+    @Autowired
+    public void setReportDealService(IReportDealService reportDealService) {
+        this.reportDealService = reportDealService;
+    }
 
     @Autowired
     public void setReadUserService(IReadUserService readUserService) {
@@ -53,11 +58,6 @@ public class DealAutoReport {
     @Autowired
     public void setResponseSender(IResponseSender responseSender) {
         this.responseSender = responseSender;
-    }
-
-    @Autowired
-    public void setDealRepository(DealRepository dealRepository) {
-        this.dealRepository = dealRepository;
     }
 
     @Scheduled(cron = "0 5 0 * * *")
@@ -103,7 +103,7 @@ public class DealAutoReport {
             LocalDateTime dateTimeBegin = LocalDateTime.of(data.getFirstDay(), LocalTime.of(0, 0, 0));
             LocalDateTime dateTimeEnd = LocalDateTime.of(data.getLastDay(), LocalTime.of(23, 59, 59));
 
-            if (dealRepository.getCountByPeriod(dateTimeBegin, dateTimeEnd) == 0) {
+            if (reportDealService.getCountByPeriod(dateTimeBegin, dateTimeEnd) == 0) {
                 notifyService.notifyMessage("Нет сделок за " + data.getPeriod() + ".", Set.of(UserRole.OPERATOR, UserRole.ADMIN));
                 return;
             }
@@ -117,7 +117,7 @@ public class DealAutoReport {
             int newActivePartnersCount = 0;
 
             for (Long chatId : allNewPartnersChatIds) {
-                if (dealRepository.getCountPassedByChatId(chatId) > 0) {
+                if (reportDealService.getCountPassedByChatId(chatId) > 0) {
                     newActivePartnersCount++;
                 }
             }
@@ -180,7 +180,7 @@ public class DealAutoReport {
 
     private BigDecimal getCryptoAmount(DealType dealType, CryptoCurrency cryptoCurrency, int scale, LocalDateTime dateFrom, LocalDateTime dateTo) {
         // TODO поправить scale для usdt, выводит 2.6E+2 место 260
-        BigDecimal totalCryptoAmount = dealRepository.getCryptoAmountSum(dealType, dateFrom, dateTo,
+        BigDecimal totalCryptoAmount = reportDealService.getCryptoAmountSum(dealType, dateFrom, dateTo,
                                                                          cryptoCurrency);
         return Objects.nonNull(totalCryptoAmount)
                ? totalCryptoAmount.setScale(scale, RoundingMode.HALF_DOWN).stripTrailingZeros()
@@ -194,10 +194,10 @@ public class DealAutoReport {
     private BigDecimal getAmount(CryptoCurrency cryptoCurrency, LocalDateTime dateFrom, LocalDateTime dateTo, DealType dealType, FiatCurrency fiatCurrency) {
         BigDecimal totalAmount;
         if (Objects.nonNull(dateTo)) {
-            totalAmount = dealRepository.getTotalAmountSum(dealType, dateFrom, dateTo, cryptoCurrency,
+            totalAmount = reportDealService.getTotalAmountSum(dealType, dateFrom, dateTo, cryptoCurrency,
                                                            fiatCurrency);
         } else {
-            totalAmount = dealRepository.getTotalAmountSum(dealType, dateFrom, cryptoCurrency, fiatCurrency);
+            totalAmount = reportDealService.getTotalAmountSum(dealType, dateFrom, cryptoCurrency, fiatCurrency);
         }
         return Objects.nonNull(totalAmount)
                ? totalAmount.setScale(0, RoundingMode.HALF_DOWN).stripTrailingZeros()

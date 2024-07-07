@@ -5,14 +5,14 @@ import org.springframework.stereotype.Service;
 import tgb.btc.api.web.INotifier;
 import tgb.btc.library.constants.enums.bot.UserRole;
 import tgb.btc.library.constants.enums.properties.VariableType;
-import tgb.btc.library.repository.bot.DealRepository;
+import tgb.btc.library.interfaces.service.bean.bot.deal.read.IDealUserService;
 import tgb.btc.library.util.properties.VariablePropertiesUtil;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.InlineType;
-import tgb.btc.rce.service.impl.NotifyService;
-import tgb.btc.rce.service.impl.KeyboardService;
 import tgb.btc.rce.service.IResponseSender;
+import tgb.btc.rce.service.impl.KeyboardService;
+import tgb.btc.rce.service.impl.NotifyService;
 import tgb.btc.rce.util.MessagePropertiesUtil;
 import tgb.btc.rce.vo.InlineButton;
 
@@ -30,11 +30,16 @@ public class Notifier implements INotifier {
 
     private IResponseSender responseSender;
 
-    private DealRepository dealRepository;
+    private IDealUserService dealUserService;
 
     @Autowired
-    public void setDealRepository(DealRepository dealRepository) {
-        this.dealRepository = dealRepository;
+    public void setNotifyService(NotifyService notifyService) {
+        this.notifyService = notifyService;
+    }
+
+    @Autowired
+    public void setDealUserService(IDealUserService dealUserService) {
+        this.dealUserService = dealUserService;
     }
 
     @Autowired
@@ -67,7 +72,7 @@ public class Notifier implements INotifier {
 
     @Override
     public void notifyDealDeletedByAdmin(Long dealPid) {
-        responseSender.sendMessage(dealRepository.getUserChatIdByDealPid(dealPid), MessagePropertiesUtil.getMessage("deal.deleted.by.admin"));
+        responseSender.sendMessage(dealUserService.getUserChatIdByDealPid(dealPid), MessagePropertiesUtil.getMessage("deal.deleted.by.admin"));
     }
 
     @Override
