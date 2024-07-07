@@ -41,8 +41,8 @@ import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.*;
 import tgb.btc.rce.service.ICalculatorTypeService;
 import tgb.btc.rce.service.IKeyboardService;
+import tgb.btc.rce.service.IMessageService;
 import tgb.btc.rce.service.IResponseSender;
-import tgb.btc.rce.service.impl.MessageService;
 import tgb.btc.rce.service.impl.NotifyService;
 import tgb.btc.rce.service.process.IUserDiscountProcessService;
 import tgb.btc.rce.util.*;
@@ -58,7 +58,7 @@ import java.util.*;
 public class ExchangeService {
     private IKeyboardService keyboardService;
 
-    private MessageService messageService;
+    private IMessageService messageService;
 
     private IReadDealService readDealService;
 
@@ -173,7 +173,7 @@ public class ExchangeService {
     }
 
     @Autowired
-    public void setMessageService(MessageService messageService) {
+    public void setMessageService(IMessageService messageService) {
         this.messageService = messageService;
     }
 

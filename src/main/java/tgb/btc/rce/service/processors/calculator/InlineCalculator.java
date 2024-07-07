@@ -14,9 +14,9 @@ import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.InlineCalculatorButton;
 import tgb.btc.rce.enums.PropertiesMessage;
 import tgb.btc.rce.service.IKeyboardService;
+import tgb.btc.rce.service.IMessageService;
 import tgb.btc.rce.service.IUpdateDispatcher;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.service.impl.MessageService;
 import tgb.btc.rce.service.processors.deal.DealProcessor;
 import tgb.btc.rce.service.processors.support.ExchangeService;
 import tgb.btc.rce.util.CallbackQueryUtil;
@@ -46,7 +46,7 @@ public class InlineCalculator extends Processor {
 
     private IUpdateDispatcher updateDispatcher;
 
-    private MessageService messageService;
+    private IMessageService messageService;
 
     public static ConcurrentHashMap<Long, InlineCalculatorVO> cache = new ConcurrentHashMap<>();
 
@@ -81,7 +81,7 @@ public class InlineCalculator extends Processor {
     }
 
     @Autowired
-    public void setMessageService(MessageService messageService) {
+    public void setMessageService(IMessageService messageService) {
         this.messageService = messageService;
     }
 

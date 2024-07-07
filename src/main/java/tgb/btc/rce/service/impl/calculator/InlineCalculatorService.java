@@ -12,8 +12,8 @@ import tgb.btc.rce.conditional.calculator.InlineCalculatorCondition;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.ICalculatorTypeService;
 import tgb.btc.rce.service.IKeyboardService;
+import tgb.btc.rce.service.IMessageService;
 import tgb.btc.rce.service.IResponseSender;
-import tgb.btc.rce.service.impl.MessageService;
 import tgb.btc.rce.service.processors.calculator.InlineCalculator;
 import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.InlineCalculatorVO;
@@ -32,7 +32,7 @@ public class InlineCalculatorService implements ICalculatorTypeService {
 
     private IKeyboardService keyboardService;
 
-    private MessageService messageService;
+    private IMessageService messageService;
 
     @Autowired
     public void setModifyUserService(IModifyUserService modifyUserService) {
@@ -60,7 +60,7 @@ public class InlineCalculatorService implements ICalculatorTypeService {
     }
 
     @Autowired
-    public void setMessageService(MessageService messageService) {
+    public void setMessageService(IMessageService messageService) {
         this.messageService = messageService;
     }
 

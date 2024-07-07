@@ -10,6 +10,7 @@ import tgb.btc.library.interfaces.service.bean.bot.user.IModifyUserService;
 import tgb.btc.library.util.BigDecimalUtil;
 import tgb.btc.library.vo.calculate.DealAmount;
 import tgb.btc.rce.enums.PropertiesMessage;
+import tgb.btc.rce.service.IMessageService;
 import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.util.MessagePropertiesUtil;
 import tgb.btc.rce.vo.InlineCalculatorVO;
@@ -17,7 +18,7 @@ import tgb.btc.rce.vo.InlineCalculatorVO;
 import java.util.Objects;
 
 @Service
-public class MessageService {
+public class MessageService implements IMessageService {
 
     private IResponseSender responseSender;
 
@@ -33,16 +34,19 @@ public class MessageService {
         this.responseSender = responseSender;
     }
 
+    @Override
     public void sendMessageAndSaveMessageId(Long chatId, String text, ReplyKeyboard keyboard) {
         responseSender.sendMessage(chatId, text, keyboard)
                 .ifPresent(message -> modifyUserService.updateBufferVariable(chatId, message.getMessageId().toString()));
     }
 
+    @Override
     public void sendMessageAndSaveMessageId(SendMessage sendMessage) {
         responseSender.sendMessage(sendMessage)
                 .ifPresent(message -> modifyUserService.updateBufferVariable(Long.parseLong(sendMessage.getChatId()), message.getMessageId().toString()));
     }
 
+    @Override
     public String getInlineCalculatorMessage(DealType dealType, InlineCalculatorVO calculator, DealAmount dealAmount) {
         String cryptoCode = calculator.getCryptoCurrency().getShortName().toUpperCase();
         String fiatCode = calculator.getFiatCurrency().getCode().toUpperCase();
@@ -71,6 +75,7 @@ public class MessageService {
         }
     }
 
+    @Override
     public String getInlineCalculatorMessage(DealType dealType, InlineCalculatorVO calculator) {
         return getInlineCalculatorMessage(dealType, calculator, null);
     }
