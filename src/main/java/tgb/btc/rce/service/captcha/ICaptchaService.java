@@ -1,4 +1,4 @@
-package tgb.btc.rce.service;
+package tgb.btc.rce.service.captcha;
 
 public interface ICaptchaService {
 

@@ -1,4 +1,4 @@
-package tgb.btc.rce.service.impl;
+package tgb.btc.rce.service.impl.captcha;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +10,8 @@ import tgb.btc.library.exception.BaseException;
 import tgb.btc.rce.conditional.PictureCaptchaCondition;
 import tgb.btc.rce.exception.PicturesNotFoundException;
 import tgb.btc.rce.service.AntiSpam;
-import tgb.btc.rce.service.ICaptchaService;
+import tgb.btc.rce.service.captcha.ICaptchaService;
+import tgb.btc.rce.service.impl.ResponseSender;
 import tgb.btc.rce.vo.Captcha;
 
 import java.io.File;
