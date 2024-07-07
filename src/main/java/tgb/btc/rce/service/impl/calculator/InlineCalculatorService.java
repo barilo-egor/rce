@@ -1,4 +1,4 @@
-package tgb.btc.rce.service.impl;
+package tgb.btc.rce.service.impl.calculator;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Conditional;
@@ -11,6 +11,8 @@ import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.rce.conditional.calculator.InlineCalculatorCondition;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.ICalculatorTypeService;
+import tgb.btc.rce.service.impl.KeyboardService;
+import tgb.btc.rce.service.impl.MessageService;
 import tgb.btc.rce.service.impl.processors.InlineCalculator;
 import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.util.UpdateUtil;

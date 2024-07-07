@@ -40,8 +40,11 @@ import tgb.btc.library.vo.calculate.DealAmount;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.*;
 import tgb.btc.rce.service.ICalculatorTypeService;
-import tgb.btc.rce.service.impl.*;
 import tgb.btc.rce.service.IResponseSender;
+import tgb.btc.rce.service.impl.KeyboardService;
+import tgb.btc.rce.service.impl.MessageService;
+import tgb.btc.rce.service.impl.NotifyService;
+import tgb.btc.rce.service.impl.UserDiscountProcessService;
 import tgb.btc.rce.util.*;
 import tgb.btc.rce.vo.CalculatorQuery;
 import tgb.btc.rce.vo.InlineButton;
@@ -74,8 +77,6 @@ public class ExchangeService {
     private UserDiscountProcessService userDiscountProcessService;
 
     private CalculateService calculateService;
-
-    private InlineQueryService queryCalculatorService;
 
     private IBotMessageService botMessageService;
 
@@ -159,11 +160,6 @@ public class ExchangeService {
     @Autowired
     public void setAdminService(NotifyService notifyService) {
         this.notifyService = notifyService;
-    }
-
-    @Autowired
-    public void setQueryCalculatorService(InlineQueryService queryCalculatorService) {
-        this.queryCalculatorService = queryCalculatorService;
     }
 
     @Autowired
@@ -313,7 +309,7 @@ public class ExchangeService {
         String inlineQueryId = update.getInlineQuery().getId();
         CalculatorQuery calculatorQuery;
         try {
-            calculatorQuery = new CalculatorQuery(queryCalculatorService.getQueryWithPoints(update));
+            calculatorQuery = new CalculatorQuery(update.getInlineQuery().getQuery().replaceAll(",", "."));
         } catch (CalculatorQueryException e) {
             responseSender.sendAnswerInlineQuery(inlineQueryId, "Введите сумму.", null, "Ошибка");
             return;
