@@ -91,7 +91,7 @@ public enum Command implements ICommand {
     USERS("Пользователи", true, false, Set.of(UserRole.ADMIN)),
     QUIT_ADMIN_PANEL("Выйти", false, false, Set.of(UserRole.ADMIN, UserRole.OPERATOR)),
     TURNING_DELIVERY_TYPE("Вкл/выкл способов доставки", false, false, Set.of(UserRole.ADMIN)),
-    BACKUP_DB("/backupdb", false, false, Set.of(UserRole.ADMIN)),
+    BACKUP_DB("/backupdb", false, true, Set.of(UserRole.ADMIN)),
 
     DEALS_COUNT("Кол-во возможных сделок", false, false, Set.of(UserRole.ADMIN)),
 

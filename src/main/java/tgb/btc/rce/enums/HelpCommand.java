@@ -12,6 +12,7 @@ public enum HelpCommand {
     MAKE_OPERATOR(Command.MAKE_OPERATOR, " chatId - перевод пользователя в роль оператора"),
     MAKE_USER(Command.MAKE_USER, " chatId - перевод пользователя в роль пользователя"),
     DELETE_USER(Command.DELETE_USER, " chatId - удаление пользователя со всеми его данными(включая сделки)"),
+    BACKUP_DB(Command.BACKUP_DB, " создание бэк апа базы данных"),
     HELP(Command.HELP, " - список скрытых команд"),
     ;
 
