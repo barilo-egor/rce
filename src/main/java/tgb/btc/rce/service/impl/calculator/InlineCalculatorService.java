@@ -13,7 +13,7 @@ import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.ICalculatorTypeService;
 import tgb.btc.rce.service.impl.KeyboardService;
 import tgb.btc.rce.service.impl.MessageService;
-import tgb.btc.rce.service.impl.processors.InlineCalculator;
+import tgb.btc.rce.service.processors.InlineCalculator;
 import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.InlineCalculatorVO;

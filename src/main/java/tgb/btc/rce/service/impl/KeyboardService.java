@@ -22,7 +22,7 @@ import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.BotInlineButton;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.InlineType;
-import tgb.btc.rce.service.impl.processors.InlineCalculator;
+import tgb.btc.rce.service.processors.InlineCalculator;
 import tgb.btc.rce.util.*;
 import tgb.btc.rce.vo.InlineButton;
 import tgb.btc.rce.vo.InlineCalculatorVO;
