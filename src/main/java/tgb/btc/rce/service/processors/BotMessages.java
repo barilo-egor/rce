@@ -6,12 +6,13 @@ import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.impl.process.BotMessageProcessService;
+import tgb.btc.rce.service.process.IBotMessageProcessService;
 import tgb.btc.rce.util.UpdateUtil;
 
 @CommandProcessor(command = Command.BOT_MESSAGES)
 public class BotMessages extends Processor {
 
-    private BotMessageProcessService botMessageProcessService;
+    private IBotMessageProcessService botMessageProcessService;
 
     @Autowired
     public void setBotMessagesService(BotMessageProcessService botMessageProcessService) {

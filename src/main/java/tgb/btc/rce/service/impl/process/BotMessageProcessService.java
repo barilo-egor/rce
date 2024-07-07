@@ -12,6 +12,7 @@ import tgb.btc.library.interfaces.service.bean.bot.user.IModifyUserService;
 import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.impl.ResponseSender;
+import tgb.btc.rce.service.process.IBotMessageProcessService;
 import tgb.btc.rce.util.BotImageUtil;
 import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.UpdateUtil;
@@ -22,7 +23,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class BotMessageProcessService {
+public class BotMessageProcessService implements IBotMessageProcessService {
 
     private IBotMessageService botMessageService;
 
@@ -52,6 +53,7 @@ public class BotMessageProcessService {
         this.responseSender = responseSender;
     }
 
+    @Override
     public void askForType(Long chatId) {
         modifyUserService.nextStep(chatId, Command.BOT_MESSAGES.name());
 
@@ -65,6 +67,7 @@ public class BotMessageProcessService {
                 KeyboardUtil.buildReply(2, buttons, true));
     }
 
+    @Override
     public void askForNewValue(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
         BotMessageType type;
@@ -79,6 +82,7 @@ public class BotMessageProcessService {
         modifyUserService.nextStep(chatId);
     }
 
+    @Override
     public void updateValue(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
         BotMessage botMessage;
