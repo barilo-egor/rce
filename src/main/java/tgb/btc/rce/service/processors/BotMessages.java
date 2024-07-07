@@ -5,7 +5,6 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.service.impl.process.BotMessageProcessService;
 import tgb.btc.rce.service.process.IBotMessageProcessService;
 import tgb.btc.rce.util.UpdateUtil;
 
@@ -15,7 +14,7 @@ public class BotMessages extends Processor {
     private IBotMessageProcessService botMessageProcessService;
 
     @Autowired
-    public void setBotMessagesService(BotMessageProcessService botMessageProcessService) {
+    public void setBotMessagesService(IBotMessageProcessService botMessageProcessService) {
         this.botMessageProcessService = botMessageProcessService;
     }
 

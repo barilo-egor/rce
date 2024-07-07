@@ -17,6 +17,7 @@ import tgb.btc.library.interfaces.service.bean.bot.user.IModifyUserService;
 import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.library.service.bean.bot.ReferralUserService;
 import tgb.btc.rce.enums.Command;
+import tgb.btc.rce.service.process.IUserProcessService;
 import tgb.btc.rce.util.CommandUtil;
 import tgb.btc.rce.util.UpdateUtil;
 
@@ -25,7 +26,7 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Service
-public class UserProcessService {
+public class UserProcessService implements IUserProcessService {
 
     private IReadUserService readUserService;
 

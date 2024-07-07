@@ -16,11 +16,12 @@ import tgb.btc.library.service.process.CalculateService;
 import tgb.btc.library.util.BigDecimalUtil;
 import tgb.btc.library.util.properties.VariablePropertiesUtil;
 import tgb.btc.rce.enums.Rank;
+import tgb.btc.rce.service.process.IUserDiscountProcessService;
 
 import java.math.BigDecimal;
 
 @Service
-public class UserDiscountProcessService {
+public class UserDiscountProcessService implements IUserDiscountProcessService {
 
     private IUserDiscountService userDiscountService;
 
@@ -50,6 +51,7 @@ public class UserDiscountProcessService {
         this.calculateService = calculateService;
     }
 
+    @Override
     public BigDecimal applyDealDiscounts(Long chatId, BigDecimal dealAmount, Boolean isUsedPromo,
                                          Boolean isUserReferralDiscount, BigDecimal discount, FiatCurrency fiatCurrency) {
         BigDecimal newDealAmount = applyPromoCodeDiscount(dealAmount, isUsedPromo, discount);
@@ -88,6 +90,7 @@ public class UserDiscountProcessService {
         return dealAmount;
     }
 
+    @Override
     public BigDecimal applyRank(Rank rank, Deal deal) {
         BigDecimal newAmount = deal.getAmount();
         boolean isRankDiscountOn = BooleanUtils.isTrue(

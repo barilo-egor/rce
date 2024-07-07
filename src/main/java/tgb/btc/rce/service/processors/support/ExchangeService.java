@@ -44,7 +44,7 @@ import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.impl.KeyboardService;
 import tgb.btc.rce.service.impl.MessageService;
 import tgb.btc.rce.service.impl.NotifyService;
-import tgb.btc.rce.service.impl.process.UserDiscountProcessService;
+import tgb.btc.rce.service.process.IUserDiscountProcessService;
 import tgb.btc.rce.util.*;
 import tgb.btc.rce.vo.CalculatorQuery;
 import tgb.btc.rce.vo.InlineButton;
@@ -74,7 +74,7 @@ public class ExchangeService {
 
     private IResponseSender responseSender;
 
-    private UserDiscountProcessService userDiscountProcessService;
+    private IUserDiscountProcessService userDiscountProcessService;
 
     private CalculateService calculateService;
 
@@ -143,7 +143,7 @@ public class ExchangeService {
     }
 
     @Autowired
-    public void setUserDiscountProcessService(UserDiscountProcessService userDiscountProcessService) {
+    public void setUserDiscountProcessService(IUserDiscountProcessService userDiscountProcessService) {
         this.userDiscountProcessService = userDiscountProcessService;
     }
 
@@ -165,11 +165,6 @@ public class ExchangeService {
     @Autowired
     public void setCalculateService(CalculateService calculateService) {
         this.calculateService = calculateService;
-    }
-
-    @Autowired
-    public void setUserDiscountService(UserDiscountProcessService userDiscountProcessService) {
-        this.userDiscountProcessService = userDiscountProcessService;
     }
 
     @Autowired

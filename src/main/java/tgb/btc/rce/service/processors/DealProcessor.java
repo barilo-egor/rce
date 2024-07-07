@@ -21,12 +21,14 @@ import tgb.btc.rce.enums.Menu;
 import tgb.btc.rce.service.ICalculatorTypeService;
 import tgb.btc.rce.service.IUpdateDispatcher;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.service.impl.process.DealProcessService;
+import tgb.btc.rce.service.process.IDealProcessService;
 import tgb.btc.rce.service.processors.support.ExchangeService;
 import tgb.btc.rce.util.CallbackQueryUtil;
 import tgb.btc.rce.util.UpdateUtil;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
 
 @CommandProcessor(command = Command.DEAL)
 @Slf4j
@@ -48,7 +50,7 @@ public class DealProcessor extends Processor {
 
     private IBotMessageService botMessageService;
 
-    private DealProcessService dealProcessService;
+    private IDealProcessService dealProcessService;
 
     @Autowired
     public void setReadDealService(IReadDealService readDealService) {
@@ -66,7 +68,7 @@ public class DealProcessor extends Processor {
     }
 
     @Autowired
-    public void setDealProcessService(DealProcessService dealProcessService) {
+    public void setDealProcessService(IDealProcessService dealProcessService) {
         this.dealProcessService = dealProcessService;
     }
 

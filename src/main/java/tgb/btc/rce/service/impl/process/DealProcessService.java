@@ -3,10 +3,11 @@ package tgb.btc.rce.service.impl.process;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tgb.btc.library.interfaces.service.bean.common.bot.IDealCommonService;
+import tgb.btc.rce.service.process.IDealProcessService;
 import tgb.btc.rce.util.DealPromoUtil;
 
 @Service
-public class DealProcessService {
+public class DealProcessService implements IDealProcessService {
 
     private IDealCommonService dealCommonService;
 

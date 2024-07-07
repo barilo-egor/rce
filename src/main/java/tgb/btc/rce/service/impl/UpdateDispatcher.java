@@ -17,7 +17,7 @@ import tgb.btc.rce.enums.SimpleCommand;
 import tgb.btc.rce.service.AntiSpam;
 import tgb.btc.rce.service.ICommandProcessorLoader;
 import tgb.btc.rce.service.IUpdateDispatcher;
-import tgb.btc.rce.service.impl.process.UserProcessService;
+import tgb.btc.rce.service.process.IUserProcessService;
 import tgb.btc.rce.util.CommandUtil;
 import tgb.btc.rce.util.UpdateUtil;
 
@@ -36,7 +36,7 @@ public class UpdateDispatcher implements IUpdateDispatcher {
 
     private IReadUserService readUserService;
 
-    private UserProcessService userProcessService;
+    private IUserProcessService userProcessService;
 
     private AntiSpam antiSpam;
 
@@ -72,7 +72,7 @@ public class UpdateDispatcher implements IUpdateDispatcher {
     }
 
     @Autowired
-    public void setUserProcessService(UserProcessService userProcessService) {
+    public void setUserProcessService(IUserProcessService userProcessService) {
         this.userProcessService = userProcessService;
     }
 
