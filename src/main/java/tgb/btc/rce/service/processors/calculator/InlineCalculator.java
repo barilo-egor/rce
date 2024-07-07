@@ -13,9 +13,9 @@ import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.InlineCalculatorButton;
 import tgb.btc.rce.enums.PropertiesMessage;
+import tgb.btc.rce.service.IKeyboardService;
 import tgb.btc.rce.service.IUpdateDispatcher;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.service.impl.KeyboardService;
 import tgb.btc.rce.service.impl.MessageService;
 import tgb.btc.rce.service.processors.deal.DealProcessor;
 import tgb.btc.rce.service.processors.support.ExchangeService;
@@ -42,7 +42,7 @@ public class InlineCalculator extends Processor {
 
     private DealProcessor dealProcessor;
 
-    private KeyboardService keyboardService;
+    private IKeyboardService keyboardService;
 
     private IUpdateDispatcher updateDispatcher;
 
@@ -71,7 +71,7 @@ public class InlineCalculator extends Processor {
     }
 
     @Autowired
-    public void setKeyboardService(KeyboardService keyboardService) {
+    public void setKeyboardService(IKeyboardService keyboardService) {
         this.keyboardService = keyboardService;
     }
 

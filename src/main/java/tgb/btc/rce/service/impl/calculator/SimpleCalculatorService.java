@@ -10,9 +10,9 @@ import tgb.btc.library.interfaces.service.bean.bot.user.IModifyUserService;
 import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.rce.enums.PropertiesMessage;
 import tgb.btc.rce.service.ICalculatorTypeService;
-import tgb.btc.rce.service.IUpdateDispatcher;
-import tgb.btc.rce.service.impl.KeyboardService;
+import tgb.btc.rce.service.IKeyboardService;
 import tgb.btc.rce.service.IResponseSender;
+import tgb.btc.rce.service.IUpdateDispatcher;
 import tgb.btc.rce.util.MessagePropertiesUtil;
 import tgb.btc.rce.util.UpdateUtil;
 
@@ -27,7 +27,7 @@ public abstract class SimpleCalculatorService implements ICalculatorTypeService 
 
     protected IResponseSender responseSender;
 
-    protected KeyboardService keyboardService;
+    protected IKeyboardService keyboardService;
 
     protected IUpdateDispatcher updateDispatcher;
 
@@ -37,7 +37,7 @@ public abstract class SimpleCalculatorService implements ICalculatorTypeService 
     }
 
     @Autowired
-    public void setKeyboardService(KeyboardService keyboardService) {
+    public void setKeyboardService(IKeyboardService keyboardService) {
         this.keyboardService = keyboardService;
     }
 

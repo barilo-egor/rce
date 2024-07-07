@@ -6,8 +6,8 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.service.process.RPSService;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
+import tgb.btc.rce.service.IKeyboardService;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.service.impl.KeyboardService;
 import tgb.btc.rce.util.CallbackQueryUtil;
 import tgb.btc.rce.util.UpdateUtil;
 
@@ -19,14 +19,14 @@ import static tgb.btc.library.constants.enums.properties.PropertiesPath.RPS_MESS
 @CommandProcessor(command = Command.RPS)
 public class RPSProcessor extends Processor {
 
-    private KeyboardService keyboardService;
+    private IKeyboardService keyboardService;
 
     private RPSService rpsService;
 
     public static ConcurrentHashMap<Long, String> localCache = new ConcurrentHashMap<>();
 
     @Autowired
-    public void setKeyboardService(KeyboardService keyboardService) {
+    public void setKeyboardService(IKeyboardService keyboardService) {
         this.keyboardService = keyboardService;
     }
 

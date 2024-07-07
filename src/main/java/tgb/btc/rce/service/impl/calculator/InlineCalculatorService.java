@@ -11,10 +11,10 @@ import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.rce.conditional.calculator.InlineCalculatorCondition;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.ICalculatorTypeService;
-import tgb.btc.rce.service.impl.KeyboardService;
+import tgb.btc.rce.service.IKeyboardService;
+import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.impl.MessageService;
 import tgb.btc.rce.service.processors.calculator.InlineCalculator;
-import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.InlineCalculatorVO;
 
@@ -30,7 +30,7 @@ public class InlineCalculatorService implements ICalculatorTypeService {
 
     private IDealPropertyService dealPropertyService;
 
-    private KeyboardService keyboardService;
+    private IKeyboardService keyboardService;
 
     private MessageService messageService;
 
@@ -55,7 +55,7 @@ public class InlineCalculatorService implements ICalculatorTypeService {
     }
 
     @Autowired
-    public void setKeyboardService(KeyboardService keyboardService) {
+    public void setKeyboardService(IKeyboardService keyboardService) {
         this.keyboardService = keyboardService;
     }
 

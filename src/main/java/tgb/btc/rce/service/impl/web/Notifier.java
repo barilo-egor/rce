@@ -10,8 +10,8 @@ import tgb.btc.library.util.properties.VariablePropertiesUtil;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.InlineType;
+import tgb.btc.rce.service.IKeyboardService;
 import tgb.btc.rce.service.IResponseSender;
-import tgb.btc.rce.service.impl.KeyboardService;
 import tgb.btc.rce.service.impl.NotifyService;
 import tgb.btc.rce.util.MessagePropertiesUtil;
 import tgb.btc.rce.vo.InlineButton;
@@ -26,7 +26,7 @@ public class Notifier implements INotifier {
 
     private NotifyService notifyService;
 
-    private KeyboardService keyboardService;
+    private IKeyboardService keyboardService;
 
     private IResponseSender responseSender;
 
@@ -48,7 +48,7 @@ public class Notifier implements INotifier {
     }
 
     @Autowired
-    public void setKeyboardService(KeyboardService keyboardService) {
+    public void setKeyboardService(IKeyboardService keyboardService) {
         this.keyboardService = keyboardService;
     }
 

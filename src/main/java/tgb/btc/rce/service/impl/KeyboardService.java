@@ -22,6 +22,7 @@ import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.BotInlineButton;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.InlineType;
+import tgb.btc.rce.service.IKeyboardService;
 import tgb.btc.rce.service.processors.calculator.InlineCalculator;
 import tgb.btc.rce.util.*;
 import tgb.btc.rce.vo.InlineButton;
@@ -35,7 +36,7 @@ import static tgb.btc.library.constants.enums.properties.PropertiesPath.RPS_PROP
 import static tgb.btc.rce.enums.InlineCalculatorButton.*;
 
 @Service
-public class KeyboardService {
+public class KeyboardService implements IKeyboardService {
 
     private IPaymentTypeService paymentTypeService;
 
@@ -44,6 +45,7 @@ public class KeyboardService {
         this.paymentTypeService = paymentTypeService;
     }
 
+    @Override
     public ReplyKeyboard getCurrencies(DealType dealType) {
         List<InlineButton> currencies = new ArrayList<>();
         TurningCurrenciesUtil.getSwitchedOnByDealType(dealType)
@@ -52,6 +54,7 @@ public class KeyboardService {
         return KeyboardUtil.buildInline(currencies);
     }
 
+    @Override
     public ReplyKeyboard getFiatCurrencies() {
         List<InlineButton> buttons = FiatCurrencyUtil.getFiatCurrencies().stream()
                 .map(fiatCurrency -> InlineButton.builder()
@@ -63,6 +66,7 @@ public class KeyboardService {
         return KeyboardUtil.buildInline(buttons);
     }
 
+    @Override
     public ReplyKeyboard getPaymentTypes(DealType dealType, FiatCurrency fiatCurrency) {
         List<InlineButton> buttons =
                 paymentTypeService.getByDealTypeAndIsOnAndFiatCurrency(dealType, true, fiatCurrency).stream()
@@ -80,6 +84,7 @@ public class KeyboardService {
         return KeyboardUtil.buildInline(buttons);
     }
 
+    @Override
     public ReplyKeyboard getShowDeal(Long dealPid) {
         return KeyboardUtil.buildInline(List.of(
                 InlineButton.builder()
@@ -90,6 +95,7 @@ public class KeyboardService {
         ));
     }
 
+    @Override
     public ReplyKeyboard getShowApiDeal(Long pid) {
         return KeyboardUtil.buildInline(List.of(
                 InlineButton.builder()
@@ -100,6 +106,7 @@ public class KeyboardService {
         ));
     }
 
+    @Override
     public ReplyKeyboard getUseReferralDiscount(BigDecimal sumWithDiscount, BigDecimal dealAmount) {
         return KeyboardUtil.buildInline(List.of(
                 InlineButton.builder()
@@ -116,6 +123,7 @@ public class KeyboardService {
         ));
     }
 
+    @Override
     public ReplyKeyboard getPromoCode(BigDecimal sumWithDiscount, BigDecimal dealAmount) {
         return KeyboardUtil.buildInline(List.of(
                 InlineButton.builder()
@@ -132,6 +140,7 @@ public class KeyboardService {
         ));
     }
 
+    @Override
     public ReplyKeyboard getInlineCalculator(Long chaId) {
         List<InlineButton> inlineButtons = new ArrayList<>();
         String[] strings = new String[]{"7", "8", "9", "4", "5", "6", "1", "2", "3", "0"};
@@ -156,6 +165,7 @@ public class KeyboardService {
         return KeyboardUtil.buildInlineByRows(rows);
     }
 
+    @Override
     public ReplyKeyboard getInlineCalculatorSwitcher() {
         List<InlineButton> buttons = new ArrayList<>();
         buttons.add(KeyboardUtil.createCallBackDataButton(SWITCH_TO_MAIN_CALCULATOR));
@@ -163,6 +173,7 @@ public class KeyboardService {
         return KeyboardUtil.buildInline(buttons);
     }
 
+    @Override
     public ReplyKeyboard getDeliveryTypes(FiatCurrency fiatCurrency, DealType dealType, CryptoCurrency cryptoCurrency) {
         List<InlineButton> buttons = new ArrayList<>();
         Arrays.stream(DeliveryType.values()).forEach(x -> {
@@ -187,6 +198,7 @@ public class KeyboardService {
         return KeyboardUtil.buildInlineSingleLast(buttons, 1, KeyboardUtil.INLINE_BACK_BUTTON);
     }
 
+    @Override
     public InlineButton getDeliveryTypeButton() {
         String text;
         DeliveryKind deliveryKind;
@@ -203,6 +215,7 @@ public class KeyboardService {
                 .build();
     }
 
+    @Override
     public ReplyKeyboard getRPSRates() {
         List<InlineButton> buttons = new ArrayList<>();
         String[] sums = RPS_PROPERTIES.getString("sums").split(",");
@@ -214,6 +227,7 @@ public class KeyboardService {
         return KeyboardUtil.buildInlineSingleLast(buttons, 1, KeyboardUtil.INLINE_BACK_BUTTON);
     }
 
+    @Override
     public ReplyKeyboard getRPSElements() {
         List<InlineButton> buttons = new ArrayList<>();
         Arrays.stream(RPSElement.values()).forEach(element -> buttons.add(InlineButton.builder()
@@ -223,7 +237,8 @@ public class KeyboardService {
         return KeyboardUtil.buildInlineSingleLast(buttons, 1, KeyboardUtil.INLINE_BACK_BUTTON);
     }
 
-    public static ReplyKeyboard getCabinetButtons() {
+
+    public ReplyKeyboard getCabinetButtons() {
         List<InlineButton> buttons = new ArrayList<>();
         Arrays.stream(CabinetButton.values()).forEach(button -> buttons.add(InlineButton.builder()
                 .text(button.getText())

@@ -6,8 +6,8 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.constants.enums.properties.PropertiesPath;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
+import tgb.btc.rce.service.IKeyboardService;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.service.impl.KeyboardService;
 import tgb.btc.rce.util.CallbackQueryUtil;
 import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.UpdateUtil;
@@ -18,10 +18,10 @@ import java.util.List;
 @Slf4j
 public class TurningProcessDeliveryProcessor extends Processor {
 
-    private KeyboardService keyboardService;
+    private IKeyboardService keyboardService;
 
     @Autowired
-    public void setKeyboardService(KeyboardService keyboardService) {
+    public void setKeyboardService(IKeyboardService keyboardService) {
         this.keyboardService = keyboardService;
     }
 
