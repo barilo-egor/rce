@@ -3,7 +3,7 @@ package tgb.btc.rce.enums;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.constants.enums.bot.BotMessageType;
 import tgb.btc.library.exception.BaseException;
-import tgb.btc.rce.service.BeanHolder;
+import tgb.btc.rce.util.BeanHolder;
 import tgb.btc.rce.service.impl.KeyboardService;
 import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.MessagePropertiesUtil;

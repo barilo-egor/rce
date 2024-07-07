@@ -1,10 +1,11 @@
-package tgb.btc.rce.service;
+package tgb.btc.rce.util;
 
 import lombok.extern.slf4j.Slf4j;
 import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.library.service.bean.bot.BotMessageService;
 import tgb.btc.library.service.bean.bot.ContactService;
 import tgb.btc.rce.RceApplication;
+import tgb.btc.rce.service.IResponseSender;
 
 @Slf4j
 public class BeanHolder {

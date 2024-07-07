@@ -14,11 +14,11 @@ import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.conditional.AntispamCondition;
 import tgb.btc.rce.enums.BotKeyboard;
 import tgb.btc.rce.enums.Command;
-import tgb.btc.rce.service.captcha.IAntiSpam;
-import tgb.btc.rce.service.impl.captcha.AntiSpam;
+import tgb.btc.rce.service.ICaptchaSender;
 import tgb.btc.rce.service.Processor;
+import tgb.btc.rce.service.captcha.IAntiSpam;
 import tgb.btc.rce.service.impl.NotifyService;
-import tgb.btc.rce.service.impl.schedule.CaptchaSender;
+import tgb.btc.rce.service.impl.captcha.AntiSpam;
 import tgb.btc.rce.util.CallbackQueryUtil;
 import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.UpdateUtil;
@@ -32,7 +32,7 @@ import java.util.Set;
 @Slf4j
 public class CaptchaProcessor extends Processor {
 
-    private CaptchaSender captchaSender;
+    private ICaptchaSender captchaSender;
 
     private Start start;
 
@@ -70,7 +70,7 @@ public class CaptchaProcessor extends Processor {
     }
 
     @Autowired
-    public void setCaptchaSender(CaptchaSender captchaSender) {
+    public void setCaptchaSender(ICaptchaSender captchaSender) {
         this.captchaSender = captchaSender;
     }
 
