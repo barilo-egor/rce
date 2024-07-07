@@ -9,7 +9,7 @@ import tgb.btc.library.constants.strings.FilePaths;
 import tgb.btc.library.exception.BaseException;
 import tgb.btc.rce.conditional.PictureCaptchaCondition;
 import tgb.btc.rce.exception.PicturesNotFoundException;
-import tgb.btc.rce.service.AntiSpam;
+import tgb.btc.rce.service.captcha.IAntiSpam;
 import tgb.btc.rce.service.captcha.ICaptchaService;
 import tgb.btc.rce.service.impl.ResponseSender;
 import tgb.btc.rce.vo.Captcha;
@@ -23,6 +23,13 @@ import java.util.*;
 public class PictureCaptchaService implements ICaptchaService {
 
     private ResponseSender responseSender;
+
+    private IAntiSpam antiSpam;
+
+    @Autowired
+    public void setAntiSpam(IAntiSpam antiSpam) {
+        this.antiSpam = antiSpam;
+    }
 
     @Autowired
     public void setResponseSender(ResponseSender responseSender) {
@@ -62,6 +69,6 @@ public class PictureCaptchaService implements ICaptchaService {
         Captcha captcha = getRandomCaptcha();
         responseSender.sendPhoto(chatId, "Сработала антиспам система. Введите капчу, чтобы продолжить.",
                 captcha.getImage());
-        AntiSpam.CAPTCHA_CASH.put(chatId, captcha.getStr());
+        antiSpam.putToCaptchaCash(chatId, captcha.getStr());
     }
 }

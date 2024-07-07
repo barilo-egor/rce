@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import tgb.btc.library.exception.BaseException;
 import tgb.btc.rce.conditional.EmojiCaptchaCondition;
 import tgb.btc.rce.enums.Command;
-import tgb.btc.rce.service.AntiSpam;
+import tgb.btc.rce.service.captcha.IAntiSpam;
 import tgb.btc.rce.service.captcha.ICaptchaService;
 import tgb.btc.rce.service.impl.ResponseSender;
 import tgb.btc.rce.vo.EmojiCaptcha;
@@ -23,6 +23,13 @@ public class EmojiCaptchaService implements ICaptchaService {
     private static final Integer EMOJI_COUNT = 4;
 
     private ResponseSender responseSender;
+
+    private IAntiSpam antiSpam;
+
+    @Autowired
+    public void setAntiSpam(IAntiSpam antiSpam) {
+        this.antiSpam = antiSpam;
+    }
 
     @Autowired
     public void setResponseSender(ResponseSender responseSender) {
@@ -51,7 +58,7 @@ public class EmojiCaptchaService implements ICaptchaService {
                 .build()));
 
         responseSender.sendMessage(chatId, "Сработала антиспам система. Выберите " + emojiCaptcha.getAnswer() + ", чтобы продолжить.", buttons);
-        AntiSpam.CAPTCHA_CASH.put(chatId, emojiCaptcha.getAnswer());
+        antiSpam.putToCaptchaCash(chatId, emojiCaptcha.getAnswer());
     }
 
     private int getRandomInt(int rightBound) {

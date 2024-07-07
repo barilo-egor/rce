@@ -14,7 +14,8 @@ import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.conditional.AntispamCondition;
 import tgb.btc.rce.enums.BotKeyboard;
 import tgb.btc.rce.enums.Command;
-import tgb.btc.rce.service.AntiSpam;
+import tgb.btc.rce.service.captcha.IAntiSpam;
+import tgb.btc.rce.service.impl.captcha.AntiSpam;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.impl.NotifyService;
 import tgb.btc.rce.service.impl.schedule.CaptchaSender;
@@ -35,7 +36,7 @@ public class CaptchaProcessor extends Processor {
 
     private Start start;
 
-    private AntiSpam antiSpam;
+    private IAntiSpam antiSpam;
 
     private ISpamBanService spamBanService;
 
@@ -59,7 +60,7 @@ public class CaptchaProcessor extends Processor {
     }
 
     @Autowired
-    public void setAntiSpam(AntiSpam antiSpam) {
+    public void setAntiSpam(IAntiSpam antiSpam) {
         this.antiSpam = antiSpam;
     }
 
@@ -122,7 +123,7 @@ public class CaptchaProcessor extends Processor {
 
     private void removeUserFromSpam(Long chatId) {
         antiSpam.removeUser(chatId);
-        AntiSpam.CAPTCHA_CASH.remove(chatId);
+        antiSpam.removeFromCaptchaCash(chatId);
         start.run(chatId);
     }
 
@@ -133,7 +134,7 @@ public class CaptchaProcessor extends Processor {
         } else {
             text = CallbackQueryUtil.getSplitData(update, 1);
         }
-        return text.equals(AntiSpam.CAPTCHA_CASH.get(UpdateUtil.getChatId(update)));
+        return text.equals(antiSpam.getFromCaptchaCash(UpdateUtil.getChatId(update)));
     }
 
     public void send(Long chatId) {

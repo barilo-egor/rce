@@ -13,9 +13,9 @@ import tgb.btc.library.interfaces.service.bean.common.bot.IUserCommonService;
 import tgb.btc.library.service.process.BannedUserCache;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.SimpleCommand;
-import tgb.btc.rce.service.AntiSpam;
 import tgb.btc.rce.service.ICommandProcessorLoader;
 import tgb.btc.rce.service.IUpdateDispatcher;
+import tgb.btc.rce.service.captcha.IAntiSpam;
 import tgb.btc.rce.service.process.IUserProcessService;
 import tgb.btc.rce.util.CommandUtil;
 import tgb.btc.rce.util.UpdateUtil;
@@ -35,7 +35,7 @@ public class UpdateDispatcher implements IUpdateDispatcher {
 
     private IUserProcessService userProcessService;
 
-    private AntiSpam antiSpam;
+    private IAntiSpam antiSpam;
 
     private BannedUserCache bannedUserCache;
 
@@ -64,7 +64,7 @@ public class UpdateDispatcher implements IUpdateDispatcher {
     }
 
     @Autowired(required = false)
-    public void setAntiSpam(AntiSpam antiSpam) {
+    public void setAntiSpam(IAntiSpam antiSpam) {
         this.antiSpam = antiSpam;
     }
 

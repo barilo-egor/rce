@@ -1,4 +1,4 @@
-package tgb.btc.rce.service;
+package tgb.btc.rce.service.impl.captcha;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import tgb.btc.library.constants.enums.properties.PropertiesPath;
 import tgb.btc.library.service.process.VerifiedUserCache;
 import tgb.btc.rce.conditional.AntispamCondition;
+import tgb.btc.rce.service.captcha.IAntiSpam;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +20,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Service
 @Conditional(AntispamCondition.class)
 @Slf4j
-public class AntiSpam {
+public class AntiSpam implements IAntiSpam {
 
     private static final List<Long> SPAM_USERS = new ArrayList<>();
 
@@ -27,11 +28,28 @@ public class AntiSpam {
 
     public static final Map<Long, String> CAPTCHA_CASH = new ConcurrentHashMap<>();
 
+    private final Map<Long, String> captchaCash = new ConcurrentHashMap<>();
+
     private VerifiedUserCache verifiedUserCache;
 
     @Autowired
     public void setVerifiedUserCache(VerifiedUserCache verifiedUserCache) {
         this.verifiedUserCache = verifiedUserCache;
+    }
+
+    @Override
+    public void putToCaptchaCash(Long chatId, String captcha) {
+        captchaCash.put(chatId, captcha);
+    }
+
+    @Override
+    public String getFromCaptchaCash(Long chatId) {
+        return captchaCash.get(chatId);
+    }
+
+    @Override
+    public void removeFromCaptchaCash(Long chatId) {
+        captchaCash.remove(chatId);
     }
 
     public boolean isVerifiedUser(Long chatId) {
