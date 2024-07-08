@@ -39,6 +39,7 @@ public class DeletingPaymentRequisite extends Processor {
         PaymentType paymentType = paymentRequisiteService.getPaymentTypeByPid(paymentRequisite.getPid());
 
         paymentRequisiteService.delete(paymentRequisite);
+        paymentRequisiteService.removeOrder(paymentType.getPid());
         responseSender.deleteMessage(UpdateUtil.getChatId(update), update.getCallbackQuery().getMessage().getMessageId());
         showRequisitesForDelete.sendRequisites(UpdateUtil.getChatId(update), paymentType.getPid());
     }

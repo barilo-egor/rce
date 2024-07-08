@@ -65,6 +65,7 @@ public class TurningDynamic extends Processor {
             responseSender.sendMessage(chatId, "Динамические реквизиты для " + paymentType.getName() + " включены.");
             turnDynamicRequisites.sendPaymentTypes(chatId, paymentType.getDealType(), paymentType.getFiatCurrency());
         }
+        paymentRequisiteService.removeOrder(paymentType.getPid());
     }
 
 }

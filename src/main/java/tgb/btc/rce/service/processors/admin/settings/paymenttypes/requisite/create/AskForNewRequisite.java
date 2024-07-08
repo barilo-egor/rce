@@ -47,6 +47,7 @@ public class AskForNewRequisite extends Processor {
                 userDataService.getLongByUserPid(readUserService.getPidByChatId(chatId)));
         paymentRequisite.setPaymentType(paymentType);
         paymentRequisiteService.save(paymentRequisite);
+        paymentRequisiteService.removeOrder(paymentType.getPid());
         responseSender.sendMessage(chatId, "Реквизит сохранен.");
         processToAdminMainPanel(chatId);
     }

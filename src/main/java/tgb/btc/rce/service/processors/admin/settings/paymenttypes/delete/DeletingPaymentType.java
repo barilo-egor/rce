@@ -45,6 +45,7 @@ public class DeletingPaymentType extends Processor {
         PaymentType paymentType = paymentTypeService.getByPid(pid);
         DealType dealType = paymentType.getDealType();
         paymentRequisiteService.deleteByPaymentTypePid(paymentType.getPid());
+        paymentRequisiteService.removeOrder(paymentType.getPid());
         paymentTypeService.deleteById(pid);
         Long chatId = UpdateUtil.getChatId(update);
         responseSender.deleteMessage(chatId, update.getCallbackQuery().getMessage().getMessageId());
