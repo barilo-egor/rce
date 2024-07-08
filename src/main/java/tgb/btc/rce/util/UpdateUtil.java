@@ -15,6 +15,20 @@ public class UpdateUtil {
         return getFrom(update).getId();
     }
 
+    public static Long getGroupChatId(Update update) {
+        if (update.hasMyChatMember())
+            return update.getMyChatMember().getChat().getId();
+        if (update.hasChatMember())
+            return update.getChatMember().getChat().getId();
+        if (update.hasMessage())
+            return update.getMessage().getChat().getId();
+        else return null;
+    }
+
+    public static boolean isGroupMessage(Update update) {
+        return update.hasMyChatMember() || update.hasChatMember() || (update.hasMessage() && update.getMessage().getChat().isGroupChat());
+    }
+
     public static String getUsername(Update update) {
         return getFrom(update).getUserName();
     }

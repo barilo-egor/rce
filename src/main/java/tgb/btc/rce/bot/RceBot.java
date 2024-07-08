@@ -9,6 +9,7 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import tgb.btc.library.exception.NumberParseException;
+import tgb.btc.rce.service.IGroupUpdateDispatcher;
 import tgb.btc.rce.service.IUpdateDispatcher;
 import tgb.btc.rce.util.TelegramBotPropertiesUtil;
 import tgb.btc.rce.util.UpdateUtil;
@@ -18,6 +19,13 @@ import tgb.btc.rce.util.UpdateUtil;
 public class RceBot extends TelegramLongPollingBot {
 
     private final IUpdateDispatcher updateDispatcher;
+
+    private IGroupUpdateDispatcher groupUpdateDispatcher;
+
+    @Autowired
+    public void setGroupUpdateDispatcher(IGroupUpdateDispatcher groupUpdateDispatcher) {
+        this.groupUpdateDispatcher = groupUpdateDispatcher;
+    }
 
     @Autowired
     public RceBot(IUpdateDispatcher updateDispatcher) {
@@ -38,7 +46,10 @@ public class RceBot extends TelegramLongPollingBot {
     public void onUpdateReceived(Update update) {
         try {
             try {
-                updateDispatcher.dispatch(update);
+                if (UpdateUtil.isGroupMessage(update))
+                    groupUpdateDispatcher.dispatch(update);
+                else
+                    updateDispatcher.dispatch(update);
             } catch (NumberParseException e) {
                 execute(SendMessage.builder()
                         .chatId(UpdateUtil.getChatId(update).toString())
