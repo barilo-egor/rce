@@ -115,13 +115,12 @@ public class DealSupportService {
     }
 
     public ReplyKeyboard dealToStringButtons(Long pid) {
-
         List<InlineButton> buttons = new ArrayList<>();
         buttons.add(InlineButton.builder()
                 .text("Подтвердить")
                 .data(CallbackQueryUtil.buildCallbackData(Command.CONFIRM_USER_DEAL, pid, false))
                 .build());
-        boolean hasDefaultGroupChat = groupChatService.hasDefault();
+        boolean hasDefaultGroupChat = groupChatService.hasDealRequests();
         if (hasDefaultGroupChat)
             buttons.add(InlineButton.builder()
                     .text("Подтвердить с запросом")

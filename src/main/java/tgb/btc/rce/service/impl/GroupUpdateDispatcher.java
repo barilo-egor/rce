@@ -55,7 +55,7 @@ public class GroupUpdateDispatcher implements IGroupUpdateDispatcher {
                 MemberStatus status = MemberStatus.valueOf(newChatMember.getStatus().toUpperCase());
                 if (MemberStatus.LEFT.equals(status) || MemberStatus.KICKED.equals(status)) {
                     log.debug("Бот был удален из группы chatid={}", chatId);
-                    groupChatService.deleteByChatId(chatId);
+                    groupChatService.deleteIfExistsByChatId(chatId);
                     return;
                 }
                 if (MemberStatus.RESTRICTED.equals(status)) {
@@ -68,9 +68,6 @@ public class GroupUpdateDispatcher implements IGroupUpdateDispatcher {
                 Optional<GroupChat> groupChatOptional = groupChatService.find(chatId);
                 if (groupChatOptional.isPresent()) {
                     groupChatService.updateMemberStatus(chatId, status);
-                    if (MemberStatus.ADMINISTRATOR.equals(status)) {
-                        responseSender.sendMessage(chatId, "Для того, чтобы узнать возможности бота, введите /help.");
-                    }
                 } else {
                     String title = update.getMyChatMember().getChat().getTitle();
                     log.debug("Зарегистрирована группа чат {}, статус бота {}, chat id {}.", title, status.name(), chatId);
@@ -81,6 +78,8 @@ public class GroupUpdateDispatcher implements IGroupUpdateDispatcher {
             groupChatService.updateTitleByChatId(chatId, update.getMessage().getNewChatTitle());
         } else if (update.hasMessage()
                 && update.getMessage().hasText()) {
+            if (!groupChatService.isDealRequest(chatId))
+                return;
             if (update.getMessage().isReply()
                     && update.getMessage().getReplyToMessage().getChatId().equals(chatId)
                     && update.getMessage().getText().equals("+")) {
