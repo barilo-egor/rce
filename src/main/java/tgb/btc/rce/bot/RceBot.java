@@ -48,14 +48,16 @@ public class RceBot extends TelegramLongPollingBot {
             try {
                 if (UpdateUtil.isGroupMessage(update))
                     groupUpdateDispatcher.dispatch(update);
-                else
+                else {
                     updateDispatcher.dispatch(update);
+                }
             } catch (NumberParseException e) {
                 execute(SendMessage.builder()
                         .chatId(UpdateUtil.getChatId(update).toString())
                         .text("Неверный формат.")
                         .build());
             } catch (Exception e) {
+                log.debug("Необработанная ошибка.", e);
                 Long time = System.currentTimeMillis();
                 String message = "Произошла ошибка." + System.lineSeparator() +
                         time + System.lineSeparator() +

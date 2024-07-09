@@ -7,26 +7,30 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import tgb.btc.library.bean.bot.Deal;
 import tgb.btc.library.bean.bot.User;
 import tgb.btc.library.bean.web.api.ApiDeal;
+import tgb.btc.library.constants.enums.bot.CryptoCurrency;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
 import tgb.btc.library.constants.enums.web.ApiDealStatus;
+import tgb.btc.library.interfaces.service.bean.bot.IGroupChatService;
 import tgb.btc.library.interfaces.service.bean.bot.deal.IReadDealService;
 import tgb.btc.library.interfaces.service.bean.bot.deal.read.IDealCountService;
 import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.library.interfaces.service.bean.web.IApiDealService;
-import tgb.btc.rce.constants.BotStringConstants;
+import tgb.btc.library.util.BigDecimalUtil;
 import tgb.btc.rce.enums.Command;
+import tgb.btc.rce.util.CallbackQueryUtil;
 import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.vo.InlineButton;
 
 import java.math.RoundingMode;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 @Service
 public class DealSupportService {
 
-    private static final String DEAL_INFO = "Заявка на %s №%s\n" + "Дата,время: %s\n" + "Тип оплаты: %s\n" + "Кошелек: %s\n" + "Контакт: %s\n"
+    private static final String DEAL_INFO = "Заявка на %s №%s \n" + "Дата,время: %s\n" + "Тип оплаты: %s\n" + "Кошелек: %s\n" + "Контакт: %s\n"
             + "Количество сделок: %s\n" + "ID: %s\n" + "Сумма %s: %s\n" + "Сумма: %s %s\n" + "Способ доставки: %s";
 
     private IReadUserService readUserService;
@@ -36,6 +40,13 @@ public class DealSupportService {
     private IReadDealService readDealService;
 
     private IDealCountService dealCountService;
+
+    private IGroupChatService groupChatService;
+
+    @Autowired
+    public void setGroupChatService(IGroupChatService groupChatService) {
+        this.groupChatService = groupChatService;
+    }
 
     @Autowired
     public void setDealCountService(IDealCountService dealCountService) {
@@ -69,13 +80,25 @@ public class DealSupportService {
                 + "Сумма " + apiDeal.getApiUser().getFiatCurrency().getDisplayName() + ": " + apiDeal.getAmount();
     }
 
-    public String dealToString(Long pid) {
+    public String dealToRequestString(Long pid) {
         Deal deal = readDealService.findByPid(pid);
+        String dealString = dealToString(pid);
+        if (CryptoCurrency.BITCOIN.equals(deal.getCryptoCurrency()))
+            return dealString + "\nСтрока для вывода:\n<code>" + deal.getWallet() + "," + BigDecimalUtil.toPlainString(deal.getCryptoAmount()) + "</code>";
+        else
+            return dealString;
+    }
+
+    public String dealToString(Long pid) {
+        return dealToString(readDealService.findByPid(pid));
+    }
+
+    public String dealToString(Deal deal) {
         User user = deal.getUser();
         String paymentTypeName = Objects.nonNull(deal.getPaymentType()) ? deal.getPaymentType().getName() : "Не установлен тип оплаты.";
         FiatCurrency fiatCurrency = deal.getFiatCurrency();
         return String.format(
-                DEAL_INFO, deal.getDealType().getAccusative(), deal.getPid(),
+                DEAL_INFO, deal.getDealType().getGenitive(), deal.getPid(),
                 deal.getDateTime().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")),
                 paymentTypeName,
                 deal.getWallet(),
@@ -92,27 +115,31 @@ public class DealSupportService {
     }
 
     public ReplyKeyboard dealToStringButtons(Long pid) {
-        return KeyboardUtil.buildInline(
-                List.of(
-                        InlineButton.builder()
-                                .text("Подтвердить")
-                                .data(Command.CONFIRM_USER_DEAL.getText() + BotStringConstants.CALLBACK_DATA_SPLITTER + pid)
-                                .build(),
-                        InlineButton.builder()
-                                .text("Доп.верификация")
-                                .data(Command.ADDITIONAL_VERIFICATION.getText() + BotStringConstants.CALLBACK_DATA_SPLITTER + pid)
-                                .build(),
-                        InlineButton.builder()
-                                .text("Удалить")
-                                .data(Command.DELETE_USER_DEAL.getText() + BotStringConstants.CALLBACK_DATA_SPLITTER + pid)
-                                .build(),
-                        InlineButton.builder()
-                                .text("Удалить и заблокировать")
-                                .data(Command.DELETE_DEAL_AND_BLOCK_USER.getText() + BotStringConstants.CALLBACK_DATA_SPLITTER + pid)
-                                .build()
-                )
 
-        );
+        List<InlineButton> buttons = new ArrayList<>();
+        buttons.add(InlineButton.builder()
+                .text("Подтвердить")
+                .data(CallbackQueryUtil.buildCallbackData(Command.CONFIRM_USER_DEAL, pid, false))
+                .build());
+        boolean hasDefaultGroupChat = groupChatService.hasDefault();
+        if (hasDefaultGroupChat)
+            buttons.add(InlineButton.builder()
+                    .text("Подтвердить с запросом")
+                    .data(CallbackQueryUtil.buildCallbackData(Command.CONFIRM_USER_DEAL, pid, true))
+                    .build());
+        buttons.add(InlineButton.builder()
+                .text("Доп.верификация")
+                .data(CallbackQueryUtil.buildCallbackData(Command.ADDITIONAL_VERIFICATION, pid))
+                .build());
+        buttons.add(InlineButton.builder()
+                .text("Удалить")
+                .data(CallbackQueryUtil.buildCallbackData(Command.DELETE_USER_DEAL, pid))
+                .build());
+        buttons.add(InlineButton.builder()
+                .text("Удалить и заблокировать")
+                .data(CallbackQueryUtil.buildCallbackData(Command.DELETE_DEAL_AND_BLOCK_USER, pid))
+                .build());
+        return KeyboardUtil.buildInline(buttons, 2);
     }
 
 }

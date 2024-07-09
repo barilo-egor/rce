@@ -5,6 +5,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.AnswerInlineQuery;
 import org.telegram.telegrambots.meta.api.methods.GetFile;
 import org.telegram.telegrambots.meta.api.methods.send.*;
@@ -73,6 +74,11 @@ public class ResponseSender implements IResponseSender {
                 .build()));
     }
 
+    @Override
+    public Optional<Message> sendMessage(Long chatId, String text, Integer replyToMessageId) {
+        return sendMessage(chatId, text, null, null, replyToMessageId);
+    }
+
     public Optional<Message> sendMessageParseNode(Long chatId, String text, String parseNode) {
         return Optional.ofNullable(executeSendMessage(SendMessage.builder()
                 .chatId(chatId.toString())
@@ -119,9 +125,15 @@ public class ResponseSender implements IResponseSender {
 
     @Override
     public Optional<Message> sendMessage(Long chatId, String text, ReplyKeyboard replyKeyboard, String parseMode) {
+        return sendMessage(chatId, text, replyKeyboard, parseMode, null);
+    }
+
+    @Override
+    public Optional<Message> sendMessage(Long chatId, String text, ReplyKeyboard replyKeyboard, String parseMode, Integer replyToMessageId) {
         SendMessage sendMessage = SendMessage.builder()
                 .chatId(chatId.toString())
                 .text(text)
+                .replyToMessageId(replyToMessageId)
                 .replyMarkup(replyKeyboard)
                 .build();
         if (Strings.isNotEmpty(parseMode)) sendMessage.setParseMode(parseMode);
@@ -390,6 +402,20 @@ public class ResponseSender implements IResponseSender {
             String text = update.getCallbackQuery().getMessage().getText();
             deleteMessage(UpdateUtil.getChatId(update), CallbackQueryUtil.messageId(update));
             sendMessage(UpdateUtil.getChatId(update), text);
+        }
+    }
+
+    @Override
+    public void sendAnswerCallbackQuery(String callbackQueryId, String text, boolean showAlert) {
+        try {
+            bot.execute(AnswerCallbackQuery.builder()
+                    .callbackQueryId(callbackQueryId)
+                    .text(text)
+                    .showAlert(showAlert)
+                    .build());
+        } catch (TelegramApiException e) {
+            log.error("Не получилось отправить answerCallbackQuery. text={}", text);
+            log.error("Ошибка отправки answerCallbackQuery", e);
         }
     }
 

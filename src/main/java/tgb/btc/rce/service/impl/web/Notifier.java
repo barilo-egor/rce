@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tgb.btc.api.web.INotifier;
 import tgb.btc.library.bean.bot.GroupChat;
+import tgb.btc.library.constants.enums.bot.GroupChatType;
 import tgb.btc.library.constants.enums.bot.UserRole;
 import tgb.btc.library.constants.enums.properties.VariableType;
 import tgb.btc.library.exception.BaseException;
@@ -125,12 +126,13 @@ public class Notifier implements INotifier {
     }
 
     @Override
-    public void sendRequestToWithdraw(String requestInitiator, Long dealPid) {
-        Optional<GroupChat> optionalGroupChat = groupChatService.getDefault();
+    public void sendRequestToWithdraw(String from, String requestInitiator, Long dealPid) {
+        Optional<GroupChat> optionalGroupChat = groupChatService.getByType(GroupChatType.DEAL_REQUEST);
         if (optionalGroupChat.isEmpty())
             throw new BaseException("Не найдена дефолтная чат-группа для отправки запроса на вывод сделки.");
         GroupChat groupChat = optionalGroupChat.get();
-        String dealString = dealSupportService.dealToString(dealPid);
-        responseSender.sendMessage(groupChat.getChatId(), "Запрос от <b>" + requestInitiator + "</b>.\n\n" + dealString);
+        String dealString = dealSupportService.dealToRequestString(dealPid);
+        String result = "Запрос из <b>" + from + "</b> от <b>" + requestInitiator + "</b>.\n\n" + dealString;
+        responseSender.sendMessage(groupChat.getChatId(), result, "html");
     }
 }

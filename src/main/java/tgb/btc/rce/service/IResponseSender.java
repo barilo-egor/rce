@@ -28,6 +28,8 @@ public interface IResponseSender {
 
     Optional<Message> sendMessage(Long chatId, String text);
 
+    Optional<Message> sendMessage(Long chatId, String text, Integer replyToMessageId);
+
     Optional<Message> sendMessage(Long chatId, String text, ReplyKeyboard replyKeyboard);
 
     Optional<Message> sendMessage(Long chatId, String text, Menu menu);
@@ -37,6 +39,8 @@ public interface IResponseSender {
     Optional<Message> sendMessage(Long chatId, String text, String parseMode);
 
     Optional<Message> sendMessage(Long chatId, String text, ReplyKeyboard replyKeyboard, String parseMode);
+
+    Optional<Message> sendMessage(Long chatId, String text, ReplyKeyboard replyKeyboard, String parseMode, Integer replyToMessageId);
 
     Optional<Message> sendMessage(Long chatId, String text, InlineButton... inlineButtons);
 
@@ -91,4 +95,6 @@ public interface IResponseSender {
     void sendEditedMessageText(Long chatId, Integer messageId, String text, ReplyKeyboard replyKeyboard);
 
     void deleteCallbackMessageButtonsIfExists(Update update);
+
+    void sendAnswerCallbackQuery(String callbackQueryId, String text, boolean showAlert);
 }

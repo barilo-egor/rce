@@ -2,9 +2,12 @@ package tgb.btc.rce.util;
 
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import tgb.btc.library.exception.BaseException;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
-import tgb.btc.library.exception.BaseException;
+
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 public final class CallbackQueryUtil {
     private CallbackQueryUtil() {
@@ -27,12 +30,23 @@ public final class CallbackQueryUtil {
         return Long.parseLong(getSplitData(update, index));
     }
 
+    public static Boolean getSplitBooleanData(Update update, int index) {
+        return Boolean.parseBoolean(getSplitData(update, index));
+    }
+
+
     public static String buildCallbackData(String... variables) {
         return String.join(BotStringConstants.CALLBACK_DATA_SPLITTER, variables);
     }
 
     public static String buildCallbackData(Command command, String... variables) {
         return command.getText().concat(BotStringConstants.CALLBACK_DATA_SPLITTER).concat(String.join(BotStringConstants.CALLBACK_DATA_SPLITTER, variables));
+    }
+
+    public static String buildCallbackData(Command command, Object... variables) {
+        return command.getText().concat(BotStringConstants.CALLBACK_DATA_SPLITTER)
+                .concat(Arrays.stream(variables).map(Object::toString)
+                        .collect(Collectors.joining(BotStringConstants.CALLBACK_DATA_SPLITTER)));
     }
 
     public static boolean isBack(Update update) {

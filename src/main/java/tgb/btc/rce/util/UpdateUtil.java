@@ -26,7 +26,9 @@ public class UpdateUtil {
     }
 
     public static boolean isGroupMessage(Update update) {
-        return update.hasMyChatMember() || update.hasChatMember() || (update.hasMessage() && update.getMessage().getChat().isGroupChat());
+        return update.hasMyChatMember()
+                || update.hasChatMember()
+                || (update.hasMessage() && (update.getMessage().getChat().isGroupChat() || update.getMessage().isSuperGroupMessage()));
     }
 
     public static String getUsername(Update update) {
