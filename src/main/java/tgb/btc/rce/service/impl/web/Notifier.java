@@ -3,8 +3,11 @@ package tgb.btc.rce.service.impl.web;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tgb.btc.api.web.INotifier;
+import tgb.btc.library.bean.bot.GroupChat;
 import tgb.btc.library.constants.enums.bot.UserRole;
 import tgb.btc.library.constants.enums.properties.VariableType;
+import tgb.btc.library.exception.BaseException;
+import tgb.btc.library.interfaces.service.bean.bot.IGroupChatService;
 import tgb.btc.library.interfaces.service.bean.bot.deal.read.IDealUserService;
 import tgb.btc.library.util.properties.VariablePropertiesUtil;
 import tgb.btc.rce.constants.BotStringConstants;
@@ -13,12 +16,14 @@ import tgb.btc.rce.enums.InlineType;
 import tgb.btc.rce.service.IKeyboardService;
 import tgb.btc.rce.service.INotifyService;
 import tgb.btc.rce.service.IResponseSender;
+import tgb.btc.rce.service.processors.support.DealSupportService;
 import tgb.btc.rce.util.MessagePropertiesUtil;
 import tgb.btc.rce.vo.InlineButton;
 
 import java.io.File;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -31,6 +36,20 @@ public class Notifier implements INotifier {
     private IResponseSender responseSender;
 
     private IDealUserService dealUserService;
+
+    private DealSupportService dealSupportService;
+
+    private IGroupChatService groupChatService;
+
+    @Autowired
+    public void setGroupChatService(IGroupChatService groupChatService) {
+        this.groupChatService = groupChatService;
+    }
+
+    @Autowired
+    public void setDealSupportService(DealSupportService dealSupportService) {
+        this.dealSupportService = dealSupportService;
+    }
 
     @Autowired
     public void setNotifyService(INotifyService notifyService) {
@@ -103,5 +122,15 @@ public class Notifier implements INotifier {
     @Override
     public void notifyAdmins(String s) {
         notifyService.notifyMessage(s, Set.of(UserRole.ADMIN));
+    }
+
+    @Override
+    public void sendRequestToWithdraw(String requestInitiator, Long dealPid) {
+        Optional<GroupChat> optionalGroupChat = groupChatService.getDefault();
+        if (optionalGroupChat.isEmpty())
+            throw new BaseException("Не найдена дефолтная чат-группа для отправки запроса на вывод сделки.");
+        GroupChat groupChat = optionalGroupChat.get();
+        String dealString = dealSupportService.dealToString(dealPid);
+        responseSender.sendMessage(groupChat.getChatId(), "Запрос от <b>" + requestInitiator + "</b>.\n\n" + dealString);
     }
 }
