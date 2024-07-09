@@ -26,8 +26,6 @@ public class AntiSpam implements IAntiSpam {
 
     private static final Map<Long, Integer> MESSAGES_COUNTER = new ConcurrentHashMap<>();
 
-    public static final Map<Long, String> CAPTCHA_CASH = new ConcurrentHashMap<>();
-
     private final Map<Long, String> captchaCash = new ConcurrentHashMap<>();
 
     private VerifiedUserCache verifiedUserCache;

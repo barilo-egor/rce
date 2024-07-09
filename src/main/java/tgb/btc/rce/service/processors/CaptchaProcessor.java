@@ -18,7 +18,6 @@ import tgb.btc.rce.service.ICaptchaSender;
 import tgb.btc.rce.service.INotifyService;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.captcha.IAntiSpam;
-import tgb.btc.rce.service.impl.captcha.AntiSpam;
 import tgb.btc.rce.service.processors.tool.Start;
 import tgb.btc.rce.util.CallbackQueryUtil;
 import tgb.btc.rce.util.KeyboardUtil;
@@ -89,7 +88,7 @@ public class CaptchaProcessor extends Processor {
             case 1:
             case 2:
                 if (!UpdateUtil.hasMessageText(update) && !update.hasCallbackQuery()) return;
-                String cashedCaptcha = AntiSpam.CAPTCHA_CASH.get(chatId);
+                String cashedCaptcha = antiSpam.getFromCaptchaCash(chatId);
                 if (StringUtils.isEmpty(cashedCaptcha))
                     throw new BaseException("Не найдена строка капчи в кэше.");
                 if (isEnteredCaptchaIsRight(update)) {
