@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.chatmember.ChatMember;
 import org.telegram.telegrambots.meta.api.objects.chatmember.ChatMemberRestricted;
+import tgb.btc.api.web.INotificationsAPI;
 import tgb.btc.library.bean.bot.GroupChat;
 import tgb.btc.library.constants.enums.MemberStatus;
 import tgb.btc.library.constants.enums.bot.GroupChatType;
@@ -29,6 +30,13 @@ public class GroupUpdateDispatcher implements IGroupUpdateDispatcher {
     private IGroupChatService groupChatService;
 
     private IResponseSender responseSender;
+
+    private INotificationsAPI notificationsAPI;
+
+    @Autowired
+    public void setNotificationsAPI(INotificationsAPI notificationsAPI) {
+        this.notificationsAPI = notificationsAPI;
+    }
 
     private final Pattern dealNumberPattern = Pattern.compile("№(\\d+)");
 
@@ -55,7 +63,13 @@ public class GroupUpdateDispatcher implements IGroupUpdateDispatcher {
                 MemberStatus status = MemberStatus.valueOf(newChatMember.getStatus().toUpperCase());
                 if (MemberStatus.LEFT.equals(status) || MemberStatus.KICKED.equals(status)) {
                     log.debug("Бот был удален из группы chatid={}", chatId);
+                    boolean isDealRequestGroup = false;
+                    Optional<GroupChat> optionalGroupChat = groupChatService.getByType(GroupChatType.DEAL_REQUEST);
+                    if (optionalGroupChat.isPresent()) {
+                        isDealRequestGroup = optionalGroupChat.get().getChatId().equals(chatId);
+                    }
                     groupChatService.deleteIfExistsByChatId(chatId);
+                    if (isDealRequestGroup) notificationsAPI.notifyDeletedDealRequestGroup();
                     return;
                 }
                 if (MemberStatus.RESTRICTED.equals(status)) {
