@@ -26,9 +26,11 @@ public class UpdateUtil {
     }
 
     public static boolean isGroupMessage(Update update) {
-        return update.hasMyChatMember()
-                || update.hasChatMember()
-                || (update.hasMessage() && (update.getMessage().getChat().isGroupChat() || update.getMessage().isSuperGroupMessage()));
+        return (update.hasMyChatMember() &&
+                (update.getMyChatMember().getChat().getType().equals("group") || update.getMyChatMember().getChat().getType().equals("supergroup")))
+                || (update.hasMessage() && (update.getMessage().getChat().isGroupChat()
+                || update.getMessage().isGroupMessage()
+                || update.getMessage().isSuperGroupMessage()));
     }
 
     public static String getUsername(Update update) {
@@ -49,7 +51,7 @@ public class UpdateUtil {
     }
 
     public static Integer getMessageId(Update update) {
-        if(Objects.isNull(update.getMessage()))
+        if (Objects.isNull(update.getMessage()))
             throw new BaseException("Невозможно получить message id, т.к. message==null.");
         return update.getMessage().getMessageId();
     }
@@ -59,7 +61,7 @@ public class UpdateUtil {
     }
 
     public static String getMessageText(Update update) {
-        if(Objects.isNull(update.getMessage()))
+        if (Objects.isNull(update.getMessage()))
             throw new BaseException("Невозможно получить message id, т.к. message==null.");
         return update.getMessage().getText();
     }
