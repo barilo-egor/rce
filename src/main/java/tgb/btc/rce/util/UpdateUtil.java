@@ -9,7 +9,10 @@ import tgb.btc.rce.enums.UpdateType;
 import java.math.BigDecimal;
 import java.util.Objects;
 
-public class UpdateUtil {
+public final class UpdateUtil {
+
+    private UpdateUtil() {
+    }
 
     public static Long getChatId(Update update) {
         return getFrom(update).getId();
@@ -61,20 +64,12 @@ public class UpdateUtil {
 
     public static String getMessageText(Update update) {
         if (Objects.isNull(update.getMessage()))
-            throw new BaseException("Невозможно получить message id, т.к. message==null.");
+            throw new BaseException("Невозможно получить message text, т.к. message==null.");
         return update.getMessage().getText();
     }
 
     public static Long getLongFromText(Update update) {
         return NumberUtil.getInputLong(getMessageText(update));
-    }
-
-    public static Integer getIntFromText(Update update) {
-        return NumberUtil.getInputInt(getMessageText(update));
-    }
-
-    public static Double getDoubleFromText(Update update) {
-        return NumberUtil.getInputDouble(getMessageText(update).replaceAll(",", "."));
     }
 
     public static BigDecimal getBigDecimalFromText(Update update) {
@@ -87,8 +82,7 @@ public class UpdateUtil {
                 return update.getMessage();
             case CALLBACK_QUERY:
                 return update.getCallbackQuery().getMessage();
-            default:
-                throw new BaseException("Не найден тип апдейта для получения месседжа.");
         }
+        throw new BaseException("Не найден тип апдейта для получения месседжа.");
     }
 }

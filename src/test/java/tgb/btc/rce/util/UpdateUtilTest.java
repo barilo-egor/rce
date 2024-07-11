@@ -1,6 +1,7 @@
 package tgb.btc.rce.util;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -9,6 +10,7 @@ import org.telegram.telegrambots.meta.api.objects.*;
 import org.telegram.telegrambots.meta.api.objects.inlinequery.InlineQuery;
 import tgb.btc.library.exception.BaseException;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -30,6 +32,7 @@ class UpdateUtilTest {
 
             User user = new User();
             user.setId(randomChatId);
+            user.setUserName(RandomStringUtils.randomAlphanumeric(10));
             users.add(user);
 
             Chat chat = new Chat();
@@ -91,6 +94,7 @@ class UpdateUtilTest {
     @Test
     void getChatIdThrowsBaseException() {
         Update update = new Update();
+        update.setChannelPost(new Message());
         assertThrows(BaseException.class, () -> UpdateUtil.getChatId(update), "Не было брошено исключение при пустом update.");
     }
 
@@ -161,12 +165,160 @@ class UpdateUtilTest {
     }
 
     private Update getUpdateWithChatMemberUpdatedWithChat(String type) {
-        Chat chat = new Chat();
-        chat.setType(type);
+        Chat chat = getChatWithType(type);
         ChatMemberUpdated chatMemberUpdated = new ChatMemberUpdated();
         chatMemberUpdated.setChat(chat);
         Update update = new Update();
         update.setMyChatMember(chatMemberUpdated);
         return update;
+    }
+
+    private Chat getChatWithType(String type) {
+        Chat chat = new Chat();
+        chat.setType(type);
+        return chat;
+    }
+
+    private Update getUpdateWithMessageChat(String type) {
+        Chat chat = getChatWithType(type);
+        Message message = new Message();
+        message.setChat(chat);
+        Update update = new Update();
+        update.setMessage(message);
+        return update;
+    }
+
+    @Test
+    void isGroupMessageByMessageChatGroupType() {
+        assertTrue(UpdateUtil.isGroupMessage(getUpdateWithMessageChat("group")),
+                "Для chat type group в message должно вернуть true.");
+    }
+
+    @Test
+    void isGroupMessageByMessageChatSuperGroupType() {
+        assertTrue(UpdateUtil.isGroupMessage(getUpdateWithMessageChat("supergroup")),
+                "Для chat type supergroup в message должно вернуть true.");
+    }
+
+    @Test
+    void isGroupMessageReturnsFalse() {
+        assertFalse(UpdateUtil.isGroupMessage(new Update()));
+    }
+
+    @Test
+    void getUsername() {
+        for (int i = 1; i <= numberOfTestUpdates; i++) {
+            Update update = new Update();
+            Message message = new Message();
+            message.setFrom(users.get(i - 1));
+            update.setMessage(message);
+            assertEquals(users.get(i - 1).getUserName(), UpdateUtil.getUsername(update));
+        }
+    }
+
+    @Test
+    void getMessageId() {
+        for (int i = 1; i <= numberOfTestUpdates; i++) {
+            Update update = new Update();
+            Message message = new Message();
+            Integer randomMessageId = RandomUtils.nextInt(0, 999999);
+            message.setMessageId(randomMessageId);
+            update.setMessage(message);
+            assertEquals(randomMessageId, UpdateUtil.getMessageId(update));
+        }
+    }
+
+    @Test
+    void getMessageIdThrows() {
+        assertThrows(BaseException.class, () -> UpdateUtil.getMessageId(new Update()));
+    }
+
+    @Test
+    void hasMessageTextWithoutMessage() {
+        Update update = new Update();
+        assertFalse(UpdateUtil.hasMessageText(update));
+    }
+
+    @Test
+    void hasMessageTextWithoutText() {
+        Update update = new Update();
+        update.setMessage(new Message());
+        assertFalse(UpdateUtil.hasMessageText(update));
+    }
+
+    @Test
+    void hasMessage() {
+        Update update = new Update();
+        Message message = new Message();
+        message.setText("qwerty");
+        update.setMessage(message);
+        assertTrue(UpdateUtil.hasMessageText(update));
+    }
+
+    @Test
+    void getMessageText() {
+        for (int i = 1; i <= numberOfTestUpdates; i++) {
+            Update update = new Update();
+            Message message = new Message();
+            String messageText = RandomStringUtils.randomAlphanumeric(10);
+            message.setText(messageText);
+            update.setMessage(message);
+            assertEquals(messageText, UpdateUtil.getMessageText(update));
+        }
+    }
+
+    @Test
+    void getMessageTextThrows() {
+        assertThrows(BaseException.class, () -> UpdateUtil.getMessageText(new Update()));
+    }
+
+    @Test
+    void getLongFromText() {
+        for (int i = 1; i <= numberOfTestUpdates; i++) {
+            Long randomLong = RandomUtils.nextLong(0, 1000);
+            String strRandom = randomLong.toString();
+            Update update = new Update();
+            Message message = new Message();
+            message.setText(strRandom);
+            update.setMessage(message);
+            assertEquals(randomLong, UpdateUtil.getLongFromText(update));
+        }
+    }
+
+    @Test
+    void getBigDecimalFromText() {
+        for (int i = 1; i <= numberOfTestUpdates; i++) {
+            double randomDouble = RandomUtils.nextDouble(0, 1000);
+            Update update = new Update();
+            Message message = new Message();
+            message.setText(Double.toString(randomDouble));
+            update.setMessage(message);
+            assertEquals(BigDecimal.valueOf(randomDouble), UpdateUtil.getBigDecimalFromText(update));
+        }
+    }
+
+    @Test
+    void getMessageFromUpdate() {
+        Update update = new Update();
+        Message message = new Message();
+        update.setMessage(message);
+        assertEquals(message, UpdateUtil.getMessage(update));
+    }
+
+    @Test
+    void getMessageFromCallbackQuery() {
+        Update update = new Update();
+        Message message = new Message();
+        CallbackQuery callbackQuery = new CallbackQuery();
+        callbackQuery.setMessage(message);
+        update.setCallbackQuery(callbackQuery);
+        assertEquals(message, UpdateUtil.getMessage(update));
+    }
+
+    @Test
+    void getMessageThrows() {
+        Update update = new Update();
+        update.setChannelPost(new Message());
+        assertThrows(BaseException.class, () -> UpdateUtil.getMessage(update));
     }
 }
