@@ -27,10 +27,9 @@ public class UpdateUtil {
 
     public static boolean isGroupMessage(Update update) {
         return (update.hasMyChatMember() &&
-                (update.getMyChatMember().getChat().getType().equals("group") || update.getMyChatMember().getChat().getType().equals("supergroup")))
-                || (update.hasMessage() && (update.getMessage().getChat().isGroupChat()
-                || update.getMessage().isGroupMessage()
-                || update.getMessage().isSuperGroupMessage()));
+                (update.getMyChatMember().getChat().isGroupChat() || update.getMyChatMember().getChat().isSuperGroupChat()))
+                || (update.hasMessage()
+                && (update.getMessage().getChat().isGroupChat() || update.getMessage().getChat().isSuperGroupChat()));
     }
 
     public static String getUsername(Update update) {
