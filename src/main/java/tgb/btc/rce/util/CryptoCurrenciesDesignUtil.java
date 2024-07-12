@@ -4,7 +4,10 @@ import tgb.btc.library.constants.enums.bot.CryptoCurrency;
 import tgb.btc.library.constants.enums.properties.PropertiesPath;
 import tgb.btc.library.exception.BaseException;
 
-public class CryptoCurrenciesDesignUtil {
+public final class CryptoCurrenciesDesignUtil {
+
+    private CryptoCurrenciesDesignUtil() {
+    }
 
     public static String getDisplayName(CryptoCurrency currency) {
         return PropertiesPath.CRYPTO_CURRENCIES_DESIGN_PROPERTIES.getString(currency.name());
