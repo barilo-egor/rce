@@ -10,7 +10,6 @@ import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.vo.InlineButton;
 import tgb.btc.rce.vo.ReplyButton;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -34,7 +33,6 @@ public enum BotKeyboard {
                     .inlineType(InlineType.URL)
                     .build()
     ))),
-    CRYPTO_CURRENCIES(getCryptoCurrencyKeyboard()),
     FIAT_CURRENCIES(getFiatCurrenciesKeyboard()),
     BUILD_DEAL(KeyboardUtil.buildInline(List.of(
             InlineButton.builder()
@@ -61,12 +59,6 @@ public enum BotKeyboard {
 
     public ReplyKeyboard getKeyboard() {
         return keyboard;
-    }
-
-    private static ReplyKeyboardMarkup getCryptoCurrencyKeyboard() {
-        List<ReplyButton> buttons = new ArrayList<>(List.of(KeyboardUtil.getCryptoCurrencyButtons()));
-        buttons.add(BotReplyButton.CANCEL.getButton());
-        return KeyboardUtil.buildReply(buttons);
     }
 
     private static ReplyKeyboardMarkup getFiatCurrenciesKeyboard() {

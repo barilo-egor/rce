@@ -1,5 +1,6 @@
 package tgb.btc.rce.util;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
@@ -8,8 +9,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.Keyboard
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.meta.api.objects.webapp.WebAppInfo;
 import tgb.btc.library.bean.bot.Contact;
-import tgb.btc.library.constants.enums.bot.CryptoCurrency;
-import tgb.btc.rce.enums.BotReplyButton;
+import tgb.btc.library.exception.BaseException;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.InlineCalculatorButton;
 import tgb.btc.rce.enums.InlineType;
@@ -25,7 +25,7 @@ public final class KeyboardUtil {
     private KeyboardUtil() {
     }
 
-    public static InlineButton INLINE_BACK_BUTTON = InlineButton.builder().text("Назад")
+    public static final InlineButton INLINE_BACK_BUTTON = InlineButton.builder().text("Назад")
             .inlineType(InlineType.CALLBACK_DATA)
             .data(Command.BACK.name())
             .build();
@@ -34,35 +34,36 @@ public final class KeyboardUtil {
         return buildInline(buttons, 1);
     }
 
-    public static InlineKeyboardMarkup buildInline(List<InlineButton> buttons, int numberOfColumns) {
-
+    public static InlineKeyboardMarkup buildInline(List<InlineButton> buttons, int maxNumberOfColumns) {
         return InlineKeyboardMarkup.builder()
-                .keyboard(buildInlineRows(buttons, numberOfColumns))
+                .keyboard(buildInlineRows(buttons, maxNumberOfColumns))
                 .build();
     }
 
     public static InlineKeyboardMarkup buildInlineByRows(List<List<InlineKeyboardButton>> rows) {
-
         return InlineKeyboardMarkup.builder()
                 .keyboard(rows)
                 .build();
     }
 
-    public static InlineKeyboardMarkup buildInlineSingleLast(List<InlineButton> buttons, int numberOfColumns, InlineButton inlineButton) {
-        List<List<InlineKeyboardButton>> builtRows = buildInlineRows(buttons, numberOfColumns);
+    public static InlineKeyboardMarkup buildInlineSingleLast(List<InlineButton> buttons, int maxNumberOfColumns, InlineButton inlineButton) {
+        List<List<InlineKeyboardButton>> builtRows = buildInlineRows(buttons, maxNumberOfColumns);
         builtRows.add(List.of(parse(inlineButton)));
         return InlineKeyboardMarkup.builder().keyboard(builtRows).build();
     }
 
-    public static List<List<InlineKeyboardButton>> buildInlineRows(List<InlineButton> buttons, int numberOfColumns) {
+    public static List<List<InlineKeyboardButton>> buildInlineRows(List<InlineButton> buttons, int maxNumberOfColumns) {
+        if (maxNumberOfColumns < 1)
+            throw new BaseException("Количество колонок не может быть меньше одного.");
+        if (CollectionUtils.isEmpty(buttons))
+            throw new BaseException("Должна присутствовать хотя бы одна кнопка");
         List<List<InlineKeyboardButton>> rows = new ArrayList<>();
         List<InlineKeyboardButton> row = new ArrayList<>();
         int j = 0;
-
         for (int i = 0; i < buttons.size(); i++) {
             row.add(parse(buttons.get(i)));
             j++;
-            if (j == numberOfColumns || i == (buttons.size() - 1)) {
+            if (j == maxNumberOfColumns || i == (buttons.size() - 1)) {
                 rows.add(row);
                 row = new ArrayList<>();
                 j = 0;
@@ -100,23 +101,22 @@ public final class KeyboardUtil {
         return buildReply(1, false, true, buttons);
     }
 
-    public static ReplyKeyboardMarkup buildReply(int numberOfColumns, List<ReplyButton> buttons) {
-        return buildReply(numberOfColumns, false, true, buttons);
+    public static ReplyKeyboardMarkup buildReply(int maxNumberOfColumns, List<ReplyButton> buttons) {
+        return buildReply(maxNumberOfColumns, false, true, buttons);
     }
 
-    public static ReplyKeyboardMarkup buildReply(int numberOfColumns, List<ReplyButton> buttons, boolean oneTime) {
-        return buildReply(numberOfColumns, oneTime, true, buttons);
+    public static ReplyKeyboardMarkup buildReply(int maxNumberOfColumns, List<ReplyButton> buttons, boolean oneTime) {
+        return buildReply(maxNumberOfColumns, oneTime, true, buttons);
     }
 
-    public static ReplyKeyboardMarkup buildReply(List<ReplyButton> buttons, boolean oneTime) {
-        return buildReply(1, oneTime, true, buttons);
-    }
-
-    public static ReplyKeyboardMarkup buildReply(int numberOfColumns, boolean oneTime, boolean resize, List<ReplyButton> buttons) {
+    public static ReplyKeyboardMarkup buildReply(int maxNumberOfColumns, boolean oneTime, boolean resize, List<ReplyButton> buttons) {
+        if (maxNumberOfColumns < 1)
+            throw new BaseException("Количество колонок не может быть меньше 1.");
+        if (CollectionUtils.isEmpty(buttons))
+            throw new BaseException("Должна присутствовать хотя бы одна кнопка.");
         List<KeyboardRow> rows = new ArrayList<>();
         KeyboardRow row = new KeyboardRow();
         int j = 0;
-
         for (int i = 0; i < buttons.size(); i++) {
             KeyboardButton keyboardButton = KeyboardButton.builder()
                     .text(buttons.get(i).getText())
@@ -125,7 +125,7 @@ public final class KeyboardUtil {
             else if (buttons.get(i).isRequestLocation()) keyboardButton.setRequestLocation(true);
             row.add(keyboardButton);
             j++;
-            if (j == numberOfColumns || i == (buttons.size() - 1)) {
+            if (j == maxNumberOfColumns || i == (buttons.size() - 1)) {
                 rows.add(row);
                 row = new KeyboardRow();
                 j = 0;
@@ -136,20 +136,6 @@ public final class KeyboardUtil {
                 .resizeKeyboard(resize)
                 .keyboard(rows)
                 .build();
-    }
-
-    public static ReplyButton[] getCryptoCurrencyButtons() {
-        ReplyButton[] replyButtons = new ReplyButton[CryptoCurrency.values().length + 1];
-        int i = 0;
-        for (CryptoCurrency cryptoCurrency : CryptoCurrency.values()) {
-            ReplyButton replyButton = ReplyButton.builder()
-                    .text(CryptoCurrenciesDesignUtil.getDisplayName(cryptoCurrency))
-                    .build();
-            replyButtons[i] = replyButton;
-            i++;
-        }
-        replyButtons[i] = BotReplyButton.CANCEL.getButton();
-        return replyButtons;
     }
 
     public static ReplyKeyboard buildContacts(List<Contact> contacts) {
