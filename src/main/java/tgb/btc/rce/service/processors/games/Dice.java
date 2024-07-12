@@ -15,9 +15,9 @@ import tgb.btc.library.service.process.DiceService;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.Menu;
+import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.IUpdateDispatcher;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.util.CallbackQueryUtil;
 import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.UpdateUtil;
@@ -150,12 +150,12 @@ public class Dice extends Processor {
         for (int i = 0; i < 6; i++) {
             buttons.add(InlineButton.builder()
                     .text(String.valueOf(i + 1))
-                    .data(CallbackQueryUtil.buildCallbackData(Command.DICE.getText(), "Number:" + (i + 1), "Bet:" + bet))
+                    .data(CallbackQueryUtil.buildCallbackData(Command.DICE, "Number:" + (i + 1), "Bet:" + bet))
                     .build());
         }
         buttons.add(InlineButton.builder()
                 .text(backText)
-                .data(CallbackQueryUtil.buildCallbackData(Command.DICE.getText(), "Number:" + backText))
+                .data(CallbackQueryUtil.buildCallbackData(Command.DICE, "Number:" + backText))
                 .build());
         responseSender.sendMessage(chatId, StringUtils.defaultIfBlank(text, "Выберите число"),
                 KeyboardUtil.buildInline(buttons,2), "Markdown");
@@ -170,12 +170,12 @@ public class Dice extends Processor {
         Arrays.stream(sums).forEach(sum -> {
             buttons.add(InlineButton.builder()
                     .text(sum + "₽")
-                    .data(CallbackQueryUtil.buildCallbackData(Command.DICE.getText(), "Bet:" + sum))
+                    .data(CallbackQueryUtil.buildCallbackData(Command.DICE, "Bet:" + sum))
                     .build());
         });
         buttons.add(InlineButton.builder()
                 .text(closeText)
-                .data(CallbackQueryUtil.buildCallbackData(Command.DICE.getText(), "Bet:" + closeText))
+                .data(CallbackQueryUtil.buildCallbackData(Command.DICE, "Bet:" + closeText))
                 .build());
         responseSender.sendMessage(chatId, StringUtils.defaultIfBlank(text, "Выберите ставку:"),
                 buildBetButtons(buttons), "Markdown");

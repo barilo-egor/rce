@@ -109,7 +109,7 @@ public class CaptchaProcessor extends Processor {
                                     InlineButton.builder()
                                             .text("Показать")
                                             .data(CallbackQueryUtil.buildCallbackData(
-                                                    Command.SHOW_SPAM_BANNED_USER.getText(), spamBan.getPid().toString())
+                                                    Command.SHOW_SPAM_BANNED_USER, spamBan.getPid().toString())
                                             )
                                             .build()
                             )), Set.of(UserRole.ADMIN, UserRole.OPERATOR));

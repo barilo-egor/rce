@@ -2,10 +2,10 @@ package tgb.btc.rce.service.processors.admin.settings.currencies;
 
 import lombok.extern.slf4j.Slf4j;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import tgb.btc.rce.annotation.CommandProcessor;
-import tgb.btc.rce.enums.Command;
 import tgb.btc.library.constants.enums.bot.CryptoCurrency;
 import tgb.btc.library.constants.enums.bot.DealType;
+import tgb.btc.rce.annotation.CommandProcessor;
+import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.util.CallbackQueryUtil;
 import tgb.btc.rce.util.KeyboardUtil;
@@ -50,7 +50,7 @@ public class TurningCurrencyProcessor extends Processor {
         Command command = isCurrencyOn ? Command.TURN_OFF_CURRENCY : Command.TURN_ON_CURRENCY;
         return InlineButton.builder()
                 .text(isCurrencyOn ? "Выключить " + currency.getShortName() : "Включить " + currency.getShortName())
-                .data(CallbackQueryUtil.buildCallbackData(command.getText(), dealType.name(), currency.name()))
+                .data(CallbackQueryUtil.buildCallbackData(command, dealType.name(), currency.name()))
                 .build();
     }
 }

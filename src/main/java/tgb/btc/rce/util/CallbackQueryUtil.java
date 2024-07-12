@@ -1,5 +1,7 @@
 package tgb.btc.rce.util;
 
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.exception.BaseException;
@@ -7,6 +9,7 @@ import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
 
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public final class CallbackQueryUtil {
@@ -34,23 +37,32 @@ public final class CallbackQueryUtil {
         return Boolean.parseBoolean(getSplitData(update, index));
     }
 
-
-    public static String buildCallbackData(String... variables) {
-        return String.join(BotStringConstants.CALLBACK_DATA_SPLITTER, variables);
-    }
-
-    public static String buildCallbackData(Command command, String... variables) {
-        return command.getText().concat(BotStringConstants.CALLBACK_DATA_SPLITTER).concat(String.join(BotStringConstants.CALLBACK_DATA_SPLITTER, variables));
-    }
-
-    public static String buildCallbackData(Command command, Object... variables) {
+    @SafeVarargs
+    public static <T> String buildCallbackData(Command command, T... variables) {
+        checkVariables(variables);
+        String[] variablesToString = Arrays.stream(variables)
+                .map(Object::toString).collect(Collectors.toList())
+                .toArray(new String[]{});
+        checkStringVariables(variablesToString);
         return command.getText().concat(BotStringConstants.CALLBACK_DATA_SPLITTER)
-                .concat(Arrays.stream(variables).map(Object::toString)
-                        .collect(Collectors.joining(BotStringConstants.CALLBACK_DATA_SPLITTER)));
+                .concat(String.join(BotStringConstants.CALLBACK_DATA_SPLITTER, variablesToString));
+    }
+
+    private static void checkStringVariables(String... variables) {
+        if (Arrays.stream(variables).anyMatch(StringUtils::isBlank))
+            throw new BaseException("Одна из переменных пуста");
+    }
+
+    @SafeVarargs
+    private static <T> void checkVariables(T... variables) {
+        if (Objects.isNull(variables) || variables.length == 0)
+            throw new BaseException("Не передана ни один аргумент.");
+        if (ArrayUtils.contains(variables, null))
+            throw new BaseException("В переменных содержится null.");
     }
 
     public static boolean isBack(Update update) {
-        return update.hasCallbackQuery() && Command.BACK.getText().equals(update.getCallbackQuery().getData());
+        return update.hasCallbackQuery() && Command.BACK.name().equals(update.getCallbackQuery().getData());
     }
 
 }

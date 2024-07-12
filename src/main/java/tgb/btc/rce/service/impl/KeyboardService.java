@@ -59,7 +59,7 @@ public class KeyboardService implements IKeyboardService {
         List<InlineButton> buttons = FiatCurrencyUtil.getFiatCurrencies().stream()
                 .map(fiatCurrency -> InlineButton.builder()
                         .text(FiatCurrenciesDesignUtil.getDisplayData(fiatCurrency))
-                        .data(CallbackQueryUtil.buildCallbackData(Command.CHOOSING_FIAT_CURRENCY.getText(), fiatCurrency.name()))
+                        .data(CallbackQueryUtil.buildCallbackData(Command.CHOOSING_FIAT_CURRENCY, fiatCurrency.name()))
                         .build())
                 .collect(Collectors.toList());
         buttons.add(KeyboardUtil.INLINE_BACK_BUTTON);
@@ -211,7 +211,7 @@ public class KeyboardService implements IKeyboardService {
         }
         return InlineButton.builder()
                 .text(text)
-                .data(CallbackQueryUtil.buildCallbackData(Command.TURN_PROCESS_DELIVERY.getText(), deliveryKind.name()))
+                .data(CallbackQueryUtil.buildCallbackData(Command.TURN_PROCESS_DELIVERY, deliveryKind.name()))
                 .build();
     }
 
