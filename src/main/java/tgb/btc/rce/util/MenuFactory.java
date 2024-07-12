@@ -58,14 +58,16 @@ public final class MenuFactory {
 
     private static List<ReplyButton> draws(UserRole userRole) {
         List<Command> commands = new ArrayList<>(Menu.DRAWS.getCommands());
-        if (SlotReelType.NONE.isCurrent() || (SlotReelType.STANDARD_ADMIN.isCurrent() && UserRole.USER.equals(userRole))) {
-            commands.remove(Command.SLOT_REEL);
-        }
-        if (DiceType.NONE.isCurrent() || (DiceType.STANDARD_ADMIN.isCurrent() && UserRole.USER.equals(userRole))) {
-            commands.remove(Command.DICE);
-        }
-        if (RPS.NONE.isCurrent() || (RPS.STANDARD_ADMIN.isCurrent() && UserRole.USER.equals(userRole))) {
-            commands.remove(Command.RPS);
+        if (UserRole.USER.equals(userRole)) {
+            if (SlotReelType.NONE.isCurrent() || (SlotReelType.STANDARD_ADMIN.isCurrent())) {
+                commands.remove(Command.SLOT_REEL);
+            }
+            if (DiceType.NONE.isCurrent() || (DiceType.STANDARD_ADMIN.isCurrent())) {
+                commands.remove(Command.DICE);
+            }
+            if (RPS.NONE.isCurrent() || (RPS.STANDARD_ADMIN.isCurrent())) {
+                commands.remove(Command.RPS);
+            }
         }
         return fillReply(commands);
     }
