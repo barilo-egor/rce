@@ -155,4 +155,13 @@ public final class KeyboardUtil {
                 .build();
    }
 
+    public static InlineKeyboardMarkup getLink(String text, String data) {
+        return KeyboardUtil.buildInline(List.of(
+                InlineButton.builder()
+                        .text(text)
+                        .data(data)
+                        .inlineType(InlineType.URL)
+                        .build()));
+    }
+
 }

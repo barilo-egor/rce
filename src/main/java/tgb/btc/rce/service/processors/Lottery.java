@@ -17,7 +17,7 @@ import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.PropertiesMessage;
 import tgb.btc.rce.service.INotifyService;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.util.MenuFactory;
+import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.MessagePropertiesUtil;
 import tgb.btc.rce.util.UpdateUtil;
 
@@ -66,7 +66,7 @@ public class Lottery extends Processor {
         float probability = VariablePropertiesUtil.getFloat(VariableType.PROBABILITY);
         if (((double) new Random().nextInt(101) < ((double) probability))) {
             responseSender.sendBotMessage(botMessageService.findByTypeNullSafe(BotMessageType.WON_LOTTERY), user.getChatId(),
-                    MenuFactory.getLink("Написать оператору",
+                    KeyboardUtil.getLink("Написать оператору",
                             VariablePropertiesUtil.getVariable(VariableType.OPERATOR_LINK)));
             String username = user.getUsername();
             notifyService.notifyMessage("Пользователь id=" + UpdateUtil.getChatId(update)

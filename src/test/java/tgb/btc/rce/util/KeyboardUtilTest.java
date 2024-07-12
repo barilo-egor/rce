@@ -390,4 +390,15 @@ class KeyboardUtilTest {
                 () -> assertEquals(CallbackQueryUtil.buildCallbackData(command, variables), inlineButton.getData())
         );
     }
+
+    @Test
+    void getLink() {
+        String text = "text";
+        String data = "url";
+        InlineKeyboardButton inlineKeyboardButton = KeyboardUtil.getLink(text, data).getKeyboard().get(0).get(0);
+        assertAll(
+                () -> assertEquals(text, inlineKeyboardButton.getText()),
+                () -> assertEquals(data, inlineKeyboardButton.getUrl())
+        );
+    }
 }
