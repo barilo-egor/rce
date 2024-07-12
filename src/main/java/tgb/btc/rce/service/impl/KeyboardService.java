@@ -147,13 +147,13 @@ public class KeyboardService implements IKeyboardService {
         for (String string : strings) {
             inlineButtons.add(KeyboardUtil.createCallBackDataButton(string, Command.INLINE_CALCULATOR, NUMBER.getData(), string));
         }
-        inlineButtons.add(KeyboardUtil.createCallBackDataButton(COMMA));
-        inlineButtons.add(KeyboardUtil.createCallBackDataButton(DEL));
+        inlineButtons.add(KeyboardUtil.createCallBackDataButton(COMMA.getData(), Command.INLINE_CALCULATOR, COMMA.getData()));
+        inlineButtons.add(KeyboardUtil.createCallBackDataButton(DEL.getData(), Command.INLINE_CALCULATOR, DEL.getData()));
         InlineButton backButton = BotInlineButton.CANCEL.getButton();
         backButton.setText(CANCEL.getData());
         inlineButtons.add(backButton);
-        inlineButtons.add(KeyboardUtil.createCallBackDataButton(SWITCH_CALCULATOR));
-        inlineButtons.add(KeyboardUtil.createCallBackDataButton(READY));
+        inlineButtons.add(KeyboardUtil.createCallBackDataButton(SWITCH_CALCULATOR.getData(), Command.INLINE_CALCULATOR, SWITCH_CALCULATOR.getData()));
+        inlineButtons.add(KeyboardUtil.createCallBackDataButton(READY.getData(), Command.INLINE_CALCULATOR, READY.getData()));
         InlineCalculatorVO calculator = InlineCalculator.cache.get(chaId);
         String text = !calculator.getSwitched()
                 ? calculator.getFiatCurrency().getFlag() + "Ввести сумму в " + calculator.getFiatCurrency().getCode().toUpperCase()
@@ -168,7 +168,7 @@ public class KeyboardService implements IKeyboardService {
     @Override
     public ReplyKeyboard getInlineCalculatorSwitcher() {
         List<InlineButton> buttons = new ArrayList<>();
-        buttons.add(KeyboardUtil.createCallBackDataButton(SWITCH_TO_MAIN_CALCULATOR));
+        buttons.add(KeyboardUtil.createCallBackDataButton(SWITCH_TO_MAIN_CALCULATOR.getData(), Command.INLINE_CALCULATOR, SWITCH_TO_MAIN_CALCULATOR.getData()));
         buttons.add(KeyboardUtil.INLINE_BACK_BUTTON);
         return KeyboardUtil.buildInline(buttons);
     }

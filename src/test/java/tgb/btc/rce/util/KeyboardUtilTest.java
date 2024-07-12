@@ -8,6 +8,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMa
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
+import tgb.btc.library.bean.bot.Contact;
 import tgb.btc.library.exception.BaseException;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.InlineType;
@@ -156,6 +157,38 @@ class KeyboardUtilTest {
         assertAll(
                 () -> assertEquals(numberOfButtons, keyboardMarkup.getKeyboard().size()),
                 () -> assertFalse(keyboardMarkup.getOneTimeKeyboard()),
+                () -> assertTrue(keyboardMarkup.getResizeKeyboard())
+        );
+    }
+
+    @Test
+    void buildReplyButtonsAndNumberOfColumns() {
+        List<ReplyButton> replyButtons = new ArrayList<>();
+        int numberOfButtons = 3;
+        for (int i = 0; i < numberOfButtons; i++) {
+            replyButtons.add(ReplyButton.builder().text("qwe").build());
+        }
+        int numberOfColumns = 2;
+        ReplyKeyboardMarkup keyboardMarkup = KeyboardUtil.buildReply(numberOfColumns, replyButtons);
+        assertAll(
+                () -> assertEquals(numberOfColumns, keyboardMarkup.getKeyboard().size()),
+                () -> assertFalse(keyboardMarkup.getOneTimeKeyboard()),
+                () -> assertTrue(keyboardMarkup.getResizeKeyboard())
+        );
+    }
+
+    @Test
+    void buildReplyButtonsAndNumberOfColumnsAndOneTime() {
+        List<ReplyButton> replyButtons = new ArrayList<>();
+        int numberOfButtons = 3;
+        for (int i = 0; i < numberOfButtons; i++) {
+            replyButtons.add(ReplyButton.builder().text("qwe").build());
+        }
+        int numberOfColumns = 2;
+        ReplyKeyboardMarkup keyboardMarkup = KeyboardUtil.buildReply(numberOfColumns, replyButtons, true);
+        assertAll(
+                () -> assertEquals(numberOfColumns, keyboardMarkup.getKeyboard().size()),
+                () -> assertTrue(keyboardMarkup.getOneTimeKeyboard()),
                 () -> assertTrue(keyboardMarkup.getResizeKeyboard())
         );
     }
@@ -324,5 +357,37 @@ class KeyboardUtilTest {
         List<InlineButton> inlineButtons = new ArrayList<>();
         inlineButtons.add(InlineButton.builder().text("qwe").build());
         assertNotNull(KeyboardUtil.buildInline(inlineButtons).getKeyboard());
+    }
+
+    @Test
+    void buildContacts() {
+        List<Contact> contacts = new ArrayList<>();
+        int numberOfContacts = 3;
+        for (int i = 0; i < numberOfContacts; i++) {
+            contacts.add(Contact.builder().label("label" + i).url("url" + i).build());
+        }
+        InlineKeyboardMarkup keyboardMarkup = KeyboardUtil.buildContacts(contacts);
+        List<List<InlineKeyboardButton>> rows = keyboardMarkup.getKeyboard();
+        assertAll(
+                () -> assertEquals(numberOfContacts, keyboardMarkup.getKeyboard().size()),
+                () -> assertEquals(contacts.get(0).getLabel(), rows.get(0).get(0).getText()),
+                () -> assertEquals(contacts.get(0).getUrl(), rows.get(0).get(0).getUrl()),
+                () -> assertEquals(contacts.get(1).getLabel(), rows.get(1).get(0).getText()),
+                () -> assertEquals(contacts.get(1).getUrl(), rows.get(1).get(0).getUrl()),
+                () -> assertEquals(contacts.get(2).getLabel(), rows.get(2).get(0).getText()),
+                () -> assertEquals(contacts.get(2).getUrl(), rows.get(2).get(0).getUrl())
+        );
+    }
+
+    @Test
+    void createCallbackDataButton() {
+        String text = Command.START.getText();
+        Command command = Command.START;
+        String[] variables = new String[] {"qwe", "123", "asd"};
+        InlineButton inlineButton = KeyboardUtil.createCallBackDataButton(text, command, variables);
+        assertAll(
+                () -> assertEquals(text, inlineButton.getText()),
+                () -> assertEquals(CallbackQueryUtil.buildCallbackData(command, variables), inlineButton.getData())
+        );
     }
 }
