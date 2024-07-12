@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import tgb.btc.rce.util.BotConfig;
 
 @SpringBootApplication(scanBasePackages = "tgb.btc")
 @EnableScheduling
@@ -24,6 +25,7 @@ public class RceApplication extends WebMvcAutoConfiguration {
 
     public static void main(String[] args) {
         SPRING_CONTEXT = SpringApplication.run(RceApplication.class, args);
+        BotConfig.init();
     }
 
 }
