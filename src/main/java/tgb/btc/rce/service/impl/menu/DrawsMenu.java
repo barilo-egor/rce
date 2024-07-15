@@ -1,6 +1,7 @@
 package tgb.btc.rce.service.impl.menu;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import tgb.btc.library.constants.enums.DiceType;
 import tgb.btc.library.constants.enums.RPS;
@@ -32,19 +33,16 @@ public class DrawsMenu implements IMenu {
     }
 
     @Override
+    @Cacheable("drawsMenuCache")
     public List<ReplyButton> build(UserRole userRole) {
         List<Command> commands = new ArrayList<>(Menu.DRAWS.getCommands());
-        if (UserRole.USER.equals(userRole)) {
-            if (SlotReelType.NONE.isCurrent() || (SlotReelType.STANDARD_ADMIN.isCurrent())) {
-                commands.remove(Command.SLOT_REEL);
-            }
-            if (DiceType.NONE.isCurrent() || (DiceType.STANDARD_ADMIN.isCurrent())) {
-                commands.remove(Command.DICE);
-            }
-            if (RPS.NONE.isCurrent() || (RPS.STANDARD_ADMIN.isCurrent())) {
-                commands.remove(Command.RPS);
-            }
-        }
+        boolean isAdmin = userRole.equals(UserRole.ADMIN);
+        if (SlotReelType.NONE.isCurrent() || (SlotReelType.STANDARD_ADMIN.isCurrent() && !isAdmin))
+            commands.remove(Command.SLOT_REEL);
+        if (DiceType.NONE.isCurrent() || (DiceType.STANDARD_ADMIN.isCurrent() && !isAdmin))
+            commands.remove(Command.DICE);
+        if (RPS.NONE.isCurrent() || (RPS.STANDARD_ADMIN.isCurrent() && !isAdmin))
+            commands.remove(Command.RPS);
         return replyButtonService.fromCommands(commands);
     }
 
