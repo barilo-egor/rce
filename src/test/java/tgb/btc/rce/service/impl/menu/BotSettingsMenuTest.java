@@ -48,8 +48,7 @@ class BotSettingsMenuTest {
     void buildWithBotOn() {
         when(updateDispatcher.isOn()).thenReturn(true);
 
-        List<Command> initialCommands = new ArrayList<>(Menu.BOT_SETTINGS.getCommands());
-        List<Command> expectedCommands = new ArrayList<>(initialCommands);
+        List<Command> expectedCommands = new ArrayList<>(Menu.BOT_SETTINGS.getCommands());
         expectedCommands.removeIf(Command.ON_BOT::equals);
 
         botSettingsMenu.build(null);
@@ -61,8 +60,7 @@ class BotSettingsMenuTest {
     void buildWithBotOff() {
         when(updateDispatcher.isOn()).thenReturn(false);
 
-        List<Command> initialCommands = new ArrayList<>(Menu.BOT_SETTINGS.getCommands());
-        List<Command> expectedCommands = new ArrayList<>(initialCommands);
+        List<Command> expectedCommands = new ArrayList<>(Menu.BOT_SETTINGS.getCommands());
         expectedCommands.removeIf(Command.OFF_BOT::equals);
 
         botSettingsMenu.build(null);
