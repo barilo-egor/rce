@@ -7,6 +7,7 @@ import tgb.btc.library.constants.enums.DiceType;
 import tgb.btc.library.constants.enums.RPSType;
 import tgb.btc.library.constants.enums.SlotReelType;
 import tgb.btc.library.constants.enums.bot.UserRole;
+import tgb.btc.library.interfaces.IModule;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.Menu;
 import tgb.btc.rce.service.IMenu;
@@ -21,11 +22,31 @@ public class DrawsMenu implements IMenu {
 
     private IReplyButtonService replyButtonService;
 
+    private IModule<SlotReelType> slotReelModule;
+
+    private IModule<DiceType> diceModule;
+
+    private IModule<RPSType> rpsModule;
+
+    @Autowired
+    public void setSlotReelModule(IModule<SlotReelType> slotReelModule) {
+        this.slotReelModule = slotReelModule;
+    }
+
+    @Autowired
+    public void setDiceModule(IModule<DiceType> diceModule) {
+        this.diceModule = diceModule;
+    }
+
+    @Autowired
+    public void setRpsModule(IModule<RPSType> rpsModule) {
+        this.rpsModule = rpsModule;
+    }
+
     @Autowired
     public void setReplyButtonService(IReplyButtonService replyButtonService) {
         this.replyButtonService = replyButtonService;
     }
-
 
     @Override
     public Menu getMenu() {
@@ -37,11 +58,14 @@ public class DrawsMenu implements IMenu {
     public List<ReplyButton> build(UserRole userRole) {
         List<Command> commands = new ArrayList<>(Menu.DRAWS.getCommands());
         boolean isAdmin = userRole.equals(UserRole.ADMIN);
-        if (SlotReelType.NONE.isCurrent() || (SlotReelType.STANDARD_ADMIN.isCurrent() && !isAdmin))
+        SlotReelType currentSlotReelType = slotReelModule.getCurrent();
+        if (SlotReelType.NONE.equals(currentSlotReelType) || (SlotReelType.STANDARD_ADMIN.equals(currentSlotReelType) && !isAdmin))
             commands.remove(Command.SLOT_REEL);
-        if (DiceType.NONE.isCurrent() || (DiceType.STANDARD_ADMIN.isCurrent() && !isAdmin))
+        DiceType currentDiceType = diceModule.getCurrent();
+        if (DiceType.NONE.equals(currentDiceType) || (DiceType.STANDARD_ADMIN.equals(currentDiceType) && !isAdmin))
             commands.remove(Command.DICE);
-        if (RPSType.NONE.isCurrent() || (RPSType.STANDARD_ADMIN.isCurrent() && !isAdmin))
+        RPSType currentRPSType = rpsModule.getCurrent();
+        if (RPSType.NONE.equals(currentRPSType) || (RPSType.STANDARD_ADMIN.equals(currentRPSType) && !isAdmin))
             commands.remove(Command.RPS);
         return replyButtonService.fromCommands(commands);
     }
