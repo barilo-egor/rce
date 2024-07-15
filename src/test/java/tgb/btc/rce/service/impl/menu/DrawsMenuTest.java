@@ -44,11 +44,13 @@ class DrawsMenuTest {
     private DrawsMenu drawsMenu;
 
     @Test
+    @DisplayName("Меню должно быть oneTime=false.")
     void isOneTime() {
         assertFalse(drawsMenu.isOneTime());
     }
 
     @Test
+    @DisplayName("Меню должно быть Menu.DRAWS")
     void getMenu() {
         assertEquals(Menu.DRAWS, drawsMenu.getMenu());
     }
