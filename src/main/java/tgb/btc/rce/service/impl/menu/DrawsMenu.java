@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import tgb.btc.library.constants.enums.DiceType;
-import tgb.btc.library.constants.enums.RPS;
+import tgb.btc.library.constants.enums.RPSType;
 import tgb.btc.library.constants.enums.SlotReelType;
 import tgb.btc.library.constants.enums.bot.UserRole;
 import tgb.btc.rce.enums.Command;
@@ -41,7 +41,7 @@ public class DrawsMenu implements IMenu {
             commands.remove(Command.SLOT_REEL);
         if (DiceType.NONE.isCurrent() || (DiceType.STANDARD_ADMIN.isCurrent() && !isAdmin))
             commands.remove(Command.DICE);
-        if (RPS.NONE.isCurrent() || (RPS.STANDARD_ADMIN.isCurrent() && !isAdmin))
+        if (RPSType.NONE.isCurrent() || (RPSType.STANDARD_ADMIN.isCurrent() && !isAdmin))
             commands.remove(Command.RPS);
         return replyButtonService.fromCommands(commands);
     }

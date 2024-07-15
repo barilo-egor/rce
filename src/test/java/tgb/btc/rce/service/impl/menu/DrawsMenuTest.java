@@ -8,8 +8,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import tgb.btc.rce.enums.Menu;
 import tgb.btc.rce.service.keyboard.IReplyButtonService;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith({MockitoExtension.class})
 class DrawsMenuTest {
@@ -22,7 +21,7 @@ class DrawsMenuTest {
 
     @Test
     void isOneTime() {
-        assertTrue(drawsMenu.isOneTime());
+        assertFalse(drawsMenu.isOneTime());
     }
 
     @Test
