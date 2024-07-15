@@ -6,7 +6,7 @@ import tgb.btc.library.constants.enums.bot.UserRole;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.Menu;
 import tgb.btc.rce.service.IMenu;
-import tgb.btc.rce.service.impl.UpdateDispatcher;
+import tgb.btc.rce.service.IUpdateDispatcher;
 import tgb.btc.rce.service.keyboard.IReplyButtonService;
 import tgb.btc.rce.vo.ReplyButton;
 
@@ -17,6 +17,13 @@ import java.util.List;
 public class BotSettingsMenu implements IMenu {
 
     private IReplyButtonService replyButtonService;
+
+    private IUpdateDispatcher updateDispatcher;
+
+    @Autowired
+    public void setUpdateDispatcher(IUpdateDispatcher updateDispatcher) {
+        this.updateDispatcher = updateDispatcher;
+    }
 
     @Autowired
     public void setReplyButtonService(IReplyButtonService replyButtonService) {
@@ -31,8 +38,8 @@ public class BotSettingsMenu implements IMenu {
     @Override
     public List<ReplyButton> build(UserRole userRole) {
         List<Command> commands = new ArrayList<>(Menu.BOT_SETTINGS.getCommands());
-        commands.removeIf(command -> (UpdateDispatcher.isOn() && Command.ON_BOT.equals(command)
-                || (!UpdateDispatcher.isOn() && Command.OFF_BOT.equals(command))));
+        commands.removeIf(command ->
+                (updateDispatcher.isOn() && Command.ON_BOT.equals(command)) || (!updateDispatcher.isOn() && Command.OFF_BOT.equals(command)));
         return replyButtonService.fromCommands(commands);
     }
 
