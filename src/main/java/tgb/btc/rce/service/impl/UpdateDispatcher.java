@@ -114,7 +114,11 @@ public class UpdateDispatcher implements IUpdateDispatcher {
         return !isOn() && UserRole.USER.equals(readUserService.getUserRoleByChatId(chatId));
     }
 
-    public static boolean isOn() {
+    public boolean isOn() {
+        return IS_ON;
+    }
+
+    public static boolean isOnStatic() {
         return IS_ON;
     }
 

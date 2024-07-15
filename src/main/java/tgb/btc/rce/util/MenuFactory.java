@@ -39,8 +39,8 @@ public final class MenuFactory {
 
     private static ReplyKeyboard botSettings() {
         List<Command> commands = new ArrayList<>(Menu.BOT_SETTINGS.getCommands());
-        commands.removeIf(command -> (UpdateDispatcher.isOn() && Command.ON_BOT.equals(command)
-                || (!UpdateDispatcher.isOn() && Command.OFF_BOT.equals(command))));
+        commands.removeIf(command -> (UpdateDispatcher.isOnStatic() && Command.ON_BOT.equals(command)
+                || (!UpdateDispatcher.isOnStatic() && Command.OFF_BOT.equals(command))));
         return KeyboardUtil.buildReply(2, fillReply(commands), true);
     }
 
