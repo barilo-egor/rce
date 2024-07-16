@@ -10,7 +10,7 @@ import tgb.btc.library.interfaces.service.bean.bot.deal.IModifyDealService;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.util.UpdateUtil;
+
 
 @Slf4j
 @CommandProcessor(command = Command.DELETE_USER)
@@ -75,9 +75,9 @@ public class DeleteUser extends Processor {
     @Override
     @Transactional
     public void run(Update update) {
-        Long chatId = UpdateUtil.getChatId(update);
+        Long chatId = updateService.getChatId(update);
         try {
-            Long userChatId = Long.parseLong(UpdateUtil.getMessageText(update).split(" ")[1]);
+            Long userChatId = Long.parseLong(updateService.getMessageText(update).split(" ")[1]);
             userDiscountService.deleteByUser_ChatId(userChatId);
             userDataService.deleteByUser_ChatId(userChatId);
             withdrawalRequestService.deleteByUser_ChatId(userChatId);

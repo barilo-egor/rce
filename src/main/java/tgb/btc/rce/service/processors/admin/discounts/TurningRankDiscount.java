@@ -10,14 +10,14 @@ import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.util.UpdateUtil;
+
 
 @CommandProcessor(command = Command.TURNING_RANK_DISCOUNT)
 public class TurningRankDiscount extends Processor {
 
     @Override
     public void run(Update update) {
-        Long chatId = UpdateUtil.getChatId(update);
+        Long chatId = updateService.getChatId(update);
         String[] values = update.getCallbackQuery().getData().split(BotStringConstants.CALLBACK_DATA_SPLITTER);
         Boolean newValue = Boolean.valueOf(values[1]);
         PropertiesConfiguration conf;

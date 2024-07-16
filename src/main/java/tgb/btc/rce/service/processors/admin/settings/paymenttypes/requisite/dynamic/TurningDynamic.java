@@ -10,7 +10,6 @@ import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.util.UpdateUtil;
 
 import java.util.List;
 
@@ -40,7 +39,7 @@ public class TurningDynamic extends Processor {
 
     @Override
     public void run(Update update) {
-        Long chatId = UpdateUtil.getChatId(update);
+        Long chatId = updateService.getChatId(update);
         if (!update.hasCallbackQuery()) {
             return;
         }

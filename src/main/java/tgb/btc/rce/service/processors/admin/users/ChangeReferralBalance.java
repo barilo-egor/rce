@@ -7,7 +7,6 @@ import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.ReplyButton;
 
 import java.util.List;
@@ -18,7 +17,7 @@ public class ChangeReferralBalance extends Processor {
 
     @Override
     public void run(Update update) {
-        Long chatId = UpdateUtil.getChatId(update);
+        Long chatId = updateService.getChatId(update);
         if (checkForCancel(update)) {
             processToAdminMainPanel(chatId);
             return;
@@ -39,7 +38,7 @@ public class ChangeReferralBalance extends Processor {
                 break;
             case 1:
                 if (!update.hasMessage() || !update.getMessage().hasText()) throw new BaseException("Не найден текст.");
-                String text = UpdateUtil.getMessageText(update);
+                String text = updateService.getMessageText(update);
                 Long userChatId = Long.parseLong(readUserService.getBufferVariable(chatId));
                 if (text.startsWith("+")) {
                     Integer userReferralBalance = readUserService.getReferralBalanceByChatId(userChatId);

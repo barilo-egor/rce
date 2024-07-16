@@ -7,7 +7,6 @@ import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.InlineButton;
 
 import java.util.List;
@@ -17,7 +16,7 @@ public class TurnRankDiscount extends Processor {
 
     @Override
     public void run(Update update) {
-        Long chatId = UpdateUtil.getChatId(update);
+        Long chatId = updateService.getChatId(update);
         boolean isOn = VariablePropertiesUtil.getBoolean(VariableType.DEAL_RANK_DISCOUNT_ENABLE);
         String message = isOn ? "Ранговая скидка включена для всех. Выключить?" : "Ранговая скидка выключена для всех. Включить?";
         String text = isOn ? "Выключить" : "Включить";

@@ -14,7 +14,6 @@ import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.INotifyService;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.util.IBotImageService;
-import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.InlineButton;
 
 import java.util.List;
@@ -60,7 +59,7 @@ public class UserAdditionalVerification extends Processor {
 
     @Override
     public void run(Update update) {
-        Long chatId = UpdateUtil.getChatId(update);
+        Long chatId = updateService.getChatId(update);
         Long dealPid = Long.parseLong(readUserService.getBufferVariable(chatId));
         if (!readDealService.existsById(dealPid)) {
             responseSender.sendMessage(chatId, "Заявки не существует.");
@@ -74,7 +73,7 @@ public class UserAdditionalVerification extends Processor {
             modifyUserService.setDefaultValues(chatId);
             modifyDealService.updateDealStatusByPid(DealStatus.VERIFICATION_RECEIVED, dealPid);
             notificationsAPI.additionalVerificationReceived(dealPid);
-            responseSender.sendMessage(UpdateUtil.getChatId(update),
+            responseSender.sendMessage(updateService.getChatId(update),
                     "Спасибо, твоя верификация отправлена администратору.");
             notifyService.notifyMessageAndPhoto("Верификация по заявке №" + dealPid, imageId, Set.of(UserRole.OPERATOR, UserRole.ADMIN));
             processToMainMenu(chatId);

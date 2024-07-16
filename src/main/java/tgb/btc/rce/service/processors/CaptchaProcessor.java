@@ -18,7 +18,6 @@ import tgb.btc.rce.service.INotifyService;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.captcha.IAntiSpam;
 import tgb.btc.rce.service.processors.tool.Start;
-import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.InlineButton;
 
 import java.util.List;
@@ -73,7 +72,7 @@ public class CaptchaProcessor extends Processor {
 
     @Override
     public void run(Update update) {
-        Long chatId = UpdateUtil.getChatId(update);
+        Long chatId = updateService.getChatId(update);
         if (!Command.CAPTCHA.name().equals(readUserService.getCommandByChatId(chatId)))
             modifyUserService.setDefaultValues(chatId);
         switch (readUserService.getStepByChatId(chatId)) {
@@ -84,7 +83,7 @@ public class CaptchaProcessor extends Processor {
                 break;
             case 1:
             case 2:
-                if (!UpdateUtil.hasMessageText(update) && !update.hasCallbackQuery()) return;
+                if (!updateService.hasMessageText(update) && !update.hasCallbackQuery()) return;
                 String cashedCaptcha = antiSpam.getFromCaptchaCash(chatId);
                 if (StringUtils.isEmpty(cashedCaptcha))
                     throw new BaseException("Не найдена строка капчи в кэше.");
@@ -126,12 +125,12 @@ public class CaptchaProcessor extends Processor {
 
     private boolean isEnteredCaptchaIsRight(Update update) {
         String text;
-        if (UpdateUtil.hasMessageText(update)) {
-            text = UpdateUtil.getMessageText(update);
+        if (updateService.hasMessageText(update)) {
+            text = updateService.getMessageText(update);
         } else {
             text = callbackQueryService.getSplitData(update, 1);
         }
-        return text.equals(antiSpam.getFromCaptchaCash(UpdateUtil.getChatId(update)));
+        return text.equals(antiSpam.getFromCaptchaCash(updateService.getChatId(update)));
     }
 
     public void send(Long chatId) {

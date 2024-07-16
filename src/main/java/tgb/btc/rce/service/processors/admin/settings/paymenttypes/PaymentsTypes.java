@@ -5,14 +5,14 @@ import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.Menu;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.util.UpdateUtil;
+
 
 @CommandProcessor(command = Command.PAYMENT_TYPES)
 public class PaymentsTypes extends Processor {
 
     @Override
     public void run(Update update) {
-        Long chatId = UpdateUtil.getChatId(update);
+        Long chatId = updateService.getChatId(update);
         responseSender.sendMessage(chatId,
                                    "Меню управления типами оплаты.",
                                    menuService.build(Menu.PAYMENT_TYPES, readUserService.getUserRoleByChatId(chatId)));

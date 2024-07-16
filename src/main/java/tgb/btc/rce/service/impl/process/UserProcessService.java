@@ -17,9 +17,9 @@ import tgb.btc.library.interfaces.service.bean.bot.user.IModifyUserService;
 import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.library.service.bean.bot.ReferralUserService;
 import tgb.btc.rce.enums.Command;
+import tgb.btc.rce.service.IUpdateService;
 import tgb.btc.rce.service.process.IUserProcessService;
 import tgb.btc.rce.service.util.ICommandService;
-import tgb.btc.rce.util.UpdateUtil;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -39,6 +39,13 @@ public class UserProcessService implements IUserProcessService {
     private IUserDiscountService userDiscountService;
 
     private ICommandService commandService;
+
+    private IUpdateService updateService;
+
+    @Autowired
+    public void setUpdateService(IUpdateService updateService) {
+        this.updateService = updateService;
+    }
 
     @Autowired
     public void setReferralUserService(IReferralUserService referralUserService) {
@@ -76,15 +83,15 @@ public class UserProcessService implements IUserProcessService {
     }
 
     public boolean registerIfNotExists(Update update) {
-        boolean isUserExists = readUserService.existsByChatId(UpdateUtil.getChatId(update));
+        boolean isUserExists = readUserService.existsByChatId(updateService.getChatId(update));
         if (!isUserExists) register(update);
         return isUserExists;
     }
 
     public User register(Update update) {
         User newUser = new User();
-        newUser.setChatId(UpdateUtil.getChatId(update));
-        newUser.setUsername(UpdateUtil.getUsername(update));
+        newUser.setChatId(updateService.getChatId(update));
+        newUser.setUsername(updateService.getUsername(update));
         newUser.setCommand(Command.START);
         newUser.setRegistrationDate(LocalDateTime.now());
         newUser.setStep(User.DEFAULT_STEP);

@@ -10,7 +10,7 @@ import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.ITurningCurrenciesService;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.util.UpdateUtil;
+
 
 @CommandProcessor(command = Command.TURN_OFF_CURRENCY)
 public class TurnOffCurrencyProcessor extends Processor {
@@ -42,7 +42,7 @@ public class TurnOffCurrencyProcessor extends Processor {
             turningCurrenciesService.addSell(currency, false);
             PropertiesPath.CURRENCIES_TURNING_PROPERTIES.setProperty("sell." + currency.name(), false);
         }
-        responseSender.deleteMessage(UpdateUtil.getChatId(update), update.getCallbackQuery().getMessage().getMessageId());
+        responseSender.deleteMessage(updateService.getChatId(update), update.getCallbackQuery().getMessage().getMessageId());
         turningCurrencyProcessor.run(update);
     }
 }

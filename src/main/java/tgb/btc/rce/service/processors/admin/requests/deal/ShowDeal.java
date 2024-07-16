@@ -13,7 +13,6 @@ import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.processors.support.DealSupportService;
-import tgb.btc.rce.util.UpdateUtil;
 
 import java.util.List;
 import java.util.Objects;
@@ -38,9 +37,9 @@ public class ShowDeal extends Processor {
     @Override
     public void run(Update update) {
         if (!update.hasCallbackQuery()) return;
-        Long chatId = UpdateUtil.getChatId(update);
+        Long chatId = updateService.getChatId(update);
         try {
-            responseSender.deleteMessage(chatId, UpdateUtil.getMessage(update).getMessageId());
+            responseSender.deleteMessage(chatId, updateService.getMessage(update).getMessageId());
         } catch (Exception ignored) {
         }
         Long dealPid = Long.parseLong(update.getCallbackQuery().getData().split(BotStringConstants.CALLBACK_DATA_SPLITTER)[1]);

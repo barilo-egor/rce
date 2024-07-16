@@ -10,12 +10,8 @@ import tgb.btc.library.interfaces.service.bean.bot.user.IModifyUserService;
 import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.rce.conditional.calculator.InlineCalculatorCondition;
 import tgb.btc.rce.enums.Command;
-import tgb.btc.rce.service.ICalculatorTypeService;
-import tgb.btc.rce.service.IKeyboardService;
-import tgb.btc.rce.service.IMessageService;
-import tgb.btc.rce.service.IResponseSender;
+import tgb.btc.rce.service.*;
 import tgb.btc.rce.service.processors.calculator.InlineCalculator;
-import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.InlineCalculatorVO;
 
 @Service
@@ -33,6 +29,13 @@ public class InlineCalculatorService implements ICalculatorTypeService {
     private IKeyboardService keyboardService;
 
     private IMessageService messageService;
+
+    private IUpdateService updateService;
+
+    @Autowired
+    public void setUpdateService(IUpdateService updateService) {
+        this.updateService = updateService;
+    }
 
     @Autowired
     public void setModifyUserService(IModifyUserService modifyUserService) {
@@ -66,7 +69,7 @@ public class InlineCalculatorService implements ICalculatorTypeService {
 
     @Override
     public void run(Update update) {
-        Long chatId = UpdateUtil.getChatId(update);
+        Long chatId = updateService.getChatId(update);
         Long currentDealPid = readUserService.getCurrentDealByChatId(chatId);
         DealType dealType = dealPropertyService.getDealTypeByPid(currentDealPid);
         InlineCalculatorVO inlineCalculatorVO = new InlineCalculatorVO();

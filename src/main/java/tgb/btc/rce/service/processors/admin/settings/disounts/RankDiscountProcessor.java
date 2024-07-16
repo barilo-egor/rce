@@ -8,7 +8,6 @@ import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.InlineButton;
 import tgb.btc.rce.vo.ReplyButton;
 
@@ -26,7 +25,7 @@ public class RankDiscountProcessor extends Processor {
 
     @Override
     public void run(Update update) {
-        Long chatId = UpdateUtil.getChatId(update);
+        Long chatId = updateService.getChatId(update);
         switch (readUserService.getStepByChatId(chatId)) {
             case 0:
                 responseSender.sendMessage(chatId, "Введите chat id пользователя для включения/выключения реферальной скидки",
@@ -37,11 +36,11 @@ public class RankDiscountProcessor extends Processor {
                 modifyUserService.nextStep(chatId, Command.RANK_DISCOUNT.name());
                 break;
             case 1:
-                if (UpdateUtil.hasMessageText(update) && Command.CANCEL.getText().equals(UpdateUtil.getMessageText(update))) {
+                if (updateService.hasMessageText(update) && Command.CANCEL.getText().equals(updateService.getMessageText(update))) {
                     processToAdminMainPanel(chatId);
                     return;
                 }
-                sendUserRankDiscount(chatId, UpdateUtil.getLongFromText(update));
+                sendUserRankDiscount(chatId, updateService.getLongFromText(update));
                 processToAdminMainPanel(chatId);
                 break;
         }

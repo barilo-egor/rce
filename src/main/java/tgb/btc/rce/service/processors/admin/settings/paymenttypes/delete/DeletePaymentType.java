@@ -8,7 +8,7 @@ import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.util.UpdateUtil;
+
 
 @CommandProcessor(command = Command.DELETE_PAYMENT_TYPE, step = 1)
 public class DeletePaymentType extends Processor {
@@ -22,8 +22,8 @@ public class DeletePaymentType extends Processor {
 
     @Override
     public void run(Update update) {
-        Long chatId = UpdateUtil.getChatId(update);
-        userDataService.updateFiatCurrencyByUserChatId(chatId, FiatCurrency.getByCode(UpdateUtil.getMessageText(update)));
+        Long chatId = updateService.getChatId(update);
+        userDataService.updateFiatCurrencyByUserChatId(chatId, FiatCurrency.getByCode(updateService.getMessageText(update)));
         responseSender.sendMessage(chatId, BotStringConstants.BUY_OR_SELL, keyboardService.getBuyOrSell());
         modifyUserService.nextStep(chatId, Command.DELETE_PAYMENT_TYPE.name());
     }

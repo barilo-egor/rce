@@ -9,7 +9,6 @@ import tgb.btc.library.service.process.PersonalDiscountsCache;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.util.UpdateUtil;
 
 import java.math.BigDecimal;
 
@@ -32,8 +31,8 @@ public class SavePersonalSellDiscountProcessor extends Processor {
 
     @Override
     public void run(Update update) {
-        Long chatId = UpdateUtil.getChatId(update);
-        String enteredValue = UpdateUtil.getMessageText(update).replaceAll(",", ".");
+        Long chatId = updateService.getChatId(update);
+        String enteredValue = updateService.getMessageText(update).replaceAll(",", ".");
         BigDecimal newPersonalSell = BigDecimal.valueOf(Double.parseDouble(enteredValue));
         Long userChatId = Long.parseLong(readUserService.getBufferVariable(chatId));
         Long userPid = readUserService.getPidByChatId(userChatId);

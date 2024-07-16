@@ -9,7 +9,7 @@ import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.util.UpdateUtil;
+
 
 @CommandProcessor(command = Command.DELETING_PAYMENT_TYPE_REQUISITE)
 public class DeletingPaymentRequisite extends Processor {
@@ -40,8 +40,8 @@ public class DeletingPaymentRequisite extends Processor {
 
         paymentRequisiteService.delete(paymentRequisite);
         paymentRequisiteService.removeOrder(paymentType.getPid());
-        responseSender.deleteMessage(UpdateUtil.getChatId(update), update.getCallbackQuery().getMessage().getMessageId());
-        showRequisitesForDelete.sendRequisites(UpdateUtil.getChatId(update), paymentType.getPid());
+        responseSender.deleteMessage(updateService.getChatId(update), update.getCallbackQuery().getMessage().getMessageId());
+        showRequisitesForDelete.sendRequisites(updateService.getChatId(update), paymentType.getPid());
     }
 
 }

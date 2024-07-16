@@ -8,9 +8,8 @@ import tgb.btc.library.constants.enums.properties.PropertiesPath;
 import tgb.btc.library.service.process.BackupService;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
-import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.IResponseSender;
-import tgb.btc.rce.util.UpdateUtil;
+import tgb.btc.rce.service.Processor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +35,7 @@ public class BackupBD extends Processor {
 
     @Override
     public void run(Update update) {
-        Long chatId = UpdateUtil.getChatId(update);
+        Long chatId = updateService.getChatId(update);
 
         String strChatIds = PropertiesPath.CONFIG_PROPERTIES.getString("backup.chatIds");
         if (StringUtils.isBlank(strChatIds)) {

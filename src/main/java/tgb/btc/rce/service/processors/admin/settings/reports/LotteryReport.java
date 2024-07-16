@@ -15,7 +15,6 @@ import tgb.btc.library.interfaces.service.bean.bot.ILotteryWinService;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.util.UpdateUtil;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -35,7 +34,7 @@ public class LotteryReport extends Processor {
 
     @Override
     public void run(Update update) {
-        Long chatId = UpdateUtil.getChatId(update);
+        Long chatId = updateService.getChatId(update);
         List<LotteryWin> lotteryWins = lotteryWinService.findAll();
         if (CollectionUtils.isEmpty(lotteryWins)) {
             responseSender.sendMessage(chatId, "Список выигрышей пуст.");

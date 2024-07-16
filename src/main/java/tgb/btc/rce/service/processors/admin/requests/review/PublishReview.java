@@ -11,7 +11,6 @@ import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.util.UpdateUtil;
 
 import static tgb.btc.rce.enums.ReviewPriseType.DYNAMIC;
 
@@ -36,7 +35,7 @@ public class PublishReview extends Processor {
 //        String username = StringUtils.isEmpty(review.getUsername()) ? StringUtils.EMPTY
 //                : "\nОтзыв от @" + review.getUsername();
         responseSender.sendMessage(channelChatId, review.getText());
-        Long chatId = UpdateUtil.getChatId(update);
+        Long chatId = updateService.getChatId(update);
         responseSender.deleteMessage(chatId, update.getCallbackQuery().getMessage().getMessageId());
         responseSender.sendMessage(chatId, "Отзыв опубликован.");
         review.setPublished(true);

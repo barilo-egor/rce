@@ -9,7 +9,6 @@ import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.InlineButton;
 
 import java.util.ArrayList;
@@ -27,7 +26,7 @@ public class ShowRequisitesForDelete extends Processor {
 
     @Override
     public void run(Update update) {
-        Long chatId = UpdateUtil.getChatId(update);
+        Long chatId = updateService.getChatId(update);
         if (!update.hasCallbackQuery()) {
             responseSender.sendMessage(chatId, "Выберите тип оплаты.");
             return;

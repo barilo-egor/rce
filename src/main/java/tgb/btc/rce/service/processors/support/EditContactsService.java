@@ -12,11 +12,11 @@ import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.Menu;
 import tgb.btc.rce.enums.PropertiesMessage;
+import tgb.btc.rce.service.IUpdateService;
 import tgb.btc.rce.service.impl.ResponseSender;
 import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
 import tgb.btc.rce.service.util.IMenuService;
 import tgb.btc.rce.service.util.IMessagePropertiesService;
-import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.InlineButton;
 
 import java.util.List;
@@ -41,6 +41,13 @@ public class EditContactsService {
     private IKeyboardBuildService keyboardBuildService;
 
     private IMessagePropertiesService messagePropertiesService;
+    
+    private IUpdateService updateService;
+
+    @Autowired
+    public void setUpdateService(IUpdateService updateService) {
+        this.updateService = updateService;
+    }
 
     @Autowired
     public void setMessagePropertiesService(IMessagePropertiesService messagePropertiesService) {
@@ -87,12 +94,12 @@ public class EditContactsService {
         String[] contactData = update.getMessage().getText().split("\n");
         contactService.save(Contact.builder().label(contactData[0]).url(contactData[1]).build());
 
-        Long chatId = UpdateUtil.getChatId(update);
+        Long chatId = updateService.getChatId(update);
         responseSender.sendMessage(chatId, "Контакт добавлен.");
     }
 
     public void askForChoose(Update update) {
-        Long chatId = UpdateUtil.getChatId(update);
+        Long chatId = updateService.getChatId(update);
         Optional<Message> optionalMessage =
                 responseSender.sendMessage(chatId, "Выберите контакт для удаления.");
         if (optionalMessage.isEmpty()) throw new BaseException("Не получено отправленное сообщение");

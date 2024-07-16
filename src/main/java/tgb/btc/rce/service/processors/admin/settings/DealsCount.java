@@ -7,7 +7,7 @@ import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.processors.support.MessagesService;
-import tgb.btc.rce.util.UpdateUtil;
+
 
 @CommandProcessor(command = Command.DEALS_COUNT)
 public class DealsCount extends Processor {
@@ -22,14 +22,14 @@ public class DealsCount extends Processor {
 
     @Override
     public void run(Update update) {
-        Long chatId = UpdateUtil.getChatId(update);
+        Long chatId = updateService.getChatId(update);
         if (checkForCancel(update)) return;
         switch (readUserService.getStepByChatId(chatId)) {
             case 0:
                 messagesService.askForDealsCount(update, Command.DEALS_COUNT);
                 break;
             case 1:
-                PropertiesPath.FUNCTIONS_PROPERTIES.setProperty("allowed.deals.count", UpdateUtil.getMessageText(update));
+                PropertiesPath.FUNCTIONS_PROPERTIES.setProperty("allowed.deals.count", updateService.getMessageText(update));
                 processToAdminMainPanel(chatId);
                 break;
         }

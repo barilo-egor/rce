@@ -14,7 +14,6 @@ import tgb.btc.library.vo.BulkDiscount;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.util.UpdateUtil;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -29,7 +28,7 @@ public class UpdateBulkDiscounts extends Processor { // TODO удалить
 
     @Override
     public void run(Update update) {
-        Long chatId = UpdateUtil.getChatId(update);
+        Long chatId = updateService.getChatId(update);
         if (!update.hasMessage() || !update.getMessage().hasDocument()) {
             responseSender.sendMessage(chatId, "Отправьте файл или вернитесь в главное меню.");
             return;
@@ -39,7 +38,7 @@ public class UpdateBulkDiscounts extends Processor { // TODO удалить
     }
 
     private void updateProperties(Update update) {
-        Long chatId = UpdateUtil.getChatId(update);
+        Long chatId = updateService.getChatId(update);
         try {
             responseSender.downloadFile(update.getMessage().getDocument(), PropertiesPath.BULK_DISCOUNT_BUFFER_PROPERTIES.getFileName());
         } catch (IOException | TelegramApiException e) {

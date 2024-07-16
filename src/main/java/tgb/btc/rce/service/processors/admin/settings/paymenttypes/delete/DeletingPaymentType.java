@@ -10,7 +10,7 @@ import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.util.UpdateUtil;
+
 
 @CommandProcessor(command = Command.DELETING_PAYMENT_TYPE)
 public class DeletingPaymentType extends Processor {
@@ -47,10 +47,10 @@ public class DeletingPaymentType extends Processor {
         paymentRequisiteService.deleteByPaymentTypePid(paymentType.getPid());
         paymentRequisiteService.removeOrder(paymentType.getPid());
         paymentTypeService.deleteById(pid);
-        Long chatId = UpdateUtil.getChatId(update);
+        Long chatId = updateService.getChatId(update);
         responseSender.deleteMessage(chatId, update.getCallbackQuery().getMessage().getMessageId());
         String message = "Тип оплаты на " + paymentType.getDealType().getAccusative() + " \"" + paymentType.getName() + "\" удален.";
-        responseSender.sendMessage(UpdateUtil.getChatId(update), message);
+        responseSender.sendMessage(updateService.getChatId(update), message);
         showPaymentTypesForDelete.sendPaymentTypes(chatId, dealType, paymentType.getFiatCurrency());
     }
 }

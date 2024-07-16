@@ -10,7 +10,7 @@ import tgb.btc.library.interfaces.service.bean.bot.IUserDataService;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.util.UpdateUtil;
+
 
 @CommandProcessor(command = Command.NEW_PAYMENT_TYPE_REQUISITE, step = 3)
 public class AskForNewRequisite extends Processor {
@@ -38,8 +38,8 @@ public class AskForNewRequisite extends Processor {
 
     @Override
     public void run(Update update) {
-        Long chatId = UpdateUtil.getChatId(update);
-        String requisite = UpdateUtil.getMessageText(update);
+        Long chatId = updateService.getChatId(update);
+        String requisite = updateService.getMessageText(update);
         PaymentRequisite paymentRequisite = new PaymentRequisite();
         paymentRequisite.setOn(true);
         paymentRequisite.setRequisite(requisite);

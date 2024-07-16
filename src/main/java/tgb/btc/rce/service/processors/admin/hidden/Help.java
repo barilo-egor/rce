@@ -5,14 +5,14 @@ import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.HelpCommand;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.util.UpdateUtil;
+
 
 @CommandProcessor(command = Command.HELP)
 public class Help extends Processor {
 
     @Override
     public void run(Update update) {
-        Long chatId = UpdateUtil.getChatId(update);
+        Long chatId = updateService.getChatId(update);
         StringBuilder text = new StringBuilder();
         text.append("<b>Нажмите на команду для копирования в буфер обмена.</b>\n\n");
         for (Command command : Command.HIDDEN_COMMANDS) {

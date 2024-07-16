@@ -10,7 +10,6 @@ import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.InlineType;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.processors.support.WithdrawalOfFundsService;
-import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.InlineButton;
 
 import java.util.List;
@@ -35,7 +34,7 @@ public class NewWithdrawals extends Processor {
     @Override
     public void run(Update update) {
         List<WithdrawalRequest> withdrawalRequests = withdrawalRequestService.getAllActive();
-        Long chatId = UpdateUtil.getChatId(update);
+        Long chatId = updateService.getChatId(update);
 
         if (withdrawalRequests.isEmpty()) {
             responseSender.sendMessage(chatId, "Новых заявок нет.");

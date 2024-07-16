@@ -8,7 +8,6 @@ import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.processors.support.DealSupportService;
-import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.InlineButton;
 
 import java.util.List;
@@ -35,9 +34,9 @@ public class ShowApiDeal extends Processor {
     @Override
     public void run(Update update) {
         if (!update.hasCallbackQuery()) return;
-        Long chatId = UpdateUtil.getChatId(update);
+        Long chatId = updateService.getChatId(update);
         try {
-            responseSender.deleteMessage(chatId, UpdateUtil.getMessage(update).getMessageId());
+            responseSender.deleteMessage(chatId, updateService.getMessage(update).getMessageId());
         } catch (Exception ignored) {
         }
         Long pid = Long.parseLong(update.getCallbackQuery().getData().split(CALLBACK_DATA_SPLITTER)[1]);

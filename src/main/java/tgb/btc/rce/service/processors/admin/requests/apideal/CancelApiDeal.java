@@ -8,7 +8,7 @@ import tgb.btc.library.interfaces.service.bean.web.IApiDealService;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.util.UpdateUtil;
+
 
 @CommandProcessor(command = Command.CANCEL_API_DEAL)
 @Slf4j
@@ -23,7 +23,7 @@ public class CancelApiDeal extends Processor {
 
     @Override
     public void run(Update update) {
-        Long chatId = UpdateUtil.getChatId(update);
+        Long chatId = updateService.getChatId(update);
         responseSender.deleteMessage(chatId, callbackQueryService.messageId(update));
         Long dealPid = callbackQueryService.getSplitLongData(update, 1);
         apiDealService.updateApiDealStatusByPid(ApiDealStatus.DECLINED, dealPid);

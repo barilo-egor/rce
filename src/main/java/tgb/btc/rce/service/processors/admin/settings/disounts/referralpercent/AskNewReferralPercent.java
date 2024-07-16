@@ -4,7 +4,6 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.util.UpdateUtil;
 
 import java.math.BigDecimal;
 import java.util.Objects;
@@ -14,8 +13,8 @@ public class AskNewReferralPercent extends Processor {
 
     @Override
     public void run(Update update) {
-        Long userChatId = UpdateUtil.getLongFromText(update);
-        Long chatId = UpdateUtil.getChatId(update);
+        Long userChatId = updateService.getLongFromText(update);
+        Long chatId = updateService.getChatId(update);
         if (!readUserService.existsByChatId(userChatId)) {
             responseSender.sendMessage(chatId, "Пользователь не найден.");
             return;

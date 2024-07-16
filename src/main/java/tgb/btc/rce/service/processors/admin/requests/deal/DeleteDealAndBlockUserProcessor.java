@@ -10,7 +10,7 @@ import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.processors.tool.Start;
-import tgb.btc.rce.util.UpdateUtil;
+
 
 @CommandProcessor(command = Command.DELETE_DEAL_AND_BLOCK_USER)
 @Slf4j
@@ -40,7 +40,7 @@ public class DeleteDealAndBlockUserProcessor extends Processor {
     @Override
     public void run(Update update) {
         if (!update.hasCallbackQuery()) return;
-        Long chatId = UpdateUtil.getChatId(update);
+        Long chatId = updateService.getChatId(update);
         Long dealPid = Long.parseLong(
                 update.getCallbackQuery().getData().split(BotStringConstants.CALLBACK_DATA_SPLITTER)[1]);
         Long userChatId = dealUserService.getUserChatIdByDealPid(dealPid);

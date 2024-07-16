@@ -8,7 +8,6 @@ import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.IKeyboardService;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.util.UpdateUtil;
 
 import java.util.List;
 
@@ -25,7 +24,7 @@ public class TurningProcessDeliveryProcessor extends Processor {
 
     @Override
     public void run(Update update) {
-        Long chatId = UpdateUtil.getChatId(update);
+        Long chatId = updateService.getChatId(update);
         String deliveryType = callbackQueryService.getSplitData(update, 1);
         PropertiesPath.MODULES_PROPERTIES.setProperty("delivery.kind", deliveryType);
         responseSender.sendEditedMessageText(chatId, update.getCallbackQuery().getMessage().getMessageId(),

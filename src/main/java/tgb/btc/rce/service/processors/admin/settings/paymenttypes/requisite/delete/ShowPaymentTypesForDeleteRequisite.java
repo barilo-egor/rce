@@ -11,7 +11,6 @@ import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.InlineButton;
 
 import java.util.List;
@@ -29,9 +28,9 @@ public class ShowPaymentTypesForDeleteRequisite extends Processor {
 
     @Override
     public void run(Update update) {
-        Long chatId = UpdateUtil.getChatId(update);
+        Long chatId = updateService.getChatId(update);
         List<PaymentType> paymentTypes = paymentTypeService.getByDealTypeAndFiatCurrency(DealType.BUY,
-                FiatCurrency.getByCode(UpdateUtil.getMessageText(update)));
+                FiatCurrency.getByCode(updateService.getMessageText(update)));
         if (CollectionUtils.isEmpty(paymentTypes)) {
             responseSender.sendMessage(chatId, "Список тип оплат на " + DealType.BUY.getAccusative() + " пуст."); // todo добавить фиат карренси
             processToAdminMainPanel(chatId);

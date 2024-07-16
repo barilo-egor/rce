@@ -10,7 +10,6 @@ import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.processors.support.WithdrawalOfFundsService;
-import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.InlineButton;
 
 import java.util.List;
@@ -34,7 +33,7 @@ public class WithdrawalOfFunds extends Processor {
 
     @Override
     public void run(Update update) {
-        Long chatId = UpdateUtil.getChatId(update);
+        Long chatId = updateService.getChatId(update);
         if (checkForCancel(update)) return;
         switch (readUserService.getStepByChatId(chatId)) {
             case 0:
@@ -55,7 +54,7 @@ public class WithdrawalOfFunds extends Processor {
                     responseSender.sendMessage(chatId, "Минимальная сумма для вывода средств равна " + minSum + "₽");
                     return;
                 }
-                withdrawalOfFundsService.askForContact(chatId, UpdateUtil.getMessage(update).getMessageId());
+                withdrawalOfFundsService.askForContact(chatId, updateService.getMessage(update).getMessageId());
                 break;
             case 1:
                 if (withdrawalOfFundsService.createRequest(update)) processToMainMenu(chatId);

@@ -23,7 +23,6 @@ import tgb.btc.rce.service.IUpdateDispatcher;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.process.IDealProcessService;
 import tgb.btc.rce.service.processors.support.ExchangeService;
-import tgb.btc.rce.util.UpdateUtil;
 
 import java.util.HashSet;
 import java.util.Objects;
@@ -93,7 +92,7 @@ public class DealProcessor extends Processor {
 
     @Override
     public void run(Update update) {
-        Long chatId = UpdateUtil.getChatId(update);
+        Long chatId = updateService.getChatId(update);
         Integer userStep = readUserService.getStepByChatId(chatId);
         boolean isBack = callbackQueryService.isBack(update);
         if (!User.isDefault(userStep)) {
@@ -243,7 +242,7 @@ public class DealProcessor extends Processor {
     }
 
     private boolean isReceiptsCancel(Update update) {
-        return update.hasMessage() && Command.RECEIPTS_CANCEL_DEAL.getText().equals(UpdateUtil.getMessageText(update));
+        return update.hasMessage() && Command.RECEIPTS_CANCEL_DEAL.getText().equals(updateService.getMessageText(update));
     }
 
     private boolean hasCheck(Update update) {
@@ -257,7 +256,7 @@ public class DealProcessor extends Processor {
 
     public boolean isMainMenuCommand(Update update) {
         if (!update.hasMessage() || !update.getMessage().hasText()) return false;
-        Long chatId = UpdateUtil.getChatId(update);
+        Long chatId = updateService.getChatId(update);
         Command commandFromUpdate = Command.fromUpdate(update);
         Command mainMenuCommand = null;
         Set<Command> commands = new HashSet<>(Menu.MAIN.getCommands());

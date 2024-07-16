@@ -7,7 +7,7 @@ import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.util.UpdateUtil;
+
 
 @CommandProcessor(command = Command.CHANGE_MIN_SUM, step = 3)
 public class AskForMinSum extends Processor {
@@ -21,7 +21,7 @@ public class AskForMinSum extends Processor {
 
     @Override
     public void run(Update update) {
-        Long chatId = UpdateUtil.getChatId(update);
+        Long chatId = updateService.getChatId(update);
         if (!update.hasCallbackQuery()) {
             responseSender.sendMessage(chatId, "Выберите тип оплаты.");
             return;

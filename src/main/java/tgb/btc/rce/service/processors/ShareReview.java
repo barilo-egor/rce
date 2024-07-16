@@ -13,7 +13,6 @@ import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.InlineType;
 import tgb.btc.rce.service.INotifyService;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.InlineButton;
 import tgb.btc.rce.vo.ReviewPrise;
 
@@ -45,7 +44,7 @@ public class ShareReview extends Processor {
 
     @Override
     public void run(Update update) {
-        Long chatId = UpdateUtil.getChatId(update);
+        Long chatId = updateService.getChatId(update);
         if (checkForCancel(update)) {
             return;
         }
@@ -58,7 +57,7 @@ public class ShareReview extends Processor {
                 return;
             case 1:
                 if (update.hasMessage() && StringUtils.isNotEmpty(update.getMessage().getFrom().getUserName())) {
-                    modifyUserService.updateBufferVariable(chatId, UpdateUtil.getMessageText(update));
+                    modifyUserService.updateBufferVariable(chatId, updateService.getMessageText(update));
                     responseSender.sendMessage(chatId, "Оставить отзыв публично или анонимно?",
                             keyboardBuildService.buildInline(List.of(InlineButton.builder()
                                             .inlineType(InlineType.CALLBACK_DATA)
@@ -79,7 +78,7 @@ public class ShareReview extends Processor {
                                  : VariablePropertiesUtil.getInt(VariableType.REVIEW_PRISE);
                 if (update.hasMessage()) {
                     reviewService.save(Review.builder()
-                            .text(author + UpdateUtil.getMessageText(update))
+                            .text(author + updateService.getMessageText(update))
                             .username(update.getMessage().getFrom().getFirstName())
                             .isPublished(false)
                             .chatId(chatId)

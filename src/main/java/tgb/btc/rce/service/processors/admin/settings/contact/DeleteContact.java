@@ -7,7 +7,7 @@ import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.UpdateType;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.processors.support.EditContactsService;
-import tgb.btc.rce.util.UpdateUtil;
+
 
 @CommandProcessor(command = Command.DELETE_CONTACT)
 public class DeleteContact extends Processor {
@@ -25,7 +25,7 @@ public class DeleteContact extends Processor {
             editContactsService.askForChoose(update);
         else if (UpdateType.CALLBACK_QUERY.equals(UpdateType.fromUpdate(update))) {
             editContactsService.delete(update);
-            processToAdminMainPanel(UpdateUtil.getChatId(update));
+            processToAdminMainPanel(updateService.getChatId(update));
         }
     }
 }

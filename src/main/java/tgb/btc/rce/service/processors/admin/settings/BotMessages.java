@@ -6,7 +6,7 @@ import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.process.IBotMessageProcessService;
-import tgb.btc.rce.util.UpdateUtil;
+
 
 @CommandProcessor(command = Command.BOT_MESSAGES)
 public class BotMessages extends Processor {
@@ -20,7 +20,7 @@ public class BotMessages extends Processor {
 
     @Override
     public void run(Update update) {
-        Long chatId = UpdateUtil.getChatId(update);
+        Long chatId = updateService.getChatId(update);
         if (checkForCancel(update)) return;
         switch (readUserService.getStepByChatId(chatId)) {
             case 0:

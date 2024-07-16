@@ -19,7 +19,6 @@ import tgb.btc.library.util.FiatCurrencyUtil;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.report.ReportDealVO;
 import tgb.btc.rce.vo.report.ReportUserVO;
 
@@ -45,7 +44,7 @@ public class UsersReport extends Processor {
     @Async
     public void run(Update update) {
         log.info("Старт отчета по пользователям.");
-        Long chatId = UpdateUtil.getChatId(update);
+        Long chatId = updateService.getChatId(update);
         responseSender.sendMessage(chatId, "Формирование отчета запущено.");
         responseSender.sendMessage(chatId, "Отчет придет после того, как сформируется. Это может занять некоторое время.");
         processToAdminMainPanel(chatId);

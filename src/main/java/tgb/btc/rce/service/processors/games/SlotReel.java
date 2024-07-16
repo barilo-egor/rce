@@ -17,7 +17,6 @@ import tgb.btc.rce.enums.Menu;
 import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.IUpdateDispatcher;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.InlineButton;
 
 import java.util.ArrayList;
@@ -52,7 +51,7 @@ public class SlotReel extends Processor {
 
     @Override
     public void run(Update update) {
-        Long chatId = UpdateUtil.getChatId(update);
+        Long chatId = updateService.getChatId(update);
         if (SlotReelType.NONE.isCurrent() || (SlotReelType.STANDARD_ADMIN.isCurrent() && UserRole.USER.equals(readUserService.getUserRoleByChatId(chatId)))) {
             processToStart(chatId, update);
             return;
@@ -73,7 +72,7 @@ public class SlotReel extends Processor {
 
     private boolean isDrawsCommand(Update update) {
         if (!update.hasMessage() || !update.getMessage().hasText()) return false;
-        Long chatId = UpdateUtil.getChatId(update);
+        Long chatId = updateService.getChatId(update);
         Command drawsCommand = null;
         Command commandFromUpdate = Command.fromUpdate(update);
         List<Command> commands = new ArrayList<>(Menu.DRAWS.getCommands());

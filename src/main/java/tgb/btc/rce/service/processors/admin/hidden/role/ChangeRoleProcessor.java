@@ -6,7 +6,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.constants.enums.bot.UserRole;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.processors.tool.Start;
-import tgb.btc.rce.util.UpdateUtil;
+
 
 public abstract class ChangeRoleProcessor extends Processor {
 
@@ -18,10 +18,10 @@ public abstract class ChangeRoleProcessor extends Processor {
     }
 
     protected void changeRole(Update update, UserRole userRole) {
-        Long chatId = UpdateUtil.getChatId(update);
+        Long chatId = updateService.getChatId(update);
         Long userChatId;
         try {
-            userChatId = Long.parseLong(UpdateUtil.getMessageText(update).split(" ")[1]);
+            userChatId = Long.parseLong(updateService.getMessageText(update).split(" ")[1]);
         } catch (NumberFormatException e) {
             responseSender.sendMessage(chatId, "Неверный формат chat id.");
             return;

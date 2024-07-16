@@ -15,7 +15,6 @@ import tgb.btc.library.interfaces.service.bean.bot.deal.read.IDealCountService;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.util.UpdateUtil;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -81,7 +80,7 @@ public class UsersDealsReport extends Processor {
             book.close();
             outputStream.close();
             File file = new File(fileName);
-            Long chatId = UpdateUtil.getChatId(update);
+            Long chatId = updateService.getChatId(update);
             responseSender.sendFile(chatId, file);
             log.debug("Админ " + chatId + " выгрузил отчет по сделкам пользователей.");
             if (file.delete()) log.trace("Файл успешно удален.");

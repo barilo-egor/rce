@@ -6,7 +6,7 @@ import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.processors.support.EditContactsService;
-import tgb.btc.rce.util.UpdateUtil;
+
 
 @CommandProcessor(command = Command.ADD_CONTACT)
 public class AddContact extends Processor {
@@ -20,7 +20,7 @@ public class AddContact extends Processor {
 
     @Override
     public void run(Update update) {
-        Long chatId = UpdateUtil.getChatId(update);
+        Long chatId = updateService.getChatId(update);
         if (checkForCancel(update)) return;
         switch (readUserService.getStepByChatId(chatId)) {
             case 0:
@@ -28,7 +28,7 @@ public class AddContact extends Processor {
                 break;
             case 1:
                 editContactsService.save(update);
-                processToAdminMainPanel(UpdateUtil.getChatId(update));
+                processToAdminMainPanel(updateService.getChatId(update));
                 break;
         }
     }

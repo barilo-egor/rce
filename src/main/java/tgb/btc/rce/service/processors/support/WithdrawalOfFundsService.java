@@ -16,9 +16,9 @@ import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.PropertiesMessage;
 import tgb.btc.rce.service.INotifyService;
 import tgb.btc.rce.service.IResponseSender;
+import tgb.btc.rce.service.IUpdateService;
 import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
 import tgb.btc.rce.service.util.IMessagePropertiesService;
-import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.ReplyButton;
 
 import java.util.List;
@@ -40,6 +40,18 @@ public class WithdrawalOfFundsService {
     private IKeyboardBuildService keyboardBuildService;
 
     private IMessagePropertiesService messagePropertiesService;
+    
+    private IUpdateService updateService;
+
+    @Autowired
+    public void setUpdateService(IUpdateService updateService) {
+        this.updateService = updateService;
+    }
+
+    @Autowired
+    public void setNotifyService(INotifyService notifyService) {
+        this.notifyService = notifyService;
+    }
 
     @Autowired
     public void setMessagePropertiesService(IMessagePropertiesService messagePropertiesService) {
@@ -62,11 +74,6 @@ public class WithdrawalOfFundsService {
     }
 
     @Autowired
-    public void setAdminService(INotifyService notifyService) {
-        this.notifyService = notifyService;
-    }
-
-    @Autowired
     public void setReadUserService(IReadUserService readUserService) {
         this.readUserService = readUserService;
     }
@@ -77,14 +84,14 @@ public class WithdrawalOfFundsService {
     }
 
     public boolean createRequest(Update update) {
-        Long chatId = UpdateUtil.getChatId(update);
+        Long chatId = updateService.getChatId(update);
         if (!update.getMessage().hasContact()) {
             responseSender.sendMessage(chatId,
                     messagePropertiesService.getMessage(PropertiesMessage.WITHDRAWAL_ERROR_CONTACT));
             return false;
         }
         WithdrawalRequest request = withdrawalRequestService.save(
-                buildFromUpdate(readUserService.findByChatId(UpdateUtil.getChatId(update)), update));
+                buildFromUpdate(readUserService.findByChatId(updateService.getChatId(update)), update));
         notifyService.notifyMessage(messagePropertiesService.getMessage(PropertiesMessage.ADMIN_NOTIFY_WITHDRAWAL_NEW),
                 Command.SHOW_WITHDRAWAL_REQUEST.getText() + BotStringConstants.CALLBACK_DATA_SPLITTER +
                         request.getPid(), Set.of(UserRole.OPERATOR, UserRole.ADMIN));

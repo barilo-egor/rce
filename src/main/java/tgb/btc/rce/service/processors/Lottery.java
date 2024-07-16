@@ -17,7 +17,6 @@ import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.PropertiesMessage;
 import tgb.btc.rce.service.INotifyService;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.util.UpdateUtil;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -51,7 +50,7 @@ public class Lottery extends Processor {
 
     @Override
     public void run(Update update) {
-        User user = readUserService.findByChatId(UpdateUtil.getChatId(update));
+        User user = readUserService.findByChatId(updateService.getChatId(update));
         if(Objects.isNull(user.getLotteryCount()) || user.getLotteryCount() == 0) {
             responseSender.sendMessage(user.getChatId(),
                     messagePropertiesService.getMessage(PropertiesMessage.NO_LOTTERY_ATTEMPTS));
@@ -67,14 +66,14 @@ public class Lottery extends Processor {
                     keyboardBuildService.getLink("Написать оператору",
                             VariablePropertiesUtil.getVariable(VariableType.OPERATOR_LINK)));
             String username = user.getUsername();
-            notifyService.notifyMessage("Пользователь id=" + UpdateUtil.getChatId(update)
+            notifyService.notifyMessage("Пользователь id=" + updateService.getChatId(update)
                     + ", username=" + (StringUtils.isNotEmpty(username) ? username : "скрыт")
                     + " выиграл лотерею.", Set.of(UserRole.OPERATOR, UserRole.ADMIN));
-            log.debug("Пользователь " + UpdateUtil.getChatId(update) + " выиграл лотерею. Probability=" + probability);
+            log.debug("Пользователь " + updateService.getChatId(update) + " выиграл лотерею. Probability=" + probability);
             lotteryWinService.save(new LotteryWin(user, LocalDateTime.now()));
         } else {
             responseSender.sendBotMessage(botMessageService.findByTypeNullSafe(BotMessageType.LOSE_LOTTERY), user.getChatId());
-            log.trace("Пользователь " + UpdateUtil.getChatId(update) + " проиграл лотерею.");
+            log.trace("Пользователь " + updateService.getChatId(update) + " проиграл лотерею.");
         }
         user.setLotteryCount(user.getLotteryCount() - 1);
         modifyUserService.save(user);

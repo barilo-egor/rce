@@ -12,7 +12,6 @@ import tgb.btc.library.interfaces.service.bean.bot.deal.read.IDateDealService;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.util.UpdateUtil;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -36,8 +35,8 @@ public class SendChecksForDate extends Processor {
 
     @Override
     public void run(Update update) {
-        Long chatId = UpdateUtil.getChatId(update);
-        String[] enteredValues = UpdateUtil.getMessageText(update).split("\\.");
+        Long chatId = updateService.getChatId(update);
+        String[] enteredValues = updateService.getMessageText(update).split("\\.");
         int day;
         int month;
         int year;

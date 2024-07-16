@@ -11,11 +11,11 @@ import tgb.btc.library.interfaces.service.bean.bot.IBotMessageService;
 import tgb.btc.library.interfaces.service.bean.bot.user.IModifyUserService;
 import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.rce.enums.Command;
+import tgb.btc.rce.service.IUpdateService;
 import tgb.btc.rce.service.impl.ResponseSender;
 import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
 import tgb.btc.rce.service.process.IBotMessageProcessService;
 import tgb.btc.rce.service.util.IBotImageService;
-import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.ReplyButton;
 
 import java.util.Arrays;
@@ -36,6 +36,13 @@ public class BotMessageProcessService implements IBotMessageProcessService {
     private IKeyboardBuildService keyboardBuildService;
 
     private IBotImageService botImageService;
+
+    private IUpdateService updateService;
+
+    @Autowired
+    public void setUpdateService(IUpdateService updateService) {
+        this.updateService = updateService;
+    }
 
     @Autowired
     public void setBotImageService(IBotImageService botImageService) {
@@ -83,10 +90,10 @@ public class BotMessageProcessService implements IBotMessageProcessService {
 
     @Override
     public void askForNewValue(Update update) {
-        Long chatId = UpdateUtil.getChatId(update);
+        Long chatId = updateService.getChatId(update);
         BotMessageType type;
         try {
-            type = BotMessageType.getByDisplayName(UpdateUtil.getMessageText(update));
+            type = BotMessageType.getByDisplayName(updateService.getMessageText(update));
         } catch (BaseException e) {
             responseSender.sendMessage(chatId, "Тип сообщения не найден.");
             return;
@@ -98,7 +105,7 @@ public class BotMessageProcessService implements IBotMessageProcessService {
 
     @Override
     public void updateValue(Update update) {
-        Long chatId = UpdateUtil.getChatId(update);
+        Long chatId = updateService.getChatId(update);
         BotMessage botMessage;
         BotMessageType type = BotMessageType.getByName(readUserService.getBufferVariable(chatId));
         try {

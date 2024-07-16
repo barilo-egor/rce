@@ -14,11 +14,11 @@ import tgb.btc.library.service.process.BannedUserCache;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.SimpleCommand;
 import tgb.btc.rce.service.IUpdateDispatcher;
+import tgb.btc.rce.service.IUpdateService;
 import tgb.btc.rce.service.captcha.IAntiSpam;
 import tgb.btc.rce.service.process.IUserProcessService;
 import tgb.btc.rce.service.util.ICommandProcessorLoader;
 import tgb.btc.rce.service.util.ICommandService;
-import tgb.btc.rce.util.UpdateUtil;
 
 import javax.annotation.PostConstruct;
 import java.util.Objects;
@@ -44,6 +44,13 @@ public class UpdateDispatcher implements IUpdateDispatcher {
     private ICommandProcessorLoader commandProcessorLoader;
 
     private ICommandService commandService;
+
+    private IUpdateService updateService;
+
+    @Autowired
+    public void setUpdateService(IUpdateService updateService) {
+        this.updateService = updateService;
+    }
 
     @Autowired
     public void setCommandService(ICommandService commandService) {
@@ -87,7 +94,7 @@ public class UpdateDispatcher implements IUpdateDispatcher {
     }
 
     public void dispatch(Update update) {
-        Long chatId = UpdateUtil.getChatId(update);
+        Long chatId = updateService.getChatId(update);
         if (IS_LOG_UDPATES) log.info(chatId.toString());
         if (bannedUserCache.get(chatId)) return;
         runProcessor(getCommand(update, chatId), chatId, update);
@@ -114,7 +121,7 @@ public class UpdateDispatcher implements IUpdateDispatcher {
     }
 
     private boolean isCaptcha(Update update) {
-        return !userProcessService.registerIfNotExists(update) || antiSpam.isSpamUser(UpdateUtil.getChatId(update));
+        return !userProcessService.registerIfNotExists(update) || antiSpam.isSpamUser(updateService.getChatId(update));
     }
 
     private boolean isOffed(Long chatId) {

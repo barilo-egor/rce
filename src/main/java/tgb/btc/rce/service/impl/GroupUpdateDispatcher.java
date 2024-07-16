@@ -16,7 +16,7 @@ import tgb.btc.library.interfaces.service.bean.bot.IGroupChatService;
 import tgb.btc.rce.service.IGroupUpdateDispatcher;
 import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.ITelegramPropertiesService;
-import tgb.btc.rce.util.UpdateUtil;
+import tgb.btc.rce.service.IUpdateService;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -34,6 +34,13 @@ public class GroupUpdateDispatcher implements IGroupUpdateDispatcher {
     private INotificationsAPI notificationsAPI;
 
     private ITelegramPropertiesService telegramPropertiesService;
+
+    private IUpdateService updateService;
+
+    @Autowired
+    public void setUpdateService(IUpdateService updateService) {
+        this.updateService = updateService;
+    }
 
     @Autowired
     public void setTelegramPropertiesService(ITelegramPropertiesService telegramPropertiesService) {
@@ -59,7 +66,7 @@ public class GroupUpdateDispatcher implements IGroupUpdateDispatcher {
 
     @Override
     public void dispatch(Update update) {
-        Long chatId = UpdateUtil.getGroupChatId(update);
+        Long chatId = updateService.getGroupChatId(update);
         if (Objects.isNull(chatId)) {
             log.warn("Chat id группы не был найден. Update:{}", update);
             return;

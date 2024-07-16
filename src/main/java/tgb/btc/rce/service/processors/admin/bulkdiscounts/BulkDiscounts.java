@@ -6,7 +6,6 @@ import tgb.btc.library.constants.enums.properties.PropertiesPath;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.util.UpdateUtil;
 
 import java.io.File;
 
@@ -16,7 +15,7 @@ public class BulkDiscounts extends Processor {
 
     @Override
     public void run(Update update) {
-        Long chatId = UpdateUtil.getChatId(update);
+        Long chatId = updateService.getChatId(update);
         if (checkForCancel(update)) return;
         responseSender.sendMessage(chatId, "Измените нужные значения и отправьте исправленный файл. " +
                 "Обязательно закройте файл, перед тем как отправлять.", keyboardService.getReplyCancel());

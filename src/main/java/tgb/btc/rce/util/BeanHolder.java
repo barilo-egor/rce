@@ -7,6 +7,7 @@ import tgb.btc.library.service.bean.bot.ContactService;
 import tgb.btc.rce.RceApplication;
 import tgb.btc.rce.service.IKeyboardService;
 import tgb.btc.rce.service.IResponseSender;
+import tgb.btc.rce.service.IUpdateService;
 import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
 import tgb.btc.rce.service.util.IMessagePropertiesService;
 
@@ -27,6 +28,8 @@ public class BeanHolder {
 
     public static IMessagePropertiesService messagePropertiesService;
 
+    public static IUpdateService updateService;
+
     public static void load() {
         log.info("Загрузка бинов в BeanHolder.");
         responseSender = RceApplication.SPRING_CONTEXT.getBean(IResponseSender.class);
@@ -36,6 +39,7 @@ public class BeanHolder {
         keyboardService = RceApplication.SPRING_CONTEXT.getBean(IKeyboardService.class);
         keyboardBuildService = RceApplication.SPRING_CONTEXT.getBean(IKeyboardBuildService.class);
         messagePropertiesService = RceApplication.SPRING_CONTEXT.getBean(IMessagePropertiesService.class);
+        updateService = RceApplication.SPRING_CONTEXT.getBean(IUpdateService.class);
         log.info("Загрузка бинов BeanHolder завершена.");
     }
 }

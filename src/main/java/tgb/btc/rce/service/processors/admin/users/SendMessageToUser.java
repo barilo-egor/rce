@@ -6,7 +6,7 @@ import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.processors.support.MessagesService;
-import tgb.btc.rce.util.UpdateUtil;
+
 
 @CommandProcessor(command = Command.SEND_MESSAGE_TO_USER)
 public class SendMessageToUser extends Processor {
@@ -20,7 +20,7 @@ public class SendMessageToUser extends Processor {
 
     @Override
     public void run(Update update) {
-        Long chatId = UpdateUtil.getChatId(update);
+        Long chatId = updateService.getChatId(update);
         if (checkForCancel(update)) return;
         switch (readUserService.getStepByChatId(chatId)) {
             case 0:
@@ -32,7 +32,7 @@ public class SendMessageToUser extends Processor {
                 break;
             case 2:
                 messagesService.sendMessageToUser(update);
-                processToAdminMainPanel(UpdateUtil.getChatId(update));
+                processToAdminMainPanel(updateService.getChatId(update));
                 break;
         }
     }

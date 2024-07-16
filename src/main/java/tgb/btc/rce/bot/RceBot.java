@@ -11,7 +11,7 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import tgb.btc.rce.service.IGroupUpdateDispatcher;
 import tgb.btc.rce.service.ITelegramPropertiesService;
 import tgb.btc.rce.service.IUpdateDispatcher;
-import tgb.btc.rce.util.UpdateUtil;
+import tgb.btc.rce.service.IUpdateService;
 
 @Service
 @Slf4j
@@ -22,6 +22,12 @@ public class RceBot extends TelegramLongPollingBot {
     private IGroupUpdateDispatcher groupUpdateDispatcher;
 
     private ITelegramPropertiesService telegramPropertiesService;
+    
+    private IUpdateService updateService;
+
+    public void setUpdateService(IUpdateService updateService) {
+        this.updateService = updateService;
+    }
 
     @Autowired
     public void setTelegramPropertiesService(ITelegramPropertiesService telegramPropertiesService) {
@@ -52,14 +58,14 @@ public class RceBot extends TelegramLongPollingBot {
     public void onUpdateReceived(Update update) {
         try {
             try {
-                if (UpdateUtil.isGroupMessage(update))
+                if (updateService.isGroupMessage(update))
                     groupUpdateDispatcher.dispatch(update);
                 else {
                     updateDispatcher.dispatch(update);
                 }
             } catch (NumberFormatException e) {
                 execute(SendMessage.builder()
-                        .chatId(UpdateUtil.getChatId(update).toString())
+                        .chatId(updateService.getChatId(update).toString())
                         .text("Неверный формат.")
                         .build());
             } catch (Exception e) {
@@ -69,7 +75,7 @@ public class RceBot extends TelegramLongPollingBot {
                         time + System.lineSeparator() +
                         "Введите /start для выхода в главное меню.";
 
-                execute(SendMessage.builder().chatId(UpdateUtil.getChatId(update).toString()).text(message).build());
+                execute(SendMessage.builder().chatId(updateService.getChatId(update).toString()).text(message).build());
                 log.debug(String.format("Произошла ошибка. %s. Описание ошибки: %s", time, e.getMessage()
                         + System.lineSeparator() + ExceptionUtils.getFullStackTrace(e)));
             }

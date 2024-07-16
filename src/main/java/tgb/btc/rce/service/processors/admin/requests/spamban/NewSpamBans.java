@@ -8,7 +8,6 @@ import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.impl.UserInfoService;
-import tgb.btc.rce.util.UpdateUtil;
 
 import java.util.List;
 
@@ -31,7 +30,7 @@ public class NewSpamBans extends Processor {
 
     @Override
     public void run(Update update) {
-        Long chatId = UpdateUtil.getChatId(update);
+        Long chatId = updateService.getChatId(update);
         List<Long> pids = spamBanService.getPids();
         if (CollectionUtils.isEmpty(pids)) {
             responseSender.sendMessage(chatId, "Список пуст.");

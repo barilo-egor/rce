@@ -12,7 +12,6 @@ import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.processors.support.DealSupportService;
-import tgb.btc.rce.util.UpdateUtil;
 
 @CommandProcessor(command = Command.CONFIRM_USER_DEAL)
 @Slf4j
@@ -50,7 +49,7 @@ public class ConfirmUserDeal extends Processor {
     @Transactional
     public void run(Update update) {
         if (!update.hasCallbackQuery()) return;
-        Long chatId = UpdateUtil.getChatId(update);
+        Long chatId = updateService.getChatId(update);
         boolean isNeedRequest = callbackQueryService.getSplitBooleanData(update, 2);
         Long dealPid = callbackQueryService.getSplitLongData(update, 1);
         if (isNeedRequest && !groupChatService.hasDealRequests()) {
@@ -69,6 +68,6 @@ public class ConfirmUserDeal extends Processor {
                             ? username
                             : "chatid:" + chatId,
                     dealPid);
-        responseSender.deleteMessage(chatId, UpdateUtil.getMessage(update).getMessageId());
+        responseSender.deleteMessage(chatId, updateService.getMessage(update).getMessageId());
     }
 }

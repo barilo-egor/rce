@@ -11,7 +11,7 @@ import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.Menu;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.processors.support.MessagesService;
-import tgb.btc.rce.util.UpdateUtil;
+
 
 @Slf4j
 @CommandProcessor(command = Command.BAN_UNBAN)
@@ -40,7 +40,7 @@ public class BanUnban extends Processor {
 
     @Override
     public void run(Update update) {
-        Long chatId = UpdateUtil.getChatId(update);
+        Long chatId = updateService.getChatId(update);
         if (checkForCancel(update)) return;
         switch (readUserService.getStepByChatId(chatId)) {
             case 0:
@@ -54,8 +54,8 @@ public class BanUnban extends Processor {
     }
 
     private void banUser(Update update) {
-        Long chatId = UpdateUtil.getChatId(update);
-        Long inputChatId = Long.parseLong(UpdateUtil.getMessageText(update));
+        Long chatId = updateService.getChatId(update);
+        Long inputChatId = Long.parseLong(updateService.getMessageText(update));
         if (!readUserService.existsByChatId(inputChatId)) {
             responseSender.sendMessage(chatId, "Пользователь с таким ID не найден.",
                     menuService.build(Menu.ADMIN_BACK, readUserService.getUserRoleByChatId(chatId)));
@@ -68,7 +68,7 @@ public class BanUnban extends Processor {
             log.debug("Админ " + chatId + " забанил пользователя " + inputChatId);
         } else {
             banningUserService.unban(inputChatId);
-            responseSender.sendMessage(UpdateUtil.getChatId(update),
+            responseSender.sendMessage(updateService.getChatId(update),
                     "Пользователь разблокирован.");
             log.debug("Админ " + chatId + " разбанил пользователя " + inputChatId);
         }

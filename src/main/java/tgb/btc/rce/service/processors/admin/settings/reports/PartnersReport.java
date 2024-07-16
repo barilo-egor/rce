@@ -14,7 +14,6 @@ import tgb.btc.library.interfaces.service.bean.bot.deal.read.IDealCountService;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.util.UpdateUtil;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -36,7 +35,7 @@ public class PartnersReport extends Processor {
 
     @Override
     public void run(Update update) {
-        Long chatId = UpdateUtil.getChatId(update);
+        Long chatId = updateService.getChatId(update);
         List<User> users = readUserService.findAll().stream().filter(user -> !user.getReferralUsers().isEmpty()).collect(Collectors.toList());
         if (users.isEmpty()) {
             responseSender.sendMessage(chatId, "Нет пользователей с рефералами.");

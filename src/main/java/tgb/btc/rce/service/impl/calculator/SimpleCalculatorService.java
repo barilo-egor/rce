@@ -9,13 +9,9 @@ import tgb.btc.library.interfaces.service.bean.bot.deal.read.IDealPropertyServic
 import tgb.btc.library.interfaces.service.bean.bot.user.IModifyUserService;
 import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.rce.enums.PropertiesMessage;
-import tgb.btc.rce.service.ICalculatorTypeService;
-import tgb.btc.rce.service.IKeyboardService;
-import tgb.btc.rce.service.IResponseSender;
-import tgb.btc.rce.service.IUpdateDispatcher;
+import tgb.btc.rce.service.*;
 import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
 import tgb.btc.rce.service.util.IMessagePropertiesService;
-import tgb.btc.rce.util.UpdateUtil;
 
 @Service
 public abstract class SimpleCalculatorService implements ICalculatorTypeService {
@@ -35,6 +31,13 @@ public abstract class SimpleCalculatorService implements ICalculatorTypeService 
     protected IKeyboardBuildService keyboardBuildService;
 
     private IMessagePropertiesService messagePropertiesService;
+
+    private IUpdateService updateService;
+
+    @Autowired
+    public void setUpdateService(IUpdateService updateService) {
+        this.updateService = updateService;
+    }
 
     @Autowired
     public void setMessagePropertiesService(IMessagePropertiesService messagePropertiesService) {
@@ -78,7 +81,7 @@ public abstract class SimpleCalculatorService implements ICalculatorTypeService 
 
     @Override
     public void run(Update update) {
-        Long chatId = UpdateUtil.getChatId(update);
+        Long chatId = updateService.getChatId(update);
         Long currentDealPid = readUserService.getCurrentDealByChatId(chatId);
         CryptoCurrency cryptoCurrency = dealPropertyService.getCryptoCurrencyByPid(currentDealPid);
         PropertiesMessage propertiesMessage;

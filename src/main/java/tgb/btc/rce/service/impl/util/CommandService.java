@@ -1,17 +1,25 @@
 package tgb.btc.rce.service.impl.util;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.enums.Command;
+import tgb.btc.rce.service.IUpdateService;
 import tgb.btc.rce.service.util.ICommandService;
-import tgb.btc.rce.util.UpdateUtil;
 
 @Service
 public class CommandService implements ICommandService {
 
+    private IUpdateService updateService;
+
+    @Autowired
+    public CommandService(IUpdateService updateService) {
+        this.updateService = updateService;
+    }
+
     @Override
     public boolean isStartCommand(Update update) {
-        return UpdateUtil.hasMessageText(update) && Command.START.equals(Command.fromUpdate(update));
+        return updateService.hasMessageText(update) && Command.START.equals(Command.fromUpdate(update));
     }
 
     @Override

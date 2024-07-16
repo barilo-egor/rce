@@ -7,7 +7,6 @@ import tgb.btc.library.interfaces.service.bean.bot.IUserDataService;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.util.UpdateUtil;
 
 import java.math.BigDecimal;
 
@@ -30,10 +29,10 @@ public class SaveMinSum extends Processor {
 
     @Override
     public void run(Update update) {
-        Long chatId = UpdateUtil.getChatId(update);
+        Long chatId = updateService.getChatId(update);
         long minSum;
         try {
-            minSum = Long.parseLong(UpdateUtil.getMessageText(update));
+            minSum = Long.parseLong(updateService.getMessageText(update));
         } catch (Exception e) {
             responseSender.sendMessage(chatId, "Ошибка. Введите новую минимальную сумму.");
             return;

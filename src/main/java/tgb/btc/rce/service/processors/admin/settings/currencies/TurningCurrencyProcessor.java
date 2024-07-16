@@ -9,7 +9,6 @@ import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.ITurningCurrenciesService;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.InlineButton;
 
 import java.util.ArrayList;
@@ -28,7 +27,7 @@ public class TurningCurrencyProcessor extends Processor {
 
     @Override
     public void run(Update update) {
-        Long chatId = UpdateUtil.getChatId(update);
+        Long chatId = updateService.getChatId(update);
         List<InlineButton> buttons = new ArrayList<>();
         buttons.add(InlineButton.builder()
                 .text("Покупка ⬇️")

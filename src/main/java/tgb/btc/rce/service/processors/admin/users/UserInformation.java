@@ -8,7 +8,7 @@ import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.impl.UserInfoService;
 import tgb.btc.rce.service.processors.support.MessagesService;
-import tgb.btc.rce.util.UpdateUtil;
+
 
 @Slf4j
 @CommandProcessor(command = Command.USER_INFORMATION)
@@ -30,14 +30,14 @@ public class UserInformation extends Processor {
 
     @Override
     public void run(Update update) {
-        Long chatId = UpdateUtil.getChatId(update);
+        Long chatId = updateService.getChatId(update);
         if (checkForCancel(update)) return;
         switch (readUserService.getStepByChatId(chatId)) {
             case 0:
                 messagesService.askForChatId(update, Command.USER_INFORMATION);
                 break;
             case 1:
-                userInfoService.sendUserInformation(chatId, Long.parseLong(UpdateUtil.getMessageText(update)));
+                userInfoService.sendUserInformation(chatId, Long.parseLong(updateService.getMessageText(update)));
                 processToAdminMainPanel(chatId);
                 break;
         }

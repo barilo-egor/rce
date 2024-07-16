@@ -18,7 +18,6 @@ import tgb.btc.rce.enums.Menu;
 import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.IUpdateDispatcher;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.InlineButton;
 
 import java.util.*;
@@ -50,7 +49,7 @@ public class Dice extends Processor {
 
     @Override
     public void run(Update update) {
-        Long chatId = UpdateUtil.getChatId(update);
+        Long chatId = updateService.getChatId(update);
         if (DiceType.NONE.isCurrent() || (DiceType.STANDARD_ADMIN.isCurrent() && UserRole.USER.equals(readUserService.getUserRoleByChatId(chatId)))) {
             processToStart(chatId, update);
             return;
@@ -73,7 +72,7 @@ public class Dice extends Processor {
     }
 
     private void numberCallBack(Update update) {
-        Long chatId = UpdateUtil.getChatId(update);
+        Long chatId = updateService.getChatId(update);
         if (PropertiesPath.DICE_PROPERTIES.getString("button.back.text").equals(callbackQueryService.getSplitData(update.getCallbackQuery(), 2))) {
             responseSender.deleteCallbackMessageIfExists(update);
             Integer referralBalance = readUserService.getReferralBalanceByChatId(chatId);
@@ -91,7 +90,7 @@ public class Dice extends Processor {
                 .equals(callbackQueryService.getSplitData(update.getCallbackQuery(), 2))) {
             responseSender.deleteCallbackMessageIfExists(update);
         } else {
-            Long chatId = UpdateUtil.getChatId(update);
+            Long chatId = updateService.getChatId(update);
             Integer bet = Integer.parseInt(callbackQueryService.getSplitData(update.getCallbackQuery(), 2));
             if (readUserService.getReferralBalanceByChatId(chatId) < bet) {
                 responseSender.sendMessage(chatId, PropertiesPath.DICE_MESSAGE.getString("balance.empty"));
@@ -190,7 +189,7 @@ public class Dice extends Processor {
 
     private boolean isDrawsCommand(Update update) {
         if (!update.hasMessage() || !update.getMessage().hasText()) return false;
-        Long chatId = UpdateUtil.getChatId(update);
+        Long chatId = updateService.getChatId(update);
         Command drawsCommand = null;
         Command commandFromUpdate = Command.fromUpdate(update);
         List<Command> commands = new ArrayList<>(Menu.DRAWS.getCommands());

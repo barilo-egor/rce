@@ -47,7 +47,6 @@ import tgb.btc.rce.service.process.IUserDiscountProcessService;
 import tgb.btc.rce.service.util.ICallbackQueryService;
 import tgb.btc.rce.service.util.ICryptoCurrenciesDesignService;
 import tgb.btc.rce.service.util.IMessagePropertiesService;
-import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.CalculatorQuery;
 import tgb.btc.rce.vo.InlineButton;
 
@@ -103,6 +102,13 @@ public class ExchangeService {
     private IFunctionsService functionsService;
 
     private IMessagePropertiesService messagePropertiesService;
+
+    private IUpdateService updateService;
+
+    @Autowired
+    public void setUpdateService(IUpdateService updateService) {
+        this.updateService = updateService;
+    }
 
     @Autowired
     public void setMessagePropertiesService(IMessagePropertiesService messagePropertiesService) {
@@ -226,7 +232,7 @@ public class ExchangeService {
     }
 
     public boolean saveFiatCurrency(Update update) {
-        Long chatId = UpdateUtil.getChatId(update);
+        Long chatId = updateService.getChatId(update);
         FiatCurrency fiatCurrency;
         boolean isFew = FiatCurrencyUtil.isFew();
         log.debug("isFew = " + isFew);
@@ -251,7 +257,7 @@ public class ExchangeService {
     }
 
     public boolean saveCryptoCurrency(Update update) {
-        Long chatId = UpdateUtil.getChatId(update);
+        Long chatId = updateService.getChatId(update);
         if (!update.hasCallbackQuery()) {
             responseSender.sendMessage(chatId, "Выберите валюту.");
             return false;
@@ -337,7 +343,7 @@ public class ExchangeService {
     }
 
     public void calculateForInlineQuery(Update update) {
-        Long chatId = UpdateUtil.getChatId(update);
+        Long chatId = updateService.getChatId(update);
         String inlineQueryId = update.getInlineQuery().getId();
         CalculatorQuery calculatorQuery;
         try {
@@ -373,7 +379,7 @@ public class ExchangeService {
     }
 
     public void askForUserRequisites(Update update) {
-        Long chatId = UpdateUtil.getChatId(update);
+        Long chatId = updateService.getChatId(update);
         Deal deal = readDealService.findByPid(readUserService.getCurrentDealByChatId(chatId));
         CryptoCurrency cryptoCurrency = deal.getCryptoCurrency();
         ReplyKeyboard keyboard;
@@ -451,7 +457,7 @@ public class ExchangeService {
         }
         boolean isUsed = isUsePromoData(update.getCallbackQuery().getData());
         modifyDealService.updateIsUsedPromoByPid(isUsed,
-                readUserService.getCurrentDealByChatId(UpdateUtil.getChatId(update)));
+                readUserService.getCurrentDealByChatId(updateService.getChatId(update)));
     }
 
     private boolean isUsePromoData(String data) {
@@ -459,13 +465,13 @@ public class ExchangeService {
     }
 
     public boolean saveRequisites(Update update) {
-        Long chatId = UpdateUtil.getChatId(update);
-        Long currentDealPid = readUserService.getCurrentDealByChatId(UpdateUtil.getChatId(update));
+        Long chatId = updateService.getChatId(update);
+        Long currentDealPid = readUserService.getCurrentDealByChatId(updateService.getChatId(update));
         DealType dealType = dealPropertyService.getDealTypeByPid(currentDealPid);
         String wallet;
         if (DealType.isBuy(dealType)) {
             if (update.hasMessage()) {
-                wallet = UpdateUtil.getMessageText(update);
+                wallet = updateService.getMessageText(update);
                 try {
                     validateWallet(wallet);
                     responseSender.deleteMessage(chatId, update.getMessage().getMessageId());
@@ -482,7 +488,7 @@ public class ExchangeService {
                 responseSender.deleteCallbackMessageIfExists(update);
             }
         } else {
-            wallet = UpdateUtil.getMessageText(update);
+            wallet = updateService.getMessageText(update);
         }
         modifyDealService.updateWalletByPid(wallet, currentDealPid);
         return true;
@@ -496,7 +502,7 @@ public class ExchangeService {
     }
 
     public void askForPaymentType(Update update) {
-        Long chatId = UpdateUtil.getChatId(update);
+        Long chatId = updateService.getChatId(update);
         Deal deal = readDealService.findByPid(readUserService.getCurrentDealByChatId(chatId));
         BigDecimal dealAmount = deal.getAmount();
         String displayCurrencyName = cryptoCurrenciesDesignService.getDisplayName(deal.getCryptoCurrency());
@@ -537,7 +543,7 @@ public class ExchangeService {
     }
 
     public Boolean savePaymentType(Update update) {
-        Long chatId = UpdateUtil.getChatId(update);
+        Long chatId = updateService.getChatId(update);
         PaymentType paymentType;
         if (!isFewPaymentTypes(chatId)) {
             try {
@@ -572,7 +578,7 @@ public class ExchangeService {
     }
 
     public void buildDeal(Update update) {
-        Long chatId = UpdateUtil.getChatId(update);
+        Long chatId = updateService.getChatId(update);
         Deal deal = readDealService.findByPid(readUserService.getCurrentDealByChatId(chatId));
         CryptoCurrency currency = deal.getCryptoCurrency();
         DealType dealType = deal.getDealType();
@@ -692,7 +698,7 @@ public class ExchangeService {
     }
 
     public Boolean isPaid(Update update) {
-        Long chatId = UpdateUtil.getChatId(update);
+        Long chatId = updateService.getChatId(update);
         if (!update.hasCallbackQuery()) {
             responseSender.sendMessage(chatId, "Для отмены сделки нажми \"Отменить сделку\".");
             return null;
@@ -725,7 +731,7 @@ public class ExchangeService {
     }
 
     public void confirmDeal(Update update) {
-        Long chatId = UpdateUtil.getChatId(update);
+        Long chatId = updateService.getChatId(update);
         Long currentDealPid = readUserService.getCurrentDealByChatId(chatId);
         DealDeleteScheduler.deleteCryptoDeal(currentDealPid);
         DealType dealType = dealPropertyService.getDealTypeByPid(currentDealPid);
@@ -740,7 +746,7 @@ public class ExchangeService {
     }
 
     public void askForReferralDiscount(Update update) {
-        Long chatId = UpdateUtil.getChatId(update);
+        Long chatId = updateService.getChatId(update);
         Long currentDealPid = readUserService.getCurrentDealByChatId(chatId);
         BigDecimal dealAmount = dealPropertyService.getAmountByPid(currentDealPid);
         if (BooleanUtils.isTrue(dealPropertyService.getIsUsedPromoByPid(currentDealPid))) {
@@ -774,7 +780,7 @@ public class ExchangeService {
     }
 
     public boolean processReferralDiscount(Update update) {
-        Long chatId = UpdateUtil.getChatId(update);
+        Long chatId = updateService.getChatId(update);
         if (!update.hasCallbackQuery()) {
             responseSender.sendMessage(chatId, "Выбери использовать со скидкой или без, либо нажми \"Назад\" " +
                     "для возвращения в предыдущее меню.");
@@ -786,12 +792,12 @@ public class ExchangeService {
     }
 
     public void askForReceipts(Update update) {
-        responseSender.sendMessage(UpdateUtil.getChatId(update),
+        responseSender.sendMessage(updateService.getChatId(update),
                 "Отправьте скрин перевода, либо чек оплаты.", keyboardService.getCancelDeal());
     }
 
     public boolean saveReceipts(Update update) {
-        Long chatId = UpdateUtil.getChatId(update);
+        Long chatId = updateService.getChatId(update);
         Deal deal = readDealService.findByPid(readUserService.getCurrentDealByChatId(chatId));
         PaymentReceipt paymentReceipt;
         if (update.getMessage().hasDocument()) {
@@ -823,7 +829,7 @@ public class ExchangeService {
     }
 
     public void saveDeliveryTypeAndUpdateAmount(Update update) {
-        Long chatId = UpdateUtil.getChatId(update);
+        Long chatId = updateService.getChatId(update);
         DeliveryType deliveryType;
         Long dealPid = readUserService.getCurrentDealByChatId(chatId);
         DealType dealType = dealPropertyService.getDealTypeByPid(dealPid);

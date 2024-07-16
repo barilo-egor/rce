@@ -12,7 +12,6 @@ import tgb.btc.rce.enums.InlineType;
 import tgb.btc.rce.enums.PropertiesMessage;
 import tgb.btc.rce.enums.Rank;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.InlineButton;
 
 import java.math.BigDecimal;
@@ -31,7 +30,7 @@ public class Referral extends Processor {
 
     @Override
     public void run(Update update) {
-        Long chatId = UpdateUtil.getChatId(update);
+        Long chatId = updateService.getChatId(update);
         String startParameter = "?start=" + chatId;
         String refLink = PropertiesPath.BOT_PROPERTIES.getString("bot.link").concat(startParameter);
         BigDecimal referralBalance = BigDecimal.valueOf(readUserService.getReferralBalanceByChatId(chatId));

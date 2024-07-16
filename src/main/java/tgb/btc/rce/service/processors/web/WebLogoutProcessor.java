@@ -6,7 +6,7 @@ import tgb.btc.api.bot.WebAPI;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.util.UpdateUtil;
+
 
 @CommandProcessor(command = Command.LOGOUT)
 public class WebLogoutProcessor extends Processor {
@@ -20,7 +20,7 @@ public class WebLogoutProcessor extends Processor {
 
     @Override
     public void run(Update update) {
-        Long chatId = UpdateUtil.getChatId(update);
+        Long chatId = updateService.getChatId(update);
         webAPI.logout(chatId);
         responseSender.deleteCallbackMessageIfExists(update);
         responseSender.sendMessage(chatId, "Сессия закрыта.");

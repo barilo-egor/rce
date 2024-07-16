@@ -22,7 +22,6 @@ import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.util.ICryptoCurrenciesDesignService;
-import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.ReplyButton;
 
 import java.io.File;
@@ -68,7 +67,7 @@ public class DealReports extends Processor {
 
     @Override
     public void run(Update update) {
-        Long chatId = UpdateUtil.getChatId(update);
+        Long chatId = updateService.getChatId(update);
         if (checkForCancel(update)) return;
         switch (readUserService.getStepByChatId(chatId)) {
             case 0:
@@ -94,7 +93,7 @@ public class DealReports extends Processor {
                 modifyUserService.nextStep(chatId, Command.DEAL_REPORTS.name());
                 break;
             case 1:
-                String period = UpdateUtil.getMessageText(update);
+                String period = updateService.getMessageText(update);
                 switch (period) {
                     case TODAY:
                         try {
@@ -146,8 +145,8 @@ public class DealReports extends Processor {
     }
 
     public LocalDate getDate(Update update) {
-        if (!UpdateUtil.hasMessageText(update)) throw new BaseException("Отсутствует message text.");
-        String[] values = UpdateUtil.getMessageText(update).split("\\.");
+        if (!updateService.hasMessageText(update)) throw new BaseException("Отсутствует message text.");
+        String[] values = updateService.getMessageText(update).split("\\.");
         try {
             if (values.length != 3) throw new BaseException("Неверный формат даты.");
             return LocalDate.of(Integer.parseInt(values[2]), Integer.parseInt(values[1]), Integer.parseInt(values[0]));

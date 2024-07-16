@@ -10,7 +10,7 @@ import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.processors.admin.settings.disounts.RankDiscountProcessor;
-import tgb.btc.rce.util.UpdateUtil;
+
 
 @CommandProcessor(command = Command.CHANGE_RANK_DISCOUNT)
 public class ChangeRankDiscountProcessor extends Processor {
@@ -43,7 +43,7 @@ public class ChangeRankDiscountProcessor extends Processor {
             userDiscount.setRankDiscountOn(isRankDiscountOn);
             userDiscountService.save(userDiscount);
         }
-        responseSender.deleteMessage(UpdateUtil.getChatId(update), update.getCallbackQuery().getMessage().getMessageId());
-        rankDiscountProcessor.sendUserRankDiscount(UpdateUtil.getChatId(update), userChatId);
+        responseSender.deleteMessage(updateService.getChatId(update), update.getCallbackQuery().getMessage().getMessageId());
+        rankDiscountProcessor.sendUserRankDiscount(updateService.getChatId(update), userChatId);
     }
 }

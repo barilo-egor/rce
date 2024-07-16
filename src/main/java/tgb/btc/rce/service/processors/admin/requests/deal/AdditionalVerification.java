@@ -10,7 +10,6 @@ import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.ReplyButton;
 
 import java.util.List;
@@ -36,7 +35,7 @@ public class AdditionalVerification extends Processor implements AdditionalVerif
     public void run(Update update) {
         Long dealPid = Long.parseLong(update.getCallbackQuery().getData().split(BotStringConstants.CALLBACK_DATA_SPLITTER)[1]);
         ask(dealPid);
-        responseSender.sendMessage(UpdateUtil.getChatId(update), "Дополнительная верификация запрошена.");
+        responseSender.sendMessage(updateService.getChatId(update), "Дополнительная верификация запрошена.");
     }
 
     public void ask(Long dealPid) {

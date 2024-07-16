@@ -12,7 +12,6 @@ import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.processors.support.ExchangeService;
-import tgb.btc.rce.util.UpdateUtil;
 
 import java.util.List;
 
@@ -43,7 +42,7 @@ public class Buy extends Processor {
 
     @Override
     public void run(Update update) {
-        Long chatId = UpdateUtil.getChatId(update);
+        Long chatId = updateService.getChatId(update);
         if (!checkAllowedDealsCount(chatId)) {
             responseSender.sendMessage(chatId, "Достигнут лимит количества сделок!");
             return;

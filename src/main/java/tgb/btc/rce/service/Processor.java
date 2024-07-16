@@ -18,7 +18,6 @@ import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
 import tgb.btc.rce.service.util.ICallbackQueryService;
 import tgb.btc.rce.service.util.IMenuService;
 import tgb.btc.rce.service.util.IMessagePropertiesService;
-import tgb.btc.rce.util.UpdateUtil;
 
 @Slf4j
 public abstract class Processor {
@@ -40,6 +39,13 @@ public abstract class Processor {
     protected ICallbackQueryService callbackQueryService;
     
     protected IMessagePropertiesService messagePropertiesService;
+
+    protected IUpdateService updateService;
+
+    @Autowired
+    public void setUpdateService(IUpdateService updateService) {
+        this.updateService = updateService;
+    }
 
     @Autowired
     public void setMessagePropertiesService(IMessagePropertiesService messagePropertiesService) {
@@ -100,13 +106,13 @@ public abstract class Processor {
     }
 
     public void beforeCancel(Update update) {
-        modifyUserService.setDefaultValues(UpdateUtil.getChatId(update));
+        modifyUserService.setDefaultValues(updateService.getChatId(update));
     }
 
     public abstract void run(Update update);
 
     public boolean checkForCancel(Update update) {
-        Long chatId = UpdateUtil.getChatId(update);
+        Long chatId = updateService.getChatId(update);
         if (User.DEFAULT_STEP == readUserService.getStepByChatId(chatId)) return false;
         if (this.getClass().getAnnotation(CommandProcessor.class).command().hasAccess(readUserService.getUserRoleByChatId(chatId)) &&
                 (isCommand(update, Command.ADMIN_BACK) || isCommand(update, Command.CANCEL))) {
@@ -152,8 +158,8 @@ public abstract class Processor {
     }
 
     protected boolean hasMessageText(Update update, String message) {
-        if (!UpdateUtil.hasMessageText(update)) {
-            responseSender.sendMessage(UpdateUtil.getChatId(update), message);
+        if (!updateService.hasMessageText(update)) {
+            responseSender.sendMessage(updateService.getChatId(update), message);
             return false;
         }
         return true;
