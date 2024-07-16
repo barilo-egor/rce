@@ -15,6 +15,8 @@ import tgb.btc.rce.enums.Menu;
 import tgb.btc.rce.enums.PropertiesMessage;
 import tgb.btc.rce.enums.UpdateType;
 import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
+import tgb.btc.rce.service.util.ICallbackQueryService;
+import tgb.btc.rce.service.util.IMenuService;
 import tgb.btc.rce.util.MessagePropertiesUtil;
 import tgb.btc.rce.util.UpdateUtil;
 

@@ -1,4 +1,4 @@
-package tgb.btc.rce.service;
+package tgb.btc.rce.service.util;
 
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import tgb.btc.library.constants.enums.bot.UserRole;

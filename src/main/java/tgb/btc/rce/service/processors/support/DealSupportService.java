@@ -17,8 +17,8 @@ import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.library.interfaces.service.bean.web.IApiDealService;
 import tgb.btc.library.util.BigDecimalUtil;
 import tgb.btc.rce.enums.Command;
-import tgb.btc.rce.service.ICallbackQueryService;
 import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
+import tgb.btc.rce.service.util.ICallbackQueryService;
 import tgb.btc.rce.vo.InlineButton;
 
 import java.math.RoundingMode;

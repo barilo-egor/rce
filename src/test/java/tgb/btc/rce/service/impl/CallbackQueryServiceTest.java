@@ -8,6 +8,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.exception.BaseException;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
+import tgb.btc.rce.service.impl.util.CallbackQueryService;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;

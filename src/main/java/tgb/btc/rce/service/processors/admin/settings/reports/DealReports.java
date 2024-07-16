@@ -21,7 +21,7 @@ import tgb.btc.library.util.BigDecimalUtil;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.util.CryptoCurrenciesDesignUtil;
+import tgb.btc.rce.service.util.ICryptoCurrenciesDesignService;
 import tgb.btc.rce.util.MessageTextUtil;
 import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.ReplyButton;
@@ -48,6 +48,13 @@ public class DealReports extends Processor {
     private IDateDealService dateDealService;
 
     private IApiDealService apiDealService;
+
+    private ICryptoCurrenciesDesignService cryptoCurrenciesDesignService;
+
+    @Autowired
+    public void setCryptoCurrenciesDesignService(ICryptoCurrenciesDesignService cryptoCurrenciesDesignService) {
+        this.cryptoCurrenciesDesignService = cryptoCurrenciesDesignService;
+    }
 
     @Autowired
     public void setDateDealService(IDateDealService dateDealService) {
@@ -248,7 +255,7 @@ public class DealReports extends Processor {
                     ? totalBuyCryptoAmountMap : totalSellCryptoAmountMap;
             totalCryptoAmountMap.put(deal.getCryptoCurrency(), totalCryptoAmountMap.get(deal.getCryptoCurrency()).add(deal.getCryptoAmount()));
             cell = row.createCell(6);
-            cell.setCellValue(CryptoCurrenciesDesignUtil.getDisplayName(deal.getCryptoCurrency()));
+            cell.setCellValue(cryptoCurrenciesDesignService.getDisplayName(deal.getCryptoCurrency()));
             cell = row.createCell(7);
             // getPaymentTypeEnum используется для старых сделок
             String paymentTypeName = Objects.nonNull(deal.getPaymentType())
@@ -323,7 +330,7 @@ public class DealReports extends Processor {
                     ? totalBuyCryptoAmountMap : totalSellCryptoAmountMap;
             totalCryptoAmountMap.put(deal.getCryptoCurrency(), totalCryptoAmountMap.get(deal.getCryptoCurrency()).add(deal.getCryptoAmount()));
             cell = row.createCell(5);
-            cell.setCellValue(CryptoCurrenciesDesignUtil.getDisplayName(deal.getCryptoCurrency()));
+            cell.setCellValue(cryptoCurrenciesDesignService.getDisplayName(deal.getCryptoCurrency()));
             cell = row.createCell(6);
             cell.setCellValue(deal.getApiUser().getId());
             i++;
@@ -379,6 +386,6 @@ public class DealReports extends Processor {
         cell.setCellValue(BigDecimalUtil.roundToPlainString(totalFiatAmountMap.get(cryptoCurrency),
                 cryptoCurrency.getScale()));
         cell = row.createCell(startCell + 1);
-        cell.setCellValue(CryptoCurrenciesDesignUtil.getDisplayName(cryptoCurrency));
+        cell.setCellValue(cryptoCurrenciesDesignService.getDisplayName(cryptoCurrency));
     }
 }

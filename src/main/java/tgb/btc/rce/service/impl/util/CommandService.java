@@ -1,9 +1,9 @@
-package tgb.btc.rce.service.impl;
+package tgb.btc.rce.service.impl.util;
 
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.enums.Command;
-import tgb.btc.rce.service.ICommandService;
+import tgb.btc.rce.service.util.ICommandService;
 import tgb.btc.rce.util.UpdateUtil;
 
 @Service

@@ -5,6 +5,7 @@ import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.Test;
 import org.telegram.telegrambots.meta.api.objects.PhotoSize;
 import tgb.btc.library.exception.BaseException;
+import tgb.btc.rce.service.impl.util.BotImageService;
 
 import java.util.ArrayList;
 import java.util.List;

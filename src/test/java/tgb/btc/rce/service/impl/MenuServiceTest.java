@@ -15,6 +15,7 @@ import tgb.btc.rce.service.IMenu;
 import tgb.btc.rce.service.impl.menu.BotSettingsMenu;
 import tgb.btc.rce.service.impl.menu.DrawsMenu;
 import tgb.btc.rce.service.impl.menu.MainMenu;
+import tgb.btc.rce.service.impl.util.MenuService;
 import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
 import tgb.btc.rce.vo.ReplyButton;
 

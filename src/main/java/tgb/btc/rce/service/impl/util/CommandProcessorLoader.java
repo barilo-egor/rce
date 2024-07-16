@@ -1,4 +1,4 @@
-package tgb.btc.rce.service.impl;
+package tgb.btc.rce.service.impl.util;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,8 +7,8 @@ import org.springframework.util.ClassUtils;
 import tgb.btc.library.exception.BaseException;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
-import tgb.btc.rce.service.ICommandProcessorLoader;
 import tgb.btc.rce.service.Processor;
+import tgb.btc.rce.service.util.ICommandProcessorLoader;
 
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;

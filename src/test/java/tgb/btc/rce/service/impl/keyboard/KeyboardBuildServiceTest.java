@@ -12,7 +12,7 @@ import tgb.btc.library.bean.bot.Contact;
 import tgb.btc.library.exception.BaseException;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.InlineType;
-import tgb.btc.rce.service.impl.CallbackQueryService;
+import tgb.btc.rce.service.impl.util.CallbackQueryService;
 import tgb.btc.rce.vo.InlineButton;
 import tgb.btc.rce.vo.ReplyButton;
 

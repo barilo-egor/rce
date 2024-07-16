@@ -11,8 +11,8 @@ import tgb.btc.library.interfaces.service.bean.bot.user.IModifyUserService;
 import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.Menu;
-import tgb.btc.rce.service.IMenuService;
 import tgb.btc.rce.service.impl.ResponseSender;
+import tgb.btc.rce.service.util.IMenuService;
 import tgb.btc.rce.util.NumberUtil;
 import tgb.btc.rce.util.UpdateUtil;
 

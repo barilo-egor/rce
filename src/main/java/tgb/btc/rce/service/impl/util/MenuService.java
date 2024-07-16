@@ -1,4 +1,4 @@
-package tgb.btc.rce.service.impl;
+package tgb.btc.rce.service.impl.util;
 
 import com.google.common.base.Functions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,8 +7,8 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import tgb.btc.library.constants.enums.bot.UserRole;
 import tgb.btc.rce.enums.Menu;
 import tgb.btc.rce.service.IMenu;
-import tgb.btc.rce.service.IMenuService;
 import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
+import tgb.btc.rce.service.util.IMenuService;
 import tgb.btc.rce.vo.ReplyButton;
 
 import java.util.EnumMap;

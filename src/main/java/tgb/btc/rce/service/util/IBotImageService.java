@@ -1,4 +1,4 @@
-package tgb.btc.rce.service;
+package tgb.btc.rce.service.util;
 
 import org.telegram.telegrambots.meta.api.objects.PhotoSize;
 

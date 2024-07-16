@@ -17,8 +17,8 @@ import tgb.btc.library.interfaces.service.bean.bot.user.IModifyUserService;
 import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.library.service.bean.bot.ReferralUserService;
 import tgb.btc.rce.enums.Command;
-import tgb.btc.rce.service.ICommandService;
 import tgb.btc.rce.service.process.IUserProcessService;
+import tgb.btc.rce.service.util.ICommandService;
 import tgb.btc.rce.util.UpdateUtil;
 
 import java.math.BigDecimal;

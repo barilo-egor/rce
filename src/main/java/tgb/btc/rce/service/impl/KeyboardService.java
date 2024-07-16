@@ -24,12 +24,12 @@ import tgb.btc.rce.enums.BotInlineButton;
 import tgb.btc.rce.enums.BotReplyButton;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.InlineType;
-import tgb.btc.rce.service.ICallbackQueryService;
 import tgb.btc.rce.service.IKeyboardService;
 import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
 import tgb.btc.rce.service.processors.calculator.InlineCalculator;
+import tgb.btc.rce.service.util.ICallbackQueryService;
+import tgb.btc.rce.service.util.ICryptoCurrenciesDesignService;
 import tgb.btc.rce.util.BeanHolder;
-import tgb.btc.rce.util.CryptoCurrenciesDesignUtil;
 import tgb.btc.rce.util.FiatCurrenciesDesignUtil;
 import tgb.btc.rce.util.TurningCurrenciesUtil;
 import tgb.btc.rce.vo.InlineButton;
@@ -51,6 +51,13 @@ public class KeyboardService implements IKeyboardService {
     private IKeyboardBuildService keyboardBuildService;
     
     private ICallbackQueryService callbackQueryService;
+    
+    private ICryptoCurrenciesDesignService cryptoCurrenciesDesignService;
+
+    @Autowired
+    public void setCryptoCurrenciesDesignService(ICryptoCurrenciesDesignService cryptoCurrenciesDesignService) {
+        this.cryptoCurrenciesDesignService = cryptoCurrenciesDesignService;
+    }
 
     @Autowired
     public void setCallbackQueryService(ICallbackQueryService callbackQueryService) {
@@ -71,7 +78,7 @@ public class KeyboardService implements IKeyboardService {
     public ReplyKeyboard getCurrencies(DealType dealType) {
         List<InlineButton> currencies = new ArrayList<>();
         TurningCurrenciesUtil.getSwitchedOnByDealType(dealType)
-                .forEach(currency -> currencies.add(InlineButton.buildData(CryptoCurrenciesDesignUtil.getDisplayName(currency), currency.name())));
+                .forEach(currency -> currencies.add(InlineButton.buildData(cryptoCurrenciesDesignService.getDisplayName(currency), currency.name())));
         currencies.add(keyboardBuildService.getInlineBackButton());
         return keyboardBuildService.buildInline(currencies);
     }

@@ -1,4 +1,4 @@
-package tgb.btc.rce.service.impl;
+package tgb.btc.rce.service.impl.util;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
@@ -8,7 +8,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.exception.BaseException;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
-import tgb.btc.rce.service.ICallbackQueryService;
+import tgb.btc.rce.service.util.ICallbackQueryService;
 
 import java.util.Arrays;
 import java.util.Objects;

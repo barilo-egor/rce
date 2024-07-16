@@ -1,10 +1,10 @@
-package tgb.btc.rce.service.impl;
+package tgb.btc.rce.service.impl.util;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.PhotoSize;
 import tgb.btc.library.exception.BaseException;
-import tgb.btc.rce.service.IBotImageService;
+import tgb.btc.rce.service.util.IBotImageService;
 
 import java.util.Comparator;
 import java.util.List;
