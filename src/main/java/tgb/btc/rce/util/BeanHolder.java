@@ -8,6 +8,7 @@ import tgb.btc.rce.RceApplication;
 import tgb.btc.rce.service.IKeyboardService;
 import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
+import tgb.btc.rce.service.util.IMessagePropertiesService;
 
 @Slf4j
 public class BeanHolder {
@@ -24,6 +25,8 @@ public class BeanHolder {
 
     public static IKeyboardBuildService keyboardBuildService;
 
+    public static IMessagePropertiesService messagePropertiesService;
+
     public static void load() {
         log.info("Загрузка бинов в BeanHolder.");
         responseSender = RceApplication.SPRING_CONTEXT.getBean(IResponseSender.class);
@@ -32,6 +35,7 @@ public class BeanHolder {
         readUserService = RceApplication.SPRING_CONTEXT.getBean(IReadUserService.class);
         keyboardService = RceApplication.SPRING_CONTEXT.getBean(IKeyboardService.class);
         keyboardBuildService = RceApplication.SPRING_CONTEXT.getBean(IKeyboardBuildService.class);
+        messagePropertiesService = RceApplication.SPRING_CONTEXT.getBean(IMessagePropertiesService.class);
         log.info("Загрузка бинов BeanHolder завершена.");
     }
 }

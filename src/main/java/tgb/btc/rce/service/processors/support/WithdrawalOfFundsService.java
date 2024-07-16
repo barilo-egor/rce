@@ -15,7 +15,7 @@ import tgb.btc.rce.enums.PropertiesMessage;
 import tgb.btc.rce.service.INotifyService;
 import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
-import tgb.btc.rce.util.MessagePropertiesUtil;
+import tgb.btc.rce.service.util.IMessagePropertiesService;
 import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.util.WithdrawalRequestUtil;
 import tgb.btc.rce.vo.ReplyButton;
@@ -37,6 +37,13 @@ public class WithdrawalOfFundsService {
     private IModifyUserService modifyUserService;
 
     private IKeyboardBuildService keyboardBuildService;
+
+    private IMessagePropertiesService messagePropertiesService;
+
+    @Autowired
+    public void setMessagePropertiesService(IMessagePropertiesService messagePropertiesService) {
+        this.messagePropertiesService = messagePropertiesService;
+    }
 
     @Autowired
     public void setKeyboardBuildService(IKeyboardBuildService keyboardBuildService) {
@@ -72,21 +79,21 @@ public class WithdrawalOfFundsService {
         Long chatId = UpdateUtil.getChatId(update);
         if (!update.getMessage().hasContact()) {
             responseSender.sendMessage(chatId,
-                    MessagePropertiesUtil.getMessage(PropertiesMessage.WITHDRAWAL_ERROR_CONTACT));
+                    messagePropertiesService.getMessage(PropertiesMessage.WITHDRAWAL_ERROR_CONTACT));
             return false;
         }
         WithdrawalRequest request = withdrawalRequestService.save(
                 WithdrawalRequestUtil.buildFromUpdate(readUserService.findByChatId(UpdateUtil.getChatId(update)), update));
-        notifyService.notifyMessage(MessagePropertiesUtil.getMessage(PropertiesMessage.ADMIN_NOTIFY_WITHDRAWAL_NEW),
+        notifyService.notifyMessage(messagePropertiesService.getMessage(PropertiesMessage.ADMIN_NOTIFY_WITHDRAWAL_NEW),
                 Command.SHOW_WITHDRAWAL_REQUEST.getText() + BotStringConstants.CALLBACK_DATA_SPLITTER +
                         request.getPid(), Set.of(UserRole.OPERATOR, UserRole.ADMIN));
         responseSender.sendMessage(chatId,
-                MessagePropertiesUtil.getMessage(PropertiesMessage.USER_RESPONSE_WITHDRAWAL_REQUEST_CREATED));
+                messagePropertiesService.getMessage(PropertiesMessage.USER_RESPONSE_WITHDRAWAL_REQUEST_CREATED));
         return true;
     }
 
     public String toString(WithdrawalRequest withdrawalRequest) {
-        return String.format(MessagePropertiesUtil.getMessage(PropertiesMessage.WITHDRAWAL_TO_STRING),
+        return String.format(messagePropertiesService.getMessage(PropertiesMessage.WITHDRAWAL_TO_STRING),
                 withdrawalRequest.getPid(), withdrawalRequest.getPhoneNumber(), withdrawalRequest.getUser().getChatId());
     }
 
@@ -103,7 +110,7 @@ public class WithdrawalOfFundsService {
                         .text(Command.CANCEL.getText())
                         .build()
         ));
-        responseSender.sendMessage(chatId, MessagePropertiesUtil.getMessage(PropertiesMessage.WITHDRAWAL_ASK_CONTACT),
+        responseSender.sendMessage(chatId, messagePropertiesService.getMessage(PropertiesMessage.WITHDRAWAL_ASK_CONTACT),
                 keyboard);
     }
 }

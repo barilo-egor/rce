@@ -15,7 +15,7 @@ import tgb.btc.rce.enums.PropertiesMessage;
 import tgb.btc.rce.service.impl.ResponseSender;
 import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
 import tgb.btc.rce.service.util.IMenuService;
-import tgb.btc.rce.util.MessagePropertiesUtil;
+import tgb.btc.rce.service.util.IMessagePropertiesService;
 import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.InlineButton;
 
@@ -39,6 +39,13 @@ public class EditContactsService {
     private IMenuService menuService;
 
     private IKeyboardBuildService keyboardBuildService;
+
+    private IMessagePropertiesService messagePropertiesService;
+
+    @Autowired
+    public void setMessagePropertiesService(IMessagePropertiesService messagePropertiesService) {
+        this.messagePropertiesService = messagePropertiesService;
+    }
 
     @Autowired
     public void setKeyboardBuildService(IKeyboardBuildService keyboardBuildService) {
@@ -72,7 +79,7 @@ public class EditContactsService {
 
     public void askInput(Long chatId) {
         modifyUserService.nextStep(chatId, Command.ADD_CONTACT.name());
-        responseSender.sendMessage(chatId, MessagePropertiesUtil.getMessage(PropertiesMessage.CONTACT_ASK_INPUT),
+        responseSender.sendMessage(chatId, messagePropertiesService.getMessage(PropertiesMessage.CONTACT_ASK_INPUT),
                 menuService.build(Menu.ADMIN_BACK, readUserService.getUserRoleByChatId(chatId)));
     }
 
@@ -91,7 +98,7 @@ public class EditContactsService {
         if (optionalMessage.isEmpty()) throw new BaseException("Не получено отправленное сообщение");
         Integer messageId = optionalMessage.get().getMessageId();
         responseSender.sendEditedMessageText(chatId, messageId,
-                MessagePropertiesUtil.getMessage(PropertiesMessage.CONTACT_ASK_DELETE),
+                messagePropertiesService.getMessage(PropertiesMessage.CONTACT_ASK_DELETE),
                 keyboardBuildService.buildInline(buildContactButtons(messageId)));
     }
 

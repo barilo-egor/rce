@@ -33,7 +33,7 @@ import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
 import tgb.btc.rce.service.util.ICallbackQueryService;
 import tgb.btc.rce.service.util.IMenuService;
-import tgb.btc.rce.util.MessagePropertiesUtil;
+import tgb.btc.rce.service.util.IMessagePropertiesService;
 import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.InlineButton;
 
@@ -59,6 +59,13 @@ public class ResponseSender implements IResponseSender {
     private IKeyboardBuildService keyboardBuildService;
     
     private ICallbackQueryService callbackQueryService;
+
+    private IMessagePropertiesService messagePropertiesService;
+
+    @Autowired
+    public void setMessagePropertiesService(IMessagePropertiesService messagePropertiesService) {
+        this.messagePropertiesService = messagePropertiesService;
+    }
 
     @Autowired
     public void setCallbackQueryService(ICallbackQueryService callbackQueryService) {
@@ -123,7 +130,7 @@ public class ResponseSender implements IResponseSender {
     }
 
     public Optional<Message> sendMessage(Long chatId, PropertiesMessage propertiesMessage, Menu menu) {
-        return sendMessage(chatId, MessagePropertiesUtil.getMessage(propertiesMessage), menu);
+        return sendMessage(chatId, messagePropertiesService.getMessage(propertiesMessage), menu);
     }
 
     public Optional<Message> sendMessage(Long chatId, String text, ReplyKeyboard replyKeyboard) {

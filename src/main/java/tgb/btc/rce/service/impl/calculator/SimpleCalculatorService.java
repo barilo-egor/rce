@@ -14,7 +14,7 @@ import tgb.btc.rce.service.IKeyboardService;
 import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.IUpdateDispatcher;
 import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
-import tgb.btc.rce.util.MessagePropertiesUtil;
+import tgb.btc.rce.service.util.IMessagePropertiesService;
 import tgb.btc.rce.util.UpdateUtil;
 
 @Service
@@ -33,6 +33,13 @@ public abstract class SimpleCalculatorService implements ICalculatorTypeService 
     protected IUpdateDispatcher updateDispatcher;
 
     protected IKeyboardBuildService keyboardBuildService;
+
+    private IMessagePropertiesService messagePropertiesService;
+
+    @Autowired
+    public void setMessagePropertiesService(IMessagePropertiesService messagePropertiesService) {
+        this.messagePropertiesService = messagePropertiesService;
+    }
 
     @Autowired
     public void setKeyboardBuildService(IKeyboardBuildService keyboardBuildService) {
@@ -78,7 +85,7 @@ public abstract class SimpleCalculatorService implements ICalculatorTypeService 
         if (CryptoCurrency.BITCOIN.equals(cryptoCurrency))
             propertiesMessage = PropertiesMessage.DEAL_INPUT_SUM_CRYPTO_OR_FIAT; // TODO сейчас хардкод на "или в рублях", надо подставлять фиатное
         else propertiesMessage = PropertiesMessage.DEAL_INPUT_SUM;
-        String text = MessagePropertiesUtil.getMessage(propertiesMessage,
+        String text = messagePropertiesService.getMessage(propertiesMessage,
                 dealPropertyService.getCryptoCurrencyByPid(
                         readUserService.getCurrentDealByChatId(chatId)));
         SendMessage sendMessage = new SendMessage();

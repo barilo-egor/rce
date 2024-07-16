@@ -10,7 +10,6 @@ import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.util.MessagePropertiesUtil;
 import tgb.btc.rce.util.UpdateUtil;
 
 @CommandProcessor(command = Command.DELETE_USER_DEAL)
@@ -44,6 +43,6 @@ public class DeleteUserDeal extends Processor {
         DealDeleteScheduler.deleteCryptoDeal(dealPid);
         responseSender.sendMessage(chatId, "Заявка №" + dealPid + " удалена.");
         responseSender.deleteMessage(chatId, update.getCallbackQuery().getMessage().getMessageId());
-        responseSender.sendMessage(userChatId, MessagePropertiesUtil.getMessage("deal.deleted.by.admin"));
+        responseSender.sendMessage(userChatId, messagePropertiesService.getMessage("deal.deleted.by.admin"));
     }
 }

@@ -12,7 +12,6 @@ import tgb.btc.rce.enums.InlineType;
 import tgb.btc.rce.enums.PropertiesMessage;
 import tgb.btc.rce.enums.Rank;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.util.MessagePropertiesUtil;
 import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.InlineButton;
 
@@ -45,7 +44,7 @@ public class Referral extends Processor {
         Long dealsCount = dealCountService.getCountPassedByUserChatId(chatId);
         Rank rank = Rank.getByDealsNumber(dealsCount.intValue());
         String resultMessage;
-        String referralMessageFewFiat = MessagePropertiesUtil.getMessage("referral.main.few.fiat");
+        String referralMessageFewFiat = messagePropertiesService.getMessage("referral.main.few.fiat");
         if (Objects.nonNull(referralMessageFewFiat)) {
             String refBalanceString = PropertiesPath.VARIABLE_PROPERTIES.isNotBlank("course.rub.byn")
                     ? BigDecimalUtil.roundToPlainString(referralBalance.multiply(PropertiesPath.VARIABLE_PROPERTIES.getBigDecimal("course.rub.byn")), 2)
@@ -55,7 +54,7 @@ public class Referral extends Processor {
                     numberOfReferrals, numberOfActiveReferrals,
                     readUserService.getChargesByChatId(chatId), dealsCount, rank.getSmile(), rank.getPercent()).concat("%");
         } else {
-            resultMessage = String.format(MessagePropertiesUtil.getMessage(PropertiesMessage.REFERRAL_MAIN),
+            resultMessage = String.format(messagePropertiesService.getMessage(PropertiesMessage.REFERRAL_MAIN),
                     refLink, currentBalance, numberOfReferrals, numberOfActiveReferrals,
                     readUserService.getChargesByChatId(chatId), dealsCount, rank.getSmile(), rank.getPercent()).concat("%");
         }

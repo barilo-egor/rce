@@ -1,18 +1,18 @@
-package tgb.btc.rce.util;
+package tgb.btc.rce.service.impl.util;
 
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.constants.enums.properties.PropertiesPath;
 import tgb.btc.rce.enums.PropertiesMessage;
+import tgb.btc.rce.service.util.IMessagePropertiesService;
 
 import java.util.Objects;
 
-@Slf4j
-public class MessagePropertiesUtil {
+@Service
+public class MessagePropertiesService implements IMessagePropertiesService {
 
-    private final static String errorMessage = "Не найдено сообщение по ключу %s";
-
-    public static String getMessage(PropertiesMessage message) {
+    @Override
+    public String getMessage(PropertiesMessage message) {
         String text;
         try {
             String propertiesMessage = PropertiesPath.MESSAGE_PROPERTIES.getString(message.getKey());
@@ -25,19 +25,22 @@ public class MessagePropertiesUtil {
         return text;
     }
 
-    public static String getMessage(PropertiesMessage message, Object... variables) {
+    @Override
+    public String getMessage(PropertiesMessage message, Object... variables) {
         String propertiesMessage = getMessage(message);
         if (Objects.isNull(propertiesMessage)) return null; // TODO переделать на наллсейф,и не налл сейф
         return String.format(propertiesMessage, variables);
     }
 
-    public static String getMessage(String key, Object... variables) {
+    @Override
+    public String getMessage(String key, Object... variables) {
         String propertiesMessage = getMessageForFormat(key);
         if (Objects.isNull(propertiesMessage)) return null; // TODO переделать на наллсейф,и не налл сейф
         return String.format(propertiesMessage, variables);
     }
 
-    public static String getMessage(String key) {
+    @Override
+    public String getMessage(String key) {
         String text;
         try {
             String message = PropertiesPath.MESSAGE_PROPERTIES.getString(key);
@@ -50,8 +53,8 @@ public class MessagePropertiesUtil {
         return text;
     }
 
-
-    public static String getMessageForFormat(String key) {
+    @Override
+    public String getMessageForFormat(String key) {
         String text;
         try {
             String message = PropertiesPath.MESSAGE_PROPERTIES.getString(key);
@@ -64,11 +67,13 @@ public class MessagePropertiesUtil {
         return text;
     }
 
-    private static String getErrorText(String key) {
+    private String getErrorText(String key) {
+        String errorMessage = "Не найдено сообщение по ключу %s";
         return String.format(errorMessage, key);
     }
 
-    public static String getChooseCurrency(DealType dealType) {
+    @Override
+    public String getChooseCurrency(DealType dealType) {
         return getMessage(DealType.BUY.equals(dealType)
                 ? PropertiesMessage.CHOOSE_CURRENCY_BUY
                 : PropertiesMessage.CHOOSE_CURRENCY_SELL);

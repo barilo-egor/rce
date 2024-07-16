@@ -16,7 +16,7 @@ import tgb.btc.rce.enums.PropertiesMessage;
 import tgb.btc.rce.service.*;
 import tgb.btc.rce.service.processors.deal.DealProcessor;
 import tgb.btc.rce.service.processors.support.ExchangeService;
-import tgb.btc.rce.util.MessagePropertiesUtil;
+import tgb.btc.rce.service.util.IMessagePropertiesService;
 import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.InlineCalculatorData;
 import tgb.btc.rce.vo.InlineCalculatorVO;
@@ -44,6 +44,13 @@ public class InlineCalculator extends Processor {
     private IMessageService messageService;
 
     private IFunctionsService functionsService;
+
+    private IMessagePropertiesService messagePropertiesService;
+
+    @Autowired
+    public void setMessagePropertiesService(IMessagePropertiesService messagePropertiesService) {
+        this.messagePropertiesService = messagePropertiesService;
+    }
 
     @Autowired
     public void setFunctionsService(IFunctionsService functionsService) {
@@ -137,7 +144,7 @@ public class InlineCalculator extends Processor {
                 calculator.setSum(sum);
                 break;
             case SWITCH_CALCULATOR:
-                String textMessage = MessagePropertiesUtil.getMessage(PropertiesMessage.DEAL_INPUT_SUM,
+                String textMessage = messagePropertiesService.getMessage(PropertiesMessage.DEAL_INPUT_SUM,
                         calculator.getCryptoCurrency());
                 responseSender.sendEditedMessageText(chatId, messageId, textMessage,
                         keyboardService.getInlineCalculatorSwitcher());

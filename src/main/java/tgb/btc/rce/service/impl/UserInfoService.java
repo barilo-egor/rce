@@ -15,7 +15,7 @@ import tgb.btc.rce.enums.PropertiesMessage;
 import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
 import tgb.btc.rce.service.util.ICallbackQueryService;
-import tgb.btc.rce.util.MessagePropertiesUtil;
+import tgb.btc.rce.service.util.IMessagePropertiesService;
 import tgb.btc.rce.vo.InlineButton;
 
 import java.util.List;
@@ -37,6 +37,13 @@ public class UserInfoService {
     private IKeyboardBuildService keyboardBuildService;
 
     private ICallbackQueryService callbackQueryService;
+
+    private IMessagePropertiesService messagePropertiesService;
+
+    @Autowired
+    public void setMessagePropertiesService(IMessagePropertiesService messagePropertiesService) {
+        this.messagePropertiesService = messagePropertiesService;
+    }
 
     @Autowired
     public void setCallbackQueryService(ICallbackQueryService callbackQueryService) {
@@ -95,12 +102,12 @@ public class UserInfoService {
             int numberOfActiveReferrals = (int) referralUsers.stream()
                     .filter(usr -> dealCountService.getCountPassedByUserChatId(usr.getChatId()) > 0).count();
             String currentBalance = readUserService.getReferralBalanceByChatId(chatId).toString();
-            result = String.format(MessagePropertiesUtil.getMessage(PropertiesMessage.USER_INFORMATION_MAIN),
+            result = String.format(messagePropertiesService.getMessage(PropertiesMessage.USER_INFORMATION_MAIN),
                     chatId, userName, dealsCount, numberOfReferrals,
                     numberOfActiveReferrals, currentBalance, isBanned, role,
                     lotteryWinCount, fromChatId);
         } else {
-            result = String.format(MessagePropertiesUtil.getMessage(PropertiesMessage.USER_INFORMATION_WITHOUT_REFERRAL_MAIN),
+            result = String.format(messagePropertiesService.getMessage(PropertiesMessage.USER_INFORMATION_WITHOUT_REFERRAL_MAIN),
                     chatId, userName, dealsCount, isBanned, role,
                     lotteryWinCount, fromChatId);
         }

@@ -12,7 +12,7 @@ import tgb.btc.library.vo.calculate.DealAmount;
 import tgb.btc.rce.enums.PropertiesMessage;
 import tgb.btc.rce.service.IMessageService;
 import tgb.btc.rce.service.IResponseSender;
-import tgb.btc.rce.util.MessagePropertiesUtil;
+import tgb.btc.rce.service.util.IMessagePropertiesService;
 import tgb.btc.rce.vo.InlineCalculatorVO;
 
 import java.util.Objects;
@@ -23,6 +23,13 @@ public class MessageService implements IMessageService {
     private IResponseSender responseSender;
 
     private IModifyUserService modifyUserService;
+
+    private IMessagePropertiesService messagePropertiesService;
+
+    @Autowired
+    public void setMessagePropertiesService(IMessagePropertiesService messagePropertiesService) {
+        this.messagePropertiesService = messagePropertiesService;
+    }
 
     @Autowired
     public void setModifyUserService(IModifyUserService modifyUserService) {
@@ -53,9 +60,9 @@ public class MessageService implements IMessageService {
         String fiatFlag = calculator.getFiatCurrency().getFlag();
         if (Objects.isNull(dealAmount)) {
             return DealType.BUY.equals(dealType)
-                    ? MessagePropertiesUtil.getMessage(PropertiesMessage.DEAL_INPUT_SUM_TO_BUY, cryptoCode, fiatCode,
+                    ? messagePropertiesService.getMessage(PropertiesMessage.DEAL_INPUT_SUM_TO_BUY, cryptoCode, fiatCode,
                     StringUtils.EMPTY, fiatFlag,StringUtils.EMPTY, fiatFlag, StringUtils.EMPTY)
-                    : MessagePropertiesUtil.getMessage(PropertiesMessage.DEAL_INPUT_SUM_TO_SELL, cryptoCode, fiatCode,
+                    : messagePropertiesService.getMessage(PropertiesMessage.DEAL_INPUT_SUM_TO_SELL, cryptoCode, fiatCode,
                     StringUtils.EMPTY, fiatFlag, StringUtils.EMPTY);
         } else {
             String cryptoAmount = !calculator.getSwitched()
@@ -65,11 +72,11 @@ public class MessageService implements IMessageService {
                     ? calculator.getSum()
                     : BigDecimalUtil.roundToPlainString(dealAmount.getAmount());
             return DealType.BUY.equals(dealType)
-                    ? MessagePropertiesUtil.getMessage(PropertiesMessage.DEAL_INPUT_SUM_TO_BUY, cryptoCode, fiatCode,
+                    ? messagePropertiesService.getMessage(PropertiesMessage.DEAL_INPUT_SUM_TO_BUY, cryptoCode, fiatCode,
                     cryptoAmount + " " + cryptoCode,
                     fiatFlag, amount + " " + fiatCode, fiatFlag,
                     BigDecimalUtil.roundToPlainString(dealAmount.getCreditedAmount()) + " " + fiatCode)
-                    : MessagePropertiesUtil.getMessage(PropertiesMessage.DEAL_INPUT_SUM_TO_SELL, cryptoCode, fiatCode,
+                    : messagePropertiesService.getMessage(PropertiesMessage.DEAL_INPUT_SUM_TO_SELL, cryptoCode, fiatCode,
                     cryptoAmount + " " + cryptoCode,
                     fiatFlag, amount + " " + fiatCode);
         }

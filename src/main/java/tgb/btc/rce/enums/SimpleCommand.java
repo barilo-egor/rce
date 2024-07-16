@@ -4,7 +4,6 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.constants.enums.bot.BotMessageType;
 import tgb.btc.library.exception.BaseException;
 import tgb.btc.rce.util.BeanHolder;
-import tgb.btc.rce.util.MessagePropertiesUtil;
 import tgb.btc.rce.util.UpdateUtil;
 
 import java.util.function.Consumer;
@@ -59,7 +58,7 @@ public enum SimpleCommand {
 
     CABINET(Command.CABINET, update ->
             BeanHolder.responseSender.sendMessage(UpdateUtil.getChatId(update),
-                    MessagePropertiesUtil.getMessage("menu.main.cabinet.message"), BeanHolder.keyboardService.getCabinetButtons())),
+                    BeanHolder.messagePropertiesService.getMessage("menu.main.cabinet.message"), BeanHolder.keyboardService.getCabinetButtons())),
     CHAT_ID(Command.CHAT_ID, update -> {
         Long chatId = UpdateUtil.getChatId(update);
         BeanHolder.responseSender.sendMessage(chatId, "Ваш chat id - <code>" + chatId + "</code>.\nНажмите на chat id для копирования в буфер обмена.", "html");

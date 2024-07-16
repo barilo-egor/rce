@@ -17,7 +17,6 @@ import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.PropertiesMessage;
 import tgb.btc.rce.service.INotifyService;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.util.MessagePropertiesUtil;
 import tgb.btc.rce.util.UpdateUtil;
 
 import java.time.LocalDateTime;
@@ -55,7 +54,7 @@ public class Lottery extends Processor {
         User user = readUserService.findByChatId(UpdateUtil.getChatId(update));
         if(Objects.isNull(user.getLotteryCount()) || user.getLotteryCount() == 0) {
             responseSender.sendMessage(user.getChatId(),
-                    MessagePropertiesUtil.getMessage(PropertiesMessage.NO_LOTTERY_ATTEMPTS));
+                    messagePropertiesService.getMessage(PropertiesMessage.NO_LOTTERY_ATTEMPTS));
             return;
         }
         processLottery(update, user);

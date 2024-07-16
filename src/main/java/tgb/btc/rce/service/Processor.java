@@ -17,7 +17,7 @@ import tgb.btc.rce.enums.UpdateType;
 import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
 import tgb.btc.rce.service.util.ICallbackQueryService;
 import tgb.btc.rce.service.util.IMenuService;
-import tgb.btc.rce.util.MessagePropertiesUtil;
+import tgb.btc.rce.service.util.IMessagePropertiesService;
 import tgb.btc.rce.util.UpdateUtil;
 
 @Slf4j
@@ -38,6 +38,13 @@ public abstract class Processor {
     protected IKeyboardService keyboardService;
 
     protected ICallbackQueryService callbackQueryService;
+    
+    protected IMessagePropertiesService messagePropertiesService;
+
+    @Autowired
+    public void setMessagePropertiesService(IMessagePropertiesService messagePropertiesService) {
+        this.messagePropertiesService = messagePropertiesService;
+    }
 
     @Autowired
     public void setCallbackQueryService(ICallbackQueryService callbackQueryService) {
@@ -127,7 +134,7 @@ public abstract class Processor {
     public void processToMainMenu(Long chatId) {
         modifyUserService.setDefaultValues(chatId);
         responseSender.sendMessage(chatId,
-                MessagePropertiesUtil.getMessage(PropertiesMessage.MENU_MAIN),
+                messagePropertiesService.getMessage(PropertiesMessage.MENU_MAIN),
                 menuService.build(Menu.MAIN, readUserService.getUserRoleByChatId(chatId)), "HTML");
     }
 
@@ -136,11 +143,11 @@ public abstract class Processor {
         UserRole role = readUserService.getUserRoleByChatId(chatId);
         if (UserRole.ADMIN.equals(role))
             responseSender.sendMessage(chatId,
-                    MessagePropertiesUtil.getMessage(PropertiesMessage.MENU_MAIN_ADMIN),
+                    messagePropertiesService.getMessage(PropertiesMessage.MENU_MAIN_ADMIN),
                     menuService.build(Menu.ADMIN_PANEL, role));
         else if (UserRole.OPERATOR.equals(role))
             responseSender.sendMessage(chatId,
-                    MessagePropertiesUtil.getMessage(PropertiesMessage.MENU_MAIN_OPERATOR),
+                    messagePropertiesService.getMessage(PropertiesMessage.MENU_MAIN_OPERATOR),
                     menuService.build(Menu.OPERATOR_PANEL, role));
     }
 

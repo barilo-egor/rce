@@ -18,7 +18,7 @@ import tgb.btc.rce.service.IKeyboardService;
 import tgb.btc.rce.service.INotifyService;
 import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.processors.support.DealSupportService;
-import tgb.btc.rce.util.MessagePropertiesUtil;
+import tgb.btc.rce.service.util.IMessagePropertiesService;
 import tgb.btc.rce.vo.InlineButton;
 
 import java.io.File;
@@ -41,6 +41,13 @@ public class Notifier implements INotifier {
     private DealSupportService dealSupportService;
 
     private IGroupChatService groupChatService;
+
+    private IMessagePropertiesService messagePropertiesService;
+
+    @Autowired
+    public void setMessagePropertiesService(IMessagePropertiesService messagePropertiesService) {
+        this.messagePropertiesService = messagePropertiesService;
+    }
 
     @Autowired
     public void setGroupChatService(IGroupChatService groupChatService) {
@@ -82,12 +89,12 @@ public class Notifier implements INotifier {
     public void notifyDealAutoDeleted(Long chatId, Integer integer) {
         Integer dealActiveTime = VariablePropertiesUtil.getInt(VariableType.DEAL_ACTIVE_TIME);
         if (Objects.nonNull(integer)) responseSender.deleteMessage(chatId, integer);
-        responseSender.sendMessage(chatId, String.format(MessagePropertiesUtil.getMessage("deal.deleted.auto"), dealActiveTime));
+        responseSender.sendMessage(chatId, String.format(messagePropertiesService.getMessage("deal.deleted.auto"), dealActiveTime));
     }
 
     @Override
     public void notifyDealDeletedByAdmin(Long dealPid) {
-        responseSender.sendMessage(dealUserService.getUserChatIdByDealPid(dealPid), MessagePropertiesUtil.getMessage("deal.deleted.by.admin"));
+        responseSender.sendMessage(dealUserService.getUserChatIdByDealPid(dealPid), messagePropertiesService.getMessage("deal.deleted.by.admin"));
     }
 
     @Override

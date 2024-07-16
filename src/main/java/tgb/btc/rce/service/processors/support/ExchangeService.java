@@ -46,7 +46,7 @@ import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
 import tgb.btc.rce.service.process.IUserDiscountProcessService;
 import tgb.btc.rce.service.util.ICallbackQueryService;
 import tgb.btc.rce.service.util.ICryptoCurrenciesDesignService;
-import tgb.btc.rce.util.MessagePropertiesUtil;
+import tgb.btc.rce.service.util.IMessagePropertiesService;
 import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.CalculatorQuery;
 import tgb.btc.rce.vo.InlineButton;
@@ -101,6 +101,13 @@ public class ExchangeService {
     private ICryptoCurrenciesDesignService cryptoCurrenciesDesignService;
 
     private IFunctionsService functionsService;
+
+    private IMessagePropertiesService messagePropertiesService;
+
+    @Autowired
+    public void setMessagePropertiesService(IMessagePropertiesService messagePropertiesService) {
+        this.messagePropertiesService = messagePropertiesService;
+    }
 
     @Autowired
     public void setFunctionsService(IFunctionsService functionsService) {
@@ -213,7 +220,7 @@ public class ExchangeService {
     }
 
     public void askForFiatCurrency(Long chatId) {
-        String message = MessagePropertiesUtil.getMessage("choose.fiat.currency");
+        String message = messagePropertiesService.getMessage("choose.fiat.currency");
         if (Objects.isNull(message)) message = "Выберите валюту.";
         responseSender.sendMessage(chatId, message, keyboardService.getFiatCurrencies());
     }
@@ -239,7 +246,7 @@ public class ExchangeService {
 
     public void askForCryptoCurrency(Long chatId) {
         DealType dealType = dealPropertyService.getDealTypeByPid(readUserService.getCurrentDealByChatId(chatId));
-        messageService.sendMessageAndSaveMessageId(chatId, MessagePropertiesUtil.getChooseCurrency(dealType),
+        messageService.sendMessageAndSaveMessageId(chatId, messagePropertiesService.getChooseCurrency(dealType),
                 keyboardService.getCurrencies(dealType));
     }
 
@@ -271,7 +278,7 @@ public class ExchangeService {
         Long currentDealPid = readUserService.getCurrentDealByChatId(chatId);
         BigDecimal dealAmount = dealPropertyService.getAmountByPid(currentDealPid);
         BigDecimal cryptoAmount = dealPropertyService.getCryptoAmountByPid(currentDealPid);
-        String message = MessagePropertiesUtil.getMessage("sum.info");
+        String message = messagePropertiesService.getMessage("sum.info");
         if (Objects.isNull(message)) {
             if (DealType.isBuy(dealType)) {
                 message = "Сумма к получению: " + BigDecimalUtil.roundToPlainString(cryptoAmount, cryptoCurrency.getScale())
@@ -372,7 +379,7 @@ public class ExchangeService {
         ReplyKeyboard keyboard;
         String message;
         if (DealType.isBuy(deal.getDealType())) {
-            message = MessagePropertiesUtil.getMessage("send.wallet.buy");
+            message = messagePropertiesService.getMessage("send.wallet.buy");
             if (Objects.isNull(message)) {
                 message = "\uD83D\uDCDDВведите " + cryptoCurrenciesDesignService.getDisplayName(cryptoCurrency)
                         + "-адрес кошелька, куда вы хотите отправить "
@@ -390,7 +397,7 @@ public class ExchangeService {
                 String wallet = readDealService.getWalletFromLastPassedByChatIdAndDealTypeAndCryptoCurrency(chatId,
                         DealType.BUY,
                         cryptoCurrency);
-                String lastWalletMessage = MessagePropertiesUtil.getMessage("send.wallet.last");
+                String lastWalletMessage = messagePropertiesService.getMessage("send.wallet.last");
                 if (Objects.isNull(lastWalletMessage))
                     message = message.concat("\n\nВы можете использовать ваш сохраненный адрес:\n" + wallet);
                 else message = message.concat("\n\n" + lastWalletMessage + "\n" + wallet);
@@ -399,7 +406,7 @@ public class ExchangeService {
             buttons.add(BotInlineButton.CANCEL.getButton());
             keyboard = keyboardBuildService.buildInline(buttons);
         } else {
-            message = MessagePropertiesUtil.getMessage("send.wallet.sell");
+            message = messagePropertiesService.getMessage("send.wallet.sell");
             if (Objects.isNull(message)) {
                 message = "Введите " + deal.getPaymentType().getName() + " реквизиты, куда вы хотите получить "
                         + BigDecimalUtil.roundToPlainString(deal.getAmount(), 0) + " "
@@ -499,7 +506,7 @@ public class ExchangeService {
         } catch (BaseException e) {
             additionalText = StringUtils.EMPTY;
         }
-        String message = MessagePropertiesUtil.getMessage("choose.payment.type");
+        String message = messagePropertiesService.getMessage("choose.payment.type");
         if (Objects.nonNull(message)) {
             responseSender.sendMessage(chatId, message,
                     keyboardService.getPaymentTypes(deal.getDealType(), deal.getFiatCurrency()), "HTML");
@@ -660,10 +667,10 @@ public class ExchangeService {
     }
 
     public String getSellMessage(Deal deal, Rank rank) {
-        String message = MessagePropertiesUtil.getMessage("deal.build.sell");
+        String message = messagePropertiesService.getMessage("deal.build.sell");
         if (Objects.isNull(message)) return null;
         CryptoCurrency currency = deal.getCryptoCurrency();
-        return MessagePropertiesUtil.getMessage("deal.build.sell", deal.getPid(),
+        return messagePropertiesService.getMessage("deal.build.sell", deal.getPid(),
                 BigDecimalUtil.roundToPlainString(deal.getAmount(), deal.getCryptoCurrency().getScale()),
                 deal.getFiatCurrency().getCode(), deal.getPaymentType().getName(),
                 deal.getWallet(), rank.getSmile(), rank.getPercent(),
@@ -673,10 +680,10 @@ public class ExchangeService {
     }
 
     public String getBuyMessage(Deal deal, Rank rank, String requisite) {
-        String message = MessagePropertiesUtil.getMessage("deal.build.buy");
+        String message = messagePropertiesService.getMessage("deal.build.buy");
         if (Objects.isNull(message)) return null;
         CryptoCurrency currency = deal.getCryptoCurrency();
-        return MessagePropertiesUtil.getMessage("deal.build.buy", deal.getPid(),
+        return messagePropertiesService.getMessage("deal.build.buy", deal.getPid(),
                 BigDecimalUtil.roundToPlainString(deal.getCryptoAmount(), deal.getCryptoCurrency().getScale()), currency.getShortName(),
                 cryptoCurrenciesDesignService.getDisplayName(currency),
                 deal.getWallet(), rank.getSmile(), rank.getPercent() + "%",
@@ -694,7 +701,7 @@ public class ExchangeService {
         DealDeleteScheduler.deleteCryptoDeal(dealPid);
         if (!readDealService.existsById(dealPid)) {
             Integer dealActiveTime = VariablePropertiesUtil.getInt(VariableType.DEAL_ACTIVE_TIME);
-            responseSender.sendMessage(chatId, String.format(MessagePropertiesUtil.getMessage("deal.deleted.auto"), dealActiveTime));
+            responseSender.sendMessage(chatId, String.format(messagePropertiesService.getMessage("deal.deleted.auto"), dealActiveTime));
             return false;
         }
         if (Command.PAID.name().equals(update.getCallbackQuery().getData())) {
@@ -725,7 +732,7 @@ public class ExchangeService {
         modifyDealService.updateDealStatusByPid(DealStatus.PAID, currentDealPid);
         modifyUserService.updateCurrentDealByChatId(null, chatId);
         modifyUserService.setDefaultValues(chatId);
-        responseSender.sendMessage(chatId, MessagePropertiesUtil.getMessage(PropertiesMessage.DEAL_CONFIRMED));
+        responseSender.sendMessage(chatId, messagePropertiesService.getMessage(PropertiesMessage.DEAL_CONFIRMED));
         log.info("Сделка " + currentDealPid + " пользователя " + chatId + " переведена в статус PAID");
         notifyService.notifyMessage("Поступила новая заявка на " + dealType.getGenitive() + ".",
                 keyboardService.getShowDeal(currentDealPid), Set.of(UserRole.OPERATOR, UserRole.ADMIN));
@@ -811,7 +818,7 @@ public class ExchangeService {
     }
 
     public void askForDeliveryType(Long chatId, FiatCurrency fiatCurrency, DealType dealType, CryptoCurrency cryptoCurrency) {
-        responseSender.sendMessage(chatId, MessagePropertiesUtil.getMessage(PropertiesMessage.DELIVERY_TYPE_ASK),
+        responseSender.sendMessage(chatId, messagePropertiesService.getMessage(PropertiesMessage.DELIVERY_TYPE_ASK),
                 keyboardService.getDeliveryTypes(fiatCurrency, dealType, cryptoCurrency));
     }
 
