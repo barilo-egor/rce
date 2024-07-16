@@ -1,13 +1,14 @@
 package tgb.btc.rce.service.processors.admin.settings.currencies;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.constants.enums.bot.CryptoCurrency;
 import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
+import tgb.btc.rce.service.ITurningCurrenciesService;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.util.TurningCurrenciesUtil;
 import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.InlineButton;
 
@@ -17,6 +18,13 @@ import java.util.List;
 @CommandProcessor(command = Command.TURNING_CURRENCY)
 @Slf4j
 public class TurningCurrencyProcessor extends Processor {
+
+    private ITurningCurrenciesService turningCurrenciesService;
+
+    @Autowired
+    public void setTurningCurrenciesService(ITurningCurrenciesService turningCurrenciesService) {
+        this.turningCurrenciesService = turningCurrenciesService;
+    }
 
     @Override
     public void run(Update update) {
@@ -44,7 +52,7 @@ public class TurningCurrencyProcessor extends Processor {
     }
 
     private InlineButton buildButton(CryptoCurrency currency, DealType dealType) {
-        boolean isCurrencyOn = TurningCurrenciesUtil.getIsOn(currency, dealType);
+        boolean isCurrencyOn = turningCurrenciesService.getIsOn(currency, dealType);
         Command command = isCurrencyOn ? Command.TURN_OFF_CURRENCY : Command.TURN_ON_CURRENCY;
         return InlineButton.builder()
                 .text(isCurrencyOn ? "Выключить " + currency.getShortName() : "Включить " + currency.getShortName())

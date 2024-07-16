@@ -26,12 +26,12 @@ import tgb.btc.rce.enums.BotReplyButton;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.InlineType;
 import tgb.btc.rce.service.IKeyboardService;
+import tgb.btc.rce.service.ITurningCurrenciesService;
 import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
 import tgb.btc.rce.service.processors.calculator.InlineCalculator;
 import tgb.btc.rce.service.util.ICallbackQueryService;
 import tgb.btc.rce.service.util.ICryptoCurrenciesDesignService;
 import tgb.btc.rce.util.BeanHolder;
-import tgb.btc.rce.util.TurningCurrenciesUtil;
 import tgb.btc.rce.vo.InlineButton;
 import tgb.btc.rce.vo.InlineCalculatorVO;
 import tgb.btc.rce.vo.ReplyButton;
@@ -55,6 +55,13 @@ public class KeyboardService implements IKeyboardService {
     private ICryptoCurrenciesDesignService cryptoCurrenciesDesignService;
 
     private ButtonsDesignPropertiesReader buttonsDesignPropertiesReader;
+
+    private ITurningCurrenciesService turningCurrenciesService;
+
+    @Autowired
+    public void setTurningCurrenciesService(ITurningCurrenciesService turningCurrenciesService) {
+        this.turningCurrenciesService = turningCurrenciesService;
+    }
 
     @Autowired
     public void setButtonsDesignPropertiesReader(ButtonsDesignPropertiesReader buttonsDesignPropertiesReader) {
@@ -84,7 +91,7 @@ public class KeyboardService implements IKeyboardService {
     @Override
     public ReplyKeyboard getCurrencies(DealType dealType) {
         List<InlineButton> currencies = new ArrayList<>();
-        TurningCurrenciesUtil.getSwitchedOnByDealType(dealType)
+        turningCurrenciesService.getSwitchedOnByDealType(dealType)
                 .forEach(currency -> currencies.add(InlineButton.buildData(cryptoCurrenciesDesignService.getDisplayName(currency), currency.name())));
         currencies.add(keyboardBuildService.getInlineBackButton());
         return keyboardBuildService.buildInline(currencies);
