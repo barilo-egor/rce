@@ -1,11 +1,9 @@
-package tgb.btc.rce.util;
+package tgb.btc.rce.service.impl;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 import org.telegram.telegrambots.meta.api.objects.*;
 import org.telegram.telegrambots.meta.api.objects.inlinequery.InlineQuery;
 import tgb.btc.library.exception.BaseException;
@@ -15,18 +13,18 @@ import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@Slf4j
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class UpdateUtilTest {
+class UpdateServiceTest {
 
-    private final int numberOfTestUpdates = 3;
+    private final UpdateService updateService = new UpdateService();
 
-    private List<User> users = new ArrayList<>();
+    private static final int numberOfTestUpdates = 3;
 
-    private List<Chat> chats = new ArrayList<>();
+    private static List<User> users = new ArrayList<>();
+
+    private static List<Chat> chats = new ArrayList<>();
 
     @BeforeAll
-    void init() {
+    static void init() {
         for (int i = 1; i <= numberOfTestUpdates; i++) {
             long randomChatId = RandomUtils.nextLong(0, 99999999);
 
@@ -55,7 +53,7 @@ class UpdateUtilTest {
             updates.put(user.getId(), update);
         }
         for (Map.Entry<Long, Update> updateEntry : updates.entrySet()) {
-            assertEquals(updateEntry.getKey(), UpdateUtil.getChatId(updateEntry.getValue()), "Неверный chatid из update message.");
+            assertEquals(updateEntry.getKey(), updateService.getChatId(updateEntry.getValue()), "Неверный chatid из update message.");
         }
     }
 
@@ -71,7 +69,7 @@ class UpdateUtilTest {
             updates.put(user.getId(), update);
         }
         for (Map.Entry<Long, Update> updateEntry : updates.entrySet()) {
-            assertEquals(updateEntry.getKey(), UpdateUtil.getChatId(updateEntry.getValue()), "Неверный chatid из update callbackQuery.");
+            assertEquals(updateEntry.getKey(), updateService.getChatId(updateEntry.getValue()), "Неверный chatid из update callbackQuery.");
         }
     }
 
@@ -87,7 +85,7 @@ class UpdateUtilTest {
             updates.put(user.getId(), update);
         }
         for (Map.Entry<Long, Update> updateEntry : updates.entrySet()) {
-            assertEquals(updateEntry.getKey(), UpdateUtil.getChatId(updateEntry.getValue()), "Неверный chatid из update inlineQuery.");
+            assertEquals(updateEntry.getKey(), updateService.getChatId(updateEntry.getValue()), "Неверный chatid из update inlineQuery.");
         }
     }
 
@@ -95,7 +93,7 @@ class UpdateUtilTest {
     void getChatIdThrowsBaseException() {
         Update update = new Update();
         update.setChannelPost(new Message());
-        assertThrows(BaseException.class, () -> UpdateUtil.getChatId(update), "Не было брошено исключение при пустом update.");
+        assertThrows(BaseException.class, () -> updateService.getChatId(update), "Не было брошено исключение при пустом update.");
     }
 
     @Test
@@ -110,7 +108,7 @@ class UpdateUtilTest {
             updates.put(chat.getId(), update);
         }
         for (Map.Entry<Long, Update> updateEntry : updates.entrySet()) {
-            assertEquals(updateEntry.getKey(), UpdateUtil.getGroupChatId(updateEntry.getValue()), "Неверный group chatid группы из update myChatMember.");
+            assertEquals(updateEntry.getKey(), updateService.getGroupChatId(updateEntry.getValue()), "Неверный group chatid группы из update myChatMember.");
         }
     }
 
@@ -126,7 +124,7 @@ class UpdateUtilTest {
             updates.put(chat.getId(), update);
         }
         for (Map.Entry<Long, Update> updateEntry : updates.entrySet()) {
-            assertEquals(updateEntry.getKey(), UpdateUtil.getGroupChatId(updateEntry.getValue()), "Неверный group chatid группы из update chatMember.");
+            assertEquals(updateEntry.getKey(), updateService.getGroupChatId(updateEntry.getValue()), "Неверный group chatid группы из update chatMember.");
         }
     }
 
@@ -142,25 +140,25 @@ class UpdateUtilTest {
             updates.put(chat.getId(), update);
         }
         for (Map.Entry<Long, Update> updateEntry : updates.entrySet()) {
-            assertEquals(updateEntry.getKey(), UpdateUtil.getGroupChatId(updateEntry.getValue()), "Неверный group chatid группы из update message.");
+            assertEquals(updateEntry.getKey(), updateService.getGroupChatId(updateEntry.getValue()), "Неверный group chatid группы из update message.");
         }
     }
 
     @Test
     void getGroupChatIdReturnsNull() {
         Update update = new Update();
-        assertNull(UpdateUtil.getGroupChatId(update));
+        assertNull(updateService.getGroupChatId(update));
     }
 
     @Test
     void isGroupMessageByMyChatMemberTypeGroup() {
-        assertTrue(UpdateUtil.isGroupMessage(getUpdateWithChatMemberUpdatedWithChat("group")),
+        assertTrue(updateService.isGroupMessage(getUpdateWithChatMemberUpdatedWithChat("group")),
                 "Для чата с типом group должен вернуться true.");
     }
 
     @Test
     void isGroupMessageByMyChatMemberTypeSuperGroup() {
-        assertTrue(UpdateUtil.isGroupMessage(getUpdateWithChatMemberUpdatedWithChat("supergroup")),
+        assertTrue(updateService.isGroupMessage(getUpdateWithChatMemberUpdatedWithChat("supergroup")),
                 "Для чата с типом supergroup должен вернуться true.");
     }
 
@@ -190,19 +188,19 @@ class UpdateUtilTest {
 
     @Test
     void isGroupMessageByMessageChatGroupType() {
-        assertTrue(UpdateUtil.isGroupMessage(getUpdateWithMessageChat("group")),
+        assertTrue(updateService.isGroupMessage(getUpdateWithMessageChat("group")),
                 "Для chat type group в message должно вернуть true.");
     }
 
     @Test
     void isGroupMessageByMessageChatSuperGroupType() {
-        assertTrue(UpdateUtil.isGroupMessage(getUpdateWithMessageChat("supergroup")),
+        assertTrue(updateService.isGroupMessage(getUpdateWithMessageChat("supergroup")),
                 "Для chat type supergroup в message должно вернуть true.");
     }
 
     @Test
     void isGroupMessageReturnsFalse() {
-        assertFalse(UpdateUtil.isGroupMessage(new Update()));
+        assertFalse(updateService.isGroupMessage(new Update()));
     }
 
     @Test
@@ -212,7 +210,7 @@ class UpdateUtilTest {
             Message message = new Message();
             message.setFrom(users.get(i - 1));
             update.setMessage(message);
-            assertEquals(users.get(i - 1).getUserName(), UpdateUtil.getUsername(update));
+            assertEquals(users.get(i - 1).getUserName(), updateService.getUsername(update));
         }
     }
 
@@ -224,26 +222,26 @@ class UpdateUtilTest {
             Integer randomMessageId = RandomUtils.nextInt(0, 999999);
             message.setMessageId(randomMessageId);
             update.setMessage(message);
-            assertEquals(randomMessageId, UpdateUtil.getMessageId(update));
+            assertEquals(randomMessageId, updateService.getMessageId(update));
         }
     }
 
     @Test
     void getMessageIdThrows() {
-        assertThrows(BaseException.class, () -> UpdateUtil.getMessageId(new Update()));
+        assertThrows(BaseException.class, () -> updateService.getMessageId(new Update()));
     }
 
     @Test
     void hasMessageTextWithoutMessage() {
         Update update = new Update();
-        assertFalse(UpdateUtil.hasMessageText(update));
+        assertFalse(updateService.hasMessageText(update));
     }
 
     @Test
     void hasMessageTextWithoutText() {
         Update update = new Update();
         update.setMessage(new Message());
-        assertFalse(UpdateUtil.hasMessageText(update));
+        assertFalse(updateService.hasMessageText(update));
     }
 
     @Test
@@ -252,7 +250,7 @@ class UpdateUtilTest {
         Message message = new Message();
         message.setText("qwerty");
         update.setMessage(message);
-        assertTrue(UpdateUtil.hasMessageText(update));
+        assertTrue(updateService.hasMessageText(update));
     }
 
     @Test
@@ -263,13 +261,13 @@ class UpdateUtilTest {
             String messageText = RandomStringUtils.randomAlphanumeric(10);
             message.setText(messageText);
             update.setMessage(message);
-            assertEquals(messageText, UpdateUtil.getMessageText(update));
+            assertEquals(messageText, updateService.getMessageText(update));
         }
     }
 
     @Test
     void getMessageTextThrows() {
-        assertThrows(BaseException.class, () -> UpdateUtil.getMessageText(new Update()));
+        assertThrows(BaseException.class, () -> updateService.getMessageText(new Update()));
     }
 
     @Test
@@ -281,7 +279,7 @@ class UpdateUtilTest {
             Message message = new Message();
             message.setText(strRandom);
             update.setMessage(message);
-            assertEquals(randomLong, UpdateUtil.getLongFromText(update));
+            assertEquals(randomLong, updateService.getLongFromText(update));
         }
     }
 
@@ -293,7 +291,7 @@ class UpdateUtilTest {
             Message message = new Message();
             message.setText(Double.toString(randomDouble));
             update.setMessage(message);
-            assertEquals(BigDecimal.valueOf(randomDouble), UpdateUtil.getBigDecimalFromText(update));
+            assertEquals(BigDecimal.valueOf(randomDouble), updateService.getBigDecimalFromText(update));
         }
     }
 
@@ -302,7 +300,7 @@ class UpdateUtilTest {
         Update update = new Update();
         Message message = new Message();
         update.setMessage(message);
-        assertEquals(message, UpdateUtil.getMessage(update));
+        assertEquals(message, updateService.getMessage(update));
     }
 
     @Test
@@ -312,13 +310,13 @@ class UpdateUtilTest {
         CallbackQuery callbackQuery = new CallbackQuery();
         callbackQuery.setMessage(message);
         update.setCallbackQuery(callbackQuery);
-        assertEquals(message, UpdateUtil.getMessage(update));
+        assertEquals(message, updateService.getMessage(update));
     }
 
     @Test
     void getMessageThrows() {
         Update update = new Update();
         update.setChannelPost(new Message());
-        assertThrows(BaseException.class, () -> UpdateUtil.getMessage(update));
+        assertThrows(BaseException.class, () -> updateService.getMessage(update));
     }
 }
