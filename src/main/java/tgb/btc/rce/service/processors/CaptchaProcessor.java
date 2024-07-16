@@ -12,7 +12,6 @@ import tgb.btc.library.interfaces.service.bean.bot.ISpamBanService;
 import tgb.btc.library.service.process.BanningUserService;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.conditional.AntispamCondition;
-import tgb.btc.rce.enums.BotKeyboard;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.ICaptchaSender;
 import tgb.btc.rce.service.INotifyService;
@@ -101,7 +100,7 @@ public class CaptchaProcessor extends Processor {
                 } else {
                     banningUserService.ban(chatId);
                     log.debug("Пользователь chatId={} был заблокирован после неправильных вводов капчи.", chatId);
-                    responseSender.sendMessage(chatId, "Вы были заблокированы.", BotKeyboard.OPERATOR);
+                    responseSender.sendMessage(chatId, "Вы были заблокированы.", keyboardService.getOperator());
                     SpamBan spamBan = spamBanService.save(chatId);
                     notifyService.notifyMessage("Антиспам система заблокировала пользователя.",
                             keyboardBuildService.buildInline(List.of(

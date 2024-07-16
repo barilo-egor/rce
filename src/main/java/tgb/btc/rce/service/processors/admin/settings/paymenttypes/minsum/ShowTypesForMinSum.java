@@ -11,7 +11,6 @@ import tgb.btc.library.interfaces.service.bean.bot.IUserDataService;
 import tgb.btc.library.util.FiatCurrencyUtil;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.constants.BotStringConstants;
-import tgb.btc.rce.enums.BotKeyboard;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.util.UpdateUtil;
@@ -72,7 +71,7 @@ public class ShowTypesForMinSum extends Processor {
                 .collect(Collectors.toList());
         responseSender.sendMessage(chatId, "Выберите тип оплаты для изменения минимальной суммы.",
                 keyboardBuildService.buildInline(buttons));
-        responseSender.sendMessage(chatId, "Для возвращения в меню нажмите \"Отмена\".", BotKeyboard.REPLY_CANCEL);
+        responseSender.sendMessage(chatId, "Для возвращения в меню нажмите \"Отмена\".", keyboardService.getReplyCancel());
         modifyUserService.nextStep(chatId);
     }
 }

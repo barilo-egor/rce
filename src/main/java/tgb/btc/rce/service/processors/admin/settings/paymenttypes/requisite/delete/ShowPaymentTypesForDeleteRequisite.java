@@ -9,7 +9,6 @@ import tgb.btc.library.constants.enums.bot.FiatCurrency;
 import tgb.btc.library.interfaces.service.bean.bot.IPaymentTypeService;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.constants.BotStringConstants;
-import tgb.btc.rce.enums.BotKeyboard;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.util.UpdateUtil;
@@ -48,7 +47,7 @@ public class ShowPaymentTypesForDeleteRequisite extends Processor {
                 .collect(Collectors.toList());
         responseSender.sendMessage(chatId, "Выберите тип оплаты для удаления реквизита.",
                                    keyboardBuildService.buildInline(buttons));
-        responseSender.sendMessage(chatId, "Для возвращения в меню нажмите \"Отмена\".", BotKeyboard.REPLY_CANCEL);
+        responseSender.sendMessage(chatId, "Для возвращения в меню нажмите \"Отмена\".", keyboardService.getReplyCancel());
         modifyUserService.nextStep(chatId, Command.DELETE_PAYMENT_TYPE_REQUISITE.name());
     }
 

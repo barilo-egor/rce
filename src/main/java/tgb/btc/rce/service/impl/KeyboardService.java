@@ -3,6 +3,7 @@ package tgb.btc.rce.service.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import tgb.btc.library.constants.enums.CabinetButton;
 import tgb.btc.library.constants.enums.DeliveryKind;
@@ -20,17 +21,16 @@ import tgb.btc.library.util.FiatCurrencyUtil;
 import tgb.btc.library.util.properties.VariablePropertiesUtil;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.BotInlineButton;
+import tgb.btc.rce.enums.BotReplyButton;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.InlineType;
 import tgb.btc.rce.service.IKeyboardService;
 import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
 import tgb.btc.rce.service.processors.calculator.InlineCalculator;
-import tgb.btc.rce.util.CallbackQueryUtil;
-import tgb.btc.rce.util.CryptoCurrenciesDesignUtil;
-import tgb.btc.rce.util.FiatCurrenciesDesignUtil;
-import tgb.btc.rce.util.TurningCurrenciesUtil;
+import tgb.btc.rce.util.*;
 import tgb.btc.rce.vo.InlineButton;
 import tgb.btc.rce.vo.InlineCalculatorVO;
+import tgb.btc.rce.vo.ReplyButton;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -258,4 +258,70 @@ public class KeyboardService implements IKeyboardService {
         return keyboardBuildService.buildInline(buttons, 1);
     }
 
+    @Override
+    public ReplyKeyboard getReplyCancel() {
+        return keyboardBuildService.buildReply(List.of(BotReplyButton.CANCEL.getButton()));
+    }
+
+    @Override
+    public ReplyKeyboard getInlineCancel() {
+        return keyboardBuildService.buildInline(List.of(BotInlineButton.CANCEL.getButton()));
+    }
+
+    @Override
+    public ReplyKeyboard getBuyOrSell() {
+        return keyboardBuildService.buildReply(List.of(
+                ReplyButton.builder()
+                        .text(DealType.BUY.getNominativeFirstLetterToUpper())
+                        .build(),
+                ReplyButton.builder()
+                        .text(DealType.SELL.getNominativeFirstLetterToUpper())
+                        .build(),
+                BotReplyButton.CANCEL.getButton()
+        ));
+    }
+
+    @Override
+    public ReplyKeyboard getOperator() {
+        return keyboardBuildService.buildInline(List.of(
+                InlineButton.builder()
+                        .text("Связь с оператором")
+                        .data(PropertiesPath.VARIABLE_PROPERTIES.getString(VariableType.OPERATOR_LINK.getKey()))
+                        .inlineType(InlineType.URL)
+                        .build()
+        ));
+    }
+
+    @Override
+    public ReplyKeyboardMarkup getFiatCurrenciesKeyboard() {
+        List<ReplyButton> buttons = Arrays.stream(FiatCurrency.values())
+                .map(fiatCurrency -> ReplyButton.builder().text(fiatCurrency.getCode()).build())
+                .collect(Collectors.toList());
+        buttons.add(BotReplyButton.CANCEL.getButton());
+        return BeanHolder.keyboardBuildService.buildReply(buttons);
+    }
+
+    @Override
+    public ReplyKeyboard getBuildDeal() {
+        return keyboardBuildService.buildInline(List.of(
+                InlineButton.builder()
+                        .text(Command.PAID.getText())
+                        .data(Command.PAID.name())
+                        .inlineType(InlineType.CALLBACK_DATA)
+                        .build(),
+                InlineButton.builder()
+                        .text(Command.CANCEL.getText())
+                        .data(Command.CANCEL_DEAL.name())
+                        .inlineType(InlineType.CALLBACK_DATA)
+                        .build()
+        ));
+    }
+
+    @Override
+    public ReplyKeyboard getCancelDeal() {
+        return keyboardBuildService.buildReply(List.of(
+                ReplyButton.builder()
+                        .text(Command.RECEIPTS_CANCEL_DEAL.getText())
+                        .build()));
+    }
 }

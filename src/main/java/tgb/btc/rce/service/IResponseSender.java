@@ -13,9 +13,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import tgb.btc.library.bean.bot.BotMessage;
 import tgb.btc.library.constants.enums.bot.BotMessageType;
-import tgb.btc.rce.enums.BotKeyboard;
 import tgb.btc.rce.enums.Menu;
-import tgb.btc.rce.enums.MessageTemplate;
 import tgb.btc.rce.enums.PropertiesMessage;
 import tgb.btc.rce.vo.InlineButton;
 
@@ -43,8 +41,6 @@ public interface IResponseSender {
     Optional<Message> sendMessage(Long chatId, String text, ReplyKeyboard replyKeyboard, String parseMode, Integer replyToMessageId);
 
     Optional<Message> sendMessage(Long chatId, String text, InlineButton... inlineButtons);
-
-    Optional<Message> sendMessage(Long chatId, String text, BotKeyboard botKeyboard);
 
     Optional<Message> sendMessage(SendMessage sendMessage);
 
@@ -83,8 +79,6 @@ public interface IResponseSender {
     void sendMedia(Long chatId, List<InputMedia> media);
 
     void sendInputFile(Long chatId, InputFile inputFile);
-
-    Optional<Message> sendMessage(Long chatId, MessageTemplate messageTemplate);
 
     boolean sendAnswerInlineQuery(String inlineQueryId, String title, String description, String messageText);
 

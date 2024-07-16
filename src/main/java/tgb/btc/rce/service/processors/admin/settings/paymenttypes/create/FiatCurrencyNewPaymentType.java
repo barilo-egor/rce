@@ -6,7 +6,6 @@ import tgb.btc.library.constants.enums.bot.FiatCurrency;
 import tgb.btc.library.interfaces.service.bean.bot.IUserDataService;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.constants.BotStringConstants;
-import tgb.btc.rce.enums.BotKeyboard;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.util.UpdateUtil;
@@ -28,7 +27,7 @@ public class FiatCurrencyNewPaymentType extends Processor {
         String message = UpdateUtil.getMessageText(update);
         FiatCurrency fiatCurrency = FiatCurrency.getByCode(message);
         userDataService.updateFiatCurrencyByUserChatId(chatId, fiatCurrency);
-        responseSender.sendMessage(chatId, BotStringConstants.BUY_OR_SELL, BotKeyboard.BUY_OR_SELL);
+        responseSender.sendMessage(chatId, BotStringConstants.BUY_OR_SELL, keyboardService.getBuyOrSell());
         modifyUserService.nextStep(chatId);
     }
 }

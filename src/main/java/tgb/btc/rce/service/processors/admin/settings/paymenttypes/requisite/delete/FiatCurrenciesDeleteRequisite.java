@@ -9,7 +9,6 @@ import tgb.btc.library.interfaces.service.bean.bot.IPaymentTypeService;
 import tgb.btc.library.util.FiatCurrencyUtil;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.constants.BotStringConstants;
-import tgb.btc.rce.enums.BotKeyboard;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.util.UpdateUtil;
@@ -32,7 +31,7 @@ public class FiatCurrenciesDeleteRequisite extends Processor {
     public void run(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
         if (FiatCurrencyUtil.isFew()) {
-            responseSender.sendMessage(chatId, BotStringConstants.FIAT_CURRENCY_CHOOSE, BotKeyboard.FIAT_CURRENCIES);
+            responseSender.sendMessage(chatId, BotStringConstants.FIAT_CURRENCY_CHOOSE, keyboardService.getFiatCurrencies());
         } else {
             List<PaymentType> paymentTypes = paymentTypeService.getByDealTypeAndFiatCurrency(DealType.BUY, FiatCurrencyUtil.getFirst());  // todo рефактор
             if (CollectionUtils.isEmpty(paymentTypes)) {
@@ -50,7 +49,7 @@ public class FiatCurrenciesDeleteRequisite extends Processor {
                     .collect(Collectors.toList());
             responseSender.sendMessage(chatId, "Выберите тип оплаты для удаления реквизита.",
                     keyboardBuildService.buildInline(buttons));
-            responseSender.sendMessage(chatId, "Для возвращения в меню нажмите \"Отмена\".", BotKeyboard.REPLY_CANCEL);
+            responseSender.sendMessage(chatId, "Для возвращения в меню нажмите \"Отмена\".", keyboardService.getReplyCancel());
             modifyUserService.nextStep(chatId, Command.DELETE_PAYMENT_TYPE_REQUISITE.name());
         }
         modifyUserService.nextStep(chatId, Command.DELETE_PAYMENT_TYPE_REQUISITE.name());

@@ -27,9 +27,7 @@ import tgb.btc.library.exception.BaseException;
 import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.library.service.bean.bot.BotMessageService;
 import tgb.btc.rce.bot.RceBot;
-import tgb.btc.rce.enums.BotKeyboard;
 import tgb.btc.rce.enums.Menu;
-import tgb.btc.rce.enums.MessageTemplate;
 import tgb.btc.rce.enums.PropertiesMessage;
 import tgb.btc.rce.service.IMenuService;
 import tgb.btc.rce.service.IResponseSender;
@@ -135,10 +133,6 @@ public class ResponseSender implements IResponseSender {
 
     public Optional<Message> sendMessage(Long chatId, String text, List<InlineButton> buttons) {
         return sendMessage(chatId, text, keyboardBuildService.buildInline(buttons));
-    }
-
-    public Optional<Message> sendMessage(Long chatId, String text, BotKeyboard botKeyboard) {
-        return sendMessage(chatId, text, botKeyboard.getKeyboard(), null);
     }
 
     @Override
@@ -378,11 +372,6 @@ public class ResponseSender implements IResponseSender {
         } catch (TelegramApiException e) {
             log.debug("Не получилось отправить input file: chatId=" + chatId);
         }
-    }
-
-    @Override
-    public Optional<Message> sendMessage(Long chatId, MessageTemplate messageTemplate) {
-        return sendMessage(chatId, messageTemplate.getMessage(), messageTemplate.getBotKeyboard());
     }
 
     @Override

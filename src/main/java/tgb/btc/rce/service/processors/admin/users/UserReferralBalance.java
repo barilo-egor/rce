@@ -5,7 +5,6 @@ import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.InlineType;
-import tgb.btc.rce.enums.MessageTemplate;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.InlineButton;
@@ -24,7 +23,7 @@ public class UserReferralBalance extends Processor {
         }
         switch (readUserService.getStepByChatId(chatId)) {
             case 0:
-                responseSender.sendMessage(chatId, MessageTemplate.ASK_CHAT_ID);
+                responseSender.sendMessage(chatId, "Введите чат айди пользователя.", keyboardService.getReplyCancel());
                 modifyUserService.nextStep(chatId, Command.USER_REFERRAL_BALANCE.name());
                 break;
             case 1:

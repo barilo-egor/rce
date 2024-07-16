@@ -1,6 +1,7 @@
 package tgb.btc.rce.service;
 
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import tgb.btc.library.constants.enums.bot.CryptoCurrency;
 import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
@@ -37,4 +38,18 @@ public interface IKeyboardService {
     ReplyKeyboard getRPSElements();
 
     ReplyKeyboard getCabinetButtons();
+
+    ReplyKeyboard getReplyCancel();
+
+    ReplyKeyboard getInlineCancel();
+
+    ReplyKeyboard getBuyOrSell();
+
+    ReplyKeyboard getOperator();
+
+    ReplyKeyboardMarkup getFiatCurrenciesKeyboard();
+
+    ReplyKeyboard getBuildDeal();
+
+    ReplyKeyboard getCancelDeal();
 }

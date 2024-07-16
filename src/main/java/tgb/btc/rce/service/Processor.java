@@ -33,6 +33,13 @@ public abstract class Processor {
 
     protected IKeyboardBuildService keyboardBuildService;
 
+    protected IKeyboardService keyboardService;
+
+    @Autowired
+    public void setKeyboardService(IKeyboardService keyboardService) {
+        this.keyboardService = keyboardService;
+    }
+
     @Autowired
     public void setKeyboardBuildService(IKeyboardBuildService keyboardBuildService) {
         this.keyboardBuildService = keyboardBuildService;

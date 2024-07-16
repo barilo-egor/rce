@@ -15,7 +15,6 @@ import tgb.btc.library.bean.bot.PaymentReceipt;
 import tgb.btc.library.bean.bot.PaymentType;
 import tgb.btc.library.constants.enums.DeliveryKind;
 import tgb.btc.library.constants.enums.ReferralType;
-import tgb.btc.library.constants.enums.bot.DeliveryType;
 import tgb.btc.library.constants.enums.bot.*;
 import tgb.btc.library.constants.enums.properties.PropertiesPath;
 import tgb.btc.library.constants.enums.properties.VariableType;
@@ -38,7 +37,10 @@ import tgb.btc.library.util.FiatCurrencyUtil;
 import tgb.btc.library.util.properties.VariablePropertiesUtil;
 import tgb.btc.library.vo.calculate.DealAmount;
 import tgb.btc.rce.constants.BotStringConstants;
-import tgb.btc.rce.enums.*;
+import tgb.btc.rce.enums.BotInlineButton;
+import tgb.btc.rce.enums.Command;
+import tgb.btc.rce.enums.PropertiesMessage;
+import tgb.btc.rce.enums.Rank;
 import tgb.btc.rce.service.*;
 import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
 import tgb.btc.rce.service.process.IUserDiscountProcessService;
@@ -381,7 +383,7 @@ public class ExchangeService {
             } else {
                 message = String.format(message, BigDecimalUtil.roundToPlainString(deal.getAmount(), 0), deal.getFiatCurrency().getGenitive());
             }
-            keyboard = BotKeyboard.INLINE_CANCEL.getKeyboard();
+            keyboard = keyboardService.getInlineCancel();
         }
         responseSender.sendMessage(chatId, message, keyboard, "HTML")
                 .ifPresent(sentMessage -> modifyUserService.updateBufferVariable(chatId,
@@ -622,7 +624,7 @@ public class ExchangeService {
         modifyDealService.save(deal);
 
         Optional<Message> optionalMessage = responseSender.sendMessage(chatId, message,
-                BotKeyboard.BUILD_DEAL.getKeyboard(), "HTML");
+                keyboardService.getBuildDeal(), "HTML");
         if (DealType.isBuy(dealType)) {
             DealDeleteScheduler.addNewCryptoDeal(deal.getPid(),
                     optionalMessage.map(
@@ -754,7 +756,7 @@ public class ExchangeService {
 
     public void askForReceipts(Update update) {
         responseSender.sendMessage(UpdateUtil.getChatId(update),
-                "Отправьте скрин перевода, либо чек оплаты.", BotKeyboard.CANCEL_DEAL);
+                "Отправьте скрин перевода, либо чек оплаты.", keyboardService.getCancelDeal());
     }
 
     public boolean saveReceipts(Update update) {
