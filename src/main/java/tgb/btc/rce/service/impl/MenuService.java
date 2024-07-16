@@ -11,7 +11,7 @@ import tgb.btc.rce.service.IMenuService;
 import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.vo.ReplyButton;
 
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -28,7 +28,7 @@ public class MenuService implements IMenuService {
     }
 
     public Map<Menu, IMenu> getMenuMap() {
-        return new HashMap<>(menuMap);
+        return new EnumMap<>(menuMap);
     }
 
     @Override
