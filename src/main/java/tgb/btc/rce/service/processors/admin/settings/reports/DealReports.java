@@ -22,7 +22,6 @@ import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.util.ICryptoCurrenciesDesignService;
-import tgb.btc.rce.util.MessageTextUtil;
 import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.ReplyButton;
 
@@ -31,6 +30,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -134,7 +134,7 @@ public class DealReports extends Processor {
                 break;
             case 2:
                 try {
-                    LocalDate date = MessageTextUtil.getDate(update);
+                    LocalDate date = getDate(update);
                     LocalDateTime dateTime = date.atStartOfDay();
                     loadReport(dateDealService.getByDate(date), chatId, date.format(DateTimeFormatter.ISO_DATE), apiDealService.getAcceptedByDate(dateTime));
                     processToAdminMainPanel(chatId);
@@ -142,6 +142,17 @@ public class DealReports extends Processor {
                     responseSender.sendMessage(chatId, e.getMessage());
                 }
                 break;
+        }
+    }
+
+    public LocalDate getDate(Update update) {
+        if (!UpdateUtil.hasMessageText(update)) throw new BaseException("Отсутствует message text.");
+        String[] values = UpdateUtil.getMessageText(update).split("\\.");
+        try {
+            if (values.length != 3) throw new BaseException("Неверный формат даты.");
+            return LocalDate.of(Integer.parseInt(values[2]), Integer.parseInt(values[1]), Integer.parseInt(values[0]));
+        } catch (DateTimeException e) {
+            throw new BaseException("Неверный формат даты.");
         }
     }
 

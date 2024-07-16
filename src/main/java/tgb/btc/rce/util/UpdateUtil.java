@@ -69,11 +69,11 @@ public final class UpdateUtil {
     }
 
     public static Long getLongFromText(Update update) {
-        return NumberUtil.getInputLong(getMessageText(update));
+        return Long.parseLong(getMessageText(update));
     }
 
     public static BigDecimal getBigDecimalFromText(Update update) {
-        return BigDecimal.valueOf(NumberUtil.getInputDouble(getMessageText(update).replaceAll(",", ".")));
+        return BigDecimal.valueOf(Double.parseDouble(getMessageText(update).replaceAll(",", ".")));
     }
 
     public static Message getMessage(Update update) {

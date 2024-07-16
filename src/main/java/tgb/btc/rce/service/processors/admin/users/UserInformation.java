@@ -8,7 +8,6 @@ import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.impl.UserInfoService;
 import tgb.btc.rce.service.processors.support.MessagesService;
-import tgb.btc.rce.util.NumberUtil;
 import tgb.btc.rce.util.UpdateUtil;
 
 @Slf4j
@@ -38,7 +37,7 @@ public class UserInformation extends Processor {
                 messagesService.askForChatId(update, Command.USER_INFORMATION);
                 break;
             case 1:
-                userInfoService.sendUserInformation(chatId, NumberUtil.getInputLong(UpdateUtil.getMessageText(update)));
+                userInfoService.sendUserInformation(chatId, Long.parseLong(UpdateUtil.getMessageText(update)));
                 processToAdminMainPanel(chatId);
                 break;
         }

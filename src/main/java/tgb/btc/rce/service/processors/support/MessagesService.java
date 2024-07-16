@@ -13,7 +13,6 @@ import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.Menu;
 import tgb.btc.rce.service.impl.ResponseSender;
 import tgb.btc.rce.service.util.IMenuService;
-import tgb.btc.rce.util.NumberUtil;
 import tgb.btc.rce.util.UpdateUtil;
 
 @Service
@@ -79,7 +78,7 @@ public class MessagesService {
     public void sendMessageToUser(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
         try {
-            responseSender.sendMessage(NumberUtil.getInputLong(readUserService.getBufferVariable(chatId)),
+            responseSender.sendMessage(Long.parseLong(readUserService.getBufferVariable(chatId)),
                     UpdateUtil.getMessageText(update));
             responseSender.sendMessage(chatId, "Сообщение отправлено.");
         } catch (Exception e) {

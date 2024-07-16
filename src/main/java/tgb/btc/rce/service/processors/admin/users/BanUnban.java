@@ -11,7 +11,6 @@ import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.Menu;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.processors.support.MessagesService;
-import tgb.btc.rce.util.NumberUtil;
 import tgb.btc.rce.util.UpdateUtil;
 
 @Slf4j
@@ -56,7 +55,7 @@ public class BanUnban extends Processor {
 
     private void banUser(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
-        Long inputChatId = NumberUtil.getInputLong(UpdateUtil.getMessageText(update));
+        Long inputChatId = Long.parseLong(UpdateUtil.getMessageText(update));
         if (!readUserService.existsByChatId(inputChatId)) {
             responseSender.sendMessage(chatId, "Пользователь с таким ID не найден.",
                     menuService.build(Menu.ADMIN_BACK, readUserService.getUserRoleByChatId(chatId)));
