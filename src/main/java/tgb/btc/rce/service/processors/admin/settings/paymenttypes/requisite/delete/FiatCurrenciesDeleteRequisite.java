@@ -30,7 +30,7 @@ public class FiatCurrenciesDeleteRequisite extends Processor {
     public void run(Update update) {
         Long chatId = updateService.getChatId(update);
         if (FiatCurrencyUtil.isFew()) {
-            responseSender.sendMessage(chatId, BotStringConstants.FIAT_CURRENCY_CHOOSE, keyboardService.getFiatCurrencies());
+            responseSender.sendMessage(chatId, BotStringConstants.FIAT_CURRENCY_CHOOSE, keyboardService.getFiatCurrenciesKeyboard());
         } else {
             List<PaymentType> paymentTypes = paymentTypeService.getByDealTypeAndFiatCurrency(DealType.BUY, FiatCurrencyUtil.getFirst());  // todo рефактор
             if (CollectionUtils.isEmpty(paymentTypes)) {
