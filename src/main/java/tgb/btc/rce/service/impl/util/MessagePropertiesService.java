@@ -1,8 +1,9 @@
 package tgb.btc.rce.service.impl.util;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tgb.btc.library.constants.enums.bot.DealType;
-import tgb.btc.library.constants.enums.properties.PropertiesPath;
+import tgb.btc.library.service.properties.MessagePropertiesReader;
 import tgb.btc.rce.enums.PropertiesMessage;
 import tgb.btc.rce.service.util.IMessagePropertiesService;
 
@@ -10,12 +11,19 @@ import java.util.Objects;
 
 @Service
 public class MessagePropertiesService implements IMessagePropertiesService {
+    
+    private MessagePropertiesReader messagePropertiesReader;
+
+    @Autowired
+    public void setMessagePropertiesReader(MessagePropertiesReader messagePropertiesReader) {
+        this.messagePropertiesReader = messagePropertiesReader;
+    }
 
     @Override
     public String getMessage(PropertiesMessage message) {
         String text;
         try {
-            String propertiesMessage = PropertiesPath.MESSAGE_PROPERTIES.getString(message.getKey());
+            String propertiesMessage = messagePropertiesReader.getString(message.getKey());
             if (Objects.isNull(propertiesMessage)) return null;
             text = propertiesMessage.replaceAll("<ln>", "\n");
         } catch (Exception e) {
@@ -43,7 +51,7 @@ public class MessagePropertiesService implements IMessagePropertiesService {
     public String getMessage(String key) {
         String text;
         try {
-            String message = PropertiesPath.MESSAGE_PROPERTIES.getString(key);
+            String message = messagePropertiesReader.getString(key);
             if (Objects.isNull(message)) return null;
             text = message.replaceAll("<ln>", "\n");
         } catch (Exception e) {
@@ -57,7 +65,7 @@ public class MessagePropertiesService implements IMessagePropertiesService {
     public String getMessageForFormat(String key) {
         String text;
         try {
-            String message = PropertiesPath.MESSAGE_PROPERTIES.getString(key);
+            String message = messagePropertiesReader.getString(key);
             if (Objects.isNull(message)) return null;
             text = message.replaceAll("<ln>", "%n");
         } catch (Exception e) {
