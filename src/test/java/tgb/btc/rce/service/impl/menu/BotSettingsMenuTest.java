@@ -8,8 +8,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.Menu;
-import tgb.btc.rce.service.IUpdateDispatcher;
 import tgb.btc.rce.service.keyboard.IReplyButtonService;
+import tgb.btc.rce.service.util.IUpdateDispatcher;
 
 import java.util.ArrayList;
 import java.util.List;

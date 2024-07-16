@@ -8,8 +8,8 @@ import tgb.btc.library.constants.enums.properties.PropertiesPath;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
-import tgb.btc.rce.service.ITurningCurrenciesService;
 import tgb.btc.rce.service.Processor;
+import tgb.btc.rce.service.util.ITurningCurrenciesService;
 
 
 @CommandProcessor(command = Command.TURN_OFF_CURRENCY)

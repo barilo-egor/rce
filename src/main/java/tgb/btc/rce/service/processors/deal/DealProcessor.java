@@ -19,10 +19,10 @@ import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.Menu;
 import tgb.btc.rce.service.ICalculatorTypeService;
-import tgb.btc.rce.service.IUpdateDispatcher;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.process.IDealProcessService;
 import tgb.btc.rce.service.processors.support.ExchangeService;
+import tgb.btc.rce.service.util.IUpdateDispatcher;
 
 import java.util.HashSet;
 import java.util.Objects;

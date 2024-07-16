@@ -1,4 +1,4 @@
-package tgb.btc.rce.service;
+package tgb.btc.rce.service.util;
 
 import tgb.btc.api.library.IReviewPriseProcessService;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;

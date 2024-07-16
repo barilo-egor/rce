@@ -9,9 +9,9 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import tgb.btc.rce.service.IGroupUpdateDispatcher;
-import tgb.btc.rce.service.ITelegramPropertiesService;
-import tgb.btc.rce.service.IUpdateDispatcher;
 import tgb.btc.rce.service.IUpdateService;
+import tgb.btc.rce.service.util.ITelegramPropertiesService;
+import tgb.btc.rce.service.util.IUpdateDispatcher;
 
 @Service
 @Slf4j

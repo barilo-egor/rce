@@ -14,9 +14,9 @@ import tgb.btc.library.util.properties.VariablePropertiesUtil;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.ReviewPriseType;
 import tgb.btc.rce.service.IResponseSender;
-import tgb.btc.rce.service.IReviewPriseBotProcessService;
 import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
 import tgb.btc.rce.service.util.ICallbackQueryService;
+import tgb.btc.rce.service.util.IReviewPriseBotProcessService;
 import tgb.btc.rce.vo.InlineButton;
 import tgb.btc.rce.vo.ReviewPrise;
 

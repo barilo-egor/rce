@@ -13,10 +13,14 @@ import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.InlineCalculatorButton;
 import tgb.btc.rce.enums.PropertiesMessage;
-import tgb.btc.rce.service.*;
+import tgb.btc.rce.service.IFunctionsService;
+import tgb.btc.rce.service.IKeyboardService;
+import tgb.btc.rce.service.IMessageService;
+import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.processors.deal.DealProcessor;
 import tgb.btc.rce.service.processors.support.ExchangeService;
 import tgb.btc.rce.service.util.IMessagePropertiesService;
+import tgb.btc.rce.service.util.IUpdateDispatcher;
 import tgb.btc.rce.vo.InlineCalculatorData;
 import tgb.btc.rce.vo.InlineCalculatorVO;
 

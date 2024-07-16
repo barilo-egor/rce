@@ -7,8 +7,8 @@ import tgb.btc.library.constants.enums.bot.CryptoCurrency;
 import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
-import tgb.btc.rce.service.ITurningCurrenciesService;
 import tgb.btc.rce.service.Processor;
+import tgb.btc.rce.service.util.ITurningCurrenciesService;
 import tgb.btc.rce.vo.InlineButton;
 
 import java.util.ArrayList;

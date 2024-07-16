@@ -1,9 +1,9 @@
-package tgb.btc.rce.service.impl;
+package tgb.btc.rce.service.impl.util;
 
 import org.springframework.stereotype.Service;
 import tgb.btc.library.constants.enums.properties.PropertiesPath;
 import tgb.btc.library.exception.BaseException;
-import tgb.btc.rce.service.ITelegramPropertiesService;
+import tgb.btc.rce.service.util.ITelegramPropertiesService;
 
 import java.util.Objects;
 

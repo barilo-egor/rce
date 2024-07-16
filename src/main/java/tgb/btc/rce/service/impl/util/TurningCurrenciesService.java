@@ -1,11 +1,11 @@
-package tgb.btc.rce.service.impl;
+package tgb.btc.rce.service.impl.util;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.springframework.stereotype.Service;
 import tgb.btc.library.constants.enums.bot.CryptoCurrency;
 import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.constants.enums.properties.PropertiesPath;
-import tgb.btc.rce.service.ITurningCurrenciesService;
+import tgb.btc.rce.service.util.ITurningCurrenciesService;
 
 import javax.annotation.PostConstruct;
 import java.util.Arrays;
