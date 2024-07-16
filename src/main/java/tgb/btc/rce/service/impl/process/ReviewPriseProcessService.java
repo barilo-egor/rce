@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 @Service
 public class ReviewPriseProcessService implements tgb.btc.api.library.IReviewPriseProcessService, IReviewPriseBotProcessService {
 
-    private final List<ReviewPrise> REVIEW_PRISES = new ArrayList<>();
+    private final List<ReviewPrise> reviewPrises = new ArrayList<>();
 
     private IResponseSender responseSender;
 
@@ -98,7 +98,7 @@ public class ReviewPriseProcessService implements tgb.btc.api.library.IReviewPri
 
     @Override
     public ReviewPrise getReviewPrise(BigDecimal sum, FiatCurrency fiatCurrency) {
-        for (ReviewPrise reviewPrise : REVIEW_PRISES.stream()
+        for (ReviewPrise reviewPrise : reviewPrises.stream()
                 .filter(reviewPrise -> reviewPrise.getFiatCurrency().equals(fiatCurrency))
                 .collect(Collectors.toList())) {
             if (BigDecimal.valueOf(reviewPrise.getSum()).compareTo(sum) < 1)
@@ -109,7 +109,7 @@ public class ReviewPriseProcessService implements tgb.btc.api.library.IReviewPri
 
     @PostConstruct
     private void load() {
-        REVIEW_PRISES.clear();
+        reviewPrises.clear();
         for (String key : PropertiesPath.REVIEW_PRISE_PROPERTIES.getKeys()) {
             int sum;
             if (StringUtils.isBlank(key)) {
@@ -132,14 +132,14 @@ public class ReviewPriseProcessService implements tgb.btc.api.library.IReviewPri
             } catch (NumberFormatException e) {
                 throw new PropertyValueNotFoundException("Не корректное значение для ключа " + key + ".");
             }
-            REVIEW_PRISES.add(ReviewPrise.builder()
+            reviewPrises.add(ReviewPrise.builder()
                     .minPrise(minPrise)
                     .maxPrise(maxPrise)
                     .sum(sum)
                     .fiatCurrency(FiatCurrency.getByCode(key.split("\\.")[0]))
                     .build());
         }
-        REVIEW_PRISES.sort(Comparator.comparingInt(ReviewPrise::getSum));
-        Collections.reverse(REVIEW_PRISES);
+        reviewPrises.sort(Comparator.comparingInt(ReviewPrise::getSum));
+        Collections.reverse(reviewPrises);
     }
 }
