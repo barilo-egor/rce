@@ -24,7 +24,10 @@ public class MenuService implements IMenuService {
 
     @Autowired
     public MenuService(List<IMenu> menus) {
-        menuMap = menus.stream().collect(Collectors.toMap(IMenu::getMenu, Functions.identity()));
+        menuMap = menus.stream()
+                .collect(Collectors.toMap(IMenu::getMenu, Functions.identity(),
+                        (existing, replacement) -> existing,
+                        () -> new EnumMap<>(Menu.class)));
     }
 
     public Map<Menu, IMenu> getMenuMap() {
