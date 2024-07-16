@@ -6,15 +6,15 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.interfaces.service.bean.bot.ISpamBanService;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
+import tgb.btc.rce.service.IUserInfoService;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.service.impl.UserInfoService;
 
 import java.util.List;
 
 @CommandProcessor(command = Command.NEW_SPAM_BANS)
 public class NewSpamBans extends Processor {
 
-    private UserInfoService userInfoService;
+    private IUserInfoService userInfoService;
 
     private ISpamBanService spamBanService;
 
@@ -24,7 +24,7 @@ public class NewSpamBans extends Processor {
     }
 
     @Autowired
-    public void setUserInfoService(UserInfoService userInfoService) {
+    public void setUserInfoService(IUserInfoService userInfoService) {
         this.userInfoService = userInfoService;
     }
 

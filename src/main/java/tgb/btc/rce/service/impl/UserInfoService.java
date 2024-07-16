@@ -13,6 +13,7 @@ import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.PropertiesMessage;
 import tgb.btc.rce.service.IResponseSender;
+import tgb.btc.rce.service.IUserInfoService;
 import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
 import tgb.btc.rce.service.util.ICallbackQueryService;
 import tgb.btc.rce.service.util.IMessagePropertiesService;
@@ -22,7 +23,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Service
-public class UserInfoService {
+public class UserInfoService implements IUserInfoService {
 
     private IReadUserService readUserService;
 
@@ -79,10 +80,12 @@ public class UserInfoService {
         this.responseSender = responseSender;
     }
 
+    @Override
     public void sendUserInformation(Long messageChatId, Long userChatId) {
         responseSender.sendMessage(messageChatId, getUserInformation(userChatId), null, "HTML");
     }
 
+    @Override
     public void sendUserInformation(Long messageChatId, Long userChatId, ReplyKeyboard replyKeyboard) {
         responseSender.sendMessage(messageChatId, getUserInformation(userChatId), replyKeyboard, "HTML");
     }
@@ -114,6 +117,7 @@ public class UserInfoService {
         return result;
     }
 
+    @Override
     public void sendSpamBannedUser(Long messageChatId, Long spamBanPid) {
         sendUserInformation(messageChatId, spamBanService.getUserChatIdByPid(spamBanPid),
                             keyboardBuildService.buildInline(List.of(
