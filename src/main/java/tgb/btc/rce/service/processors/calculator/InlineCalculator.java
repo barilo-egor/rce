@@ -13,13 +13,9 @@ import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.InlineCalculatorButton;
 import tgb.btc.rce.enums.PropertiesMessage;
-import tgb.btc.rce.service.IKeyboardService;
-import tgb.btc.rce.service.IMessageService;
-import tgb.btc.rce.service.IUpdateDispatcher;
-import tgb.btc.rce.service.Processor;
+import tgb.btc.rce.service.*;
 import tgb.btc.rce.service.processors.deal.DealProcessor;
 import tgb.btc.rce.service.processors.support.ExchangeService;
-import tgb.btc.rce.util.FunctionPropertiesUtil;
 import tgb.btc.rce.util.MessagePropertiesUtil;
 import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.InlineCalculatorData;
@@ -46,6 +42,13 @@ public class InlineCalculator extends Processor {
     private IUpdateDispatcher updateDispatcher;
 
     private IMessageService messageService;
+
+    private IFunctionsService functionsService;
+
+    @Autowired
+    public void setFunctionsService(IFunctionsService functionsService) {
+        this.functionsService = functionsService;
+    }
 
     public static ConcurrentHashMap<Long, InlineCalculatorVO> cache = new ConcurrentHashMap<>();
 
@@ -159,7 +162,7 @@ public class InlineCalculator extends Processor {
         } else {
             dealAmount = StringUtils.isNotEmpty(sum)
                     ? calculateService.calculate(chatId, new BigDecimal(sum), calculator.getCryptoCurrency(),
-                    calculator.getFiatCurrency(), dealType, !isSwitched, BooleanUtils.isTrue(FunctionPropertiesUtil.getSumToReceive(calculator.getCryptoCurrency())))
+                    calculator.getFiatCurrency(), dealType, !isSwitched, BooleanUtils.isTrue(functionsService.getSumToReceive(calculator.getCryptoCurrency())))
                     : null;
             calculator.setDealAmount(dealAmount);
         }

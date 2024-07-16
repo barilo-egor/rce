@@ -46,7 +46,6 @@ import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
 import tgb.btc.rce.service.process.IUserDiscountProcessService;
 import tgb.btc.rce.service.util.ICallbackQueryService;
 import tgb.btc.rce.service.util.ICryptoCurrenciesDesignService;
-import tgb.btc.rce.util.FunctionPropertiesUtil;
 import tgb.btc.rce.util.MessagePropertiesUtil;
 import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.CalculatorQuery;
@@ -100,6 +99,13 @@ public class ExchangeService {
     private ICallbackQueryService callbackQueryService;
 
     private ICryptoCurrenciesDesignService cryptoCurrenciesDesignService;
+
+    private IFunctionsService functionsService;
+
+    @Autowired
+    public void setFunctionsService(IFunctionsService functionsService) {
+        this.functionsService = functionsService;
+    }
 
     @Autowired
     public void setCryptoCurrenciesDesignService(ICryptoCurrenciesDesignService cryptoCurrenciesDesignService) {
@@ -272,7 +278,7 @@ public class ExchangeService {
                         + " " + cryptoCurrenciesDesignService.getDisplayName(cryptoCurrency) + "\n"
                         + "Сумма к оплате: " + BigDecimalUtil.roundToPlainString(dealAmount) + " "
                         + fiatCurrency.getGenitive() + "\n";
-                if (BooleanUtils.isTrue(FunctionPropertiesUtil.getSumToReceive(cryptoCurrency))) {
+                if (BooleanUtils.isTrue(functionsService.getSumToReceive(cryptoCurrency))) {
                     message = message.concat("Сумма к зачислению: "
                             + BigDecimalUtil.roundToPlainString(dealPropertyService.getCreditedAmountByPid(currentDealPid))
                             + " " + fiatCurrency.getGenitive());
@@ -301,7 +307,7 @@ public class ExchangeService {
         Deal deal = readDealService.findByPid(readUserService.getCurrentDealByChatId(chatId));
         DealAmount dealAmount = calculateService.calculate(chatId, enteredAmount,
                 deal.getCryptoCurrency(), deal.getFiatCurrency(),
-                deal.getDealType(), isEnteredInCrypto, BooleanUtils.isTrue(FunctionPropertiesUtil.getSumToReceive(deal.getCryptoCurrency())));
+                deal.getDealType(), isEnteredInCrypto, BooleanUtils.isTrue(functionsService.getSumToReceive(deal.getCryptoCurrency())));
         if (isLessThanMin(chatId, deal.getDealType(), deal.getCryptoCurrency(), dealAmount.getCryptoAmount())) {
             return false;
         }
@@ -339,7 +345,7 @@ public class ExchangeService {
                 calculatorQuery.getCurrency(),
                 calculatorQuery.getFiatCurrency(),
                 calculatorQuery.getDealType(),
-                BooleanUtils.isTrue(FunctionPropertiesUtil.getSumToReceive(calculatorQuery.getCurrency())));
+                BooleanUtils.isTrue(functionsService.getSumToReceive(calculatorQuery.getCurrency())));
         Long currentDealPid = readUserService.getCurrentDealByChatId(chatId);
         DealType dealType = dealPropertyService.getDealTypeByPid(currentDealPid);
         CryptoCurrency cryptoCurrency = dealPropertyService.getCryptoCurrencyByPid(currentDealPid);
