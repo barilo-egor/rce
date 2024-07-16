@@ -15,7 +15,7 @@ import tgb.btc.library.constants.enums.bot.GroupChatType;
 import tgb.btc.library.interfaces.service.bean.bot.IGroupChatService;
 import tgb.btc.rce.service.IGroupUpdateDispatcher;
 import tgb.btc.rce.service.IResponseSender;
-import tgb.btc.rce.util.TelegramBotPropertiesUtil;
+import tgb.btc.rce.service.ITelegramPropertiesService;
 import tgb.btc.rce.util.UpdateUtil;
 
 import java.util.Objects;
@@ -32,6 +32,13 @@ public class GroupUpdateDispatcher implements IGroupUpdateDispatcher {
     private IResponseSender responseSender;
 
     private INotificationsAPI notificationsAPI;
+
+    private ITelegramPropertiesService telegramPropertiesService;
+
+    @Autowired
+    public void setTelegramPropertiesService(ITelegramPropertiesService telegramPropertiesService) {
+        this.telegramPropertiesService = telegramPropertiesService;
+    }
 
     @Autowired
     public void setNotificationsAPI(INotificationsAPI notificationsAPI) {
@@ -59,7 +66,7 @@ public class GroupUpdateDispatcher implements IGroupUpdateDispatcher {
         }
         if (update.hasMyChatMember()) {
             ChatMember newChatMember = update.getMyChatMember().getNewChatMember();
-            if (TelegramBotPropertiesUtil.getUsername().equals(newChatMember.getUser().getUserName())) {
+            if (telegramPropertiesService.getUsername().equals(newChatMember.getUser().getUserName())) {
                 MemberStatus status = MemberStatus.valueOf(newChatMember.getStatus().toUpperCase());
                 if (MemberStatus.LEFT.equals(status) || MemberStatus.KICKED.equals(status)) {
                     log.debug("Бот был удален из группы chatid={}", chatId);

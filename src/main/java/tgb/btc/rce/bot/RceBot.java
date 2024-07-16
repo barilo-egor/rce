@@ -9,8 +9,8 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import tgb.btc.rce.service.IGroupUpdateDispatcher;
+import tgb.btc.rce.service.ITelegramPropertiesService;
 import tgb.btc.rce.service.IUpdateDispatcher;
-import tgb.btc.rce.util.TelegramBotPropertiesUtil;
 import tgb.btc.rce.util.UpdateUtil;
 
 @Service
@@ -20,6 +20,13 @@ public class RceBot extends TelegramLongPollingBot {
     private final IUpdateDispatcher updateDispatcher;
 
     private IGroupUpdateDispatcher groupUpdateDispatcher;
+
+    private ITelegramPropertiesService telegramPropertiesService;
+
+    @Autowired
+    public void setTelegramPropertiesService(ITelegramPropertiesService telegramPropertiesService) {
+        this.telegramPropertiesService = telegramPropertiesService;
+    }
 
     @Autowired
     public void setGroupUpdateDispatcher(IGroupUpdateDispatcher groupUpdateDispatcher) {
@@ -33,12 +40,12 @@ public class RceBot extends TelegramLongPollingBot {
 
     @Override
     public String getBotUsername() {
-        return TelegramBotPropertiesUtil.getUsername();
+        return telegramPropertiesService.getUsername();
     }
 
     @Override
     public String getBotToken() {
-        return TelegramBotPropertiesUtil.getToken();
+        return telegramPropertiesService.getToken();
     }
 
     @Override
