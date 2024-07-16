@@ -11,10 +11,10 @@ import tgb.btc.library.interfaces.service.bean.bot.IBotMessageService;
 import tgb.btc.library.interfaces.service.bean.bot.user.IModifyUserService;
 import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.rce.enums.Command;
+import tgb.btc.rce.service.IBotImageService;
 import tgb.btc.rce.service.impl.ResponseSender;
 import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
 import tgb.btc.rce.service.process.IBotMessageProcessService;
-import tgb.btc.rce.util.BotImageUtil;
 import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.ReplyButton;
 
@@ -34,6 +34,13 @@ public class BotMessageProcessService implements IBotMessageProcessService {
     private ResponseSender responseSender;
 
     private IKeyboardBuildService keyboardBuildService;
+
+    private IBotImageService botImageService;
+
+    @Autowired
+    public void setBotImageService(IBotImageService botImageService) {
+        this.botImageService = botImageService;
+    }
 
     @Autowired
     public void setKeyboardBuildService(IKeyboardBuildService keyboardBuildService) {
@@ -103,7 +110,7 @@ public class BotMessageProcessService implements IBotMessageProcessService {
 
         if (update.getMessage().hasPhoto()) {
             botMessage.setMessageType(MessageType.IMAGE);
-            botMessage.setImage(BotImageUtil.getImageId(update.getMessage().getPhoto()));
+            botMessage.setImage(botImageService.getImageId(update.getMessage().getPhoto()));
             botMessage.setText(update.getMessage().getCaption());
         } else if (update.getMessage().hasAnimation()) {
             botMessage.setMessageType(MessageType.ANIMATION);

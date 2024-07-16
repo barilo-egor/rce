@@ -11,9 +11,9 @@ import tgb.btc.library.interfaces.service.bean.bot.deal.IReadDealService;
 import tgb.btc.library.util.properties.VariablePropertiesUtil;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
+import tgb.btc.rce.service.IBotImageService;
 import tgb.btc.rce.service.INotifyService;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.util.BotImageUtil;
 import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.InlineButton;
 
@@ -31,8 +31,15 @@ public class UserAdditionalVerification extends Processor {
 
     private INotifyService notifyService;
 
+    private IBotImageService botImageService;
+
     @Autowired
-    public void setAdminService(INotifyService notifyService) {
+    public void setBotImageService(IBotImageService botImageService) {
+        this.botImageService = botImageService;
+    }
+
+    @Autowired
+    public void setNotifyService(INotifyService notifyService) {
         this.notifyService = notifyService;
     }
 
@@ -62,7 +69,7 @@ public class UserAdditionalVerification extends Processor {
             return;
         }
         if (update.getMessage().hasPhoto()) {
-            String imageId = BotImageUtil.getImageId(update.getMessage().getPhoto());
+            String imageId = botImageService.getImageId(update.getMessage().getPhoto());
             modifyDealService.updateAdditionalVerificationImageIdByPid(dealPid, imageId);
             modifyUserService.setDefaultValues(chatId);
             modifyDealService.updateDealStatusByPid(DealStatus.VERIFICATION_RECEIVED, dealPid);

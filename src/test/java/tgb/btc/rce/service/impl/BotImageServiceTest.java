@@ -1,4 +1,4 @@
-package tgb.btc.rce.util;
+package tgb.btc.rce.service.impl;
 
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
@@ -12,7 +12,9 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class BotImageUtilTest {
+class BotImageServiceTest {
+
+    private final BotImageService botImageService = new BotImageService();
 
     @Test
     void getImageId() {
@@ -28,14 +30,14 @@ class BotImageUtilTest {
             PhotoSize photoSize = new PhotoSize();
             photoSize.setFileSize(RandomUtils.nextInt(1, 999));
             photoSizeList.add(photoSize);
-            assertEquals(randomFileId, BotImageUtil.getImageId(photoSizeList));
+            assertEquals(randomFileId, botImageService.getImageId(photoSizeList));
         }
     }
 
     @Test
     void getImageIdThrows() {
-        assertThrows(BaseException.class, () -> BotImageUtil.getImageId(new ArrayList<>()));
-        assertThrows(BaseException.class, () -> BotImageUtil.getImageId(null));
+        assertThrows(BaseException.class, () -> botImageService.getImageId(new ArrayList<>()));
+        assertThrows(BaseException.class, () -> botImageService.getImageId(null));
     }
 
 }
