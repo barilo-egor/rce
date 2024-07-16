@@ -1,6 +1,7 @@
-package tgb.btc.rce.util;
+package tgb.btc.rce.service.impl.keyboard;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
@@ -11,6 +12,8 @@ import tgb.btc.library.bean.bot.Contact;
 import tgb.btc.library.exception.BaseException;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.InlineType;
+import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
+import tgb.btc.rce.util.CallbackQueryUtil;
 import tgb.btc.rce.vo.InlineButton;
 import tgb.btc.rce.vo.ReplyButton;
 
@@ -19,43 +22,42 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-/**
- * use IKeyboardBuildService
- * @deprecated
- */
-@Deprecated(since = "1.4", forRemoval = true)
-public final class KeyboardUtil {
-    private KeyboardUtil() {
-    }
+@Service
+public class KeyboardBuildService implements IKeyboardBuildService {
 
-    public static final InlineButton INLINE_BACK_BUTTON = InlineButton.builder().text("Назад")
+    public final InlineButton inlineBackButton = InlineButton.builder().text("Назад")
             .inlineType(InlineType.CALLBACK_DATA)
             .data(Command.BACK.name())
             .build();
 
-    public static InlineKeyboardMarkup buildInline(List<InlineButton> buttons) {
+    @Override
+    public InlineKeyboardMarkup buildInline(List<InlineButton> buttons) {
         return buildInline(buttons, 1);
     }
 
-    public static InlineKeyboardMarkup buildInline(List<InlineButton> buttons, int maxNumberOfColumns) {
+    @Override
+    public InlineKeyboardMarkup buildInline(List<InlineButton> buttons, int maxNumberOfColumns) {
         return InlineKeyboardMarkup.builder()
                 .keyboard(buildInlineRows(buttons, maxNumberOfColumns))
                 .build();
     }
 
-    public static InlineKeyboardMarkup buildInlineByRows(List<List<InlineKeyboardButton>> rows) {
+    @Override
+    public InlineKeyboardMarkup buildInlineByRows(List<List<InlineKeyboardButton>> rows) {
         return InlineKeyboardMarkup.builder()
                 .keyboard(rows)
                 .build();
     }
 
-    public static InlineKeyboardMarkup buildInlineSingleLast(List<InlineButton> buttons, int maxNumberOfColumns, InlineButton inlineButton) {
+    @Override
+    public InlineKeyboardMarkup buildInlineSingleLast(List<InlineButton> buttons, int maxNumberOfColumns, InlineButton inlineButton) {
         List<List<InlineKeyboardButton>> builtRows = buildInlineRows(buttons, maxNumberOfColumns);
         builtRows.add(List.of(parse(inlineButton)));
         return InlineKeyboardMarkup.builder().keyboard(builtRows).build();
     }
 
-    public static List<List<InlineKeyboardButton>> buildInlineRows(List<InlineButton> buttons, int maxNumberOfColumns) {
+    @Override
+    public List<List<InlineKeyboardButton>> buildInlineRows(List<InlineButton> buttons, int maxNumberOfColumns) {
         if (maxNumberOfColumns < 1)
             throw new BaseException("Количество колонок не может быть меньше одного.");
         if (CollectionUtils.isEmpty(buttons))
@@ -75,7 +77,7 @@ public final class KeyboardUtil {
         return rows;
     }
 
-    private static InlineKeyboardButton parse(InlineButton inlineButton) {
+    private InlineKeyboardButton parse(InlineButton inlineButton) {
         InlineKeyboardButton inlineKeyboardButton = new InlineKeyboardButton();
         inlineKeyboardButton.setText(inlineButton.getText());
         String data = inlineButton.getData();
@@ -100,19 +102,23 @@ public final class KeyboardUtil {
         return inlineKeyboardButton;
     }
 
-    public static ReplyKeyboardMarkup buildReply(List<ReplyButton> buttons) {
+    @Override
+    public ReplyKeyboardMarkup buildReply(List<ReplyButton> buttons) {
         return buildReply(1, false, true, buttons);
     }
 
-    public static ReplyKeyboardMarkup buildReply(int maxNumberOfColumns, List<ReplyButton> buttons) {
+    @Override
+    public ReplyKeyboardMarkup buildReply(int maxNumberOfColumns, List<ReplyButton> buttons) {
         return buildReply(maxNumberOfColumns, false, true, buttons);
     }
 
-    public static ReplyKeyboardMarkup buildReply(int maxNumberOfColumns, List<ReplyButton> buttons, boolean oneTime) {
+    @Override
+    public ReplyKeyboardMarkup buildReply(int maxNumberOfColumns, List<ReplyButton> buttons, boolean oneTime) {
         return buildReply(maxNumberOfColumns, oneTime, true, buttons);
     }
 
-    public static ReplyKeyboardMarkup buildReply(int maxNumberOfColumns, boolean oneTime, boolean resize, List<ReplyButton> buttons) {
+    @Override
+    public ReplyKeyboardMarkup buildReply(int maxNumberOfColumns, boolean oneTime, boolean resize, List<ReplyButton> buttons) {
         if (maxNumberOfColumns < 1)
             throw new BaseException("Количество колонок не может быть меньше 1.");
         if (CollectionUtils.isEmpty(buttons))
@@ -141,8 +147,9 @@ public final class KeyboardUtil {
                 .build();
     }
 
-    public static InlineKeyboardMarkup buildContacts(List<Contact> contacts) {
-        return KeyboardUtil.buildInline(
+    @Override
+    public InlineKeyboardMarkup buildContacts(List<Contact> contacts) {
+        return buildInline(
                 contacts.stream()
                         .map(contact -> InlineButton.builder()
                                 .text(contact.getLabel())
@@ -152,21 +159,22 @@ public final class KeyboardUtil {
                         .collect(Collectors.toList()));
     }
 
-   public static InlineButton createCallBackDataButton(String text, Command command, String... string) {
+    @Override
+    public InlineButton createCallBackDataButton(String text, Command command, String... string) {
         return InlineButton.builder()
                 .inlineType(InlineType.CALLBACK_DATA)
                 .text(text)
                 .data(CallbackQueryUtil.buildCallbackData(command, string))
                 .build();
-   }
+    }
 
-    public static InlineKeyboardMarkup getLink(String text, String data) {
-        return KeyboardUtil.buildInline(List.of(
+    @Override
+    public InlineKeyboardMarkup getLink(String text, String data) {
+        return buildInline(List.of(
                 InlineButton.builder()
                         .text(text)
                         .data(data)
                         .inlineType(InlineType.URL)
                         .build()));
     }
-
 }
