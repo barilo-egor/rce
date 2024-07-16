@@ -11,8 +11,8 @@ import tgb.btc.library.interfaces.service.bean.bot.user.IModifyUserService;
 import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.Menu;
+import tgb.btc.rce.service.IMenuService;
 import tgb.btc.rce.service.impl.ResponseSender;
-import tgb.btc.rce.util.MenuFactory;
 import tgb.btc.rce.util.NumberUtil;
 import tgb.btc.rce.util.UpdateUtil;
 
@@ -24,6 +24,13 @@ public class MessagesService {
     private IReadUserService readUserService;
 
     private IModifyUserService modifyUserService;
+
+    private IMenuService menuService;
+
+    @Autowired
+    public void setMenuService(IMenuService menuService) {
+        this.menuService = menuService;
+    }
 
     @Autowired
     public void setResponseSender(ResponseSender responseSender) {
@@ -44,14 +51,14 @@ public class MessagesService {
         Long chatId = UpdateUtil.getChatId(update);
         modifyUserService.nextStep(chatId, command.name());
         responseSender.sendMessage(chatId, "Введите ID пользователя.",
-                MenuFactory.build(Menu.ADMIN_BACK, readUserService.getUserRoleByChatId(chatId)));
+                menuService.build(Menu.ADMIN_BACK, readUserService.getUserRoleByChatId(chatId)));
     }
 
     public void askForDealsCount(Update update, Command command) {
         Long chatId = UpdateUtil.getChatId(update);
         modifyUserService.nextStep(chatId, command.name());
         responseSender.sendMessage(chatId, "Введите кол-во возможных сделок.",
-                MenuFactory.build(Menu.ADMIN_BACK, readUserService.getUserRoleByChatId(chatId)));
+                menuService.build(Menu.ADMIN_BACK, readUserService.getUserRoleByChatId(chatId)));
     }
 
     public boolean isUserExist(Update update) {
@@ -66,7 +73,7 @@ public class MessagesService {
         Long chatId = UpdateUtil.getChatId(update);
         modifyUserService.nextStep(chatId, command.name());
         responseSender.sendMessage(chatId, "Введите текст сообщения.",
-                MenuFactory.build(Menu.ADMIN_BACK, readUserService.getUserRoleByChatId(chatId)));
+                menuService.build(Menu.ADMIN_BACK, readUserService.getUserRoleByChatId(chatId)));
     }
 
     public void sendMessageToUser(Update update) {

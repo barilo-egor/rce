@@ -14,7 +14,6 @@ import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.Menu;
 import tgb.btc.rce.enums.PropertiesMessage;
 import tgb.btc.rce.enums.UpdateType;
-import tgb.btc.rce.util.MenuFactory;
 import tgb.btc.rce.util.MessagePropertiesUtil;
 import tgb.btc.rce.util.UpdateUtil;
 
@@ -28,6 +27,13 @@ public abstract class Processor {
     protected IModifyUserService modifyUserService;
 
     protected IUserCommonService userCommonService;
+
+    protected IMenuService menuService;
+
+    @Autowired
+    public void setMenuService(IMenuService menuService) {
+        this.menuService = menuService;
+    }
 
     @Autowired
     public void setResponseSender(IResponseSender responseSender) {
@@ -98,7 +104,7 @@ public abstract class Processor {
         modifyUserService.setDefaultValues(chatId);
         responseSender.sendMessage(chatId,
                 MessagePropertiesUtil.getMessage(PropertiesMessage.MENU_MAIN),
-                MenuFactory.build(Menu.MAIN, readUserService.getUserRoleByChatId(chatId)), "HTML");
+                menuService.build(Menu.MAIN, readUserService.getUserRoleByChatId(chatId)), "HTML");
     }
 
     public void processToAdminMainPanel(Long chatId) {
@@ -107,11 +113,11 @@ public abstract class Processor {
         if (UserRole.ADMIN.equals(role))
             responseSender.sendMessage(chatId,
                     MessagePropertiesUtil.getMessage(PropertiesMessage.MENU_MAIN_ADMIN),
-                    MenuFactory.build(Menu.ADMIN_PANEL, role));
+                    menuService.build(Menu.ADMIN_PANEL, role));
         else if (UserRole.OPERATOR.equals(role))
             responseSender.sendMessage(chatId,
                     MessagePropertiesUtil.getMessage(PropertiesMessage.MENU_MAIN_OPERATOR),
-                    MenuFactory.build(Menu.OPERATOR_PANEL, role));
+                    menuService.build(Menu.OPERATOR_PANEL, role));
     }
 
     protected boolean hasMessageText(Update update, String message) {

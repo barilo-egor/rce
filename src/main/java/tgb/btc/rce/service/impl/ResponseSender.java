@@ -31,8 +31,12 @@ import tgb.btc.rce.enums.BotKeyboard;
 import tgb.btc.rce.enums.Menu;
 import tgb.btc.rce.enums.MessageTemplate;
 import tgb.btc.rce.enums.PropertiesMessage;
+import tgb.btc.rce.service.IMenuService;
 import tgb.btc.rce.service.IResponseSender;
-import tgb.btc.rce.util.*;
+import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
+import tgb.btc.rce.util.CallbackQueryUtil;
+import tgb.btc.rce.util.MessagePropertiesUtil;
+import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.InlineButton;
 
 import java.io.File;
@@ -51,6 +55,20 @@ public class ResponseSender implements IResponseSender {
     private BotMessageService botMessageService;
 
     private IReadUserService readUserService;
+
+    private IMenuService menuService;
+
+    private IKeyboardBuildService keyboardBuildService;
+
+    @Autowired
+    public void setKeyboardBuildService(IKeyboardBuildService keyboardBuildService) {
+        this.keyboardBuildService = keyboardBuildService;
+    }
+
+    @Autowired
+    public void setMenuService(IMenuService menuService) {
+        this.menuService = menuService;
+    }
 
     @Autowired
     public void setReadUserService(IReadUserService readUserService) {
@@ -96,7 +114,7 @@ public class ResponseSender implements IResponseSender {
     }
 
     public Optional<Message> sendMessage(Long chatId, String text, Menu menu) {
-        return sendMessage(chatId, text, MenuFactory.build(menu, readUserService.getUserRoleByChatId(chatId)), null);
+        return sendMessage(chatId, text, menuService.build(menu, readUserService.getUserRoleByChatId(chatId)), null);
     }
 
     public Optional<Message> sendMessage(Long chatId, PropertiesMessage propertiesMessage, Menu menu) {
@@ -112,11 +130,11 @@ public class ResponseSender implements IResponseSender {
     }
 
     public Optional<Message> sendMessage(Long chatId, String text, InlineButton... inlineButtons) {
-        return sendMessage(chatId, text, KeyboardUtil.buildInline(List.of(inlineButtons)));
+        return sendMessage(chatId, text, keyboardBuildService.buildInline(List.of(inlineButtons)));
     }
 
     public Optional<Message> sendMessage(Long chatId, String text, List<InlineButton> buttons) {
-        return sendMessage(chatId, text, KeyboardUtil.buildInline(buttons));
+        return sendMessage(chatId, text, keyboardBuildService.buildInline(buttons));
     }
 
     public Optional<Message> sendMessage(Long chatId, String text, BotKeyboard botKeyboard) {
@@ -167,7 +185,7 @@ public class ResponseSender implements IResponseSender {
     }
 
     public Optional<Message> sendBotMessage(BotMessageType botMessageType, Long chatId, Menu menu) {
-        return sendBotMessage(botMessageType, chatId, MenuFactory.build(menu, readUserService.getUserRoleByChatId(chatId)));
+        return sendBotMessage(botMessageType, chatId, menuService.build(menu, readUserService.getUserRoleByChatId(chatId)));
     }
 
     public Optional<Message> sendBotMessage(BotMessageType botMessageType, Long chatId, ReplyKeyboard replyKeyboard) {

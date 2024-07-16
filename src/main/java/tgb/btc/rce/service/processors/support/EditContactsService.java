@@ -12,9 +12,9 @@ import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.Menu;
 import tgb.btc.rce.enums.PropertiesMessage;
+import tgb.btc.rce.service.IMenuService;
 import tgb.btc.rce.service.impl.ResponseSender;
 import tgb.btc.rce.util.KeyboardUtil;
-import tgb.btc.rce.util.MenuFactory;
 import tgb.btc.rce.util.MessagePropertiesUtil;
 import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.InlineButton;
@@ -35,6 +35,13 @@ public class EditContactsService {
     private IReadUserService readUserService;
 
     private IModifyUserService modifyUserService;
+
+    private IMenuService menuService;
+
+    @Autowired
+    public void setMenuService(IMenuService menuService) {
+        this.menuService = menuService;
+    }
 
     @Autowired
     public void setModifyUserService(IModifyUserService modifyUserService) {
@@ -59,7 +66,7 @@ public class EditContactsService {
     public void askInput(Long chatId) {
         modifyUserService.nextStep(chatId, Command.ADD_CONTACT.name());
         responseSender.sendMessage(chatId, MessagePropertiesUtil.getMessage(PropertiesMessage.CONTACT_ASK_INPUT),
-                MenuFactory.build(Menu.ADMIN_BACK, readUserService.getUserRoleByChatId(chatId)));
+                menuService.build(Menu.ADMIN_BACK, readUserService.getUserRoleByChatId(chatId)));
     }
 
     public void save(Update update) {
