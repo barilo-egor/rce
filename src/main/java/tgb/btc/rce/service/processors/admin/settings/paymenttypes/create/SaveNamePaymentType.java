@@ -27,7 +27,7 @@ public class SaveNamePaymentType extends Processor {
         String newTypeName = updateService.getMessageText(update);
         userDataService.updateStringByUserChatId(chatId, newTypeName);
         if (FiatCurrencyUtil.isFew()) {
-            responseSender.sendMessage(chatId, BotStringConstants.FIAT_CURRENCY_CHOOSE, keyboardService.getFiatCurrencies());
+            responseSender.sendMessage(chatId, BotStringConstants.FIAT_CURRENCY_CHOOSE, keyboardService.getFiatCurrenciesKeyboard());
             modifyUserService.nextStep(chatId);
         } else {
             responseSender.sendMessage(chatId, BotStringConstants.BUY_OR_SELL, keyboardService.getBuyOrSell());

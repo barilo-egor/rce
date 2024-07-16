@@ -15,7 +15,7 @@ public class ChangeMinSum extends Processor {
     public void run(Update update) {
         Long chatId = updateService.getChatId(update);
         if (FiatCurrencyUtil.isFew()) {
-            responseSender.sendMessage(chatId, BotStringConstants.FIAT_CURRENCY_CHOOSE, keyboardService.getFiatCurrencies());
+            responseSender.sendMessage(chatId, BotStringConstants.FIAT_CURRENCY_CHOOSE, keyboardService.getFiatCurrenciesKeyboard());
         } else {
             responseSender.sendMessage(chatId, BotStringConstants.BUY_OR_SELL, keyboardService.getBuyOrSell());
             modifyUserService.nextStep(chatId, Command.CHANGE_MIN_SUM.name());
