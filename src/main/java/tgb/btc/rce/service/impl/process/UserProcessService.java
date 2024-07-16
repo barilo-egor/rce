@@ -17,8 +17,8 @@ import tgb.btc.library.interfaces.service.bean.bot.user.IModifyUserService;
 import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.library.service.bean.bot.ReferralUserService;
 import tgb.btc.rce.enums.Command;
+import tgb.btc.rce.service.ICommandService;
 import tgb.btc.rce.service.process.IUserProcessService;
-import tgb.btc.rce.util.CommandUtil;
 import tgb.btc.rce.util.UpdateUtil;
 
 import java.math.BigDecimal;
@@ -37,6 +37,18 @@ public class UserProcessService implements IUserProcessService {
     private IReferralUserService referralUserService;
 
     private IUserDiscountService userDiscountService;
+
+    private ICommandService commandService;
+
+    @Autowired
+    public void setReferralUserService(IReferralUserService referralUserService) {
+        this.referralUserService = referralUserService;
+    }
+
+    @Autowired
+    public void setCommandService(ICommandService commandService) {
+        this.commandService = commandService;
+    }
 
     @Autowired
     public void setUserDiscountService(IUserDiscountService userDiscountService) {
@@ -84,7 +96,7 @@ public class UserProcessService implements IUserProcessService {
         newUser.setCharges(0);
         newUser.setReferralPercent(BigDecimal.ZERO);
         User inviter = null;
-        if (CommandUtil.isStartCommand(update) && ReferralType.STANDARD.isCurrent()) {
+        if (commandService.isStartCommand(update) && ReferralType.STANDARD.isCurrent()) {
             try {
                 Long chatIdFrom = Long.parseLong(update.getMessage().getText()
                         .replaceAll(Command.START.getText(), "").trim());

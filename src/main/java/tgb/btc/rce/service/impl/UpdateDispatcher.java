@@ -14,10 +14,10 @@ import tgb.btc.library.service.process.BannedUserCache;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.SimpleCommand;
 import tgb.btc.rce.service.ICommandProcessorLoader;
+import tgb.btc.rce.service.ICommandService;
 import tgb.btc.rce.service.IUpdateDispatcher;
 import tgb.btc.rce.service.captcha.IAntiSpam;
 import tgb.btc.rce.service.process.IUserProcessService;
-import tgb.btc.rce.util.CommandUtil;
 import tgb.btc.rce.util.UpdateUtil;
 
 import javax.annotation.PostConstruct;
@@ -42,6 +42,13 @@ public class UpdateDispatcher implements IUpdateDispatcher {
     private IUserCommonService userCommonService;
 
     private ICommandProcessorLoader commandProcessorLoader;
+
+    private ICommandService commandService;
+
+    @Autowired
+    public void setCommandService(ICommandService commandService) {
+        this.commandService = commandService;
+    }
 
     @Autowired
     public void setCommandProcessorLoader(@Lazy ICommandProcessorLoader commandProcessorLoader) {
@@ -97,8 +104,8 @@ public class UpdateDispatcher implements IUpdateDispatcher {
             if (isCaptcha(update)) return Command.CAPTCHA;
             antiSpam.saveTime(chatId);
         } else userProcessService.registerIfNotExists(update);
-        if (isOffed(chatId) && !CommandUtil.isSubmitCommand(update)) return Command.BOT_OFFED;
-        if (CommandUtil.isStartCommand(update)) return Command.START;
+        if (isOffed(chatId) && !commandService.isSubmitCommand(update)) return Command.BOT_OFFED;
+        if (commandService.isStartCommand(update)) return Command.START;
         Command command;
         if (userCommonService.isDefaultStep(chatId)) command = Command.fromUpdate(update);
         else command = Command.valueOf(readUserService.getCommandByChatId(chatId));
@@ -115,10 +122,6 @@ public class UpdateDispatcher implements IUpdateDispatcher {
     }
 
     public boolean isOn() {
-        return IS_ON;
-    }
-
-    public static boolean isOnStatic() {
         return IS_ON;
     }
 

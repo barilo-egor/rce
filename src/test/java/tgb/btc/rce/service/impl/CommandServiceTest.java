@@ -1,4 +1,4 @@
-package tgb.btc.rce.util;
+package tgb.btc.rce.service.impl;
 
 import org.junit.jupiter.api.Test;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
@@ -9,7 +9,10 @@ import tgb.btc.rce.enums.Command;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class CommandUtilTest {
+class CommandServiceTest {
+
+    private final CommandService commandService = new CommandService();
+
 
     @Test
     void isStartCommandReturnTrue() {
@@ -17,7 +20,7 @@ class CommandUtilTest {
         Message message = new Message();
         message.setText(Command.START.getText());
         update.setMessage(message);
-        assertTrue(CommandUtil.isStartCommand(update));
+        assertTrue(commandService.isStartCommand(update));
     }
 
     @Test
@@ -26,13 +29,13 @@ class CommandUtilTest {
         Message message = new Message();
         message.setText(Command.BACKUP_DB.getText());
         update.setMessage(message);
-        assertFalse(CommandUtil.isStartCommand(update));
+        assertFalse(commandService.isStartCommand(update));
     }
 
     @Test
     void isStartCommandReturnFalseForNoMessage() {
         Update update = new Update();
-        assertFalse(CommandUtil.isStartCommand(update));
+        assertFalse(commandService.isStartCommand(update));
     }
 
     @Test
@@ -40,7 +43,7 @@ class CommandUtilTest {
         Update update = new Update();
         Message message = new Message();
         update.setMessage(message);
-        assertFalse(CommandUtil.isStartCommand(update));
+        assertFalse(commandService.isStartCommand(update));
     }
 
     @Test
@@ -49,7 +52,7 @@ class CommandUtilTest {
         CallbackQuery callbackQuery = new CallbackQuery();
         update.setCallbackQuery(callbackQuery);
         callbackQuery.setData(Command.SUBMIT_LOGIN.name());
-        assertTrue(CommandUtil.isSubmitCommand(update));
+        assertTrue(commandService.isSubmitCommand(update));
     }
 
     @Test
@@ -58,13 +61,13 @@ class CommandUtilTest {
         CallbackQuery callbackQuery = new CallbackQuery();
         update.setCallbackQuery(callbackQuery);
         callbackQuery.setData(Command.SUBMIT_REGISTER.name());
-        assertTrue(CommandUtil.isSubmitCommand(update));
+        assertTrue(commandService.isSubmitCommand(update));
     }
 
     @Test
     void isSubmitCommandReturnFalseWithoutCallbackQuery() {
         Update update = new Update();
-        assertFalse(CommandUtil.isSubmitCommand(update));
+        assertFalse(commandService.isSubmitCommand(update));
     }
 
     @Test
@@ -73,6 +76,6 @@ class CommandUtilTest {
         CallbackQuery callbackQuery = new CallbackQuery();
         callbackQuery.setData(Command.START.name());
         update.setCallbackQuery(callbackQuery);
-        assertFalse(CommandUtil.isSubmitCommand(update));
+        assertFalse(commandService.isSubmitCommand(update));
     }
 }
