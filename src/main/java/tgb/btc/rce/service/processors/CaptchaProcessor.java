@@ -20,7 +20,6 @@ import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.captcha.IAntiSpam;
 import tgb.btc.rce.service.processors.tool.Start;
 import tgb.btc.rce.util.CallbackQueryUtil;
-import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.InlineButton;
 
@@ -105,7 +104,7 @@ public class CaptchaProcessor extends Processor {
                     responseSender.sendMessage(chatId, "Вы были заблокированы.", BotKeyboard.OPERATOR);
                     SpamBan spamBan = spamBanService.save(chatId);
                     notifyService.notifyMessage("Антиспам система заблокировала пользователя.",
-                            KeyboardUtil.buildInline(List.of(
+                            keyboardBuildService.buildInline(List.of(
                                     InlineButton.builder()
                                             .text("Показать")
                                             .data(CallbackQueryUtil.buildCallbackData(

@@ -6,7 +6,7 @@ import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
 import tgb.btc.library.constants.enums.properties.PropertiesPath;
 import tgb.btc.library.constants.enums.properties.VariableType;
-import tgb.btc.rce.util.KeyboardUtil;
+import tgb.btc.rce.util.BeanHolder;
 import tgb.btc.rce.vo.InlineButton;
 import tgb.btc.rce.vo.ReplyButton;
 
@@ -15,9 +15,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public enum BotKeyboard {
-    REPLY_CANCEL(KeyboardUtil.buildReply(List.of(BotReplyButton.CANCEL.getButton()))),
-    INLINE_CANCEL(KeyboardUtil.buildInline(List.of(BotInlineButton.CANCEL.getButton()))),
-    BUY_OR_SELL(KeyboardUtil.buildReply(List.of(
+    REPLY_CANCEL(BeanHolder.keyboardBuildService.buildReply(List.of(BotReplyButton.CANCEL.getButton()))),
+    INLINE_CANCEL(BeanHolder.keyboardBuildService.buildInline(List.of(BotInlineButton.CANCEL.getButton()))),
+    BUY_OR_SELL(BeanHolder.keyboardBuildService.buildReply(List.of(
             ReplyButton.builder()
                     .text(DealType.BUY.getNominativeFirstLetterToUpper())
                     .build(),
@@ -26,7 +26,7 @@ public enum BotKeyboard {
                     .build(),
             BotReplyButton.CANCEL.getButton()
     ))),
-    OPERATOR(KeyboardUtil.buildInline(List.of(
+    OPERATOR(BeanHolder.keyboardBuildService.buildInline(List.of(
             InlineButton.builder()
                     .text("Связь с оператором")
                     .data(PropertiesPath.VARIABLE_PROPERTIES.getString(VariableType.OPERATOR_LINK.getKey()))
@@ -34,7 +34,7 @@ public enum BotKeyboard {
                     .build()
     ))),
     FIAT_CURRENCIES(getFiatCurrenciesKeyboard()),
-    BUILD_DEAL(KeyboardUtil.buildInline(List.of(
+    BUILD_DEAL(BeanHolder.keyboardBuildService.buildInline(List.of(
             InlineButton.builder()
                     .text(Command.PAID.getText())
                     .data(Command.PAID.name())
@@ -46,7 +46,7 @@ public enum BotKeyboard {
                     .inlineType(InlineType.CALLBACK_DATA)
                     .build()
     ))),
-    CANCEL_DEAL(KeyboardUtil.buildReply(List.of(
+    CANCEL_DEAL(BeanHolder.keyboardBuildService.buildReply(List.of(
             ReplyButton.builder()
                     .text(Command.RECEIPTS_CANCEL_DEAL.getText())
                     .build())));
@@ -66,7 +66,7 @@ public enum BotKeyboard {
                 .map(fiatCurrency -> ReplyButton.builder().text(fiatCurrency.getCode()).build())
                 .collect(Collectors.toList());
         buttons.add(BotReplyButton.CANCEL.getButton());
-        return KeyboardUtil.buildReply(buttons);
+        return BeanHolder.keyboardBuildService.buildReply(buttons);
     }
 
 }

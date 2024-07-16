@@ -9,7 +9,6 @@ import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.IKeyboardService;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.util.CallbackQueryUtil;
-import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.UpdateUtil;
 
 import java.util.List;
@@ -32,7 +31,7 @@ public class TurningProcessDeliveryProcessor extends Processor {
         PropertiesPath.MODULES_PROPERTIES.setProperty("delivery.kind", deliveryType);
         responseSender.sendEditedMessageText(chatId, update.getCallbackQuery().getMessage().getMessageId(),
                 Command.TURNING_DELIVERY_TYPE.getText(),
-                KeyboardUtil.buildInline(List.of(keyboardService.getDeliveryTypeButton())));
+                keyboardBuildService.buildInline(List.of(keyboardService.getDeliveryTypeButton())));
     }
 
 }

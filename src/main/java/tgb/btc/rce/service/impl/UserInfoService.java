@@ -13,8 +13,8 @@ import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.PropertiesMessage;
 import tgb.btc.rce.service.IResponseSender;
+import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
 import tgb.btc.rce.util.CallbackQueryUtil;
-import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.MessagePropertiesUtil;
 import tgb.btc.rce.vo.InlineButton;
 
@@ -33,6 +33,12 @@ public class UserInfoService {
     private IDealCountService dealCountService;
 
     private ILotteryWinService lotteryWinService;
+
+    private IKeyboardBuildService keyboardBuildService;
+
+    public void setKeyboardBuildService(IKeyboardBuildService keyboardBuildService) {
+        this.keyboardBuildService = keyboardBuildService;
+    }
 
     @Autowired
     public void setLotteryWinService(ILotteryWinService lotteryWinService) {
@@ -96,7 +102,7 @@ public class UserInfoService {
 
     public void sendSpamBannedUser(Long messageChatId, Long spamBanPid) {
         sendUserInformation(messageChatId, spamBanService.getUserChatIdByPid(spamBanPid),
-                            KeyboardUtil.buildInline(List.of(
+                            keyboardBuildService.buildInline(List.of(
                                     InlineButton.builder()
                                             .text("Оставить в бане")
                                             .data(CallbackQueryUtil.buildCallbackData(

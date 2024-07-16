@@ -25,6 +25,16 @@ import java.util.stream.Collectors;
 @Service
 public class KeyboardBuildService implements IKeyboardBuildService {
 
+    private final InlineButton inlineBackButton = InlineButton.builder().text("Назад")
+            .inlineType(InlineType.CALLBACK_DATA)
+            .data(Command.BACK.name())
+            .build();
+
+    @Override
+    public InlineButton getInlineBackButton() {
+        return inlineBackButton;
+    }
+
     @Override
     public InlineKeyboardMarkup buildInline(List<InlineButton> buttons) {
         return buildInline(buttons, 1);

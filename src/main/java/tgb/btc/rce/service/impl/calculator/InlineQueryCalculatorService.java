@@ -9,7 +9,6 @@ import tgb.btc.library.constants.enums.bot.FiatCurrency;
 import tgb.btc.rce.conditional.calculator.InlineQueryCalculatorCondition;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.InlineType;
-import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.vo.InlineButton;
 
 import java.util.List;
@@ -24,13 +23,13 @@ public class InlineQueryCalculatorService extends SimpleCalculatorService {
         FiatCurrency fiatCurrency = dealPropertyService.getFiatCurrencyByPid(currentDealPid);
         DealType dealType = dealPropertyService.getDealTypeByPid(currentDealPid);
         CryptoCurrency currency = dealPropertyService.getCryptoCurrencyByPid(currentDealPid);
-        sendMessage.setReplyMarkup(KeyboardUtil.buildInline(List.of(
+        sendMessage.setReplyMarkup(keyboardBuildService.buildInline(List.of(
                 InlineButton.builder()
                         .inlineType(InlineType.SWITCH_INLINE_QUERY_CURRENT_CHAT)
                         .text("Калькулятор")
                         .data(fiatCurrency.getCode() + "-" + dealType.getKey() + "-" + currency.getShortName() + " ")
                         .build(),
-                KeyboardUtil.INLINE_BACK_BUTTON), 1));
+                keyboardBuildService.getInlineBackButton()), 1));
     }
 
     @Override

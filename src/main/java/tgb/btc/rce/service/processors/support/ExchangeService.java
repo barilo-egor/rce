@@ -40,6 +40,7 @@ import tgb.btc.library.vo.calculate.DealAmount;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.*;
 import tgb.btc.rce.service.*;
+import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
 import tgb.btc.rce.service.process.IUserDiscountProcessService;
 import tgb.btc.rce.util.*;
 import tgb.btc.rce.vo.CalculatorQuery;
@@ -87,6 +88,13 @@ public class ExchangeService {
     private ICalculatorTypeService calculatorTypeService;
 
     private INotificationsAPI notificationsAPI;
+
+    private IKeyboardBuildService keyboardBuildService;
+
+    @Autowired
+    public void setKeyboardBuildService(IKeyboardBuildService keyboardBuildService) {
+        this.keyboardBuildService = keyboardBuildService;
+    }
 
     @Autowired
     public void setBotMessageService(IBotMessageService botMessageService) {
@@ -363,7 +371,7 @@ public class ExchangeService {
                 buttons.add(BotInlineButton.USE_SAVED_WALLET.getButton());
             }
             buttons.add(BotInlineButton.CANCEL.getButton());
-            keyboard = KeyboardUtil.buildInline(buttons);
+            keyboard = keyboardBuildService.buildInline(buttons);
         } else {
             message = MessagePropertiesUtil.getMessage("send.wallet.sell");
             if (Objects.isNull(message)) {

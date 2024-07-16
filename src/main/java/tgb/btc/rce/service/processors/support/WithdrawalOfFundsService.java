@@ -14,7 +14,7 @@ import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.PropertiesMessage;
 import tgb.btc.rce.service.INotifyService;
 import tgb.btc.rce.service.IResponseSender;
-import tgb.btc.rce.util.KeyboardUtil;
+import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
 import tgb.btc.rce.util.MessagePropertiesUtil;
 import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.util.WithdrawalRequestUtil;
@@ -35,6 +35,13 @@ public class WithdrawalOfFundsService {
     private IReadUserService readUserService;
 
     private IModifyUserService modifyUserService;
+
+    private IKeyboardBuildService keyboardBuildService;
+
+    @Autowired
+    public void setKeyboardBuildService(IKeyboardBuildService keyboardBuildService) {
+        this.keyboardBuildService = keyboardBuildService;
+    }
 
     @Autowired
     public void setResponseSender(IResponseSender responseSender) {
@@ -86,7 +93,7 @@ public class WithdrawalOfFundsService {
     public void askForContact(Long chatId, Integer messageId) {
         responseSender.deleteMessage(chatId, messageId);
         modifyUserService.nextStep(chatId, Command.WITHDRAWAL_OF_FUNDS.name());
-        ReplyKeyboard keyboard = KeyboardUtil.buildReply(List.of(
+        ReplyKeyboard keyboard = keyboardBuildService.buildReply(List.of(
                 ReplyButton.builder()
                         .text(Command.SHARE_CONTACT.getText())
                         .isRequestContact(true)

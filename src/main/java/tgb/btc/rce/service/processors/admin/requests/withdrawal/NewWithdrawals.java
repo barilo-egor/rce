@@ -10,7 +10,6 @@ import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.InlineType;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.processors.support.WithdrawalOfFundsService;
-import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.InlineButton;
 
@@ -45,7 +44,7 @@ public class NewWithdrawals extends Processor {
 
         withdrawalRequests.forEach(withdrawalRequest ->
                 responseSender.sendMessage(chatId, withdrawalOfFundsService.toString(withdrawalRequest),
-                        KeyboardUtil.buildInline(List.of(InlineButton.builder()
+                        keyboardBuildService.buildInline(List.of(InlineButton.builder()
                                 .text("Скрыть")
                                 .data(Command.HIDE_WITHDRAWAL.getText() + BotStringConstants.CALLBACK_DATA_SPLITTER
                                         + withdrawalRequest.getPid())

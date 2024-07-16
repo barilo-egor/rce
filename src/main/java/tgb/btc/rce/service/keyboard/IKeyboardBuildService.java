@@ -12,6 +12,8 @@ import java.util.List;
 
 public interface IKeyboardBuildService {
 
+    InlineButton getInlineBackButton();
+
     InlineKeyboardMarkup buildInline(List<InlineButton> buttons);
 
     InlineKeyboardMarkup buildInline(List<InlineButton> buttons, int maxNumberOfColumns);

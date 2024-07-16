@@ -14,7 +14,6 @@ import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.INotifyService;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.util.BotImageUtil;
-import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.InlineButton;
 
@@ -75,7 +74,7 @@ public class UserAdditionalVerification extends Processor {
             return;
         } else if (update.getMessage().hasText() && update.getMessage().getText().equals("Отказаться от верификации")) {
             responseSender.sendMessage(chatId, "Ты отказался от верификации. " +
-                    "Дальнейшая связь через оператора.", KeyboardUtil.buildInline(List.of(
+                    "Дальнейшая связь через оператора.", keyboardBuildService.buildInline(List.of(
                     InlineButton.builder()
                             .data(VariablePropertiesUtil.getVariable(VariableType.OPERATOR_LINK))
                             .text("Написать оператору")

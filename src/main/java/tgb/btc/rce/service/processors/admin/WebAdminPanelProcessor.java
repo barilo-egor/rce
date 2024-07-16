@@ -7,7 +7,6 @@ import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.InlineType;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.InlineButton;
 
@@ -21,7 +20,7 @@ public class WebAdminPanelProcessor extends Processor {
     public void run(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
         responseSender.sendMessage(chatId, "Для перехода в веб-админ панель нажмите на кнопку.",
-                KeyboardUtil.buildInline(List.of(InlineButton.builder()
+                keyboardBuildService.buildInline(List.of(InlineButton.builder()
                         .text("Перейти")
                         .data(PropertiesPath.SERVER_PROPERTIES.getString("main.url"))
                         .inlineType(InlineType.URL)

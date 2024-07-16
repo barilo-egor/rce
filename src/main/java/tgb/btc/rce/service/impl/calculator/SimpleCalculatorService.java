@@ -13,6 +13,7 @@ import tgb.btc.rce.service.ICalculatorTypeService;
 import tgb.btc.rce.service.IKeyboardService;
 import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.IUpdateDispatcher;
+import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
 import tgb.btc.rce.util.MessagePropertiesUtil;
 import tgb.btc.rce.util.UpdateUtil;
 
@@ -30,6 +31,13 @@ public abstract class SimpleCalculatorService implements ICalculatorTypeService 
     protected IKeyboardService keyboardService;
 
     protected IUpdateDispatcher updateDispatcher;
+
+    protected IKeyboardBuildService keyboardBuildService;
+
+    @Autowired
+    public void setKeyboardBuildService(IKeyboardBuildService keyboardBuildService) {
+        this.keyboardBuildService = keyboardBuildService;
+    }
 
     @Autowired
     public void setResponseSender(IResponseSender responseSender) {

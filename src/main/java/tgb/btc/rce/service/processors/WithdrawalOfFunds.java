@@ -10,7 +10,6 @@ import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.processors.support.WithdrawalOfFundsService;
-import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.InlineButton;
 
@@ -41,7 +40,7 @@ public class WithdrawalOfFunds extends Processor {
             case 0:
                 if (withdrawalRequestService.getActiveByUserChatId(chatId) > 0) {
                     responseSender.sendMessage(chatId, "У вас уже есть активная заявка.",
-                            KeyboardUtil.buildInline(List.of(
+                            keyboardBuildService.buildInline(List.of(
                                     InlineButton.builder()
                                             .text("Удалить")
                                             .data(Command.DELETE_WITHDRAWAL_REQUEST.getText()

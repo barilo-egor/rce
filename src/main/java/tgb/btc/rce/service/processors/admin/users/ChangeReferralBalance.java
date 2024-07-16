@@ -2,12 +2,11 @@ package tgb.btc.rce.service.processors.admin.users;
 
 import lombok.extern.slf4j.Slf4j;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import tgb.btc.library.exception.BaseException;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
-import tgb.btc.library.exception.BaseException;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.ReplyButton;
 
@@ -30,7 +29,7 @@ public class ChangeReferralBalance extends Processor {
                                 "Для того, чтобы полностью заменить значение, отправьте новое число без знаков. Пример:\n1750\n\n" +
                                 "Чтобы добавить к текущему значению баланса сумму, отправьте число со знаком \"+\". Пример:\n+1750\n\n" +
                                 "Чтобы отнять от текущего значения баланса сумму, отправьте число со знаком \"-\". Пример:\n-1750",
-                        KeyboardUtil.buildReply(List.of(
+                        keyboardBuildService.buildReply(List.of(
                                 ReplyButton.builder()
                                         .text(Command.CANCEL.getText())
                                         .build())));

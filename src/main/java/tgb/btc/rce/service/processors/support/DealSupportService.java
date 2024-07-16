@@ -17,8 +17,8 @@ import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.library.interfaces.service.bean.web.IApiDealService;
 import tgb.btc.library.util.BigDecimalUtil;
 import tgb.btc.rce.enums.Command;
+import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
 import tgb.btc.rce.util.CallbackQueryUtil;
-import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.vo.InlineButton;
 
 import java.math.RoundingMode;
@@ -42,6 +42,13 @@ public class DealSupportService {
     private IDealCountService dealCountService;
 
     private IGroupChatService groupChatService;
+
+    private IKeyboardBuildService keyboardBuildService;
+
+    @Autowired
+    public void setKeyboardBuildService(IKeyboardBuildService keyboardBuildService) {
+        this.keyboardBuildService = keyboardBuildService;
+    }
 
     @Autowired
     public void setGroupChatService(IGroupChatService groupChatService) {
@@ -138,7 +145,7 @@ public class DealSupportService {
                 .text("Удалить и заблокировать")
                 .data(CallbackQueryUtil.buildCallbackData(Command.DELETE_DEAL_AND_BLOCK_USER, pid))
                 .build());
-        return KeyboardUtil.buildInline(buttons, 2);
+        return keyboardBuildService.buildInline(buttons, 2);
     }
 
 }

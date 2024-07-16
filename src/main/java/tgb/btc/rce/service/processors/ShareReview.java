@@ -13,7 +13,6 @@ import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.InlineType;
 import tgb.btc.rce.service.INotifyService;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.InlineButton;
 import tgb.btc.rce.vo.ReviewPrise;
@@ -61,7 +60,7 @@ public class ShareReview extends Processor {
                 if (update.hasMessage() && StringUtils.isNotEmpty(update.getMessage().getFrom().getUserName())) {
                     modifyUserService.updateBufferVariable(chatId, UpdateUtil.getMessageText(update));
                     responseSender.sendMessage(chatId, "Оставить отзыв публично или анонимно?",
-                            KeyboardUtil.buildInline(List.of(InlineButton.builder()
+                            keyboardBuildService.buildInline(List.of(InlineButton.builder()
                                             .inlineType(InlineType.CALLBACK_DATA)
                                             .text("Публично")
                                             .data("public")

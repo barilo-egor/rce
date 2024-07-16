@@ -9,7 +9,6 @@ import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.InlineButton;
 
@@ -49,7 +48,7 @@ public class NewReviews extends Processor {
 
             responseSender.sendMessage(chatId, review.getText()
                     + "\nUsername: " + StringUtils.defaultIfEmpty(review.getUsername(), "скрыт") + "\n"
-                    + "ID: " + review.getChatId(), KeyboardUtil.buildInline(buttons));
+                    + "ID: " + review.getChatId(), keyboardBuildService.buildInline(buttons));
         }
     }
 }

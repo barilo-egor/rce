@@ -22,7 +22,6 @@ import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.util.CryptoCurrenciesDesignUtil;
-import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.MessageTextUtil;
 import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.ReplyButton;
@@ -67,7 +66,7 @@ public class DealReports extends Processor {
         switch (readUserService.getStepByChatId(chatId)) {
             case 0:
                 responseSender.sendMessage(chatId, "Выберите период.",
-                        KeyboardUtil.buildReply(2,
+                        keyboardBuildService.buildReply(2,
                                 List.of(
                                         ReplyButton.builder()
                                                 .text(TODAY)

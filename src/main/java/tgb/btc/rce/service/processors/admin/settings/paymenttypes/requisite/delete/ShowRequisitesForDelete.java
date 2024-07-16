@@ -9,7 +9,6 @@ import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.InlineButton;
 
@@ -61,6 +60,6 @@ public class ShowRequisitesForDelete extends Processor {
                                 .build());
             counter++;
         }
-        responseSender.sendMessage(chatId, message.toString(), KeyboardUtil.buildInline(buttons));
+        responseSender.sendMessage(chatId, message.toString(), keyboardBuildService.buildInline(buttons));
     }
 }

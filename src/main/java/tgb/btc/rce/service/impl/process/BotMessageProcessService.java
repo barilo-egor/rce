@@ -12,9 +12,9 @@ import tgb.btc.library.interfaces.service.bean.bot.user.IModifyUserService;
 import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.impl.ResponseSender;
+import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
 import tgb.btc.rce.service.process.IBotMessageProcessService;
 import tgb.btc.rce.util.BotImageUtil;
-import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.ReplyButton;
 
@@ -32,6 +32,13 @@ public class BotMessageProcessService implements IBotMessageProcessService {
     private IModifyUserService modifyUserService;
 
     private ResponseSender responseSender;
+
+    private IKeyboardBuildService keyboardBuildService;
+
+    @Autowired
+    public void setKeyboardBuildService(IKeyboardBuildService keyboardBuildService) {
+        this.keyboardBuildService = keyboardBuildService;
+    }
 
     @Autowired
     public void setModifyUserService(IModifyUserService modifyUserService) {
@@ -64,7 +71,7 @@ public class BotMessageProcessService implements IBotMessageProcessService {
                 .collect(Collectors.toList());
         buttons.add(ReplyButton.builder().text(Command.ADMIN_BACK.getText()).build());
         responseSender.sendMessage(chatId, "Выберите сообщение для замены.",
-                KeyboardUtil.buildReply(2, buttons, true));
+                keyboardBuildService.buildReply(2, buttons, true));
     }
 
     @Override

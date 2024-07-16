@@ -10,7 +10,6 @@ import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.ReplyButton;
 
@@ -49,6 +48,6 @@ public class AdditionalVerification extends Processor implements AdditionalVerif
                 "⚠️Уважаемый клиент, необходимо пройти дополнительную верификацию. Предоставьте фото карты " +
                         "с которой была оплата на фоне переписки с ботом, либо бумажного чека на фоне переписки с " +
                         "ботом для завершения сделки. (Проверка проходится только при первом обмене)",
-                KeyboardUtil.buildReply(List.of(ReplyButton.builder().text("Отказаться от верификации").build())));
+                keyboardBuildService.buildReply(List.of(ReplyButton.builder().text("Отказаться от верификации").build())));
     }
 }

@@ -8,7 +8,6 @@ import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.util.CallbackQueryUtil;
-import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.TurningCurrenciesUtil;
 import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.InlineButton;
@@ -42,7 +41,7 @@ public class TurningCurrencyProcessor extends Processor {
         }
 
         responseSender.sendMessage(chatId, "Включение/выключение криптовалют",
-                KeyboardUtil.buildInline(buttons, 2));
+                keyboardBuildService.buildInline(buttons, 2));
     }
 
     private InlineButton buildButton(CryptoCurrency currency, DealType dealType) {

@@ -18,7 +18,6 @@ import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.IUpdateDispatcher;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.util.CallbackQueryUtil;
-import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.InlineButton;
 
@@ -139,7 +138,7 @@ public class SlotReel extends Processor {
                 .data(CallbackQueryUtil.buildCallbackData(Command.SLOT_REEL, closeText))
                 .build());
         responseSender.sendMessage(chatId, StringUtils.defaultIfBlank(text, "Выберите действие"),
-                KeyboardUtil.buildInline(buttons), "Markdown");
+                keyboardBuildService.buildInline(buttons), "Markdown");
     }
 
     private void processToStart(Long chatId, Update update) {

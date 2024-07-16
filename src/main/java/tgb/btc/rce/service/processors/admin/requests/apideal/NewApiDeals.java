@@ -7,7 +7,6 @@ import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.processors.support.DealSupportService;
-import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.InlineButton;
 
@@ -44,7 +43,7 @@ public class NewApiDeals extends Processor {
 
         activeDeals.forEach(pid -> {
             String dealInfo = dealSupportService.apiDealToString(pid);
-            responseSender.sendMessage(chatId, dealInfo, KeyboardUtil.buildInline(List.of(
+            responseSender.sendMessage(chatId, dealInfo, keyboardBuildService.buildInline(List.of(
                     InlineButton.builder()
                             .text("Подтвердить")
                             .data(Command.CONFIRM_API_DEAL.getText() + CALLBACK_DATA_SPLITTER + pid)

@@ -19,7 +19,6 @@ import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.IUpdateDispatcher;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.util.CallbackQueryUtil;
-import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.InlineButton;
 
@@ -158,7 +157,7 @@ public class Dice extends Processor {
                 .data(CallbackQueryUtil.buildCallbackData(Command.DICE, "Number:" + backText))
                 .build());
         responseSender.sendMessage(chatId, StringUtils.defaultIfBlank(text, "Выберите число"),
-                KeyboardUtil.buildInline(buttons,2), "Markdown");
+                keyboardBuildService.buildInline(buttons,2), "Markdown");
     }
 
     private void drawDiceBetButtons(Long chatId, String text) {
@@ -182,10 +181,10 @@ public class Dice extends Processor {
     }
 
     private InlineKeyboardMarkup buildBetButtons(List<InlineButton> buttons){
-        InlineKeyboardMarkup first = KeyboardUtil.buildInline(Collections.singletonList(buttons.remove(0)),1);
-        InlineKeyboardMarkup last = KeyboardUtil.buildInline(Collections.singletonList(buttons.remove(buttons.size()-1)),1);
+        InlineKeyboardMarkup first = keyboardBuildService.buildInline(Collections.singletonList(buttons.remove(0)),1);
+        InlineKeyboardMarkup last = keyboardBuildService.buildInline(Collections.singletonList(buttons.remove(buttons.size()-1)),1);
         List<List<InlineKeyboardButton>> listInlineButtons = new ArrayList<>(first.getKeyboard());
-        listInlineButtons.addAll(KeyboardUtil.buildInline(buttons,2).getKeyboard());
+        listInlineButtons.addAll(keyboardBuildService.buildInline(buttons,2).getKeyboard());
         listInlineButtons.addAll(last.getKeyboard());
         return InlineKeyboardMarkup.builder().keyboard(listInlineButtons).build();
     }

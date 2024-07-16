@@ -7,7 +7,6 @@ import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.InlineType;
 import tgb.btc.rce.enums.MessageTemplate;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.InlineButton;
 
@@ -33,7 +32,7 @@ public class UserReferralBalance extends Processor {
                 if (readUserService.existsByChatId(userChatId)) {
                     responseSender.sendMessage(chatId, "У пользователя с чат айди " + userChatId
                             + " на реферальном балансе " + readUserService.getReferralBalanceByChatId(userChatId) + "₽",
-                            KeyboardUtil.buildInline(List.of(
+                            keyboardBuildService.buildInline(List.of(
                                     InlineButton.builder()
                                             .inlineType(InlineType.CALLBACK_DATA)
                                             .text("Изменить")

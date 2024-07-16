@@ -14,7 +14,6 @@ import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.InlineButton;
 
@@ -86,7 +85,7 @@ public class ShowPaymentTypesForTurn extends Processor {
                 .data(Command.INLINE_DELETE.getText())
                 .build());
         responseSender.sendMessage(chatId, "Выберите тип оплаты для включения/выключения.",
-                KeyboardUtil.buildInline(buttons));
+                keyboardBuildService.buildInline(buttons));
     }
 
 }

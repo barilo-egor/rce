@@ -8,7 +8,6 @@ import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.InlineButton;
 import tgb.btc.rce.vo.ReplyButton;
@@ -31,7 +30,7 @@ public class RankDiscountProcessor extends Processor {
         switch (readUserService.getStepByChatId(chatId)) {
             case 0:
                 responseSender.sendMessage(chatId, "Введите chat id пользователя для включения/выключения реферальной скидки",
-                        KeyboardUtil.buildReply(List.of(
+                        keyboardBuildService.buildReply(List.of(
                                 ReplyButton.builder()
                                         .text(Command.CANCEL.getText())
                                         .build())));
@@ -55,7 +54,7 @@ public class RankDiscountProcessor extends Processor {
         }
         boolean isRankDiscountOn = BooleanUtils.isTrue(userDiscountService.getRankDiscountByUserChatId(userChatId));
         responseSender.sendMessage(chatId, "Пользователь chat id=" + userChatId + ".",
-                KeyboardUtil.buildInline(List.of(InlineButton.builder()
+                keyboardBuildService.buildInline(List.of(InlineButton.builder()
                         .text(isRankDiscountOn ? "Выключить" : "Включить")
                         .data(Command.CHANGE_RANK_DISCOUNT.getText()
                                 + BotStringConstants.CALLBACK_DATA_SPLITTER + userChatId

@@ -7,27 +7,31 @@ import tgb.btc.library.service.bean.bot.ContactService;
 import tgb.btc.rce.RceApplication;
 import tgb.btc.rce.service.IKeyboardService;
 import tgb.btc.rce.service.IResponseSender;
+import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
 
 @Slf4j
 public class BeanHolder {
 
-    public static IResponseSender RESPONSE_SENDER;
+    public static IResponseSender responseSender;
 
-    public static BotMessageService BOT_MESSAGE_SERVICE;
+    public static BotMessageService botMessageService;
 
-    public static IReadUserService READ_USER_SERVICE;
+    public static IReadUserService readUserService;
 
-    public static ContactService CONTACTS_SERVICE;
+    public static ContactService contactService;
 
-    public static IKeyboardService KEYBOARD_SERVICE;
+    public static IKeyboardService keyboardService;
+
+    public static IKeyboardBuildService keyboardBuildService;
 
     public static void load() {
         log.info("Загрузка бинов в BeanHolder.");
-        RESPONSE_SENDER = RceApplication.SPRING_CONTEXT.getBean(IResponseSender.class);
-        BOT_MESSAGE_SERVICE = RceApplication.SPRING_CONTEXT.getBean(BotMessageService.class);
-        CONTACTS_SERVICE = RceApplication.SPRING_CONTEXT.getBean(ContactService.class);
-        READ_USER_SERVICE = RceApplication.SPRING_CONTEXT.getBean(IReadUserService.class);
-        KEYBOARD_SERVICE = RceApplication.SPRING_CONTEXT.getBean(IKeyboardService.class);
+        responseSender = RceApplication.SPRING_CONTEXT.getBean(IResponseSender.class);
+        botMessageService = RceApplication.SPRING_CONTEXT.getBean(BotMessageService.class);
+        contactService = RceApplication.SPRING_CONTEXT.getBean(ContactService.class);
+        readUserService = RceApplication.SPRING_CONTEXT.getBean(IReadUserService.class);
+        keyboardService = RceApplication.SPRING_CONTEXT.getBean(IKeyboardService.class);
+        keyboardBuildService = RceApplication.SPRING_CONTEXT.getBean(IKeyboardBuildService.class);
         log.info("Загрузка бинов BeanHolder завершена.");
     }
 }

@@ -14,7 +14,7 @@ import tgb.btc.rce.enums.Menu;
 import tgb.btc.rce.enums.PropertiesMessage;
 import tgb.btc.rce.service.IMenuService;
 import tgb.btc.rce.service.impl.ResponseSender;
-import tgb.btc.rce.util.KeyboardUtil;
+import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
 import tgb.btc.rce.util.MessagePropertiesUtil;
 import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.InlineButton;
@@ -37,6 +37,13 @@ public class EditContactsService {
     private IModifyUserService modifyUserService;
 
     private IMenuService menuService;
+
+    private IKeyboardBuildService keyboardBuildService;
+
+    @Autowired
+    public void setKeyboardBuildService(IKeyboardBuildService keyboardBuildService) {
+        this.keyboardBuildService = keyboardBuildService;
+    }
 
     @Autowired
     public void setMenuService(IMenuService menuService) {
@@ -85,7 +92,7 @@ public class EditContactsService {
         Integer messageId = optionalMessage.get().getMessageId();
         responseSender.sendEditedMessageText(chatId, messageId,
                 MessagePropertiesUtil.getMessage(PropertiesMessage.CONTACT_ASK_DELETE),
-                KeyboardUtil.buildInline(buildContactButtons(messageId)));
+                keyboardBuildService.buildInline(buildContactButtons(messageId)));
     }
 
     private List<InlineButton> buildContactButtons(Integer messageId) {

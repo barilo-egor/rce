@@ -11,8 +11,8 @@ import tgb.btc.library.util.properties.VariablePropertiesUtil;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.ReviewPriseType;
 import tgb.btc.rce.service.IResponseSender;
+import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
 import tgb.btc.rce.util.CallbackQueryUtil;
-import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.ReviewPriseUtil;
 import tgb.btc.rce.vo.InlineButton;
 import tgb.btc.rce.vo.ReviewPrise;
@@ -26,6 +26,13 @@ public class ReviewPriseProcessService implements IReviewPriseProcessService {
     private IResponseSender responseSender;
 
     private IReadDealService readDealService;
+
+    private IKeyboardBuildService keyboardBuildService;
+
+    @Autowired
+    public void setKeyboardBuildService(IKeyboardBuildService keyboardBuildService) {
+        this.keyboardBuildService = keyboardBuildService;
+    }
 
     @Autowired
     public void setReadDealService(IReadDealService readDealService) {
@@ -58,7 +65,7 @@ public class ReviewPriseProcessService implements IReviewPriseProcessService {
             responseSender.sendMessage(deal.getUser().getChatId(), "Хотите оставить отзыв?\n" +
                             "За оставленный отзыв вы получите вознаграждение в размере " + amount +
                             " на реферальный баланс после публикации.",
-                    KeyboardUtil.buildInline(List.of(
+                    keyboardBuildService.buildInline(List.of(
                                     InlineButton.builder()
                                             .data(data)
                                             .text("Оставить")

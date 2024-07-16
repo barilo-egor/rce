@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import tgb.btc.rce.conditional.calculator.NoneCalculatorCondition;
 import tgb.btc.rce.enums.Command;
-import tgb.btc.rce.util.KeyboardUtil;
 
 import java.util.List;
 
@@ -15,7 +14,7 @@ public class NoneCalculatorService extends SimpleCalculatorService {
 
     @Override
     public void addKeyboard(SendMessage sendMessage) {
-        sendMessage.setReplyMarkup(KeyboardUtil.buildInline(List.of(KeyboardUtil.INLINE_BACK_BUTTON), 1));
+        sendMessage.setReplyMarkup(keyboardBuildService.buildInline(List.of(keyboardBuildService.getInlineBackButton()), 1));
     }
 
     @Override

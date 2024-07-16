@@ -12,7 +12,6 @@ import tgb.btc.rce.enums.InlineType;
 import tgb.btc.rce.enums.PropertiesMessage;
 import tgb.btc.rce.enums.Rank;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.util.KeyboardUtil;
 import tgb.btc.rce.util.MessagePropertiesUtil;
 import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.InlineButton;
@@ -61,7 +60,7 @@ public class Referral extends Processor {
                     readUserService.getChargesByChatId(chatId), dealsCount, rank.getSmile(), rank.getPercent()).concat("%");
         }
 
-        responseSender.sendMessage(chatId, resultMessage, KeyboardUtil.buildInline(getButtons(refLink)));
+        responseSender.sendMessage(chatId, resultMessage, keyboardBuildService.buildInline(getButtons(refLink)));
     }
 
     private List<InlineButton> getButtons(String refLink) {
