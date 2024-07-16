@@ -28,7 +28,7 @@ public class MenuService implements IMenuService {
     public MenuService(List<IMenu> menus, IKeyboardBuildService keyboardBuildService) {
         menuMap = menus.stream()
                 .collect(Collectors.toMap(IMenu::getMenu, Functions.identity(),
-                        (existing, replacement) -> existing,
+                        (existing, replacement) -> replacement,
                         () -> new EnumMap<>(Menu.class)));
         this.keyboardBuildService = keyboardBuildService;
     }
