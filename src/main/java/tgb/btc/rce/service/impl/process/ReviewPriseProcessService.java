@@ -38,13 +38,6 @@ public class ReviewPriseProcessService implements tgb.btc.api.library.IReviewPri
 
     private ICallbackQueryService callbackQueryService;
 
-    private IReviewPriseBotProcessService reviewPriseBotProcessService;
-
-    @Autowired
-    public void setReviewPriseBotProcessService(IReviewPriseBotProcessService reviewPriseBotProcessService) {
-        this.reviewPriseBotProcessService = reviewPriseBotProcessService;
-    }
-
     @Autowired
     public void setCallbackQueryService(ICallbackQueryService callbackQueryService) {
         this.callbackQueryService = callbackQueryService;
@@ -72,7 +65,7 @@ public class ReviewPriseProcessService implements tgb.btc.api.library.IReviewPri
             String data;
             String amount;
             if (ReviewPriseType.DYNAMIC.isCurrent()) {
-                ReviewPrise reviewPriseVo = reviewPriseBotProcessService.getReviewPrise(deal.getAmount(), deal.getFiatCurrency());
+                ReviewPrise reviewPriseVo = getReviewPrise(deal.getAmount(), deal.getFiatCurrency());
                 if (Objects.nonNull(reviewPriseVo)) {
                     data = callbackQueryService.buildCallbackData(Command.SHARE_REVIEW,
                             new Object[]{String.valueOf(reviewPriseVo.getMinPrise()), String.valueOf(reviewPriseVo.getMaxPrise())});
