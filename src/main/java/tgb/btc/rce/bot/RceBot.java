@@ -25,6 +25,7 @@ public class RceBot extends TelegramLongPollingBot {
     
     private IUpdateService updateService;
 
+    @Autowired
     public void setUpdateService(IUpdateService updateService) {
         this.updateService = updateService;
     }

@@ -1,5 +1,6 @@
 package tgb.btc.rce.service.impl.util;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tgb.btc.library.constants.enums.bot.CryptoCurrency;
 import tgb.btc.library.exception.BaseException;
@@ -10,6 +11,11 @@ import tgb.btc.rce.service.util.ICryptoCurrenciesDesignService;
 public class CryptoCurrenciesDesignService implements ICryptoCurrenciesDesignService {
 
     private CryptoCurrencyDesignPropertiesReader cryptoCurrencyDesignPropertiesReader;
+
+    @Autowired
+    public void setCryptoCurrencyDesignPropertiesReader(CryptoCurrencyDesignPropertiesReader cryptoCurrencyDesignPropertiesReader) {
+        this.cryptoCurrencyDesignPropertiesReader = cryptoCurrencyDesignPropertiesReader;
+    }
 
     @Override
     public String getDisplayName(CryptoCurrency currency) {
