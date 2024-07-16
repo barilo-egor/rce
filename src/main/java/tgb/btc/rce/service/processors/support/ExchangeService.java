@@ -44,7 +44,10 @@ import tgb.btc.rce.enums.Rank;
 import tgb.btc.rce.service.*;
 import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
 import tgb.btc.rce.service.process.IUserDiscountProcessService;
-import tgb.btc.rce.util.*;
+import tgb.btc.rce.util.CryptoCurrenciesDesignUtil;
+import tgb.btc.rce.util.FunctionPropertiesUtil;
+import tgb.btc.rce.util.MessagePropertiesUtil;
+import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.CalculatorQuery;
 import tgb.btc.rce.vo.InlineButton;
 
@@ -92,6 +95,18 @@ public class ExchangeService {
     private INotificationsAPI notificationsAPI;
 
     private IKeyboardBuildService keyboardBuildService;
+
+    private ICallbackQueryService callbackQueryService;
+
+    @Autowired
+    public void setNotifyService(INotifyService notifyService) {
+        this.notifyService = notifyService;
+    }
+
+    @Autowired
+    public void setCallbackQueryService(ICallbackQueryService callbackQueryService) {
+        this.callbackQueryService = callbackQueryService;
+    }
 
     @Autowired
     public void setKeyboardBuildService(IKeyboardBuildService keyboardBuildService) {
@@ -164,11 +179,6 @@ public class ExchangeService {
     }
 
     @Autowired
-    public void setAdminService(INotifyService notifyService) {
-        this.notifyService = notifyService;
-    }
-
-    @Autowired
     public void setCalculateService(CalculateService calculateService) {
         this.calculateService = calculateService;
     }
@@ -204,7 +214,7 @@ public class ExchangeService {
                 responseSender.sendMessage(chatId, "Выберите валюту.");
                 return false;
             }
-            fiatCurrency = FiatCurrency.valueOf(CallbackQueryUtil.getSplitData(update.getCallbackQuery(), 1));
+            fiatCurrency = FiatCurrency.valueOf(callbackQueryService.getSplitData(update.getCallbackQuery(), 1));
         } else {
             fiatCurrency = FiatCurrencyUtil.getFirst();
         }
@@ -681,7 +691,7 @@ public class ExchangeService {
             modifyUserService.nextStep(chatId);
             return true;
         } else {
-            cancelDeal(CallbackQueryUtil.messageId(update), chatId, dealPid);
+            cancelDeal(callbackQueryService.messageId(update), chatId, dealPid);
             return false;
         }
     }

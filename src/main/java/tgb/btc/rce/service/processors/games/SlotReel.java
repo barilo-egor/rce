@@ -17,7 +17,6 @@ import tgb.btc.rce.enums.Menu;
 import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.IUpdateDispatcher;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.util.CallbackQueryUtil;
 import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.InlineButton;
 
@@ -65,7 +64,7 @@ public class SlotReel extends Processor {
         }
         if (isDrawsCommand(update)) return;
         if (PropertiesPath.SLOT_REEL_PROPERTIES.getString("button.try.text")
-                .equals(CallbackQueryUtil.getSplitData(update.getCallbackQuery(), 1))) {
+                .equals(callbackQueryService.getSplitData(update.getCallbackQuery(), 1))) {
             scroll(chatId);
         } else {
             responseSender.deleteCallbackMessageIfExists(update);
@@ -131,11 +130,11 @@ public class SlotReel extends Processor {
         List<InlineButton> buttons = new ArrayList<>();
         buttons.add(InlineButton.builder()
                 .text(tryText)
-                .data(CallbackQueryUtil.buildCallbackData(Command.SLOT_REEL, tryText))
+                .data(callbackQueryService.buildCallbackData(Command.SLOT_REEL, tryText))
                 .build());
         buttons.add(InlineButton.builder()
                 .text(closeText)
-                .data(CallbackQueryUtil.buildCallbackData(Command.SLOT_REEL, closeText))
+                .data(callbackQueryService.buildCallbackData(Command.SLOT_REEL, closeText))
                 .build());
         responseSender.sendMessage(chatId, StringUtils.defaultIfBlank(text, "Выберите действие"),
                 keyboardBuildService.buildInline(buttons), "Markdown");

@@ -35,6 +35,13 @@ public abstract class Processor {
 
     protected IKeyboardService keyboardService;
 
+    protected ICallbackQueryService callbackQueryService;
+
+    @Autowired
+    public void setCallbackQueryService(ICallbackQueryService callbackQueryService) {
+        this.callbackQueryService = callbackQueryService;
+    }
+
     @Autowired
     public void setKeyboardService(IKeyboardService keyboardService) {
         this.keyboardService = keyboardService;

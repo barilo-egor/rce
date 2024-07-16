@@ -17,8 +17,8 @@ import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.library.interfaces.service.bean.web.IApiDealService;
 import tgb.btc.library.util.BigDecimalUtil;
 import tgb.btc.rce.enums.Command;
+import tgb.btc.rce.service.ICallbackQueryService;
 import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
-import tgb.btc.rce.util.CallbackQueryUtil;
 import tgb.btc.rce.vo.InlineButton;
 
 import java.math.RoundingMode;
@@ -44,6 +44,13 @@ public class DealSupportService {
     private IGroupChatService groupChatService;
 
     private IKeyboardBuildService keyboardBuildService;
+
+    private ICallbackQueryService callbackQueryService;
+
+    @Autowired
+    public void setCallbackQueryService(ICallbackQueryService callbackQueryService) {
+        this.callbackQueryService = callbackQueryService;
+    }
 
     @Autowired
     public void setKeyboardBuildService(IKeyboardBuildService keyboardBuildService) {
@@ -125,25 +132,25 @@ public class DealSupportService {
         List<InlineButton> buttons = new ArrayList<>();
         buttons.add(InlineButton.builder()
                 .text("Подтвердить")
-                .data(CallbackQueryUtil.buildCallbackData(Command.CONFIRM_USER_DEAL, pid, false))
+                .data(callbackQueryService.buildCallbackData(Command.CONFIRM_USER_DEAL, new Object[]{pid, false}))
                 .build());
         boolean hasDefaultGroupChat = groupChatService.hasDealRequests();
         if (hasDefaultGroupChat)
             buttons.add(InlineButton.builder()
                     .text("Подтвердить с запросом")
-                    .data(CallbackQueryUtil.buildCallbackData(Command.CONFIRM_USER_DEAL, pid, true))
+                    .data(callbackQueryService.buildCallbackData(Command.CONFIRM_USER_DEAL, new Object[]{pid, true}))
                     .build());
         buttons.add(InlineButton.builder()
                 .text("Доп.верификация")
-                .data(CallbackQueryUtil.buildCallbackData(Command.ADDITIONAL_VERIFICATION, pid))
+                .data(callbackQueryService.buildCallbackData(Command.ADDITIONAL_VERIFICATION, pid))
                 .build());
         buttons.add(InlineButton.builder()
                 .text("Удалить")
-                .data(CallbackQueryUtil.buildCallbackData(Command.DELETE_USER_DEAL, pid))
+                .data(callbackQueryService.buildCallbackData(Command.DELETE_USER_DEAL, pid))
                 .build());
         buttons.add(InlineButton.builder()
                 .text("Удалить и заблокировать")
-                .data(CallbackQueryUtil.buildCallbackData(Command.DELETE_DEAL_AND_BLOCK_USER, pid))
+                .data(callbackQueryService.buildCallbackData(Command.DELETE_DEAL_AND_BLOCK_USER, pid))
                 .build());
         return keyboardBuildService.buildInline(buttons, 2);
     }

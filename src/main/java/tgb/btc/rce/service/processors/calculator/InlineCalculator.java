@@ -19,7 +19,6 @@ import tgb.btc.rce.service.IUpdateDispatcher;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.processors.deal.DealProcessor;
 import tgb.btc.rce.service.processors.support.ExchangeService;
-import tgb.btc.rce.util.CallbackQueryUtil;
 import tgb.btc.rce.util.FunctionPropertiesUtil;
 import tgb.btc.rce.util.MessagePropertiesUtil;
 import tgb.btc.rce.util.UpdateUtil;
@@ -88,7 +87,7 @@ public class InlineCalculator extends Processor {
     @Override
     public void run(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
-        if (CallbackQueryUtil.isBack(update)) {
+        if (callbackQueryService.isBack(update)) {
             modifyUserService.updateStepAndCommandByChatId(chatId, Command.DEAL.name(), DealProcessor.AFTER_CALCULATOR_STEP);
             dealProcessor.run(update);
             return;

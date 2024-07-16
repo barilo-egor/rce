@@ -24,10 +24,14 @@ import tgb.btc.rce.enums.BotInlineButton;
 import tgb.btc.rce.enums.BotReplyButton;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.InlineType;
+import tgb.btc.rce.service.ICallbackQueryService;
 import tgb.btc.rce.service.IKeyboardService;
 import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
 import tgb.btc.rce.service.processors.calculator.InlineCalculator;
-import tgb.btc.rce.util.*;
+import tgb.btc.rce.util.BeanHolder;
+import tgb.btc.rce.util.CryptoCurrenciesDesignUtil;
+import tgb.btc.rce.util.FiatCurrenciesDesignUtil;
+import tgb.btc.rce.util.TurningCurrenciesUtil;
 import tgb.btc.rce.vo.InlineButton;
 import tgb.btc.rce.vo.InlineCalculatorVO;
 import tgb.btc.rce.vo.ReplyButton;
@@ -45,6 +49,13 @@ public class KeyboardService implements IKeyboardService {
     private IPaymentTypeService paymentTypeService;
 
     private IKeyboardBuildService keyboardBuildService;
+    
+    private ICallbackQueryService callbackQueryService;
+
+    @Autowired
+    public void setCallbackQueryService(ICallbackQueryService callbackQueryService) {
+        this.callbackQueryService = callbackQueryService;
+    }
 
     @Autowired
     public void setKeyboardBuildService(IKeyboardBuildService keyboardBuildService) {
@@ -70,7 +81,7 @@ public class KeyboardService implements IKeyboardService {
         List<InlineButton> buttons = FiatCurrencyUtil.getFiatCurrencies().stream()
                 .map(fiatCurrency -> InlineButton.builder()
                         .text(FiatCurrenciesDesignUtil.getDisplayData(fiatCurrency))
-                        .data(CallbackQueryUtil.buildCallbackData(Command.CHOOSING_FIAT_CURRENCY, fiatCurrency.name()))
+                        .data(callbackQueryService.buildCallbackData(Command.CHOOSING_FIAT_CURRENCY, fiatCurrency.name()))
                         .build())
                 .collect(Collectors.toList());
         buttons.add(keyboardBuildService.getInlineBackButton());
@@ -222,7 +233,7 @@ public class KeyboardService implements IKeyboardService {
         }
         return InlineButton.builder()
                 .text(text)
-                .data(CallbackQueryUtil.buildCallbackData(Command.TURN_PROCESS_DELIVERY, deliveryKind.name()))
+                .data(callbackQueryService.buildCallbackData(Command.TURN_PROCESS_DELIVERY, deliveryKind.name()))
                 .build();
     }
 

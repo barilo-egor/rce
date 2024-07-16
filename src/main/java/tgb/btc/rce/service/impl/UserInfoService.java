@@ -12,9 +12,9 @@ import tgb.btc.library.interfaces.service.bean.bot.deal.read.IDealCountService;
 import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.PropertiesMessage;
+import tgb.btc.rce.service.ICallbackQueryService;
 import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
-import tgb.btc.rce.util.CallbackQueryUtil;
 import tgb.btc.rce.util.MessagePropertiesUtil;
 import tgb.btc.rce.vo.InlineButton;
 
@@ -35,6 +35,13 @@ public class UserInfoService {
     private ILotteryWinService lotteryWinService;
 
     private IKeyboardBuildService keyboardBuildService;
+
+    private ICallbackQueryService callbackQueryService;
+
+    @Autowired
+    public void setCallbackQueryService(ICallbackQueryService callbackQueryService) {
+        this.callbackQueryService = callbackQueryService;
+    }
 
     public void setKeyboardBuildService(IKeyboardBuildService keyboardBuildService) {
         this.keyboardBuildService = keyboardBuildService;
@@ -105,13 +112,13 @@ public class UserInfoService {
                             keyboardBuildService.buildInline(List.of(
                                     InlineButton.builder()
                                             .text("Оставить в бане")
-                                            .data(CallbackQueryUtil.buildCallbackData(
+                                            .data(callbackQueryService.buildCallbackData(
                                                     Command.KEEP_SPAM_BAN, spamBanPid.toString()
                                             ))
                                             .build(),
                                     InlineButton.builder()
                                             .text("Разблокировать")
-                                            .data(CallbackQueryUtil.buildCallbackData(
+                                            .data(callbackQueryService.buildCallbackData(
                                                     Command.SPAM_UNBAN, spamBanPid.toString()
                                             ))
                                             .build()

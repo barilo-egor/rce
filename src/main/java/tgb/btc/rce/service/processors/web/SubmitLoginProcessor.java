@@ -6,7 +6,6 @@ import tgb.btc.api.bot.WebAPI;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.util.CallbackQueryUtil;
 import tgb.btc.rce.vo.InlineButton;
 
 @CommandProcessor(command = Command.SUBMIT_LOGIN)
@@ -21,7 +20,7 @@ public class SubmitLoginProcessor extends Processor {
 
     @Override
     public void run(Update update) {
-        Long chatId = CallbackQueryUtil.getSplitLongData(update, 1);
+        Long chatId = callbackQueryService.getSplitLongData(update, 1);
         webAPI.submitLogin(chatId);
         responseSender.deleteCallbackMessageIfExists(update);
         responseSender.sendMessage(chatId, "Вы можете, если потребуется, закрыть сессию по кнопке ниже.",

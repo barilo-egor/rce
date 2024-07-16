@@ -8,7 +8,6 @@ import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.IKeyboardService;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.util.CallbackQueryUtil;
 import tgb.btc.rce.util.UpdateUtil;
 
 import java.util.Objects;
@@ -40,7 +39,7 @@ public class RPSProcessor extends Processor {
         Long chatId = UpdateUtil.getChatId(update);
         CallbackQuery query;
         Integer userStep = readUserService.getStepByChatId(chatId);
-        boolean isBack = CallbackQueryUtil.isBack(update);
+        boolean isBack = callbackQueryService.isBack(update);
         if (isBack) {
             userStep--;
             modifyUserService.previousStep(chatId);
@@ -65,7 +64,7 @@ public class RPSProcessor extends Processor {
             case 1:
                  query = update.getCallbackQuery();
                 if (Objects.nonNull(query)) {
-                    if (!CallbackQueryUtil.isBack(update)) {
+                    if (!callbackQueryService.isBack(update)) {
                         localCache.put(chatId, query.getData());
                         responseSender.deleteCallbackMessageIfExists(update);
                     }

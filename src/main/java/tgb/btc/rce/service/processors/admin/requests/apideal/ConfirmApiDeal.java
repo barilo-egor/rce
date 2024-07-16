@@ -8,7 +8,6 @@ import tgb.btc.library.interfaces.service.bean.web.IApiDealService;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.util.CallbackQueryUtil;
 import tgb.btc.rce.util.UpdateUtil;
 
 @CommandProcessor(command = Command.CONFIRM_API_DEAL)
@@ -25,8 +24,8 @@ public class ConfirmApiDeal extends Processor {
     @Override
     public void run(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
-        responseSender.deleteMessage(chatId, CallbackQueryUtil.messageId(update));
-        Long dealPid = CallbackQueryUtil.getSplitLongData(update, 1);
+        responseSender.deleteMessage(chatId, callbackQueryService.messageId(update));
+        Long dealPid = callbackQueryService.getSplitLongData(update, 1);
         apiDealService.updateApiDealStatusByPid(ApiDealStatus.ACCEPTED, dealPid);
         log.debug("Админ chatId={} подтвердил АПИ сделку={}.", chatId, dealPid);
         responseSender.sendMessage(chatId, "API сделка подтверждена.");

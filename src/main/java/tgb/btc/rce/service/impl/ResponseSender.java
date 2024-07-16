@@ -29,10 +29,10 @@ import tgb.btc.library.service.bean.bot.BotMessageService;
 import tgb.btc.rce.bot.RceBot;
 import tgb.btc.rce.enums.Menu;
 import tgb.btc.rce.enums.PropertiesMessage;
+import tgb.btc.rce.service.ICallbackQueryService;
 import tgb.btc.rce.service.IMenuService;
 import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
-import tgb.btc.rce.util.CallbackQueryUtil;
 import tgb.btc.rce.util.MessagePropertiesUtil;
 import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.InlineButton;
@@ -57,6 +57,13 @@ public class ResponseSender implements IResponseSender {
     private IMenuService menuService;
 
     private IKeyboardBuildService keyboardBuildService;
+    
+    private ICallbackQueryService callbackQueryService;
+
+    @Autowired
+    public void setCallbackQueryService(ICallbackQueryService callbackQueryService) {
+        this.callbackQueryService = callbackQueryService;
+    }
 
     @Autowired
     public void setKeyboardBuildService(IKeyboardBuildService keyboardBuildService) {
@@ -400,14 +407,14 @@ public class ResponseSender implements IResponseSender {
 
     @Override
     public void deleteCallbackMessageIfExists(Update update) {
-        if (update.hasCallbackQuery()) deleteMessage(UpdateUtil.getChatId(update), CallbackQueryUtil.messageId(update));
+        if (update.hasCallbackQuery()) deleteMessage(UpdateUtil.getChatId(update), callbackQueryService.messageId(update));
     }
 
     @Override
     public void deleteCallbackMessageButtonsIfExists(Update update) {
         if (update.hasCallbackQuery()) {
             String text = update.getCallbackQuery().getMessage().getText();
-            deleteMessage(UpdateUtil.getChatId(update), CallbackQueryUtil.messageId(update));
+            deleteMessage(UpdateUtil.getChatId(update), callbackQueryService.messageId(update));
             sendMessage(UpdateUtil.getChatId(update), text);
         }
     }

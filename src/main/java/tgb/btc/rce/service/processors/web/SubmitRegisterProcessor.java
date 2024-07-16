@@ -6,7 +6,7 @@ import tgb.btc.api.bot.WebAPI;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.util.CallbackQueryUtil;
+
 
 @CommandProcessor(command = Command.SUBMIT_REGISTER)
 public class SubmitRegisterProcessor extends Processor {
@@ -20,7 +20,7 @@ public class SubmitRegisterProcessor extends Processor {
 
     @Override
     public void run(Update update) {
-        Long chatId = CallbackQueryUtil.getSplitLongData(update, 1);
+        Long chatId = callbackQueryService.getSplitLongData(update, 1);
         webAPI.submitChatId(chatId);
         responseSender.deleteCallbackMessageIfExists(update);
     }

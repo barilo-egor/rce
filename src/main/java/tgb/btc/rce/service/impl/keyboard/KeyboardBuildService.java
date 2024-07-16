@@ -1,6 +1,7 @@
 package tgb.btc.rce.service.impl.keyboard;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
@@ -12,8 +13,8 @@ import tgb.btc.library.bean.bot.Contact;
 import tgb.btc.library.exception.BaseException;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.InlineType;
+import tgb.btc.rce.service.ICallbackQueryService;
 import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
-import tgb.btc.rce.util.CallbackQueryUtil;
 import tgb.btc.rce.vo.InlineButton;
 import tgb.btc.rce.vo.ReplyButton;
 
@@ -29,6 +30,13 @@ public class KeyboardBuildService implements IKeyboardBuildService {
             .inlineType(InlineType.CALLBACK_DATA)
             .data(Command.BACK.name())
             .build();
+
+    private final ICallbackQueryService callbackQueryService;
+
+    @Autowired
+    public KeyboardBuildService(ICallbackQueryService callbackQueryService) {
+        this.callbackQueryService = callbackQueryService;
+    }
 
     @Override
     public InlineButton getInlineBackButton() {
@@ -169,7 +177,7 @@ public class KeyboardBuildService implements IKeyboardBuildService {
         return InlineButton.builder()
                 .inlineType(InlineType.CALLBACK_DATA)
                 .text(text)
-                .data(CallbackQueryUtil.buildCallbackData(command, string))
+                .data(callbackQueryService.buildCallbackData(command, string))
                 .build();
     }
 

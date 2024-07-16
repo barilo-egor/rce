@@ -18,7 +18,6 @@ import tgb.btc.rce.service.INotifyService;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.captcha.IAntiSpam;
 import tgb.btc.rce.service.processors.tool.Start;
-import tgb.btc.rce.util.CallbackQueryUtil;
 import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.InlineButton;
 
@@ -106,7 +105,7 @@ public class CaptchaProcessor extends Processor {
                             keyboardBuildService.buildInline(List.of(
                                     InlineButton.builder()
                                             .text("Показать")
-                                            .data(CallbackQueryUtil.buildCallbackData(
+                                            .data(callbackQueryService.buildCallbackData(
                                                     Command.SHOW_SPAM_BANNED_USER, spamBan.getPid().toString())
                                             )
                                             .build()
@@ -130,7 +129,7 @@ public class CaptchaProcessor extends Processor {
         if (UpdateUtil.hasMessageText(update)) {
             text = UpdateUtil.getMessageText(update);
         } else {
-            text = CallbackQueryUtil.getSplitData(update, 1);
+            text = callbackQueryService.getSplitData(update, 1);
         }
         return text.equals(antiSpam.getFromCaptchaCash(UpdateUtil.getChatId(update)));
     }

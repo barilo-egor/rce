@@ -8,7 +8,6 @@ import tgb.btc.rce.service.IUpdateDispatcher;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.processors.deal.DealProcessor;
 import tgb.btc.rce.service.processors.support.ExchangeService;
-import tgb.btc.rce.util.CallbackQueryUtil;
 import tgb.btc.rce.util.UpdateUtil;
 
 @CommandProcessor(command = Command.NONE_CALCULATOR, step = 1)
@@ -40,7 +39,7 @@ public class NoneCalculator extends Processor {
     public void run(Update update) {
         if (dealProcessor.isMainMenuCommand(update)) return;
         Long chatId = UpdateUtil.getChatId(update);
-        if (CallbackQueryUtil.isBack(update)) {
+        if (callbackQueryService.isBack(update)) {
             modifyUserService.updateStepAndCommandByChatId(chatId, Command.DEAL.name(), DealProcessor.AFTER_CALCULATOR_STEP);
             dealProcessor.run(update);
             return;

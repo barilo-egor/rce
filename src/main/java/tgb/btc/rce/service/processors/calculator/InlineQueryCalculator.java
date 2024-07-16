@@ -7,7 +7,6 @@ import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.processors.deal.DealProcessor;
 import tgb.btc.rce.service.processors.support.ExchangeService;
-import tgb.btc.rce.util.CallbackQueryUtil;
 import tgb.btc.rce.util.UpdateUtil;
 
 @CommandProcessor(command = Command.INLINE_QUERY_CALCULATOR, step = 1)
@@ -31,7 +30,7 @@ public class InlineQueryCalculator extends Processor {
     public void run(Update update) {
         if (dealProcessor.isMainMenuCommand(update)) return;
         Long chatId = UpdateUtil.getChatId(update);
-        if (CallbackQueryUtil.isBack(update)) {
+        if (callbackQueryService.isBack(update)) {
             modifyUserService.updateStepAndCommandByChatId(chatId, Command.DEAL.name(), DealProcessor.AFTER_CALCULATOR_STEP);
             dealProcessor.run(update);
             return;

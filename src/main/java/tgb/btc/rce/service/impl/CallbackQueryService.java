@@ -54,6 +54,11 @@ public class CallbackQueryService implements ICallbackQueryService {
                 .concat(String.join(BotStringConstants.CALLBACK_DATA_SPLITTER, variablesToString));
     }
 
+    @Override
+    public <T> String buildCallbackData(Command command, Object variable) {
+        return buildCallbackData(command, new Object[]{variable});
+    }
+
     private void checkStringVariables(String... variables) {
         if (Arrays.stream(variables).anyMatch(StringUtils::isBlank))
             throw new BaseException("Одна из переменных пуста");

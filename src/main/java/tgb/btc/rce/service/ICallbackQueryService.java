@@ -18,5 +18,7 @@ public interface ICallbackQueryService {
 
     <T> String buildCallbackData(Command command, T[] variables);
 
+    <T> String buildCallbackData(Command command, Object variable);
+
     boolean isBack(Update update);
 }

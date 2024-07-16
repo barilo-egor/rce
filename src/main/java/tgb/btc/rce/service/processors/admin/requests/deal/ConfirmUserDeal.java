@@ -12,7 +12,6 @@ import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.processors.support.DealSupportService;
-import tgb.btc.rce.util.CallbackQueryUtil;
 import tgb.btc.rce.util.UpdateUtil;
 
 @CommandProcessor(command = Command.CONFIRM_USER_DEAL)
@@ -52,8 +51,8 @@ public class ConfirmUserDeal extends Processor {
     public void run(Update update) {
         if (!update.hasCallbackQuery()) return;
         Long chatId = UpdateUtil.getChatId(update);
-        boolean isNeedRequest = CallbackQueryUtil.getSplitBooleanData(update, 2);
-        Long dealPid = CallbackQueryUtil.getSplitLongData(update, 1);
+        boolean isNeedRequest = callbackQueryService.getSplitBooleanData(update, 2);
+        Long dealPid = callbackQueryService.getSplitLongData(update, 1);
         if (isNeedRequest && !groupChatService.hasDealRequests()) {
             responseSender.sendAnswerCallbackQuery(update.getCallbackQuery().getId(),
                     "Не найдена установленная группа для вывода запросов. " +

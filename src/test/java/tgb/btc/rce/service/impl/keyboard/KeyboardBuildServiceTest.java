@@ -12,7 +12,7 @@ import tgb.btc.library.bean.bot.Contact;
 import tgb.btc.library.exception.BaseException;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.InlineType;
-import tgb.btc.rce.util.CallbackQueryUtil;
+import tgb.btc.rce.service.impl.CallbackQueryService;
 import tgb.btc.rce.vo.InlineButton;
 import tgb.btc.rce.vo.ReplyButton;
 
@@ -22,8 +22,11 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 class KeyboardBuildServiceTest {
-    
-    private final KeyboardBuildService keyboardBuildService = new KeyboardBuildService();
+
+    private final CallbackQueryService callbackQueryService = new CallbackQueryService();
+
+    private final KeyboardBuildService keyboardBuildService = new KeyboardBuildService(callbackQueryService);
+
 
     @Test
     void buildReplyButtonsLessThanColumns() {
@@ -390,7 +393,7 @@ class KeyboardBuildServiceTest {
         InlineButton inlineButton = keyboardBuildService.createCallBackDataButton(text, command, variables);
         assertAll(
                 () -> assertEquals(text, inlineButton.getText()),
-                () -> assertEquals(CallbackQueryUtil.buildCallbackData(command, variables), inlineButton.getData())
+                () -> assertEquals(callbackQueryService.buildCallbackData(command, variables), inlineButton.getData())
         );
     }
 

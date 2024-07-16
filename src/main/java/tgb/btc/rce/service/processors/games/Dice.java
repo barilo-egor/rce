@@ -18,7 +18,6 @@ import tgb.btc.rce.enums.Menu;
 import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.IUpdateDispatcher;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.util.CallbackQueryUtil;
 import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.InlineButton;
 
@@ -64,24 +63,24 @@ public class Dice extends Processor {
         }
 
         if (isDrawsCommand(update)) return;
-        if (CallbackQueryUtil.getSplitData(update.getCallbackQuery(), 1).startsWith("Bet")) {
+        if (callbackQueryService.getSplitData(update.getCallbackQuery(), 1).startsWith("Bet")) {
             betCallBack(update);
             return;
         }
-        if (CallbackQueryUtil.getSplitData(update.getCallbackQuery(), 1).startsWith("Number")) {
+        if (callbackQueryService.getSplitData(update.getCallbackQuery(), 1).startsWith("Number")) {
             numberCallBack(update);
         }
     }
 
     private void numberCallBack(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
-        if (PropertiesPath.DICE_PROPERTIES.getString("button.back.text").equals(CallbackQueryUtil.getSplitData(update.getCallbackQuery(), 2))) {
+        if (PropertiesPath.DICE_PROPERTIES.getString("button.back.text").equals(callbackQueryService.getSplitData(update.getCallbackQuery(), 2))) {
             responseSender.deleteCallbackMessageIfExists(update);
             Integer referralBalance = readUserService.getReferralBalanceByChatId(chatId);
             drawDiceBetButtons(chatId, String.format(diceService.selectBetMessage(), referralBalance));
         } else {
-            Integer selectedNumber = Integer.parseInt(CallbackQueryUtil.getSplitData(update.getCallbackQuery(), 2));
-            Integer bet = Integer.parseInt(CallbackQueryUtil.getSplitData(update.getCallbackQuery(), 4));
+            Integer selectedNumber = Integer.parseInt(callbackQueryService.getSplitData(update.getCallbackQuery(), 2));
+            Integer bet = Integer.parseInt(callbackQueryService.getSplitData(update.getCallbackQuery(), 4));
             responseSender.deleteCallbackMessageIfExists(update);
             rollDice(chatId, selectedNumber, bet);
         }
@@ -89,11 +88,11 @@ public class Dice extends Processor {
 
     private void betCallBack(Update update) {
         if (PropertiesPath.DICE_PROPERTIES.getString("button.close.text")
-                .equals(CallbackQueryUtil.getSplitData(update.getCallbackQuery(), 2))) {
+                .equals(callbackQueryService.getSplitData(update.getCallbackQuery(), 2))) {
             responseSender.deleteCallbackMessageIfExists(update);
         } else {
             Long chatId = UpdateUtil.getChatId(update);
-            Integer bet = Integer.parseInt(CallbackQueryUtil.getSplitData(update.getCallbackQuery(), 2));
+            Integer bet = Integer.parseInt(callbackQueryService.getSplitData(update.getCallbackQuery(), 2));
             if (readUserService.getReferralBalanceByChatId(chatId) < bet) {
                 responseSender.sendMessage(chatId, PropertiesPath.DICE_MESSAGE.getString("balance.empty"));
                 return;
@@ -149,12 +148,12 @@ public class Dice extends Processor {
         for (int i = 0; i < 6; i++) {
             buttons.add(InlineButton.builder()
                     .text(String.valueOf(i + 1))
-                    .data(CallbackQueryUtil.buildCallbackData(Command.DICE, "Number:" + (i + 1), "Bet:" + bet))
+                    .data(callbackQueryService.buildCallbackData(Command.DICE, new Object[]{"Number:" + (i + 1), "Bet:" + bet}))
                     .build());
         }
         buttons.add(InlineButton.builder()
                 .text(backText)
-                .data(CallbackQueryUtil.buildCallbackData(Command.DICE, "Number:" + backText))
+                .data(callbackQueryService.buildCallbackData(Command.DICE, "Number:" + backText))
                 .build());
         responseSender.sendMessage(chatId, StringUtils.defaultIfBlank(text, "Выберите число"),
                 keyboardBuildService.buildInline(buttons,2), "Markdown");
@@ -169,12 +168,12 @@ public class Dice extends Processor {
         Arrays.stream(sums).forEach(sum -> {
             buttons.add(InlineButton.builder()
                     .text(sum + "₽")
-                    .data(CallbackQueryUtil.buildCallbackData(Command.DICE, "Bet:" + sum))
+                    .data(callbackQueryService.buildCallbackData(Command.DICE, "Bet:" + sum))
                     .build());
         });
         buttons.add(InlineButton.builder()
                 .text(closeText)
-                .data(CallbackQueryUtil.buildCallbackData(Command.DICE, "Bet:" + closeText))
+                .data(callbackQueryService.buildCallbackData(Command.DICE, "Bet:" + closeText))
                 .build());
         responseSender.sendMessage(chatId, StringUtils.defaultIfBlank(text, "Выберите ставку:"),
                 buildBetButtons(buttons), "Markdown");

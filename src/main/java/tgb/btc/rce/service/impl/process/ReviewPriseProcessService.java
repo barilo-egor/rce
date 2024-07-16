@@ -10,9 +10,9 @@ import tgb.btc.library.interfaces.service.bean.bot.deal.IReadDealService;
 import tgb.btc.library.util.properties.VariablePropertiesUtil;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.ReviewPriseType;
+import tgb.btc.rce.service.ICallbackQueryService;
 import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
-import tgb.btc.rce.util.CallbackQueryUtil;
 import tgb.btc.rce.util.ReviewPriseUtil;
 import tgb.btc.rce.vo.InlineButton;
 import tgb.btc.rce.vo.ReviewPrise;
@@ -28,6 +28,13 @@ public class ReviewPriseProcessService implements IReviewPriseProcessService {
     private IReadDealService readDealService;
 
     private IKeyboardBuildService keyboardBuildService;
+
+    private ICallbackQueryService callbackQueryService;
+
+    @Autowired
+    public void setCallbackQueryService(ICallbackQueryService callbackQueryService) {
+        this.callbackQueryService = callbackQueryService;
+    }
 
     @Autowired
     public void setKeyboardBuildService(IKeyboardBuildService keyboardBuildService) {
@@ -53,8 +60,8 @@ public class ReviewPriseProcessService implements IReviewPriseProcessService {
             if (ReviewPriseType.DYNAMIC.isCurrent()) {
                 ReviewPrise reviewPriseVo = ReviewPriseUtil.getReviewPrise(deal.getAmount(), deal.getFiatCurrency());
                 if (Objects.nonNull(reviewPriseVo)) {
-                    data = CallbackQueryUtil.buildCallbackData(Command.SHARE_REVIEW,
-                            String.valueOf(reviewPriseVo.getMinPrise()), String.valueOf(reviewPriseVo.getMaxPrise()));
+                    data = callbackQueryService.buildCallbackData(Command.SHARE_REVIEW,
+                            new Object[]{String.valueOf(reviewPriseVo.getMinPrise()), String.valueOf(reviewPriseVo.getMaxPrise())});
                     amount = "от " + reviewPriseVo.getMinPrise() + "₽" + " до " + reviewPriseVo.getMaxPrise() + "₽";
                 }
                 else return;

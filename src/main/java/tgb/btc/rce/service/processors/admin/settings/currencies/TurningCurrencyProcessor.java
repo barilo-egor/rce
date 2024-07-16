@@ -7,7 +7,6 @@ import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.util.CallbackQueryUtil;
 import tgb.btc.rce.util.TurningCurrenciesUtil;
 import tgb.btc.rce.util.UpdateUtil;
 import tgb.btc.rce.vo.InlineButton;
@@ -49,7 +48,7 @@ public class TurningCurrencyProcessor extends Processor {
         Command command = isCurrencyOn ? Command.TURN_OFF_CURRENCY : Command.TURN_ON_CURRENCY;
         return InlineButton.builder()
                 .text(isCurrencyOn ? "Выключить " + currency.getShortName() : "Включить " + currency.getShortName())
-                .data(CallbackQueryUtil.buildCallbackData(command, dealType.name(), currency.name()))
+                .data(callbackQueryService.buildCallbackData(command, new Object[]{dealType.name(), currency.name()}))
                 .build();
     }
 }

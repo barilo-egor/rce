@@ -23,7 +23,6 @@ import tgb.btc.rce.service.IUpdateDispatcher;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.process.IDealProcessService;
 import tgb.btc.rce.service.processors.support.ExchangeService;
-import tgb.btc.rce.util.CallbackQueryUtil;
 import tgb.btc.rce.util.UpdateUtil;
 
 import java.util.HashSet;
@@ -96,7 +95,7 @@ public class DealProcessor extends Processor {
     public void run(Update update) {
         Long chatId = UpdateUtil.getChatId(update);
         Integer userStep = readUserService.getStepByChatId(chatId);
-        boolean isBack = CallbackQueryUtil.isBack(update);
+        boolean isBack = callbackQueryService.isBack(update);
         if (!User.isDefault(userStep)) {
             if (isMainMenuCommand(update)) return;
             if (isBack) {
