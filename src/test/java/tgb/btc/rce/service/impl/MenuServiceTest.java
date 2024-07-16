@@ -1,8 +1,9 @@
 package tgb.btc.rce.service.impl;
 
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import tgb.btc.rce.enums.Menu;
 import tgb.btc.rce.service.IMenu;
 import tgb.btc.rce.service.impl.menu.BotSettingsMenu;
@@ -14,16 +15,11 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@ExtendWith(MockitoExtension.class)
 class MenuServiceTest {
 
     @Mock
-    private Map<Menu, IMenu> menuMap;
-
-    @Mock
     private MainMenu mainMenu;
-
-    @InjectMocks
-    private MenuService menuService;
 
     @Test
     void init() {
@@ -39,4 +35,18 @@ class MenuServiceTest {
                 () -> assertTrue(actual.get(Menu.BOT_SETTINGS) instanceof BotSettingsMenu)
         );
     }
+
+//    @Test
+//    void buildMainUser() {
+//        List<IMenu> menus = List.of(mainMenu);
+//        when(mainMenu.build(any())).thenReturn(new ArrayList<>());
+//        when(mainMenu.isOneTime()).thenReturn(false);
+//        when(mainMenu.getMenu()).thenReturn(Menu.MAIN);
+//        MenuService menuService = new MenuService(menus);
+//        try (MockedStatic<KeyboardUtil> keyboardUtilMockedStatic = mockStatic(KeyboardUtil.class)) {
+//            menuService.build(Menu.MAIN, UserRole.USER);
+//            keyboardUtilMockedStatic.verify(()
+//                    -> KeyboardUtil.buildReply(eq(Menu.MAIN.getNumberOfColumns()), anyList(), anyBoolean()));
+//        }
+//    }
 }
