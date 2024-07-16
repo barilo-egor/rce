@@ -3,6 +3,7 @@ package tgb.btc.rce.service.impl.process;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import tgb.btc.api.library.IReviewPriseProcessService;
 import tgb.btc.library.bean.bot.Deal;
 import tgb.btc.library.constants.enums.ReferralType;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
@@ -26,7 +27,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-public class ReviewPriseProcessService implements tgb.btc.api.library.IReviewPriseProcessService, IReviewPriseBotProcessService {
+public class ReviewPriseProcessService implements IReviewPriseProcessService, IReviewPriseBotProcessService {
 
     private final List<ReviewPrise> reviewPrises = new ArrayList<>();
 
