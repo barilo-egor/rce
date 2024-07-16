@@ -16,6 +16,7 @@ import tgb.btc.library.constants.enums.properties.PropertiesPath;
 import tgb.btc.library.constants.enums.properties.VariableType;
 import tgb.btc.library.exception.BaseException;
 import tgb.btc.library.interfaces.service.bean.bot.IPaymentTypeService;
+import tgb.btc.library.service.properties.ButtonsDesignPropertiesReader;
 import tgb.btc.library.util.BigDecimalUtil;
 import tgb.btc.library.util.FiatCurrencyUtil;
 import tgb.btc.library.util.properties.VariablePropertiesUtil;
@@ -30,7 +31,6 @@ import tgb.btc.rce.service.processors.calculator.InlineCalculator;
 import tgb.btc.rce.service.util.ICallbackQueryService;
 import tgb.btc.rce.service.util.ICryptoCurrenciesDesignService;
 import tgb.btc.rce.util.BeanHolder;
-import tgb.btc.rce.util.FiatCurrenciesDesignUtil;
 import tgb.btc.rce.util.TurningCurrenciesUtil;
 import tgb.btc.rce.vo.InlineButton;
 import tgb.btc.rce.vo.InlineCalculatorVO;
@@ -53,6 +53,13 @@ public class KeyboardService implements IKeyboardService {
     private ICallbackQueryService callbackQueryService;
     
     private ICryptoCurrenciesDesignService cryptoCurrenciesDesignService;
+
+    private ButtonsDesignPropertiesReader buttonsDesignPropertiesReader;
+
+    @Autowired
+    public void setButtonsDesignPropertiesReader(ButtonsDesignPropertiesReader buttonsDesignPropertiesReader) {
+        this.buttonsDesignPropertiesReader = buttonsDesignPropertiesReader;
+    }
 
     @Autowired
     public void setCryptoCurrenciesDesignService(ICryptoCurrenciesDesignService cryptoCurrenciesDesignService) {
@@ -87,7 +94,7 @@ public class KeyboardService implements IKeyboardService {
     public ReplyKeyboard getFiatCurrencies() {
         List<InlineButton> buttons = FiatCurrencyUtil.getFiatCurrencies().stream()
                 .map(fiatCurrency -> InlineButton.builder()
-                        .text(FiatCurrenciesDesignUtil.getDisplayData(fiatCurrency))
+                        .text(buttonsDesignPropertiesReader.getString(fiatCurrency.name()))
                         .data(callbackQueryService.buildCallbackData(Command.CHOOSING_FIAT_CURRENCY, fiatCurrency.name()))
                         .build())
                 .collect(Collectors.toList());
