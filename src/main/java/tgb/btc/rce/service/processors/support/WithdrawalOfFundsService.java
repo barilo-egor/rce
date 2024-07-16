@@ -4,8 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
+import tgb.btc.library.bean.bot.User;
 import tgb.btc.library.bean.bot.WithdrawalRequest;
 import tgb.btc.library.constants.enums.bot.UserRole;
+import tgb.btc.library.constants.enums.bot.WithdrawalRequestStatus;
 import tgb.btc.library.interfaces.service.bean.bot.IWithdrawalRequestService;
 import tgb.btc.library.interfaces.service.bean.bot.user.IModifyUserService;
 import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
@@ -17,7 +19,6 @@ import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
 import tgb.btc.rce.service.util.IMessagePropertiesService;
 import tgb.btc.rce.util.UpdateUtil;
-import tgb.btc.rce.util.WithdrawalRequestUtil;
 import tgb.btc.rce.vo.ReplyButton;
 
 import java.util.List;
@@ -83,13 +84,22 @@ public class WithdrawalOfFundsService {
             return false;
         }
         WithdrawalRequest request = withdrawalRequestService.save(
-                WithdrawalRequestUtil.buildFromUpdate(readUserService.findByChatId(UpdateUtil.getChatId(update)), update));
+                buildFromUpdate(readUserService.findByChatId(UpdateUtil.getChatId(update)), update));
         notifyService.notifyMessage(messagePropertiesService.getMessage(PropertiesMessage.ADMIN_NOTIFY_WITHDRAWAL_NEW),
                 Command.SHOW_WITHDRAWAL_REQUEST.getText() + BotStringConstants.CALLBACK_DATA_SPLITTER +
                         request.getPid(), Set.of(UserRole.OPERATOR, UserRole.ADMIN));
         responseSender.sendMessage(chatId,
                 messagePropertiesService.getMessage(PropertiesMessage.USER_RESPONSE_WITHDRAWAL_REQUEST_CREATED));
         return true;
+    }
+
+    public WithdrawalRequest buildFromUpdate(User user, Update update) {
+        WithdrawalRequest withdrawalRequest = new WithdrawalRequest();
+        withdrawalRequest.setUser(user);
+        withdrawalRequest.setStatus(WithdrawalRequestStatus.CREATED);
+        withdrawalRequest.setPhoneNumber(update.getMessage().getContact().getPhoneNumber());
+        withdrawalRequest.setActive(true);
+        return withdrawalRequest;
     }
 
     public String toString(WithdrawalRequest withdrawalRequest) {
