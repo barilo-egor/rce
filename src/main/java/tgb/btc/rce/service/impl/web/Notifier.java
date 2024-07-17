@@ -133,7 +133,7 @@ public class Notifier implements INotifier {
     }
 
     @Override
-    public void sendRequestToWithdraw(String from, String requestInitiator, Long dealPid) {
+    public void sendRequestToWithdrawDeal(String from, String requestInitiator, Long dealPid) {
         Optional<GroupChat> optionalGroupChat = groupChatService.getByType(GroupChatType.DEAL_REQUEST);
         if (optionalGroupChat.isEmpty())
             throw new BaseException("Не найдена дефолтная чат-группа для отправки запроса на вывод сделки.");
@@ -144,12 +144,33 @@ public class Notifier implements INotifier {
     }
 
     @Override
-    public void sendGreetingToNewGroup() {
+    public void sendRequestToWithdrawApiDeal(String from, String requestInitiator, Long apiDealPid) {
+        Optional<GroupChat> optionalGroupChat = groupChatService.getByType(GroupChatType.API_DEAL_REQUEST);
+        if (optionalGroupChat.isEmpty())
+            throw new BaseException("Не найдена дефолтная чат-группа для отправки запроса на вывод апи сделки.");
+        GroupChat groupChat = optionalGroupChat.get();
+        String dealString = dealSupportService.apiDealToRequestString(apiDealPid);
+        String result = "Запрос из <b>" + from + "</b> от <b>" + requestInitiator + "</b>.\n\n" + dealString;
+        responseSender.sendMessage(groupChat.getChatId(), result, "html");
+    }
+
+    @Override
+    public void sendGreetingToNewDealRequestGroup() {
         Optional<GroupChat> optionalGroupChat = groupChatService.getByType(GroupChatType.DEAL_REQUEST);
         if (optionalGroupChat.isEmpty())
             throw new BaseException("Не найдена дефолтная чат-группа для отправки запроса на вывод сделки.");
         GroupChat groupChat = optionalGroupChat.get();
         responseSender.sendMessage(groupChat.getChatId(), "Данная группа была выбрана для отправки запросов на вывод." +
+                "Для того, чтобы узнать возможности бота, введите <code>/help</code>.", "html");
+    }
+
+    @Override
+    public void sendGreetingToNewApiDealRequestGroup() {
+        Optional<GroupChat> optionalGroupChat = groupChatService.getByType(GroupChatType.API_DEAL_REQUEST);
+        if (optionalGroupChat.isEmpty())
+            throw new BaseException("Не найдена дефолтная чат-группа для отправки запроса на вывод апи сделки.");
+        GroupChat groupChat = optionalGroupChat.get();
+        responseSender.sendMessage(groupChat.getChatId(), "Данная группа была выбрана для отправки запросов на вывод API сделок." +
                 "Для того, чтобы узнать возможности бота, введите <code>/help</code>.", "html");
     }
 }

@@ -8,6 +8,7 @@ import tgb.btc.library.bean.bot.Deal;
 import tgb.btc.library.bean.bot.User;
 import tgb.btc.library.bean.web.api.ApiDeal;
 import tgb.btc.library.constants.enums.bot.CryptoCurrency;
+import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
 import tgb.btc.library.constants.enums.web.ApiDealStatus;
 import tgb.btc.library.interfaces.service.bean.bot.IGroupChatService;
@@ -82,8 +83,21 @@ public class DealSupportService {
         this.apiDealService = apiDealService;
     }
 
+    public String apiDealToRequestString(Long pid) {
+        ApiDeal apiDeal = apiDealService.findById(pid);
+        String dealString = dealToString(pid);
+        if (CryptoCurrency.BITCOIN.equals(apiDeal.getCryptoCurrency()) && DealType.BUY.equals(apiDeal.getDealType()))
+            return dealString + "\nСтрока для вывода:\n<code>" + apiDeal.getRequisite() + "," + BigDecimalUtil.toPlainString(apiDeal.getCryptoAmount()) + "</code>";
+        else
+            return dealString;
+    }
+
     public String apiDealToString(Long pid) {
         ApiDeal apiDeal = apiDealService.getByPid(pid);
+        return apiDealToString(apiDeal);
+    }
+
+    public String apiDealToString(ApiDeal apiDeal) {
         return "API заявка на " + apiDeal.getDealType().getGenitive() + " №" + apiDeal.getPid() + "\n"
                 + "Идентификатор клиента: " + apiDeal.getApiUser().getId() + "\n"
                 + "Дата, время: " + apiDeal.getDateTime().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")) + "\n"
@@ -97,11 +111,12 @@ public class DealSupportService {
     public String dealToRequestString(Long pid) {
         Deal deal = readDealService.findByPid(pid);
         String dealString = dealToString(pid);
-        if (CryptoCurrency.BITCOIN.equals(deal.getCryptoCurrency()))
+        if (CryptoCurrency.BITCOIN.equals(deal.getCryptoCurrency()) && DealType.BUY.equals(deal.getDealType()))
             return dealString + "\nСтрока для вывода:\n<code>" + deal.getWallet() + "," + BigDecimalUtil.toPlainString(deal.getCryptoAmount()) + "</code>";
         else
             return dealString;
     }
+
 
     public String dealToString(Long pid) {
         return dealToString(readDealService.findByPid(pid));
