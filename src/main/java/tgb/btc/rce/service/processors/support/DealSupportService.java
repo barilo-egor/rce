@@ -85,7 +85,7 @@ public class DealSupportService {
 
     public String apiDealToRequestString(Long pid) {
         ApiDeal apiDeal = apiDealService.findById(pid);
-        String dealString = dealToString(pid);
+        String dealString = apiDealToString(pid);
         if (CryptoCurrency.BITCOIN.equals(apiDeal.getCryptoCurrency()) && DealType.BUY.equals(apiDeal.getDealType()))
             return dealString + "\nСтрока для вывода:\n<code>" + apiDeal.getRequisite() + "," + BigDecimalUtil.toPlainString(apiDeal.getCryptoAmount()) + "</code>";
         else

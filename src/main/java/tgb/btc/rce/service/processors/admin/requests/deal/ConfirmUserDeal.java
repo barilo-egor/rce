@@ -11,7 +11,6 @@ import tgb.btc.library.interfaces.service.bean.bot.deal.IModifyDealService;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.service.processors.support.DealSupportService;
 
 @CommandProcessor(command = Command.CONFIRM_USER_DEAL)
 @Slf4j
@@ -22,13 +21,6 @@ public class ConfirmUserDeal extends Processor {
     private INotifier notifier;
 
     private IGroupChatService groupChatService;
-
-    private DealSupportService dealSupportService;
-
-    @Autowired
-    public void setDealSupportService(DealSupportService dealSupportService) {
-        this.dealSupportService = dealSupportService;
-    }
 
     @Autowired
     public void setGroupChatService(IGroupChatService groupChatService) {
@@ -62,7 +54,7 @@ public class ConfirmUserDeal extends Processor {
         modifyDealService.confirm(dealPid);
         String username = readUserService.getUsernameByChatId(chatId);
         if (isNeedRequest)
-            notifier.sendRequestToWithdraw(
+            notifier.sendRequestToWithdrawDeal(
                     "бота",
                     StringUtils.isNotEmpty(username)
                             ? username
