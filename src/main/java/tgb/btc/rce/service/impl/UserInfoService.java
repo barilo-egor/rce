@@ -51,6 +51,7 @@ public class UserInfoService implements IUserInfoService {
         this.callbackQueryService = callbackQueryService;
     }
 
+    @Autowired
     public void setKeyboardBuildService(IKeyboardBuildService keyboardBuildService) {
         this.keyboardBuildService = keyboardBuildService;
     }

@@ -10,7 +10,7 @@ import tgb.btc.rce.service.util.ICommandService;
 @Service
 public class CommandService implements ICommandService {
 
-    private IUpdateService updateService;
+    private final IUpdateService updateService;
 
     @Autowired
     public CommandService(IUpdateService updateService) {
