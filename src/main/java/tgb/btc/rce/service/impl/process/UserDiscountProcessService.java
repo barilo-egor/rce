@@ -12,9 +12,9 @@ import tgb.btc.library.constants.enums.properties.VariableType;
 import tgb.btc.library.interfaces.service.bean.bot.IUserDiscountService;
 import tgb.btc.library.interfaces.service.bean.bot.deal.read.IDealUserService;
 import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
+import tgb.btc.library.interfaces.util.IBigDecimalService;
 import tgb.btc.library.service.process.CalculateService;
 import tgb.btc.library.service.properties.VariablePropertiesReader;
-import tgb.btc.library.util.BigDecimalUtil;
 import tgb.btc.rce.enums.Rank;
 import tgb.btc.rce.service.process.IUserDiscountProcessService;
 
@@ -32,6 +32,13 @@ public class UserDiscountProcessService implements IUserDiscountProcessService {
     private IDealUserService dealUserService;
 
     private VariablePropertiesReader variablePropertiesReader;
+
+    private IBigDecimalService bigDecimalService;
+
+    @Autowired
+    public void setBigDecimalService(IBigDecimalService bigDecimalService) {
+        this.bigDecimalService = bigDecimalService;
+    }
 
     @Autowired
     public void setVariablePropertiesReader(VariablePropertiesReader variablePropertiesReader) {
@@ -106,11 +113,11 @@ public class UserDiscountProcessService implements IUserDiscountProcessService {
                 dealUserService.getUserChatIdByDealPid(deal.getPid())));
         if (!Rank.FIRST.equals(rank) && isRankDiscountOn) {
             BigDecimal commission = deal.getCommission();
-            BigDecimal rankDiscount = BigDecimalUtil.multiplyHalfUp(commission, calculateService.getPercentsFactor(
+            BigDecimal rankDiscount = bigDecimalService.multiplyHalfUp(commission, calculateService.getPercentsFactor(
                     BigDecimal.valueOf(rank.getPercent())));
             newAmount = DealType.isBuy(deal.getDealType())
-                    ? BigDecimalUtil.subtractHalfUp(deal.getAmount(), rankDiscount)
-                    : BigDecimalUtil.addHalfUp(deal.getAmount(), rankDiscount);
+                    ? bigDecimalService.subtractHalfUp(deal.getAmount(), rankDiscount)
+                    : bigDecimalService.addHalfUp(deal.getAmount(), rankDiscount);
         }
         return newAmount;
     }

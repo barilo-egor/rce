@@ -14,8 +14,8 @@ import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
 import tgb.btc.library.exception.BaseException;
 import tgb.btc.library.interfaces.service.bean.bot.deal.read.IReportDealService;
+import tgb.btc.library.interfaces.util.IBigDecimalService;
 import tgb.btc.library.interfaces.util.IFiatCurrencyService;
-import tgb.btc.library.util.BigDecimalUtil;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.Processor;
@@ -36,6 +36,13 @@ public class UsersReport extends Processor {
     private IReportDealService reportDealService;
 
     private IFiatCurrencyService fiatCurrencyService;
+
+    private IBigDecimalService bigDecimalService;
+
+    @Autowired
+    public void setBigDecimalService(IBigDecimalService bigDecimalService) {
+        this.bigDecimalService = bigDecimalService;
+    }
 
     @Autowired
     public void setFiatCurrencyService(IFiatCurrencyService fiatCurrencyService) {
@@ -140,7 +147,7 @@ public class UsersReport extends Processor {
                         if (DealType.BUY.equals(deal.getDealType()) && fiatCurrency.equals(deal.getFiatCurrency()))
                             userAmount = userAmount.add(deal.getAmount());
                     }
-                    cell.setCellValue(BigDecimalUtil.roundNullSafe(userAmount, 0).toPlainString());
+                    cell.setCellValue(bigDecimalService.roundNullSafe(userAmount, 0).toPlainString());
                 }
                 i++;
             }
@@ -167,7 +174,7 @@ public class UsersReport extends Processor {
     }
 
     public void setUserCryptoAmount(Cell cell, BigDecimal cryptoAmount, CryptoCurrency cryptoCurrency) {
-        cell.setCellValue(BigDecimalUtil.roundNullSafe(
+        cell.setCellValue(bigDecimalService.roundNullSafe(
                 cryptoAmount,
                 cryptoCurrency.getScale()).toPlainString()
         );

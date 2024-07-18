@@ -18,11 +18,11 @@ import tgb.btc.library.exception.BaseException;
 import tgb.btc.library.interfaces.enums.ICabinetButtonService;
 import tgb.btc.library.interfaces.enums.IDeliveryTypeService;
 import tgb.btc.library.interfaces.service.bean.bot.IPaymentTypeService;
+import tgb.btc.library.interfaces.util.IBigDecimalService;
 import tgb.btc.library.interfaces.util.IFiatCurrencyService;
 import tgb.btc.library.service.process.RPSService;
 import tgb.btc.library.service.properties.ButtonsDesignPropertiesReader;
 import tgb.btc.library.service.properties.VariablePropertiesReader;
-import tgb.btc.library.util.BigDecimalUtil;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.BotInlineButton;
 import tgb.btc.rce.enums.BotReplyButton;
@@ -70,6 +70,13 @@ public class KeyboardService implements IKeyboardService {
     private VariablePropertiesReader variablePropertiesReader;
     
     private IFiatCurrencyService fiatCurrencyService;
+
+    private IBigDecimalService bigDecimalService;
+
+    @Autowired
+    public void setBigDecimalService(IBigDecimalService bigDecimalService) {
+        this.bigDecimalService = bigDecimalService;
+    }
 
     @Autowired
     public void setFiatCurrencyService(IFiatCurrencyService fiatCurrencyService) {
@@ -191,12 +198,12 @@ public class KeyboardService implements IKeyboardService {
     public ReplyKeyboard getUseReferralDiscount(BigDecimal sumWithDiscount, BigDecimal dealAmount) {
         return keyboardBuildService.buildInline(List.of(
                 InlineButton.builder()
-                        .text("Со скидкой, " + BigDecimalUtil.roundToPlainString(sumWithDiscount))
+                        .text("Со скидкой, " + bigDecimalService.roundToPlainString(sumWithDiscount))
                         .data(BotStringConstants.USE_REFERRAL_DISCOUNT)
                         .inlineType(InlineType.CALLBACK_DATA)
                         .build(),
                 InlineButton.builder()
-                        .text("Без скидки, " + BigDecimalUtil.roundToPlainString(dealAmount))
+                        .text("Без скидки, " + bigDecimalService.roundToPlainString(dealAmount))
                         .data(BotStringConstants.DONT_USE_REFERRAL_DISCOUNT)
                         .inlineType(InlineType.CALLBACK_DATA)
                         .build(),
@@ -208,12 +215,12 @@ public class KeyboardService implements IKeyboardService {
     public ReplyKeyboard getPromoCode(BigDecimal sumWithDiscount, BigDecimal dealAmount) {
         return keyboardBuildService.buildInline(List.of(
                 InlineButton.builder()
-                        .text(String.format(Command.USE_PROMO.getText(), BigDecimalUtil.roundToPlainString(sumWithDiscount)))
+                        .text(String.format(Command.USE_PROMO.getText(), bigDecimalService.roundToPlainString(sumWithDiscount)))
                         .data(BotStringConstants.USE_PROMO)
                         .inlineType(InlineType.CALLBACK_DATA)
                         .build(),
                 InlineButton.builder()
-                        .text(String.format(Command.DONT_USE_PROMO.getText(), BigDecimalUtil.roundToPlainString(dealAmount)))
+                        .text(String.format(Command.DONT_USE_PROMO.getText(), bigDecimalService.roundToPlainString(dealAmount)))
                         .data(BotStringConstants.DONT_USE_PROMO)
                         .inlineType(InlineType.CALLBACK_DATA)
                         .build(),

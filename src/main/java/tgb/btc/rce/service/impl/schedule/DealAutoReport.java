@@ -12,8 +12,8 @@ import tgb.btc.library.constants.enums.bot.FiatCurrency;
 import tgb.btc.library.constants.enums.bot.UserRole;
 import tgb.btc.library.interfaces.service.bean.bot.deal.read.IReportDealService;
 import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
+import tgb.btc.library.interfaces.util.IBigDecimalService;
 import tgb.btc.library.interfaces.util.IFiatCurrencyService;
-import tgb.btc.library.util.BigDecimalUtil;
 import tgb.btc.rce.service.INotifyService;
 import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.util.ICryptoCurrenciesDesignService;
@@ -43,6 +43,13 @@ public class DealAutoReport {
     private ICryptoCurrenciesDesignService cryptoCurrenciesDesignService;
     
     private IFiatCurrencyService fiatCurrencyService;
+
+    private IBigDecimalService bigDecimalService;
+
+    @Autowired
+    public void setBigDecimalService(IBigDecimalService bigDecimalService) {
+        this.bigDecimalService = bigDecimalService;
+    }
 
     @Autowired
     public void setFiatCurrencyService(IFiatCurrencyService fiatCurrencyService) {
@@ -154,7 +161,7 @@ public class DealAutoReport {
                     totalSum = totalSum.add(cryptoAmount);
                     stringBuilder.append("Получено ").append(fiatCurrency.getCode()).append(" от ")
                             .append(cryptoCurrenciesDesignService.getDisplayName(cryptoCurrency)).append(": ")
-                            .append(BigDecimalUtil.roundToPlainString(cryptoAmount, cryptoCurrency.getScale())).append("\n");
+                            .append(bigDecimalService.roundToPlainString(cryptoAmount, cryptoCurrency.getScale())).append("\n");
                 }
                 totalAmounts.put(fiatCurrency, totalSum);
                 stringBuilder.append("\n");

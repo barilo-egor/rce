@@ -1,8 +1,9 @@
 package tgb.btc.rce.service.processors.admin.settings.disounts.referralpercent;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import tgb.btc.library.util.BigDecimalUtil;
+import tgb.btc.library.interfaces.util.IBigDecimalService;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.Processor;
@@ -13,6 +14,13 @@ import java.math.BigDecimal;
 @Slf4j
 public class SaveReferralPercent extends Processor {
 
+    private IBigDecimalService bigDecimalService;
+
+    @Autowired
+    public void setBigDecimalService(IBigDecimalService bigDecimalService) {
+        this.bigDecimalService = bigDecimalService;
+    }
+
     @Override
     public void run(Update update) {
         Long chatId = updateService.getChatId(update);
@@ -21,7 +29,7 @@ public class SaveReferralPercent extends Processor {
         Long userChatId = Long.parseLong(readUserService.getBufferVariable(chatId));
         modifyUserService.updateReferralPercent(newReferralPercent, userChatId);
         responseSender.sendMessage(chatId, "Процент по реферальным отчислениям обновлен.");
-        log.debug("Админ chatId={} обновил процент по реферальным отчислениям={} .", chatId, BigDecimalUtil.roundToPlainString(newReferralPercent, 2));
+        log.debug("Админ chatId={} обновил процент по реферальным отчислениям={} .", chatId, bigDecimalService.roundToPlainString(newReferralPercent, 2));
         processToAdminMainPanel(chatId);
     }
 }

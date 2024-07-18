@@ -17,7 +17,7 @@ import tgb.btc.library.interfaces.service.bean.bot.deal.IReadDealService;
 import tgb.btc.library.interfaces.service.bean.bot.deal.read.IDealCountService;
 import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.library.interfaces.service.bean.web.IApiDealService;
-import tgb.btc.library.util.BigDecimalUtil;
+import tgb.btc.library.interfaces.util.IBigDecimalService;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
 import tgb.btc.rce.service.util.ICallbackQueryService;
@@ -50,6 +50,13 @@ public class DealSupportService {
     private ICallbackQueryService callbackQueryService;
 
     private IDeliveryTypeService deliveryTypeService;
+
+    private IBigDecimalService bigDecimalService;
+
+    @Autowired
+    public void setBigDecimalService(IBigDecimalService bigDecimalService) {
+        this.bigDecimalService = bigDecimalService;
+    }
 
     @Autowired
     public void setDeliveryTypeService(IDeliveryTypeService deliveryTypeService) {
@@ -95,7 +102,7 @@ public class DealSupportService {
         ApiDeal apiDeal = apiDealService.findById(pid);
         String dealString = apiDealToString(pid);
         if (CryptoCurrency.BITCOIN.equals(apiDeal.getCryptoCurrency()) && DealType.BUY.equals(apiDeal.getDealType()))
-            return dealString + "\nСтрока для вывода:\n<code>" + apiDeal.getRequisite() + "," + BigDecimalUtil.toPlainString(apiDeal.getCryptoAmount()) + "</code>";
+            return dealString + "\nСтрока для вывода:\n<code>" + apiDeal.getRequisite() + "," + bigDecimalService.toPlainString(apiDeal.getCryptoAmount()) + "</code>";
         else
             return dealString;
     }
@@ -120,7 +127,7 @@ public class DealSupportService {
         Deal deal = readDealService.findByPid(pid);
         String dealString = dealToString(pid);
         if (CryptoCurrency.BITCOIN.equals(deal.getCryptoCurrency()) && DealType.BUY.equals(deal.getDealType()))
-            return dealString + "\nСтрока для вывода:\n<code>" + deal.getWallet() + "," + BigDecimalUtil.toPlainString(deal.getCryptoAmount()) + "</code>";
+            return dealString + "\nСтрока для вывода:\n<code>" + deal.getWallet() + "," + bigDecimalService.toPlainString(deal.getCryptoAmount()) + "</code>";
         else
             return dealString;
     }

@@ -31,11 +31,11 @@ import tgb.btc.library.interfaces.service.bean.bot.deal.read.IDealCountService;
 import tgb.btc.library.interfaces.service.bean.bot.deal.read.IDealPropertyService;
 import tgb.btc.library.interfaces.service.bean.bot.user.IModifyUserService;
 import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
+import tgb.btc.library.interfaces.util.IBigDecimalService;
 import tgb.btc.library.interfaces.util.IFiatCurrencyService;
 import tgb.btc.library.service.process.CalculateService;
 import tgb.btc.library.service.properties.VariablePropertiesReader;
 import tgb.btc.library.service.schedule.DealDeleteScheduler;
-import tgb.btc.library.util.BigDecimalUtil;
 import tgb.btc.library.vo.calculate.DealAmount;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.BotInlineButton;
@@ -111,6 +111,13 @@ public class ExchangeService {
     private VariablePropertiesReader variablePropertiesReader;
 
     private IFiatCurrencyService fiatCurrencyService;
+
+    private IBigDecimalService bigDecimalService;
+
+    @Autowired
+    public void setBigDecimalService(IBigDecimalService bigDecimalService) {
+        this.bigDecimalService = bigDecimalService;
+    }
 
     @Autowired
     public void setFiatCurrencyService(IFiatCurrencyService fiatCurrencyService) {
@@ -309,26 +316,26 @@ public class ExchangeService {
         String message = messagePropertiesService.getMessage("sum.info");
         if (Objects.isNull(message)) {
             if (DealType.isBuy(dealType)) {
-                message = "Сумма к получению: " + BigDecimalUtil.roundToPlainString(cryptoAmount, cryptoCurrency.getScale())
+                message = "Сумма к получению: " + bigDecimalService.roundToPlainString(cryptoAmount, cryptoCurrency.getScale())
                         + " " + cryptoCurrenciesDesignService.getDisplayName(cryptoCurrency) + "\n"
-                        + "Сумма к оплате: " + BigDecimalUtil.roundToPlainString(dealAmount) + " "
+                        + "Сумма к оплате: " + bigDecimalService.roundToPlainString(dealAmount) + " "
                         + fiatCurrency.getGenitive() + "\n";
                 if (BooleanUtils.isTrue(functionsService.getSumToReceive(cryptoCurrency))) {
                     message = message.concat("Сумма к зачислению: "
-                            + BigDecimalUtil.roundToPlainString(dealPropertyService.getCreditedAmountByPid(currentDealPid))
+                            + bigDecimalService.roundToPlainString(dealPropertyService.getCreditedAmountByPid(currentDealPid))
                             + " " + fiatCurrency.getGenitive());
                 }
-            } else message = "Сумма к получению: " + BigDecimalUtil.roundToPlainString(dealAmount) + " "
+            } else message = "Сумма к получению: " + bigDecimalService.roundToPlainString(dealAmount) + " "
                     + fiatCurrency.getGenitive() + "\n"
-                    + "Сумма к оплате: " + BigDecimalUtil.roundToPlainString(cryptoAmount, cryptoCurrency.getScale())
+                    + "Сумма к оплате: " + bigDecimalService.roundToPlainString(cryptoAmount, cryptoCurrency.getScale())
                     + " " + cryptoCurrency.getShortName();
         } else {
             if (DealType.isBuy(dealType)) {
-                message = String.format(message, BigDecimalUtil.roundToPlainString(cryptoAmount, cryptoCurrency.getScale()),
-                        cryptoCurrenciesDesignService.getDisplayName(cryptoCurrency), BigDecimalUtil.roundToPlainString(dealAmount), fiatCurrency.getGenitive());
+                message = String.format(message, bigDecimalService.roundToPlainString(cryptoAmount, cryptoCurrency.getScale()),
+                        cryptoCurrenciesDesignService.getDisplayName(cryptoCurrency), bigDecimalService.roundToPlainString(dealAmount), fiatCurrency.getGenitive());
             } else {
-                message = String.format(message, BigDecimalUtil.roundToPlainString(dealAmount), fiatCurrency.getGenitive(),
-                        BigDecimalUtil.roundToPlainString(cryptoAmount, cryptoCurrency.getScale()), cryptoCurrency.getShortName());
+                message = String.format(message, bigDecimalService.roundToPlainString(dealAmount), fiatCurrency.getGenitive(),
+                        bigDecimalService.roundToPlainString(cryptoAmount, cryptoCurrency.getScale()), cryptoCurrency.getShortName());
             }
         }
         responseSender.sendMessage(chatId, message);
@@ -388,16 +395,16 @@ public class ExchangeService {
                 dealType, cryptoCurrency);
         if (dealAmount.getCryptoAmount().compareTo(minSum) < 0) {
             responseSender.sendAnswerInlineQuery(inlineQueryId, "Минимальная сумма " + dealType.getAccusative()
-                            + " равна " + BigDecimalUtil.roundToPlainString(minSum, cryptoCurrency.getScale()), null,
+                            + " равна " + bigDecimalService.roundToPlainString(minSum, cryptoCurrency.getScale()), null,
                     "Ошибка");
             return;
         }
 
         String resultText = calculatorQuery.getDealType().getNominative() + ": "
-                + BigDecimalUtil.roundToPlainString(dealAmount.getCryptoAmount(), calculatorQuery.getCurrency().getScale())
-                + " ~ " + BigDecimalUtil.roundToPlainString(dealAmount.getAmount(), 0);
+                + bigDecimalService.roundToPlainString(dealAmount.getCryptoAmount(), calculatorQuery.getCurrency().getScale())
+                + " ~ " + bigDecimalService.roundToPlainString(dealAmount.getAmount(), 0);
         responseSender.sendAnswerInlineQuery(inlineQueryId, resultText, "Нажмите сюда, чтобы отправить сумму.",
-                BigDecimalUtil.toPlainString(calculatorQuery.getEnteredAmount()));
+                bigDecimalService.toPlainString(calculatorQuery.getEnteredAmount()));
     }
 
     public void askForUserRequisites(Update update) {
@@ -411,10 +418,10 @@ public class ExchangeService {
             if (Objects.isNull(message)) {
                 message = "\uD83D\uDCDDВведите " + cryptoCurrenciesDesignService.getDisplayName(cryptoCurrency)
                         + "-адрес кошелька, куда вы хотите отправить "
-                        + BigDecimalUtil.roundToPlainString(deal.getCryptoAmount(), cryptoCurrency.getScale())
+                        + bigDecimalService.roundToPlainString(deal.getCryptoAmount(), cryptoCurrency.getScale())
                         + " " + cryptoCurrency.getShortName();
             } else {
-                message = String.format(message, BigDecimalUtil.roundToPlainString(deal.getCryptoAmount(), cryptoCurrency.getScale()),
+                message = String.format(message, bigDecimalService.roundToPlainString(deal.getCryptoAmount(), cryptoCurrency.getScale()),
                         cryptoCurrency.getShortName());
 
             }
@@ -437,10 +444,10 @@ public class ExchangeService {
             message = messagePropertiesService.getMessage("send.wallet.sell");
             if (Objects.isNull(message)) {
                 message = "Введите " + deal.getPaymentType().getName() + " реквизиты, куда вы хотите получить "
-                        + BigDecimalUtil.roundToPlainString(deal.getAmount(), 0) + " "
+                        + bigDecimalService.roundToPlainString(deal.getAmount(), 0) + " "
                         + deal.getFiatCurrency().getGenitive();
             } else {
-                message = String.format(message, BigDecimalUtil.roundToPlainString(deal.getAmount(), 0), deal.getFiatCurrency().getGenitive());
+                message = String.format(message, bigDecimalService.roundToPlainString(deal.getAmount(), 0), deal.getFiatCurrency().getGenitive());
             }
             keyboard = keyboardService.getInlineCancel();
         }
@@ -455,18 +462,18 @@ public class ExchangeService {
         BigDecimal dealAmount = deal.getAmount();
         BigDecimal promoCodeDiscount = variablePropertiesReader.getBigDecimal(
                 VariableType.PROMO_CODE_DISCOUNT.getKey());
-        BigDecimal discount = BigDecimalUtil.multiplyHalfUp(deal.getCommission(),
+        BigDecimal discount = bigDecimalService.multiplyHalfUp(deal.getCommission(),
                 calculateService.getPercentsFactor(promoCodeDiscount));
         modifyDealService.updateDiscountByPid(discount, deal.getPid());
         BigDecimal sumWithDiscount = dealAmount.subtract(discount);
 
         String message = "<b>Покупка " + cryptoCurrenciesDesignService.getDisplayName(cryptoCurrency) + "</b>: "
-                + BigDecimalUtil.roundToPlainString(deal.getCryptoAmount(), cryptoCurrency.getScale()) + "\n\n"
-                + "<b>Сумма перевода</b>: <s>" + BigDecimalUtil.roundToPlainString(dealAmount)
-                + "</s> " + BigDecimalUtil.roundToPlainString(sumWithDiscount) + "\n\n"
+                + bigDecimalService.roundToPlainString(deal.getCryptoAmount(), cryptoCurrency.getScale()) + "\n\n"
+                + "<b>Сумма перевода</b>: <s>" + bigDecimalService.roundToPlainString(dealAmount)
+                + "</s> " + bigDecimalService.roundToPlainString(sumWithDiscount) + "\n\n"
                 + "\uD83C\uDFAB У вас есть промокод: <b>" + variablePropertiesReader.getVariable(
                 VariableType.PROMO_CODE_NAME)
-                + "</b>, который даёт скидку в размере " + BigDecimalUtil.roundToPlainString(
+                + "</b>, который даёт скидку в размере " + bigDecimalService.roundToPlainString(
                 promoCodeDiscount) + "% от комиссии"
                 + "\n\n"
                 + "✅ <b>Использовать промокод</b> как скидку?";
@@ -544,18 +551,18 @@ public class ExchangeService {
         messageNew.append("\uD83D\uDCAC<b>Информация по заявке</b>\n" + "\uD83D\uDCAC<b>")
                 .append(deal.getDealType().getNominativeFirstLetterToUpper()).append(" ")
                 .append(displayCurrencyName).append("</b>: ")
-                .append(BigDecimalUtil.roundToPlainString(deal.getCryptoAmount(), deal.getCryptoCurrency().getScale()))
+                .append(bigDecimalService.roundToPlainString(deal.getCryptoAmount(), deal.getCryptoCurrency().getScale()))
                 .append("\n");
         if (DealType.isBuy(deal.getDealType())) {
             dealAmount = userDiscountProcessService.applyDealDiscounts(chatId, dealAmount, deal.getUsedPromo(),
                     deal.getUsedReferralDiscount(), deal.getDiscount(), deal.getFiatCurrency());
             messageNew.append("\uD83D\uDCB5<b>Сумма перевода</b>: ")
-                    .append(BigDecimalUtil.roundToPlainString(dealAmount))
+                    .append(bigDecimalService.roundToPlainString(dealAmount))
                     .append(" ").append(deal.getFiatCurrency().getGenitive()).append("\n\n")
                     .append(additionalText).append("<b>Выберите способ оплаты:</b>");
         } else {
             messageNew.append("\n\n" + "\uD83D\uDCB5<b>Сумма перевода</b>: ")
-                    .append(BigDecimalUtil.roundToPlainString(dealAmount)).append(" ")
+                    .append(bigDecimalService.roundToPlainString(dealAmount)).append(" ")
                     .append(deal.getFiatCurrency().getGenitive()).append("\n\n")
                     .append(additionalText).append("<b>Выберите способ получения перевода:</b>");
         }
@@ -639,13 +646,13 @@ public class ExchangeService {
             message = getBuyMessage(deal, rank, requisite);
             if (Objects.isNull(message)) {
                 message = "✅<b>Заявка №</b><code>" + deal.getPid() + "</code> успешно создана." + "\n\n"
-                        + "<b>Получаете</b>: " + BigDecimalUtil.roundToPlainString(deal.getCryptoAmount(),
+                        + "<b>Получаете</b>: " + bigDecimalService.roundToPlainString(deal.getCryptoAmount(),
                         currency.getScale())
                         + " " + currency.getShortName() + "\n"
                         + "<b>" + cryptoCurrenciesDesignService.getDisplayName(deal.getCryptoCurrency())
                         + "-адрес</b>:" + "<code>" + deal.getWallet() + "</code>" + "\n\n"
                         + "Ваш ранг: " + rank.getSmile() + ", скидка " + rank.getPercent() + "%" + "\n\n"
-                        + "<b>\uD83D\uDCB5Сумма к оплате</b>: <code>" + BigDecimalUtil.roundToPlainString(dealAmount, 0)
+                        + "<b>\uD83D\uDCB5Сумма к оплате</b>: <code>" + bigDecimalService.roundToPlainString(dealAmount, 0)
                         + " " + deal.getFiatCurrency().getGenitive() + "</code>" + "\n"
                         + "<b>Резквизиты для оплаты:</b>" + "\n\n"
                         + "<code>" + requisite + "</code>" + "\n\n"
@@ -663,11 +670,11 @@ public class ExchangeService {
             if (Objects.isNull(message)) {
                 message = "✅<b>Заявка №</b><code>" + deal.getPid() + "</code> успешно создана." + "\n\n"
                         + "<b>Продаете</b>: "
-                        + BigDecimalUtil.roundToPlainString(deal.getCryptoAmount(),
+                        + bigDecimalService.roundToPlainString(deal.getCryptoAmount(),
                         currency.getScale()) + " " + currency.getShortName() + "\n"
                         + "<b>" + paymentType.getName() + " реквизиты</b>:" + "<code>" + deal.getWallet() + "</code>" + "\n\n"
                         + "Ваш ранг: " + rank.getSmile() + ", скидка " + rank.getPercent() + "%" + "\n\n"
-                        + "\uD83D\uDCB5<b>Получаете</b>: <code>" + BigDecimalUtil.roundToPlainString(dealAmount)
+                        + "\uD83D\uDCB5<b>Получаете</b>: <code>" + bigDecimalService.roundToPlainString(dealAmount)
                         + " " + deal.getFiatCurrency().getGenitive() + "</code>" + "\n"
                         + "<b>Реквизиты для перевода " + currency.getShortName() + ":</b>" + "\n\n"
                         + "<code>" + variablePropertiesReader.getWallet(currency) + "</code>" + "\n\n"
@@ -699,10 +706,10 @@ public class ExchangeService {
         if (Objects.isNull(message)) return null;
         CryptoCurrency currency = deal.getCryptoCurrency();
         return messagePropertiesService.getMessage("deal.build.sell", deal.getPid(),
-                BigDecimalUtil.roundToPlainString(deal.getAmount(), deal.getCryptoCurrency().getScale()),
+                bigDecimalService.roundToPlainString(deal.getAmount(), deal.getCryptoCurrency().getScale()),
                 deal.getFiatCurrency().getCode(), deal.getPaymentType().getName(),
                 deal.getWallet(), rank.getSmile(), rank.getPercent(),
-                BigDecimalUtil.roundToPlainString(deal.getCryptoAmount(), currency.getScale()), currency.getShortName(), currency.getShortName(),
+                bigDecimalService.roundToPlainString(deal.getCryptoAmount(), currency.getScale()), currency.getShortName(), currency.getShortName(),
                 variablePropertiesReader.getWallet(currency),
                 variablePropertiesReader.getVariable(VariableType.DEAL_ACTIVE_TIME));
     }
@@ -712,10 +719,10 @@ public class ExchangeService {
         if (Objects.isNull(message)) return null;
         CryptoCurrency currency = deal.getCryptoCurrency();
         return messagePropertiesService.getMessage("deal.build.buy", deal.getPid(),
-                BigDecimalUtil.roundToPlainString(deal.getCryptoAmount(), deal.getCryptoCurrency().getScale()), currency.getShortName(),
+                bigDecimalService.roundToPlainString(deal.getCryptoAmount(), deal.getCryptoCurrency().getScale()), currency.getShortName(),
                 cryptoCurrenciesDesignService.getDisplayName(currency),
                 deal.getWallet(), rank.getSmile(), rank.getPercent() + "%",
-                BigDecimalUtil.roundToPlainString(deal.getAmount()), deal.getFiatCurrency().getGenitive(), requisite,
+                bigDecimalService.roundToPlainString(deal.getAmount()), deal.getFiatCurrency().getGenitive(), requisite,
                 variablePropertiesReader.getVariable(VariableType.DEAL_ACTIVE_TIME));
     }
 
@@ -794,7 +801,7 @@ public class ExchangeService {
             } else {
                 sumWithDiscount = BigDecimal.ZERO;
             }
-            message = "\uD83E\uDD11У вас есть " + referralBalance + "₽(" + BigDecimalUtil.roundToPlainString(refBalance, 2)
+            message = "\uD83E\uDD11У вас есть " + referralBalance + "₽(" + bigDecimalService.roundToPlainString(refBalance, 2)
                     + " бел.рублей) на реферальном балансе. Использовать их в качестве скидки?";
         }
         responseSender.sendMessage(chatId, message,

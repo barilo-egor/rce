@@ -7,7 +7,7 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.interfaces.service.bean.bot.user.IModifyUserService;
-import tgb.btc.library.util.BigDecimalUtil;
+import tgb.btc.library.interfaces.util.IBigDecimalService;
 import tgb.btc.library.vo.calculate.DealAmount;
 import tgb.btc.rce.enums.PropertiesMessage;
 import tgb.btc.rce.service.IMessageService;
@@ -25,6 +25,13 @@ public class MessageService implements IMessageService {
     private IModifyUserService modifyUserService;
 
     private IMessagePropertiesService messagePropertiesService;
+
+    private IBigDecimalService bigDecimalService;
+
+    @Autowired
+    public void setBigDecimalService(IBigDecimalService bigDecimalService) {
+        this.bigDecimalService = bigDecimalService;
+    }
 
     @Autowired
     public void setMessagePropertiesService(IMessagePropertiesService messagePropertiesService) {
@@ -67,15 +74,15 @@ public class MessageService implements IMessageService {
         } else {
             String cryptoAmount = !calculator.getSwitched()
                     ? calculator.getSum()
-                    : BigDecimalUtil.roundToPlainString(dealAmount.getCryptoAmount(), calculator.getCryptoCurrency().getScale());
+                    : bigDecimalService.roundToPlainString(dealAmount.getCryptoAmount(), calculator.getCryptoCurrency().getScale());
             String amount = calculator.getSwitched()
                     ? calculator.getSum()
-                    : BigDecimalUtil.roundToPlainString(dealAmount.getAmount());
+                    : bigDecimalService.roundToPlainString(dealAmount.getAmount());
             return DealType.BUY.equals(dealType)
                     ? messagePropertiesService.getMessage(PropertiesMessage.DEAL_INPUT_SUM_TO_BUY, cryptoCode, fiatCode,
                     cryptoAmount + " " + cryptoCode,
                     fiatFlag, amount + " " + fiatCode, fiatFlag,
-                    BigDecimalUtil.roundToPlainString(dealAmount.getCreditedAmount()) + " " + fiatCode)
+                    bigDecimalService.roundToPlainString(dealAmount.getCreditedAmount()) + " " + fiatCode)
                     : messagePropertiesService.getMessage(PropertiesMessage.DEAL_INPUT_SUM_TO_SELL, cryptoCode, fiatCode,
                     cryptoAmount + " " + cryptoCode,
                     fiatFlag, amount + " " + fiatCode);
