@@ -1,20 +1,15 @@
 package tgb.btc.rce.service.impl.calculator;
 
-import org.springframework.context.annotation.Conditional;
-import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import tgb.btc.library.constants.enums.bot.CryptoCurrency;
 import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
-import tgb.btc.rce.conditional.calculator.InlineQueryCalculatorCondition;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.InlineType;
 import tgb.btc.rce.vo.InlineButton;
 
 import java.util.List;
 
-@Service
-@Conditional(InlineQueryCalculatorCondition.class)
 public class InlineQueryCalculatorService extends SimpleCalculatorService {
 
     @Override

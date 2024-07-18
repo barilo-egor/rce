@@ -1,21 +1,16 @@
 package tgb.btc.rce.service.impl.calculator;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Conditional;
-import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.interfaces.service.bean.bot.deal.read.IDealPropertyService;
 import tgb.btc.library.interfaces.service.bean.bot.user.IModifyUserService;
 import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
-import tgb.btc.rce.conditional.calculator.InlineCalculatorCondition;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.*;
 import tgb.btc.rce.service.processors.calculator.InlineCalculator;
 import tgb.btc.rce.vo.InlineCalculatorVO;
 
-@Service
-@Conditional(InlineCalculatorCondition.class)
 public class InlineCalculatorService implements ICalculatorTypeService {
 
     private IResponseSender responseSender;
