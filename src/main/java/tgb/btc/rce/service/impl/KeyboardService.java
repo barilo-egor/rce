@@ -15,6 +15,7 @@ import tgb.btc.library.constants.enums.bot.FiatCurrency;
 import tgb.btc.library.constants.enums.properties.PropertiesPath;
 import tgb.btc.library.constants.enums.properties.VariableType;
 import tgb.btc.library.exception.BaseException;
+import tgb.btc.library.interfaces.enums.ICabinetButtonService;
 import tgb.btc.library.interfaces.enums.IDeliveryTypeService;
 import tgb.btc.library.interfaces.service.bean.bot.IPaymentTypeService;
 import tgb.btc.library.service.properties.ButtonsDesignPropertiesReader;
@@ -60,6 +61,13 @@ public class KeyboardService implements IKeyboardService {
     private ITurningCurrenciesService turningCurrenciesService;
 
     private IDeliveryTypeService deliveryTypeService;
+
+    private ICabinetButtonService cabinetButtonService;
+
+    @Autowired
+    public void setCabinetButtonService(ICabinetButtonService cabinetButtonService) {
+        this.cabinetButtonService = cabinetButtonService;
+    }
 
     @Autowired
     public void setDeliveryTypeService(IDeliveryTypeService deliveryTypeService) {
@@ -291,9 +299,9 @@ public class KeyboardService implements IKeyboardService {
 
     public ReplyKeyboard getCabinetButtons() {
         List<InlineButton> buttons = new ArrayList<>();
-        Arrays.stream(CabinetButton.values()).forEach(button -> buttons.add(InlineButton.builder()
-                .text(button.getText())
-                .data(button.name())
+        Arrays.stream(CabinetButton.values()).forEach(cabinetButton -> buttons.add(InlineButton.builder()
+                .text(cabinetButtonService.getText(cabinetButton))
+                .data(cabinetButton.name())
                 .build()));
         return keyboardBuildService.buildInline(buttons, 1);
     }
