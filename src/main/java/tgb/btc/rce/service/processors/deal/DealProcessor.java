@@ -13,8 +13,8 @@ import tgb.btc.library.interfaces.service.bean.bot.IBotMessageService;
 import tgb.btc.library.interfaces.service.bean.bot.deal.IModifyDealService;
 import tgb.btc.library.interfaces.service.bean.bot.deal.IReadDealService;
 import tgb.btc.library.interfaces.service.bean.bot.deal.read.IDealPropertyService;
+import tgb.btc.library.interfaces.util.IFiatCurrencyService;
 import tgb.btc.library.service.bean.bot.BotMessageService;
-import tgb.btc.library.util.FiatCurrencyUtil;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.Menu;
@@ -49,6 +49,13 @@ public class DealProcessor extends Processor {
     private IBotMessageService botMessageService;
 
     private IDealProcessService dealProcessService;
+
+    private IFiatCurrencyService fiatCurrencyService;
+
+    @Autowired
+    public void setFiatCurrencyService(IFiatCurrencyService fiatCurrencyService) {
+        this.fiatCurrencyService = fiatCurrencyService;
+    }
 
     @Autowired
     public void setReadDealService(IReadDealService readDealService) {
@@ -120,7 +127,7 @@ public class DealProcessor extends Processor {
         switch (userStep) {
             case 0:
                 if (!isBack) modifyUserService.updateCommandByChatId(Command.DEAL.name(), chatId);
-                if (!FiatCurrencyUtil.isFew()) {
+                if (!fiatCurrencyService.isFew()) {
                     recursiveSwitch(update, chatId, isBack);
                     break;
                 }

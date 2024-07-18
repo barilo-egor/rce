@@ -18,11 +18,11 @@ import tgb.btc.library.exception.BaseException;
 import tgb.btc.library.interfaces.enums.ICabinetButtonService;
 import tgb.btc.library.interfaces.enums.IDeliveryTypeService;
 import tgb.btc.library.interfaces.service.bean.bot.IPaymentTypeService;
+import tgb.btc.library.interfaces.util.IFiatCurrencyService;
 import tgb.btc.library.service.process.RPSService;
 import tgb.btc.library.service.properties.ButtonsDesignPropertiesReader;
 import tgb.btc.library.service.properties.VariablePropertiesReader;
 import tgb.btc.library.util.BigDecimalUtil;
-import tgb.btc.library.util.FiatCurrencyUtil;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.BotInlineButton;
 import tgb.btc.rce.enums.BotReplyButton;
@@ -68,6 +68,13 @@ public class KeyboardService implements IKeyboardService {
     private RPSService rpsService;
 
     private VariablePropertiesReader variablePropertiesReader;
+    
+    private IFiatCurrencyService fiatCurrencyService;
+
+    @Autowired
+    public void setFiatCurrencyService(IFiatCurrencyService fiatCurrencyService) {
+        this.fiatCurrencyService = fiatCurrencyService;
+    }
 
     @Autowired
     public void setVariablePropertiesReader(VariablePropertiesReader variablePropertiesReader) {
@@ -130,7 +137,7 @@ public class KeyboardService implements IKeyboardService {
 
     @Override
     public ReplyKeyboard getFiatCurrencies() {
-        List<InlineButton> buttons = FiatCurrencyUtil.getFiatCurrencies().stream()
+        List<InlineButton> buttons = fiatCurrencyService.getFiatCurrencies().stream()
                 .map(fiatCurrency -> InlineButton.builder()
                         .text(buttonsDesignPropertiesReader.getString(fiatCurrency.name()))
                         .data(callbackQueryService.buildCallbackData(Command.CHOOSING_FIAT_CURRENCY, fiatCurrency.name()))

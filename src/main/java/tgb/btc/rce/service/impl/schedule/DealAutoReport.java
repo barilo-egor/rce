@@ -12,8 +12,8 @@ import tgb.btc.library.constants.enums.bot.FiatCurrency;
 import tgb.btc.library.constants.enums.bot.UserRole;
 import tgb.btc.library.interfaces.service.bean.bot.deal.read.IReportDealService;
 import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
+import tgb.btc.library.interfaces.util.IFiatCurrencyService;
 import tgb.btc.library.util.BigDecimalUtil;
-import tgb.btc.library.util.FiatCurrencyUtil;
 import tgb.btc.rce.service.INotifyService;
 import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.util.ICryptoCurrenciesDesignService;
@@ -41,6 +41,13 @@ public class DealAutoReport {
     public static LocalDate YESTERDAY;
 
     private ICryptoCurrenciesDesignService cryptoCurrenciesDesignService;
+    
+    private IFiatCurrencyService fiatCurrencyService;
+
+    @Autowired
+    public void setFiatCurrencyService(IFiatCurrencyService fiatCurrencyService) {
+        this.fiatCurrencyService = fiatCurrencyService;
+    }
 
     @Autowired
     public void setCryptoCurrenciesDesignService(ICryptoCurrenciesDesignService cryptoCurrenciesDesignService) {
@@ -139,7 +146,7 @@ public class DealAutoReport {
             }
             stringBuilder.append("\n");
             Map<FiatCurrency, BigDecimal> totalAmounts = new HashMap<>();
-            for (FiatCurrency fiatCurrency : FiatCurrencyUtil.getFiatCurrencies()) {
+            for (FiatCurrency fiatCurrency : fiatCurrencyService.getFiatCurrencies()) {
                 BigDecimal totalSum = BigDecimal.ZERO;
                 for (CryptoCurrency cryptoCurrency : CryptoCurrency.values()) {
                     BigDecimal cryptoAmount = getBuyAmount(cryptoCurrency, dateTimeBegin, dateTimeEnd,
@@ -161,7 +168,7 @@ public class DealAutoReport {
                         .append("\n");
             }
             stringBuilder.append("\n");
-            for (FiatCurrency fiatCurrency : FiatCurrencyUtil.getFiatCurrencies()) {
+            for (FiatCurrency fiatCurrency : fiatCurrencyService.getFiatCurrencies()) {
                 stringBuilder.append("Всего получено ").append(fiatCurrency.getCode()).append(" : ")
                         .append(totalAmounts.get(fiatCurrency).toPlainString()).append("\n");
             }

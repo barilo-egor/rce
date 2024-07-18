@@ -14,8 +14,8 @@ import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
 import tgb.btc.library.exception.BaseException;
 import tgb.btc.library.interfaces.service.bean.bot.deal.read.IReportDealService;
+import tgb.btc.library.interfaces.util.IFiatCurrencyService;
 import tgb.btc.library.util.BigDecimalUtil;
-import tgb.btc.library.util.FiatCurrencyUtil;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.Processor;
@@ -34,6 +34,13 @@ import java.util.stream.Collectors;
 public class UsersReport extends Processor {
 
     private IReportDealService reportDealService;
+
+    private IFiatCurrencyService fiatCurrencyService;
+
+    @Autowired
+    public void setFiatCurrencyService(IFiatCurrencyService fiatCurrencyService) {
+        this.fiatCurrencyService = fiatCurrencyService;
+    }
 
     @Autowired
     public void setReportDealService(IReportDealService reportDealService) {
@@ -56,7 +63,7 @@ public class UsersReport extends Processor {
             List<String> cellHeaders = new ArrayList<>(List.of("Chat ID", "Username", "Куплено BTC", "Куплено LTC", "Куплено USDT",
                     "Куплено MONERO", "Продано BTC", "Продано LTC", "Продано USDT",
                     "Продано MONERO"));
-            for (FiatCurrency fiatCurrency : FiatCurrencyUtil.getFiatCurrencies()) {
+            for (FiatCurrency fiatCurrency : fiatCurrencyService.getFiatCurrencies()) {
                 cellHeaders.add("Потрачено " + fiatCurrency.getCode());
             }
             Cell headCell;
@@ -124,7 +131,7 @@ public class UsersReport extends Processor {
                     }
                     setUserCryptoAmount(cell, cryptoAmount, cryptoCurrency);
                 }
-                for (FiatCurrency fiatCurrency : FiatCurrencyUtil.getFiatCurrencies()) {
+                for (FiatCurrency fiatCurrency : fiatCurrencyService.getFiatCurrencies()) {
                     cellHeaders.add("Потрачено " + fiatCurrency.getCode());
                     Cell cell = row.createCell(++cellCount);
                     BigDecimal userAmount = BigDecimal.ZERO;

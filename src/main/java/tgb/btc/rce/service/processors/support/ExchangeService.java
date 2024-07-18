@@ -31,11 +31,11 @@ import tgb.btc.library.interfaces.service.bean.bot.deal.read.IDealCountService;
 import tgb.btc.library.interfaces.service.bean.bot.deal.read.IDealPropertyService;
 import tgb.btc.library.interfaces.service.bean.bot.user.IModifyUserService;
 import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
+import tgb.btc.library.interfaces.util.IFiatCurrencyService;
 import tgb.btc.library.service.process.CalculateService;
 import tgb.btc.library.service.properties.VariablePropertiesReader;
 import tgb.btc.library.service.schedule.DealDeleteScheduler;
 import tgb.btc.library.util.BigDecimalUtil;
-import tgb.btc.library.util.FiatCurrencyUtil;
 import tgb.btc.library.vo.calculate.DealAmount;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.BotInlineButton;
@@ -109,6 +109,13 @@ public class ExchangeService {
     private IDeliveryTypeService deliveryTypeService;
     
     private VariablePropertiesReader variablePropertiesReader;
+
+    private IFiatCurrencyService fiatCurrencyService;
+
+    @Autowired
+    public void setFiatCurrencyService(IFiatCurrencyService fiatCurrencyService) {
+        this.fiatCurrencyService = fiatCurrencyService;
+    }
 
     @Autowired
     public void setVariablePropertiesReader(VariablePropertiesReader variablePropertiesReader) {
@@ -249,7 +256,7 @@ public class ExchangeService {
     public boolean saveFiatCurrency(Update update) {
         Long chatId = updateService.getChatId(update);
         FiatCurrency fiatCurrency;
-        boolean isFew = FiatCurrencyUtil.isFew();
+        boolean isFew = fiatCurrencyService.isFew();
         log.debug("isFew = " + isFew);
         if (isFew) {
             if (!update.hasCallbackQuery()) {
@@ -258,7 +265,7 @@ public class ExchangeService {
             }
             fiatCurrency = FiatCurrency.valueOf(callbackQueryService.getSplitData(update.getCallbackQuery(), 1));
         } else {
-            fiatCurrency = FiatCurrencyUtil.getFirst();
+            fiatCurrency = fiatCurrencyService.getFirst();
         }
         Long currentDealPid = readUserService.getCurrentDealByChatId(chatId);
         modifyDealService.updateFiatCurrencyByPid(currentDealPid, fiatCurrency);

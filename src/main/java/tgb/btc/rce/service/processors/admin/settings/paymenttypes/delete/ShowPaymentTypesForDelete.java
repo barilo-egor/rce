@@ -8,7 +8,7 @@ import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
 import tgb.btc.library.interfaces.service.bean.bot.IPaymentTypeService;
 import tgb.btc.library.interfaces.service.bean.bot.IUserDataService;
-import tgb.btc.library.util.FiatCurrencyUtil;
+import tgb.btc.library.interfaces.util.IFiatCurrencyService;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
@@ -23,6 +23,13 @@ public class ShowPaymentTypesForDelete extends Processor {
     private IPaymentTypeService paymentTypeService;
 
     private IUserDataService userDataService;
+
+    private IFiatCurrencyService fiatCurrencyService;
+
+    @Autowired
+    public void setFiatCurrencyService(IFiatCurrencyService fiatCurrencyService) {
+        this.fiatCurrencyService = fiatCurrencyService;
+    }
 
     @Autowired
     public void setUserDataService(IUserDataService userDataService) {
@@ -50,9 +57,9 @@ public class ShowPaymentTypesForDelete extends Processor {
             responseSender.sendMessage(chatId, BotStringConstants.BUY_OR_SELL);
             return;
         }
-        FiatCurrency fiatCurrency = FiatCurrencyUtil.isFew()
+        FiatCurrency fiatCurrency = fiatCurrencyService.isFew()
                 ? userDataService.getFiatCurrencyByChatId(chatId)
-                : FiatCurrencyUtil.getFirst();
+                : fiatCurrencyService.getFirst();
         sendPaymentTypes(chatId, dealType, fiatCurrency);
         processToAdminMainPanel(chatId);
     }

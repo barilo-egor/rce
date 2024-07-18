@@ -6,7 +6,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.bean.bot.PaymentType;
 import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.interfaces.service.bean.bot.IPaymentTypeService;
-import tgb.btc.library.util.FiatCurrencyUtil;
+import tgb.btc.library.interfaces.util.IFiatCurrencyService;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
@@ -21,6 +21,13 @@ public class FiatCurrenciesDeleteRequisite extends Processor {
 
     private IPaymentTypeService paymentTypeService;
 
+    private IFiatCurrencyService fiatCurrencyService;
+
+    @Autowired
+    public void setFiatCurrencyService(IFiatCurrencyService fiatCurrencyService) {
+        this.fiatCurrencyService = fiatCurrencyService;
+    }
+
     @Autowired
     public void setPaymentTypeService(IPaymentTypeService paymentTypeService) {
         this.paymentTypeService = paymentTypeService;
@@ -29,12 +36,12 @@ public class FiatCurrenciesDeleteRequisite extends Processor {
     @Override
     public void run(Update update) {
         Long chatId = updateService.getChatId(update);
-        if (FiatCurrencyUtil.isFew()) {
+        if (fiatCurrencyService.isFew()) {
             responseSender.sendMessage(chatId, BotStringConstants.FIAT_CURRENCY_CHOOSE, keyboardService.getFiatCurrenciesKeyboard());
         } else {
-            List<PaymentType> paymentTypes = paymentTypeService.getByDealTypeAndFiatCurrency(DealType.BUY, FiatCurrencyUtil.getFirst());  // todo рефактор
+            List<PaymentType> paymentTypes = paymentTypeService.getByDealTypeAndFiatCurrency(DealType.BUY, fiatCurrencyService.getFirst());  // todo рефактор
             if (CollectionUtils.isEmpty(paymentTypes)) {
-                responseSender.sendMessage(chatId, "Список тип оплат на " + DealType.BUY.getAccusative() + "-" + FiatCurrencyUtil.getFirst().getCode() + " пуст.");
+                responseSender.sendMessage(chatId, "Список тип оплат на " + DealType.BUY.getAccusative() + "-" + fiatCurrencyService.getFirst().getCode() + " пуст.");
                 processToAdminMainPanel(chatId);
                 return;
             }
