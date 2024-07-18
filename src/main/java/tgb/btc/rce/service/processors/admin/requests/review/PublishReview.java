@@ -6,7 +6,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.bean.bot.Review;
 import tgb.btc.library.constants.enums.properties.VariableType;
 import tgb.btc.library.interfaces.service.bean.bot.IReviewService;
-import tgb.btc.library.util.properties.VariablePropertiesUtil;
+import tgb.btc.library.service.properties.VariablePropertiesReader;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
@@ -20,6 +20,13 @@ public class PublishReview extends Processor {
 
     private IReviewService reviewService;
 
+    private VariablePropertiesReader variablePropertiesReader;
+
+    @Autowired
+    public void setVariablePropertiesReader(VariablePropertiesReader variablePropertiesReader) {
+        this.variablePropertiesReader = variablePropertiesReader;
+    }
+
     @Autowired
     public void setReviewService(IReviewService reviewService) {
         this.reviewService = reviewService;
@@ -27,7 +34,7 @@ public class PublishReview extends Processor {
 
     @Override
     public void run(Update update) {
-        Long channelChatId = Long.parseLong(VariablePropertiesUtil.getVariable(VariableType.CHANNEL_CHAT_ID));
+        Long channelChatId = Long.parseLong(variablePropertiesReader.getVariable(VariableType.CHANNEL_CHAT_ID));
 
         Review review = reviewService.findById(Long.parseLong(
                 update.getCallbackQuery().getData().split(BotStringConstants.CALLBACK_DATA_SPLITTER)[1]));
@@ -42,7 +49,7 @@ public class PublishReview extends Processor {
         reviewService.save(review);
         Integer reviewPrise = DYNAMIC.isCurrent()
                 ? review.getAmount()
-                : VariablePropertiesUtil.getInt(VariableType.REVIEW_PRISE);
+                : variablePropertiesReader.getInt(VariableType.REVIEW_PRISE);
         Integer referralBalance = readUserService.getReferralBalanceByChatId(review.getChatId());
         int total = referralBalance + reviewPrise;
         log.info("Обновление реф баланса за отзыв : chatId = " + review.getChatId() + "; reviewPrise = "

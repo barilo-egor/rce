@@ -11,7 +11,7 @@ import tgb.btc.library.constants.enums.bot.UserRole;
 import tgb.btc.library.constants.enums.properties.VariableType;
 import tgb.btc.library.interfaces.service.bean.bot.IBotMessageService;
 import tgb.btc.library.interfaces.service.bean.bot.ILotteryWinService;
-import tgb.btc.library.util.properties.VariablePropertiesUtil;
+import tgb.btc.library.service.properties.VariablePropertiesReader;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.PropertiesMessage;
@@ -33,9 +33,16 @@ public class Lottery extends Processor {
 
     private INotifyService notifyService;
 
+    private VariablePropertiesReader variablePropertiesReader;
+
     @Autowired
-    public void setAdminService(INotifyService notifyService) {
+    public void setNotifyService(INotifyService notifyService) {
         this.notifyService = notifyService;
+    }
+
+    @Autowired
+    public void setVariablePropertiesReader(VariablePropertiesReader variablePropertiesReader) {
+        this.variablePropertiesReader = variablePropertiesReader;
     }
 
     @Autowired
@@ -60,11 +67,11 @@ public class Lottery extends Processor {
     }
 
     private void processLottery(Update update, User user) {
-        float probability = VariablePropertiesUtil.getFloat(VariableType.PROBABILITY);
+        float probability = variablePropertiesReader.getFloat(VariableType.PROBABILITY);
         if (((double) new Random().nextInt(101) < ((double) probability))) {
             responseSender.sendBotMessage(botMessageService.findByTypeNullSafe(BotMessageType.WON_LOTTERY), user.getChatId(),
                     keyboardBuildService.getLink("Написать оператору",
-                            VariablePropertiesUtil.getVariable(VariableType.OPERATOR_LINK)));
+                            variablePropertiesReader.getVariable(VariableType.OPERATOR_LINK)));
             String username = user.getUsername();
             notifyService.notifyMessage("Пользователь id=" + updateService.getChatId(update)
                     + ", username=" + (StringUtils.isNotEmpty(username) ? username : "скрыт")

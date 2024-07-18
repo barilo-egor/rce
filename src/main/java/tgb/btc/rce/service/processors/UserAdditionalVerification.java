@@ -8,7 +8,7 @@ import tgb.btc.library.constants.enums.bot.UserRole;
 import tgb.btc.library.constants.enums.properties.VariableType;
 import tgb.btc.library.interfaces.service.bean.bot.deal.IModifyDealService;
 import tgb.btc.library.interfaces.service.bean.bot.deal.IReadDealService;
-import tgb.btc.library.util.properties.VariablePropertiesUtil;
+import tgb.btc.library.service.properties.VariablePropertiesReader;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.INotifyService;
@@ -31,6 +31,13 @@ public class UserAdditionalVerification extends Processor {
     private INotifyService notifyService;
 
     private IBotImageService botImageService;
+
+    private VariablePropertiesReader variablePropertiesReader;
+
+    @Autowired
+    public void setVariablePropertiesReader(VariablePropertiesReader variablePropertiesReader) {
+        this.variablePropertiesReader = variablePropertiesReader;
+    }
 
     @Autowired
     public void setBotImageService(IBotImageService botImageService) {
@@ -82,7 +89,7 @@ public class UserAdditionalVerification extends Processor {
             responseSender.sendMessage(chatId, "Ты отказался от верификации. " +
                     "Дальнейшая связь через оператора.", keyboardBuildService.buildInline(List.of(
                     InlineButton.builder()
-                            .data(VariablePropertiesUtil.getVariable(VariableType.OPERATOR_LINK))
+                            .data(variablePropertiesReader.getVariable(VariableType.OPERATOR_LINK))
                             .text("Написать оператору")
                             .build()
             )));

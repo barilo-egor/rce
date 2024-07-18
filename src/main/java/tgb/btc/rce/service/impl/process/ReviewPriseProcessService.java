@@ -11,7 +11,7 @@ import tgb.btc.library.constants.enums.properties.PropertiesPath;
 import tgb.btc.library.constants.enums.properties.VariableType;
 import tgb.btc.library.exception.PropertyValueNotFoundException;
 import tgb.btc.library.interfaces.service.bean.bot.deal.IReadDealService;
-import tgb.btc.library.util.properties.VariablePropertiesUtil;
+import tgb.btc.library.service.properties.VariablePropertiesReader;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.ReviewPriseType;
 import tgb.btc.rce.service.IResponseSender;
@@ -38,6 +38,13 @@ public class ReviewPriseProcessService implements IReviewPriseProcessService, IR
     private IKeyboardBuildService keyboardBuildService;
 
     private ICallbackQueryService callbackQueryService;
+
+    private VariablePropertiesReader variablePropertiesReader;
+
+    @Autowired
+    public void setVariablePropertiesReader(VariablePropertiesReader variablePropertiesReader) {
+        this.variablePropertiesReader = variablePropertiesReader;
+    }
 
     @Autowired
     public void setCallbackQueryService(ICallbackQueryService callbackQueryService) {
@@ -75,7 +82,7 @@ public class ReviewPriseProcessService implements IReviewPriseProcessService, IR
                 else return;
             } else {
                 data = Command.SHARE_REVIEW.getText();
-                amount = VariablePropertiesUtil.getInt(VariableType.REVIEW_PRISE) +"₽";
+                amount = variablePropertiesReader.getInt(VariableType.REVIEW_PRISE) +"₽";
             }
             responseSender.sendMessage(deal.getUser().getChatId(), "Хотите оставить отзыв?\n" +
                             "За оставленный отзыв вы получите вознаграждение в размере " + amount +

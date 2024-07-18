@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.constants.enums.properties.VariableType;
 import tgb.btc.library.interfaces.service.bean.bot.IWithdrawalRequestService;
-import tgb.btc.library.util.properties.VariablePropertiesUtil;
+import tgb.btc.library.service.properties.VariablePropertiesReader;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
@@ -20,6 +20,13 @@ public class WithdrawalOfFunds extends Processor {
     private WithdrawalOfFundsService withdrawalOfFundsService;
 
     private IWithdrawalRequestService withdrawalRequestService;
+
+    private VariablePropertiesReader variablePropertiesReader;
+
+    @Autowired
+    public void setVariablePropertiesReader(VariablePropertiesReader variablePropertiesReader) {
+        this.variablePropertiesReader = variablePropertiesReader;
+    }
 
     @Autowired
     public void setWithdrawalOfFundsService(WithdrawalOfFundsService withdrawalOfFundsService) {
@@ -49,7 +56,7 @@ public class WithdrawalOfFunds extends Processor {
                             )));
                     return;
                 }
-                int minSum = VariablePropertiesUtil.getInt(VariableType.REFERRAL_MIN_SUM);
+                int minSum = variablePropertiesReader.getInt(VariableType.REFERRAL_MIN_SUM);
                 if (readUserService.getReferralBalanceByChatId(chatId) < minSum) {
                     responseSender.sendMessage(chatId, "Минимальная сумма для вывода средств равна " + minSum + "₽");
                     return;

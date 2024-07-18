@@ -13,8 +13,8 @@ import tgb.btc.library.interfaces.service.bean.bot.IUserDiscountService;
 import tgb.btc.library.interfaces.service.bean.bot.deal.read.IDealUserService;
 import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.library.service.process.CalculateService;
+import tgb.btc.library.service.properties.VariablePropertiesReader;
 import tgb.btc.library.util.BigDecimalUtil;
-import tgb.btc.library.util.properties.VariablePropertiesUtil;
 import tgb.btc.rce.enums.Rank;
 import tgb.btc.rce.service.process.IUserDiscountProcessService;
 
@@ -30,6 +30,13 @@ public class UserDiscountProcessService implements IUserDiscountProcessService {
     private IReadUserService readUserService;
 
     private IDealUserService dealUserService;
+
+    private VariablePropertiesReader variablePropertiesReader;
+
+    @Autowired
+    public void setVariablePropertiesReader(VariablePropertiesReader variablePropertiesReader) {
+        this.variablePropertiesReader = variablePropertiesReader;
+    }
 
     @Autowired
     public void setDealUserService(IDealUserService dealUserService) {
@@ -94,7 +101,7 @@ public class UserDiscountProcessService implements IUserDiscountProcessService {
     public BigDecimal applyRank(Rank rank, Deal deal) {
         BigDecimal newAmount = deal.getAmount();
         boolean isRankDiscountOn = BooleanUtils.isTrue(
-                VariablePropertiesUtil.getBoolean(VariableType.DEAL_RANK_DISCOUNT_ENABLE))
+                variablePropertiesReader.getBoolean(VariableType.DEAL_RANK_DISCOUNT_ENABLE))
                 && BooleanUtils.isNotFalse(userDiscountService.getRankDiscountByUserChatId(
                 dealUserService.getUserChatIdByDealPid(deal.getPid())));
         if (!Rank.FIRST.equals(rank) && isRankDiscountOn) {

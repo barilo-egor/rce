@@ -7,7 +7,7 @@ import tgb.btc.library.bean.bot.Review;
 import tgb.btc.library.constants.enums.bot.UserRole;
 import tgb.btc.library.constants.enums.properties.VariableType;
 import tgb.btc.library.interfaces.service.bean.bot.IReviewService;
-import tgb.btc.library.util.properties.VariablePropertiesUtil;
+import tgb.btc.library.service.properties.VariablePropertiesReader;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.InlineType;
@@ -30,9 +30,16 @@ public class ShareReview extends Processor {
 
     private INotifyService notifyService;
 
+    private VariablePropertiesReader variablePropertiesReader;
+
     @Autowired
-    public void setAdminService(INotifyService notifyService) {
+    public void setNotifyService(INotifyService notifyService) {
         this.notifyService = notifyService;
+    }
+
+    @Autowired
+    public void setVariablePropertiesReader(VariablePropertiesReader variablePropertiesReader) {
+        this.variablePropertiesReader = variablePropertiesReader;
     }
 
     public static Map<Long, ReviewPrise> reviewPrisesMap = new ConcurrentHashMap<>();
@@ -75,7 +82,7 @@ public class ShareReview extends Processor {
                 String author = "Анонимный отзыв\n\n";
                 Integer amount = DYNAMIC.isCurrent()
                                  ? getRandomAmount(chatId)
-                                 : VariablePropertiesUtil.getInt(VariableType.REVIEW_PRISE);
+                                 : variablePropertiesReader.getInt(VariableType.REVIEW_PRISE);
                 if (update.hasMessage()) {
                     reviewService.save(Review.builder()
                             .text(author + updateService.getMessageText(update))

@@ -20,9 +20,9 @@ import tgb.btc.library.interfaces.enums.IDeliveryTypeService;
 import tgb.btc.library.interfaces.service.bean.bot.IPaymentTypeService;
 import tgb.btc.library.service.process.RPSService;
 import tgb.btc.library.service.properties.ButtonsDesignPropertiesReader;
+import tgb.btc.library.service.properties.VariablePropertiesReader;
 import tgb.btc.library.util.BigDecimalUtil;
 import tgb.btc.library.util.FiatCurrencyUtil;
-import tgb.btc.library.util.properties.VariablePropertiesUtil;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.BotInlineButton;
 import tgb.btc.rce.enums.BotReplyButton;
@@ -66,6 +66,13 @@ public class KeyboardService implements IKeyboardService {
     private ICabinetButtonService cabinetButtonService;
 
     private RPSService rpsService;
+
+    private VariablePropertiesReader variablePropertiesReader;
+
+    @Autowired
+    public void setVariablePropertiesReader(VariablePropertiesReader variablePropertiesReader) {
+        this.variablePropertiesReader = variablePropertiesReader;
+    }
 
     @Autowired
     public void setRpsService(RPSService rpsService) {
@@ -249,7 +256,7 @@ public class KeyboardService implements IKeyboardService {
                     PropertiesPath.FUNCTIONS_PROPERTIES.getBoolean("vip.button.add.sum", false)) {
                 Integer fix;
                 try {
-                    fix = VariablePropertiesUtil.getInt(VariableType.FIX_COMMISSION_VIP,
+                    fix = variablePropertiesReader.getInt(VariableType.FIX_COMMISSION_VIP,
                             fiatCurrency, dealType, cryptoCurrency);
                 } catch (NumberFormatException e) {
                     throw new BaseException("Значение фиксированной комиссии для " + deliveryTypeService.getDisplayName(DeliveryType.VIP) + " должно быть целочисленным.");
