@@ -15,6 +15,7 @@ import tgb.btc.library.constants.enums.bot.FiatCurrency;
 import tgb.btc.library.constants.enums.properties.PropertiesPath;
 import tgb.btc.library.constants.enums.properties.VariableType;
 import tgb.btc.library.exception.BaseException;
+import tgb.btc.library.interfaces.enums.IDeliveryTypeService;
 import tgb.btc.library.interfaces.service.bean.bot.IPaymentTypeService;
 import tgb.btc.library.service.properties.ButtonsDesignPropertiesReader;
 import tgb.btc.library.util.BigDecimalUtil;
@@ -57,6 +58,13 @@ public class KeyboardService implements IKeyboardService {
     private ButtonsDesignPropertiesReader buttonsDesignPropertiesReader;
 
     private ITurningCurrenciesService turningCurrenciesService;
+
+    private IDeliveryTypeService deliveryTypeService;
+
+    @Autowired
+    public void setDeliveryTypeService(IDeliveryTypeService deliveryTypeService) {
+        this.deliveryTypeService = deliveryTypeService;
+    }
 
     @Autowired
     public void setTurningCurrenciesService(ITurningCurrenciesService turningCurrenciesService) {
@@ -228,7 +236,7 @@ public class KeyboardService implements IKeyboardService {
                     fix = VariablePropertiesUtil.getInt(VariableType.FIX_COMMISSION_VIP,
                             fiatCurrency, dealType, cryptoCurrency);
                 } catch (NumberFormatException e) {
-                    throw new BaseException("Значение фиксированной комиссии для " + DeliveryType.VIP.getDisplayName() + " должно быть целочисленным.");
+                    throw new BaseException("Значение фиксированной комиссии для " + deliveryTypeService.getDisplayName(DeliveryType.VIP) + " должно быть целочисленным.");
                 }
                 text = text +  "(+" + fix + fiatCurrency.getGenitive() + ")";
             }

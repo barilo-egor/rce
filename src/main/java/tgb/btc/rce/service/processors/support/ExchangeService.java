@@ -20,6 +20,7 @@ import tgb.btc.library.constants.enums.properties.PropertiesPath;
 import tgb.btc.library.constants.enums.properties.VariableType;
 import tgb.btc.library.exception.BaseException;
 import tgb.btc.library.exception.CalculatorQueryException;
+import tgb.btc.library.interfaces.enums.IDeliveryTypeService;
 import tgb.btc.library.interfaces.service.bean.bot.IBotMessageService;
 import tgb.btc.library.interfaces.service.bean.bot.IPaymentReceiptService;
 import tgb.btc.library.interfaces.service.bean.bot.IPaymentRequisiteService;
@@ -104,6 +105,13 @@ public class ExchangeService {
     private IMessagePropertiesService messagePropertiesService;
 
     private IUpdateService updateService;
+
+    private IDeliveryTypeService deliveryTypeService;
+
+    @Autowired
+    public void setDeliveryTypeService(IDeliveryTypeService deliveryTypeService) {
+        this.deliveryTypeService = deliveryTypeService;
+    }
 
     @Autowired
     public void setUpdateService(IUpdateService updateService) {
@@ -598,7 +606,7 @@ public class ExchangeService {
         String message;
         String deliveryTypeText;
         if (DeliveryKind.STANDARD.isCurrent() && DealType.isBuy(dealType) && CryptoCurrency.BITCOIN.equals(currency)) {
-            deliveryTypeText = "<b>Способ доставки</b>: " + deal.getDeliveryType().getDisplayName() + "\n\n";
+            deliveryTypeText = "<b>Способ доставки</b>: " + deliveryTypeService.getDisplayName(deal.getDeliveryType()) + "\n\n";
         } else {
             deliveryTypeText = "";
         }
