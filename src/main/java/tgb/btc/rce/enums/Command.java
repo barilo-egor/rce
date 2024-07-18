@@ -102,7 +102,6 @@ public enum Command implements ICommand {
     CHANGE_RANK_DISCOUNT("change_rank_discount", false, false, Set.of(UserRole.ADMIN)),
     PERSONAL_BUY_DISCOUNT("Персональная, покупка", false, false, Set.of(UserRole.ADMIN)),
     PERSONAL_SELL_DISCOUNT("Персональная, продажа", false, false, Set.of(UserRole.ADMIN)),
-    BULK_DISCOUNTS("Оптовые скидки", false, false, Set.of(UserRole.ADMIN)),
     REFERRAL_PERCENT("Процент реферала", false, false, Set.of(UserRole.ADMIN)),
     TURN_RANK_DISCOUNT("Ранговая скидка(для всех)", false, false, Set.of(UserRole.ADMIN)),
     TURNING_RANK_DISCOUNT("turning_rd", false, false, Set.of(UserRole.ADMIN)),
