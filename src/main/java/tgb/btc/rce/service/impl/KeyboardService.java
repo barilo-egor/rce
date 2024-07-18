@@ -18,6 +18,7 @@ import tgb.btc.library.exception.BaseException;
 import tgb.btc.library.interfaces.enums.ICabinetButtonService;
 import tgb.btc.library.interfaces.enums.IDeliveryTypeService;
 import tgb.btc.library.interfaces.service.bean.bot.IPaymentTypeService;
+import tgb.btc.library.service.process.RPSService;
 import tgb.btc.library.service.properties.ButtonsDesignPropertiesReader;
 import tgb.btc.library.util.BigDecimalUtil;
 import tgb.btc.library.util.FiatCurrencyUtil;
@@ -63,6 +64,13 @@ public class KeyboardService implements IKeyboardService {
     private IDeliveryTypeService deliveryTypeService;
 
     private ICabinetButtonService cabinetButtonService;
+
+    private RPSService rpsService;
+
+    @Autowired
+    public void setRpsService(RPSService rpsService) {
+        this.rpsService = rpsService;
+    }
 
     @Autowired
     public void setCabinetButtonService(ICabinetButtonService cabinetButtonService) {
@@ -290,7 +298,7 @@ public class KeyboardService implements IKeyboardService {
     public ReplyKeyboard getRPSElements() {
         List<InlineButton> buttons = new ArrayList<>();
         Arrays.stream(RPSElement.values()).forEach(element -> buttons.add(InlineButton.builder()
-                .text(element.getSymbol())
+                .text(rpsService.getSymbol(element))
                 .data(element.name())
                 .build()));
         return keyboardBuildService.buildInlineSingleLast(buttons, 1, keyboardBuildService.getInlineBackButton());
