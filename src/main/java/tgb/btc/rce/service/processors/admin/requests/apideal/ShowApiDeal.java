@@ -58,7 +58,7 @@ public class ShowApiDeal extends Processor {
         List<InlineButton> buttons = new ArrayList<>();
         buttons.add(InlineButton.builder()
                 .text("Подтвердить")
-                .data(Command.CONFIRM_API_DEAL.getText() + CALLBACK_DATA_SPLITTER + pid)
+                .data(callbackQueryService.buildCallbackData(Command.CONFIRM_API_DEAL, new Object[]{pid, false}))
                 .build());
         boolean hasDefaultGroupChat = groupChatService.hasApiDealRequests();
         if (hasDefaultGroupChat)
