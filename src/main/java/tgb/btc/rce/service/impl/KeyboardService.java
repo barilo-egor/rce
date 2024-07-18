@@ -358,8 +358,8 @@ public class KeyboardService implements IKeyboardService {
                         .inlineType(InlineType.CALLBACK_DATA)
                         .build(),
                 InlineButton.builder()
-                        .text(Command.CANCEL.getText())
-                        .data(Command.CANCEL_DEAL.name())
+                        .text(Command.CANCEL_DEAL.getText())
+                        .data(Command.CANCEL_DEAL.getText())
                         .inlineType(InlineType.CALLBACK_DATA)
                         .build()
         ));
