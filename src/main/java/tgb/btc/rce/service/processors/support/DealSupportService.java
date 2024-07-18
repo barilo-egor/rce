@@ -11,6 +11,7 @@ import tgb.btc.library.constants.enums.bot.CryptoCurrency;
 import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
 import tgb.btc.library.constants.enums.web.ApiDealStatus;
+import tgb.btc.library.interfaces.enums.IDeliveryTypeService;
 import tgb.btc.library.interfaces.service.bean.bot.IGroupChatService;
 import tgb.btc.library.interfaces.service.bean.bot.deal.IReadDealService;
 import tgb.btc.library.interfaces.service.bean.bot.deal.read.IDealCountService;
@@ -47,6 +48,13 @@ public class DealSupportService {
     private IKeyboardBuildService keyboardBuildService;
 
     private ICallbackQueryService callbackQueryService;
+
+    private IDeliveryTypeService deliveryTypeService;
+
+    @Autowired
+    public void setDeliveryTypeService(IDeliveryTypeService deliveryTypeService) {
+        this.deliveryTypeService = deliveryTypeService;
+    }
 
     @Autowired
     public void setCallbackQueryService(ICallbackQueryService callbackQueryService) {
@@ -139,7 +147,7 @@ public class DealSupportService {
                         .toPlainString(),
                 deal.getAmount().setScale(0, RoundingMode.HALF_UP).stripTrailingZeros().toPlainString(),
                 Objects.nonNull(fiatCurrency) ? fiatCurrency.getGenitive() : "отсутствует",
-                Objects.nonNull(deal.getDeliveryType()) ? deal.getDeliveryType().getDisplayName() : "Отсутствует"
+                Objects.nonNull(deal.getDeliveryType()) ? deliveryTypeService.getDisplayName(deal.getDeliveryType()) : "Отсутствует"
         );
     }
 
