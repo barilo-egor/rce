@@ -9,6 +9,7 @@ import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
 import tgb.btc.library.constants.enums.properties.PropertiesPath;
 import tgb.btc.library.constants.enums.properties.VariableType;
+import tgb.btc.library.interfaces.IModule;
 import tgb.btc.library.interfaces.service.bean.bot.IUserDiscountService;
 import tgb.btc.library.interfaces.service.bean.bot.deal.read.IDealUserService;
 import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
@@ -34,6 +35,13 @@ public class UserDiscountProcessService implements IUserDiscountProcessService {
     private VariablePropertiesReader variablePropertiesReader;
 
     private IBigDecimalService bigDecimalService;
+
+    private IModule<ReferralType> referralModule;
+
+    @Autowired
+    public void setReferralModule(IModule<ReferralType> referralModule) {
+        this.referralModule = referralModule;
+    }
 
     @Autowired
     public void setBigDecimalService(IBigDecimalService bigDecimalService) {
@@ -83,7 +91,7 @@ public class UserDiscountProcessService implements IUserDiscountProcessService {
     private BigDecimal applyReferralDiscount(Long chatId, BigDecimal dealAmount, Boolean isUsedReferralDiscount, FiatCurrency fiatCurrency) {
         if (BooleanUtils.isTrue(isUsedReferralDiscount)) {
             Integer referralBalance = readUserService.getReferralBalanceByChatId(chatId);
-            if (ReferralType.CURRENT.isCurrent() && !FiatCurrency.BYN.equals(fiatCurrency)) {
+            if (!FiatCurrency.BYN.equals(fiatCurrency)) {
                 if (referralBalance <= dealAmount.intValue())
                     dealAmount = dealAmount.subtract(BigDecimal.valueOf(referralBalance));
                 else dealAmount = BigDecimal.ZERO;

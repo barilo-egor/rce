@@ -6,11 +6,13 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.bean.bot.Review;
 import tgb.btc.library.constants.enums.bot.UserRole;
 import tgb.btc.library.constants.enums.properties.VariableType;
+import tgb.btc.library.interfaces.IModule;
 import tgb.btc.library.interfaces.service.bean.bot.IReviewService;
 import tgb.btc.library.service.properties.VariablePropertiesReader;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.InlineType;
+import tgb.btc.rce.enums.ReviewPriseType;
 import tgb.btc.rce.service.INotifyService;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.vo.InlineButton;
@@ -31,6 +33,13 @@ public class ShareReview extends Processor {
     private INotifyService notifyService;
 
     private VariablePropertiesReader variablePropertiesReader;
+
+    private IModule<ReviewPriseType> reviewPriseModule;
+
+    @Autowired
+    public void setReviewPriseModule(IModule<ReviewPriseType> reviewPriseModule) {
+        this.reviewPriseModule = reviewPriseModule;
+    }
 
     @Autowired
     public void setNotifyService(INotifyService notifyService) {
@@ -60,7 +69,7 @@ public class ShareReview extends Processor {
                 responseSender.deleteMessage(chatId, update.getCallbackQuery().getMessage().getMessageId());
                 responseSender.sendMessage(chatId, "Напишите ваш отзыв.");
                 modifyUserService.nextStep(chatId, Command.SHARE_REVIEW.name());
-                if (DYNAMIC.isCurrent()) reviewPrisesMap.put(chatId, new ReviewPrise(update.getCallbackQuery().getData()));
+                if (reviewPriseModule.isCurrent(DYNAMIC)) reviewPrisesMap.put(chatId, new ReviewPrise(update.getCallbackQuery().getData()));
                 return;
             case 1:
                 if (update.hasMessage() && StringUtils.isNotEmpty(update.getMessage().getFrom().getUserName())) {
@@ -80,7 +89,7 @@ public class ShareReview extends Processor {
                 }
             case 2:
                 String author = "Анонимный отзыв\n\n";
-                Integer amount = DYNAMIC.isCurrent()
+                Integer amount = reviewPriseModule.isCurrent(DYNAMIC)
                                  ? getRandomAmount(chatId)
                                  : variablePropertiesReader.getInt(VariableType.REVIEW_PRISE);
                 if (update.hasMessage()) {

@@ -5,11 +5,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.bean.bot.Review;
 import tgb.btc.library.constants.enums.properties.VariableType;
+import tgb.btc.library.interfaces.IModule;
 import tgb.btc.library.interfaces.service.bean.bot.IReviewService;
 import tgb.btc.library.service.properties.VariablePropertiesReader;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
+import tgb.btc.rce.enums.ReviewPriseType;
 import tgb.btc.rce.service.Processor;
 
 import static tgb.btc.rce.enums.ReviewPriseType.DYNAMIC;
@@ -21,6 +23,13 @@ public class PublishReview extends Processor {
     private IReviewService reviewService;
 
     private VariablePropertiesReader variablePropertiesReader;
+
+    private IModule<ReviewPriseType> reviewPriseModule;
+
+    @Autowired
+    public void setReviewPriseModule(IModule<ReviewPriseType> reviewPriseModule) {
+        this.reviewPriseModule = reviewPriseModule;
+    }
 
     @Autowired
     public void setVariablePropertiesReader(VariablePropertiesReader variablePropertiesReader) {
@@ -47,7 +56,7 @@ public class PublishReview extends Processor {
         responseSender.sendMessage(chatId, "Отзыв опубликован.");
         review.setPublished(true);
         reviewService.save(review);
-        Integer reviewPrise = DYNAMIC.isCurrent()
+        Integer reviewPrise = reviewPriseModule.isCurrent(DYNAMIC)
                 ? review.getAmount()
                 : variablePropertiesReader.getInt(VariableType.REVIEW_PRISE);
         Integer referralBalance = readUserService.getReferralBalanceByChatId(review.getChatId());

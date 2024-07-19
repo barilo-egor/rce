@@ -15,6 +15,7 @@ import tgb.btc.library.constants.enums.bot.FiatCurrency;
 import tgb.btc.library.constants.enums.properties.PropertiesPath;
 import tgb.btc.library.constants.enums.properties.VariableType;
 import tgb.btc.library.exception.BaseException;
+import tgb.btc.library.interfaces.IModule;
 import tgb.btc.library.interfaces.enums.ICabinetButtonService;
 import tgb.btc.library.interfaces.enums.IDeliveryTypeService;
 import tgb.btc.library.interfaces.service.bean.bot.IPaymentTypeService;
@@ -75,6 +76,13 @@ public class KeyboardService implements IKeyboardService {
     private IBigDecimalService bigDecimalService;
 
     private ICommandService commandService;
+
+    private IModule<DeliveryKind> deliveryKindModule;
+
+    @Autowired
+    public void setDeliveryKindModule(IModule<DeliveryKind> deliveryKindModule) {
+        this.deliveryKindModule = deliveryKindModule;
+    }
 
     @Autowired
     public void setCommandService(ICommandService commandService) {
@@ -298,7 +306,7 @@ public class KeyboardService implements IKeyboardService {
     public InlineButton getDeliveryTypeButton() {
         String text;
         DeliveryKind deliveryKind;
-        if (DeliveryKind.NONE.isCurrent()) {
+        if (deliveryKindModule.isCurrent(DeliveryKind.NONE)) {
             text = "Включить";
             deliveryKind = DeliveryKind.STANDARD;
         } else {

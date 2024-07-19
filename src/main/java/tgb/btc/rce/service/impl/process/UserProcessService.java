@@ -10,6 +10,7 @@ import tgb.btc.library.bean.bot.UserDiscount;
 import tgb.btc.library.constants.enums.ReferralType;
 import tgb.btc.library.constants.enums.bot.UserRole;
 import tgb.btc.library.exception.BaseException;
+import tgb.btc.library.interfaces.IModule;
 import tgb.btc.library.interfaces.service.bean.bot.IReferralUserService;
 import tgb.btc.library.interfaces.service.bean.bot.IUserDataService;
 import tgb.btc.library.interfaces.service.bean.bot.IUserDiscountService;
@@ -41,6 +42,13 @@ public class UserProcessService implements IUserProcessService {
     private ICommandService commandService;
 
     private IUpdateService updateService;
+
+    private IModule<ReferralType> referralModule;
+
+    @Autowired
+    public void setReferralModule(IModule<ReferralType> referralModule) {
+        this.referralModule = referralModule;
+    }
 
     @Autowired
     public void setUpdateService(IUpdateService updateService) {
@@ -103,7 +111,7 @@ public class UserProcessService implements IUserProcessService {
         newUser.setCharges(0);
         newUser.setReferralPercent(BigDecimal.ZERO);
         User inviter = null;
-        if (commandService.isStartCommand(update) && ReferralType.STANDARD.isCurrent()) {
+        if (commandService.isStartCommand(update) && referralModule.isCurrent(ReferralType.STANDARD)) {
             try {
                 Long chatIdFrom = Long.parseLong(update.getMessage().getText()
                         .replaceAll(commandService.getText(Command.START), "").trim());

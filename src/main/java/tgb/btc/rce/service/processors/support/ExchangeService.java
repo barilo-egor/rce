@@ -20,6 +20,7 @@ import tgb.btc.library.constants.enums.properties.PropertiesPath;
 import tgb.btc.library.constants.enums.properties.VariableType;
 import tgb.btc.library.exception.BaseException;
 import tgb.btc.library.exception.CalculatorQueryException;
+import tgb.btc.library.interfaces.IModule;
 import tgb.btc.library.interfaces.enums.IDeliveryTypeService;
 import tgb.btc.library.interfaces.service.bean.bot.IBotMessageService;
 import tgb.btc.library.interfaces.service.bean.bot.IPaymentReceiptService;
@@ -116,6 +117,20 @@ public class ExchangeService {
     private IBigDecimalService bigDecimalService;
 
     private ICommandService commandService;
+
+    private IModule<DeliveryKind> deliveryKindModule;
+
+    private IModule<ReferralType> referralModule;
+
+    @Autowired
+    public void setDeliveryKindModule(IModule<DeliveryKind> deliveryKindModule) {
+        this.deliveryKindModule = deliveryKindModule;
+    }
+
+    @Autowired
+    public void setReferralModule(IModule<ReferralType> referralModule) {
+        this.referralModule = referralModule;
+    }
 
     @Autowired
     public void setCommandService(ICommandService commandService) {
@@ -634,7 +649,7 @@ public class ExchangeService {
         deal.setDateTime(LocalDateTime.now());
         String message;
         String deliveryTypeText;
-        if (DeliveryKind.STANDARD.isCurrent() && DealType.isBuy(dealType) && CryptoCurrency.BITCOIN.equals(currency)) {
+        if (deliveryKindModule.isCurrent(DeliveryKind.STANDARD) && DealType.isBuy(dealType) && CryptoCurrency.BITCOIN.equals(currency)) {
             deliveryTypeText = "<b>Способ доставки</b>: " + deliveryTypeService.getDisplayName(deal.getDeliveryType()) + "\n\n";
         } else {
             deliveryTypeText = "";
@@ -792,7 +807,7 @@ public class ExchangeService {
         BigDecimal sumWithDiscount;
         String message;
         Integer referralBalance = readUserService.getReferralBalanceByChatId(chatId);
-        if (ReferralType.STANDARD.isCurrent() && !FiatCurrency.BYN.equals(readDealService.findByPid(currentDealPid).getFiatCurrency())) {
+        if (referralModule.isCurrent(ReferralType.STANDARD) && !FiatCurrency.BYN.equals(readDealService.findByPid(currentDealPid).getFiatCurrency())) {
             if (referralBalance <= dealAmount.intValue()) {
                 sumWithDiscount = dealAmount.subtract(BigDecimal.valueOf(referralBalance));
             } else {
@@ -871,7 +886,7 @@ public class ExchangeService {
         Long dealPid = readUserService.getCurrentDealByChatId(chatId);
         DealType dealType = dealPropertyService.getDealTypeByPid(dealPid);
         CryptoCurrency cryptoCurrency = dealPropertyService.getCryptoCurrencyByPid(dealPid);
-        if (DeliveryKind.STANDARD.isCurrent() && DealType.isBuy(dealType) && CryptoCurrency.BITCOIN.equals(cryptoCurrency)) {
+        if (deliveryKindModule.isCurrent(DeliveryKind.STANDARD) && DealType.isBuy(dealType) && CryptoCurrency.BITCOIN.equals(cryptoCurrency)) {
             deliveryType = DeliveryType.valueOf(update.getCallbackQuery().getData());
             responseSender.deleteCallbackMessageIfExists(update);
             if (DeliveryType.VIP.equals(deliveryType)) {

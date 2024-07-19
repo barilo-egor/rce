@@ -11,6 +11,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 import tgb.btc.library.constants.enums.DiceType;
 import tgb.btc.library.constants.enums.bot.UserRole;
 import tgb.btc.library.constants.enums.properties.PropertiesPath;
+import tgb.btc.library.interfaces.IModule;
 import tgb.btc.library.service.process.DiceService;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
@@ -32,6 +33,13 @@ public class Dice extends Processor {
 
     private IUpdateDispatcher updateDispatcher;
 
+    private IModule<DiceType> diceModule;
+
+    @Autowired
+    public void setDiceModule(IModule<DiceType> diceModule) {
+        this.diceModule = diceModule;
+    }
+
     @Autowired
     public void setDiceService(DiceService diceService) {
         this.diceService = diceService;
@@ -50,7 +58,7 @@ public class Dice extends Processor {
     @Override
     public void run(Update update) {
         Long chatId = updateService.getChatId(update);
-        if (DiceType.NONE.isCurrent() || (DiceType.STANDARD_ADMIN.isCurrent() && UserRole.USER.equals(readUserService.getUserRoleByChatId(chatId)))) {
+        if (diceModule.isCurrent(DiceType.NONE) || (diceModule.isCurrent(DiceType.STANDARD_ADMIN) && UserRole.USER.equals(readUserService.getUserRoleByChatId(chatId)))) {
             processToStart(chatId, update);
             return;
         }

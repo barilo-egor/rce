@@ -9,6 +9,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.constants.enums.SlotReelType;
 import tgb.btc.library.constants.enums.bot.UserRole;
 import tgb.btc.library.constants.enums.properties.PropertiesPath;
+import tgb.btc.library.interfaces.IModule;
 import tgb.btc.library.service.process.SlotReelService;
 import tgb.btc.library.vo.slotReel.ScrollResult;
 import tgb.btc.rce.annotation.CommandProcessor;
@@ -34,6 +35,13 @@ public class SlotReel extends Processor {
 
     private IUpdateDispatcher updateDispatcher;
 
+    private IModule<SlotReelType> slotReelModule;
+
+    @Autowired
+    public void setSlotReelModule(IModule<SlotReelType> slotReelModule) {
+        this.slotReelModule = slotReelModule;
+    }
+
     @Autowired
     public void setResponseSender(IResponseSender responseSender) {
         this.responseSender = responseSender;
@@ -52,7 +60,7 @@ public class SlotReel extends Processor {
     @Override
     public void run(Update update) {
         Long chatId = updateService.getChatId(update);
-        if (SlotReelType.NONE.isCurrent() || (SlotReelType.STANDARD_ADMIN.isCurrent() && UserRole.USER.equals(readUserService.getUserRoleByChatId(chatId)))) {
+        if (slotReelModule.isCurrent(SlotReelType.NONE) || (slotReelModule.isCurrent(SlotReelType.STANDARD_ADMIN) && UserRole.USER.equals(readUserService.getUserRoleByChatId(chatId)))) {
             processToStart(chatId, update);
             return;
         }

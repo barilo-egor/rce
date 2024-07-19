@@ -10,6 +10,7 @@ import tgb.btc.library.constants.enums.bot.FiatCurrency;
 import tgb.btc.library.constants.enums.properties.PropertiesPath;
 import tgb.btc.library.constants.enums.properties.VariableType;
 import tgb.btc.library.exception.PropertyValueNotFoundException;
+import tgb.btc.library.interfaces.IModule;
 import tgb.btc.library.interfaces.service.bean.bot.deal.IReadDealService;
 import tgb.btc.library.service.properties.VariablePropertiesReader;
 import tgb.btc.rce.enums.Command;
@@ -44,6 +45,20 @@ public class ReviewPriseProcessService implements IReviewPriseProcessService, IR
 
     private ICommandService commandService;
 
+    private IModule<ReferralType> referralModule;
+
+    private IModule<ReviewPriseType> reviewPriseModule;
+
+    @Autowired
+    public void setReferralModule(IModule<ReferralType> referralModule) {
+        this.referralModule = referralModule;
+    }
+
+    @Autowired
+    public void setReviewPriseModule(IModule<ReviewPriseType> reviewPriseModule) {
+        this.reviewPriseModule = reviewPriseModule;
+    }
+
     @Autowired
     public void setCommandService(ICommandService commandService) {
         this.commandService = commandService;
@@ -77,10 +92,10 @@ public class ReviewPriseProcessService implements IReviewPriseProcessService, IR
     @Override
     public void processReviewPrise(Long dealPid) {
         Deal deal = readDealService.findByPid(dealPid);
-        if (ReferralType.STANDARD.isCurrent()) {
+        if (referralModule.isCurrent(ReferralType.STANDARD)) {
             String data;
             String amount;
-            if (ReviewPriseType.DYNAMIC.isCurrent()) {
+            if (reviewPriseModule.isCurrent(ReviewPriseType.DYNAMIC)) {
                 ReviewPrise reviewPriseVo = getReviewPrise(deal.getAmount(), deal.getFiatCurrency());
                 if (Objects.nonNull(reviewPriseVo)) {
                     data = callbackQueryService.buildCallbackData(Command.SHARE_REVIEW,

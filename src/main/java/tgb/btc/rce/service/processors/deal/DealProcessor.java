@@ -9,6 +9,7 @@ import tgb.btc.library.constants.enums.DeliveryKind;
 import tgb.btc.library.constants.enums.bot.BotMessageType;
 import tgb.btc.library.constants.enums.bot.CryptoCurrency;
 import tgb.btc.library.constants.enums.bot.DealType;
+import tgb.btc.library.interfaces.IModule;
 import tgb.btc.library.interfaces.service.bean.bot.IBotMessageService;
 import tgb.btc.library.interfaces.service.bean.bot.deal.IModifyDealService;
 import tgb.btc.library.interfaces.service.bean.bot.deal.IReadDealService;
@@ -51,6 +52,13 @@ public class DealProcessor extends Processor {
     private IDealProcessService dealProcessService;
 
     private IFiatCurrencyService fiatCurrencyService;
+
+    private IModule<DeliveryKind> deliveryKindModule;
+
+    @Autowired
+    public void setDeliveryKindModule(IModule<DeliveryKind> deliveryKindModule) {
+        this.deliveryKindModule = deliveryKindModule;
+    }
 
     @Autowired
     public void setBotMessageService(IBotMessageService botMessageService) {
@@ -206,7 +214,7 @@ public class DealProcessor extends Processor {
                 Long dealPid = readUserService.getCurrentDealByChatId(chatId);
                 dealType = dealPropertyService.getDealTypeByPid(dealPid);
                 CryptoCurrency cryptoCurrency = dealPropertyService.getCryptoCurrencyByPid(dealPid);
-                if (DeliveryKind.STANDARD.isCurrent() && DealType.isBuy(dealType) && CryptoCurrency.BITCOIN.equals(cryptoCurrency)) {
+                if (deliveryKindModule.isCurrent(DeliveryKind.STANDARD) && DealType.isBuy(dealType) && CryptoCurrency.BITCOIN.equals(cryptoCurrency)) {
                     modifyUserService.nextStep(chatId);
                     exchangeService.askForDeliveryType(chatId, dealPropertyService.getFiatCurrencyByPid(dealPid),dealType, cryptoCurrency);
                     break;

@@ -6,6 +6,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import tgb.btc.library.bean.bot.ReferralUser;
 import tgb.btc.library.bean.bot.User;
 import tgb.btc.library.constants.enums.ReferralType;
+import tgb.btc.library.interfaces.IModule;
 import tgb.btc.library.interfaces.service.bean.bot.ILotteryWinService;
 import tgb.btc.library.interfaces.service.bean.bot.ISpamBanService;
 import tgb.btc.library.interfaces.service.bean.bot.deal.read.IDealCountService;
@@ -43,6 +44,13 @@ public class UserInfoService implements IUserInfoService {
     private IMessagePropertiesService messagePropertiesService;
 
     private ICommandService commandService;
+
+    private IModule<ReferralType> referralModule;
+
+    @Autowired
+    public void setReferralModule(IModule<ReferralType> referralModule) {
+        this.referralModule = referralModule;
+    }
 
     @Autowired
     public void setCommandService(ICommandService commandService) {
@@ -109,7 +117,7 @@ public class UserInfoService implements IUserInfoService {
         Long lotteryWinCount = lotteryWinService.getLotteryWinCount(chatId);
         String fromChatId = Objects.nonNull(user.getFromChatId()) ? String.valueOf(user.getFromChatId()) : "отсутствует";
         String result = null;
-        if (ReferralType.STANDARD.isCurrent()) {
+        if (referralModule.isCurrent(ReferralType.STANDARD)) {
             int numberOfReferrals = referralUsers.size();
             int numberOfActiveReferrals = (int) referralUsers.stream()
                     .filter(usr -> dealCountService.getCountPassedByUserChatId(usr.getChatId()) > 0).count();
