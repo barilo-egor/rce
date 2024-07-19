@@ -11,7 +11,6 @@ import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.util.ICommandProcessorLoader;
 
 import javax.annotation.PostConstruct;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -53,7 +52,7 @@ public final class CommandProcessorLoader implements ICommandProcessorLoader {
             Map<Integer, Processor> stepProcessors = processorMap.get(command);
             if (stepProcessors.size() > 1)
                 return processorMap.get(command).get(step);
-            return new ArrayList<>(stepProcessors.values()).get(0);
+            return stepProcessors.values().iterator().next();
         } catch (NullPointerException e) {
             log.error("Не найден процессор для команды {} по шагу {}.", command.name(), step);
             throw new BaseException("Не найден процессор для команды " + command.name() + " по шагу " + step);
