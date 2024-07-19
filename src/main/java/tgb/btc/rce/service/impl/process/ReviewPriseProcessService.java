@@ -90,7 +90,7 @@ public class ReviewPriseProcessService implements IReviewPriseProcessService, IR
                     keyboardBuildService.buildInline(List.of(
                                     InlineButton.builder()
                                             .data(data)
-                                            .text("Оставить")
+                                            .text(Command.SHARE_REVIEW.getText())
                                             .build()
                             )
                     ));

@@ -33,7 +33,7 @@ public enum Command implements ICommand {
     ADMIN_BACK("Назад", false, false, Set.of(UserRole.ADMIN, UserRole.OPERATOR)),
     CANCEL("Отмена", false, false, Set.of(UserRole.USER, UserRole.OPERATOR, UserRole.ADMIN)),
     SHARE_CONTACT("Поделиться контактом", false, false, Set.of(UserRole.USER, UserRole.OPERATOR, UserRole.ADMIN)),
-    BOT_OFFED("bot_offed", true, false, Set.of(UserRole.USER, UserRole.OPERATOR, UserRole.ADMIN)),
+    BOT_OFFED("BOT_OFFED", true, false, Set.of(UserRole.USER, UserRole.OPERATOR, UserRole.ADMIN)),
     INLINE_DELETE("❌ Закрыть", true, false, Set.of(UserRole.USER, UserRole.OPERATOR, UserRole.ADMIN)),
     CAPTCHA("captcha", false, false, Set.of(UserRole.USER, UserRole.OPERATOR, UserRole.ADMIN)),
 
@@ -70,12 +70,12 @@ public enum Command implements ICommand {
     /**
      * REFERRAL
      */
-    WITHDRAWAL_OF_FUNDS("withdrawal", false, false, Set.of(UserRole.USER, UserRole.OPERATOR, UserRole.ADMIN)),
-    SHOW_WITHDRAWAL_REQUEST("show_withdrawal", false, false, Set.of(UserRole.USER, UserRole.OPERATOR, UserRole.ADMIN)),
+    WITHDRAWAL_OF_FUNDS("Вывод средств", false, false, Set.of(UserRole.USER, UserRole.OPERATOR, UserRole.ADMIN)),
+    SHOW_WITHDRAWAL_REQUEST("SHOW_WITHDRAWAL_REQUEST", false, false, Set.of(UserRole.USER, UserRole.OPERATOR, UserRole.ADMIN)),
     SEND_LINK(PropertiesPath.BOT_PROPERTIES.getString("bot.link"), false, false, Set.of(UserRole.USER, UserRole.OPERATOR, UserRole.ADMIN)),
-    HIDE_WITHDRAWAL("hide_withdrawal", false, false, Set.of(UserRole.ADMIN)),
-    CHANGE_REFERRAL_BALANCE("change_ref", false, false, Set.of(UserRole.ADMIN)),
-    DELETE_WITHDRAWAL_REQUEST("withdrawal_delete", false, false, Set.of(UserRole.USER, UserRole.OPERATOR, UserRole.ADMIN)),
+    HIDE_WITHDRAWAL("Скрыть", false, false, Set.of(UserRole.ADMIN)),
+    CHANGE_REFERRAL_BALANCE("Изменить", false, false, Set.of(UserRole.ADMIN)),
+    DELETE_WITHDRAWAL_REQUEST("Удалить", false, false, Set.of(UserRole.USER, UserRole.OPERATOR, UserRole.ADMIN)),
 
     /**
      * ADMIN PANEL
@@ -105,7 +105,7 @@ public enum Command implements ICommand {
     PERSONAL_SELL_DISCOUNT("Персональная, продажа", false, false, Set.of(UserRole.ADMIN)),
     REFERRAL_PERCENT("Процент реферала", false, false, Set.of(UserRole.ADMIN)),
     TURN_RANK_DISCOUNT("Ранговая скидка(для всех)", false, false, Set.of(UserRole.ADMIN)),
-    TURNING_RANK_DISCOUNT("turning_rd", false, false, Set.of(UserRole.ADMIN)),
+    TURNING_RANK_DISCOUNT("TURNING_RANK_DISCOUNT", false, false, Set.of(UserRole.ADMIN)),
 
     /**
      * TURNING CURRENCIES
@@ -139,22 +139,22 @@ public enum Command implements ICommand {
     /**
      * DEAL
      */
-    DEAL("deal_proc", false, false, Set.of(UserRole.USER, UserRole.OPERATOR, UserRole.ADMIN)),
+    DEAL("DEAL", false, false, Set.of(UserRole.USER, UserRole.OPERATOR, UserRole.ADMIN)),
     PAID(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.getString("PAID"), false, false, Set.of(UserRole.USER, UserRole.OPERATOR, UserRole.ADMIN)),
     CANCEL_DEAL("Отменить заявку", false, false, Set.of(UserRole.USER, UserRole.OPERATOR, UserRole.ADMIN)),
-    DELETE_DEAL("Удалить заявку", false, false, Set.of(UserRole.USER, UserRole.OPERATOR, UserRole.ADMIN)),
+    DELETE_DEAL("Удалить", false, false, Set.of(UserRole.USER, UserRole.OPERATOR, UserRole.ADMIN)),
     SHOW_DEAL("Показать", false, false, Set.of(UserRole.ADMIN, UserRole.OPERATOR)),
     SHOW_API_DEAL("show_api_deal", false, false, Set.of(UserRole.ADMIN, UserRole.OPERATOR)),
     DELETE_USER_DEAL("delete_deal", false, false, Set.of(UserRole.ADMIN, UserRole.OPERATOR)),
-    DELETE_DEAL_AND_BLOCK_USER("deleteDeal_and_block_user", false, false, Set.of(UserRole.ADMIN, UserRole.OPERATOR)),
-    CONFIRM_USER_DEAL("confirm_deal", false, false, Set.of(UserRole.ADMIN, UserRole.OPERATOR)),
-    ADDITIONAL_VERIFICATION("add_verification", false, false, Set.of(UserRole.ADMIN, UserRole.OPERATOR)),
-    USER_ADDITIONAL_VERIFICATION("user_verification", false, false, Set.of(UserRole.USER, UserRole.OPERATOR, UserRole.ADMIN)),
-    SHARE_REVIEW("share_review", false, false, Set.of(UserRole.USER, UserRole.OPERATOR, UserRole.ADMIN)),
-    CHOOSING_FIAT_CURRENCY("chs_fc", false, false, Set.of(UserRole.USER, UserRole.OPERATOR, UserRole.ADMIN)),
+    DELETE_DEAL_AND_BLOCK_USER("Удалить и заблокировать", false, false, Set.of(UserRole.ADMIN, UserRole.OPERATOR)),
+    CONFIRM_USER_DEAL("Подтвердить", false, false, Set.of(UserRole.ADMIN, UserRole.OPERATOR)),
+    ADDITIONAL_VERIFICATION("Доп.верификация", false, false, Set.of(UserRole.ADMIN, UserRole.OPERATOR)),
+    USER_ADDITIONAL_VERIFICATION("USER_ADDITIONAL_VERIFICATION", false, false, Set.of(UserRole.USER, UserRole.OPERATOR, UserRole.ADMIN)),
+    SHARE_REVIEW("Оставить", false, false, Set.of(UserRole.USER, UserRole.OPERATOR, UserRole.ADMIN)),
+    CHOOSING_FIAT_CURRENCY("CHOOSING_FIAT_CURRENCY", false, false, Set.of(UserRole.USER, UserRole.OPERATOR, UserRole.ADMIN)),
     USE_PROMO(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.getString("USE_PROMO"), false, false, Set.of(UserRole.USER, UserRole.OPERATOR, UserRole.ADMIN)),
     DONT_USE_PROMO(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.getString("DONT_USE_PROMO"), false, false, Set.of(UserRole.USER, UserRole.OPERATOR, UserRole.ADMIN)),
-    USE_SAVED_WALLET("use_saved_wallet", false, false, Set.of(UserRole.USER, UserRole.OPERATOR, UserRole.ADMIN)),
+    USE_SAVED_WALLET("USE_SAVED_WALLET", false, false, Set.of(UserRole.USER, UserRole.OPERATOR, UserRole.ADMIN)),
 
     /**
      * REQUESTS
@@ -163,8 +163,8 @@ public enum Command implements ICommand {
     NEW_WITHDRAWALS("Вывод средств", false, false, Set.of(UserRole.ADMIN, UserRole.OPERATOR)),
     NEW_REVIEWS("Новые отзывы", false, false, Set.of(UserRole.ADMIN, UserRole.OPERATOR)),
 
-    PUBLISH_REVIEW("pub_review", false, false, Set.of(UserRole.ADMIN, UserRole.OPERATOR)),
-    DELETE_REVIEW("del_review", false, false, Set.of(UserRole.ADMIN, UserRole.OPERATOR)),
+    PUBLISH_REVIEW("Опубликовать", false, false, Set.of(UserRole.ADMIN, UserRole.OPERATOR)),
+    DELETE_REVIEW("Удалить", false, false, Set.of(UserRole.ADMIN, UserRole.OPERATOR)),
 
     /**
      * REPORTS
@@ -175,10 +175,10 @@ public enum Command implements ICommand {
     DEAL_REPORTS("Отчет по сделкам", false, false, Set.of(UserRole.ADMIN)),
     PARTNERS_REPORT("Отчет по партнерам", false, false, Set.of(UserRole.ADMIN)),
     CHECKS_FOR_DATE("Чеки по дате", false, false, Set.of(UserRole.ADMIN)),
-    SEND_CHECKS_FOR_DATE("send_checks_for_dats", false, false, Set.of(UserRole.ADMIN)),
+    SEND_CHECKS_FOR_DATE("SEND_CHECKS_FOR_DATE", false, false, Set.of(UserRole.ADMIN)),
     LOTTERY_REPORT("Отчет по лотереи", false, false, Set.of(UserRole.ADMIN)),
 
-    CHANNEL_POST("channel_post", false, false, Set.of(UserRole.USER, UserRole.OPERATOR, UserRole.ADMIN)),
+    CHANNEL_POST("CHANNEL_POST", false, false, Set.of(UserRole.USER, UserRole.OPERATOR, UserRole.ADMIN)),
 
     /**
      * RECEIPTS
@@ -190,44 +190,44 @@ public enum Command implements ICommand {
      */
     NEW_PAYMENT_TYPE("Создать тип оплаты", false, false, Set.of(UserRole.ADMIN, UserRole.OPERATOR)),
     DELETE_PAYMENT_TYPE("Удалить тип оплаты", false, false, Set.of(UserRole.ADMIN, UserRole.OPERATOR)),
-    DELETING_PAYMENT_TYPE("deleting_pt", false, false, Set.of(UserRole.ADMIN, UserRole.OPERATOR)),
+    DELETING_PAYMENT_TYPE("DELETING_PAYMENT_TYPE", false, false, Set.of(UserRole.ADMIN, UserRole.OPERATOR)),
     NEW_PAYMENT_TYPE_REQUISITE("Создать реквизит", false, false, Set.of(UserRole.ADMIN, UserRole.OPERATOR)),
     DELETE_PAYMENT_TYPE_REQUISITE("Удалить реквизит", false, false, Set.of(UserRole.ADMIN, UserRole.OPERATOR)),
-    DELETING_PAYMENT_TYPE_REQUISITE("delete_ptr", false, false, Set.of(UserRole.ADMIN, UserRole.OPERATOR)),
+    DELETING_PAYMENT_TYPE_REQUISITE("DELETING_PAYMENT_TYPE_REQUISITE", false, false, Set.of(UserRole.ADMIN, UserRole.OPERATOR)),
     TURN_PAYMENT_TYPES("Включение типов оплат", false, false, Set.of(UserRole.ADMIN, UserRole.OPERATOR)),
-    TURNING_PAYMENT_TYPES("turning_pt", false, false, Set.of(UserRole.ADMIN, UserRole.OPERATOR)),
+    TURNING_PAYMENT_TYPES("TURNING_PAYMENT_TYPES", false, false, Set.of(UserRole.ADMIN, UserRole.OPERATOR)),
     CHANGE_MIN_SUM("Мин.сумма", false, false, Set.of(UserRole.ADMIN, UserRole.OPERATOR)),
     TURN_DYNAMIC_REQUISITES("Динамические реквизиты", false, false, Set.of(UserRole.ADMIN, UserRole.OPERATOR)),
-    TURNING_DYNAMIC_REQUISITES("turning_dr", false, false, Set.of(UserRole.ADMIN, UserRole.OPERATOR)),
+    TURNING_DYNAMIC_REQUISITES("TURNING_DYNAMIC_REQUISITES", false, false, Set.of(UserRole.ADMIN, UserRole.OPERATOR)),
 
     /**
      * ANTISPAM
      */
-    SHOW_SPAM_BANNED_USER("show_sb_user", false, false, Set.of(UserRole.ADMIN, UserRole.OPERATOR)),
-    KEEP_SPAM_BAN("keep_sb", false, false, Set.of(UserRole.ADMIN, UserRole.OPERATOR)),
-    SPAM_UNBAN("spam_unban", false, false, Set.of(UserRole.ADMIN, UserRole.OPERATOR)),
+    SHOW_SPAM_BANNED_USER("Показать", false, false, Set.of(UserRole.ADMIN, UserRole.OPERATOR)),
+    KEEP_SPAM_BAN("Оставить в бане", false, false, Set.of(UserRole.ADMIN, UserRole.OPERATOR)),
+    SPAM_UNBAN("Разблокировать", false, false, Set.of(UserRole.ADMIN, UserRole.OPERATOR)),
     NEW_SPAM_BANS("Антиспам блоки", false, false, Set.of(UserRole.ADMIN, UserRole.OPERATOR)),
 
     /**
      * USERS STATES
      */
-    NONE_CALCULATOR("none_calc", false, false, Set.of(UserRole.USER, UserRole.OPERATOR, UserRole.ADMIN)),
-    INLINE_QUERY_CALCULATOR("inline_q_calc", false, false, Set.of(UserRole.USER, UserRole.OPERATOR, UserRole.ADMIN)),
-    INLINE_CALCULATOR("inline_calculator", false, false, Set.of(UserRole.USER, UserRole.OPERATOR, UserRole.ADMIN)),
+    NONE_CALCULATOR("NONE_CALCULATOR", false, false, Set.of(UserRole.USER, UserRole.OPERATOR, UserRole.ADMIN)),
+    INLINE_QUERY_CALCULATOR("INLINE_QUERY_CALCULATOR", false, false, Set.of(UserRole.USER, UserRole.OPERATOR, UserRole.ADMIN)),
+    INLINE_CALCULATOR("INLINE_CALCULATOR", false, false, Set.of(UserRole.USER, UserRole.OPERATOR, UserRole.ADMIN)),
 
     WEB_ADMIN_PANEL("Веб админ-панель", false, false, Set.of(UserRole.ADMIN, UserRole.OPERATOR)),
 
     /**
      * API DEALS
      */
-    CONFIRM_API_DEAL("confirm_api_deal", false, false, Set.of(UserRole.ADMIN, UserRole.OPERATOR)),
-    CANCEL_API_DEAL("cancel_api_deal", false, false, Set.of(UserRole.ADMIN, UserRole.OPERATOR)),
+    CONFIRM_API_DEAL("Подтвердить", false, false, Set.of(UserRole.ADMIN, UserRole.OPERATOR)),
+    CANCEL_API_DEAL("Отклонить", false, false, Set.of(UserRole.ADMIN, UserRole.OPERATOR)),
     NEW_API_DEALS("Новые API заявки", false, false, Set.of(UserRole.ADMIN, UserRole.OPERATOR)),
 
     /**
      * TURNING DELIVERY
      */
-    TURN_PROCESS_DELIVERY("turn_process_delivery", false, false, Set.of(UserRole.ADMIN)),
+    TURN_PROCESS_DELIVERY("TURN_PROCESS_DELIVERY", false, false, Set.of(UserRole.ADMIN)),
 
     /**
      * WEB

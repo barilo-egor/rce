@@ -100,7 +100,7 @@ public class CaptchaProcessor extends Processor {
                     notifyService.notifyMessage("Антиспам система заблокировала пользователя.",
                             keyboardBuildService.buildInline(List.of(
                                     InlineButton.builder()
-                                            .text("Показать")
+                                            .text(Command.SHOW_SPAM_BANNED_USER.getText())
                                             .data(callbackQueryService.buildCallbackData(
                                                     Command.SHOW_SPAM_BANNED_USER, spamBan.getPid().toString())
                                             )

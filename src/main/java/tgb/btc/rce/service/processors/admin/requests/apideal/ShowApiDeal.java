@@ -57,17 +57,17 @@ public class ShowApiDeal extends Processor {
         String dealInfo = dealSupportService.apiDealToString(pid);
         List<InlineButton> buttons = new ArrayList<>();
         buttons.add(InlineButton.builder()
-                .text("Подтвердить")
+                .text(Command.CONFIRM_API_DEAL.getText())
                 .data(callbackQueryService.buildCallbackData(Command.CONFIRM_API_DEAL, new Object[]{pid, false}))
                 .build());
         boolean hasDefaultGroupChat = groupChatService.hasApiDealRequests();
         if (hasDefaultGroupChat)
             buttons.add(InlineButton.builder()
-                    .text("Подтвердить с запросом")
+                    .text(Command.CONFIRM_API_DEAL.getText() + " запросом")
                     .data(callbackQueryService.buildCallbackData(Command.CONFIRM_API_DEAL, new Object[]{pid, true}))
                     .build());
         buttons.add(InlineButton.builder()
-                .text("Отклонить")
+                .text(Command.CANCEL_API_DEAL.getText())
                 .data(Command.CANCEL_API_DEAL.name() + CALLBACK_DATA_SPLITTER + pid)
                 .build());
         responseSender.sendMessage(chatId, dealInfo, keyboardBuildService.buildInline(buttons));

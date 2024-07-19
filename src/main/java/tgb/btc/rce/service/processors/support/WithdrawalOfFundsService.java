@@ -93,7 +93,7 @@ public class WithdrawalOfFundsService {
         WithdrawalRequest request = withdrawalRequestService.save(
                 buildFromUpdate(readUserService.findByChatId(updateService.getChatId(update)), update));
         notifyService.notifyMessage(messagePropertiesService.getMessage(PropertiesMessage.ADMIN_NOTIFY_WITHDRAWAL_NEW),
-                Command.SHOW_WITHDRAWAL_REQUEST.getText() + BotStringConstants.CALLBACK_DATA_SPLITTER +
+                Command.SHOW_WITHDRAWAL_REQUEST.name() + BotStringConstants.CALLBACK_DATA_SPLITTER +
                         request.getPid(), Set.of(UserRole.OPERATOR, UserRole.ADMIN));
         responseSender.sendMessage(chatId,
                 messagePropertiesService.getMessage(PropertiesMessage.USER_RESPONSE_WITHDRAWAL_REQUEST_CREATED));

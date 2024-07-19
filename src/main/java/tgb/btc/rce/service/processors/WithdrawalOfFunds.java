@@ -48,7 +48,7 @@ public class WithdrawalOfFunds extends Processor {
                     responseSender.sendMessage(chatId, "У вас уже есть активная заявка.",
                             keyboardBuildService.buildInline(List.of(
                                     InlineButton.builder()
-                                            .text("Удалить")
+                                            .text(Command.DELETE_WITHDRAWAL_REQUEST.getText())
                                             .data(Command.DELETE_WITHDRAWAL_REQUEST.name()
                                                     + BotStringConstants.CALLBACK_DATA_SPLITTER
                                                     + withdrawalRequestService.getPidByUserChatId(chatId))

@@ -161,25 +161,25 @@ public class DealSupportService {
     public ReplyKeyboard dealToStringButtons(Long pid) {
         List<InlineButton> buttons = new ArrayList<>();
         buttons.add(InlineButton.builder()
-                .text("Подтвердить")
+                .text(Command.CONFIRM_USER_DEAL.getText())
                 .data(callbackQueryService.buildCallbackData(Command.CONFIRM_USER_DEAL, new Object[]{pid, false}))
                 .build());
         boolean hasDefaultGroupChat = groupChatService.hasDealRequests();
         if (hasDefaultGroupChat)
             buttons.add(InlineButton.builder()
-                    .text("Подтвердить с запросом")
+                    .text(Command.CONFIRM_USER_DEAL.getText() + "с запросом")
                     .data(callbackQueryService.buildCallbackData(Command.CONFIRM_USER_DEAL, new Object[]{pid, true}))
                     .build());
         buttons.add(InlineButton.builder()
-                .text("Доп.верификация")
+                .text(Command.ADDITIONAL_VERIFICATION.getText())
                 .data(callbackQueryService.buildCallbackData(Command.ADDITIONAL_VERIFICATION, pid))
                 .build());
         buttons.add(InlineButton.builder()
-                .text("Удалить")
+                .text(Command.DELETE_DEAL.getText())
                 .data(callbackQueryService.buildCallbackData(Command.DELETE_USER_DEAL, pid))
                 .build());
         buttons.add(InlineButton.builder()
-                .text("Удалить и заблокировать")
+                .text(Command.DELETE_DEAL_AND_BLOCK_USER.getText())
                 .data(callbackQueryService.buildCallbackData(Command.DELETE_DEAL_AND_BLOCK_USER, pid))
                 .build());
         return keyboardBuildService.buildInline(buttons, 2);

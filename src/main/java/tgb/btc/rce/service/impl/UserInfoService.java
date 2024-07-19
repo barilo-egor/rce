@@ -123,13 +123,13 @@ public class UserInfoService implements IUserInfoService {
         sendUserInformation(messageChatId, spamBanService.getUserChatIdByPid(spamBanPid),
                             keyboardBuildService.buildInline(List.of(
                                     InlineButton.builder()
-                                            .text("Оставить в бане")
+                                            .text(Command.KEEP_SPAM_BAN.getText())
                                             .data(callbackQueryService.buildCallbackData(
                                                     Command.KEEP_SPAM_BAN, spamBanPid.toString()
                                             ))
                                             .build(),
                                     InlineButton.builder()
-                                            .text("Разблокировать")
+                                            .text(Command.SPAM_UNBAN.getText())
                                             .data(callbackQueryService.buildCallbackData(
                                                     Command.SPAM_UNBAN, spamBanPid.toString()
                                             ))
