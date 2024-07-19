@@ -7,9 +7,6 @@ import tgb.btc.library.interfaces.IModule;
 import tgb.btc.rce.enums.AntiSpamType;
 import tgb.btc.rce.enums.CalculatorType;
 import tgb.btc.rce.service.ICalculatorTypeService;
-import tgb.btc.rce.service.ICaptchaSender;
-import tgb.btc.rce.service.captcha.IAntiSpam;
-import tgb.btc.rce.service.captcha.ICaptchaService;
 import tgb.btc.rce.service.impl.CaptchaSender;
 import tgb.btc.rce.service.impl.calculator.InlineCalculatorService;
 import tgb.btc.rce.service.impl.calculator.InlineQueryCalculatorService;
@@ -19,7 +16,7 @@ import tgb.btc.rce.service.impl.captcha.EmojiCaptchaService;
 import tgb.btc.rce.service.impl.captcha.PictureCaptchaService;
 
 @Configuration
-public class CalculatorConfig {
+public class ModulesConfig {
 
     private IModule<CalculatorType> calculatorModule;
 
@@ -48,28 +45,52 @@ public class CalculatorConfig {
     }
 
     @Bean
-    public IAntiSpam antiSpam() {
+    public InlineCalculatorService inlineCalculatorService() {
+        if (calculatorModule.isCurrent(CalculatorType.INLINE))
+            return new InlineCalculatorService();
+        return null;
+    }
+
+    @Bean
+    public InlineQueryCalculatorService inlineQueryCalculatorService() {
+        if (calculatorModule.isCurrent(CalculatorType.INLINE_QUERY))
+            return new InlineQueryCalculatorService();
+        return null;
+    }
+
+    @Bean
+    public NoneCalculatorService noneCalculatorService() {
+        if (calculatorModule.isCurrent(CalculatorType.NONE))
+            return new NoneCalculatorService();
+        return null;
+    }
+
+    @Bean
+    public AntiSpam antiSpam() {
         if (antiSpamModule.isCurrent(AntiSpamType.NONE))
             return null;
         return new AntiSpam();
     }
 
     @Bean
-    public ICaptchaSender captchaSender() {
+    public CaptchaSender captchaSender() {
         if (antiSpamModule.isCurrent(AntiSpamType.NONE))
             return null;
         return new CaptchaSender();
     }
 
     @Bean
-    public ICaptchaService captchaService() {
-        switch (antiSpamModule.getCurrent()) {
-            case EMOJI:
-                return new EmojiCaptchaService();
-            case PICTURE:
-                return new PictureCaptchaService();
-            default:
-                return null;
-        }
+    public EmojiCaptchaService emojiCaptchaService() {
+        if (antiSpamModule.isCurrent(AntiSpamType.EMOJI))
+            return new EmojiCaptchaService();
+        return null;
     }
+
+    @Bean
+    public PictureCaptchaService pictureCaptchaService() {
+        if (antiSpamModule.isCurrent(AntiSpamType.PICTURE))
+            return new PictureCaptchaService();
+        return null;
+    }
+
 }
