@@ -5,6 +5,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.constants.enums.bot.UserRole;
 import tgb.btc.library.constants.enums.properties.PropertiesPath;
 import tgb.btc.library.interfaces.ICommand;
+import tgb.btc.rce.constants.BotStringConstants;
 
 import java.util.Arrays;
 import java.util.Objects;
@@ -33,7 +34,7 @@ public enum Command implements ICommand {
     CANCEL("Отмена", false, false, Set.of(UserRole.USER, UserRole.OPERATOR, UserRole.ADMIN)),
     SHARE_CONTACT("Поделиться контактом", false, false, Set.of(UserRole.USER, UserRole.OPERATOR, UserRole.ADMIN)),
     BOT_OFFED("bot_offed", true, false, Set.of(UserRole.USER, UserRole.OPERATOR, UserRole.ADMIN)),
-    INLINE_DELETE("inline_delete", true, false, Set.of(UserRole.USER, UserRole.OPERATOR, UserRole.ADMIN)),
+    INLINE_DELETE("❌ Закрыть", true, false, Set.of(UserRole.USER, UserRole.OPERATOR, UserRole.ADMIN)),
     CAPTCHA("captcha", false, false, Set.of(UserRole.USER, UserRole.OPERATOR, UserRole.ADMIN)),
 
     /**
@@ -153,6 +154,7 @@ public enum Command implements ICommand {
     CHOOSING_FIAT_CURRENCY("chs_fc", false, false, Set.of(UserRole.USER, UserRole.OPERATOR, UserRole.ADMIN)),
     USE_PROMO(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.getString("USE_PROMO"), false, false, Set.of(UserRole.USER, UserRole.OPERATOR, UserRole.ADMIN)),
     DONT_USE_PROMO(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.getString("DONT_USE_PROMO"), false, false, Set.of(UserRole.USER, UserRole.OPERATOR, UserRole.ADMIN)),
+    USE_SAVED_WALLET("use_saved_wallet", false, false, Set.of(UserRole.USER, UserRole.OPERATOR, UserRole.ADMIN)),
 
     /**
      * REQUESTS
@@ -273,11 +275,11 @@ public enum Command implements ICommand {
     public static Command fromUpdate(Update update) {
         switch (UpdateType.fromUpdate(update)) {
             case MESSAGE:
-                return findByText(update.getMessage().getText());
+                return findByTextOrName(update.getMessage().getText());
             case CALLBACK_QUERY:
-                return findByText(update.getCallbackQuery().getData());
+                return fromCallbackQuery(update.getCallbackQuery().getData());
             case INLINE_QUERY:
-                return findByText(update.getInlineQuery().getQuery());
+                return findByTextOrName(update.getInlineQuery().getQuery());
             case CHANNEL_POST:
                 return Command.CHANNEL_POST;
             default:
@@ -285,7 +287,18 @@ public enum Command implements ICommand {
         }
     }
 
-    public static Command findByText(String value) {
+    public static Command fromCallbackQuery(String value) {
+        if (value.contains(BotStringConstants.CALLBACK_DATA_SPLITTER)) {
+            value = value.split(BotStringConstants.CALLBACK_DATA_SPLITTER)[0];
+        }
+        try {
+            return Command.valueOf(value);
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
+    }
+
+    public static Command findByTextOrName(String value) {
         return Arrays.stream(Command.values())
                 .filter(command -> (Objects.nonNull(command.getText()) && value.startsWith(command.getText())) || value.startsWith(command.name()))
                 .findFirst()

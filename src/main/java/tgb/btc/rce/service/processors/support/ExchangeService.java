@@ -510,7 +510,7 @@ public class ExchangeService {
                 }
             } else {
                 if (!update.hasCallbackQuery()
-                        || !update.getCallbackQuery().getData().equals(BotStringConstants.USE_SAVED_WALLET))
+                        || !update.getCallbackQuery().getData().equals(Command.USE_SAVED_WALLET.name()))
                     return false;
                 wallet = readDealService.getWalletFromLastPassedByChatIdAndDealTypeAndCryptoCurrency(
                         chatId, dealType, dealPropertyService.getCryptoCurrencyByPid(currentDealPid));

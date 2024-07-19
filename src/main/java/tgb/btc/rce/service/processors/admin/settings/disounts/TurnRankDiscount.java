@@ -28,7 +28,7 @@ public class TurnRankDiscount extends Processor {
         boolean isOn = variablePropertiesReader.getBoolean(VariableType.DEAL_RANK_DISCOUNT_ENABLE);
         String message = isOn ? "Ранговая скидка включена для всех. Выключить?" : "Ранговая скидка выключена для всех. Включить?";
         String text = isOn ? "Выключить" : "Включить";
-        String data = Command.TURNING_RANK_DISCOUNT.getText() + BotStringConstants.CALLBACK_DATA_SPLITTER + !isOn;
+        String data = Command.TURNING_RANK_DISCOUNT.name() + BotStringConstants.CALLBACK_DATA_SPLITTER + !isOn;
         responseSender.sendMessage(chatId, message, keyboardBuildService.buildInline(List.of(InlineButton.builder()
                                                                                              .text(text)
                                                                                              .data(data)

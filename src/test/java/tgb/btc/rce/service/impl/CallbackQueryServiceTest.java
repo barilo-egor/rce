@@ -43,7 +43,7 @@ class CallbackQueryServiceTest {
     @Test
     void buildCallbackDataWithCommand() {
         String[] variables = new String[] {"123", "qwe", "1qw"};
-        assertEquals(Command.START.getText()
+        assertEquals(Command.START.name()
                         .concat(BotStringConstants.CALLBACK_DATA_SPLITTER)
                         .concat(String.join(BotStringConstants.CALLBACK_DATA_SPLITTER, variables)),
                 callbackQueryService.buildCallbackData(Command.START, variables));
@@ -52,7 +52,7 @@ class CallbackQueryServiceTest {
     @Test
     void buildCallbackDataWithCommandAndVariablesDifferentTypes() {
         Object[] variables = new Object[] {"123", 123, 1245L, 12.25};
-        assertEquals(Command.START.getText()
+        assertEquals(Command.START.name()
                         .concat(BotStringConstants.CALLBACK_DATA_SPLITTER)
                         .concat(Arrays.stream(variables).map(Object::toString)
                                 .collect(Collectors.joining(BotStringConstants.CALLBACK_DATA_SPLITTER))),

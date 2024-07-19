@@ -177,7 +177,7 @@ public class KeyboardService implements IKeyboardService {
         return keyboardBuildService.buildInline(List.of(
                 InlineButton.builder()
                         .text(Command.SHOW_DEAL.getText())
-                        .data(Command.SHOW_DEAL.getText() + BotStringConstants.CALLBACK_DATA_SPLITTER
+                        .data(Command.SHOW_DEAL.name() + BotStringConstants.CALLBACK_DATA_SPLITTER
                                 + dealPid)
                         .build()
         ));
@@ -188,7 +188,7 @@ public class KeyboardService implements IKeyboardService {
         return keyboardBuildService.buildInline(List.of(
                 InlineButton.builder()
                         .text("Показать")
-                        .data(Command.SHOW_API_DEAL.getText() + BotStringConstants.CALLBACK_DATA_SPLITTER
+                        .data(Command.SHOW_API_DEAL.name() + BotStringConstants.CALLBACK_DATA_SPLITTER
                                 + pid)
                         .build()
         ));
@@ -388,7 +388,7 @@ public class KeyboardService implements IKeyboardService {
                         .build(),
                 InlineButton.builder()
                         .text(Command.CANCEL_DEAL.getText())
-                        .data(Command.CANCEL_DEAL.getText())
+                        .data(Command.CANCEL_DEAL.name())
                         .inlineType(InlineType.CALLBACK_DATA)
                         .build()
         ));

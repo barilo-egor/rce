@@ -38,7 +38,7 @@ public class ShowWithdrawalRequest extends Processor {
                         withdrawalRequestService.findById(callbackQueryService.getSplitLongData(update, 1))),
                 keyboardBuildService.buildInline(List.of(InlineButton.builder()
                         .text("Скрыть")
-                        .data(Command.HIDE_WITHDRAWAL.getText() + BotStringConstants.CALLBACK_DATA_SPLITTER
+                        .data(Command.HIDE_WITHDRAWAL.name() + BotStringConstants.CALLBACK_DATA_SPLITTER
                                 + update.getCallbackQuery().getData().split(BotStringConstants.CALLBACK_DATA_SPLITTER)[1])
                         .inlineType(InlineType.CALLBACK_DATA)
                         .build())));

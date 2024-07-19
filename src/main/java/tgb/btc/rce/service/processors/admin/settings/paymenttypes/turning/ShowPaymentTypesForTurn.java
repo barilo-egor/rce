@@ -78,7 +78,7 @@ public class ShowPaymentTypesForTurn extends Processor {
             boolean isOn = BooleanUtils.isTrue(paymentType.getOn());
             String text = paymentType.getName() + " - " +
                     (isOn ? "выключить" : "включить");
-            String data = Command.TURNING_PAYMENT_TYPES.getText()
+            String data = Command.TURNING_PAYMENT_TYPES.name()
                     + BotStringConstants.CALLBACK_DATA_SPLITTER + paymentType.getPid()
                     + BotStringConstants.CALLBACK_DATA_SPLITTER + (isOn ? Boolean.FALSE.toString() : Boolean.TRUE.toString());
             buttons.add(InlineButton.builder()
@@ -87,8 +87,8 @@ public class ShowPaymentTypesForTurn extends Processor {
                     .build());
         }
         buttons.add(InlineButton.builder()
-                .text("❌ Закрыть")
-                .data(Command.INLINE_DELETE.getText())
+                .text(Command.INLINE_DELETE.getText())
+                .data(Command.INLINE_DELETE.name())
                 .build());
         responseSender.sendMessage(chatId, "Выберите тип оплаты для включения/выключения.",
                 keyboardBuildService.buildInline(buttons));

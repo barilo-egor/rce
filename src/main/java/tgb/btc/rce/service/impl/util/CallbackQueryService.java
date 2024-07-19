@@ -50,7 +50,7 @@ public class CallbackQueryService implements ICallbackQueryService {
                 .map(Object::toString).collect(Collectors.toList())
                 .toArray(new String[]{});
         checkStringVariables(variablesToString);
-        return command.getText().concat(BotStringConstants.CALLBACK_DATA_SPLITTER)
+        return command.name().concat(BotStringConstants.CALLBACK_DATA_SPLITTER)
                 .concat(String.join(BotStringConstants.CALLBACK_DATA_SPLITTER, variablesToString));
     }
 

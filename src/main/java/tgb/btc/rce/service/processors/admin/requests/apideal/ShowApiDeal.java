@@ -68,7 +68,7 @@ public class ShowApiDeal extends Processor {
                     .build());
         buttons.add(InlineButton.builder()
                 .text("Отклонить")
-                .data(Command.CANCEL_API_DEAL.getText() + CALLBACK_DATA_SPLITTER + pid)
+                .data(Command.CANCEL_API_DEAL.name() + CALLBACK_DATA_SPLITTER + pid)
                 .build());
         responseSender.sendMessage(chatId, dealInfo, keyboardBuildService.buildInline(buttons));
     }
