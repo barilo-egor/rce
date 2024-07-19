@@ -1,7 +1,6 @@
 package tgb.btc.rce.service.impl.menu;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import tgb.btc.library.constants.enums.DiceType;
 import tgb.btc.library.constants.enums.RPSType;
@@ -14,8 +13,9 @@ import tgb.btc.rce.service.IMenu;
 import tgb.btc.rce.service.keyboard.IReplyButtonService;
 import tgb.btc.rce.vo.ReplyButton;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class DrawsMenu implements IMenu {
@@ -54,20 +54,19 @@ public class DrawsMenu implements IMenu {
     }
 
     @Override
-    @Cacheable("drawsMenuCache")
     public List<ReplyButton> build(UserRole userRole) {
-        List<Command> commands = new ArrayList<>(Menu.DRAWS.getCommands());
+        Set<Command> resultCommands = new HashSet<>(getMenu().getCommands());
         boolean isAdmin = userRole.equals(UserRole.ADMIN);
         SlotReelType currentSlotReelType = slotReelModule.getCurrent();
         if (SlotReelType.NONE.equals(currentSlotReelType) || (SlotReelType.STANDARD_ADMIN.equals(currentSlotReelType) && !isAdmin))
-            commands.remove(Command.SLOT_REEL);
+            resultCommands.remove(Command.SLOT_REEL);
         DiceType currentDiceType = diceModule.getCurrent();
         if (DiceType.NONE.equals(currentDiceType) || (DiceType.STANDARD_ADMIN.equals(currentDiceType) && !isAdmin))
-            commands.remove(Command.DICE);
+            resultCommands.remove(Command.DICE);
         RPSType currentRPSType = rpsModule.getCurrent();
         if (RPSType.NONE.equals(currentRPSType) || (RPSType.STANDARD_ADMIN.equals(currentRPSType) && !isAdmin))
-            commands.remove(Command.RPS);
-        return replyButtonService.fromCommands(commands);
+            resultCommands.remove(Command.RPS);
+        return replyButtonService.fromCommands(resultCommands);
     }
 
     @Override

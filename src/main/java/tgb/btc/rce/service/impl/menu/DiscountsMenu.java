@@ -16,39 +16,32 @@ import java.util.List;
 import java.util.Set;
 
 @Service
-public class MainMenu implements IMenu {
-
-    private IReplyButtonService replyButtonService;
+public class DiscountsMenu implements IMenu {
 
     private IModule<ReferralType> referralModule;
 
-    @Autowired
-    public void setReferralModule(IModule<ReferralType> referralModule) {
-        this.referralModule = referralModule;
-    }
+    private IReplyButtonService replyButtonService;
 
     @Autowired
     public void setReplyButtonService(IReplyButtonService replyButtonService) {
         this.replyButtonService = replyButtonService;
     }
 
+    @Autowired
+    public void setReferralModule(IModule<ReferralType> referralModule) {
+        this.referralModule = referralModule;
+    }
+
     @Override
     public Menu getMenu() {
-        return Menu.MAIN;
+        return Menu.DISCOUNTS;
     }
 
     @Override
     public List<ReplyButton> build(UserRole userRole) {
         Set<Command> resultCommands = new HashSet<>(getMenu().getCommands());
         if (!referralModule.isCurrent(ReferralType.STANDARD)) {
-            resultCommands.remove(Command.REFERRAL);
-        }
-        if (!UserRole.ADMIN.equals(userRole)) {
-            resultCommands.remove(Command.ADMIN_PANEL);
-            resultCommands.remove(Command.WEB_ADMIN_PANEL);
-        }
-        if (!UserRole.OPERATOR.equals(userRole)) {
-            resultCommands.remove(Command.OPERATOR_PANEL);
+            resultCommands.remove(Command.REFERRAL_PERCENT);
         }
         return replyButtonService.fromCommands(resultCommands);
     }

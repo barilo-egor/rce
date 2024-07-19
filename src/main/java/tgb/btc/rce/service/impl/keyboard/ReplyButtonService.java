@@ -9,6 +9,7 @@ import tgb.btc.rce.service.keyboard.IReplyButtonService;
 import tgb.btc.rce.service.util.ICommandService;
 import tgb.btc.rce.vo.ReplyButton;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,7 +23,7 @@ public class ReplyButtonService implements IReplyButtonService {
         this.commandService = commandService;
     }
 
-    public List<ReplyButton> fromCommands(List<Command> commands) {
+    public List<ReplyButton> fromCommands(Collection<Command> commands) {
         if (CollectionUtils.isEmpty(commands))
             throw new BaseException("Список команд не может быть пуст.");
         return commands.stream()
