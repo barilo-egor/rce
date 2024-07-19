@@ -13,9 +13,8 @@ import tgb.btc.rce.service.IMenu;
 import tgb.btc.rce.service.keyboard.IReplyButtonService;
 import tgb.btc.rce.vo.ReplyButton;
 
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 @Service
 public class DrawsMenu implements IMenu {
@@ -55,7 +54,7 @@ public class DrawsMenu implements IMenu {
 
     @Override
     public List<ReplyButton> build(UserRole userRole) {
-        Set<Command> resultCommands = new HashSet<>(getMenu().getCommands());
+        List<Command> resultCommands = new ArrayList<>(getMenu().getCommands());
         boolean isAdmin = userRole.equals(UserRole.ADMIN);
         SlotReelType currentSlotReelType = slotReelModule.getCurrent();
         if (SlotReelType.NONE.equals(currentSlotReelType) || (SlotReelType.STANDARD_ADMIN.equals(currentSlotReelType) && !isAdmin))

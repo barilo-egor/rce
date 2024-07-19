@@ -10,9 +10,8 @@ import tgb.btc.rce.service.keyboard.IReplyButtonService;
 import tgb.btc.rce.service.util.IUpdateDispatcher;
 import tgb.btc.rce.vo.ReplyButton;
 
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 @Service
 public class BotSettingsMenu implements IMenu {
@@ -38,7 +37,7 @@ public class BotSettingsMenu implements IMenu {
 
     @Override
     public List<ReplyButton> build(UserRole userRole) {
-        Set<Command> resultCommands = new HashSet<>(getMenu().getCommands());
+        List<Command> resultCommands = new ArrayList<>(getMenu().getCommands());
         resultCommands.removeIf(command ->
                 (updateDispatcher.isOn() && Command.ON_BOT.equals(command)) || (!updateDispatcher.isOn() && Command.OFF_BOT.equals(command)));
         return replyButtonService.fromCommands(resultCommands);
