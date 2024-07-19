@@ -12,7 +12,6 @@ import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.library.interfaces.service.bean.common.bot.IUserCommonService;
 import tgb.btc.library.service.process.BannedUserCache;
 import tgb.btc.rce.enums.Command;
-import tgb.btc.rce.enums.SimpleCommand;
 import tgb.btc.rce.service.IUpdateService;
 import tgb.btc.rce.service.captcha.IAntiSpam;
 import tgb.btc.rce.service.process.IUserProcessService;
@@ -101,9 +100,7 @@ public class UpdateDispatcher implements IUpdateDispatcher {
     }
 
     public void runProcessor(Command command, Long chatId, Update update) {
-        if (!command.isSimple())
-            commandProcessorLoader.getByCommand(command, readUserService.getStepByChatId(chatId)).process(update);
-        else SimpleCommand.run(command, update);
+        commandProcessorLoader.getByCommand(command, readUserService.getStepByChatId(chatId)).process(update);
     }
 
     private Command getCommand(Update update, Long chatId) {
