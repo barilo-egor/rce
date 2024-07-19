@@ -1,10 +1,7 @@
 package tgb.btc.rce.service.impl.captcha;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Conditional;
-import org.springframework.stereotype.Service;
 import tgb.btc.library.exception.BaseException;
-import tgb.btc.rce.conditional.EmojiCaptchaCondition;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.captcha.IAntiSpam;
 import tgb.btc.rce.service.captcha.ICaptchaService;
@@ -16,8 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-@Conditional(EmojiCaptchaCondition.class)
-@Service
 public class EmojiCaptchaService implements ICaptchaService {
 
     private static final Integer EMOJI_COUNT = 4;

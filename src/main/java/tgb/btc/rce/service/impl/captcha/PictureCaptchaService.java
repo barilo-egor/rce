@@ -2,12 +2,9 @@ package tgb.btc.rce.service.impl.captcha;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Conditional;
-import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
 import tgb.btc.library.constants.strings.FilePaths;
 import tgb.btc.library.exception.BaseException;
-import tgb.btc.rce.conditional.PictureCaptchaCondition;
 import tgb.btc.rce.exception.PicturesNotFoundException;
 import tgb.btc.rce.service.captcha.IAntiSpam;
 import tgb.btc.rce.service.captcha.ICaptchaService;
@@ -15,11 +12,12 @@ import tgb.btc.rce.service.impl.ResponseSender;
 import tgb.btc.rce.vo.Captcha;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Random;
 
 @Slf4j
-@Service
-@Conditional(PictureCaptchaCondition.class)
 public class PictureCaptchaService implements ICaptchaService {
 
     private ResponseSender responseSender;

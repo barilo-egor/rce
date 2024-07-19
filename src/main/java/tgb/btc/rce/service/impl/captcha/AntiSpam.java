@@ -46,8 +46,7 @@ public class AntiSpam implements IAntiSpam {
     }
 
     public boolean isVerifiedUser(Long chatId) {
-        return false;
-//        return verifiedUserCache.check(chatId);
+        return verifiedUserCache.check(chatId);
     }
 
     public boolean isSpamUser(Long chatId) {
