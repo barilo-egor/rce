@@ -3,6 +3,7 @@ package tgb.btc.rce.service.processors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.bean.bot.SpamBan;
 import tgb.btc.library.constants.enums.bot.UserRole;
@@ -23,6 +24,7 @@ import java.util.Set;
 
 @CommandProcessor(command = Command.CAPTCHA)
 @Slf4j
+@ConditionalOnExpression("'${anti.spam}' != 'NONE'")
 public class CaptchaProcessor extends Processor {
 
     private ICaptchaSender captchaSender;

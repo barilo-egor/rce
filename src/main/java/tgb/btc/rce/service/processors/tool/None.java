@@ -1,4 +1,4 @@
-package tgb.btc.rce.service.processors;
+package tgb.btc.rce.service.processors.tool;
 
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.annotation.CommandProcessor;

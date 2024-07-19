@@ -1,4 +1,4 @@
-package tgb.btc.rce.service.processors;
+package tgb.btc.rce.service.processors.deal;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;

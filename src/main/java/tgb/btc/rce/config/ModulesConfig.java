@@ -1,12 +1,13 @@
 package tgb.btc.rce.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import tgb.btc.library.interfaces.IModule;
 import tgb.btc.rce.enums.AntiSpamType;
 import tgb.btc.rce.enums.CalculatorType;
-import tgb.btc.rce.service.ICalculatorTypeService;
 import tgb.btc.rce.service.impl.CaptchaSender;
 import tgb.btc.rce.service.impl.calculator.InlineCalculatorService;
 import tgb.btc.rce.service.impl.calculator.InlineQueryCalculatorService;
@@ -33,39 +34,25 @@ public class ModulesConfig {
     }
 
     @Bean
-    public ICalculatorTypeService calculatorTypeService() {
-        switch (calculatorModule.getCurrent()) {
-            case INLINE:
-                return new InlineCalculatorService();
-            case INLINE_QUERY:
-                return new InlineQueryCalculatorService();
-            default:
-                return new NoneCalculatorService();
-        }
-    }
-
-    @Bean
-    public InlineCalculatorService inlineCalculatorService() {
-        if (calculatorModule.isCurrent(CalculatorType.INLINE))
-            return new InlineCalculatorService();
-        return null;
-    }
-
-    @Bean
+    @ConditionalOnExpression("'${calculator.type}' == 'INLINE_QUERY'")
     public InlineQueryCalculatorService inlineQueryCalculatorService() {
-        if (calculatorModule.isCurrent(CalculatorType.INLINE_QUERY))
-            return new InlineQueryCalculatorService();
-        return null;
+        return new InlineQueryCalculatorService();
     }
 
     @Bean
+    @ConditionalOnExpression("'${calculator.type}' == 'NONE'")
     public NoneCalculatorService noneCalculatorService() {
-        if (calculatorModule.isCurrent(CalculatorType.NONE))
-            return new NoneCalculatorService();
-        return null;
+        return new NoneCalculatorService();
     }
 
     @Bean
+    @ConditionalOnExpression("'${calculator.type}' == 'INLINE'")
+    public InlineCalculatorService inlineCalculatorService() {
+        return new InlineCalculatorService();
+    }
+
+    @Bean
+    @ConditionalOnExpression("'${anti.spam}' != 'NONE'")
     public AntiSpam antiSpam() {
         if (antiSpamModule.isCurrent(AntiSpamType.NONE))
             return null;
@@ -73,6 +60,7 @@ public class ModulesConfig {
     }
 
     @Bean
+    @ConditionalOnExpression("'${anti.spam}' != 'NONE'")
     public CaptchaSender captchaSender() {
         if (antiSpamModule.isCurrent(AntiSpamType.NONE))
             return null;
@@ -80,6 +68,7 @@ public class ModulesConfig {
     }
 
     @Bean
+    @ConditionalOnProperty(value = "anti.spam", havingValue = "EMOJI")
     public EmojiCaptchaService emojiCaptchaService() {
         if (antiSpamModule.isCurrent(AntiSpamType.EMOJI))
             return new EmojiCaptchaService();
@@ -87,6 +76,7 @@ public class ModulesConfig {
     }
 
     @Bean
+    @ConditionalOnProperty(value = "anti.spam", havingValue = "PICTURE")
     public PictureCaptchaService pictureCaptchaService() {
         if (antiSpamModule.isCurrent(AntiSpamType.PICTURE))
             return new PictureCaptchaService();
