@@ -26,7 +26,7 @@ public enum Command implements ICommand {
     /**
      * UTIL
      */
-    BACK(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.getString("BACK"), true, false, UserRole.USER_ACCESS),
+    BACK(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.name(), true, false, UserRole.USER_ACCESS),
     ADMIN_BACK("Назад", false, false, UserRole.OPERATOR_ACCESS),
     CANCEL("Отмена", false, false, UserRole.USER_ACCESS),
     SHARE_CONTACT("Поделиться контактом", false, false, UserRole.USER_ACCESS),
@@ -46,30 +46,30 @@ public enum Command implements ICommand {
     /**
      * MAIN
      */
-    BUY_BITCOIN(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.getString("BUY_BITCOIN"), false, false, UserRole.USER_ACCESS),
-    SELL_BITCOIN(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.getString("SELL_BITCOIN"), false, false, UserRole.USER_ACCESS),
-    CABINET(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.getString("CABINET"), true, false, UserRole.USER_ACCESS),
-    CONTACTS(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.getString("CONTACTS"), true, false, UserRole.USER_ACCESS),
-    DRAWS(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.getString("DRAWS"), true, false, UserRole.USER_ACCESS),
-    REFERRAL(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.getString("REFERRAL"), false, false, UserRole.USER_ACCESS),
+    BUY_BITCOIN(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.name(), false, false, UserRole.USER_ACCESS),
+    SELL_BITCOIN(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.name(), false, false, UserRole.USER_ACCESS),
+    CABINET(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.name(), true, false, UserRole.USER_ACCESS),
+    CONTACTS(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.name(), true, false, UserRole.USER_ACCESS),
+    DRAWS(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.name(), true, false, UserRole.USER_ACCESS),
+    REFERRAL(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.name(), false, false, UserRole.USER_ACCESS),
     ADMIN_PANEL("Админ панель", true, false, UserRole.ADMIN_ACCESS),
     OPERATOR_PANEL("Панель оператора", true, false, UserRole.OPERATOR_ACCESS),
 
     /**
      * DRAWS
      */
-    LOTTERY(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.getString("LOTTERY"), false, false, UserRole.USER_ACCESS),
-    ROULETTE(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.getString("ROULETTE"), true, false, UserRole.USER_ACCESS),
-    SLOT_REEL(PropertiesPath.SLOT_REEL_PROPERTIES.getString("SLOT_REEL"), false, false, UserRole.USER_ACCESS),
-    DICE(PropertiesPath.DICE_PROPERTIES.getString("DICE"), false, false, UserRole.USER_ACCESS),
-    RPS(PropertiesPath.RPS_PROPERTIES.getString("RPS"), false, false, UserRole.USER_ACCESS),
+    LOTTERY(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.name(), false, false, UserRole.USER_ACCESS),
+    ROULETTE(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.name(), true, false, UserRole.USER_ACCESS),
+    SLOT_REEL(PropertiesPath.SLOT_REEL_PROPERTIES.name(), false, false, UserRole.USER_ACCESS),
+    DICE(PropertiesPath.DICE_PROPERTIES.name(), false, false, UserRole.USER_ACCESS),
+    RPS(PropertiesPath.RPS_PROPERTIES.name(), false, false, UserRole.USER_ACCESS),
 
     /**
      * REFERRAL
      */
     WITHDRAWAL_OF_FUNDS("Вывод средств", false, false, UserRole.USER_ACCESS),
     SHOW_WITHDRAWAL_REQUEST("SHOW_WITHDRAWAL_REQUEST", false, false, UserRole.USER_ACCESS),
-    SEND_LINK(PropertiesPath.BOT_PROPERTIES.getString("SEND_LINK"), false, false, UserRole.USER_ACCESS),
+    SEND_LINK(PropertiesPath.BOT_PROPERTIES.name(), false, false, UserRole.USER_ACCESS),
     HIDE_WITHDRAWAL("Скрыть", false, false, UserRole.ADMIN_ACCESS),
     CHANGE_REFERRAL_BALANCE("Изменить", false, false, UserRole.ADMIN_ACCESS),
     DELETE_WITHDRAWAL_REQUEST("Удалить", false, false, UserRole.USER_ACCESS),
@@ -137,7 +137,7 @@ public enum Command implements ICommand {
      * DEAL
      */
     DEAL("DEAL", false, false, UserRole.USER_ACCESS),
-    PAID(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.getString("PAID"), false, false, UserRole.USER_ACCESS),
+    PAID(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.name(), false, false, UserRole.USER_ACCESS),
     CANCEL_DEAL("Отменить заявку", false, false, UserRole.USER_ACCESS),
     DELETE_DEAL("Удалить", false, false, UserRole.USER_ACCESS),
     SHOW_DEAL("Показать", false, false, UserRole.OPERATOR_ACCESS),
@@ -149,8 +149,8 @@ public enum Command implements ICommand {
     USER_ADDITIONAL_VERIFICATION("USER_ADDITIONAL_VERIFICATION", false, false, UserRole.USER_ACCESS),
     SHARE_REVIEW("Оставить", false, false, UserRole.USER_ACCESS),
     CHOOSING_FIAT_CURRENCY("CHOOSING_FIAT_CURRENCY", false, false, UserRole.USER_ACCESS),
-    USE_PROMO(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.getString("USE_PROMO"), false, false, UserRole.USER_ACCESS),
-    DONT_USE_PROMO(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.getString("DONT_USE_PROMO"), false, false, UserRole.USER_ACCESS),
+    USE_PROMO(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.name(), false, false, UserRole.USER_ACCESS),
+    DONT_USE_PROMO(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.name(), false, false, UserRole.USER_ACCESS),
     USE_SAVED_WALLET("USE_SAVED_WALLET", false, false, UserRole.USER_ACCESS),
 
     /**
