@@ -3,7 +3,6 @@ package tgb.btc.rce.service.processors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Conditional;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.bean.bot.SpamBan;
 import tgb.btc.library.constants.enums.bot.UserRole;
@@ -11,7 +10,6 @@ import tgb.btc.library.exception.BaseException;
 import tgb.btc.library.interfaces.service.bean.bot.ISpamBanService;
 import tgb.btc.library.service.process.BanningUserService;
 import tgb.btc.rce.annotation.CommandProcessor;
-import tgb.btc.rce.conditional.AntispamCondition;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.ICaptchaSender;
 import tgb.btc.rce.service.INotifyService;
@@ -24,7 +22,6 @@ import java.util.List;
 import java.util.Set;
 
 @CommandProcessor(command = Command.CAPTCHA)
-@Conditional(AntispamCondition.class)
 @Slf4j
 public class CaptchaProcessor extends Processor {
 

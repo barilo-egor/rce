@@ -2,13 +2,10 @@ package tgb.btc.rce.service.impl.captcha;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Service;
 import tgb.btc.library.constants.enums.properties.PropertiesPath;
 import tgb.btc.library.service.process.VerifiedUserCache;
-import tgb.btc.rce.conditional.AntispamCondition;
 import tgb.btc.rce.service.captcha.IAntiSpam;
 
 import java.util.ArrayList;
@@ -17,8 +14,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
-@Service
-@Conditional(AntispamCondition.class)
 @Slf4j
 public class AntiSpam implements IAntiSpam {
 
@@ -51,7 +46,8 @@ public class AntiSpam implements IAntiSpam {
     }
 
     public boolean isVerifiedUser(Long chatId) {
-        return verifiedUserCache.check(chatId);
+        return false;
+//        return verifiedUserCache.check(chatId);
     }
 
     public boolean isSpamUser(Long chatId) {
