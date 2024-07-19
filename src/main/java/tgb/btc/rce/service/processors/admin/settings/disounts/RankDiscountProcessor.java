@@ -31,12 +31,12 @@ public class RankDiscountProcessor extends Processor {
                 responseSender.sendMessage(chatId, "Введите chat id пользователя для включения/выключения реферальной скидки",
                         keyboardBuildService.buildReply(List.of(
                                 ReplyButton.builder()
-                                        .text(Command.CANCEL.getText())
+                                        .text(commandService.getText(Command.CANCEL))
                                         .build())));
                 modifyUserService.nextStep(chatId, Command.RANK_DISCOUNT.name());
                 break;
             case 1:
-                if (updateService.hasMessageText(update) && Command.CANCEL.getText().equals(updateService.getMessageText(update))) {
+                if (updateService.hasMessageText(update) && commandService.getText(Command.CANCEL).equals(updateService.getMessageText(update))) {
                     processToAdminMainPanel(chatId);
                     return;
                 }

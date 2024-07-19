@@ -17,7 +17,7 @@ public class Help extends Processor {
         text.append("<b>Нажмите на команду для копирования в буфер обмена.</b>\n\n");
         for (Command command : Command.HIDDEN_COMMANDS) {
             if (command.hasAccess(readUserService.getUserRoleByChatId(chatId))) {
-                text.append("<code>").append(command.getText()).append("</code>").append(HelpCommand.getDescription(command)).append("\n");
+                text.append("<code>").append(commandService.getText(command)).append("</code>").append(HelpCommand.getDescription(command)).append("\n");
             }
         }
         responseSender.sendMessage(chatId, text.toString(), "html");

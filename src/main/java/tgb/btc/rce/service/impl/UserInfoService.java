@@ -16,6 +16,7 @@ import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.IUserInfoService;
 import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
 import tgb.btc.rce.service.util.ICallbackQueryService;
+import tgb.btc.rce.service.util.ICommandService;
 import tgb.btc.rce.service.util.IMessagePropertiesService;
 import tgb.btc.rce.vo.InlineButton;
 
@@ -40,6 +41,13 @@ public class UserInfoService implements IUserInfoService {
     private ICallbackQueryService callbackQueryService;
 
     private IMessagePropertiesService messagePropertiesService;
+
+    private ICommandService commandService;
+
+    @Autowired
+    public void setCommandService(ICommandService commandService) {
+        this.commandService = commandService;
+    }
 
     @Autowired
     public void setMessagePropertiesService(IMessagePropertiesService messagePropertiesService) {
@@ -123,13 +131,13 @@ public class UserInfoService implements IUserInfoService {
         sendUserInformation(messageChatId, spamBanService.getUserChatIdByPid(spamBanPid),
                             keyboardBuildService.buildInline(List.of(
                                     InlineButton.builder()
-                                            .text(Command.KEEP_SPAM_BAN.getText())
+                                            .text(commandService.getText(Command.KEEP_SPAM_BAN))
                                             .data(callbackQueryService.buildCallbackData(
                                                     Command.KEEP_SPAM_BAN, spamBanPid.toString()
                                             ))
                                             .build(),
                                     InlineButton.builder()
-                                            .text(Command.SPAM_UNBAN.getText())
+                                            .text(commandService.getText(Command.SPAM_UNBAN))
                                             .data(callbackQueryService.buildCallbackData(
                                                     Command.SPAM_UNBAN, spamBanPid.toString()
                                             ))

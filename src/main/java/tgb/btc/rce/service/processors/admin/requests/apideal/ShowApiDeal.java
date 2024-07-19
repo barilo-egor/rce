@@ -54,20 +54,21 @@ public class ShowApiDeal extends Processor {
             responseSender.sendMessage(chatId, "Заяка уже обработана, либо отменена.");
             return;
         }
+        // TODO отрефакторить, вынести общую часть с показом одной сделки NewApiDeals
         String dealInfo = dealSupportService.apiDealToString(pid);
         List<InlineButton> buttons = new ArrayList<>();
         buttons.add(InlineButton.builder()
-                .text(Command.CONFIRM_API_DEAL.getText())
+                .text(commandService.getText(Command.CONFIRM_API_DEAL))
                 .data(callbackQueryService.buildCallbackData(Command.CONFIRM_API_DEAL, new Object[]{pid, false}))
                 .build());
         boolean hasDefaultGroupChat = groupChatService.hasApiDealRequests();
         if (hasDefaultGroupChat)
             buttons.add(InlineButton.builder()
-                    .text(Command.CONFIRM_API_DEAL.getText() + " запросом")
+                    .text(commandService.getText(Command.CONFIRM_API_DEAL) + " запросом")
                     .data(callbackQueryService.buildCallbackData(Command.CONFIRM_API_DEAL, new Object[]{pid, true}))
                     .build());
         buttons.add(InlineButton.builder()
-                .text(Command.CANCEL_API_DEAL.getText())
+                .text(commandService.getText(Command.CANCEL_API_DEAL))
                 .data(Command.CANCEL_API_DEAL.name() + CALLBACK_DATA_SPLITTER + pid)
                 .build());
         responseSender.sendMessage(chatId, dealInfo, keyboardBuildService.buildInline(buttons));

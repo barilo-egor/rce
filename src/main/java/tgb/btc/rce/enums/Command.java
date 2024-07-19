@@ -1,14 +1,11 @@
 package tgb.btc.rce.enums;
 
 import lombok.extern.slf4j.Slf4j;
-import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.constants.enums.bot.UserRole;
 import tgb.btc.library.constants.enums.properties.PropertiesPath;
 import tgb.btc.library.interfaces.ICommand;
-import tgb.btc.rce.constants.BotStringConstants;
 
 import java.util.Arrays;
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -65,14 +62,14 @@ public enum Command implements ICommand {
     ROULETTE(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.getString("ROULETTE"), true, false, UserRole.USER_ACCESS),
     SLOT_REEL(PropertiesPath.SLOT_REEL_PROPERTIES.getString("SLOT_REEL"), false, false, UserRole.USER_ACCESS),
     DICE(PropertiesPath.DICE_PROPERTIES.getString("DICE"), false, false, UserRole.USER_ACCESS),
-    RPS(PropertiesPath.RPS_PROPERTIES.getString("button.text"), false, false, UserRole.USER_ACCESS),
+    RPS(PropertiesPath.RPS_PROPERTIES.getString("RPS"), false, false, UserRole.USER_ACCESS),
 
     /**
      * REFERRAL
      */
     WITHDRAWAL_OF_FUNDS("Вывод средств", false, false, UserRole.USER_ACCESS),
     SHOW_WITHDRAWAL_REQUEST("SHOW_WITHDRAWAL_REQUEST", false, false, UserRole.USER_ACCESS),
-    SEND_LINK(PropertiesPath.BOT_PROPERTIES.getString("bot.link"), false, false, UserRole.USER_ACCESS),
+    SEND_LINK(PropertiesPath.BOT_PROPERTIES.getString("SEND_LINK"), false, false, UserRole.USER_ACCESS),
     HIDE_WITHDRAWAL("Скрыть", false, false, UserRole.ADMIN_ACCESS),
     CHANGE_REFERRAL_BALANCE("Изменить", false, false, UserRole.ADMIN_ACCESS),
     DELETE_WITHDRAWAL_REQUEST("Удалить", false, false, UserRole.USER_ACCESS),
@@ -270,38 +267,5 @@ public enum Command implements ICommand {
 
     public boolean isHidden() {
         return isHidden;
-    }
-
-    public static Command fromUpdate(Update update) {
-        switch (UpdateType.fromUpdate(update)) {
-            case MESSAGE:
-                return findByTextOrName(update.getMessage().getText());
-            case CALLBACK_QUERY:
-                return fromCallbackQuery(update.getCallbackQuery().getData());
-            case INLINE_QUERY:
-                return findByTextOrName(update.getInlineQuery().getQuery());
-            case CHANNEL_POST:
-                return Command.CHANNEL_POST;
-            default:
-                return Command.START;
-        }
-    }
-
-    public static Command fromCallbackQuery(String value) {
-        if (value.contains(BotStringConstants.CALLBACK_DATA_SPLITTER)) {
-            value = value.split(BotStringConstants.CALLBACK_DATA_SPLITTER)[0];
-        }
-        try {
-            return Command.valueOf(value);
-        } catch (IllegalArgumentException e) {
-            return null;
-        }
-    }
-
-    public static Command findByTextOrName(String value) {
-        return Arrays.stream(Command.values())
-                .filter(command -> (Objects.nonNull(command.getText()) && value.startsWith(command.getText())) || value.startsWith(command.name()))
-                .findFirst()
-                .orElse(null);
     }
 }

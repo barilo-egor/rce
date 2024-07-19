@@ -37,11 +37,11 @@ public class NewReviews extends Processor {
             List<InlineButton> buttons = new ArrayList<>();
 
             buttons.add(InlineButton.builder()
-                    .text(Command.PUBLISH_REVIEW.getText())
+                    .text(commandService.getText(Command.PUBLISH_REVIEW))
                     .data(Command.PUBLISH_REVIEW.name() + BotStringConstants.CALLBACK_DATA_SPLITTER + review.getPid())
                     .build());
             buttons.add(InlineButton.builder()
-                    .text(Command.DELETE_REVIEW.getText())
+                    .text(commandService.getText(Command.DELETE_REVIEW))
                     .data(Command.DELETE_REVIEW.name() + BotStringConstants.CALLBACK_DATA_SPLITTER + review.getPid())
                     .build());
 

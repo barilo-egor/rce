@@ -106,7 +106,7 @@ public class UserProcessService implements IUserProcessService {
         if (commandService.isStartCommand(update) && ReferralType.STANDARD.isCurrent()) {
             try {
                 Long chatIdFrom = Long.parseLong(update.getMessage().getText()
-                        .replaceAll(Command.START.getText(), "").trim());
+                        .replaceAll(commandService.getText(Command.START), "").trim());
                 if (!readUserService.existsByChatId(chatIdFrom)) throw new BaseException();
                 inviter = readUserService.getByChatId(chatIdFrom);
                 newUser.setFromChatId(chatIdFrom);

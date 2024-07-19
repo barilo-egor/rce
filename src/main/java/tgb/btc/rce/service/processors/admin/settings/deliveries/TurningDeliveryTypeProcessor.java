@@ -24,7 +24,7 @@ public class TurningDeliveryTypeProcessor extends Processor {
     @Override
     public void run(Update update) {
         Long chatId = updateService.getChatId(update);
-        responseSender.sendMessage(chatId, Command.TURNING_DELIVERY_TYPE.getText(), keyboardBuildService.buildInline(List.of(keyboardService.getDeliveryTypeButton())));
+        responseSender.sendMessage(chatId, commandService.getText(Command.TURNING_DELIVERY_TYPE), keyboardBuildService.buildInline(List.of(keyboardService.getDeliveryTypeButton())));
     }
 
 }

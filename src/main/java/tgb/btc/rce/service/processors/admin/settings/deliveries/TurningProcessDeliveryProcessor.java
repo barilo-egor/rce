@@ -28,7 +28,7 @@ public class TurningProcessDeliveryProcessor extends Processor {
         String deliveryType = callbackQueryService.getSplitData(update, 1);
         PropertiesPath.MODULES_PROPERTIES.setProperty("delivery.kind", deliveryType);
         responseSender.sendEditedMessageText(chatId, update.getCallbackQuery().getMessage().getMessageId(),
-                Command.TURNING_DELIVERY_TYPE.getText(),
+                commandService.getText(Command.TURNING_DELIVERY_TYPE),
                 keyboardBuildService.buildInline(List.of(keyboardService.getDeliveryTypeButton())));
     }
 

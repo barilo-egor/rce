@@ -114,7 +114,7 @@ public class UpdateDispatcher implements IUpdateDispatcher {
         if (isOffed(chatId) && !commandService.isSubmitCommand(update)) return Command.BOT_OFFED;
         if (commandService.isStartCommand(update)) return Command.START;
         Command command;
-        if (userCommonService.isDefaultStep(chatId)) command = Command.fromUpdate(update);
+        if (userCommonService.isDefaultStep(chatId)) command = commandService.fromUpdate(update);
         else command = Command.valueOf(readUserService.getCommandByChatId(chatId));
         if (Objects.isNull(command) || !command.hasAccess(readUserService.getUserRoleByChatId(chatId))) return Command.START;
         else return command;

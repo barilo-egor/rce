@@ -74,7 +74,7 @@ public class SlotReel extends Processor {
         if (!update.hasMessage() || !update.getMessage().hasText()) return false;
         Long chatId = updateService.getChatId(update);
         Command drawsCommand = null;
-        Command commandFromUpdate = Command.fromUpdate(update);
+        Command commandFromUpdate = commandService.fromUpdate(update);
         List<Command> commands = new ArrayList<>(Menu.DRAWS.getCommands());
         for (Command command : commands) {
             if (command.equals(commandFromUpdate)) drawsCommand = command;

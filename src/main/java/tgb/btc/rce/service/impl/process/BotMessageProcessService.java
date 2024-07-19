@@ -16,6 +16,7 @@ import tgb.btc.rce.service.impl.ResponseSender;
 import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
 import tgb.btc.rce.service.process.IBotMessageProcessService;
 import tgb.btc.rce.service.util.IBotImageService;
+import tgb.btc.rce.service.util.ICommandService;
 import tgb.btc.rce.vo.ReplyButton;
 
 import java.util.Arrays;
@@ -38,6 +39,13 @@ public class BotMessageProcessService implements IBotMessageProcessService {
     private IBotImageService botImageService;
 
     private IUpdateService updateService;
+
+    private ICommandService commandService;
+
+    @Autowired
+    public void setCommandService(ICommandService commandService) {
+        this.commandService = commandService;
+    }
 
     @Autowired
     public void setUpdateService(IUpdateService updateService) {
@@ -83,7 +91,7 @@ public class BotMessageProcessService implements IBotMessageProcessService {
         List<ReplyButton> buttons = Arrays.stream(values)
                 .map(t -> ReplyButton.builder().text(t.getDisplayName()).build())
                 .collect(Collectors.toList());
-        buttons.add(ReplyButton.builder().text(Command.ADMIN_BACK.getText()).build());
+        buttons.add(ReplyButton.builder().text(commandService.getText(Command.ADMIN_BACK)).build());
         responseSender.sendMessage(chatId, "Выберите сообщение для замены.",
                 keyboardBuildService.buildReply(2, buttons, true));
     }

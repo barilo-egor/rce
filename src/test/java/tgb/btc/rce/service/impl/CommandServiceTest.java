@@ -22,7 +22,7 @@ class CommandServiceTest {
     void isStartCommandReturnTrue() {
         Update update = new Update();
         Message message = new Message();
-        message.setText(Command.START.getText());
+        message.setText(commandService.getText(Command.START));
         update.setMessage(message);
         assertTrue(commandService.isStartCommand(update));
     }
@@ -31,7 +31,7 @@ class CommandServiceTest {
     void isStartCommandReturnFalse() {
         Update update = new Update();
         Message message = new Message();
-        message.setText(Command.BACKUP_DB.getText());
+        message.setText(commandService.getText(Command.BACKUP_DB));
         update.setMessage(message);
         assertFalse(commandService.isStartCommand(update));
     }

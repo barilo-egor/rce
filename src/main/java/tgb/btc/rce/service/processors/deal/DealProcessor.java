@@ -53,6 +53,11 @@ public class DealProcessor extends Processor {
     private IFiatCurrencyService fiatCurrencyService;
 
     @Autowired
+    public void setBotMessageService(IBotMessageService botMessageService) {
+        this.botMessageService = botMessageService;
+    }
+
+    @Autowired
     public void setFiatCurrencyService(IFiatCurrencyService fiatCurrencyService) {
         this.fiatCurrencyService = fiatCurrencyService;
     }
@@ -249,7 +254,7 @@ public class DealProcessor extends Processor {
     }
 
     private boolean isReceiptsCancel(Update update) {
-        return update.hasMessage() && Command.RECEIPTS_CANCEL_DEAL.getText().equals(updateService.getMessageText(update));
+        return update.hasMessage() && commandService.getText(Command.RECEIPTS_CANCEL_DEAL).equals(updateService.getMessageText(update));
     }
 
     private boolean hasCheck(Update update) {
@@ -264,7 +269,7 @@ public class DealProcessor extends Processor {
     public boolean isMainMenuCommand(Update update) {
         if (!update.hasMessage() || !update.getMessage().hasText()) return false;
         Long chatId = updateService.getChatId(update);
-        Command commandFromUpdate = Command.fromUpdate(update);
+        Command commandFromUpdate = commandService.fromUpdate(update);
         Command mainMenuCommand = null;
         Set<Command> commands = new HashSet<>(Menu.MAIN.getCommands());
         commands.add(Command.ADMIN_PANEL);

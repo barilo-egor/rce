@@ -94,7 +94,7 @@ public class DealReports extends Processor {
                                                 .text(DATE)
                                                 .build(),
                                         ReplyButton.builder()
-                                                .text(Command.ADMIN_BACK.getText())
+                                                .text(commandService.getText(Command.ADMIN_BACK))
                                                 .build()
                                 )));
                 modifyUserService.nextStep(chatId, Command.DEAL_REPORTS.name());

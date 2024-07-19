@@ -21,6 +21,7 @@ import tgb.btc.library.interfaces.util.IBigDecimalService;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
 import tgb.btc.rce.service.util.ICallbackQueryService;
+import tgb.btc.rce.service.util.ICommandService;
 import tgb.btc.rce.vo.InlineButton;
 
 import java.math.RoundingMode;
@@ -52,6 +53,13 @@ public class DealSupportService {
     private IDeliveryTypeService deliveryTypeService;
 
     private IBigDecimalService bigDecimalService;
+
+    private ICommandService commandService;
+
+    @Autowired
+    public void setCommandService(ICommandService commandService) {
+        this.commandService = commandService;
+    }
 
     @Autowired
     public void setBigDecimalService(IBigDecimalService bigDecimalService) {
@@ -161,25 +169,25 @@ public class DealSupportService {
     public ReplyKeyboard dealToStringButtons(Long pid) {
         List<InlineButton> buttons = new ArrayList<>();
         buttons.add(InlineButton.builder()
-                .text(Command.CONFIRM_USER_DEAL.getText())
+                .text(commandService.getText(Command.CONFIRM_USER_DEAL))
                 .data(callbackQueryService.buildCallbackData(Command.CONFIRM_USER_DEAL, new Object[]{pid, false}))
                 .build());
         boolean hasDefaultGroupChat = groupChatService.hasDealRequests();
         if (hasDefaultGroupChat)
             buttons.add(InlineButton.builder()
-                    .text(Command.CONFIRM_USER_DEAL.getText() + "с запросом")
+                    .text(commandService.getText(Command.CONFIRM_USER_DEAL) + "с запросом")
                     .data(callbackQueryService.buildCallbackData(Command.CONFIRM_USER_DEAL, new Object[]{pid, true}))
                     .build());
         buttons.add(InlineButton.builder()
-                .text(Command.ADDITIONAL_VERIFICATION.getText())
+                .text(commandService.getText(Command.ADDITIONAL_VERIFICATION))
                 .data(callbackQueryService.buildCallbackData(Command.ADDITIONAL_VERIFICATION, pid))
                 .build());
         buttons.add(InlineButton.builder()
-                .text(Command.DELETE_DEAL.getText())
+                .text(commandService.getText(Command.DELETE_DEAL))
                 .data(callbackQueryService.buildCallbackData(Command.DELETE_USER_DEAL, pid))
                 .build());
         buttons.add(InlineButton.builder()
-                .text(Command.DELETE_DEAL_AND_BLOCK_USER.getText())
+                .text(commandService.getText(Command.DELETE_DEAL_AND_BLOCK_USER))
                 .data(callbackQueryService.buildCallbackData(Command.DELETE_DEAL_AND_BLOCK_USER, pid))
                 .build());
         return keyboardBuildService.buildInline(buttons, 2);

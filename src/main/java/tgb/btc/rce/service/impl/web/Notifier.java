@@ -18,6 +18,7 @@ import tgb.btc.rce.service.IKeyboardService;
 import tgb.btc.rce.service.INotifyService;
 import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.processors.support.DealSupportService;
+import tgb.btc.rce.service.util.ICommandService;
 import tgb.btc.rce.service.util.IMessagePropertiesService;
 import tgb.btc.rce.vo.InlineButton;
 
@@ -45,6 +46,13 @@ public class Notifier implements INotifier {
     private IMessagePropertiesService messagePropertiesService;
 
     private VariablePropertiesReader variablePropertiesReader;
+
+    private ICommandService commandService;
+
+    @Autowired
+    public void setCommandService(ICommandService commandService) {
+        this.commandService = commandService;
+    }
 
     @Autowired
     public void setVariablePropertiesReader(VariablePropertiesReader variablePropertiesReader) {
@@ -114,7 +122,7 @@ public class Notifier implements INotifier {
         responseSender.sendMessage(chatId, "Кто-то пытается авторизоваться на сайте под вашим chat id. Если это не вы, то проигнорируйте это сообщение.",
                 InlineButton.builder()
                         .inlineType(InlineType.CALLBACK_DATA)
-                        .text(Command.SUBMIT_LOGIN.getText())
+                        .text(commandService.getText(Command.SUBMIT_LOGIN))
                         .data(Command.SUBMIT_LOGIN.name() + BotStringConstants.CALLBACK_DATA_SPLITTER + chatId)
                         .build());
     }
@@ -124,7 +132,7 @@ public class Notifier implements INotifier {
         responseSender.sendMessage(chatId, "Кто-то пытается зарегистрироваться на сайте под вашим chat id. Если это не вы, то проигнорируйте это сообщение.",
                 InlineButton.builder()
                         .inlineType(InlineType.CALLBACK_DATA)
-                        .text(Command.SUBMIT_REGISTER.getText())
+                        .text(commandService.getText(Command.SUBMIT_REGISTER))
                         .data(Command.SUBMIT_REGISTER.name() + BotStringConstants.CALLBACK_DATA_SPLITTER + chatId)
                         .build());
     }

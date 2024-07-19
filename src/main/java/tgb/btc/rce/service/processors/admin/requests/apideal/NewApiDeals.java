@@ -52,18 +52,19 @@ public class NewApiDeals extends Processor {
         activeDeals.forEach(pid -> {
             String dealInfo = dealSupportService.apiDealToString(pid);
             List<InlineButton> buttons = new ArrayList<>();
+            // TODO вынести получения текста для команды CONFIRM_API_DEAL в переменную
             buttons.add(InlineButton.builder()
-                    .text(Command.CONFIRM_API_DEAL.getText())
+                    .text(commandService.getText(Command.CONFIRM_API_DEAL))
                     .data(callbackQueryService.buildCallbackData(Command.CONFIRM_API_DEAL, new Object[]{pid, false}))
                     .build());
             boolean hasDefaultGroupChat = groupChatService.hasApiDealRequests();
             if (hasDefaultGroupChat)
                 buttons.add(InlineButton.builder()
-                        .text(Command.CONFIRM_API_DEAL.getText() + " с запросом")
+                        .text(commandService.getText(Command.CONFIRM_API_DEAL) + " с запросом")
                         .data(callbackQueryService.buildCallbackData(Command.CONFIRM_API_DEAL, new Object[]{pid, true}))
                         .build());
             buttons.add(InlineButton.builder()
-                    .text(Command.CANCEL_API_DEAL.getText())
+                    .text(commandService.getText(Command.CANCEL_API_DEAL))
                     .data(Command.CANCEL_API_DEAL.name() + CALLBACK_DATA_SPLITTER + pid)
                     .build());
             responseSender.sendMessage(chatId, dealInfo, keyboardBuildService.buildInline(buttons));

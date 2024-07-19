@@ -87,7 +87,7 @@ public class ShowPaymentTypesForTurn extends Processor {
                     .build());
         }
         buttons.add(InlineButton.builder()
-                .text(Command.INLINE_DELETE.getText())
+                .text(commandService.getText(Command.INLINE_DELETE))
                 .data(Command.INLINE_DELETE.name())
                 .build());
         responseSender.sendMessage(chatId, "Выберите тип оплаты для включения/выключения.",

@@ -8,6 +8,7 @@ import tgb.btc.library.constants.enums.bot.UserRole;
 import tgb.btc.rce.enums.Menu;
 import tgb.btc.rce.service.IMenu;
 import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
+import tgb.btc.rce.service.util.ICommandService;
 import tgb.btc.rce.service.util.IMenuService;
 import tgb.btc.rce.vo.ReplyButton;
 
@@ -23,6 +24,13 @@ public class MenuService implements IMenuService {
     private final Map<Menu, IMenu> menuMap;
 
     private final IKeyboardBuildService keyboardBuildService;
+
+    private ICommandService commandService;
+
+    @Autowired
+    public void setCommandService(ICommandService commandService) {
+        this.commandService = commandService;
+    }
 
     @Autowired
     public MenuService(List<IMenu> menus, IKeyboardBuildService keyboardBuildService) {
@@ -43,7 +51,7 @@ public class MenuService implements IMenuService {
         if (Objects.nonNull(iMenu))
             return keyboardBuildService.buildReply(menu.getNumberOfColumns(), iMenu.build(userRole), iMenu.isOneTime());
         return keyboardBuildService.buildReply(menu.getNumberOfColumns(), menu.getCommands().stream()
-                .map(command -> ReplyButton.builder().text(command.getText()).build())
+                .map(command -> ReplyButton.builder().text(commandService.getText(command)).build())
                 .collect(Collectors.toList()), false);
     }
 }

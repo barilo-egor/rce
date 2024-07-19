@@ -16,6 +16,7 @@ import tgb.btc.rce.enums.PropertiesMessage;
 import tgb.btc.rce.enums.UpdateType;
 import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
 import tgb.btc.rce.service.util.ICallbackQueryService;
+import tgb.btc.rce.service.util.ICommandService;
 import tgb.btc.rce.service.util.IMenuService;
 import tgb.btc.rce.service.util.IMessagePropertiesService;
 
@@ -41,6 +42,13 @@ public abstract class Processor {
     protected IMessagePropertiesService messagePropertiesService;
 
     protected IUpdateService updateService;
+
+    protected ICommandService commandService;
+
+    @Autowired
+    public void setCommandService(ICommandService commandService) {
+        this.commandService = commandService;
+    }
 
     @Autowired
     public void setUpdateService(IUpdateService updateService) {
@@ -129,7 +137,7 @@ public abstract class Processor {
         Command enteredCommand;
         try {
             if (update.hasCallbackQuery() || (update.hasMessage() && update.getMessage().hasText()))
-                enteredCommand = Command.fromUpdate(update);
+                enteredCommand = commandService.fromUpdate(update);
             else return false;
         } catch (BaseException e) {
             return false;

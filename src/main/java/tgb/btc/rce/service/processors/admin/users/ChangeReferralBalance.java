@@ -30,7 +30,7 @@ public class ChangeReferralBalance extends Processor {
                                 "Чтобы отнять от текущего значения баланса сумму, отправьте число со знаком \"-\". Пример:\n-1750",
                         keyboardBuildService.buildReply(List.of(
                                 ReplyButton.builder()
-                                        .text(Command.CANCEL.getText())
+                                        .text(commandService.getText(Command.CANCEL))
                                         .build())));
                 modifyUserService.updateBufferVariable(chatId,
                         update.getCallbackQuery().getData().split(BotStringConstants.CALLBACK_DATA_SPLITTER)[1]);

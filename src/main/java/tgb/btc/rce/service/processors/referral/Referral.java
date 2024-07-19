@@ -75,7 +75,7 @@ public class Referral extends Processor {
                         .inlineType(InlineType.SWITCH_INLINE_QUERY)
                         .build(),
                 InlineButton.builder()
-                        .text(Command.WITHDRAWAL_OF_FUNDS.getText())
+                        .text(commandService.getText(Command.WITHDRAWAL_OF_FUNDS))
                         .data(Command.WITHDRAWAL_OF_FUNDS.name())
                         .inlineType(InlineType.CALLBACK_DATA)
                         .build());

@@ -46,6 +46,7 @@ import tgb.btc.rce.service.*;
 import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
 import tgb.btc.rce.service.process.IUserDiscountProcessService;
 import tgb.btc.rce.service.util.ICallbackQueryService;
+import tgb.btc.rce.service.util.ICommandService;
 import tgb.btc.rce.service.util.ICryptoCurrenciesDesignService;
 import tgb.btc.rce.service.util.IMessagePropertiesService;
 import tgb.btc.rce.vo.CalculatorQuery;
@@ -113,6 +114,13 @@ public class ExchangeService {
     private IFiatCurrencyService fiatCurrencyService;
 
     private IBigDecimalService bigDecimalService;
+
+    private ICommandService commandService;
+
+    @Autowired
+    public void setCommandService(ICommandService commandService) {
+        this.commandService = commandService;
+    }
 
     @Autowired
     public void setBigDecimalService(IBigDecimalService bigDecimalService) {
@@ -660,8 +668,8 @@ public class ExchangeService {
                         VariableType.DEAL_ACTIVE_TIME) + " минут" + "\n\n"
                         + deliveryTypeText
                         + "☑️После успешного перевода денег по указанным реквизитам нажмите на кнопку <b>\""
-                        + Command.PAID.getText() + "\"</b> или же вы можете отменить данную заявку, нажав на кнопку <b>\""
-                        + Command.CANCEL_DEAL.getText() + "\"</b>."
+                        + commandService.getText(Command.PAID) + "\"</b> или же вы можете отменить данную заявку, нажав на кнопку <b>\""
+                        + commandService.getText(Command.CANCEL_DEAL) + "\"</b>."
                         + promoCodeText;
             }
         } else {
@@ -682,8 +690,8 @@ public class ExchangeService {
                         VariableType.DEAL_ACTIVE_TIME) + " минут" + "\n\n"
                         + deliveryTypeText
                         + "☑️После успешного перевода денег по указанному кошельку нажмите на кнопку <b>\""
-                        + Command.PAID.getText() + "\"</b> или же вы можете отменить данную заявку, нажав на кнопку <b>\""
-                        + Command.CANCEL_DEAL.getText() + "\"</b>."
+                        + commandService.getText(Command.PAID) + "\"</b> или же вы можете отменить данную заявку, нажав на кнопку <b>\""
+                        + commandService.getText(Command.CANCEL_DEAL) + "\"</b>."
                         + promoCodeText;
             }
         }

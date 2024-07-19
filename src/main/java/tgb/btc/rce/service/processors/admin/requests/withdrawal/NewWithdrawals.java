@@ -44,7 +44,7 @@ public class NewWithdrawals extends Processor {
         withdrawalRequests.forEach(withdrawalRequest ->
                 responseSender.sendMessage(chatId, withdrawalOfFundsService.toString(withdrawalRequest),
                         keyboardBuildService.buildInline(List.of(InlineButton.builder()
-                                .text(Command.HIDE_WITHDRAWAL.getText())
+                                .text(commandService.getText(Command.HIDE_WITHDRAWAL))
                                 .data(Command.HIDE_WITHDRAWAL.name() + BotStringConstants.CALLBACK_DATA_SPLITTER
                                         + withdrawalRequest.getPid())
                                 .inlineType(InlineType.CALLBACK_DATA)

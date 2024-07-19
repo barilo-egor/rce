@@ -33,7 +33,7 @@ public class UserReferralBalance extends Processor {
                             keyboardBuildService.buildInline(List.of(
                                     InlineButton.builder()
                                             .inlineType(InlineType.CALLBACK_DATA)
-                                            .text(Command.CHANGE_REFERRAL_BALANCE.getText())
+                                            .text(commandService.getText(Command.CHANGE_REFERRAL_BALANCE))
                                             .data(Command.CHANGE_REFERRAL_BALANCE.name()
                                                     + BotStringConstants.CALLBACK_DATA_SPLITTER + userChatId)
                                             .build()

@@ -18,6 +18,7 @@ import tgb.btc.rce.service.INotifyService;
 import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.IUpdateService;
 import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
+import tgb.btc.rce.service.util.ICommandService;
 import tgb.btc.rce.service.util.IMessagePropertiesService;
 import tgb.btc.rce.vo.ReplyButton;
 
@@ -42,6 +43,13 @@ public class WithdrawalOfFundsService {
     private IMessagePropertiesService messagePropertiesService;
     
     private IUpdateService updateService;
+
+    private ICommandService commandService;
+
+    @Autowired
+    public void setCommandService(ICommandService commandService) {
+        this.commandService = commandService;
+    }
 
     @Autowired
     public void setUpdateService(IUpdateService updateService) {
@@ -119,12 +127,12 @@ public class WithdrawalOfFundsService {
         modifyUserService.nextStep(chatId, Command.WITHDRAWAL_OF_FUNDS.name());
         ReplyKeyboard keyboard = keyboardBuildService.buildReply(List.of(
                 ReplyButton.builder()
-                        .text(Command.SHARE_CONTACT.getText())
+                        .text(commandService.getText(Command.SHARE_CONTACT))
                         .isRequestContact(true)
                         .isRequestLocation(false)
                         .build(),
                 ReplyButton.builder()
-                        .text(Command.CANCEL.getText())
+                        .text(commandService.getText(Command.CANCEL))
                         .build()
         ));
         responseSender.sendMessage(chatId, messagePropertiesService.getMessage(PropertiesMessage.WITHDRAWAL_ASK_CONTACT),

@@ -17,6 +17,7 @@ import tgb.btc.rce.enums.ReviewPriseType;
 import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
 import tgb.btc.rce.service.util.ICallbackQueryService;
+import tgb.btc.rce.service.util.ICommandService;
 import tgb.btc.rce.service.util.IReviewPriseBotProcessService;
 import tgb.btc.rce.vo.InlineButton;
 import tgb.btc.rce.vo.ReviewPrise;
@@ -40,6 +41,13 @@ public class ReviewPriseProcessService implements IReviewPriseProcessService, IR
     private ICallbackQueryService callbackQueryService;
 
     private VariablePropertiesReader variablePropertiesReader;
+
+    private ICommandService commandService;
+
+    @Autowired
+    public void setCommandService(ICommandService commandService) {
+        this.commandService = commandService;
+    }
 
     @Autowired
     public void setVariablePropertiesReader(VariablePropertiesReader variablePropertiesReader) {
@@ -90,7 +98,7 @@ public class ReviewPriseProcessService implements IReviewPriseProcessService, IR
                     keyboardBuildService.buildInline(List.of(
                                     InlineButton.builder()
                                             .data(data)
-                                            .text(Command.SHARE_REVIEW.getText())
+                                            .text(commandService.getText(Command.SHARE_REVIEW))
                                             .build()
                             )
                     ));
