@@ -187,7 +187,7 @@ public class DealSupportService {
                 .data(callbackQueryService.buildCallbackData(Command.ADDITIONAL_VERIFICATION, pid))
                 .build());
         buttons.add(InlineButton.builder()
-                .text(commandService.getText(Command.DELETE_DEAL))
+                .text(commandService.getText(Command.DELETE_USER_DEAL))
                 .data(callbackQueryService.buildCallbackData(Command.DELETE_USER_DEAL, pid))
                 .build());
         buttons.add(InlineButton.builder()

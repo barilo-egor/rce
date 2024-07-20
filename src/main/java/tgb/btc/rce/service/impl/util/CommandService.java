@@ -91,7 +91,7 @@ public class CommandService implements ICommandService {
     @Override
     public Command findByTextOrName(String value) {
         return Arrays.stream(Command.values())
-                .filter(command -> (Objects.nonNull(getText(command)) && value.startsWith(getText(command))) || value.startsWith(command.name()))
+                .filter(command -> (Objects.nonNull(getText(command)) && value.equals(getText(command))))
                 .findFirst()
                 .orElse(null);
     }
