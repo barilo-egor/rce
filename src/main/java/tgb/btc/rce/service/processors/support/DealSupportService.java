@@ -33,8 +33,6 @@ import java.util.Objects;
 @Service
 public class DealSupportService {
 
-    private static final String DEAL_INFO = "Заявка на %s №%s \n" + "Дата,время: %s\n" + "Тип оплаты: %s\n" + "Кошелек: %s\n" + "Контакт: %s\n"
-            + "Количество сделок: %s\n" + "ID: %s\n" + "Сумма %s: %s\n" + "Сумма: %s %s\n" + "Способ доставки: %s";
 
     private IReadUserService readUserService;
 
@@ -145,6 +143,9 @@ public class DealSupportService {
         return dealToString(readDealService.findByPid(pid));
     }
 
+    private static final String DEAL_INFO = "Заявка на %s №%s \n" + "Дата,время: %s\n" + "Тип оплаты: %s\n" + "Кошелек: %s\n" + "Контакт: %s\n"
+            + "Количество сделок: %s\n" + "ID: %s\n" + "Курс: %s\n" + "Сумма %s: %s\n" + "Сумма: %s %s\n" + "Способ доставки: %s";
+
     public String dealToString(Deal deal) {
         User user = deal.getUser();
         String paymentTypeName = Objects.nonNull(deal.getPaymentType()) ? deal.getPaymentType().getName() : "Не установлен тип оплаты.";
@@ -157,6 +158,7 @@ public class DealSupportService {
                 StringUtils.defaultIfEmpty(readUserService.getUsernameByChatId(user.getChatId()),
                         "Отсутствует"),
                 dealCountService.getCountPassedByUserChatId(user.getChatId()), user.getChatId(),
+                deal.getCourse(),
                 deal.getCryptoCurrency().getShortName(),
                 deal.getCryptoAmount().setScale(8, RoundingMode.FLOOR).stripTrailingZeros()
                         .toPlainString(),
