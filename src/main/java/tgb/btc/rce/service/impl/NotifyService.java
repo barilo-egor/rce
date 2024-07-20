@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import tgb.btc.library.constants.enums.bot.UserRole;
 import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
-import tgb.btc.rce.enums.BotInlineButton;
+import tgb.btc.rce.enums.InlineType;
 import tgb.btc.rce.service.INotifyService;
 import tgb.btc.rce.vo.InlineButton;
 
@@ -45,7 +45,10 @@ public class NotifyService implements INotifyService {
 
     @Override
     public void notifyMessage(String message, String data, Set<UserRole> roles) {
-        InlineButton button = BotInlineButton.SHOW.getButton();
+        InlineButton button = InlineButton.builder()
+                .text("Показать")
+                .inlineType(InlineType.CALLBACK_DATA)
+                .build();
         button.setData(data);
         readUserService.getChatIdsByRoles(roles).forEach(chatId ->
                 responseSender.sendMessage(chatId, message, button));

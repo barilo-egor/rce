@@ -35,6 +35,7 @@ import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.library.interfaces.util.IBigDecimalService;
 import tgb.btc.library.interfaces.util.IFiatCurrencyService;
 import tgb.btc.library.service.process.CalculateService;
+import tgb.btc.library.service.properties.ButtonsDesignPropertiesReader;
 import tgb.btc.library.service.properties.VariablePropertiesReader;
 import tgb.btc.library.service.schedule.DealDeleteScheduler;
 import tgb.btc.library.vo.calculate.DealAmount;
@@ -121,6 +122,13 @@ public class ExchangeService {
     private IModule<DeliveryKind> deliveryKindModule;
 
     private IModule<ReferralType> referralModule;
+
+    private ButtonsDesignPropertiesReader buttonsDesignPropertiesReader;
+
+    @Autowired
+    public void setButtonsDesignPropertiesReader(ButtonsDesignPropertiesReader buttonsDesignPropertiesReader) {
+        this.buttonsDesignPropertiesReader = buttonsDesignPropertiesReader;
+    }
 
     @Autowired
     public void setDeliveryKindModule(IModule<DeliveryKind> deliveryKindModule) {
@@ -459,7 +467,10 @@ public class ExchangeService {
                 if (Objects.isNull(lastWalletMessage))
                     message = message.concat("\n\nВы можете использовать ваш сохраненный адрес:\n" + wallet);
                 else message = message.concat("\n\n" + lastWalletMessage + "\n" + wallet);
-                buttons.add(BotInlineButton.USE_SAVED_WALLET.getButton());
+                buttons.add(InlineButton.builder()
+                        .text(buttonsDesignPropertiesReader.getString("USE_SAVED_WALLET"))
+                        .data(Command.USE_SAVED_WALLET.name())
+                        .build());
             }
             buttons.add(BotInlineButton.CANCEL.getButton());
             keyboard = keyboardBuildService.buildInline(buttons);
