@@ -158,7 +158,9 @@ public class DealSupportService {
                 StringUtils.defaultIfEmpty(readUserService.getUsernameByChatId(user.getChatId()),
                         "Отсутствует"),
                 dealCountService.getCountPassedByUserChatId(user.getChatId()), user.getChatId(),
-                deal.getCourse(),
+                Objects.nonNull(deal.getCourse())
+                        ? bigDecimalService.roundToPlainString(deal.getCourse(), 0)
+                        : "Отсутствует",
                 deal.getCryptoCurrency().getShortName(),
                 deal.getCryptoAmount().setScale(8, RoundingMode.FLOOR).stripTrailingZeros()
                         .toPlainString(),
