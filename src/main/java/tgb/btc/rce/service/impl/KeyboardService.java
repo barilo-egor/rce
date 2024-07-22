@@ -36,7 +36,6 @@ import tgb.btc.rce.service.util.ICallbackQueryService;
 import tgb.btc.rce.service.util.ICommandService;
 import tgb.btc.rce.service.util.ICryptoCurrenciesDesignService;
 import tgb.btc.rce.service.util.ITurningCurrenciesService;
-import tgb.btc.rce.util.BeanHolder;
 import tgb.btc.rce.vo.InlineButton;
 import tgb.btc.rce.vo.InlineCalculatorVO;
 import tgb.btc.rce.vo.ReplyButton;
@@ -391,7 +390,7 @@ public class KeyboardService implements IKeyboardService {
                 .map(fiatCurrency -> ReplyButton.builder().text(fiatCurrency.getCode()).build())
                 .collect(Collectors.toList());
         buttons.add(BotReplyButton.CANCEL.getButton());
-        return BeanHolder.keyboardBuildService.buildReply(buttons);
+        return keyboardBuildService.buildReply(buttons);
     }
 
     @Override
