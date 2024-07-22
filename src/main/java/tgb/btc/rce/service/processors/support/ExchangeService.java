@@ -458,7 +458,7 @@ public class ExchangeService {
             }
             List<InlineButton> buttons = new ArrayList<>();
 
-            if (dealCountService.getPassedDealsCountByUserChatIdAndDealTypeAndCryptoCurrency(chatId, DealType.BUY,
+            if (dealCountService.getConfirmedDealsCountByUserChatIdAndDealTypeAndCryptoCurrency(chatId, DealType.BUY,
                     cryptoCurrency) > 0) {
                 String wallet = readDealService.getWalletFromLastPassedByChatIdAndDealTypeAndCryptoCurrency(chatId,
                         DealType.BUY,
