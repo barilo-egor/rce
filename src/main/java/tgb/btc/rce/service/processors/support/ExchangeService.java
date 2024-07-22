@@ -328,8 +328,8 @@ public class ExchangeService {
         return true;
     }
 
-    public Integer getCountFinishedDeal(Long chatId) {
-        return dealCountService.getCountDealByChatIdAndDealStatus(chatId, Arrays.asList(DealStatus.NEW, DealStatus.CONFIRMED));
+    public Integer getCountNotFinishedDeals(Long chatId) {
+        return dealCountService.getCountDealByChatIdAndNotInDealStatus(chatId, Arrays.asList(DealStatus.NEW, DealStatus.CONFIRMED));
     }
 
     public List<Long> getListNewDeal(Long chatId) {

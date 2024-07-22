@@ -63,7 +63,7 @@ public class Buy extends Processor {
         }
         if (allowedDealsCount < 0) throw new BaseException("Допустимое кол-во сделок не может быть < 0.");
         if (allowedDealsCount == 0) return Boolean.TRUE;
-        if (exchangeService.getCountFinishedDeal(chatId) < allowedDealsCount) return Boolean.TRUE;
+        if (exchangeService.getCountNotFinishedDeals(chatId) < allowedDealsCount) return Boolean.TRUE;
         return Boolean.FALSE;
     }
 
