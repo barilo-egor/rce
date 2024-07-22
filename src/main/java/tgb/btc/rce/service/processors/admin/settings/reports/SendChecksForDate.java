@@ -51,7 +51,7 @@ public class SendChecksForDate extends Processor {
             return;
         }
 
-        List<Deal> deals = dateDealService.getPassedByDate(date);
+        List<Deal> deals = dateDealService.getConfirmedByDateBetween(date);
 
         if (CollectionUtils.isEmpty(deals)) {
             responseSender.sendMessage(chatId, "Сделки за дату отсутствуют.");

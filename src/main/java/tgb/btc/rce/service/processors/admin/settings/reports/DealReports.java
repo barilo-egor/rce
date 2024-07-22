@@ -104,14 +104,14 @@ public class DealReports extends Processor {
                 switch (period) {
                     case TODAY:
                         try {
-                            loadReport(dateDealService.getByDate(LocalDate.now()), chatId, period, apiDealService.getAcceptedByDate(LocalDateTime.now()));
+                            loadReport(dateDealService.getConfirmedByDateBetween(LocalDate.now()), chatId, period, apiDealService.getAcceptedByDate(LocalDateTime.now()));
                         } catch (Exception e) {
                             log.error("Ошибка при выгрузке отчета.", e);
                         }
                         break;
                     case TEN_DAYS:
                         try {
-                            loadReport(dateDealService.getByDateBetween(LocalDate.now().minusDays(10), LocalDate.now()),
+                            loadReport(dateDealService.getConfirmedByDateBetween(LocalDate.now().minusDays(10), LocalDate.now()),
                                     chatId, period, apiDealService.getAcceptedByDateBetween(LocalDateTime.now().minusDays(10), LocalDateTime.now()));
                         } catch (Exception e) {
                             log.error("Ошибка при выгрузке отчета.", e);
@@ -119,7 +119,7 @@ public class DealReports extends Processor {
                         break;
                     case MONTH:
                         try {
-                            loadReport(dateDealService.getByDateBetween(LocalDate.now().minusDays(30), LocalDate.now()), chatId, period,
+                            loadReport(dateDealService.getConfirmedByDateBetween(LocalDate.now().minusDays(30), LocalDate.now()), chatId, period,
                                     apiDealService.getAcceptedByDateBetween(LocalDateTime.now().minusDays(30), LocalDateTime.now()));
                         } catch (Exception e) {
                             log.error("Ошибка при выгрузке отчета.", e);
@@ -142,7 +142,7 @@ public class DealReports extends Processor {
                 try {
                     LocalDate date = getDate(update);
                     LocalDateTime dateTime = date.atStartOfDay();
-                    loadReport(dateDealService.getByDate(date), chatId, date.format(DateTimeFormatter.ISO_DATE), apiDealService.getAcceptedByDate(dateTime));
+                    loadReport(dateDealService.getConfirmedByDateBetween(date), chatId, date.format(DateTimeFormatter.ISO_DATE), apiDealService.getAcceptedByDate(dateTime));
                     processToAdminMainPanel(chatId);
                 } catch (Exception e) {
                     responseSender.sendMessage(chatId, e.getMessage());
