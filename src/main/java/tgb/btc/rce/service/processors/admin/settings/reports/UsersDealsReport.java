@@ -53,7 +53,7 @@ public class UsersDealsReport extends Processor {
             List<User> users = readUserService.findAll();
             Map<Long, Long> map = new HashMap<>();
             users.forEach(user -> {
-                Long count = dealCountService.getCountPassedByUserChatId(user.getChatId());
+                Long count = dealCountService.getCountConfirmedByUserChatId(user.getChatId());
                 if (Objects.isNull(count)) map.put(user.getChatId(), 0L);
                 if (count != 0) map.put(user.getChatId(), count);
             });

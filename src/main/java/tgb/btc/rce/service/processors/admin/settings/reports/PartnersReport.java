@@ -74,7 +74,7 @@ public class PartnersReport extends Processor {
                 cell3.setCellValue(user.getReferralUsers().size());
                 Cell cell4 = row.createCell(3);
                 cell4.setCellValue((int) user.getReferralUsers().stream()
-                        .filter(usr -> dealCountService.getCountPassedByUserChatId(usr.getChatId()) > 0).count());
+                        .filter(usr -> dealCountService.getCountConfirmedByUserChatId(usr.getChatId()) > 0).count());
                 Cell cell5 = row.createCell(4);
                 cell5.setCellValue(user.getCharges());
                 Cell cell6 = row.createCell(5);

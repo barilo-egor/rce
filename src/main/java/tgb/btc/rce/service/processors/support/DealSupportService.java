@@ -157,7 +157,7 @@ public class DealSupportService {
                 deal.getWallet(),
                 StringUtils.defaultIfEmpty(readUserService.getUsernameByChatId(user.getChatId()),
                         "Отсутствует"),
-                dealCountService.getCountPassedByUserChatId(user.getChatId()), user.getChatId(),
+                dealCountService.getCountConfirmedByUserChatId(user.getChatId()), user.getChatId(),
                 Objects.nonNull(deal.getCourse())
                         ? bigDecimalService.roundToPlainString(deal.getCourse(), 0)
                         : "Отсутствует",

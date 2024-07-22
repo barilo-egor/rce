@@ -110,7 +110,7 @@ public class UserInfoService implements IUserInfoService {
     private String getUserInformation(Long chatId) {
         User user = readUserService.findByChatId(chatId);
         String userName = Objects.nonNull(user.getUsername()) ? user.getUsername() : "скрыт";
-        Long dealsCount = dealCountService.getCountPassedByUserChatId(chatId);
+        Long dealsCount = dealCountService.getCountConfirmedByUserChatId(chatId);
         List<ReferralUser> referralUsers = readUserService.getUserReferralsByChatId(chatId);
         String role = user.getUserRole().getDisplayName();
         String isBanned = user.getBanned() ? "да" : "нет";
@@ -120,7 +120,7 @@ public class UserInfoService implements IUserInfoService {
         if (referralModule.isCurrent(ReferralType.STANDARD)) {
             int numberOfReferrals = referralUsers.size();
             int numberOfActiveReferrals = (int) referralUsers.stream()
-                    .filter(usr -> dealCountService.getCountPassedByUserChatId(usr.getChatId()) > 0).count();
+                    .filter(usr -> dealCountService.getCountConfirmedByUserChatId(usr.getChatId()) > 0).count();
             String currentBalance = readUserService.getReferralBalanceByChatId(chatId).toString();
             result = String.format(messagePropertiesService.getMessage(PropertiesMessage.USER_INFORMATION_MAIN),
                     chatId, userName, dealsCount, numberOfReferrals,

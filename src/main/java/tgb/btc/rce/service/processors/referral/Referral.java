@@ -45,9 +45,9 @@ public class Referral extends Processor {
         List<ReferralUser> referralUsers = readUserService.getUserReferralsByChatId(chatId);
         String numberOfReferrals = String.valueOf(referralUsers.size());
         int numberOfActiveReferrals = (int) referralUsers.stream()
-                .filter(usr -> dealCountService.getCountPassedByUserChatId(usr.getChatId()) > 0).count();
+                .filter(usr -> dealCountService.getCountConfirmedByUserChatId(usr.getChatId()) > 0).count();
 
-        Long dealsCount = dealCountService.getCountPassedByUserChatId(chatId);
+        Long dealsCount = dealCountService.getCountConfirmedByUserChatId(chatId);
         Rank rank = Rank.getByDealsNumber(dealsCount.intValue());
         String resultMessage;
         String referralMessageFewFiat = messagePropertiesService.getMessage("referral.main.few.fiat");

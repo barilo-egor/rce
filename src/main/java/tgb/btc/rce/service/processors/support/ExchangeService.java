@@ -645,7 +645,7 @@ public class ExchangeService {
         Deal deal = readDealService.findByPid(readUserService.getCurrentDealByChatId(chatId));
         CryptoCurrency currency = deal.getCryptoCurrency();
         DealType dealType = deal.getDealType();
-        Long countPassed = dealCountService.getCountPassedByUserChatId(chatId);
+        Long countPassed = dealCountService.getCountConfirmedByUserChatId(chatId);
         Rank rank = Objects.nonNull(countPassed)
                 ? Rank.getByDealsNumber(countPassed.intValue())
                 : Rank.FIRST;
