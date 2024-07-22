@@ -1,7 +1,6 @@
 package tgb.btc.rce.service.processors.admin.requests.apideal;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.api.web.INotifier;
@@ -44,23 +43,17 @@ public class ConfirmApiDeal extends Processor {
         Long chatId = updateService.getChatId(update);
         boolean isNeedRequest = callbackQueryService.getSplitBooleanData(update, 2);
         Long dealPid = callbackQueryService.getSplitLongData(update, 1);
-        if (isNeedRequest && !groupChatService.hasApiDealRequests()) {
+        if (isNeedRequest && !groupChatService.hasGroupChat(apiDealService.getApiUserPidByDealPid(dealPid))) {
             responseSender.sendAnswerCallbackQuery(update.getCallbackQuery().getId(),
-                    "Не найдена установленная группа для вывода запросов. " +
+                    "Не найдена установленная группа для вывода запросов этого клиента. " +
                             "Добавьте бота в группу, выдайте разрешения на отправку сообщений и выберите группу на сайте в " +
-                            "разделе \"API сделки\".\n", true);
+                            "разделе \"API пользователи\".\n", true);
             return;
         }
         responseSender.deleteMessage(chatId, callbackQueryService.messageId(update));
         apiDealService.updateApiDealStatusByPid(ApiDealStatus.ACCEPTED, dealPid);
-        String username = readUserService.getUsernameByChatId(chatId);
         if (isNeedRequest)
-            notifier.sendRequestToWithdrawApiDeal(
-                    "бота",
-                    StringUtils.isNotEmpty(username)
-                            ? username
-                            : "chatid:" + chatId,
-                    dealPid);
+            notifier.sendRequestToWithdrawApiDeal(dealPid);
         log.debug("Админ chatId={} подтвердил АПИ сделку={}.", chatId, dealPid);
         responseSender.sendMessage(chatId, "API сделка подтверждена.");
     }

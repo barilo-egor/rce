@@ -10,9 +10,11 @@ import org.telegram.telegrambots.meta.api.objects.chatmember.ChatMember;
 import org.telegram.telegrambots.meta.api.objects.chatmember.ChatMemberRestricted;
 import tgb.btc.api.web.INotificationsAPI;
 import tgb.btc.library.bean.bot.GroupChat;
+import tgb.btc.library.bean.web.api.ApiUser;
 import tgb.btc.library.constants.enums.MemberStatus;
 import tgb.btc.library.constants.enums.bot.GroupChatType;
 import tgb.btc.library.interfaces.service.bean.bot.IGroupChatService;
+import tgb.btc.library.interfaces.service.bean.web.IApiUserService;
 import tgb.btc.rce.service.IGroupUpdateDispatcher;
 import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.IUpdateService;
@@ -36,6 +38,13 @@ public class GroupUpdateDispatcher implements IGroupUpdateDispatcher {
     private ITelegramPropertiesService telegramPropertiesService;
 
     private IUpdateService updateService;
+
+    private IApiUserService apiUserService;
+
+    @Autowired
+    public void setApiUserService(IApiUserService apiUserService) {
+        this.apiUserService = apiUserService;
+    }
 
     @Autowired
     public void setUpdateService(IUpdateService updateService) {
@@ -78,19 +87,18 @@ public class GroupUpdateDispatcher implements IGroupUpdateDispatcher {
                 if (MemberStatus.LEFT.equals(status) || MemberStatus.KICKED.equals(status)) {
                     log.debug("Бот был удален из группы chatid={}", chatId);
                     boolean isDealRequestGroup = false;
-                    boolean isApiDealRequestGroup = false;
                     Optional<GroupChat> optionalGroupChat = groupChatService.getByType(GroupChatType.DEAL_REQUEST);
                     if (optionalGroupChat.isPresent()) {
                         isDealRequestGroup = optionalGroupChat.get().getChatId().equals(chatId);
                     } else {
-                        optionalGroupChat = groupChatService.getByType(GroupChatType.API_DEAL_REQUEST);
-                        if (optionalGroupChat.isPresent()) {
-                            isApiDealRequestGroup = optionalGroupChat.get().getChatId().equals(chatId);
+                        ApiUser apiUser = apiUserService.getByGroupChatId(chatId);
+                        if (Objects.nonNull(apiUser)) {
+                            apiUser.setGroupChat(null);
+                            apiUserService.save(apiUser);
                         }
                     }
                     groupChatService.deleteIfExistsByChatId(chatId);
                     if (isDealRequestGroup) notificationsAPI.notifyDeletedDealRequestGroup();
-                    if (isApiDealRequestGroup) notificationsAPI.notifyDeletedApiDealRequestGroup();
                     return;
                 }
                 if (MemberStatus.RESTRICTED.equals(status)) {

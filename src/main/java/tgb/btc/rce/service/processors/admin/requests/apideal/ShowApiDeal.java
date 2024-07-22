@@ -61,7 +61,7 @@ public class ShowApiDeal extends Processor {
                 .text(commandService.getText(Command.CONFIRM_API_DEAL))
                 .data(callbackQueryService.buildCallbackData(Command.CONFIRM_API_DEAL, new Object[]{pid, false}))
                 .build());
-        boolean hasDefaultGroupChat = groupChatService.hasApiDealRequests();
+        boolean hasDefaultGroupChat = groupChatService.hasGroupChat(apiDealService.getApiUserPidByDealPid(pid));
         if (hasDefaultGroupChat)
             buttons.add(InlineButton.builder()
                     .text(commandService.getText(Command.CONFIRM_API_DEAL) + " запросом")

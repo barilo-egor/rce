@@ -4,12 +4,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tgb.btc.api.web.INotifier;
 import tgb.btc.library.bean.bot.GroupChat;
+import tgb.btc.library.bean.web.api.ApiUser;
 import tgb.btc.library.constants.enums.bot.GroupChatType;
 import tgb.btc.library.constants.enums.bot.UserRole;
 import tgb.btc.library.constants.enums.properties.VariableType;
 import tgb.btc.library.exception.BaseException;
 import tgb.btc.library.interfaces.service.bean.bot.IGroupChatService;
 import tgb.btc.library.interfaces.service.bean.bot.deal.read.IDealUserService;
+import tgb.btc.library.interfaces.service.bean.web.IApiDealService;
+import tgb.btc.library.interfaces.service.bean.web.IApiUserService;
 import tgb.btc.library.service.properties.VariablePropertiesReader;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
@@ -48,6 +51,20 @@ public class Notifier implements INotifier {
     private VariablePropertiesReader variablePropertiesReader;
 
     private ICommandService commandService;
+
+    private IApiUserService apiUserService;
+
+    private IApiDealService apiDealService;
+
+    @Autowired
+    public void setApiDealService(IApiDealService apiDealService) {
+        this.apiDealService = apiDealService;
+    }
+
+    @Autowired
+    public void setApiUserService(IApiUserService apiUserService) {
+        this.apiUserService = apiUserService;
+    }
 
     @Autowired
     public void setCommandService(ICommandService commandService) {
@@ -159,14 +176,13 @@ public class Notifier implements INotifier {
     }
 
     @Override
-    public void sendRequestToWithdrawApiDeal(String from, String requestInitiator, Long apiDealPid) {
-        Optional<GroupChat> optionalGroupChat = groupChatService.getByType(GroupChatType.API_DEAL_REQUEST);
+    public void sendRequestToWithdrawApiDeal(Long apiDealPid) {
+        Optional<GroupChat> optionalGroupChat = groupChatService.getByApiUserPid(apiDealService.getApiUserPidByDealPid(apiDealPid));
         if (optionalGroupChat.isEmpty())
-            throw new BaseException("Не найдена дефолтная чат-группа для отправки запроса на вывод апи сделки.");
+            throw new BaseException("Не найдена дефолтная чат-группа для отправки запроса на вывод апи сделки pid=" + apiDealPid);
         GroupChat groupChat = optionalGroupChat.get();
         String dealString = dealSupportService.apiDealToRequestString(apiDealPid);
-        String result = "Запрос из <b>" + from + "</b> от <b>" + requestInitiator + "</b>.\n\n" + dealString;
-        responseSender.sendMessage(groupChat.getChatId(), result, "html");
+        responseSender.sendMessage(groupChat.getChatId(), dealString, "html");
     }
 
     @Override
@@ -180,12 +196,18 @@ public class Notifier implements INotifier {
     }
 
     @Override
-    public void sendGreetingToNewApiDealRequestGroup() {
-        Optional<GroupChat> optionalGroupChat = groupChatService.getByType(GroupChatType.API_DEAL_REQUEST);
+    public void sendGreetingToNewApiDealRequestGroup(Long apiUserPid) {
+        ApiUser apiUser = apiUserService.findById(apiUserPid);
+        Optional<GroupChat> optionalGroupChat = Optional.ofNullable(apiUser.getGroupChat());
         if (optionalGroupChat.isEmpty())
-            throw new BaseException("Не найдена дефолтная чат-группа для отправки запроса на вывод апи сделки.");
+            throw new BaseException("Не найдена дефолтная чат-группа для отправки запроса на вывод апи сделки клиента pid=" + apiUserPid + ".");
         GroupChat groupChat = optionalGroupChat.get();
-        responseSender.sendMessage(groupChat.getChatId(), "Данная группа была выбрана для отправки запросов на вывод API сделок." +
-                "Для того, чтобы узнать возможности бота, введите <code>/help</code>.", "html");
+        responseSender.sendMessage(groupChat.getChatId(), "Данная группа была выбрана для отправки запросов на вывод API сделок клиента <b>" + apiUser.getId() +
+                "</b>. Для того, чтобы узнать возможности бота, введите <code>/help</code>.", "html");
+    }
+
+    @Override
+    public void sendGoodbyeToNewApiDealRequestGroup(Long chatId, String apiUserId) {
+        responseSender.sendMessage(chatId, "Данная группа была отвязана от API клиента <b>" + apiUserId + "</b>.", "html");
     }
 }
