@@ -138,7 +138,7 @@ public class DealAutoReport {
             int newActivePartnersCount = 0;
 
             for (Long chatId : allNewPartnersChatIds) {
-                if (reportDealService.getCountPassedByChatId(chatId) > 0) {
+                if (reportDealService.getConfirmedPassedByChatId(chatId) > 0) {
                     newActivePartnersCount++;
                 }
             }
