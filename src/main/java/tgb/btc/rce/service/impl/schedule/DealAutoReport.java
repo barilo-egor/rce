@@ -201,7 +201,7 @@ public class DealAutoReport {
 
     private BigDecimal getCryptoAmount(DealType dealType, CryptoCurrency cryptoCurrency, int scale, LocalDateTime dateFrom, LocalDateTime dateTo) {
         // TODO поправить scale для usdt, выводит 2.6E+2 место 260
-        BigDecimal totalCryptoAmount = reportDealService.getCryptoAmountSum(dealType, dateFrom, dateTo,
+        BigDecimal totalCryptoAmount = reportDealService.getConfirmedCryptoAmountSum(dealType, dateFrom, dateTo,
                                                                          cryptoCurrency);
         return Objects.nonNull(totalCryptoAmount)
                ? totalCryptoAmount.setScale(scale, RoundingMode.HALF_DOWN).stripTrailingZeros()
@@ -215,10 +215,10 @@ public class DealAutoReport {
     private BigDecimal getAmount(CryptoCurrency cryptoCurrency, LocalDateTime dateFrom, LocalDateTime dateTo, DealType dealType, FiatCurrency fiatCurrency) {
         BigDecimal totalAmount;
         if (Objects.nonNull(dateTo)) {
-            totalAmount = reportDealService.getTotalAmountSum(dealType, dateFrom, dateTo, cryptoCurrency,
+            totalAmount = reportDealService.getConfirmedTotalAmountSum(dealType, dateFrom, dateTo, cryptoCurrency,
                                                            fiatCurrency);
         } else {
-            totalAmount = reportDealService.getTotalAmountSum(dealType, dateFrom, cryptoCurrency, fiatCurrency);
+            totalAmount = reportDealService.getConfirmedTotalAmountSum(dealType, dateFrom, cryptoCurrency, fiatCurrency);
         }
         return Objects.nonNull(totalAmount)
                ? totalAmount.setScale(0, RoundingMode.HALF_DOWN).stripTrailingZeros()
