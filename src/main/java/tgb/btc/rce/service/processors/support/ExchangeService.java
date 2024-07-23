@@ -333,7 +333,7 @@ public class ExchangeService {
     }
 
     public List<Long> getListNewDeal(Long chatId) {
-        return readDealService.getListNewDeal(chatId, DealStatus.NEW);
+        return readDealService.getPidsByChatIdAndStatus(chatId, DealStatus.NEW);
     }
 
     public void deleteByPidIn(List<Long> pidList) {
