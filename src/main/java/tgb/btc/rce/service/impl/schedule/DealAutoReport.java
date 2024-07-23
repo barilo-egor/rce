@@ -10,12 +10,12 @@ import tgb.btc.library.constants.enums.bot.CryptoCurrency;
 import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
 import tgb.btc.library.constants.enums.bot.UserRole;
+import tgb.btc.library.interfaces.service.bean.bot.deal.read.IDealCountService;
 import tgb.btc.library.interfaces.service.bean.bot.deal.read.IReportDealService;
 import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.library.interfaces.util.IBigDecimalService;
 import tgb.btc.library.interfaces.util.IFiatCurrencyService;
 import tgb.btc.rce.service.INotifyService;
-import tgb.btc.rce.service.IResponseSender;
 import tgb.btc.rce.service.util.ICryptoCurrenciesDesignService;
 import tgb.btc.rce.vo.DealReportData;
 
@@ -32,9 +32,9 @@ public class DealAutoReport {
 
     private IReportDealService reportDealService;
 
-    private IReadUserService readUserService;
+    private IDealCountService dealCountService;
 
-    public IResponseSender responseSender;
+    private IReadUserService readUserService;
 
     private INotifyService notifyService;
 
@@ -45,6 +45,11 @@ public class DealAutoReport {
     private IFiatCurrencyService fiatCurrencyService;
 
     private IBigDecimalService bigDecimalService;
+
+    @Autowired
+    public void setDealCountService(IDealCountService dealCountService) {
+        this.dealCountService = dealCountService;
+    }
 
     @Autowired
     public void setBigDecimalService(IBigDecimalService bigDecimalService) {
@@ -74,11 +79,6 @@ public class DealAutoReport {
     @Autowired
     public void setReadUserService(IReadUserService readUserService) {
         this.readUserService = readUserService;
-    }
-
-    @Autowired
-    public void setResponseSender(IResponseSender responseSender) {
-        this.responseSender = responseSender;
     }
 
     @Scheduled(cron = "0 5 0 * * *")
@@ -124,7 +124,7 @@ public class DealAutoReport {
             LocalDateTime dateTimeBegin = LocalDateTime.of(data.getFirstDay(), LocalTime.of(0, 0, 0));
             LocalDateTime dateTimeEnd = LocalDateTime.of(data.getLastDay(), LocalTime.of(23, 59, 59));
 
-            if (reportDealService.getCountByPeriod(dateTimeBegin, dateTimeEnd) == 0) {
+            if (dealCountService.getCountConfirmedByDateTimeBetween(dateTimeBegin, dateTimeEnd) == 0) {
                 notifyService.notifyMessage("Нет сделок за " + data.getPeriod() + ".", Set.of(UserRole.OPERATOR, UserRole.ADMIN));
                 return;
             }
@@ -138,7 +138,7 @@ public class DealAutoReport {
             int newActivePartnersCount = 0;
 
             for (Long chatId : allNewPartnersChatIds) {
-                if (reportDealService.getConfirmedPassedByChatId(chatId) > 0) {
+                if (dealCountService.getCountConfirmedByUserChatId(chatId) > 0) {
                     newActivePartnersCount++;
                 }
             }
