@@ -64,7 +64,7 @@ public interface IResponseSender {
 
     void deleteMessage(Long chatId, Integer messageId);
 
-    void sendFile(Long chatId, File file);
+    Message sendFile(Long chatId, File file);
 
     Optional<org.telegram.telegrambots.meta.api.objects.File> execute(GetFile getFile);
 

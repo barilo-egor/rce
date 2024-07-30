@@ -303,14 +303,16 @@ public class ResponseSender implements IResponseSender {
         }
     }
 
-    public void sendFile(Long chatId, File file) {
+    @Override
+    public Message sendFile(Long chatId, File file) {
         try {
-            bot.execute(SendDocument.builder()
+            return bot.execute(SendDocument.builder()
                     .chatId(chatId.toString())
                     .document(new InputFile(file))
                     .build());
         } catch (TelegramApiException e) {
             log.debug("Не получилось отправить файл: chatId=" + chatId + ", fileName=" + file.getName(), e);
+            return null;
         }
     }
 
