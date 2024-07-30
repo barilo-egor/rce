@@ -97,6 +97,9 @@ public class FileDownloader implements IFileDownloader {
             result = message.getPhoto().get(0).getFileId();
         }
         responseSender.deleteMessage(sentChatId, message.getMessageId());
+        if (!FileUtils.deleteQuietly(file)) {
+            log.warn("Не удалось удалить чек диспута из буфера: {} , name={}", file.getAbsolutePath(), file.getName());
+        }
         return result;
     }
 }
