@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import tgb.btc.api.web.INotifier;
 import tgb.btc.library.bean.bot.GroupChat;
 import tgb.btc.library.bean.web.api.ApiUser;
+import tgb.btc.library.constants.enums.ApiDealType;
 import tgb.btc.library.constants.enums.bot.GroupChatType;
 import tgb.btc.library.constants.enums.bot.UserRole;
 import tgb.btc.library.constants.enums.properties.VariableType;
@@ -113,7 +114,11 @@ public class Notifier implements INotifier {
 
     @Override
     public void notifyNewApiDeal(Long apiDealPid) {
-        notifyService.notifyMessage("Поступила новая api сделка.", keyboardService.getShowApiDeal(apiDealPid),
+        ApiDealType apiDealType = apiDealService.getApiDealTypeByPid(apiDealPid);
+        String message = ApiDealType.API.equals(apiDealType)
+                ? "Поступила новая api сделка."
+                : "Поступил новый диспут.";
+        notifyService.notifyMessage(message, keyboardService.getShowApiDeal(apiDealPid),
                 Set.of(UserRole.OPERATOR, UserRole.ADMIN));
     }
 
