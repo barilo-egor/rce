@@ -9,6 +9,7 @@ import org.telegram.telegrambots.meta.api.methods.GetFile;
 import org.telegram.telegrambots.meta.api.objects.File;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Message;
+import org.telegram.telegrambots.meta.api.objects.PhotoSize;
 import tgb.btc.api.bot.IFileDownloader;
 import tgb.btc.library.constants.enums.bot.UserRole;
 import tgb.btc.library.exception.BaseException;
@@ -94,7 +95,9 @@ public class FileDownloader implements IFileDownloader {
         if (file.getName().endsWith(".pdf")) {
             result = message.getDocument().getFileId();
         } else {
-            result = message.getPhoto().get(0).getFileId();
+            List<PhotoSize> photoSizes = message.getPhoto();
+            photoSizes.sort((p1, p2) -> p2.getHeight().compareTo(p1.getHeight()));
+            result = photoSizes.get(0).getFileId();
         }
         responseSender.deleteMessage(sentChatId, message.getMessageId());
         if (!FileUtils.deleteQuietly(file)) {
