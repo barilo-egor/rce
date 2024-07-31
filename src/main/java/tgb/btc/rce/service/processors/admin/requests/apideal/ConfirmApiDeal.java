@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.api.web.INotifier;
+import tgb.btc.library.constants.enums.ApiDealType;
 import tgb.btc.library.constants.enums.web.ApiDealStatus;
 import tgb.btc.library.interfaces.service.bean.bot.IGroupChatService;
 import tgb.btc.library.interfaces.service.bean.web.IApiDealService;
@@ -55,6 +56,9 @@ public class ConfirmApiDeal extends Processor {
         if (isNeedRequest)
             notifier.sendRequestToWithdrawApiDeal(dealPid);
         log.debug("Админ chatId={} подтвердил АПИ сделку={}.", chatId, dealPid);
-        responseSender.sendMessage(chatId, "API сделка подтверждена.");
+        String message = ApiDealType.API.equals(apiDealService.getApiDealTypeByPid(dealPid))
+                ? "API сделка подтверждена."
+                : "Диспут подтвержден.";
+        responseSender.sendMessage(chatId, message);
     }
 }
