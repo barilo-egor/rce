@@ -66,6 +66,8 @@ public interface IResponseSender {
 
     Message sendFile(Long chatId, File file);
 
+    Message sendFile(Long chatId, String caption, String fileId);
+
     Optional<org.telegram.telegrambots.meta.api.objects.File> execute(GetFile getFile);
 
     void downloadFile(Document document, String localFilePath) throws IOException, TelegramApiException;

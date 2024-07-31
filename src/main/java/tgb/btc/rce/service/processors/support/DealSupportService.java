@@ -7,6 +7,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import tgb.btc.library.bean.bot.Deal;
 import tgb.btc.library.bean.bot.User;
 import tgb.btc.library.bean.web.api.ApiDeal;
+import tgb.btc.library.constants.enums.ApiDealType;
 import tgb.btc.library.constants.enums.bot.CryptoCurrency;
 import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
@@ -105,24 +106,22 @@ public class DealSupportService {
     }
 
     public String apiDealToRequestString(Long pid) {
-        ApiDeal apiDeal = apiDealService.findById(pid);
-        String dealString = apiDealToString(pid);
+        ApiDeal apiDeal = apiDealService.getByPid(pid);
+        String dealString = apiDealToString(apiDeal);
         if (CryptoCurrency.BITCOIN.equals(apiDeal.getCryptoCurrency()) && DealType.BUY.equals(apiDeal.getDealType()))
             return dealString + "\nСтрока для вывода:\n<code>" + apiDeal.getRequisite() + "," + bigDecimalService.toPlainString(apiDeal.getCryptoAmount()) + "</code>";
         else
             return dealString;
     }
 
-    public String apiDealToString(Long pid) {
-        ApiDeal apiDeal = apiDealService.getByPid(pid);
-        return apiDealToString(apiDeal);
-    }
-
     public String apiDealToString(ApiDeal apiDeal) {
-        return "API заявка на " + apiDeal.getDealType().getGenitive() + " №" + apiDeal.getPid() + "\n"
+        String apiDealType = ApiDealType.API.equals(apiDeal.getApiDealType())
+                ? "API заявка"
+                : "Диспут";
+        return apiDealType + " на " + apiDeal.getDealType().getGenitive() + " №" + apiDeal.getPid() + "\n"
                 + "Идентификатор клиента: " + apiDeal.getApiUser().getId() + "\n"
                 + "Дата, время: " + apiDeal.getDateTime().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")) + "\n"
-                + "Рекзвизиты клиента: " + apiDeal.getRequisite() + "\n"
+                + "Реквизиты клиента: " + apiDeal.getRequisite() + "\n"
                 + "Реквизиты оплаты: " + apiDeal.getApiUser().getRequisite(apiDeal.getDealType()) + "\n"
                 + "Количество сделок: " + apiDealService.countByApiDealStatusAndApiUser_Pid(ApiDealStatus.ACCEPTED, apiDeal.getApiUser().getPid()) + "\n"
                 + "Сумма " + apiDeal.getCryptoCurrency().getShortName() + ": " + apiDeal.getCryptoAmount() + "\n"

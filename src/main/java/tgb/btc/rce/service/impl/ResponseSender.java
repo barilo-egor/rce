@@ -57,7 +57,7 @@ public class ResponseSender implements IResponseSender {
     private IMenuService menuService;
 
     private IKeyboardBuildService keyboardBuildService;
-    
+
     private ICallbackQueryService callbackQueryService;
 
     private IMessagePropertiesService messagePropertiesService;
@@ -316,6 +316,20 @@ public class ResponseSender implements IResponseSender {
         }
     }
 
+    @Override
+    public Message sendFile(Long chatId, String caption, String fileId) {
+        try {
+            return bot.execute(SendDocument.builder()
+                    .chatId(chatId.toString())
+                    .caption(caption)
+                    .document(new InputFile(fileId))
+                    .build());
+        } catch (TelegramApiException e) {
+            log.debug("Не получилось отправить файл: chatId=" + chatId + ", fileId=" + fileId, e);
+            return null;
+        }
+    }
+
     public Optional<org.telegram.telegrambots.meta.api.objects.File> execute(GetFile getFile) {
         try {
             return Optional.of(bot.execute(getFile));
@@ -423,7 +437,8 @@ public class ResponseSender implements IResponseSender {
 
     @Override
     public void deleteCallbackMessageIfExists(Update update) {
-        if (update.hasCallbackQuery()) deleteMessage(updateService.getChatId(update), callbackQueryService.messageId(update));
+        if (update.hasCallbackQuery())
+            deleteMessage(updateService.getChatId(update), callbackQueryService.messageId(update));
     }
 
     @Override
