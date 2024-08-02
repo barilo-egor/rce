@@ -1,7 +1,6 @@
 package tgb.btc.rce.bot;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -70,15 +69,16 @@ public class RceBot extends TelegramLongPollingBot {
                         .text("Неверный формат.")
                         .build());
             } catch (Exception e) {
-                log.debug("Необработанная ошибка.", e);
                 Long time = System.currentTimeMillis();
+                log.debug("{} Необработанная ошибка.", time, e);
                 String message = "Произошла ошибка." + System.lineSeparator() +
                         time + System.lineSeparator() +
                         "Введите /start для выхода в главное меню.";
 
-                execute(SendMessage.builder().chatId(updateService.getChatId(update).toString()).text(message).build());
-                log.debug(String.format("Произошла ошибка. %s. Описание ошибки: %s", time, e.getMessage()
-                        + System.lineSeparator() + ExceptionUtils.getFullStackTrace(e)));
+                try {
+                    execute(SendMessage.builder().chatId(updateService.getChatId(update).toString()).text(message).build());
+                } catch (Exception ignored) {
+                }
             }
         } catch (TelegramApiException ignored) {
         }

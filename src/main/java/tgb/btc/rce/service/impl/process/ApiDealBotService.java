@@ -8,7 +8,7 @@ import tgb.btc.library.constants.enums.bot.ReceiptFormat;
 import tgb.btc.library.interfaces.service.bean.bot.IGroupChatService;
 import tgb.btc.library.interfaces.service.bean.web.IApiDealService;
 import tgb.btc.rce.enums.Command;
-import tgb.btc.rce.service.IResponseSender;
+import tgb.btc.rce.sender.IResponseSender;
 import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
 import tgb.btc.rce.service.process.IApiDealBotService;
 import tgb.btc.rce.service.processors.support.DealSupportService;

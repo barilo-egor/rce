@@ -16,7 +16,7 @@ import tgb.btc.library.service.process.DiceService;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.Menu;
-import tgb.btc.rce.service.IResponseSender;
+import tgb.btc.rce.sender.IResponseSender;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.util.IUpdateDispatcher;
 import tgb.btc.rce.vo.InlineButton;

@@ -71,6 +71,10 @@ public class CommandService implements ICommandService {
                 return findByTextOrName(update.getInlineQuery().getQuery());
             case CHANNEL_POST:
                 return Command.CHANNEL_POST;
+            case EDITED_CHANNEL_POST:
+            case MY_CHAT_MEMBER:
+                // TODO переделать логику, чтобы регистрировало по myChatMember а не по команде /start
+                return Command.NONE;
             default:
                 return Command.START;
         }

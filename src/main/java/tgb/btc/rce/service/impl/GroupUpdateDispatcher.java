@@ -16,7 +16,7 @@ import tgb.btc.library.constants.enums.bot.GroupChatType;
 import tgb.btc.library.interfaces.service.bean.bot.IGroupChatService;
 import tgb.btc.library.interfaces.service.bean.web.IApiUserService;
 import tgb.btc.rce.service.IGroupUpdateDispatcher;
-import tgb.btc.rce.service.IResponseSender;
+import tgb.btc.rce.sender.IResponseSender;
 import tgb.btc.rce.service.IUpdateService;
 import tgb.btc.rce.service.util.ITelegramPropertiesService;
 

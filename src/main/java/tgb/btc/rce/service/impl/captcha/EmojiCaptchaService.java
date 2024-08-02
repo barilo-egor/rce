@@ -5,7 +5,7 @@ import tgb.btc.library.exception.BaseException;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.captcha.IAntiSpam;
 import tgb.btc.rce.service.captcha.ICaptchaService;
-import tgb.btc.rce.service.impl.ResponseSender;
+import tgb.btc.rce.sender.ResponseSender;
 import tgb.btc.rce.vo.EmojiCaptcha;
 import tgb.btc.rce.vo.InlineButton;
 

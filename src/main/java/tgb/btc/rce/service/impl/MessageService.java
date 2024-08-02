@@ -10,8 +10,9 @@ import tgb.btc.library.interfaces.service.bean.bot.user.IModifyUserService;
 import tgb.btc.library.interfaces.util.IBigDecimalService;
 import tgb.btc.library.vo.calculate.DealAmount;
 import tgb.btc.rce.enums.PropertiesMessage;
+import tgb.btc.rce.sender.ResponseSender;
 import tgb.btc.rce.service.IMessageService;
-import tgb.btc.rce.service.IResponseSender;
+import tgb.btc.rce.sender.IResponseSender;
 import tgb.btc.rce.service.util.IMessagePropertiesService;
 import tgb.btc.rce.vo.InlineCalculatorVO;
 

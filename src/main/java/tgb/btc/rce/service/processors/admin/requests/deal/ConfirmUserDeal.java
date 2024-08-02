@@ -53,13 +53,16 @@ public class ConfirmUserDeal extends Processor {
         }
         modifyDealService.confirm(dealPid);
         String username = readUserService.getUsernameByChatId(chatId);
-        if (isNeedRequest)
+        log.debug("Админ {} подтвердил сделку {}.", chatId, dealPid);
+        if (isNeedRequest) {
+            log.debug("Сделка {} была отправлена в группу запросов.", dealPid);
             notifier.sendRequestToWithdrawDeal(
                     "бота",
                     StringUtils.isNotEmpty(username)
                             ? username
                             : "chatid:" + chatId,
                     dealPid);
+        }
         responseSender.deleteMessage(chatId, updateService.getMessage(update).getMessageId());
     }
 }

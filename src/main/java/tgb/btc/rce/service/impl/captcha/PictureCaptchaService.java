@@ -8,7 +8,7 @@ import tgb.btc.library.exception.BaseException;
 import tgb.btc.rce.exception.PicturesNotFoundException;
 import tgb.btc.rce.service.captcha.IAntiSpam;
 import tgb.btc.rce.service.captcha.ICaptchaService;
-import tgb.btc.rce.service.impl.ResponseSender;
+import tgb.btc.rce.sender.ResponseSender;
 import tgb.btc.rce.vo.Captcha;
 
 import java.io.File;

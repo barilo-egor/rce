@@ -8,7 +8,7 @@ import tgb.btc.library.constants.enums.properties.PropertiesPath;
 import tgb.btc.library.service.process.BackupService;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
-import tgb.btc.rce.service.IResponseSender;
+import tgb.btc.rce.sender.IResponseSender;
 import tgb.btc.rce.service.Processor;
 
 import java.util.ArrayList;

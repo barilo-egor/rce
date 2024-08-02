@@ -12,7 +12,7 @@ import tgb.btc.library.interfaces.service.bean.bot.user.IModifyUserService;
 import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.IUpdateService;
-import tgb.btc.rce.service.impl.ResponseSender;
+import tgb.btc.rce.sender.ResponseSender;
 import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
 import tgb.btc.rce.service.process.IBotMessageProcessService;
 import tgb.btc.rce.service.util.IBotImageService;

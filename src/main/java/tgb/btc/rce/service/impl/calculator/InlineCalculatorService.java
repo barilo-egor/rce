@@ -7,6 +7,7 @@ import tgb.btc.library.interfaces.service.bean.bot.deal.read.IDealPropertyServic
 import tgb.btc.library.interfaces.service.bean.bot.user.IModifyUserService;
 import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.rce.enums.Command;
+import tgb.btc.rce.sender.IResponseSender;
 import tgb.btc.rce.service.*;
 import tgb.btc.rce.service.processors.calculator.InlineCalculator;
 import tgb.btc.rce.vo.InlineCalculatorVO;

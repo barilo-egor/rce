@@ -51,6 +51,8 @@ public class UpdateService implements IUpdateService {
                 return update.getCallbackQuery().getFrom();
             case INLINE_QUERY:
                 return update.getInlineQuery().getFrom();
+            case MY_CHAT_MEMBER:
+                return update.getMyChatMember().getFrom();
             default:
                 throw new BaseException("Тип апдейта не найден: " + update);
         }

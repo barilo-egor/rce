@@ -12,7 +12,7 @@ import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.Menu;
 import tgb.btc.rce.service.IUpdateService;
-import tgb.btc.rce.service.impl.ResponseSender;
+import tgb.btc.rce.sender.ResponseSender;
 import tgb.btc.rce.service.util.IMenuService;
 
 
