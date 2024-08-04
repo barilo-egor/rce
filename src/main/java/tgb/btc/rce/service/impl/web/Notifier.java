@@ -171,7 +171,7 @@ public class Notifier implements INotifier {
 
     @Override
     public void sendRequestToWithdrawDeal(String from, String requestInitiator, Long dealPid) {
-        Optional<GroupChat> optionalGroupChat = groupChatService.getByType(GroupChatType.DEAL_REQUEST);
+        Optional<GroupChat> optionalGroupChat = groupChatService.getAllByType(GroupChatType.DEAL_REQUEST).stream().findAny();
         if (optionalGroupChat.isEmpty())
             throw new BaseException("Не найдена дефолтная чат-группа для отправки запроса на вывод сделки.");
         GroupChat groupChat = optionalGroupChat.get();
@@ -192,7 +192,7 @@ public class Notifier implements INotifier {
 
     @Override
     public void sendGreetingToNewDealRequestGroup() {
-        Optional<GroupChat> optionalGroupChat = groupChatService.getByType(GroupChatType.DEAL_REQUEST);
+        Optional<GroupChat> optionalGroupChat = groupChatService.getAllByType(GroupChatType.DEAL_REQUEST).stream().findAny();
         if (optionalGroupChat.isEmpty())
             throw new BaseException("Не найдена дефолтная чат-группа для отправки запроса на вывод сделки.");
         GroupChat groupChat = optionalGroupChat.get();

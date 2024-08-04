@@ -87,7 +87,7 @@ public class GroupUpdateDispatcher implements IGroupUpdateDispatcher {
                 if (MemberStatus.LEFT.equals(status) || MemberStatus.KICKED.equals(status)) {
                     log.debug("Бот был удален из группы chatid={}", chatId);
                     boolean isDealRequestGroup = false;
-                    Optional<GroupChat> optionalGroupChat = groupChatService.getByType(GroupChatType.DEAL_REQUEST);
+                    Optional<GroupChat> optionalGroupChat = groupChatService.getAllByType(GroupChatType.DEAL_REQUEST).stream().findAny();
                     if (optionalGroupChat.isPresent()) {
                         isDealRequestGroup = optionalGroupChat.get().getChatId().equals(chatId);
                     } else {
