@@ -10,6 +10,7 @@ import java.util.Optional;
 public enum HelpCommand {
     MAKE_ADMIN(Command.MAKE_ADMIN, " chatId - перевод пользователя в роль администратора"),
     MAKE_OPERATOR(Command.MAKE_OPERATOR, " chatId - перевод пользователя в роль оператора"),
+    MAKE_OBSERVER(Command.MAKE_OBSERVER, " chatId - перевод пользователя в роль наблюдателя"),
     MAKE_USER(Command.MAKE_USER, " chatId - перевод пользователя в роль пользователя"),
     DELETE_USER(Command.DELETE_USER, " chatId - удаление пользователя со всеми его данными(включая сделки)"),
     BACKUP_DB(Command.BACKUP_DB, " создание бэк апа базы данных"),

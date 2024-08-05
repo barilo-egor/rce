@@ -6,7 +6,7 @@ import java.util.List;
 public enum Menu {
     MAIN(2, List.of(
             Command.BUY_BITCOIN, Command.SELL_BITCOIN, Command.CONTACTS, Command.DRAWS, Command.REFERRAL,
-            Command.ADMIN_PANEL, Command.WEB_ADMIN_PANEL, Command.OPERATOR_PANEL
+            Command.ADMIN_PANEL, Command.WEB_ADMIN_PANEL, Command.OPERATOR_PANEL, Command.OBSERVER_PANEL
     )),
     DRAWS(2, List.of(
             Command.LOTTERY, Command.ROULETTE, Command.SLOT_REEL, Command.DICE, Command.RPS, Command.BACK
@@ -16,6 +16,7 @@ public enum Menu {
             Command.USERS, Command.DEALS_COUNT, Command.QUIT_ADMIN_PANEL)),
     OPERATOR_PANEL(2, List.of(Command.NEW_DEALS, Command.NEW_API_DEALS, Command.NEW_REVIEWS, Command.NEW_WITHDRAWALS, Command.NEW_SPAM_BANS,
             Command.PAYMENT_TYPES, Command.QUIT_ADMIN_PANEL)),
+    OBSERVER_PANEL(2, List.of(Command.DEAL_REPORTS, Command.QUIT_ADMIN_PANEL)),
     DISCOUNTS(2, List.of(Command.RANK_DISCOUNT, Command.TURN_RANK_DISCOUNT, Command.PERSONAL_BUY_DISCOUNT,
             Command.PERSONAL_SELL_DISCOUNT, Command.REFERRAL_PERCENT, Command.ADMIN_BACK)),
     USERS(2, List.of(

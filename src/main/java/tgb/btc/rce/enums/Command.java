@@ -40,6 +40,7 @@ public enum Command implements ICommand {
     DELETE_USER("/deleteuser", true, UserRole.ADMIN_ACCESS),
     MAKE_ADMIN("/makeadmin", true, UserRole.ADMIN_ACCESS),
     MAKE_OPERATOR("/makeoperator", true, UserRole.ADMIN_ACCESS),
+    MAKE_OBSERVER("/makeobserver", true, UserRole.ADMIN_ACCESS),
     MAKE_USER("/makeuser", true, UserRole.ADMIN_ACCESS),
     HELP("/help", false, UserRole.ADMIN_ACCESS),
 
@@ -54,6 +55,7 @@ public enum Command implements ICommand {
     REFERRAL(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.name(), false, UserRole.USER_ACCESS),
     ADMIN_PANEL("Админ панель", false, UserRole.ADMIN_ACCESS),
     OPERATOR_PANEL("Панель оператора", false, UserRole.OPERATOR_ACCESS),
+    OBSERVER_PANEL("Панель наблюдателя", false, UserRole.OBSERVER_ACCESS),
 
     /**
      * DRAWS
@@ -87,7 +89,7 @@ public enum Command implements ICommand {
     TURNING_CURRENCY("Включение криптовалют", false, UserRole.ADMIN_ACCESS),
     DISCOUNTS("Скидки", false, UserRole.ADMIN_ACCESS),
     USERS("Пользователи", false, UserRole.ADMIN_ACCESS),
-    QUIT_ADMIN_PANEL("Выйти", false, UserRole.OPERATOR_ACCESS),
+    QUIT_ADMIN_PANEL("Выйти", false, UserRole.OBSERVER_ACCESS),
     TURNING_DELIVERY_TYPE("Вкл/выкл способов доставки", false, UserRole.ADMIN_ACCESS),
     BACKUP_DB("/backupdb", true, UserRole.ADMIN_ACCESS),
 
@@ -169,7 +171,7 @@ public enum Command implements ICommand {
     USERS_REPORT("Отчет по пользователям", false, UserRole.ADMIN_ACCESS),
     USER_INFORMATION("Информация о пользователе", false, UserRole.ADMIN_ACCESS),
     USERS_DEALS_REPORT("Отчет сделки пользователей", false, UserRole.ADMIN_ACCESS),
-    DEAL_REPORTS("Отчет по сделкам", false, UserRole.ADMIN_ACCESS),
+    DEAL_REPORTS("Отчет по сделкам", false, Set.of(UserRole.OBSERVER, UserRole.ADMIN)),
     PARTNERS_REPORT("Отчет по партнерам", false, UserRole.ADMIN_ACCESS),
     CHECKS_FOR_DATE("Чеки по дате", false, UserRole.ADMIN_ACCESS),
     SEND_CHECKS_FOR_DATE("SEND_CHECKS_FOR_DATE", false, UserRole.ADMIN_ACCESS),

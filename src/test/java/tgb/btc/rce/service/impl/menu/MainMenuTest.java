@@ -53,6 +53,7 @@ class MainMenuTest {
         expectedCommands.remove(Command.ADMIN_PANEL);
         expectedCommands.remove(Command.WEB_ADMIN_PANEL);
         expectedCommands.remove(Command.OPERATOR_PANEL);
+        expectedCommands.remove(Command.OBSERVER_PANEL);
         mainMenu.build(UserRole.USER);
         verify(replyButtonService).fromCommands(expectedCommands);
         when(referralModule.isCurrent(ReferralType.STANDARD)).thenReturn(false);
@@ -67,6 +68,7 @@ class MainMenuTest {
         when(referralModule.isCurrent(ReferralType.STANDARD)).thenReturn(true);
         List<Command> expectedCommands = new ArrayList<>(Menu.MAIN.getCommands());
         expectedCommands.remove(Command.OPERATOR_PANEL);
+        expectedCommands.remove(Command.OBSERVER_PANEL);
         mainMenu.build(UserRole.ADMIN);
         verify(replyButtonService).fromCommands(expectedCommands);
         when(referralModule.isCurrent(ReferralType.STANDARD)).thenReturn(false);
@@ -82,11 +84,28 @@ class MainMenuTest {
         List<Command> expectedCommands = new ArrayList<>(Menu.MAIN.getCommands());
         expectedCommands.remove(Command.ADMIN_PANEL);
         expectedCommands.remove(Command.WEB_ADMIN_PANEL);
+        expectedCommands.remove(Command.OBSERVER_PANEL);
         mainMenu.build(UserRole.OPERATOR);
         verify(replyButtonService).fromCommands(expectedCommands);
         when(referralModule.isCurrent(ReferralType.STANDARD)).thenReturn(false);
         expectedCommands.remove(Command.REFERRAL);
         mainMenu.build(UserRole.OPERATOR);
+        verify(replyButtonService).fromCommands(expectedCommands);
+    }
+
+    @Test
+    @DisplayName("Должен вернуть меню для OBSERVER.")
+    void buildObserver() {
+        when(referralModule.isCurrent(ReferralType.STANDARD)).thenReturn(true);
+        List<Command> expectedCommands = new ArrayList<>(Menu.MAIN.getCommands());
+        expectedCommands.remove(Command.ADMIN_PANEL);
+        expectedCommands.remove(Command.WEB_ADMIN_PANEL);
+        expectedCommands.remove(Command.OPERATOR_PANEL);
+        mainMenu.build(UserRole.OBSERVER);
+        verify(replyButtonService).fromCommands(expectedCommands);
+        when(referralModule.isCurrent(ReferralType.STANDARD)).thenReturn(false);
+        expectedCommands.remove(Command.REFERRAL);
+        mainMenu.build(UserRole.OBSERVER);
         verify(replyButtonService).fromCommands(expectedCommands);
     }
 }

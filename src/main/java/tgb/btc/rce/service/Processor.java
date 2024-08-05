@@ -156,14 +156,21 @@ public abstract class Processor {
     public void processToAdminMainPanel(Long chatId) {
         modifyUserService.setDefaultValues(chatId);
         UserRole role = readUserService.getUserRoleByChatId(chatId);
-        if (UserRole.ADMIN.equals(role))
-            responseSender.sendMessage(chatId,
-                    messagePropertiesService.getMessage(PropertiesMessage.MENU_MAIN_ADMIN),
-                    menuService.build(Menu.ADMIN_PANEL, role));
-        else if (UserRole.OPERATOR.equals(role))
-            responseSender.sendMessage(chatId,
-                    messagePropertiesService.getMessage(PropertiesMessage.MENU_MAIN_OPERATOR),
-                    menuService.build(Menu.OPERATOR_PANEL, role));
+        switch (role) {
+            case ADMIN:
+                responseSender.sendMessage(chatId,
+                        messagePropertiesService.getMessage(PropertiesMessage.MENU_MAIN_ADMIN),
+                        menuService.build(Menu.ADMIN_PANEL, role));
+                break;
+            case OPERATOR:
+                responseSender.sendMessage(chatId,
+                        messagePropertiesService.getMessage(PropertiesMessage.MENU_MAIN_OPERATOR),
+                        menuService.build(Menu.OPERATOR_PANEL, role));
+                break;
+            case OBSERVER:
+                responseSender.sendMessage(chatId, "Вы перешли в панель наблюдателя", Menu.OBSERVER_PANEL);
+                break;
+        }
     }
 
     protected boolean hasMessageText(Update update, String message) {

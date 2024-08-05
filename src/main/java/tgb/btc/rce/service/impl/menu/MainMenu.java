@@ -49,6 +49,9 @@ public class MainMenu implements IMenu {
         if (!UserRole.OPERATOR.equals(userRole)) {
             resultCommands.remove(Command.OPERATOR_PANEL);
         }
+        if (!UserRole.OBSERVER.equals(userRole)) {
+            resultCommands.remove(Command.OBSERVER_PANEL);
+        }
         return replyButtonService.fromCommands(resultCommands);
     }
 
