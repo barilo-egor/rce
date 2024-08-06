@@ -805,7 +805,7 @@ public class ExchangeService {
         responseSender.sendMessage(chatId, messagePropertiesService.getMessage(PropertiesMessage.DEAL_CONFIRMED));
         log.info("Сделка " + currentDealPid + " пользователя " + chatId + " переведена в статус PAID");
         notifyService.notifyMessage("Поступила новая заявка на " + dealType.getGenitive() + ".",
-                keyboardService.getShowDeal(currentDealPid), Set.of(UserRole.OPERATOR, UserRole.ADMIN));
+                keyboardService.getShowDeal(currentDealPid), UserRole.OBSERVER_ACCESS);
         notificationsAPI.newBotDeal(currentDealPid);
     }
 

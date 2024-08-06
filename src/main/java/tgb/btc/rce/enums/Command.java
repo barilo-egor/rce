@@ -142,7 +142,7 @@ public enum Command implements ICommand {
     PAID(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.name(), false, UserRole.USER_ACCESS),
     CANCEL_DEAL("Отменить заявку", false, UserRole.USER_ACCESS),
     DELETE_DEAL("Удалить", false, UserRole.USER_ACCESS),
-    SHOW_DEAL("Показать", false, UserRole.OPERATOR_ACCESS),
+    SHOW_DEAL("Показать", false, UserRole.OBSERVER_ACCESS),
     SHOW_API_DEAL("show_api_deal", false, UserRole.OPERATOR_ACCESS),
     DELETE_USER_DEAL("Удалить", false, UserRole.OPERATOR_ACCESS),
     DELETE_DEAL_AND_BLOCK_USER("Удалить и заблокировать", false, UserRole.OPERATOR_ACCESS),
@@ -158,7 +158,7 @@ public enum Command implements ICommand {
     /**
      * REQUESTS
      */
-    NEW_DEALS("Новые заявки", false, UserRole.OPERATOR_ACCESS),
+    NEW_DEALS("Новые заявки", false, UserRole.OBSERVER_ACCESS),
     NEW_WITHDRAWALS("Вывод средств", false, UserRole.OPERATOR_ACCESS),
     NEW_REVIEWS("Новые отзывы", false, UserRole.OPERATOR_ACCESS),
 

@@ -118,8 +118,7 @@ public class Notifier implements INotifier {
         String message = ApiDealType.API.equals(apiDealType)
                 ? "Поступила новая api сделка."
                 : "Поступил новый диспут.";
-        notifyService.notifyMessage(message, keyboardService.getShowApiDeal(apiDealPid),
-                Set.of(UserRole.OPERATOR, UserRole.ADMIN));
+        notifyService.notifyMessage(message, keyboardService.getShowApiDeal(apiDealPid), UserRole.OBSERVER_ACCESS);
     }
 
     @Override

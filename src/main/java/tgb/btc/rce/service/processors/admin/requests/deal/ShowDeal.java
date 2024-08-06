@@ -7,6 +7,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.bean.bot.Deal;
 import tgb.btc.library.bean.bot.PaymentReceipt;
 import tgb.btc.library.constants.enums.bot.ReceiptFormat;
+import tgb.btc.library.constants.enums.bot.UserRole;
 import tgb.btc.library.interfaces.service.bean.bot.deal.IReadDealService;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.constants.BotStringConstants;
@@ -48,10 +49,18 @@ public class ShowDeal extends Processor {
             responseSender.sendMessage(chatId, "Заявка была удалена.");
             return;
         }
+        UserRole userRole = readUserService.getUserRoleByChatId(chatId);
         String dealInfo = dealSupportService.dealToString(dealPid);
-        responseSender.sendMessage(chatId, dealInfo, dealSupportService.dealToStringButtons(dealPid));
+        if (UserRole.OPERATOR_ACCESS.contains(userRole)) {
+            responseSender.sendMessage(chatId, dealInfo, dealSupportService.dealToStringButtons(dealPid));
+        } else {
+            responseSender.sendMessage(chatId, dealInfo);
+        }
+        if (!UserRole.OPERATOR_ACCESS.contains(userRole)) {
+            return;
+        }
         List<PaymentReceipt> paymentReceipts = readDealService.getPaymentReceipts(dealPid);
-        if (paymentReceipts.size() > 0) {
+        if (!paymentReceipts.isEmpty()) {
             for (PaymentReceipt paymentReceipt : paymentReceipts) {
                 if (paymentReceipt.getReceiptFormat().equals(ReceiptFormat.PICTURE)) {
                     responseSender.sendPhoto(chatId, StringUtils.EMPTY, paymentReceipt.getReceipt());
