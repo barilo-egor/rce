@@ -65,12 +65,14 @@
                                         <scp file="target/rce.jar"
                                              todir="rce@45.83.122.132:/home/rce/application"
                                              keyfile="${ssh.keyfile}"
-                                             trust="true"/>
+                                             trust="true"
+                                             port="58732"/>
                                         <sshexec host="45.83.122.132"
                                                  username="rce"
                                                  keyfile="${ssh.keyfile}"
                                                  trust="true"
-                                                 command="/home/rce/application/run.sh"/>
+                                                 command="sudo /home/rce/application/run.sh"
+                                                 port="58732"/>
                                     </target>
                                 </configuration>
                             </execution>
@@ -111,12 +113,14 @@
                                         <scp file="target/rce.jar"
                                              todir="rce@45.83.123.33:/home/rce/application"
                                              keyfile="${ssh.keyfile}"
-                                             trust="true"/>
+                                             trust="true"
+                                             port="58732"/>
                                         <sshexec host="45.83.123.33"
                                                  username="rce"
                                                  keyfile="${ssh.keyfile}"
                                                  trust="true"
-                                                 command="/home/rce/application/run.sh"/>
+                                                 command="sudo /home/rce/application/run.sh"
+                                                 port="58732"/>
                                     </target>
                                 </configuration>
                             </execution>
@@ -156,12 +160,14 @@
                                         <scp file="target/rce.jar"
                                              todir="rce@45.83.122.247:/home/rce/application"
                                              keyfile="${ssh.keyfile}"
-                                             trust="true"/>
+                                             trust="true"
+                                             port="58732"/>
                                         <sshexec host="45.83.122.247"
                                                  username="rce"
                                                  keyfile="${ssh.keyfile}"
                                                  trust="true"
-                                                 command="/home/rce/application/run.sh"/>
+                                                 command="sudo /home/rce/application/run.sh"
+                                                 port="58732"/>
                                     </target>
                                 </configuration>
                             </execution>
@@ -202,12 +208,14 @@
                                         <scp file="target/rce.jar"
                                              todir="rce@45.83.122.228:/home/rce/application"
                                              keyfile="${ssh.keyfile}"
-                                             trust="true"/>
+                                             trust="true"
+                                             port="58732"/>
                                         <sshexec host="45.83.122.228"
                                                  username="rce"
                                                  keyfile="${ssh.keyfile}"
                                                  trust="true"
-                                                 command="/home/rce/application/run.sh"/>
+                                                 command="sudo /home/rce/application/run.sh"
+                                                 port="58732"/>
                                     </target>
                                 </configuration>
                             </execution>
