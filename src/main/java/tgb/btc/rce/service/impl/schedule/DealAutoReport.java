@@ -182,7 +182,7 @@ public class DealAutoReport {
             stringBuilder.append("\n" + "Количество новых пользователей: ").append(newUsersCount).append("\n")
                     .append("Количество новых партнеров: ").append(allNewPartnersCount).append("\n")
                     .append("Количество активных новых партнеров: ").append(newActivePartnersCount);
-            notifyService.notifyMessage(stringBuilder.toString(), Set.of(UserRole.ADMIN));
+            notifyService.notifyMessage(stringBuilder.toString(), UserRole.OBSERVER_ACCESS);
         } catch (Exception e) {
             String message = "Ошибка при формировании периодического отчета за " + data.getPeriod() + ":\n"
                     + e.getMessage() + "\n"
