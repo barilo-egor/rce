@@ -109,7 +109,8 @@ public class DealSupportService {
         ApiDeal apiDeal = apiDealService.getByPid(pid);
         String dealString = apiDealToString(apiDeal);
         if (CryptoCurrency.BITCOIN.equals(apiDeal.getCryptoCurrency()) && DealType.BUY.equals(apiDeal.getDealType()))
-            return dealString + "\nСтрока для вывода:\n<code>" + apiDeal.getRequisite() + "," + bigDecimalService.toPlainString(apiDeal.getCryptoAmount()) + "</code>";
+            return dealString + "\nСтрока для вывода:\n<code>" + apiDeal.getRequisite() + ","
+                    + bigDecimalService.toPlainString(apiDeal.getCryptoAmount()) + "</code>";
         else
             return dealString;
     }
@@ -122,7 +123,7 @@ public class DealSupportService {
         if (Objects.nonNull(apiDeal.getApiRequisite())) {
             requisite = apiDeal.getApiRequisite().getRequisite();
         } else {
-            requisite = apiDeal.getRequisite();
+            requisite = "Отсутствует";
         }
         return apiDealType + " на " + apiDeal.getDealType().getGenitive() + " №" + apiDeal.getPid() + "\n"
                 + "Идентификатор клиента: " + apiDeal.getApiUser().getId() + "\n"
@@ -130,8 +131,8 @@ public class DealSupportService {
                 + (Objects.nonNull(apiDeal.getApiPaymentType())
                 ? "Тип оплаты:" + apiDeal.getApiPaymentType().getName() + "(" + apiDeal.getApiPaymentType().getId() + ")"
                 : "")
-                + "Реквизиты клиента: " + requisite + "\n"
-                + "Реквизиты оплаты: " + apiDeal.getApiUser().getRequisite(apiDeal.getDealType()) + "\n"
+                + "Реквизиты клиента: " + apiDeal.getRequisite() + "\n"
+                + "Реквизиты оплаты: " + requisite + "\n"
                 + "Количество сделок: " + apiDealService.countByApiDealStatusAndApiUser_Pid(ApiDealStatus.ACCEPTED, apiDeal.getApiUser().getPid()) + "\n"
                 + "Сумма " + apiDeal.getCryptoCurrency().getShortName() + ": " + apiDeal.getCryptoAmount() + "\n"
                 + "Сумма " + apiDeal.getApiUser().getFiatCurrency().getDisplayName() + ": " + apiDeal.getAmount();
