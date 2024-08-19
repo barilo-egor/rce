@@ -14,6 +14,8 @@ import tgb.btc.rce.enums.ReviewPriseType;
 import tgb.btc.rce.sender.IResponseSender;
 import tgb.btc.rce.service.process.IReviewProcessService;
 
+import java.util.Objects;
+
 import static tgb.btc.rce.enums.ReviewPriseType.DYNAMIC;
 
 @Service
@@ -51,7 +53,7 @@ public class ReviewProcessService implements IReviewProcessService {
         responseSender.sendMessage(channelChatId, review.getText());
         review.setPublished(true);
         reviewService.save(review);
-        Integer reviewPrise = reviewPriseModule.isCurrent(DYNAMIC)
+        Integer reviewPrise = reviewPriseModule.isCurrent(DYNAMIC) && Objects.nonNull(review.getAmount())
                 ? review.getAmount()
                 : variablePropertiesReader.getInt(VariableType.REVIEW_PRISE);
         Integer referralBalance = readUserService.getReferralBalanceByChatId(review.getChatId());

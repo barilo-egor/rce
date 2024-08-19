@@ -3,6 +3,7 @@ package tgb.btc.rce.service.processors.deal;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import tgb.btc.api.web.INotificationsAPI;
 import tgb.btc.library.bean.bot.Review;
 import tgb.btc.library.constants.enums.bot.UserRole;
 import tgb.btc.library.constants.enums.properties.VariableType;
@@ -35,6 +36,13 @@ public class ShareReview extends Processor {
     private VariablePropertiesReader variablePropertiesReader;
 
     private IModule<ReviewPriseType> reviewPriseModule;
+
+    private final INotificationsAPI notificationsAPI;
+
+    @Autowired
+    public ShareReview(INotificationsAPI notificationsAPI) {
+        this.notificationsAPI = notificationsAPI;
+    }
 
     @Autowired
     public void setReviewPriseModule(IModule<ReviewPriseType> reviewPriseModule) {
@@ -92,18 +100,19 @@ public class ShareReview extends Processor {
                 Integer amount = reviewPriseModule.isCurrent(DYNAMIC)
                                  ? getRandomAmount(chatId)
                                  : variablePropertiesReader.getInt(VariableType.REVIEW_PRISE);
+                Review review;
                 if (update.hasMessage()) {
-                    reviewService.save(Review.builder()
+                    review = reviewService.save(Review.builder()
                             .text(author + updateService.getMessageText(update))
                             .username(update.getMessage().getFrom().getFirstName())
                             .isPublished(false)
                             .chatId(chatId)
                             .amount(amount)
                             .build());
-                } else if (update.hasCallbackQuery()) {
+                } else {
                     if (update.getCallbackQuery().getData().equals("public"))
                         author = "Отзыв от " + update.getCallbackQuery().getFrom().getFirstName() + "\n\n";
-                    reviewService.save(Review.builder()
+                    review = reviewService.save(Review.builder()
                             .text(author + readUserService.getBufferVariable(chatId))
                             .username(update.getCallbackQuery().getFrom().getFirstName())
                             .isPublished(false)
@@ -113,6 +122,7 @@ public class ShareReview extends Processor {
                 }
                 responseSender.sendMessage(chatId, "Спасибо, ваш отзыв сохранен.");
                 notifyService.notifyMessage("Поступил новый отзыв.", Set.of(UserRole.OPERATOR, UserRole.ADMIN));
+                notificationsAPI.newReview(review.getPid());
                 processToMainMenu(chatId);
                 break;
         }
