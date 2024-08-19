@@ -39,7 +39,7 @@ public class Referral extends Processor {
     public void run(Update update) {
         Long chatId = updateService.getChatId(update);
         String startParameter = "?start=" + chatId;
-        String refLink = PropertiesPath.BOT_PROPERTIES.getString("bot.link").concat(startParameter);
+        String refLink = PropertiesPath.BOT_PROPERTIES.getString("SEND_LINK").concat(startParameter);
         BigDecimal referralBalance = BigDecimal.valueOf(readUserService.getReferralBalanceByChatId(chatId));
         String currentBalance = bigDecimalService.roundToPlainString(referralBalance);
         List<ReferralUser> referralUsers = readUserService.getUserReferralsByChatId(chatId);

@@ -42,7 +42,7 @@ public class CommandService implements ICommandService {
 
     @Override
     public boolean isStartCommand(Update update) {
-        return updateService.hasMessageText(update) && Command.START.equals(fromUpdate(update));
+        return updateService.hasMessageText(update) && update.getMessage().getText().startsWith(Command.START.getText());
     }
 
     @Override
