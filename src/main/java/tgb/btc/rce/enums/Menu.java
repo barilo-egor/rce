@@ -16,7 +16,7 @@ public enum Menu {
             Command.USERS, Command.DEALS_COUNT, Command.QUIT_ADMIN_PANEL)),
     OPERATOR_PANEL(2, List.of(Command.NEW_DEALS, Command.NEW_API_DEALS, Command.NEW_REVIEWS, Command.NEW_WITHDRAWALS, Command.NEW_SPAM_BANS,
             Command.PAYMENT_TYPES, Command.QUIT_ADMIN_PANEL)),
-    OBSERVER_PANEL(2, List.of(Command.NEW_DEALS, Command.DEAL_REPORTS, Command.QUIT_ADMIN_PANEL)),
+    OBSERVER_PANEL(2, List.of(Command.NEW_DEALS, Command.DEAL_REPORTS, Command.MAILING_LIST, Command.QUIT_ADMIN_PANEL)),
     DISCOUNTS(2, List.of(Command.RANK_DISCOUNT, Command.TURN_RANK_DISCOUNT, Command.PERSONAL_BUY_DISCOUNT,
             Command.PERSONAL_SELL_DISCOUNT, Command.REFERRAL_PERCENT, Command.ADMIN_BACK)),
     USERS(2, List.of(

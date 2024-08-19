@@ -121,7 +121,7 @@ public enum Command implements ICommand {
     /**
      * SEND MESSAGES
      */
-    MAILING_LIST("Рассылка", false, UserRole.ADMIN_ACCESS),
+    MAILING_LIST("Рассылка", false, UserRole.OBSERVER_ACCESS),
     SEND_MESSAGE_TO_USER("Сообщение пользователю", false, UserRole.ADMIN_ACCESS),
 
     /**

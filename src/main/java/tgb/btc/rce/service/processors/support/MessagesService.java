@@ -97,6 +97,7 @@ public class MessagesService {
     @Async
     public void sendMessageToUsers(Update update) {
         Long chatId = updateService.getChatId(update);
+        responseSender.sendMessage(chatId, "Рассылка успешно инициирована. По завершении процесса вы получите уведомление.");
         readUserService.getChatIdsForMailing()
                 .forEach(userChatId -> {
                     try {
@@ -110,6 +111,6 @@ public class MessagesService {
                         }
                     }
                 });
-        responseSender.sendMessage(chatId, "Рассылка произведена.");
+        responseSender.sendMessage(chatId, "Рассылка успешно завершена.");
     }
 }
