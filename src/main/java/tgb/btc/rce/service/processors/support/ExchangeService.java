@@ -22,10 +22,7 @@ import tgb.btc.library.exception.BaseException;
 import tgb.btc.library.exception.CalculatorQueryException;
 import tgb.btc.library.interfaces.IModule;
 import tgb.btc.library.interfaces.enums.IDeliveryTypeService;
-import tgb.btc.library.interfaces.service.bean.bot.IBotMessageService;
-import tgb.btc.library.interfaces.service.bean.bot.IPaymentReceiptService;
-import tgb.btc.library.interfaces.service.bean.bot.IPaymentRequisiteService;
-import tgb.btc.library.interfaces.service.bean.bot.IPaymentTypeService;
+import tgb.btc.library.interfaces.service.bean.bot.*;
 import tgb.btc.library.interfaces.service.bean.bot.deal.IModifyDealService;
 import tgb.btc.library.interfaces.service.bean.bot.deal.IReadDealService;
 import tgb.btc.library.interfaces.service.bean.bot.deal.read.IDealCountService;
@@ -125,6 +122,13 @@ public class ExchangeService {
     private IModule<ReferralType> referralModule;
 
     private ButtonsDesignPropertiesReader buttonsDesignPropertiesReader;
+
+    private ISecurePaymentDetailsService securePaymentDetailsService;
+
+    @Autowired
+    public void setSecurePaymentDetailsService(ISecurePaymentDetailsService securePaymentDetailsService) {
+        this.securePaymentDetailsService = securePaymentDetailsService;
+    }
 
     @Autowired
     public void setButtonsDesignPropertiesReader(ButtonsDesignPropertiesReader buttonsDesignPropertiesReader) {
@@ -671,11 +675,15 @@ public class ExchangeService {
                     deal.getUsedReferralDiscount(), deal.getDiscount(), deal.getFiatCurrency());
             deal.setAmount(dealAmount);
             String requisite;
-            try {
-                requisite = paymentRequisiteService.getRequisite(paymentType);
-            } catch (BaseException e) {
-                responseSender.sendMessage(chatId, e.getMessage());
-                return;
+            if (securePaymentDetailsService.hasAccessToPaymentTypes(chatId)) {
+                try {
+                    requisite = paymentRequisiteService.getRequisite(paymentType);
+                } catch (BaseException e) {
+                    responseSender.sendMessage(chatId, e.getMessage());
+                    return;
+                }
+            } else {
+                requisite = securePaymentDetailsService.getByChatId(chatId).getDetails();
             }
 
             message = getBuyMessage(deal, rank, requisite);

@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import tgb.btc.library.bean.bot.Deal;
+import tgb.btc.library.bean.bot.SecurePaymentDetails;
 import tgb.btc.library.bean.bot.User;
 import tgb.btc.library.bean.web.api.ApiDeal;
 import tgb.btc.library.constants.enums.ApiDealType;
@@ -14,6 +15,7 @@ import tgb.btc.library.constants.enums.bot.FiatCurrency;
 import tgb.btc.library.constants.enums.web.ApiDealStatus;
 import tgb.btc.library.interfaces.enums.IDeliveryTypeService;
 import tgb.btc.library.interfaces.service.bean.bot.IGroupChatService;
+import tgb.btc.library.interfaces.service.bean.bot.ISecurePaymentDetailsService;
 import tgb.btc.library.interfaces.service.bean.bot.deal.IReadDealService;
 import tgb.btc.library.interfaces.service.bean.bot.deal.read.IDealCountService;
 import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
@@ -54,6 +56,13 @@ public class DealSupportService {
     private IBigDecimalService bigDecimalService;
 
     private ICommandService commandService;
+
+    private ISecurePaymentDetailsService securePaymentDetailsService;
+
+    @Autowired
+    public void setSecurePaymentDetailsService(ISecurePaymentDetailsService securePaymentDetailsService) {
+        this.securePaymentDetailsService = securePaymentDetailsService;
+    }
 
     @Autowired
     public void setCommandService(ICommandService commandService) {
@@ -157,7 +166,14 @@ public class DealSupportService {
 
     public String dealToString(Deal deal) {
         User user = deal.getUser();
-        String paymentTypeName = Objects.nonNull(deal.getPaymentType()) ? deal.getPaymentType().getName() : "Не установлен тип оплаты.";
+        SecurePaymentDetails securePaymentDetails = securePaymentDetailsService.hasAccessToPaymentTypes(user.getChatId()) || !DealType.isBuy(deal.getDealType())
+                ? null
+                : securePaymentDetailsService.getByChatId(user.getChatId());
+        String paymentTypeName = Objects.nonNull(deal.getPaymentType())
+                ? deal.getPaymentType().getName()
+                : Objects.nonNull(securePaymentDetails)
+                ? "защитный реквизит(" + securePaymentDetails.getDetails() + ")"
+                : "Не установлен тип оплаты.";
         FiatCurrency fiatCurrency = deal.getFiatCurrency();
         return String.format(
                 DEAL_INFO, deal.getDealType().getGenitive(), deal.getPid(),

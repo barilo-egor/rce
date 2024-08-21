@@ -11,6 +11,7 @@ import tgb.btc.library.constants.enums.bot.CryptoCurrency;
 import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.interfaces.IModule;
 import tgb.btc.library.interfaces.service.bean.bot.IBotMessageService;
+import tgb.btc.library.interfaces.service.bean.bot.ISecurePaymentDetailsService;
 import tgb.btc.library.interfaces.service.bean.bot.deal.IModifyDealService;
 import tgb.btc.library.interfaces.service.bean.bot.deal.IReadDealService;
 import tgb.btc.library.interfaces.service.bean.bot.deal.read.IDealPropertyService;
@@ -54,6 +55,13 @@ public class DealProcessor extends Processor {
     private IFiatCurrencyService fiatCurrencyService;
 
     private IModule<DeliveryKind> deliveryKindModule;
+
+    private ISecurePaymentDetailsService securePaymentDetailsService;
+
+    @Autowired
+    public void setSecurePaymentDetailsService(ISecurePaymentDetailsService securePaymentDetailsService) {
+        this.securePaymentDetailsService = securePaymentDetailsService;
+    }
 
     @Autowired
     public void setDeliveryKindModule(IModule<DeliveryKind> deliveryKindModule) {
@@ -193,7 +201,8 @@ public class DealProcessor extends Processor {
                     if (!exchangeService.processReferralDiscount(update)) return;
                 }
                 responseSender.deleteCallbackMessageIfExists(update);
-                if (exchangeService.isFewPaymentTypes(chatId)) {
+                if (exchangeService.isFewPaymentTypes(chatId)
+                        && (!DealType.isBuy(dealType) || securePaymentDetailsService.hasAccessToPaymentTypes(chatId))) {
                     modifyUserService.nextStep(chatId);
                     exchangeService.askForPaymentType(update);
                     break;
@@ -201,7 +210,8 @@ public class DealProcessor extends Processor {
                 recursiveSwitch(update, chatId, isBack);
                 break;
             case 6:
-                if (!isBack) {
+                dealType = dealPropertyService.getDealTypeByPid(readUserService.getCurrentDealByChatId(chatId));
+                if (!isBack && (!DealType.isBuy(dealType) || securePaymentDetailsService.hasAccessToPaymentTypes(chatId))) {
                     if (!exchangeService.savePaymentType(update)) return;
                 }
                 exchangeService.askForUserRequisites(update);
