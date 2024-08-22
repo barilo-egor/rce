@@ -139,7 +139,7 @@ public class DealSupportService {
                 + "Дата, время: " + apiDeal.getDateTime().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")) + "\n"
                 + (Objects.nonNull(apiDeal.getApiPaymentType())
                 ? "Тип оплаты:" + apiDeal.getApiPaymentType().getName() + "(" + apiDeal.getApiPaymentType().getId() + ")"
-                : "")
+                : "") + "\n"
                 + "Реквизиты клиента: " + apiDeal.getRequisite() + "\n"
                 + "Реквизиты оплаты: " + requisite + "\n"
                 + "Количество сделок: " + apiDealService.countByApiDealStatusAndApiUser_Pid(ApiDealStatus.ACCEPTED, apiDeal.getApiUser().getPid()) + "\n"
