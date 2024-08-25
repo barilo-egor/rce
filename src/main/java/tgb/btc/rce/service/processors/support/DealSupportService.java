@@ -21,6 +21,7 @@ import tgb.btc.library.interfaces.service.bean.bot.deal.read.IDealCountService;
 import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.library.interfaces.service.bean.web.IApiDealService;
 import tgb.btc.library.interfaces.util.IBigDecimalService;
+import tgb.btc.library.service.bean.bot.deal.read.DealPropertyService;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
 import tgb.btc.rce.service.util.ICallbackQueryService;
@@ -58,6 +59,13 @@ public class DealSupportService {
     private ICommandService commandService;
 
     private ISecurePaymentDetailsService securePaymentDetailsService;
+
+    private DealPropertyService dealPropertyService;
+
+    @Autowired
+    public void setDealPropertyService(DealPropertyService dealPropertyService) {
+        this.dealPropertyService = dealPropertyService;
+    }
 
     @Autowired
     public void setSecurePaymentDetailsService(ISecurePaymentDetailsService securePaymentDetailsService) {
@@ -204,9 +212,15 @@ public class DealSupportService {
         boolean hasDefaultGroupChat = groupChatService.hasDealRequests();
         if (hasDefaultGroupChat)
             buttons.add(InlineButton.builder()
-                    .text(commandService.getText(Command.CONFIRM_USER_DEAL) + "с запросом")
+                    .text(commandService.getText(Command.CONFIRM_USER_DEAL) + " с запросом")
                     .data(callbackQueryService.buildCallbackData(Command.CONFIRM_USER_DEAL, new Object[]{pid, true}))
                     .build());
+        if (CryptoCurrency.LITECOIN.equals(dealPropertyService.getCryptoCurrencyByPid(pid))) {
+            buttons.add(InlineButton.builder()
+                            .text(commandService.getText(Command.AUTO_WITHDRAWAL_DEAL))
+                            .data(callbackQueryService.buildCallbackData(Command.AUTO_WITHDRAWAL_DEAL, pid))
+                    .build());
+        }
         buttons.add(InlineButton.builder()
                 .text(commandService.getText(Command.ADDITIONAL_VERIFICATION))
                 .data(callbackQueryService.buildCallbackData(Command.ADDITIONAL_VERIFICATION, pid))

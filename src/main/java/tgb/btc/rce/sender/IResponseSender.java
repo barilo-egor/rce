@@ -42,6 +42,8 @@ public interface IResponseSender {
 
     Optional<Message> sendMessage(Long chatId, String text, InlineButton... inlineButtons);
 
+    Optional<Message> sendMessage(Long chatId, String text, String parseMode, InlineButton... inlineButtons);
+
     Optional<Message> sendMessage(SendMessage sendMessage);
 
     Optional<Message> sendPhoto(Long chatId, String caption, String photo);

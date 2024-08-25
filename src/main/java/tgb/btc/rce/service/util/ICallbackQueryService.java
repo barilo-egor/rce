@@ -14,6 +14,8 @@ public interface ICallbackQueryService {
 
     Long getSplitLongData(Update update, int index);
 
+    Integer getSplitIntData(Update update, int index);
+
     Boolean getSplitBooleanData(Update update, int index);
 
     <T> String buildCallbackData(Command command, T[] variables);
