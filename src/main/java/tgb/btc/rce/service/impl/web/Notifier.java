@@ -180,6 +180,17 @@ public class Notifier implements INotifier {
     }
 
     @Override
+    public void sendAutoWithdrawDeal(String from, String requestInitiator, Long dealPid) {
+        Optional<GroupChat> optionalGroupChat = groupChatService.getAllByType(GroupChatType.AUTO_WITHDRAWAL).stream().findAny();
+        if (optionalGroupChat.isEmpty())
+            throw new BaseException("Не найдена дефолтная чат-группа для отправки сделок с автовыводом.");
+        GroupChat groupChat = optionalGroupChat.get();
+        String dealString = dealSupportService.dealToRequestString(dealPid);
+        String result = "Автовывод из <b>" + from + "</b> от <b>" + requestInitiator + "</b>.\n\n" + dealString;
+        responseSender.sendMessage(groupChat.getChatId(), result, "html");
+    }
+
+    @Override
     public void sendRequestToWithdrawApiDeal(Long apiDealPid) {
         Optional<GroupChat> optionalGroupChat = groupChatService.getByApiUserPid(apiDealService.getApiUserPidByDealPid(apiDealPid));
         if (optionalGroupChat.isEmpty())
@@ -196,6 +207,16 @@ public class Notifier implements INotifier {
             throw new BaseException("Не найдена дефолтная чат-группа для отправки запроса на вывод сделки.");
         GroupChat groupChat = optionalGroupChat.get();
         responseSender.sendMessage(groupChat.getChatId(), "Данная группа была выбрана для отправки запросов на вывод." +
+                "Для того, чтобы узнать возможности бота, введите <code>/help</code>.", "html");
+    }
+
+    @Override
+    public void sendGreetingToNewAutoWithdrawalGroup() {
+        Optional<GroupChat> optionalGroupChat = groupChatService.getAllByType(GroupChatType.AUTO_WITHDRAWAL).stream().findAny();
+        if (optionalGroupChat.isEmpty())
+            throw new BaseException("Не найдена дефолтная чат-группа для отправки автовыводов сделок.");
+        GroupChat groupChat = optionalGroupChat.get();
+        responseSender.sendMessage(groupChat.getChatId(), "Данная группа была выбрана для отправки автовыводов." +
                 "Для того, чтобы узнать возможности бота, введите <code>/help</code>.", "html");
     }
 

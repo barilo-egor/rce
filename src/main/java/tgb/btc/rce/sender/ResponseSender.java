@@ -151,6 +151,11 @@ public class ResponseSender implements IResponseSender {
         return sendMessage(chatId, text, keyboardBuildService.buildInline(List.of(inlineButtons)));
     }
 
+    @Override
+    public Optional<Message> sendMessage(Long chatId, String text, String parseMode, InlineButton... inlineButtons) {
+        return sendMessage(chatId, text, keyboardBuildService.buildInline(List.of(inlineButtons)), parseMode);
+    }
+
     public Optional<Message> sendMessage(Long chatId, String text, List<InlineButton> buttons) {
         return sendMessage(chatId, text, keyboardBuildService.buildInline(buttons));
     }

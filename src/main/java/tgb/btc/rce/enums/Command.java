@@ -147,6 +147,8 @@ public enum Command implements ICommand {
     DELETE_USER_DEAL("Удалить", false, UserRole.OPERATOR_ACCESS),
     DELETE_DEAL_AND_BLOCK_USER("Удалить и заблокировать", false, UserRole.OPERATOR_ACCESS),
     CONFIRM_USER_DEAL("Подтвердить", false, UserRole.OPERATOR_ACCESS),
+    AUTO_WITHDRAWAL_DEAL("Автовывод", false, UserRole.OPERATOR_ACCESS),
+    CONFIRM_AUTO_WITHDRAWAL_DEAL("Продолжить", false, UserRole.OPERATOR_ACCESS),
     ADDITIONAL_VERIFICATION("Доп.верификация", false, UserRole.OPERATOR_ACCESS),
     USER_ADDITIONAL_VERIFICATION("USER_ADDITIONAL_VERIFICATION", false, UserRole.USER_ACCESS),
     SHARE_REVIEW("Оставить", false, UserRole.USER_ACCESS),

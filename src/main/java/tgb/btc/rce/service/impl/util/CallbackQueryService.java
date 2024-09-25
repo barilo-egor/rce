@@ -39,6 +39,11 @@ public class CallbackQueryService implements ICallbackQueryService {
     }
 
     @Override
+    public Integer getSplitIntData(Update update, int index) {
+        return Integer.parseInt(getSplitData(update, index));
+    }
+
+    @Override
     public Boolean getSplitBooleanData(Update update, int index) {
         return Boolean.parseBoolean(getSplitData(update, index));
     }
