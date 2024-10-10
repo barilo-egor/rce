@@ -685,6 +685,7 @@ public class ExchangeService {
             } else {
                 requisite = securePaymentDetailsService.getByChatId(chatId).getDetails();
             }
+            deal.setDetails(requisite);
 
             message = getBuyMessage(deal, rank, requisite);
             if (Objects.isNull(message)) {

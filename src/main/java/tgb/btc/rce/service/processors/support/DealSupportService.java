@@ -170,7 +170,7 @@ public class DealSupportService {
     }
 
     private static final String DEAL_INFO = "Заявка на %s №%s \n" + "Дата,время: %s\n" + "Тип оплаты: %s\n" + "Кошелек: %s\n" + "Контакт: %s\n"
-            + "Количество сделок: %s\n" + "ID: %s\n" + "Курс: %s\n" + "Сумма %s: %s\n" + "Сумма: %s %s\n" + "Способ доставки: %s";
+            + "Количество сделок: %s\n" + "ID: %s\n" + "Курс: %s\n" + "Сумма %s: %s\n" + "Сумма: %s %s\n" + "Способ доставки: %s\n" + "Реквизит: %s";
 
     public String dealToString(Deal deal) {
         User user = deal.getUser();
@@ -198,8 +198,9 @@ public class DealSupportService {
                 deal.getCryptoAmount().setScale(8, RoundingMode.FLOOR).stripTrailingZeros()
                         .toPlainString(),
                 deal.getAmount().setScale(0, RoundingMode.HALF_UP).stripTrailingZeros().toPlainString(),
-                Objects.nonNull(fiatCurrency) ? fiatCurrency.getGenitive() : "отсутствует",
-                Objects.nonNull(deal.getDeliveryType()) ? deliveryTypeService.getDisplayName(deal.getDeliveryType()) : "Отсутствует"
+                Objects.nonNull(fiatCurrency) ? fiatCurrency.getGenitive() : "Отсутствует",
+                Objects.nonNull(deal.getDeliveryType()) ? deliveryTypeService.getDisplayName(deal.getDeliveryType()) : "Отсутствует",
+                StringUtils.isNotEmpty(deal.getDetails()) ? deal.getDetails() : "Отсутствует"
         );
     }
 
