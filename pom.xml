@@ -275,6 +275,54 @@
             </build>
         </profile>
         <profile>
+            <id>donald</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.springframework.boot</groupId>
+                        <artifactId>spring-boot-maven-plugin</artifactId>
+                        <configuration>
+                            <mainClass>tgb.btc.rce.RceApplication</mainClass>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <version>1.8</version>
+                        <executions>
+                            <execution>
+                                <id>copy-to-donald</id>
+                                <phase>install</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <target>
+                                        <condition property="ssh.keyfile" value="/home/barilo/.ssh/id_rsa" else="C:\Users\User\.ssh\id_rsa">
+                                            <os family="unix"/>
+                                        </condition>
+                                        <scp file="target/rce.jar"
+                                             todir="rce@185.238.2.68:/home/rce/application"
+                                             keyfile="${ssh.keyfile}"
+                                             trust="true"
+                                             port="58732"/>
+                                        <sshexec host="185.238.2.68"
+                                                 username="rce"
+                                                 keyfile="${ssh.keyfile}"
+                                                 trust="true"
+                                                 command="sudo /home/rce/application/run.sh"
+                                                 port="58732"/>
+                                    </target>
+                                </configuration>
+                            </execution>
+                        </executions>
+
+                    </plugin>
+                </plugins>
+                <finalName>rce</finalName>
+            </build>
+        </profile>
+        <profile>
             <id>windows</id>
             <activation>
                 <os>
