@@ -302,11 +302,11 @@
                                             <os family="unix"/>
                                         </condition>
                                         <scp file="target/rce.jar"
-                                             todir="rce@185.238.2.68:/home/rce/application"
+                                             todir="rce@45.83.123.135:/home/rce/application"
                                              keyfile="${ssh.keyfile}"
                                              trust="true"
                                              port="58732"/>
-                                        <sshexec host="185.238.2.68"
+                                        <sshexec host="45.83.123.135"
                                                  username="rce"
                                                  keyfile="${ssh.keyfile}"
                                                  trust="true"
