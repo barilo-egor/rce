@@ -45,7 +45,12 @@ public class ConfirmAutoWithdrawalDeal extends Processor {
                             "разделе \"Сделки из бота\".\n", true);
             return;
         }
-        autoWithdrawalService.withdrawal(dealPid);
+        try {
+            autoWithdrawalService.withdrawal(dealPid);
+        } catch (Exception e) {
+            responseSender.sendMessage(chatId, "Ошибка при попытке авто вывода сделки " + dealPid + ": " + e.getMessage());
+            return;
+        }
         modifyDealService.confirm(dealPid);
         String username = readUserService.getUsernameByChatId(chatId);
         log.debug("Админ {} подтвердил сделку {} с автовыводом.", chatId, dealPid);
