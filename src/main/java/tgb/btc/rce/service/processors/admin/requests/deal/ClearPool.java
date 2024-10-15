@@ -21,6 +21,7 @@ public class ClearPool extends Processor {
                         .data(callbackQueryService.buildCallbackData(Command.CONFIRM_CLEAR_POOL, updateService.getMessageId(update))).build(),
                 InlineButton.builder().text("Нет").data(Command.INLINE_DELETE.name()).build()
         ), 2);
-        responseSender.sendMessage(chatId, "Вы собираетесь удалить все <b>" + dealsSize + "</b> сделок из BTC пула. Продолжить?", replyKeyboard, "html");
+        responseSender.sendMessage(chatId, "Вы собираетесь удалить все <b>" + dealsSize + "</b> сделок из BTC пула. Продолжить?",
+                replyKeyboard, "html");
     }
 }

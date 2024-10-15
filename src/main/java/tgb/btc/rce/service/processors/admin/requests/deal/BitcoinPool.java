@@ -56,14 +56,20 @@ public class BitcoinPool extends Processor {
             totalAmount = totalAmount.add(deal.getCryptoAmount());
         }
         dealsInfo.append("-----------").append("\n");
+        String strTotalAmount = bigDecimalService.roundToPlainString(totalAmount, CryptoCurrency.BITCOIN.getScale());
         dealsInfo.append("Общая сумма: <code>").append(bigDecimalService.roundToPlainString(totalAmount, CryptoCurrency.BITCOIN.getScale())).append("</code>\n");
         dealsInfo.append("Баланс кошелька: <code>").append(autoWithdrawalService.getBalance(CryptoCurrency.BITCOIN)).append("</code>");
         ReplyKeyboard replyKeyboard = keyboardBuildService.buildInline(
                 List.of(
-                        InlineButton.builder().text(commandService.getText(Command.POOL_WITHDRAWAL))
-                                .data(Command.POOL_WITHDRAWAL.name()).build(),
-                        InlineButton.builder().text(commandService.getText(Command.CLEAR_POOL))
-                                .data(callbackQueryService.buildCallbackData(Command.CLEAR_POOL, deals.size())).build()
+                        InlineButton.builder()
+                                .text(commandService.getText(Command.BITCOIN_POOL_WITHDRAWAL))
+                                .data(callbackQueryService.buildCallbackData(Command.BITCOIN_POOL_WITHDRAWAL, new Object[]{deals.size(), strTotalAmount}))
+                                .build(),
+                        InlineButton.builder()
+                                .text(commandService.getText(Command.CLEAR_POOL))
+                                .data(callbackQueryService.buildCallbackData(Command.CLEAR_POOL, deals.size()))
+                                .build(),
+                        InlineButton.builder().text(commandService.getText(Command.INLINE_DELETE)).data(Command.INLINE_DELETE.name()).build()
                 ), 2);
         responseSender.sendMessage(chatId, dealsInfo.toString(), replyKeyboard, "html");
     }
