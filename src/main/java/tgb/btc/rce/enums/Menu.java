@@ -31,7 +31,7 @@ public enum Menu {
             Command.TURNING_CURRENCY, Command.EDIT_CONTACTS, Command.TURNING_DELIVERY_TYPE,
             Command.ADMIN_BACK)),
     REQUESTS(2, List.of(
-            Command.NEW_DEALS, Command.NEW_API_DEALS,
+            Command.NEW_DEALS, Command.NEW_API_DEALS, Command.BITCOIN_POOL,
             Command.NEW_SPAM_BANS, Command.NEW_REVIEWS, Command.NEW_WITHDRAWALS, Command.ADMIN_BACK
     )),
     REPORTS(2, List.of(Command.CHECKS_FOR_DATE, Command.USERS_REPORT, Command.DEAL_REPORTS, Command.PARTNERS_REPORT,

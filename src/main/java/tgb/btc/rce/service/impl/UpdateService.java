@@ -60,6 +60,9 @@ public class UpdateService implements IUpdateService {
 
     @Override
     public Integer getMessageId(Update update) {
+        if (update.hasCallbackQuery()) {
+            return update.getCallbackQuery().getMessage().getMessageId();
+        }
         if (Objects.isNull(update.getMessage()))
             throw new BaseException("Невозможно получить message id, т.к. message==null.");
         return update.getMessage().getMessageId();

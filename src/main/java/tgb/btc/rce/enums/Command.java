@@ -148,7 +148,11 @@ public enum Command implements ICommand {
     DELETE_DEAL_AND_BLOCK_USER("Удалить и заблокировать", false, UserRole.OPERATOR_ACCESS),
     CONFIRM_USER_DEAL("Подтвердить", false, UserRole.OPERATOR_ACCESS),
     AUTO_WITHDRAWAL_DEAL("Автовывод", false, UserRole.OPERATOR_ACCESS),
+    POOL_WITHDRAWAL("Автовывод", false, UserRole.OPERATOR_ACCESS),
     ADD_TO_POOL("Добавить в пул", false, UserRole.OPERATOR_ACCESS),
+    CLEAR_POOL("Очистить пул", false, UserRole.OPERATOR_ACCESS),
+    CONFIRM_CLEAR_POOL("Да", false, UserRole.OPERATOR_ACCESS),
+    DELETE_FROM_POOL("/deletefrompool", true, UserRole.OPERATOR_ACCESS),
     CONFIRM_AUTO_WITHDRAWAL_DEAL("Продолжить", false, UserRole.OPERATOR_ACCESS),
     ADDITIONAL_VERIFICATION("Доп.верификация", false, UserRole.OPERATOR_ACCESS),
     USER_ADDITIONAL_VERIFICATION("USER_ADDITIONAL_VERIFICATION", false, UserRole.USER_ACCESS),
@@ -162,6 +166,7 @@ public enum Command implements ICommand {
      * REQUESTS
      */
     NEW_DEALS("Новые заявки", false, UserRole.OBSERVER_ACCESS),
+    BITCOIN_POOL("Пул сделок BTC", false, UserRole.OPERATOR_ACCESS),
     NEW_WITHDRAWALS("Вывод средств", false, UserRole.OPERATOR_ACCESS),
     NEW_REVIEWS("Новые отзывы", false, UserRole.OPERATOR_ACCESS),
 

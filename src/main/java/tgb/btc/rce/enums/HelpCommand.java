@@ -15,6 +15,7 @@ public enum HelpCommand {
     DELETE_USER(Command.DELETE_USER, " chatId - удаление пользователя со всеми его данными(включая сделки)"),
     BACKUP_DB(Command.BACKUP_DB, " создание бэк апа базы данных"),
     HELP(Command.HELP, " - список скрытых команд"),
+    DELETE_FROM_POOL(Command.DELETE_FROM_POOL, " id - удаление сделки из пула по её номеру")
     ;
 
     private final Command command;
