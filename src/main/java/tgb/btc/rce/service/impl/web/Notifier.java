@@ -1,6 +1,7 @@
 package tgb.btc.rce.service.impl.web;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import tgb.btc.api.web.INotifier;
 import tgb.btc.library.bean.bot.GroupChat;
@@ -18,9 +19,9 @@ import tgb.btc.library.service.properties.VariablePropertiesReader;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.InlineType;
+import tgb.btc.rce.sender.IResponseSender;
 import tgb.btc.rce.service.IKeyboardService;
 import tgb.btc.rce.service.INotifyService;
-import tgb.btc.rce.sender.IResponseSender;
 import tgb.btc.rce.service.processors.support.DealSupportService;
 import tgb.btc.rce.service.util.ICommandService;
 import tgb.btc.rce.service.util.IMessagePropertiesService;
@@ -33,6 +34,7 @@ import java.util.Optional;
 import java.util.Set;
 
 @Service
+@Profile("!web")
 public class Notifier implements INotifier {
 
     private INotifyService notifyService;
