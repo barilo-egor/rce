@@ -48,7 +48,7 @@ public class ConfirmAutoWithdrawalDeal extends Processor {
         try {
             autoWithdrawalService.withdrawal(dealPid);
         } catch (Exception e) {
-            responseSender.sendMessage(chatId, "Ошибка при попытке авто вывода сделки " + dealPid + ": " + e.getMessage());
+            responseSender.sendMessage(chatId, "Ошибка при попытке автовывода сделки " + dealPid + ": " + e.getMessage());
             return;
         }
         modifyDealService.confirm(dealPid);

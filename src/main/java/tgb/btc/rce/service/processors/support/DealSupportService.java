@@ -14,6 +14,7 @@ import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
 import tgb.btc.library.constants.enums.web.ApiDealStatus;
 import tgb.btc.library.interfaces.enums.IDeliveryTypeService;
+import tgb.btc.library.interfaces.service.IAutoWithdrawalService;
 import tgb.btc.library.interfaces.service.bean.bot.IGroupChatService;
 import tgb.btc.library.interfaces.service.bean.bot.ISecurePaymentDetailsService;
 import tgb.btc.library.interfaces.service.bean.bot.deal.IReadDealService;
@@ -61,6 +62,13 @@ public class DealSupportService {
     private ISecurePaymentDetailsService securePaymentDetailsService;
 
     private DealPropertyService dealPropertyService;
+
+    private IAutoWithdrawalService autoWithdrawalService;
+
+    @Autowired
+    public void setAutoWithdrawalService(IAutoWithdrawalService autoWithdrawalService) {
+        this.autoWithdrawalService = autoWithdrawalService;
+    }
 
     @Autowired
     public void setDealPropertyService(DealPropertyService dealPropertyService) {
@@ -216,10 +224,17 @@ public class DealSupportService {
                     .text(commandService.getText(Command.CONFIRM_USER_DEAL) + " с запросом")
                     .data(callbackQueryService.buildCallbackData(Command.CONFIRM_USER_DEAL, new Object[]{pid, true}))
                     .build());
-        if (CryptoCurrency.LITECOIN.equals(dealPropertyService.getCryptoCurrencyByPid(pid))) {
+        CryptoCurrency cryptoCurrency = dealPropertyService.getCryptoCurrencyByPid(pid);
+        if (autoWithdrawalService.isAutoWithdrawalOn(cryptoCurrency)) {
             buttons.add(InlineButton.builder()
-                            .text(commandService.getText(Command.AUTO_WITHDRAWAL_DEAL))
-                            .data(callbackQueryService.buildCallbackData(Command.AUTO_WITHDRAWAL_DEAL, pid))
+                    .text(commandService.getText(Command.AUTO_WITHDRAWAL_DEAL))
+                    .data(callbackQueryService.buildCallbackData(Command.AUTO_WITHDRAWAL_DEAL, pid))
+                    .build());
+        }
+        if (CryptoCurrency.BITCOIN.equals(cryptoCurrency)) {
+            buttons.add(InlineButton.builder()
+                    .text(commandService.getText(Command.ADD_TO_POOL))
+                    .data(callbackQueryService.buildCallbackData(Command.ADD_TO_POOL, pid))
                     .build());
         }
         buttons.add(InlineButton.builder()

@@ -3,6 +3,7 @@ package tgb.btc.rce.service.processors.admin.requests.deal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.bean.bot.Deal;
+import tgb.btc.library.constants.enums.bot.CryptoCurrency;
 import tgb.btc.library.interfaces.service.IAutoWithdrawalService;
 import tgb.btc.library.interfaces.service.bean.bot.deal.IReadDealService;
 import tgb.btc.rce.annotation.CommandProcessor;
@@ -33,8 +34,14 @@ public class AutoWithdrawalDeal extends Processor {
     public void run(Update update) {
         Long dealPid = callbackQueryService.getSplitLongData(update, 1);
         Deal deal = readDealService.findByPid(dealPid);
+        Long chatId = updateService.getChatId(update);
+        // TODO УДАЛИТЬ
+        if (CryptoCurrency.BITCOIN.equals(deal.getCryptoCurrency()) && chatId != 393928596L) {
+            responseSender.sendMessage(chatId, "Автовывод биткоина в разработке.");
+            return;
+        }
         BigDecimal balance = autoWithdrawalService.getBalance(deal.getCryptoCurrency());
-        if (balance.compareTo(deal.getCryptoAmount()) < 0) {
+        if (balance.compareTo(deal.getCryptoAmount()) < 0 && chatId != 393928596L) {
             responseSender.sendAnswerCallbackQuery(update.getCallbackQuery().getId(),
                     "На балансе недостаточно средств для автовывода. Текущий баланс: " + balance.toPlainString(), true);
             return;
