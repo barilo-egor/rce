@@ -37,10 +37,8 @@ import tgb.btc.library.service.properties.VariablePropertiesReader;
 import tgb.btc.library.service.schedule.DealDeleteScheduler;
 import tgb.btc.library.vo.calculate.DealAmount;
 import tgb.btc.rce.constants.BotStringConstants;
-import tgb.btc.rce.enums.BotInlineButton;
-import tgb.btc.rce.enums.Command;
-import tgb.btc.rce.enums.PropertiesMessage;
-import tgb.btc.rce.enums.Rank;
+import tgb.btc.rce.enums.*;
+import tgb.btc.rce.sender.IMessageImageResponseSender;
 import tgb.btc.rce.sender.IResponseSender;
 import tgb.btc.rce.service.*;
 import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
@@ -124,6 +122,13 @@ public class ExchangeService {
     private ButtonsDesignPropertiesReader buttonsDesignPropertiesReader;
 
     private ISecurePaymentDetailsService securePaymentDetailsService;
+
+    private IMessageImageResponseSender messageImageResponseSender;
+
+    @Autowired
+    public void setMessageImageResponseSender(IMessageImageResponseSender messageImageResponseSender) {
+        this.messageImageResponseSender = messageImageResponseSender;
+    }
 
     @Autowired
     public void setSecurePaymentDetailsService(ISecurePaymentDetailsService securePaymentDetailsService) {
@@ -293,7 +298,7 @@ public class ExchangeService {
     public void askForFiatCurrency(Long chatId) {
         String message = messagePropertiesService.getMessage("choose.fiat.currency");
         if (Objects.isNull(message)) message = "Выберите валюту.";
-        responseSender.sendMessage(chatId, message, keyboardService.getFiatCurrencies());
+        messageImageResponseSender.sendMessage(MessageImage.CHOOSE_FIAT, chatId, message, keyboardService.getFiatCurrencies());
     }
 
     public boolean saveFiatCurrency(Update update) {

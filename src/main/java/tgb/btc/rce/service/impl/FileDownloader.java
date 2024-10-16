@@ -66,6 +66,11 @@ public class FileDownloader implements IFileDownloader {
 
     @Override
     public String saveFile(java.io.File file) {
+        return saveFile(file, true);
+    }
+
+    @Override
+    public String saveFile(java.io.File file, boolean delete) {
         List<Long> adminsChatIds = readUserService.getChatIdsByRoles(Set.of(UserRole.ADMIN, UserRole.OPERATOR));
         if (CollectionUtils.isEmpty(adminsChatIds)) {
             throw new BaseException("В БД отсутствуют администраторы, которым можно отправить чек для сохранения через ТГ.");
@@ -100,8 +105,10 @@ public class FileDownloader implements IFileDownloader {
             result = photoSizes.get(0).getFileId();
         }
         responseSender.deleteMessage(sentChatId, message.getMessageId());
-        if (!FileUtils.deleteQuietly(file)) {
-            log.warn("Не удалось удалить чек диспута из буфера: {} , name={}", file.getAbsolutePath(), file.getName());
+        if (delete) {
+            if (!FileUtils.deleteQuietly(file)) {
+                log.warn("Не удалось удалить чек диспута из буфера: {} , name={}", file.getAbsolutePath(), file.getName());
+            }
         }
         return result;
     }

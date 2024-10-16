@@ -43,3 +43,6 @@ config/antispam/picture
 *.log
 *.gz
 /config/local.properties
+/config/design/images/fileIds.properties
+/config/design/images/help.txt
+/config/design/images/
