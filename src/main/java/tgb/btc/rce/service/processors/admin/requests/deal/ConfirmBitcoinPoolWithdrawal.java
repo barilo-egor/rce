@@ -38,7 +38,7 @@ public class ConfirmBitcoinPoolWithdrawal extends Processor {
     @Override
     public void run(Update update) {
         Long chatId = updateService.getChatId(update);
-        Integer messageId = updateService.getMessageId(update);
+        Integer messageId = callbackQueryService.getSplitIntData(update, 1);
         log.debug("Пользователь chatId={} подтвердил вывод сделок из пула.", chatId);
         try {
             synchronized (dealPoolService) {
