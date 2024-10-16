@@ -1,6 +1,7 @@
 package tgb.btc.rce.service.processors.admin.requests.deal;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.bean.bot.Deal;
@@ -46,7 +47,7 @@ public class ConfirmBitcoinPoolWithdrawal extends Processor {
                         .map(Deal::getCryptoAmount)
                         .reduce(BigDecimal.ZERO, BigDecimal::add);
                 BigDecimal balance = autoWithdrawalService.getBalance(CryptoCurrency.BITCOIN);
-                if (balance.compareTo(totalAmount) < 0) {
+                if (BooleanUtils.isNotTrue(autoWithdrawalService.getMinAmount()) && balance.compareTo(totalAmount) < 0) {
                     responseSender.sendAnswerCallbackQuery(update.getCallbackQuery().getId(),
                             "На балансе недостаточно средств для автовывода. Текущий баланс: " + balance.toPlainString(), true);
                     return;
