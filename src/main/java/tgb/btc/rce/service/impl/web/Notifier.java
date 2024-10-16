@@ -170,6 +170,10 @@ public class Notifier implements INotifier {
         notifyService.notifyMessage(s, Set.of(UserRole.ADMIN));
     }
 
+    private void notifyAdmins(String s, Long excludeChatId) {
+        notifyService.notifyMessage(s, Set.of(UserRole.ADMIN), List.of(excludeChatId));
+    }
+
     @Override
     public void sendRequestToWithdrawDeal(String from, String requestInitiator, Long dealPid) {
         Optional<GroupChat> optionalGroupChat = groupChatService.getAllByType(GroupChatType.DEAL_REQUEST).stream().findAny();
@@ -236,5 +240,10 @@ public class Notifier implements INotifier {
     @Override
     public void sendGoodbyeToNewApiDealRequestGroup(Long chatId, String apiUserId) {
         responseSender.sendMessage(chatId, "Данная группа была отвязана от API клиента <b>" + apiUserId + "</b>.", "html");
+    }
+
+    @Override
+    public void notifyPoolChanged(Long aLong) {
+        notifyAdmins("Пул сделок BTC был обновлен.", aLong);
     }
 }

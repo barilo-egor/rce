@@ -53,7 +53,7 @@ public class ConfirmBitcoinPoolWithdrawal extends Processor {
                 }
                 autoWithdrawalService.withdrawal(deals.stream().map(Deal::getPid).collect(Collectors.toList()));
                 deals.forEach(deal -> modifyDealService.confirm(deal.getPid()));
-                dealPoolService.completePool(CryptoCurrency.BITCOIN);
+                dealPoolService.completePool(CryptoCurrency.BITCOIN, chatId);
             }
         } catch (Exception e) {
             responseSender.sendMessage(chatId, "Ошибка:" + e.getMessage());

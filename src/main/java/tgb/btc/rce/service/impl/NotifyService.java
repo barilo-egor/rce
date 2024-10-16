@@ -10,6 +10,7 @@ import tgb.btc.rce.sender.ResponseSender;
 import tgb.btc.rce.service.INotifyService;
 import tgb.btc.rce.vo.InlineButton;
 
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -32,6 +33,13 @@ public class NotifyService implements INotifyService {
     @Override
     public void notifyMessage(String message, Set<UserRole> roles) {
         readUserService.getChatIdsByRoles(roles).forEach(chatId -> responseSender.sendMessage(chatId, message));
+    }
+
+    @Override
+    public void notifyMessage(String message, Set<UserRole> roles, List<Long> excludeChatIds) {
+        readUserService.getChatIdsByRoles(roles).stream()
+                .filter(chatId -> !excludeChatIds.contains(chatId))
+                .forEach(chatId -> responseSender.sendMessage(chatId, message));
     }
 
     @Override

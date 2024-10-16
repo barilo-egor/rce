@@ -23,7 +23,7 @@ public class AddToPool extends Processor {
     public void run(Update update) {
         Long chatId = updateService.getChatId(update);
         Long dealPid = callbackQueryService.getSplitLongData(update, 1);
-        dealPoolService.addToPool(dealPid);
+        dealPoolService.addToPool(dealPid, chatId);
         log.debug("Пользователь chatId={} добавил сделку {} в пул.", chatId, dealPid);
         responseSender.deleteCallbackMessageIfExists(update);
         responseSender.sendMessage(chatId, "Сделка №" + dealPid + " добавлена в пул.");

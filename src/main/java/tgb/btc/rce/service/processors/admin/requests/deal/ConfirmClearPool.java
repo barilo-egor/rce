@@ -21,7 +21,7 @@ public class ConfirmClearPool extends Processor {
     @Override
     public void run(Update update) {
         Long chatId = updateService.getChatId(update);
-        dealPoolService.clearPool(CryptoCurrency.BITCOIN);
+        dealPoolService.clearPool(CryptoCurrency.BITCOIN, chatId);
         Integer poolMessageId = callbackQueryService.getSplitIntData(update, 1);
         responseSender.deleteMessage(chatId, poolMessageId);
         responseSender.deleteCallbackMessageIfExists(update);

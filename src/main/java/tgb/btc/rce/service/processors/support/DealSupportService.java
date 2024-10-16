@@ -231,7 +231,7 @@ public class DealSupportService {
                     .data(callbackQueryService.buildCallbackData(Command.AUTO_WITHDRAWAL_DEAL, pid))
                     .build());
         }
-        if (CryptoCurrency.BITCOIN.equals(cryptoCurrency)) {
+        if (CryptoCurrency.BITCOIN.equals(cryptoCurrency) && autoWithdrawalService.isAutoWithdrawalOn(CryptoCurrency.BITCOIN)) {
             buttons.add(InlineButton.builder()
                     .text(commandService.getText(Command.ADD_TO_POOL))
                     .data(callbackQueryService.buildCallbackData(Command.ADD_TO_POOL, pid))

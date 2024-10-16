@@ -26,7 +26,7 @@ public class DeleteFromPool extends Processor {
         Long chatId = updateService.getChatId(update);
         Long dealPid = Long.parseLong(updateService.getMessageText(update).split(" ")[1]);
         responseSender.deleteCallbackMessageIfExists(update);
-        dealPoolService.deleteFromPool(dealPid);
+        dealPoolService.deleteFromPool(dealPid, chatId);
         responseSender.sendMessage(chatId, "Сделка №" + dealPid + " удалена из пула.");
         bitcoinPool.run(update);
     }
