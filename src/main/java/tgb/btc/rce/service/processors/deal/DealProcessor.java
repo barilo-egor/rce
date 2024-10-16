@@ -22,7 +22,7 @@ import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.Menu;
 import tgb.btc.rce.service.ICalculatorTypeService;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.service.process.IDealProcessService;
+import tgb.btc.rce.service.process.IDealBotProcessService;
 import tgb.btc.rce.service.processors.support.ExchangeService;
 import tgb.btc.rce.service.util.IUpdateDispatcher;
 
@@ -50,7 +50,7 @@ public class DealProcessor extends Processor {
 
     private IBotMessageService botMessageService;
 
-    private IDealProcessService dealProcessService;
+    private IDealBotProcessService dealProcessService;
 
     private IFiatCurrencyService fiatCurrencyService;
 
@@ -94,7 +94,7 @@ public class DealProcessor extends Processor {
     }
 
     @Autowired
-    public void setDealProcessService(IDealProcessService dealProcessService) {
+    public void setDealProcessService(IDealBotProcessService dealProcessService) {
         this.dealProcessService = dealProcessService;
     }
 

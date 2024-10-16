@@ -1,6 +1,6 @@
 package tgb.btc.rce.service.process;
 
-public interface IDealProcessService {
+public interface IDealBotProcessService {
 
     boolean isAvailableForPromo(Long chatId);
 }

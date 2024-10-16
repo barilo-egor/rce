@@ -5,10 +5,10 @@ import org.springframework.stereotype.Service;
 import tgb.btc.library.interfaces.service.bean.common.bot.IDealCommonService;
 import tgb.btc.library.service.properties.ModulesPropertiesReader;
 import tgb.btc.rce.enums.FirstDealPromoType;
-import tgb.btc.rce.service.process.IDealProcessService;
+import tgb.btc.rce.service.process.IDealBotProcessService;
 
 @Service
-public class DealProcessService implements IDealProcessService {
+public class DealBotProcessService implements IDealBotProcessService {
 
     private IDealCommonService dealCommonService;
 
