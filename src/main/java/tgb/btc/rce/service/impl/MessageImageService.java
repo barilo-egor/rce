@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import tgb.btc.api.bot.IFileDownloader;
+import tgb.btc.library.exception.BaseException;
 import tgb.btc.rce.enums.MessageImage;
 import tgb.btc.rce.service.IMessageImageService;
 
@@ -18,22 +19,27 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 @Service
 @Slf4j
 public class MessageImageService implements IMessageImageService {
 
     private PropertiesConfiguration FILE_IDS_PROPERTIES;
+    
+    private PropertiesConfiguration MESSAGES_PROPERTIES;
 
     private final Map<MessageImage, String> FILES_IDS = new HashMap<>();
 
-    private static final String FILE_IDS_PROPERTIES_PATH = "config/design/images/fileIds.properties";
+    private static final String FILE_IDS_PROPERTIES_PATH = "config/design/message_images/fileIds.properties";
 
-    private static final String HELP_FILE_PATH = "config/design/images/help.txt";
+    private static final String HELP_FILE_PATH = "config/design/message_images/help.txt";
 
     private static final String IMAGE_FORMAT = ".png";
 
-    private static final String IMAGE_PATH = "config/design/images/%s" + IMAGE_FORMAT;
+    private static final String IMAGE_PATH = "config/design/message_images/%s" + IMAGE_FORMAT;
+
+    private static final String MESSAGES_PROPERTIES_PATH = "config/design/message_images/messages.properties";
 
     private final IFileDownloader fileDownloader;
 
@@ -43,7 +49,25 @@ public class MessageImageService implements IMessageImageService {
     }
 
     @PostConstruct
-    public void init() throws ConfigurationException {
+    public void init() throws ConfigurationException, IOException {
+        File messagesFile = new File(MESSAGES_PROPERTIES_PATH);
+        if (!messagesFile.exists()) {
+            log.debug("Файл с текстами сообщений {} не найден. Будет создан новый.", MESSAGES_PROPERTIES_PATH);
+            if (!messagesFile.createNewFile()) {
+                log.error("Не получилось создать файл {}", MESSAGES_PROPERTIES_PATH);
+                throw new BaseException("Ошибка при создании " + MESSAGES_PROPERTIES);
+            }
+        }
+        MESSAGES_PROPERTIES = new PropertiesConfiguration(MESSAGES_PROPERTIES_PATH);
+        for (MessageImage messageImage: MessageImage.values()) {
+            String value = MESSAGES_PROPERTIES.getString(messageImage.name(), null);
+            if (Objects.isNull(value)) {
+                log.debug("Значение для {} отсутствует. Создание проперти.", messageImage.name());
+                MESSAGES_PROPERTIES.addProperty(messageImage.name(), StringUtils.EMPTY);
+            }
+        }
+        MESSAGES_PROPERTIES.save();
+
         File fileFilesIds = new File(FILE_IDS_PROPERTIES_PATH);
         PropertiesConfiguration config = new PropertiesConfiguration();
         config.setFileName(FILE_IDS_PROPERTIES_PATH);
@@ -72,11 +96,16 @@ public class MessageImageService implements IMessageImageService {
         if (!helpFile.exists()) {
             log.debug("help.txt для изображений к сообщениям отсутствует и будет создан.");
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(HELP_FILE_PATH))) {
-                writer.write("В папке config/design/images должны лежать изображения со следующими наименованиями:\n");
+                writer.write("В папке config/design/message_images должны лежать изображения со следующими наименованиями:\n");
                 for (MessageImage value : MessageImage.values()) {
                     writer.write(value.name() + IMAGE_FORMAT + " - " + value.getDescription());
                     writer.newLine();  // Переход на новую строку
                 }
+                writer.write("\n\nВ папке config/design/message_images также должен лежать " +
+                        "messages.properties(создается из заполняется автоматически при старте приложения)" +
+                        " с аналогичными названиями проперти и текстами сообщений в качестве значений.\n\n" +
+                        "Данный файл help.txt создается автоматически при старте приложения. Его можно удалить и перезапустить" +
+                        " бота, чтобы пересоздать файл и получить актуальные данные.");
                 log.debug("help.txt успешно создан.");
             } catch (IOException e) {
                 log.debug("Ошибка при создании help.txt", e);
@@ -97,14 +126,16 @@ public class MessageImageService implements IMessageImageService {
             }
             fileId = fileDownloader.saveFile(imageFile, false);
             FILE_IDS_PROPERTIES.addProperty(messageImage.name(), fileId);
-            try {
-                FILE_IDS_PROPERTIES.save();
-            } catch (ConfigurationException e) {
-                log.error("Ошибка при сохранении {} ", FILE_IDS_PROPERTIES_PATH);
-                log.error("Описание:", e);
-                return null;
-            }
         }
         return fileId;
+    }
+    
+    @Override
+    @Cacheable("messageImageMessagesCache")
+    public String getMessage(MessageImage messageImage) {
+        String value = MESSAGES_PROPERTIES.getString(messageImage.name());
+        return StringUtils.isBlank(value)
+                ? messageImage.getDefaultMessage()
+                : value;
     }
 }
