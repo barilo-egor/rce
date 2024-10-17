@@ -32,11 +32,16 @@ public class NotifyService implements INotifyService {
 
     @Override
     public void notifyMessage(String message, Set<UserRole> roles) {
-        readUserService.getChatIdsByRoles(roles).forEach(chatId -> responseSender.sendMessage(chatId, message));
+        List<Long> excludeChatIds = readUserService.getChatIdsByIsNotificationsOn(false);
+        readUserService.getChatIdsByRoles(roles)
+                .stream()
+                .filter(chatId -> !excludeChatIds.contains(chatId))
+                .forEach(chatId -> responseSender.sendMessage(chatId, message));
     }
 
     @Override
     public void notifyMessage(String message, Set<UserRole> roles, List<Long> excludeChatIds) {
+        excludeChatIds.addAll(readUserService.getChatIdsByIsNotificationsOn(false));
         readUserService.getChatIdsByRoles(roles).stream()
                 .filter(chatId -> !excludeChatIds.contains(chatId))
                 .forEach(chatId -> responseSender.sendMessage(chatId, message));
@@ -44,12 +49,19 @@ public class NotifyService implements INotifyService {
 
     @Override
     public void notifyMessageAndPhoto(String message, String imageId, Set<UserRole> roles) {
-        readUserService.getChatIdsByRoles(roles).forEach(chatId -> responseSender.sendPhoto(chatId, message, imageId));
+        List<Long> excludeChatIds = readUserService.getChatIdsByIsNotificationsOn(false);
+        readUserService.getChatIdsByRoles(roles)
+                .stream()
+                .filter(chatId -> !excludeChatIds.contains(chatId))
+                .forEach(chatId -> responseSender.sendPhoto(chatId, message, imageId));
     }
 
     @Override
     public void notifyMessage(String message, ReplyKeyboard replyKeyboard, Set<UserRole> roles) {
-        readUserService.getChatIdsByRoles(roles).forEach(chatId -> responseSender.sendMessage(chatId, message, replyKeyboard));
+        List<Long> excludeChatIds = readUserService.getChatIdsByIsNotificationsOn(false);
+        readUserService.getChatIdsByRoles(roles).stream()
+                .filter(chatId -> !excludeChatIds.contains(chatId))
+                .forEach(chatId -> responseSender.sendMessage(chatId, message, replyKeyboard));
     }
 
     @Override
@@ -59,7 +71,11 @@ public class NotifyService implements INotifyService {
                 .inlineType(InlineType.CALLBACK_DATA)
                 .build();
         button.setData(data);
-        readUserService.getChatIdsByRoles(roles).forEach(chatId ->
-                responseSender.sendMessage(chatId, message, button));
+        List<Long> excludeChatIds = readUserService.getChatIdsByIsNotificationsOn(false);
+        readUserService.getChatIdsByRoles(roles)
+                .stream()
+                .filter(chatId -> !excludeChatIds.contains(chatId))
+                .forEach(chatId ->
+                        responseSender.sendMessage(chatId, message, button));
     }
 }

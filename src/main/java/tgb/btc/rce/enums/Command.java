@@ -43,6 +43,7 @@ public enum Command implements ICommand {
     MAKE_OBSERVER("/makeobserver", true, UserRole.ADMIN_ACCESS),
     MAKE_USER("/makeuser", true, UserRole.ADMIN_ACCESS),
     HELP("/help", false, UserRole.ADMIN_ACCESS),
+    TURN_NOTIFICATIONS("/notifications", true, UserRole.OBSERVER_ACCESS),
 
     /**
      * MAIN
