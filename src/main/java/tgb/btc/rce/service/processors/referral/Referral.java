@@ -9,14 +9,15 @@ import tgb.btc.library.interfaces.util.IBigDecimalService;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.InlineType;
-import tgb.btc.rce.enums.PropertiesMessage;
+import tgb.btc.rce.enums.MessageImage;
 import tgb.btc.rce.enums.Rank;
+import tgb.btc.rce.sender.IMessageImageResponseSender;
+import tgb.btc.rce.service.IMessageImageService;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.vo.InlineButton;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Objects;
 
 @CommandProcessor(command = Command.REFERRAL)
 public class Referral extends Processor {
@@ -24,6 +25,20 @@ public class Referral extends Processor {
     private IDealCountService dealCountService;
 
     private IBigDecimalService bigDecimalService;
+
+    private IMessageImageService messageImageService;
+
+    private IMessageImageResponseSender messageImageResponseSender;
+
+    @Autowired
+    public void setMessageImageService(IMessageImageService messageImageService) {
+        this.messageImageService = messageImageService;
+    }
+
+    @Autowired
+    public void setMessageImageResponseSender(IMessageImageResponseSender messageImageResponseSender) {
+        this.messageImageResponseSender = messageImageResponseSender;
+    }
 
     @Autowired
     public void setBigDecimalService(IBigDecimalService bigDecimalService) {
@@ -49,23 +64,29 @@ public class Referral extends Processor {
 
         Long dealsCount = dealCountService.getCountConfirmedByUserChatId(chatId);
         Rank rank = Rank.getByDealsNumber(dealsCount.intValue());
-        String resultMessage;
-        String referralMessageFewFiat = messagePropertiesService.getMessage("referral.main.few.fiat");
-        if (Objects.nonNull(referralMessageFewFiat)) {
-            String refBalanceString = PropertiesPath.VARIABLE_PROPERTIES.isNotBlank("course.rub.byn")
-                    ? bigDecimalService.roundToPlainString(referralBalance.multiply(PropertiesPath.VARIABLE_PROPERTIES.getBigDecimal("course.rub.byn")), 2)
-                    : bigDecimalService.roundToPlainString(referralBalance);
-            resultMessage = String.format(referralMessageFewFiat,
-                    refLink, currentBalance, refBalanceString,
-                    numberOfReferrals, numberOfActiveReferrals,
-                    readUserService.getChargesByChatId(chatId), dealsCount, rank.getSmile(), rank.getPercent()).concat("%");
-        } else {
-            resultMessage = String.format(messagePropertiesService.getMessage(PropertiesMessage.REFERRAL_MAIN),
-                    refLink, currentBalance, numberOfReferrals, numberOfActiveReferrals,
-                    readUserService.getChargesByChatId(chatId), dealsCount, rank.getSmile(), rank.getPercent()).concat("%");
+        MessageImage messageImage = MessageImage.REFERRAL;
+        Integer subType = messageImageService.getSubType(messageImage);
+        switch (subType) {
+            case 1:
+                messageImageResponseSender.sendMessage(messageImage, chatId,
+                        String.format(messageImageService.getMessage(messageImage),
+                                refLink, currentBalance, numberOfReferrals, numberOfActiveReferrals,
+                                readUserService.getChargesByChatId(chatId), dealsCount, rank.getSmile(),
+                                rank.getPercent()),
+                        keyboardBuildService.buildInline(getButtons(refLink)));
+                break;
+            case 2:
+                String refBalanceString = PropertiesPath.VARIABLE_PROPERTIES.isNotBlank("course.rub.byn")
+                        ? bigDecimalService.roundToPlainString(referralBalance.multiply(PropertiesPath.VARIABLE_PROPERTIES.getBigDecimal("course.rub.byn")), 2)
+                        : bigDecimalService.roundToPlainString(referralBalance);
+                messageImageResponseSender.sendMessage(messageImage, chatId,
+                        String.format(messageImageService.getMessage(messageImage),
+                                refLink, currentBalance, refBalanceString,
+                                numberOfReferrals, numberOfActiveReferrals,
+                                readUserService.getChargesByChatId(chatId), dealsCount, rank.getSmile(), rank.getPercent()),
+                        keyboardBuildService.buildInline(getButtons(refLink)));
+                break;
         }
-
-        responseSender.sendMessage(chatId, resultMessage, keyboardBuildService.buildInline(getButtons(refLink)));
     }
 
     private List<InlineButton> getButtons(String refLink) {
