@@ -9,4 +9,7 @@ public interface IMessageImageService {
 
     @Cacheable("messageImageMessagesCache")
     String getMessage(MessageImage messageImage);
+
+    @Cacheable("messageImageSubTypesCache")
+    Integer getSubType(MessageImage messageImage);
 }

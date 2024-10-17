@@ -248,6 +248,7 @@ public class ResponseSender implements IResponseSender {
                     .caption(caption)
                     .photo(new InputFile(photo))
                     .replyMarkup(replyKeyboard)
+                    .parseMode("html")
                     .build()));
         } catch (TelegramApiException e) {
             log.debug("Не получилось отправить фото: chatId=" + chatId + ", caption=" + caption + ", photo=" + photo, e);

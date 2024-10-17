@@ -26,7 +26,7 @@ public class MessageImageResponseSender implements IMessageImageResponseSender {
         if (StringUtils.isNotBlank(fileId)) {
             responseSender.sendPhoto(chatId, message, fileId, replyKeyboard);
         } else {
-            responseSender.sendMessage(chatId, message, replyKeyboard);
+            responseSender.sendMessage(chatId, message, replyKeyboard, "html");
         }
     }
 
@@ -37,7 +37,7 @@ public class MessageImageResponseSender implements IMessageImageResponseSender {
         if (StringUtils.isNotBlank(fileId)) {
             responseSender.sendPhoto(chatId, message, fileId, replyKeyboard);
         } else {
-            responseSender.sendMessage(chatId, message, replyKeyboard);
+            responseSender.sendMessage(chatId, message, replyKeyboard, "html");
         }
     }
 }

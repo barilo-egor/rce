@@ -22,10 +22,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -48,7 +45,7 @@ public class MessageImageService implements IMessageImageService {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    private final Map<MessageImage, String> MESSAGES = new HashMap<>();
+    private final Map<MessageImage, MessageVariable> MESSAGES = new HashMap<>();
 
     private final Map<MessageImage, String> FILES_IDS = new HashMap<>();
 
@@ -148,14 +145,14 @@ public class MessageImageService implements IMessageImageService {
             if (optionalMessageVariable.isPresent()) {
                 MessageVariable messageVariable = optionalMessageVariable.get();
                 if (StringUtils.isBlank(messageVariable.getText())) {
-                    MESSAGES.put(messageImage, messageImage.getDefaultMessage());
+                    MESSAGES.put(messageImage, MessageVariable.builder().type(messageImage).text(messageImage.getDefaultMessage()).build());
                     messageVariable.setText(messageImage.getDefaultMessage());
                     log.debug("У сообщения {} отсутствует текст. Будет установлен дефолтный.", messageImage.name());
                 } else {
-                    MESSAGES.put(messageImage, messageVariable.getText());
+                    MESSAGES.put(messageImage, messageVariable);
                 }
             } else {
-                MESSAGES.put(messageImage, messageImage.getDefaultMessage());
+                MESSAGES.put(messageImage, MessageVariable.builder().type(messageImage).text(messageImage.getDefaultMessage()).build());
                 messages.getMessages().add(MessageVariable.builder()
                         .type(messageImage)
                         .text(messageImage.getDefaultMessage())
@@ -205,9 +202,18 @@ public class MessageImageService implements IMessageImageService {
     @Override
     @Cacheable("messageImageMessagesCache")
     public String getMessage(MessageImage messageImage) {
-        String value = MESSAGES.get(messageImage);
-        return StringUtils.isBlank(value)
+        MessageVariable value = MESSAGES.get(messageImage);
+        return Objects.isNull(value) || StringUtils.isBlank(value.getText())
                 ? messageImage.getDefaultMessage()
-                : value;
+                : value.getText();
+    }
+
+    @Override
+    @Cacheable("messageImageSubTypesCache")
+    public Integer getSubType(MessageImage messageImage) {
+        MessageVariable value = MESSAGES.get(messageImage);
+        return Objects.isNull(value) || Objects.isNull(value.getSubType())
+                ? 1
+                : value.getSubType();
     }
 }

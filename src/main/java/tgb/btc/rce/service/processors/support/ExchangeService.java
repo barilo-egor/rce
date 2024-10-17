@@ -2,7 +2,6 @@ package tgb.btc.rce.service.processors.support;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.BooleanUtils;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Message;
@@ -106,7 +105,7 @@ public class ExchangeService {
     private IUpdateService updateService;
 
     private IDeliveryTypeService deliveryTypeService;
-    
+
     private VariablePropertiesReader variablePropertiesReader;
 
     private IFiatCurrencyService fiatCurrencyService;
@@ -124,6 +123,13 @@ public class ExchangeService {
     private ISecurePaymentDetailsService securePaymentDetailsService;
 
     private IMessageImageResponseSender messageImageResponseSender;
+
+    private IMessageImageService messageImageService;
+
+    @Autowired
+    public void setMessageImageService(IMessageImageService messageImageService) {
+        this.messageImageService = messageImageService;
+    }
 
     @Autowired
     public void setMessageImageResponseSender(IMessageImageResponseSender messageImageResponseSender) {
@@ -296,9 +302,7 @@ public class ExchangeService {
     }
 
     public void askForFiatCurrency(Long chatId) {
-        String message = messagePropertiesService.getMessage("choose.fiat.currency");
-        if (Objects.isNull(message)) message = "Выберите валюту.";
-        messageImageResponseSender.sendMessage(MessageImage.CHOOSE_FIAT, chatId, message, keyboardService.getFiatCurrencies());
+        messageImageResponseSender.sendMessage(MessageImage.CHOOSE_FIAT, chatId, keyboardService.getFiatCurrencies());
     }
 
     public boolean saveFiatCurrency(Update update) {
@@ -579,40 +583,31 @@ public class ExchangeService {
         Deal deal = readDealService.findByPid(readUserService.getCurrentDealByChatId(chatId));
         BigDecimal dealAmount = deal.getAmount();
         String displayCurrencyName = cryptoCurrenciesDesignService.getDisplayName(deal.getCryptoCurrency());
-        String additionalText;
-        try {
-            additionalText = botMessageService.findByTypeThrows(BotMessageType.ADDITIONAL_DEAL_TEXT).getText() + "\n\n";
-        } catch (BaseException e) {
-            additionalText = StringUtils.EMPTY;
-        }
-        String message = messagePropertiesService.getMessage("choose.payment.type");
-        if (Objects.nonNull(message)) {
-            responseSender.sendMessage(chatId, message,
-                    keyboardService.getPaymentTypes(deal.getDealType(), deal.getFiatCurrency()), "HTML");
-            return;
-        }
-        StringBuilder messageNew = new StringBuilder();
-        messageNew.append("\uD83D\uDCAC<b>Информация по заявке</b>\n" + "\uD83D\uDCAC<b>")
-                .append(deal.getDealType().getNominativeFirstLetterToUpper()).append(" ")
-                .append(displayCurrencyName).append("</b>: ")
-                .append(bigDecimalService.roundToPlainString(deal.getCryptoAmount(), deal.getCryptoCurrency().getScale()))
-                .append("\n");
+        MessageImage messageImage;
+        Integer subType;
         if (DealType.isBuy(deal.getDealType())) {
-            dealAmount = userDiscountProcessService.applyDealDiscounts(chatId, dealAmount, deal.getUsedPromo(),
-                    deal.getUsedReferralDiscount(), deal.getDiscount(), deal.getFiatCurrency());
-            messageNew.append("\uD83D\uDCB5<b>Сумма перевода</b>: ")
-                    .append(bigDecimalService.roundToPlainString(dealAmount))
-                    .append(" ").append(deal.getFiatCurrency().getGenitive()).append("\n\n")
-                    .append(additionalText).append("<b>Выберите способ оплаты:</b>");
+            messageImage = MessageImage.PAYMENT_TYPES_BUY;
+            subType = messageImageService.getSubType(messageImage);
         } else {
-            messageNew.append("\n\n" + "\uD83D\uDCB5<b>Сумма перевода</b>: ")
-                    .append(bigDecimalService.roundToPlainString(dealAmount)).append(" ")
-                    .append(deal.getFiatCurrency().getGenitive()).append("\n\n")
-                    .append(additionalText).append("<b>Выберите способ получения перевода:</b>");
+            messageImage = MessageImage.PAYMENT_TYPES_SELL;
+            subType = messageImageService.getSubType(messageImage);
         }
-
-        responseSender.sendMessage(chatId, messageNew.toString(),
-                keyboardService.getPaymentTypes(deal.getDealType(), deal.getFiatCurrency()), "HTML");
+        switch (subType) {
+            case 1:
+                messageImageResponseSender.sendMessage(messageImage, chatId,
+                        keyboardService.getPaymentTypes(deal.getDealType(), deal.getFiatCurrency()));
+                break;
+            case 2:
+                messageImageResponseSender.sendMessage(messageImage, chatId,
+                        String.format(messageImageService.getMessage(messageImage),
+                                deal.getDealType().getNominativeFirstLetterToUpper(),
+                                displayCurrencyName,
+                                bigDecimalService.roundToPlainString(deal.getCryptoAmount(), deal.getCryptoCurrency().getScale()),
+                                bigDecimalService.roundToPlainString(dealAmount),
+                                deal.getFiatCurrency().getGenitive()),
+                        keyboardService.getPaymentTypes(deal.getDealType(), deal.getFiatCurrency()));
+                break;
+        }
     }
 
     public Boolean savePaymentType(Update update) {

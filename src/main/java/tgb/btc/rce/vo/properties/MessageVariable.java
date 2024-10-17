@@ -15,4 +15,6 @@ public class MessageVariable {
     private MessageImage type;
 
     private String text;
+
+    private Integer subType;
 }
