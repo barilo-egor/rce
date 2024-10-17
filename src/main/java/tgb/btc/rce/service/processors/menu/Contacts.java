@@ -28,8 +28,6 @@ public class Contacts extends Processor {
 
     @Override
     public void run(Update update) {
-//        responseSender.sendBotMessage(BotMessageType.CONTACTS, updateService.getChatId(update),
-//                keyboardBuildService.buildContacts(contactService.findAll()));
         messageImageResponseSender.sendMessage(MessageImage.CONTACTS, updateService.getChatId(update),
                 keyboardBuildService.buildContacts(contactService.findAll()));
     }
