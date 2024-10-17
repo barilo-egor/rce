@@ -463,30 +463,17 @@ public class ExchangeService {
         Deal deal = readDealService.findByPid(readUserService.getCurrentDealByChatId(chatId));
         CryptoCurrency cryptoCurrency = deal.getCryptoCurrency();
         ReplyKeyboard keyboard;
-        String message;
+        MessageImage messageImage;
+        Integer subType;
+        String lastWalletMessage = "";
         if (DealType.isBuy(deal.getDealType())) {
-            message = messagePropertiesService.getMessage("send.wallet.buy");
-            if (Objects.isNull(message)) {
-                message = "\uD83D\uDCDDВведите " + cryptoCurrenciesDesignService.getDisplayName(cryptoCurrency)
-                        + "-адрес кошелька, куда вы хотите отправить "
-                        + bigDecimalService.roundToPlainString(deal.getCryptoAmount(), cryptoCurrency.getScale())
-                        + " " + cryptoCurrency.getShortName();
-            } else {
-                message = String.format(message, bigDecimalService.roundToPlainString(deal.getCryptoAmount(), cryptoCurrency.getScale()),
-                        cryptoCurrency.getShortName());
-
-            }
+            messageImage = MessageImage.getInputWallet(cryptoCurrency);
+            subType = messageImageService.getSubType(messageImage);
             List<InlineButton> buttons = new ArrayList<>();
-
-            if (dealCountService.getConfirmedDealsCountByUserChatIdAndDealTypeAndCryptoCurrency(chatId, DealType.BUY,
-                    cryptoCurrency) > 0) {
-                String wallet = readDealService.getWalletFromLastPassedByChatIdAndDealTypeAndCryptoCurrency(chatId,
-                        DealType.BUY,
-                        cryptoCurrency);
-                String lastWalletMessage = messagePropertiesService.getMessage("send.wallet.last");
-                if (Objects.isNull(lastWalletMessage))
-                    message = message.concat("\n\nВы можете использовать ваш сохраненный адрес:\n" + wallet);
-                else message = message.concat("\n\n" + lastWalletMessage + "\n" + wallet);
+            if (dealCountService.getConfirmedDealsCountByUserChatIdAndDealTypeAndCryptoCurrency(chatId, DealType.BUY, cryptoCurrency) > 0) {
+                lastWalletMessage = String.format(
+                        messageImageService.getMessage(MessageImage.SAVED_WALLET),
+                        readDealService.getWalletFromLastPassedByChatIdAndDealTypeAndCryptoCurrency(chatId, DealType.BUY, cryptoCurrency));
                 buttons.add(InlineButton.builder()
                         .text(buttonsDesignPropertiesReader.getString("USE_SAVED_WALLET"))
                         .data(Command.USE_SAVED_WALLET.name())
@@ -494,20 +481,31 @@ public class ExchangeService {
             }
             buttons.add(BotInlineButton.CANCEL.getButton());
             keyboard = keyboardBuildService.buildInline(buttons);
+
         } else {
-            message = messagePropertiesService.getMessage("send.wallet.sell");
-            if (Objects.isNull(message)) {
-                message = "Введите " + deal.getPaymentType().getName() + " реквизиты, куда вы хотите получить "
-                        + bigDecimalService.roundToPlainString(deal.getAmount(), 0) + " "
-                        + deal.getFiatCurrency().getGenitive();
-            } else {
-                message = String.format(message, bigDecimalService.roundToPlainString(deal.getAmount(), 0), deal.getFiatCurrency().getGenitive());
-            }
             keyboard = keyboardService.getInlineCancel();
+            messageImage = MessageImage.FIAT_INPUT_DETAILS;
+            subType = messageImageService.getSubType(messageImage);
         }
-        responseSender.sendMessage(chatId, message, keyboard, "HTML")
-                .ifPresent(sentMessage -> modifyUserService.updateBufferVariable(chatId,
-                        sentMessage.getMessageId().toString()));
+        switch (subType) {
+            case 1:
+                messageImageResponseSender.sendMessage(messageImage, chatId,
+                        String.format(messageImageService.getMessage(messageImage),
+                                cryptoCurrenciesDesignService.getDisplayName(cryptoCurrency),
+                                bigDecimalService.roundToPlainString(deal.getCryptoAmount(), cryptoCurrency.getScale()),
+                                cryptoCurrency.getShortName(),
+                                lastWalletMessage),
+                        keyboard);
+                break;
+            case 2:
+                messageImageResponseSender.sendMessage(messageImage, chatId,
+                        String.format(messageImageService.getMessage(messageImage),
+                                bigDecimalService.roundToPlainString(deal.getCryptoAmount(), cryptoCurrency.getScale()),
+                                cryptoCurrency.getShortName(),
+                                lastWalletMessage),
+                        keyboard);
+                break;
+        }
     }
 
     public void askForUserPromoCode(Long chatId) {

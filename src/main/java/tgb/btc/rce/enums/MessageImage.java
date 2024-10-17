@@ -1,6 +1,7 @@
 package tgb.btc.rce.enums;
 
 import lombok.Getter;
+import tgb.btc.library.constants.enums.bot.CryptoCurrency;
 
 @Getter
 public enum MessageImage {
@@ -11,10 +12,12 @@ public enum MessageImage {
     PAYMENT_TYPES_SELL("Выберите способ получения перевода:", "Выберите тип оплаты."),
     REFERRAL("Реферальная программа.", "Реферальная программа."),
     CONTACTS("Контакты.", "Контакты."),
-    BITCOIN_INPUT_WALLET("Ввод кошелька BTC.", "Введите %s-адрес кошелька, куда вы хотите отправить %s%s."),
-    LITECOIN_INPUT_WALLET("Ввод кошелька LTC.", "Введите %s-адрес кошелька, куда вы хотите отправить %s%s."),
-    USDT_INPUT_WALLET("Ввод кошелька USDT.", "Введите %s-адрес кошелька, куда вы хотите отправить %s%s."),
-    MONERO_INPUT_WALLET("Ввод кошелька XMR.", "Введите %s-адрес кошелька, куда вы хотите отправить %s%s.");
+    BITCOIN_INPUT_WALLET("Ввод кошелька BTC.", "Введите %s-адрес кошелька, куда вы хотите отправить %s%s.%s"),
+    LITECOIN_INPUT_WALLET("Ввод кошелька LTC.", "Введите %s-адрес кошелька, куда вы хотите отправить %s%s.%s"),
+    USDT_INPUT_WALLET("Ввод кошелька USDT.", "Введите %s-адрес кошелька, куда вы хотите отправить %s%s.%s"),
+    MONERO_INPUT_WALLET("Ввод кошелька XMR.", "Введите %s-адрес кошелька, куда вы хотите отправить %s%s.%s"),
+    SAVED_WALLET("Предложение использовать сохраненный кошелек.", "Вы можете использовать ваш сохраненный адрес:"),
+    FIAT_INPUT_DETAILS("Ввод реквизитов для продажи.", "Введите %s реквизиты, куда вы хотите получить %s%s.");
 
     final String description;
     final String defaultMessage;
@@ -24,4 +27,16 @@ public enum MessageImage {
         this.defaultMessage = defaultMessage;
     }
 
+    public static MessageImage getInputWallet(CryptoCurrency cryptoCurrency) {
+        switch (cryptoCurrency) {
+            case LITECOIN:
+                return LITECOIN_INPUT_WALLET;
+            case USDT:
+                return USDT_INPUT_WALLET;
+            case MONERO:
+                return MONERO_INPUT_WALLET;
+            default:
+                return BITCOIN_INPUT_WALLET;
+        }
+    }
 }
