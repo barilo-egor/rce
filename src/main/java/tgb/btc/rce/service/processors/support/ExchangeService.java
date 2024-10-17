@@ -326,8 +326,14 @@ public class ExchangeService {
 
     public void askForCryptoCurrency(Long chatId) {
         DealType dealType = dealPropertyService.getDealTypeByPid(readUserService.getCurrentDealByChatId(chatId));
-        messageService.sendMessageAndSaveMessageId(chatId, messagePropertiesService.getChooseCurrency(dealType),
-                keyboardService.getCurrencies(dealType));
+        ReplyKeyboard replyKeyboard = keyboardService.getCurrencies(dealType);
+        MessageImage messageImage;
+        if (DealType.isBuy(dealType)) {
+            messageImage = MessageImage.CHOOSE_CRYPTO_CURRENCY_BUY;
+        } else {
+            messageImage = MessageImage.CHOOSE_CRYPTO_CURRENCY_SELL;
+        }
+        messageImageResponseSender.sendMessageAndSaveMessageId(messageImage, chatId, replyKeyboard);
     }
 
     public boolean saveCryptoCurrency(Update update) {
