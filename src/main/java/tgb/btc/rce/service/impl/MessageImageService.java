@@ -1,8 +1,9 @@
 package tgb.btc.rce.service.impl;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
@@ -11,37 +12,44 @@ import tgb.btc.api.bot.IFileDownloader;
 import tgb.btc.library.exception.BaseException;
 import tgb.btc.rce.enums.MessageImage;
 import tgb.btc.rce.service.IMessageImageService;
+import tgb.btc.rce.vo.properties.FileId;
+import tgb.btc.rce.vo.properties.FileIds;
+import tgb.btc.rce.vo.properties.ImageMessages;
+import tgb.btc.rce.vo.properties.MessageVariable;
 
 import javax.annotation.PostConstruct;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 @Service
 @Slf4j
 public class MessageImageService implements IMessageImageService {
 
-    private PropertiesConfiguration FILE_IDS_PROPERTIES;
-    
-    private PropertiesConfiguration MESSAGES_PROPERTIES;
+    private static final String FILE_IDS_JSON_PATH = "config/design/message_images/fileIds.json";
 
-    private final Map<MessageImage, String> FILES_IDS = new HashMap<>();
-
-    private static final String FILE_IDS_PROPERTIES_PATH = "config/design/message_images/fileIds.properties";
 
     private static final String HELP_FILE_PATH = "config/design/message_images/help.txt";
 
-    private static final String IMAGE_FORMAT = ".png";
+    private static final String PNG_FORMAT = ".png";
 
-    private static final String IMAGE_PATH = "config/design/message_images/%s" + IMAGE_FORMAT;
+    private static final String JPG_FORMAT = ".png";
 
-    private static final String MESSAGES_PROPERTIES_PATH = "config/design/message_images/messages.properties";
+    private static final String IMAGE_PATH = "config/design/message_images/%s%s";
+
+    private static final String MESSAGES_JSON_PATH = "config/design/message_images/messages.json";
 
     private final IFileDownloader fileDownloader;
+
+    private final ObjectMapper objectMapper = new ObjectMapper();
+
+    private final Map<MessageImage, String> MESSAGES = new HashMap<>();
+
+    private final Map<MessageImage, String> FILES_IDS = new HashMap<>();
+
+    private  FileIds fileIds;
 
     @Autowired
     public MessageImageService(IFileDownloader fileDownloader) {
@@ -50,60 +58,21 @@ public class MessageImageService implements IMessageImageService {
 
     @PostConstruct
     public void init() throws ConfigurationException, IOException {
-        File messagesFile = new File(MESSAGES_PROPERTIES_PATH);
-        if (!messagesFile.exists()) {
-            log.debug("Файл с текстами сообщений {} не найден. Будет создан новый.", MESSAGES_PROPERTIES_PATH);
-            if (!messagesFile.createNewFile()) {
-                log.error("Не получилось создать файл {}", MESSAGES_PROPERTIES_PATH);
-                throw new BaseException("Ошибка при создании " + MESSAGES_PROPERTIES);
-            }
-        }
-        MESSAGES_PROPERTIES = new PropertiesConfiguration(MESSAGES_PROPERTIES_PATH);
-        for (MessageImage messageImage: MessageImage.values()) {
-            String value = MESSAGES_PROPERTIES.getString(messageImage.name(), null);
-            if (Objects.isNull(value)) {
-                log.debug("Значение для {} отсутствует. Создание проперти.", messageImage.name());
-                MESSAGES_PROPERTIES.addProperty(messageImage.name(), StringUtils.EMPTY);
-            }
-        }
-        MESSAGES_PROPERTIES.save();
-
-        File fileFilesIds = new File(FILE_IDS_PROPERTIES_PATH);
-        PropertiesConfiguration config = new PropertiesConfiguration();
-        config.setFileName(FILE_IDS_PROPERTIES_PATH);
-        config.setEncoding("UTF-8");
-        config.setAutoSave(true);
-        if (!fileFilesIds.exists()) {
-            log.debug("Файл {} для хранения fileId изображений для сообщений не найден. Будет создан новый.", FILE_IDS_PROPERTIES_PATH);
-            config.save();
-        } else {
-            log.debug("Файл {} для хранения fileId изображений для сообщений найден.", FILE_IDS_PROPERTIES_PATH);
-            config.load();
-            for (MessageImage messageImage : MessageImage.values()) {
-                String name = messageImage.name();
-                String fileId = config.getString(name, null);
-                if (StringUtils.isNotBlank(fileId)) {
-                    FILES_IDS.put(messageImage, fileId);
-                    log.debug("File id для {} найден и загружен в кеш.", name);
-                } else {
-                    log.debug("File id для {} не найден.", name);
-                }
-            }
-        }
-        FILE_IDS_PROPERTIES = config;
-
+        loadText();
+        loadFileIds();
         File helpFile = new File(HELP_FILE_PATH);
         if (!helpFile.exists()) {
             log.debug("help.txt для изображений к сообщениям отсутствует и будет создан.");
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(HELP_FILE_PATH))) {
-                writer.write("В папке config/design/message_images должны лежать изображения со следующими наименованиями:\n");
+                writer.write("В папке config/design/message_images должны лежать изображения со следующими наименованиями:\n\n");
                 for (MessageImage value : MessageImage.values()) {
-                    writer.write(value.name() + IMAGE_FORMAT + " - " + value.getDescription());
+                    writer.write(value.name() + PNG_FORMAT + " - " + value.getDescription());
                     writer.newLine();  // Переход на новую строку
                 }
+                writer.write("В случае отсутствия изображения будет отправляться только текст.");
                 writer.write("\n\nВ папке config/design/message_images также должен лежать " +
-                        "messages.properties(создается из заполняется автоматически при старте приложения)" +
-                        " с аналогичными названиями проперти и текстами сообщений в качестве значений.\n\n" +
+                        "messages.json(создается из заполняется автоматически при старте приложения)" +
+                        " с аналогичными названиями проперти и текстами сообщений.\n\n" +
                         "Данный файл help.txt создается автоматически при старте приложения. Его можно удалить и перезапустить" +
                         " бота, чтобы пересоздать файл и получить актуальные данные.");
                 log.debug("help.txt успешно создан.");
@@ -113,27 +82,123 @@ public class MessageImageService implements IMessageImageService {
         }
     }
 
+    private void loadFileIds() throws IOException {
+        File fileFilesIds = new File(FILE_IDS_JSON_PATH);
+        if (!fileFilesIds.exists()) {
+            log.debug("Файл {} для хранения fileId изображений для сообщений не найден. Будет создан новый.", FILE_IDS_JSON_PATH);
+            if (!fileFilesIds.createNewFile()) {
+                log.error("Не получилось создать файл {}.", MESSAGES_JSON_PATH);
+                throw new BaseException();
+            }
+            FileIds fileIds = new FileIds();
+            fileIds.setFileIds(new ArrayList<>());
+            ObjectWriter writer = objectMapper.writerWithDefaultPrettyPrinter();
+            writer.writeValue(fileFilesIds, fileIds);
+        }
+
+        fileIds = objectMapper.readValue(fileFilesIds, FileIds.class);
+
+        for (MessageImage messageImage : MessageImage.values()) {
+            Optional<FileId> optionalMessageVariable = fileIds.getFileIds()
+                    .stream()
+                    .filter(messageVariable -> messageVariable.getType().equals(messageImage))
+                    .findFirst();
+            if (optionalMessageVariable.isPresent()) {
+                FileId messageVariable = optionalMessageVariable.get();
+                if (StringUtils.isBlank(messageVariable.getFileId())) {
+                    FILES_IDS.put(messageImage, messageVariable.getFileId());
+                    log.debug("FileId для {} найден и загружен в кеш.", messageImage.name());
+                }
+            }
+        }
+    }
+
+    private void loadText() throws IOException {
+        File messagesFile = new File(MESSAGES_JSON_PATH);
+        if (!messagesFile.exists()) {
+            log.debug("Отсутствует файл с текстами сообщений {} , будет создан новый.", MESSAGES_JSON_PATH);
+            if (!messagesFile.createNewFile()) {
+                log.error("Не получилось создать файл {}.", MESSAGES_JSON_PATH);
+                throw new BaseException();
+            }
+            ImageMessages imageMessages = new ImageMessages();
+            imageMessages.setMessages(new ArrayList<>());
+            objectMapper.writeValue(messagesFile, imageMessages);
+        }
+        ImageMessages messages;
+        try {
+            messages = objectMapper.readValue(messagesFile, ImageMessages.class);
+        } catch (Exception e) {
+            log.error("Ошибка при попытке считать {}", MESSAGES_JSON_PATH);
+            log.error(e.getMessage(), e);
+            throw new BaseException(e.getMessage(), e);
+        }
+        for (MessageImage messageImage : MessageImage.values()) {
+            Optional<MessageVariable> optionalMessageVariable = messages.getMessages()
+                    .stream()
+                    .filter(messageVariable -> messageVariable.getType().equals(messageImage))
+                    .findFirst();
+            if (optionalMessageVariable.isPresent()) {
+                MessageVariable messageVariable = optionalMessageVariable.get();
+                if (StringUtils.isBlank(messageVariable.getText())) {
+                    MESSAGES.put(messageImage, messageImage.getDefaultMessage());
+                    messageVariable.setText(messageImage.getDefaultMessage());
+                    log.debug("У сообщения {} отсутствует текст. Будет установлен дефолтный.", messageImage.name());
+                } else {
+                    MESSAGES.put(messageImage, messageVariable.getText());
+                }
+            } else {
+                MESSAGES.put(messageImage, messageImage.getDefaultMessage());
+                messages.getMessages().add(MessageVariable.builder()
+                        .type(messageImage)
+                        .text(messageImage.getDefaultMessage())
+                        .build());
+                log.debug("Отсутствует {} . Сообщение с дефолтным текстом будет добавлено.", messageImage.name());
+            }
+        }
+        try {
+            ObjectWriter objectWriter = objectMapper.writerWithDefaultPrettyPrinter();
+            objectWriter.writeValue(messagesFile, messages);
+        } catch (Exception e) {
+            log.error("Ошибка при попытке записи {} значения: {}", MESSAGES_JSON_PATH, messages);
+            log.error(e.getMessage(), e);
+            throw new BaseException(e.getMessage(), e);
+        }
+    }
+
     @Override
     @Cacheable("messageImageFilesIdsCache")
     public String getFileId(MessageImage messageImage) {
-        String fileId;
-        if (FILES_IDS.containsKey(messageImage)) {
-            fileId = FILES_IDS.get(messageImage);
+        String fileId = FILES_IDS.get(messageImage);
+        if (StringUtils.isNotBlank(fileId)) {
+            return fileId;
         } else {
-            File imageFile = new File(String.format(IMAGE_PATH, messageImage.name()));
+            File imageFile = new File(String.format(IMAGE_PATH, messageImage.name(), PNG_FORMAT));
             if (!imageFile.exists()) {
-                return null;
+                imageFile = new File(String.format(IMAGE_PATH, messageImage.name(), JPG_FORMAT));
+                if (!imageFile.exists()) {
+                    return null;
+                }
             }
             fileId = fileDownloader.saveFile(imageFile, false);
-            FILE_IDS_PROPERTIES.addProperty(messageImage.name(), fileId);
+            fileIds.getFileIds().add(FileId.builder().type(messageImage).fileId(fileId).build());
+            ObjectWriter objectWriter = objectMapper.writerWithDefaultPrettyPrinter();
+            try {
+                objectWriter.writeValue(new File(FILE_IDS_JSON_PATH), fileIds);
+            } catch (IOException e) {
+                log.error("Ошибка при попытке записи fileId для {}.", messageImage.name());
+                log.error(e.getMessage(), e);
+                throw new BaseException(e.getMessage(), e);
+            }
+            log.debug("Было загружено новое изображение для {}.", messageImage.name());
+            return fileId;
         }
-        return fileId;
     }
-    
+
     @Override
     @Cacheable("messageImageMessagesCache")
     public String getMessage(MessageImage messageImage) {
-        String value = MESSAGES_PROPERTIES.getString(messageImage.name());
+        String value = MESSAGES.get(messageImage);
         return StringUtils.isBlank(value)
                 ? messageImage.getDefaultMessage()
                 : value;
