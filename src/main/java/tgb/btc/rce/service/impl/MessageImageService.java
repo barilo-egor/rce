@@ -22,7 +22,10 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -60,6 +63,10 @@ public class MessageImageService implements IMessageImageService {
     public void init() throws ConfigurationException, IOException {
         loadText();
         loadFileIds();
+        loadHelp();
+    }
+
+    private void loadHelp() {
         File helpFile = new File(HELP_FILE_PATH);
         if (!helpFile.exists()) {
             log.debug("help.txt для изображений к сообщениям отсутствует и будет создан.");
@@ -72,7 +79,7 @@ public class MessageImageService implements IMessageImageService {
                 writer.write("В случае отсутствия изображения будет отправляться только текст.");
                 writer.write("\n\nВ папке config/design/message_images также должен лежать " +
                         "messages.json(создается из заполняется автоматически при старте приложения)" +
-                        " с аналогичными названиями проперти и текстами сообщений.\n\n" +
+                        " с аналогичными названиями проперти и текстами сообщений. Перенос строк обозначается как \\n\n\n" +
                         "Данный файл help.txt создается автоматически при старте приложения. Его можно удалить и перезапустить" +
                         " бота, чтобы пересоздать файл и получить актуальные данные.");
                 log.debug("help.txt успешно создан.");
