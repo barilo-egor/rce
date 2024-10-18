@@ -76,7 +76,7 @@ public class MessageImageService implements IMessageImageService {
                     writer.newLine();  // Переход на новую строку
                 }
                 writer.write("Доступные форматы на текущий момент: " + String.join(" ", FORMATS));
-                writer.write("В случае отсутствия изображения будет отправляться только текст.");
+                writer.write("\nВ случае отсутствия изображения будет отправляться только текст.");
                 writer.write("\n\nВ папке config/design/message_images также должен лежать " +
                         "messages.json(создается из заполняется автоматически при старте приложения)" +
                         " с аналогичными названиями проперти и текстами сообщений. Перенос строк обозначается как \\n\n" +
