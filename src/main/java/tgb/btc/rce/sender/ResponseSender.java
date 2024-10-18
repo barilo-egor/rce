@@ -256,6 +256,19 @@ public class ResponseSender implements IResponseSender {
         }
     }
 
+    @Override
+    public Message sendAnimation(Long chatId, File file) {
+        try {
+            return bot.execute(SendAnimation.builder()
+                    .chatId(chatId.toString())
+                    .animation(new InputFile(file))
+                    .build());
+        } catch (TelegramApiException e) {
+            log.debug("Не получилось отправить анимацию: chatId=" + chatId, e);
+            return null;
+        }
+    }
+
     public Optional<Message> sendAnimation(Long chatId, String caption, String animation, ReplyKeyboard replyKeyboard) {
         try {
             return Optional.of(bot.execute(SendAnimation.builder()

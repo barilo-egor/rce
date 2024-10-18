@@ -83,6 +83,9 @@ public class FileDownloader implements IFileDownloader {
                 if (file.getName().endsWith(".pdf")) {
                     message = responseSender.sendFile(chatId, file);
                     sentChatId = chatId;
+                } else if (file.getName().endsWith(".mp4")) {
+                    message = responseSender.sendAnimation(chatId, file);
+                    sentChatId = chatId;
                 } else {
                     message = responseSender.sendPhoto(chatId, null,
                             new InputFile(file)).orElse(null);
@@ -99,6 +102,8 @@ public class FileDownloader implements IFileDownloader {
         String result;
         if (file.getName().endsWith(".pdf")) {
             result = message.getDocument().getFileId();
+        } else if (file.getName().endsWith(".mp4") || file.getName().endsWith(".mp4")) {
+            result = message.getAnimation().getFileId();
         } else {
             List<PhotoSize> photoSizes = message.getPhoto();
             photoSizes.sort((p1, p2) -> p2.getHeight().compareTo(p1.getHeight()));

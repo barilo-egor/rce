@@ -3,12 +3,13 @@ package tgb.btc.rce.service.processors.tool;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import tgb.btc.library.constants.enums.bot.BotMessageType;
 import tgb.btc.library.interfaces.service.bean.bot.deal.IModifyDealService;
 import tgb.btc.library.interfaces.service.bean.bot.deal.IReadDealService;
 import tgb.btc.library.service.bean.bot.BotMessageService;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
+import tgb.btc.rce.enums.MessageImage;
+import tgb.btc.rce.sender.IMessageImageResponseSender;
 import tgb.btc.rce.service.Processor;
 
 import java.util.Objects;
@@ -22,6 +23,13 @@ public class Start extends Processor {
     private IReadDealService readDealService;
 
     private IModifyDealService modifyDealService;
+
+    private IMessageImageResponseSender messageImageResponseSender;
+
+    @Autowired
+    public void setMessageImageResponseSender(IMessageImageResponseSender messageImageResponseSender) {
+        this.messageImageResponseSender = messageImageResponseSender;
+    }
 
     @Autowired
     public void setReadDealService(IReadDealService readDealService) {
@@ -46,7 +54,7 @@ public class Start extends Processor {
 
     public void run(Long chatId) {
         modifyUserService.updateIsActiveByChatId(true, chatId);
-        responseSender.sendBotMessage(botMessageService.findByTypeNullSafe(BotMessageType.START), chatId);
+        messageImageResponseSender.sendMessage(MessageImage.START, chatId);
         Long currentDealPid = readUserService.getCurrentDealByChatId(chatId);
         if (Objects.nonNull(currentDealPid)) {
             if (readDealService.existsById(currentDealPid)) {

@@ -52,6 +52,8 @@ public interface IResponseSender {
 
     Optional<Message> sendPhoto(Long chatId, String caption, String photo, ReplyKeyboard replyKeyboard);
 
+    Message sendAnimation(Long chatId, File file);
+
     Optional<Message> sendAnimation(Long chatId, String caption, String animation, ReplyKeyboard replyKeyboard);
 
     Optional<Message> sendBotMessage(BotMessageType botMessageType, Long chatId, Menu menu);

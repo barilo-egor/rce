@@ -12,4 +12,7 @@ public interface IMessageImageService {
 
     @Cacheable("messageImageSubTypesCache")
     Integer getSubType(MessageImage messageImage);
+
+    @Cacheable("messageImageFormatCache")
+    String getFormat(MessageImage messageImage);
 }

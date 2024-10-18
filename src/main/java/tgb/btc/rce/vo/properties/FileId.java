@@ -14,4 +14,6 @@ public class FileId {
     private MessageImage type;
 
     private String fileId;
+
+    private String format;
 }
