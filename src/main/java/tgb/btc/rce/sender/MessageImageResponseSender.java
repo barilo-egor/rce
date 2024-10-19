@@ -6,8 +6,11 @@ import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import tgb.btc.library.interfaces.service.bean.bot.user.IModifyUserService;
+import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
+import tgb.btc.rce.enums.Menu;
 import tgb.btc.rce.enums.MessageImage;
 import tgb.btc.rce.service.IMessageImageService;
+import tgb.btc.rce.service.util.IMenuService;
 
 import java.util.Optional;
 
@@ -18,12 +21,17 @@ public class MessageImageResponseSender implements IMessageImageResponseSender {
     private final IMessageImageService messageImageService;
     private final ResponseSender responseSender;
     private final IModifyUserService modifyUserService;
+    private final IMenuService menuService;
+    private final IReadUserService readUserService;
 
     @Autowired
-    public MessageImageResponseSender(IMessageImageService messageImageService, ResponseSender responseSender, IModifyUserService modifyUserService) {
+    public MessageImageResponseSender(IMessageImageService messageImageService, ResponseSender responseSender,
+                                      IModifyUserService modifyUserService, IMenuService menuService, IReadUserService readUserService) {
         this.messageImageService = messageImageService;
         this.responseSender = responseSender;
         this.modifyUserService = modifyUserService;
+        this.menuService = menuService;
+        this.readUserService = readUserService;
     }
 
     @Override
@@ -55,6 +63,11 @@ public class MessageImageResponseSender implements IMessageImageResponseSender {
         } else {
             responseSender.sendMessage(chatId, message, replyKeyboard, "html");
         }
+    }
+
+    @Override
+    public void sendMessage(MessageImage messageImage, Menu menu, Long chatId) {
+        sendMessage(messageImage, chatId, menuService.build(menu, readUserService.getUserRoleByChatId(chatId)));
     }
 
     @Override
