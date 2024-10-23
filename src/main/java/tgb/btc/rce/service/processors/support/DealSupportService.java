@@ -188,7 +188,7 @@ public class DealSupportService {
         String paymentTypeName = Objects.nonNull(deal.getPaymentType())
                 ? deal.getPaymentType().getName()
                 : Objects.nonNull(securePaymentDetails)
-                ? "защитный реквизит(" + securePaymentDetails.getDetails() + ")"
+                ? "защитный реквизит"
                 : "Не установлен тип оплаты.";
         FiatCurrency fiatCurrency = deal.getFiatCurrency();
         return String.format(
