@@ -1,6 +1,5 @@
 HELP.md
 target/
-!.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
 !.idea/
@@ -32,10 +31,6 @@ build/
 
 ### VS Code ###
 .vscode/
-/mvnw
-/mvnw.cmd
-/.mvn/wrapper/maven-wrapper.jar
-/.mvn/wrapper/maven-wrapper.properties
 
 src/main/resources/application.properties
 bot.properties
