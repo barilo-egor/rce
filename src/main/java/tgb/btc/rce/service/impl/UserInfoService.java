@@ -6,23 +6,26 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import tgb.btc.library.bean.bot.ReferralUser;
 import tgb.btc.library.bean.bot.User;
 import tgb.btc.library.constants.enums.ReferralType;
+import tgb.btc.library.interfaces.IModule;
 import tgb.btc.library.interfaces.service.bean.bot.ILotteryWinService;
 import tgb.btc.library.interfaces.service.bean.bot.ISpamBanService;
 import tgb.btc.library.interfaces.service.bean.bot.deal.read.IDealCountService;
 import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.PropertiesMessage;
-import tgb.btc.rce.service.sender.IResponseSender;
-import tgb.btc.rce.util.CallbackQueryUtil;
-import tgb.btc.rce.util.KeyboardUtil;
-import tgb.btc.rce.util.MessagePropertiesUtil;
+import tgb.btc.rce.sender.IResponseSender;
+import tgb.btc.rce.service.IUserInfoService;
+import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
+import tgb.btc.rce.service.util.ICallbackQueryService;
+import tgb.btc.rce.service.util.ICommandService;
+import tgb.btc.rce.service.util.IMessagePropertiesService;
 import tgb.btc.rce.vo.InlineButton;
 
 import java.util.List;
 import java.util.Objects;
 
 @Service
-public class UserInfoService {
+public class UserInfoService implements IUserInfoService {
 
     private IReadUserService readUserService;
 
@@ -33,6 +36,41 @@ public class UserInfoService {
     private IDealCountService dealCountService;
 
     private ILotteryWinService lotteryWinService;
+
+    private IKeyboardBuildService keyboardBuildService;
+
+    private ICallbackQueryService callbackQueryService;
+
+    private IMessagePropertiesService messagePropertiesService;
+
+    private ICommandService commandService;
+
+    private IModule<ReferralType> referralModule;
+
+    @Autowired
+    public void setReferralModule(IModule<ReferralType> referralModule) {
+        this.referralModule = referralModule;
+    }
+
+    @Autowired
+    public void setCommandService(ICommandService commandService) {
+        this.commandService = commandService;
+    }
+
+    @Autowired
+    public void setMessagePropertiesService(IMessagePropertiesService messagePropertiesService) {
+        this.messagePropertiesService = messagePropertiesService;
+    }
+
+    @Autowired
+    public void setCallbackQueryService(ICallbackQueryService callbackQueryService) {
+        this.callbackQueryService = callbackQueryService;
+    }
+
+    @Autowired
+    public void setKeyboardBuildService(IKeyboardBuildService keyboardBuildService) {
+        this.keyboardBuildService = keyboardBuildService;
+    }
 
     @Autowired
     public void setLotteryWinService(ILotteryWinService lotteryWinService) {
@@ -59,10 +97,12 @@ public class UserInfoService {
         this.responseSender = responseSender;
     }
 
+    @Override
     public void sendUserInformation(Long messageChatId, Long userChatId) {
         responseSender.sendMessage(messageChatId, getUserInformation(userChatId), null, "HTML");
     }
 
+    @Override
     public void sendUserInformation(Long messageChatId, Long userChatId, ReplyKeyboard replyKeyboard) {
         responseSender.sendMessage(messageChatId, getUserInformation(userChatId), replyKeyboard, "HTML");
     }
@@ -70,43 +110,44 @@ public class UserInfoService {
     private String getUserInformation(Long chatId) {
         User user = readUserService.findByChatId(chatId);
         String userName = Objects.nonNull(user.getUsername()) ? user.getUsername() : "скрыт";
-        Long dealsCount = dealCountService.getCountPassedByUserChatId(chatId);
+        Long dealsCount = dealCountService.getCountConfirmedByUserChatId(chatId);
         List<ReferralUser> referralUsers = readUserService.getUserReferralsByChatId(chatId);
         String role = user.getUserRole().getDisplayName();
         String isBanned = user.getBanned() ? "да" : "нет";
         Long lotteryWinCount = lotteryWinService.getLotteryWinCount(chatId);
         String fromChatId = Objects.nonNull(user.getFromChatId()) ? String.valueOf(user.getFromChatId()) : "отсутствует";
         String result = null;
-        if (ReferralType.STANDARD.isCurrent()) {
+        if (referralModule.isCurrent(ReferralType.STANDARD)) {
             int numberOfReferrals = referralUsers.size();
             int numberOfActiveReferrals = (int) referralUsers.stream()
-                    .filter(usr -> dealCountService.getCountPassedByUserChatId(usr.getChatId()) > 0).count();
+                    .filter(usr -> dealCountService.getCountConfirmedByUserChatId(usr.getChatId()) > 0).count();
             String currentBalance = readUserService.getReferralBalanceByChatId(chatId).toString();
-            result = String.format(MessagePropertiesUtil.getMessage(PropertiesMessage.USER_INFORMATION_MAIN),
+            result = String.format(messagePropertiesService.getMessage(PropertiesMessage.USER_INFORMATION_MAIN),
                     chatId, userName, dealsCount, numberOfReferrals,
                     numberOfActiveReferrals, currentBalance, isBanned, role,
                     lotteryWinCount, fromChatId);
         } else {
-            result = String.format(MessagePropertiesUtil.getMessage(PropertiesMessage.USER_INFORMATION_WITHOUT_REFERRAL_MAIN),
+            result = String.format(messagePropertiesService.getMessage(PropertiesMessage.USER_INFORMATION_WITHOUT_REFERRAL_MAIN),
                     chatId, userName, dealsCount, isBanned, role,
                     lotteryWinCount, fromChatId);
         }
         return result;
     }
 
+    @Override
     public void sendSpamBannedUser(Long messageChatId, Long spamBanPid) {
         sendUserInformation(messageChatId, spamBanService.getUserChatIdByPid(spamBanPid),
-                            KeyboardUtil.buildInline(List.of(
+                            keyboardBuildService.buildInline(List.of(
                                     InlineButton.builder()
-                                            .text("Оставить в бане")
-                                            .data(CallbackQueryUtil.buildCallbackData(
-                                                    Command.KEEP_SPAM_BAN.getText(), spamBanPid.toString()
+                                            .text(commandService.getText(Command.KEEP_SPAM_BAN))
+                                            .data(callbackQueryService.buildCallbackData(
+                                                    Command.KEEP_SPAM_BAN, spamBanPid.toString()
                                             ))
                                             .build(),
                                     InlineButton.builder()
-                                            .text("Разблокировать")
-                                            .data(CallbackQueryUtil.buildCallbackData(
-                                                    Command.SPAM_UNBAN.getText(), spamBanPid.toString()
+                                            .text(commandService.getText(Command.SPAM_UNBAN))
+                                            .data(callbackQueryService.buildCallbackData(
+                                                    Command.SPAM_UNBAN, spamBanPid.toString()
                                             ))
                                             .build()
                             )));

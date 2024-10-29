@@ -11,7 +11,7 @@
 
     <groupId>tgb.btc</groupId>
     <artifactId>rce</artifactId>
-    <version>1.4</version>
+    <version>1.4-SNAPSHOT</version>
     <name>rce</name>
     <description>rce</description>
     <packaging>jar</packaging>
@@ -25,6 +25,11 @@
                 <configuration>
                     <mainClass>tgb.btc.rce.RceApplication</mainClass>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.sonarsource.scanner.maven</groupId>
+                <artifactId>sonar-maven-plugin</artifactId>
+                <version>3.9.0.2155</version>
             </plugin>
         </plugins>
     </build>
@@ -58,14 +63,16 @@
                                             <os family="unix"/>
                                         </condition>
                                         <scp file="target/rce.jar"
-                                             todir="root@45.83.122.132:/home/rce/application"
+                                             todir="rce@45.83.122.132:/home/rce/application"
                                              keyfile="${ssh.keyfile}"
-                                             trust="true"/>
+                                             trust="true"
+                                             port="58732"/>
                                         <sshexec host="45.83.122.132"
-                                                 username="root"
+                                                 username="rce"
                                                  keyfile="${ssh.keyfile}"
                                                  trust="true"
-                                                 command="/home/rce/application/run.sh"/>
+                                                 command="sudo /home/rce/application/run.sh"
+                                                 port="58732"/>
                                     </target>
                                 </configuration>
                             </execution>
@@ -104,14 +111,16 @@
                                             <os family="unix"/>
                                         </condition>
                                         <scp file="target/rce.jar"
-                                             todir="root@45.83.123.33:/home/rce/application"
+                                             todir="rce@45.83.123.33:/home/rce/application"
                                              keyfile="${ssh.keyfile}"
-                                             trust="true"/>
+                                             trust="true"
+                                             port="58732"/>
                                         <sshexec host="45.83.123.33"
-                                                 username="root"
+                                                 username="rce"
                                                  keyfile="${ssh.keyfile}"
                                                  trust="true"
-                                                 command="/home/rce/application/run.sh"/>
+                                                 command="sudo /home/rce/application/run.sh"
+                                                 port="58732"/>
                                     </target>
                                 </configuration>
                             </execution>
@@ -149,14 +158,16 @@
                                             <os family="unix"/>
                                         </condition>
                                         <scp file="target/rce.jar"
-                                             todir="root@45.83.122.247:/home/rce/application"
+                                             todir="rce@45.83.122.247:/home/rce/application"
                                              keyfile="${ssh.keyfile}"
-                                             trust="true"/>
+                                             trust="true"
+                                             port="58732"/>
                                         <sshexec host="45.83.122.247"
-                                                 username="root"
+                                                 username="rce"
                                                  keyfile="${ssh.keyfile}"
                                                  trust="true"
-                                                 command="/home/rce/application/run.sh"/>
+                                                 command="sudo /home/rce/application/run.sh"
+                                                 port="58732"/>
                                     </target>
                                 </configuration>
                             </execution>
@@ -195,14 +206,112 @@
                                             <os family="unix"/>
                                         </condition>
                                         <scp file="target/rce.jar"
-                                             todir="root@45.83.122.228:/home/rce/application"
+                                             todir="rce@45.83.122.228:/home/rce/application"
                                              keyfile="${ssh.keyfile}"
-                                             trust="true"/>
+                                             trust="true"
+                                             port="58732"/>
                                         <sshexec host="45.83.122.228"
-                                                 username="root"
+                                                 username="rce"
                                                  keyfile="${ssh.keyfile}"
                                                  trust="true"
-                                                 command="/home/rce/application/run.sh"/>
+                                                 command="sudo /home/rce/application/run.sh"
+                                                 port="58732"/>
+                                    </target>
+                                </configuration>
+                            </execution>
+                        </executions>
+
+                    </plugin>
+                </plugins>
+                <finalName>rce</finalName>
+            </build>
+        </profile>
+        <profile>
+            <id>bit</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.springframework.boot</groupId>
+                        <artifactId>spring-boot-maven-plugin</artifactId>
+                        <configuration>
+                            <mainClass>tgb.btc.rce.RceApplication</mainClass>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <version>1.8</version>
+                        <executions>
+                            <execution>
+                                <id>copy-to-bit</id>
+                                <phase>install</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <target>
+                                        <condition property="ssh.keyfile" value="/home/barilo/.ssh/id_rsa" else="C:\Users\User\.ssh\id_rsa">
+                                            <os family="unix"/>
+                                        </condition>
+                                        <scp file="target/rce.jar"
+                                             todir="rce@185.238.2.68:/home/rce/application"
+                                             keyfile="${ssh.keyfile}"
+                                             trust="true"
+                                             port="58732"/>
+                                        <sshexec host="185.238.2.68"
+                                                 username="rce"
+                                                 keyfile="${ssh.keyfile}"
+                                                 trust="true"
+                                                 command="sudo /home/rce/application/run.sh"
+                                                 port="58732"/>
+                                    </target>
+                                </configuration>
+                            </execution>
+                        </executions>
+
+                    </plugin>
+                </plugins>
+                <finalName>rce</finalName>
+            </build>
+        </profile>
+        <profile>
+            <id>donald</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.springframework.boot</groupId>
+                        <artifactId>spring-boot-maven-plugin</artifactId>
+                        <configuration>
+                            <mainClass>tgb.btc.rce.RceApplication</mainClass>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <version>1.8</version>
+                        <executions>
+                            <execution>
+                                <id>copy-to-donald</id>
+                                <phase>install</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <target>
+                                        <condition property="ssh.keyfile" value="/home/barilo/.ssh/id_rsa" else="C:\Users\User\.ssh\id_rsa">
+                                            <os family="unix"/>
+                                        </condition>
+                                        <scp file="target/rce.jar"
+                                             todir="rce@45.83.123.135:/home/rce/application"
+                                             keyfile="${ssh.keyfile}"
+                                             trust="true"
+                                             port="58732"/>
+                                        <sshexec host="45.83.123.135"
+                                                 username="rce"
+                                                 keyfile="${ssh.keyfile}"
+                                                 trust="true"
+                                                 command="sudo /home/rce/application/run.sh"
+                                                 port="58732"/>
                                     </target>
                                 </configuration>
                             </execution>
@@ -318,6 +427,8 @@
 
     <properties>
         <java.version>11</java.version>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
     </properties>
 
     <dependencies>
@@ -358,6 +469,10 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-logging</artifactId>
             <version>2.6.7</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -408,17 +523,23 @@
         <dependency>
             <groupId>tgb.btc</groupId>
             <artifactId>rce-library</artifactId>
-            <version>1.2</version>
+            <version>1.2-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>tgb.btc</groupId>
             <artifactId>rce-web</artifactId>
-            <version>1.2</version>
+            <version>1.2-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>tgb.btc</groupId>
             <artifactId>rce-api</artifactId>
-            <version>1.2</version>
+            <version>1.2-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-inline</artifactId>
+            <version>3.6.28</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 

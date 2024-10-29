@@ -4,12 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
-import tgb.btc.rce.service.IUpdateDispatcher;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.service.processors.DealProcessor;
+import tgb.btc.rce.service.processors.deal.DealProcessor;
 import tgb.btc.rce.service.processors.support.ExchangeService;
-import tgb.btc.rce.util.CallbackQueryUtil;
-import tgb.btc.rce.util.UpdateUtil;
+import tgb.btc.rce.service.util.IUpdateDispatcher;
 
 @CommandProcessor(command = Command.NONE_CALCULATOR, step = 1)
 public class NoneCalculator extends Processor {
@@ -39,13 +37,13 @@ public class NoneCalculator extends Processor {
     @Override
     public void run(Update update) {
         if (dealProcessor.isMainMenuCommand(update)) return;
-        Long chatId = UpdateUtil.getChatId(update);
-        if (CallbackQueryUtil.isBack(update)) {
+        Long chatId = updateService.getChatId(update);
+        if (callbackQueryService.isBack(update)) {
             modifyUserService.updateStepAndCommandByChatId(chatId, Command.DEAL.name(), DealProcessor.AFTER_CALCULATOR_STEP);
             dealProcessor.run(update);
             return;
         }
-        if (!exchangeService.calculateDealAmount(chatId, UpdateUtil.getBigDecimalFromText(update))) return;
+        if (!exchangeService.calculateDealAmount(chatId, updateService.getBigDecimalFromText(update))) return;
         modifyUserService.updateStepAndCommandByChatId(chatId, Command.DEAL.name(), DealProcessor.AFTER_CALCULATOR_STEP);
         updateDispatcher.runProcessor(Command.DEAL, chatId, update);
     }

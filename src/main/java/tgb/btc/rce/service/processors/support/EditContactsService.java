@@ -12,11 +12,11 @@ import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.Menu;
 import tgb.btc.rce.enums.PropertiesMessage;
-import tgb.btc.rce.service.sender.ResponseSender;
-import tgb.btc.rce.util.KeyboardUtil;
-import tgb.btc.rce.util.MenuFactory;
-import tgb.btc.rce.util.MessagePropertiesUtil;
-import tgb.btc.rce.util.UpdateUtil;
+import tgb.btc.rce.service.IUpdateService;
+import tgb.btc.rce.sender.ResponseSender;
+import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
+import tgb.btc.rce.service.util.IMenuService;
+import tgb.btc.rce.service.util.IMessagePropertiesService;
 import tgb.btc.rce.vo.InlineButton;
 
 import java.util.List;
@@ -35,6 +35,34 @@ public class EditContactsService {
     private IReadUserService readUserService;
 
     private IModifyUserService modifyUserService;
+
+    private IMenuService menuService;
+
+    private IKeyboardBuildService keyboardBuildService;
+
+    private IMessagePropertiesService messagePropertiesService;
+    
+    private IUpdateService updateService;
+
+    @Autowired
+    public void setUpdateService(IUpdateService updateService) {
+        this.updateService = updateService;
+    }
+
+    @Autowired
+    public void setMessagePropertiesService(IMessagePropertiesService messagePropertiesService) {
+        this.messagePropertiesService = messagePropertiesService;
+    }
+
+    @Autowired
+    public void setKeyboardBuildService(IKeyboardBuildService keyboardBuildService) {
+        this.keyboardBuildService = keyboardBuildService;
+    }
+
+    @Autowired
+    public void setMenuService(IMenuService menuService) {
+        this.menuService = menuService;
+    }
 
     @Autowired
     public void setModifyUserService(IModifyUserService modifyUserService) {
@@ -58,34 +86,34 @@ public class EditContactsService {
 
     public void askInput(Long chatId) {
         modifyUserService.nextStep(chatId, Command.ADD_CONTACT.name());
-        responseSender.sendMessage(chatId, MessagePropertiesUtil.getMessage(PropertiesMessage.CONTACT_ASK_INPUT),
-                MenuFactory.build(Menu.ADMIN_BACK, readUserService.isAdminByChatId(chatId)));
+        responseSender.sendMessage(chatId, messagePropertiesService.getMessage(PropertiesMessage.CONTACT_ASK_INPUT),
+                menuService.build(Menu.ADMIN_BACK, readUserService.getUserRoleByChatId(chatId)));
     }
 
     public void save(Update update) {
         String[] contactData = update.getMessage().getText().split("\n");
         contactService.save(Contact.builder().label(contactData[0]).url(contactData[1]).build());
 
-        Long chatId = UpdateUtil.getChatId(update);
+        Long chatId = updateService.getChatId(update);
         responseSender.sendMessage(chatId, "Контакт добавлен.");
     }
 
     public void askForChoose(Update update) {
-        Long chatId = UpdateUtil.getChatId(update);
+        Long chatId = updateService.getChatId(update);
         Optional<Message> optionalMessage =
                 responseSender.sendMessage(chatId, "Выберите контакт для удаления.");
         if (optionalMessage.isEmpty()) throw new BaseException("Не получено отправленное сообщение");
         Integer messageId = optionalMessage.get().getMessageId();
         responseSender.sendEditedMessageText(chatId, messageId,
-                MessagePropertiesUtil.getMessage(PropertiesMessage.CONTACT_ASK_DELETE),
-                KeyboardUtil.buildInline(buildContactButtons(messageId)));
+                messagePropertiesService.getMessage(PropertiesMessage.CONTACT_ASK_DELETE),
+                keyboardBuildService.buildInline(buildContactButtons(messageId)));
     }
 
     private List<InlineButton> buildContactButtons(Integer messageId) {
         return contactService.findAll().stream()
                 .map(c -> InlineButton.builder()
                         .text(c.getLabel())
-                        .data(Command.DELETE_CONTACT.getText() + CALLBACK_DATA_SPLITTER
+                        .data(Command.DELETE_CONTACT.name() + CALLBACK_DATA_SPLITTER
                                 + c.getPid() + CALLBACK_DATA_SPLITTER
                                 + messageId).build())
                 .collect(Collectors.toList());

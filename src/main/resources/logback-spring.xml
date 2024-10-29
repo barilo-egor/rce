@@ -8,9 +8,9 @@
 
     <!-- RollingFileAppender для tgb.btc.rce с ежедневной ротацией и сохранением логов на 3 дня -->
     <appender name="FILE_TGB_BTC_RCE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>logs/tgb.btc.rce.log</file>
+        <file>logs/rce.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>logs/tgb.btc.rce.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <fileNamePattern>logs/rce.%d{yyyy-MM-dd}.log</fileNamePattern>
             <maxHistory>3</maxHistory>
         </rollingPolicy>
         <encoder>
@@ -20,9 +20,9 @@
 
     <!-- RollingFileAppender для tgb.btc.rce.bot с ежедневной ротацией и сохранением логов на 3 дня -->
     <appender name="FILE_TGB_BTC_RCE_BOT" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>logs/tgb.btc.rce.bot.log</file>
+        <file>logs/unhandled.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>logs/tgb.btc.rce.bot.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <fileNamePattern>logs/unhandled.%d{yyyy-MM-dd}.log</fileNamePattern>
             <maxHistory>3</maxHistory>
         </rollingPolicy>
         <encoder>
@@ -32,10 +32,10 @@
 
     <!-- RollingFileAppender для tgb.btc.rce.service.sender с ежедневной ротацией и сохранением логов на 3 дня -->
     <appender name="FILE_TGB_BTC_RCE_SENDER" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>logs/tgb.btc.rce.service.sender.log</file>
+        <file>logs/sender.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>logs/tgb.btc.rce.service.sender.%d{yyyy-MM-dd}.log</fileNamePattern>
-            <maxHistory>3</maxHistory>
+            <fileNamePattern>logs/sender.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>1</maxHistory>
         </rollingPolicy>
         <encoder>
             <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level [%logger] - %msg%n</pattern>
@@ -44,9 +44,9 @@
 
     <!-- RollingFileAppender для tgb.btc.library с ежедневной ротацией и сохранением логов на 3 дня -->
     <appender name="FILE_TGB_BTC_LIBRARY" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>logs/tgb.btc.library.log</file>
+        <file>logs/library.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>logs/tgb.btc.library.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <fileNamePattern>logs/library.%d{yyyy-MM-dd}.log</fileNamePattern>
             <maxHistory>3</maxHistory>
         </rollingPolicy>
         <encoder>
@@ -56,9 +56,9 @@
 
     <!-- RollingFileAppender для tgb.btc.web с ежедневной ротацией и сохранением логов на 3 дня -->
     <appender name="FILE_TGB_BTC_WEB" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>logs/tgb.btc.web.log</file>
+        <file>logs/web.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>logs/tgb.btc.web.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <fileNamePattern>logs/web.%d{yyyy-MM-dd}.log</fileNamePattern>
             <maxHistory>3</maxHistory>
         </rollingPolicy>
         <encoder>
@@ -68,9 +68,9 @@
 
     <!-- RollingFileAppender для tgb.btc.web.api с ежедневной ротацией и сохранением логов на 3 дня -->
     <appender name="FILE_TGB_BTC_WEB_API" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>logs/tgb.btc.web.api.log</file>
+        <file>logs/api.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>logs/tgb.btc.web.api.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <fileNamePattern>logs/api.%d{yyyy-MM-dd}.log</fileNamePattern>
             <maxHistory>3</maxHistory>
         </rollingPolicy>
         <encoder>
@@ -101,7 +101,7 @@
         <appender-ref ref="COLOR_CONSOLE" />
     </logger>
 
-    <logger name="tgb.btc.rce.service.sender" level="DEBUG" additivity="false">
+    <logger name="tgb.btc.rce.sender" level="DEBUG" additivity="false">
         <appender-ref ref="FILE_TGB_BTC_RCE_SENDER" />
         <appender-ref ref="COLOR_CONSOLE" />
     </logger>

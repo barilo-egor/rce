@@ -3,8 +3,8 @@ package tgb.btc.rce.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import tgb.btc.library.bean.bot.User;
+import tgb.btc.library.constants.enums.bot.UserRole;
 import tgb.btc.library.exception.BaseException;
 import tgb.btc.library.interfaces.service.bean.bot.user.IModifyUserService;
 import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
@@ -14,10 +14,12 @@ import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.Menu;
 import tgb.btc.rce.enums.PropertiesMessage;
 import tgb.btc.rce.enums.UpdateType;
-import tgb.btc.rce.service.sender.IResponseSender;
-import tgb.btc.rce.util.MenuFactory;
-import tgb.btc.rce.util.MessagePropertiesUtil;
-import tgb.btc.rce.util.UpdateUtil;
+import tgb.btc.rce.sender.IResponseSender;
+import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
+import tgb.btc.rce.service.util.ICallbackQueryService;
+import tgb.btc.rce.service.util.ICommandService;
+import tgb.btc.rce.service.util.IMenuService;
+import tgb.btc.rce.service.util.IMessagePropertiesService;
 
 @Slf4j
 public abstract class Processor {
@@ -29,6 +31,55 @@ public abstract class Processor {
     protected IModifyUserService modifyUserService;
 
     protected IUserCommonService userCommonService;
+
+    protected IMenuService menuService;
+
+    protected IKeyboardBuildService keyboardBuildService;
+
+    protected IKeyboardService keyboardService;
+
+    protected ICallbackQueryService callbackQueryService;
+    
+    protected IMessagePropertiesService messagePropertiesService;
+
+    protected IUpdateService updateService;
+
+    protected ICommandService commandService;
+
+    @Autowired
+    public void setCommandService(ICommandService commandService) {
+        this.commandService = commandService;
+    }
+
+    @Autowired
+    public void setUpdateService(IUpdateService updateService) {
+        this.updateService = updateService;
+    }
+
+    @Autowired
+    public void setMessagePropertiesService(IMessagePropertiesService messagePropertiesService) {
+        this.messagePropertiesService = messagePropertiesService;
+    }
+
+    @Autowired
+    public void setCallbackQueryService(ICallbackQueryService callbackQueryService) {
+        this.callbackQueryService = callbackQueryService;
+    }
+
+    @Autowired
+    public void setKeyboardService(IKeyboardService keyboardService) {
+        this.keyboardService = keyboardService;
+    }
+
+    @Autowired
+    public void setKeyboardBuildService(IKeyboardBuildService keyboardBuildService) {
+        this.keyboardBuildService = keyboardBuildService;
+    }
+
+    @Autowired
+    public void setMenuService(IMenuService menuService) {
+        this.menuService = menuService;
+    }
 
     @Autowired
     public void setResponseSender(IResponseSender responseSender) {
@@ -64,15 +115,15 @@ public abstract class Processor {
     }
 
     public void beforeCancel(Update update) {
-        modifyUserService.setDefaultValues(UpdateUtil.getChatId(update));
+        modifyUserService.setDefaultValues(updateService.getChatId(update));
     }
 
     public abstract void run(Update update);
 
     public boolean checkForCancel(Update update) {
-        Long chatId = UpdateUtil.getChatId(update);
+        Long chatId = updateService.getChatId(update);
         if (User.DEFAULT_STEP == readUserService.getStepByChatId(chatId)) return false;
-        if (this.getClass().getAnnotation(CommandProcessor.class).command().isAdmin() &&
+        if (this.getClass().getAnnotation(CommandProcessor.class).command().hasAccess(readUserService.getUserRoleByChatId(chatId)) &&
                 (isCommand(update, Command.ADMIN_BACK) || isCommand(update, Command.CANCEL))) {
             processToAdminMainPanel(chatId);
             return true;
@@ -86,7 +137,8 @@ public abstract class Processor {
     private boolean isCommand(Update update, Command command) {
         Command enteredCommand;
         try {
-            if(update.hasCallbackQuery() || (update.hasMessage() && update.getMessage().hasText())) enteredCommand = Command.fromUpdate(update);
+            if (update.hasCallbackQuery() || (update.hasMessage() && update.getMessage().hasText()))
+                enteredCommand = commandService.fromUpdate(update);
             else return false;
         } catch (BaseException e) {
             return false;
@@ -97,28 +149,33 @@ public abstract class Processor {
     public void processToMainMenu(Long chatId) {
         modifyUserService.setDefaultValues(chatId);
         responseSender.sendMessage(chatId,
-                MessagePropertiesUtil.getMessage(PropertiesMessage.MENU_MAIN),
-                getMainMenuKeyboard(chatId), "HTML");
+                messagePropertiesService.getMessage(PropertiesMessage.MENU_MAIN),
+                menuService.build(Menu.MAIN, readUserService.getUserRoleByChatId(chatId)), "HTML");
     }
 
     public void processToAdminMainPanel(Long chatId) {
         modifyUserService.setDefaultValues(chatId);
-        responseSender.sendMessage(chatId,
-                MessagePropertiesUtil.getMessage(PropertiesMessage.MENU_MAIN_ADMIN),
-                getAdminMainPanel(chatId));
-    }
-
-    protected ReplyKeyboard getAdminMainPanel(Long chatId) {
-        return MenuFactory.build(Menu.ADMIN_PANEL, readUserService.isAdminByChatId(chatId));
-    }
-
-    protected ReplyKeyboard getMainMenuKeyboard(Long chatId) {
-        return MenuFactory.build(Menu.MAIN, readUserService.isAdminByChatId(chatId));
+        UserRole role = readUserService.getUserRoleByChatId(chatId);
+        switch (role) {
+            case ADMIN:
+                responseSender.sendMessage(chatId,
+                        messagePropertiesService.getMessage(PropertiesMessage.MENU_MAIN_ADMIN),
+                        menuService.build(Menu.ADMIN_PANEL, role));
+                break;
+            case OPERATOR:
+                responseSender.sendMessage(chatId,
+                        messagePropertiesService.getMessage(PropertiesMessage.MENU_MAIN_OPERATOR),
+                        menuService.build(Menu.OPERATOR_PANEL, role));
+                break;
+            case OBSERVER:
+                responseSender.sendMessage(chatId, "Вы перешли в панель наблюдателя", Menu.OBSERVER_PANEL);
+                break;
+        }
     }
 
     protected boolean hasMessageText(Update update, String message) {
-        if (!UpdateUtil.hasMessageText(update)) {
-            responseSender.sendMessage(UpdateUtil.getChatId(update), message);
+        if (!updateService.hasMessageText(update)) {
+            responseSender.sendMessage(updateService.getChatId(update), message);
             return false;
         }
         return true;

@@ -3,6 +3,7 @@ package tgb.btc.rce.service.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import tgb.btc.library.constants.enums.CabinetButton;
 import tgb.btc.library.constants.enums.DeliveryKind;
@@ -14,18 +15,30 @@ import tgb.btc.library.constants.enums.bot.FiatCurrency;
 import tgb.btc.library.constants.enums.properties.PropertiesPath;
 import tgb.btc.library.constants.enums.properties.VariableType;
 import tgb.btc.library.exception.BaseException;
+import tgb.btc.library.interfaces.IModule;
+import tgb.btc.library.interfaces.enums.ICabinetButtonService;
+import tgb.btc.library.interfaces.enums.IDeliveryTypeService;
 import tgb.btc.library.interfaces.service.bean.bot.IPaymentTypeService;
-import tgb.btc.library.util.BigDecimalUtil;
-import tgb.btc.library.util.FiatCurrencyUtil;
-import tgb.btc.library.util.properties.VariablePropertiesUtil;
+import tgb.btc.library.interfaces.util.IBigDecimalService;
+import tgb.btc.library.interfaces.util.IFiatCurrencyService;
+import tgb.btc.library.service.process.RPSService;
+import tgb.btc.library.service.properties.ButtonsDesignPropertiesReader;
+import tgb.btc.library.service.properties.VariablePropertiesReader;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.BotInlineButton;
+import tgb.btc.rce.enums.BotReplyButton;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.InlineType;
-import tgb.btc.rce.service.processors.InlineCalculator;
-import tgb.btc.rce.util.*;
+import tgb.btc.rce.service.IKeyboardService;
+import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
+import tgb.btc.rce.service.processors.calculator.InlineCalculator;
+import tgb.btc.rce.service.util.ICallbackQueryService;
+import tgb.btc.rce.service.util.ICommandService;
+import tgb.btc.rce.service.util.ICryptoCurrenciesDesignService;
+import tgb.btc.rce.service.util.ITurningCurrenciesService;
 import tgb.btc.rce.vo.InlineButton;
 import tgb.btc.rce.vo.InlineCalculatorVO;
+import tgb.btc.rce.vo.ReplyButton;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -35,34 +48,128 @@ import static tgb.btc.library.constants.enums.properties.PropertiesPath.RPS_PROP
 import static tgb.btc.rce.enums.InlineCalculatorButton.*;
 
 @Service
-public class KeyboardService {
+public class KeyboardService implements IKeyboardService {
 
     private IPaymentTypeService paymentTypeService;
+
+    private IKeyboardBuildService keyboardBuildService;
+    
+    private ICallbackQueryService callbackQueryService;
+    
+    private ICryptoCurrenciesDesignService cryptoCurrenciesDesignService;
+
+    private ButtonsDesignPropertiesReader buttonsDesignPropertiesReader;
+
+    private ITurningCurrenciesService turningCurrenciesService;
+
+    private IDeliveryTypeService deliveryTypeService;
+
+    private ICabinetButtonService cabinetButtonService;
+
+    private RPSService rpsService;
+
+    private VariablePropertiesReader variablePropertiesReader;
+    
+    private IFiatCurrencyService fiatCurrencyService;
+
+    private IBigDecimalService bigDecimalService;
+
+    private ICommandService commandService;
+
+    private IModule<DeliveryKind> deliveryKindModule;
+
+    @Autowired
+    public void setDeliveryKindModule(IModule<DeliveryKind> deliveryKindModule) {
+        this.deliveryKindModule = deliveryKindModule;
+    }
+
+    @Autowired
+    public void setCommandService(ICommandService commandService) {
+        this.commandService = commandService;
+    }
+
+    @Autowired
+    public void setBigDecimalService(IBigDecimalService bigDecimalService) {
+        this.bigDecimalService = bigDecimalService;
+    }
+
+    @Autowired
+    public void setFiatCurrencyService(IFiatCurrencyService fiatCurrencyService) {
+        this.fiatCurrencyService = fiatCurrencyService;
+    }
+
+    @Autowired
+    public void setVariablePropertiesReader(VariablePropertiesReader variablePropertiesReader) {
+        this.variablePropertiesReader = variablePropertiesReader;
+    }
+
+    @Autowired
+    public void setRpsService(RPSService rpsService) {
+        this.rpsService = rpsService;
+    }
+
+    @Autowired
+    public void setCabinetButtonService(ICabinetButtonService cabinetButtonService) {
+        this.cabinetButtonService = cabinetButtonService;
+    }
+
+    @Autowired
+    public void setDeliveryTypeService(IDeliveryTypeService deliveryTypeService) {
+        this.deliveryTypeService = deliveryTypeService;
+    }
+
+    @Autowired
+    public void setTurningCurrenciesService(ITurningCurrenciesService turningCurrenciesService) {
+        this.turningCurrenciesService = turningCurrenciesService;
+    }
+
+    @Autowired
+    public void setButtonsDesignPropertiesReader(ButtonsDesignPropertiesReader buttonsDesignPropertiesReader) {
+        this.buttonsDesignPropertiesReader = buttonsDesignPropertiesReader;
+    }
+
+    @Autowired
+    public void setCryptoCurrenciesDesignService(ICryptoCurrenciesDesignService cryptoCurrenciesDesignService) {
+        this.cryptoCurrenciesDesignService = cryptoCurrenciesDesignService;
+    }
+
+    @Autowired
+    public void setCallbackQueryService(ICallbackQueryService callbackQueryService) {
+        this.callbackQueryService = callbackQueryService;
+    }
+
+    @Autowired
+    public void setKeyboardBuildService(IKeyboardBuildService keyboardBuildService) {
+        this.keyboardBuildService = keyboardBuildService;
+    }
 
     @Autowired
     public void setPaymentTypeService(IPaymentTypeService paymentTypeService) {
         this.paymentTypeService = paymentTypeService;
     }
 
+    @Override
     public ReplyKeyboard getCurrencies(DealType dealType) {
         List<InlineButton> currencies = new ArrayList<>();
-        TurningCurrenciesUtil.getSwitchedOnByDealType(dealType)
-                .forEach(currency -> currencies.add(InlineButton.buildData(CryptoCurrenciesDesignUtil.getDisplayName(currency), currency.name())));
-        currencies.add(KeyboardUtil.INLINE_BACK_BUTTON);
-        return KeyboardUtil.buildInline(currencies);
+        turningCurrenciesService.getSwitchedOnByDealType(dealType)
+                .forEach(currency -> currencies.add(InlineButton.buildData(cryptoCurrenciesDesignService.getDisplayName(currency), currency.name())));
+        currencies.add(keyboardBuildService.getInlineBackButton());
+        return keyboardBuildService.buildInline(currencies);
     }
 
+    @Override
     public ReplyKeyboard getFiatCurrencies() {
-        List<InlineButton> buttons = FiatCurrencyUtil.getFiatCurrencies().stream()
+        List<InlineButton> buttons = fiatCurrencyService.getFiatCurrencies().stream()
                 .map(fiatCurrency -> InlineButton.builder()
-                        .text(FiatCurrenciesDesignUtil.getDisplayData(fiatCurrency))
-                        .data(CallbackQueryUtil.buildCallbackData(Command.CHOOSING_FIAT_CURRENCY.getText(), fiatCurrency.name()))
+                        .text(buttonsDesignPropertiesReader.getString(fiatCurrency.name()))
+                        .data(callbackQueryService.buildCallbackData(Command.CHOOSING_FIAT_CURRENCY, fiatCurrency.name()))
                         .build())
                 .collect(Collectors.toList());
-        buttons.add(KeyboardUtil.INLINE_BACK_BUTTON);
-        return KeyboardUtil.buildInline(buttons);
+        buttons.add(keyboardBuildService.getInlineBackButton());
+        return keyboardBuildService.buildInline(buttons);
     }
 
+    @Override
     public ReplyKeyboard getPaymentTypes(DealType dealType, FiatCurrency fiatCurrency) {
         List<InlineButton> buttons =
                 paymentTypeService.getByDealTypeAndIsOnAndFiatCurrency(dealType, true, fiatCurrency).stream()
@@ -74,95 +181,102 @@ public class KeyboardService {
                         .collect(Collectors.toList());
         Integer numberOfColumns = PropertiesPath.FUNCTIONS_PROPERTIES.getInteger("payment.types.columns", null);
         if (Objects.nonNull(numberOfColumns)) {
-            return KeyboardUtil.buildInlineSingleLast(buttons, numberOfColumns, KeyboardUtil.INLINE_BACK_BUTTON);
+            return keyboardBuildService.buildInlineSingleLast(buttons, numberOfColumns, keyboardBuildService.getInlineBackButton());
         }
-        buttons.add(KeyboardUtil.INLINE_BACK_BUTTON);
-        return KeyboardUtil.buildInline(buttons);
+        buttons.add(keyboardBuildService.getInlineBackButton());
+        return keyboardBuildService.buildInline(buttons);
     }
 
+    @Override
     public ReplyKeyboard getShowDeal(Long dealPid) {
-        return KeyboardUtil.buildInline(List.of(
+        return keyboardBuildService.buildInline(List.of(
                 InlineButton.builder()
-                        .text(Command.SHOW_DEAL.getText())
-                        .data(Command.SHOW_DEAL.getText() + BotStringConstants.CALLBACK_DATA_SPLITTER
+                        .text(commandService.getText(Command.SHOW_DEAL))
+                        .data(Command.SHOW_DEAL.name() + BotStringConstants.CALLBACK_DATA_SPLITTER
                                 + dealPid)
                         .build()
         ));
     }
 
+    @Override
     public ReplyKeyboard getShowApiDeal(Long pid) {
-        return KeyboardUtil.buildInline(List.of(
+        return keyboardBuildService.buildInline(List.of(
                 InlineButton.builder()
                         .text("Показать")
-                        .data(Command.SHOW_API_DEAL.getText() + BotStringConstants.CALLBACK_DATA_SPLITTER
+                        .data(Command.SHOW_API_DEAL.name() + BotStringConstants.CALLBACK_DATA_SPLITTER
                                 + pid)
                         .build()
         ));
     }
 
+    @Override
     public ReplyKeyboard getUseReferralDiscount(BigDecimal sumWithDiscount, BigDecimal dealAmount) {
-        return KeyboardUtil.buildInline(List.of(
+        return keyboardBuildService.buildInline(List.of(
                 InlineButton.builder()
-                        .text("Со скидкой, " + BigDecimalUtil.roundToPlainString(sumWithDiscount))
+                        .text("Со скидкой, " + bigDecimalService.roundToPlainString(sumWithDiscount))
                         .data(BotStringConstants.USE_REFERRAL_DISCOUNT)
                         .inlineType(InlineType.CALLBACK_DATA)
                         .build(),
                 InlineButton.builder()
-                        .text("Без скидки, " + BigDecimalUtil.roundToPlainString(dealAmount))
+                        .text("Без скидки, " + bigDecimalService.roundToPlainString(dealAmount))
                         .data(BotStringConstants.DONT_USE_REFERRAL_DISCOUNT)
                         .inlineType(InlineType.CALLBACK_DATA)
                         .build(),
-                KeyboardUtil.INLINE_BACK_BUTTON
+                keyboardBuildService.getInlineBackButton()
         ));
     }
 
+    @Override
     public ReplyKeyboard getPromoCode(BigDecimal sumWithDiscount, BigDecimal dealAmount) {
-        return KeyboardUtil.buildInline(List.of(
+        return keyboardBuildService.buildInline(List.of(
                 InlineButton.builder()
-                        .text(String.format(Command.USE_PROMO.getText(), BigDecimalUtil.roundToPlainString(sumWithDiscount)))
+                        .text(String.format(commandService.getText(Command.USE_PROMO), bigDecimalService.roundToPlainString(sumWithDiscount)))
                         .data(BotStringConstants.USE_PROMO)
                         .inlineType(InlineType.CALLBACK_DATA)
                         .build(),
                 InlineButton.builder()
-                        .text(String.format(Command.DONT_USE_PROMO.getText(), BigDecimalUtil.roundToPlainString(dealAmount)))
+                        .text(String.format(commandService.getText(Command.DONT_USE_PROMO), bigDecimalService.roundToPlainString(dealAmount)))
                         .data(BotStringConstants.DONT_USE_PROMO)
                         .inlineType(InlineType.CALLBACK_DATA)
                         .build(),
-                KeyboardUtil.INLINE_BACK_BUTTON
+                keyboardBuildService.getInlineBackButton()
         ));
     }
 
+    @Override
     public ReplyKeyboard getInlineCalculator(Long chaId) {
         List<InlineButton> inlineButtons = new ArrayList<>();
         String[] strings = new String[]{"7", "8", "9", "4", "5", "6", "1", "2", "3", "0"};
         for (String string : strings) {
-            inlineButtons.add(KeyboardUtil.createCallBackDataButton(string, Command.INLINE_CALCULATOR, NUMBER.getData(), string));
+            inlineButtons.add(keyboardBuildService.createCallBackDataButton(string, Command.INLINE_CALCULATOR, NUMBER.getData(), string));
         }
-        inlineButtons.add(KeyboardUtil.createCallBackDataButton(COMMA));
-        inlineButtons.add(KeyboardUtil.createCallBackDataButton(DEL));
+        inlineButtons.add(keyboardBuildService.createCallBackDataButton(COMMA.getData(), Command.INLINE_CALCULATOR, COMMA.getData()));
+        inlineButtons.add(keyboardBuildService.createCallBackDataButton(DEL.getData(), Command.INLINE_CALCULATOR, DEL.getData()));
         InlineButton backButton = BotInlineButton.CANCEL.getButton();
         backButton.setText(CANCEL.getData());
         inlineButtons.add(backButton);
-        inlineButtons.add(KeyboardUtil.createCallBackDataButton(SWITCH_CALCULATOR));
-        inlineButtons.add(KeyboardUtil.createCallBackDataButton(READY));
+        inlineButtons.add(keyboardBuildService.createCallBackDataButton(SWITCH_CALCULATOR.getData(), Command.INLINE_CALCULATOR, SWITCH_CALCULATOR.getData()));
+        inlineButtons.add(keyboardBuildService.createCallBackDataButton(READY.getData(), Command.INLINE_CALCULATOR, READY.getData()));
         InlineCalculatorVO calculator = InlineCalculator.cache.get(chaId);
         String text = !calculator.getSwitched()
                 ? calculator.getFiatCurrency().getFlag() + "Ввести сумму в " + calculator.getFiatCurrency().getCode().toUpperCase()
                 : "\uD83D\uDD38Ввести сумму в " + calculator.getCryptoCurrency().getShortName().toUpperCase();
-        List<InlineButton> currencySwitcher = Collections.singletonList(KeyboardUtil.createCallBackDataButton(text,
+        List<InlineButton> currencySwitcher = Collections.singletonList(keyboardBuildService.createCallBackDataButton(text,
                 Command.INLINE_CALCULATOR, CURRENCY_SWITCHER.getData()));
-        List<List<InlineKeyboardButton>> rows = KeyboardUtil.buildInlineRows(inlineButtons, 3);
-        rows.add(4, KeyboardUtil.buildInlineRows(currencySwitcher, 1).get(0));
-        return KeyboardUtil.buildInlineByRows(rows);
+        List<List<InlineKeyboardButton>> rows = keyboardBuildService.buildInlineRows(inlineButtons, 3);
+        rows.add(4, keyboardBuildService.buildInlineRows(currencySwitcher, 1).get(0));
+        return keyboardBuildService.buildInlineByRows(rows);
     }
 
+    @Override
     public ReplyKeyboard getInlineCalculatorSwitcher() {
         List<InlineButton> buttons = new ArrayList<>();
-        buttons.add(KeyboardUtil.createCallBackDataButton(SWITCH_TO_MAIN_CALCULATOR));
-        buttons.add(KeyboardUtil.INLINE_BACK_BUTTON);
-        return KeyboardUtil.buildInline(buttons);
+        buttons.add(keyboardBuildService.createCallBackDataButton(SWITCH_TO_MAIN_CALCULATOR.getData(), Command.INLINE_CALCULATOR, SWITCH_TO_MAIN_CALCULATOR.getData()));
+        buttons.add(keyboardBuildService.getInlineBackButton());
+        return keyboardBuildService.buildInline(buttons);
     }
 
+    @Override
     public ReplyKeyboard getDeliveryTypes(FiatCurrency fiatCurrency, DealType dealType, CryptoCurrency cryptoCurrency) {
         List<InlineButton> buttons = new ArrayList<>();
         Arrays.stream(DeliveryType.values()).forEach(x -> {
@@ -171,10 +285,10 @@ public class KeyboardService {
                     PropertiesPath.FUNCTIONS_PROPERTIES.getBoolean("vip.button.add.sum", false)) {
                 Integer fix;
                 try {
-                    fix = VariablePropertiesUtil.getInt(VariableType.FIX_COMMISSION_VIP,
+                    fix = variablePropertiesReader.getInt(VariableType.FIX_COMMISSION_VIP,
                             fiatCurrency, dealType, cryptoCurrency);
                 } catch (NumberFormatException e) {
-                    throw new BaseException("Значение фиксированной комиссии для " + DeliveryType.VIP.getDisplayName() + " должно быть целочисленным.");
+                    throw new BaseException("Значение фиксированной комиссии для " + deliveryTypeService.getDisplayName(DeliveryType.VIP) + " должно быть целочисленным.");
                 }
                 text = text +  "(+" + fix + fiatCurrency.getGenitive() + ")";
             }
@@ -184,13 +298,14 @@ public class KeyboardService {
                     .inlineType(InlineType.CALLBACK_DATA)
                     .build());
         });
-        return KeyboardUtil.buildInlineSingleLast(buttons, 1, KeyboardUtil.INLINE_BACK_BUTTON);
+        return keyboardBuildService.buildInlineSingleLast(buttons, 1, keyboardBuildService.getInlineBackButton());
     }
 
+    @Override
     public InlineButton getDeliveryTypeButton() {
         String text;
         DeliveryKind deliveryKind;
-        if (DeliveryKind.NONE.isCurrent()) {
+        if (deliveryKindModule.isCurrent(DeliveryKind.NONE)) {
             text = "Включить";
             deliveryKind = DeliveryKind.STANDARD;
         } else {
@@ -199,10 +314,11 @@ public class KeyboardService {
         }
         return InlineButton.builder()
                 .text(text)
-                .data(CallbackQueryUtil.buildCallbackData(Command.TURN_PROCESS_DELIVERY.getText(), deliveryKind.name()))
+                .data(callbackQueryService.buildCallbackData(Command.TURN_PROCESS_DELIVERY, deliveryKind.name()))
                 .build();
     }
 
+    @Override
     public ReplyKeyboard getRPSRates() {
         List<InlineButton> buttons = new ArrayList<>();
         String[] sums = RPS_PROPERTIES.getString("sums").split(",");
@@ -211,25 +327,93 @@ public class KeyboardService {
                 .data(sum)
                 .inlineType(InlineType.CALLBACK_DATA)
                 .build()));
-        return KeyboardUtil.buildInlineSingleLast(buttons, 1, KeyboardUtil.INLINE_BACK_BUTTON);
+        return keyboardBuildService.buildInlineSingleLast(buttons, 1, keyboardBuildService.getInlineBackButton());
     }
 
+    @Override
     public ReplyKeyboard getRPSElements() {
         List<InlineButton> buttons = new ArrayList<>();
         Arrays.stream(RPSElement.values()).forEach(element -> buttons.add(InlineButton.builder()
-                .text(element.getSymbol())
+                .text(rpsService.getSymbol(element))
                 .data(element.name())
                 .build()));
-        return KeyboardUtil.buildInlineSingleLast(buttons, 1, KeyboardUtil.INLINE_BACK_BUTTON);
+        return keyboardBuildService.buildInlineSingleLast(buttons, 1, keyboardBuildService.getInlineBackButton());
     }
 
-    public static ReplyKeyboard getCabinetButtons() {
+
+    public ReplyKeyboard getCabinetButtons() {
         List<InlineButton> buttons = new ArrayList<>();
-        Arrays.stream(CabinetButton.values()).forEach(button -> buttons.add(InlineButton.builder()
-                .text(button.getText())
-                .data(button.name())
+        Arrays.stream(CabinetButton.values()).forEach(cabinetButton -> buttons.add(InlineButton.builder()
+                .text(cabinetButtonService.getText(cabinetButton))
+                .data(cabinetButton.name())
                 .build()));
-        return KeyboardUtil.buildInline(buttons, 1);
+        return keyboardBuildService.buildInline(buttons, 1);
     }
 
+    @Override
+    public ReplyKeyboard getReplyCancel() {
+        return keyboardBuildService.buildReply(List.of(BotReplyButton.CANCEL.getButton()));
+    }
+
+    @Override
+    public ReplyKeyboard getInlineCancel() {
+        return keyboardBuildService.buildInline(List.of(BotInlineButton.CANCEL.getButton()));
+    }
+
+    @Override
+    public ReplyKeyboard getBuyOrSell() {
+        return keyboardBuildService.buildReply(List.of(
+                ReplyButton.builder()
+                        .text(DealType.BUY.getNominativeFirstLetterToUpper())
+                        .build(),
+                ReplyButton.builder()
+                        .text(DealType.SELL.getNominativeFirstLetterToUpper())
+                        .build(),
+                BotReplyButton.CANCEL.getButton()
+        ));
+    }
+
+    @Override
+    public ReplyKeyboard getOperator() {
+        return keyboardBuildService.buildInline(List.of(
+                InlineButton.builder()
+                        .text("Связь с оператором")
+                        .data(PropertiesPath.VARIABLE_PROPERTIES.getString(VariableType.OPERATOR_LINK.getKey()))
+                        .inlineType(InlineType.URL)
+                        .build()
+        ));
+    }
+
+    @Override
+    public ReplyKeyboardMarkup getFiatCurrenciesKeyboard() {
+        List<ReplyButton> buttons = Arrays.stream(FiatCurrency.values())
+                .map(fiatCurrency -> ReplyButton.builder().text(fiatCurrency.getCode()).build())
+                .collect(Collectors.toList());
+        buttons.add(BotReplyButton.CANCEL.getButton());
+        return keyboardBuildService.buildReply(buttons);
+    }
+
+    @Override
+    public ReplyKeyboard getBuildDeal() {
+        return keyboardBuildService.buildInline(List.of(
+                InlineButton.builder()
+                        .text(commandService.getText(Command.PAID))
+                        .data(Command.PAID.name())
+                        .inlineType(InlineType.CALLBACK_DATA)
+                        .build(),
+                InlineButton.builder()
+                        .text(commandService.getText(Command.CANCEL_DEAL))
+                        .data(Command.CANCEL_DEAL.name())
+                        .inlineType(InlineType.CALLBACK_DATA)
+                        .build()
+        ));
+    }
+
+    @Override
+    public ReplyKeyboard getCancelDeal() {
+        return keyboardBuildService.buildReply(List.of(
+                ReplyButton.builder()
+                        .text(commandService.getText(Command.RECEIPTS_CANCEL_DEAL))
+                        .build()));
+    }
 }

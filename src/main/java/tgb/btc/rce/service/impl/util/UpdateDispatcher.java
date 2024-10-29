@@ -1,0 +1,135 @@
+package tgb.btc.rce.service.impl.util;
+
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.BooleanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Service;
+import org.telegram.telegrambots.meta.api.objects.Update;
+import tgb.btc.library.constants.enums.bot.UserRole;
+import tgb.btc.library.constants.enums.properties.PropertiesPath;
+import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
+import tgb.btc.library.interfaces.service.bean.common.bot.IUserCommonService;
+import tgb.btc.library.service.process.BannedUserCache;
+import tgb.btc.rce.enums.Command;
+import tgb.btc.rce.service.IUpdateService;
+import tgb.btc.rce.service.captcha.IAntiSpam;
+import tgb.btc.rce.service.process.IUserProcessService;
+import tgb.btc.rce.service.util.ICommandProcessorLoader;
+import tgb.btc.rce.service.util.ICommandService;
+import tgb.btc.rce.service.util.IUpdateDispatcher;
+
+import javax.annotation.PostConstruct;
+import java.util.Objects;
+
+@Service
+@Slf4j
+public class UpdateDispatcher implements IUpdateDispatcher {
+
+    private static boolean IS_ON = true;
+
+    private static final boolean IS_LOG_UDPATES = PropertiesPath.FUNCTIONS_PROPERTIES.getBoolean("log.updates", false);
+
+    private IReadUserService readUserService;
+
+    private IUserProcessService userProcessService;
+
+    private IAntiSpam antiSpam;
+
+    private BannedUserCache bannedUserCache;
+
+    private IUserCommonService userCommonService;
+
+    private ICommandProcessorLoader commandProcessorLoader;
+
+    private ICommandService commandService;
+
+    private IUpdateService updateService;
+
+    @Autowired
+    public void setUpdateService(IUpdateService updateService) {
+        this.updateService = updateService;
+    }
+
+    @Autowired
+    public void setCommandService(ICommandService commandService) {
+        this.commandService = commandService;
+    }
+
+    @Autowired
+    public void setCommandProcessorLoader(@Lazy ICommandProcessorLoader commandProcessorLoader) {
+        this.commandProcessorLoader = commandProcessorLoader;
+    }
+
+    @Autowired
+    public void setReadUserService(IReadUserService readUserService) {
+        this.readUserService = readUserService;
+    }
+
+    @Autowired
+    public void setUserCommonService(IUserCommonService userCommonService) {
+        this.userCommonService = userCommonService;
+    }
+
+    @Autowired
+    public void setBannedUserCache(BannedUserCache bannedUserCache) {
+        this.bannedUserCache = bannedUserCache;
+    }
+
+    @Autowired(required = false)
+    public void setAntiSpam(IAntiSpam antiSpam) {
+        this.antiSpam = antiSpam;
+    }
+
+    @Autowired
+    public void setUserProcessService(IUserProcessService userProcessService) {
+        this.userProcessService = userProcessService;
+    }
+
+    @PostConstruct
+    public void setIsOn() {
+        Boolean turnOffOnStart = PropertiesPath.CONFIG_PROPERTIES.getBoolean("turn.off.on.start");
+        if (BooleanUtils.isTrue(turnOffOnStart)) setIsOn(false);
+    }
+
+    public void dispatch(Update update) {
+        Long chatId = updateService.getChatId(update);
+        if (IS_LOG_UDPATES) log.info(chatId.toString());
+        if (bannedUserCache.get(chatId)) return;
+        runProcessor(getCommand(update, chatId), chatId, update);
+    }
+
+    public void runProcessor(Command command, Long chatId, Update update) {
+        commandProcessorLoader.getByCommand(command, readUserService.getStepByChatId(chatId)).process(update);
+    }
+
+    private Command getCommand(Update update, Long chatId) {
+        if (Objects.nonNull(antiSpam) && !antiSpam.isVerifiedUser(chatId)) {
+            if (isCaptcha(update)) return Command.CAPTCHA;
+            antiSpam.saveTime(chatId);
+        } else userProcessService.registerIfNotExists(update);
+        if (isOffed(chatId) && !commandService.isSubmitCommand(update)) return Command.BOT_OFFED;
+        if (commandService.isStartCommand(update)) return Command.START;
+        Command command;
+        if (userCommonService.isDefaultStep(chatId)) command = commandService.fromUpdate(update);
+        else command = Command.valueOf(readUserService.getCommandByChatId(chatId));
+        if (Objects.isNull(command) || !command.hasAccess(readUserService.getUserRoleByChatId(chatId))) return Command.START;
+        else return command;
+    }
+
+    private boolean isCaptcha(Update update) {
+        return !userProcessService.registerIfNotExists(update) || antiSpam.isSpamUser(updateService.getChatId(update));
+    }
+
+    private boolean isOffed(Long chatId) {
+        return !isOn() && UserRole.USER.equals(readUserService.getUserRoleByChatId(chatId));
+    }
+
+    public boolean isOn() {
+        return IS_ON;
+    }
+
+    public static void setIsOn(boolean isOn) {
+        IS_ON = isOn;
+    }
+}

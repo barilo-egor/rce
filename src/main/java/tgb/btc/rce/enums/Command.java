@@ -1,12 +1,13 @@
 package tgb.btc.rce.enums;
 
 import lombok.extern.slf4j.Slf4j;
-import org.telegram.telegrambots.meta.api.objects.Update;
+import tgb.btc.library.constants.enums.bot.UserRole;
 import tgb.btc.library.constants.enums.properties.PropertiesPath;
 import tgb.btc.library.interfaces.ICommand;
 
 import java.util.Arrays;
-import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Slf4j
 public enum Command implements ICommand {
@@ -14,9 +15,9 @@ public enum Command implements ICommand {
      * CallbackQuery
      */
 
-    START("/start", false, false, false),
-    NONE("none", false, true, false),
-    CHAT_ID("/chatid", false, true, false),
+    START("/start", false, UserRole.USER_ACCESS),
+    NONE("none", false, UserRole.USER_ACCESS),
+    CHAT_ID("/chatid", false, UserRole.USER_ACCESS),
 
     /*
       Reply
@@ -25,260 +26,253 @@ public enum Command implements ICommand {
     /**
      * UTIL
      */
-    BACK(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.getString("BACK"), false, true, false),
-    ADMIN_BACK("Назад", true, false, false),
-    CANCEL("Отмена", false, false, false),
-    SHARE_CONTACT("Поделиться контактом", false, false, false),
-    BOT_OFFED("bot_offed", false, true, false),
-    INLINE_DELETE("inline_delete", false, true, false),
-    CAPTCHA("captcha", false, false, false),
+    BACK(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.name(), false, UserRole.USER_ACCESS),
+    ADMIN_BACK("Назад", false, UserRole.OPERATOR_ACCESS),
+    CANCEL("Отмена", false, UserRole.USER_ACCESS),
+    SHARE_CONTACT("Поделиться контактом", false, UserRole.USER_ACCESS),
+    BOT_OFFED("BOT_OFFED", false, UserRole.USER_ACCESS),
+    INLINE_DELETE("❌ Закрыть", false, UserRole.USER_ACCESS),
+    CAPTCHA("captcha", false, UserRole.USER_ACCESS),
 
     /**
      * HIDDEN
      */
-    DELETE_USER("/deleteuser", true, false, true),
-    CREATE_USER_DATA("/createuserdata", true, false, true),
-    MAKE_ADMIN("/makeadmin", true, false, true),
-    HELP("/help", true, false, true),
+    DELETE_USER("/deleteuser", true, UserRole.ADMIN_ACCESS),
+    MAKE_ADMIN("/makeadmin", true, UserRole.ADMIN_ACCESS),
+    MAKE_OPERATOR("/makeoperator", true, UserRole.ADMIN_ACCESS),
+    MAKE_OBSERVER("/makeobserver", true, UserRole.ADMIN_ACCESS),
+    MAKE_USER("/makeuser", true, UserRole.ADMIN_ACCESS),
+    HELP("/help", false, UserRole.ADMIN_ACCESS),
+    TURN_NOTIFICATIONS("/notifications", true, UserRole.OBSERVER_ACCESS),
 
     /**
      * MAIN
      */
-    BUY_BITCOIN(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.getString("BUY_BITCOIN"), false, false, false),
-    SELL_BITCOIN(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.getString("SELL_BITCOIN"), false, false, false),
-    CABINET(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.getString("CABINET"), false, true, false),
-    CONTACTS(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.getString("CONTACTS"), false, true, false),
-    DRAWS(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.getString("DRAWS"), false, true, false),
-    REFERRAL(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.getString("REFERRAL"), false, false, false),
-    ADMIN_PANEL("Админ панель", true, true, false),
+    BUY_BITCOIN(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.name(), false, UserRole.USER_ACCESS),
+    SELL_BITCOIN(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.name(), false, UserRole.USER_ACCESS),
+    CABINET(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.name(), false, UserRole.USER_ACCESS),
+    CONTACTS(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.name(), false, UserRole.USER_ACCESS),
+    DRAWS(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.name(), false, UserRole.USER_ACCESS),
+    REFERRAL(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.name(), false, UserRole.USER_ACCESS),
+    ADMIN_PANEL("Админ панель", false, UserRole.ADMIN_ACCESS),
+    OPERATOR_PANEL("Панель оператора", false, UserRole.OPERATOR_ACCESS),
+    OBSERVER_PANEL("Панель наблюдателя", false, UserRole.OBSERVER_ACCESS),
 
     /**
      * DRAWS
      */
-    LOTTERY(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.getString("LOTTERY"), false, false, false),
-    ROULETTE(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.getString("ROULETTE"), false, true, false),
-    SLOT_REEL(PropertiesPath.SLOT_REEL_PROPERTIES.getString("SLOT_REEL"), false, false, false),
-    DICE(PropertiesPath.DICE_PROPERTIES.getString("DICE"), false, false, false),
-    RPS(PropertiesPath.RPS_PROPERTIES.getString("button.text"), false, false, false),
+    LOTTERY(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.name(), false, UserRole.USER_ACCESS),
+    ROULETTE(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.name(), false, UserRole.USER_ACCESS),
+    SLOT_REEL(PropertiesPath.SLOT_REEL_PROPERTIES.name(), false, UserRole.USER_ACCESS),
+    DICE(PropertiesPath.DICE_PROPERTIES.name(), false, UserRole.USER_ACCESS),
+    RPS(PropertiesPath.RPS_PROPERTIES.name(), false, UserRole.USER_ACCESS),
 
     /**
      * REFERRAL
      */
-    WITHDRAWAL_OF_FUNDS("withdrawal", false, false, false),
-    SHOW_WITHDRAWAL_REQUEST("show_withdrawal", false, false, false),
-    SEND_LINK(PropertiesPath.BOT_PROPERTIES.getString("bot.link"), false, false, false),
-    HIDE_WITHDRAWAL("hide_withdrawal", true, false, false),
-    CHANGE_REFERRAL_BALANCE("change_ref", true, false, false),
-    DELETE_WITHDRAWAL_REQUEST("withdrawal_delete", false, false, false),
+    WITHDRAWAL_OF_FUNDS("Вывод средств", false, UserRole.USER_ACCESS),
+    SHOW_WITHDRAWAL_REQUEST("SHOW_WITHDRAWAL_REQUEST", false, UserRole.USER_ACCESS),
+    SEND_LINK(PropertiesPath.BOT_PROPERTIES.name(), false, UserRole.USER_ACCESS),
+    HIDE_WITHDRAWAL("Скрыть", false, UserRole.ADMIN_ACCESS),
+    CHANGE_REFERRAL_BALANCE("Изменить", false, UserRole.ADMIN_ACCESS),
+    DELETE_WITHDRAWAL_REQUEST("Удалить", false, UserRole.USER_ACCESS),
 
     /**
      * ADMIN PANEL
      */
-    REQUESTS("Заявки", true, true, false),
-    SEND_MESSAGES("Отправка сообщений", true, true, false),
-    BAN_UNBAN("Бан/разбан", true, false, false),
-    BOT_SETTINGS("Настройки бота", true, true, false),
-    REPORTS("Отчеты", true, true, false),
-    EDIT_CONTACTS("Редактирование контактов", true, true, false),
-    USER_REFERRAL_BALANCE("Реф.баланс юзера", true, false, false),
-    TURNING_CURRENCY("Включение криптовалют", true, false, false),
-    DISCOUNTS("Скидки", true, true, false),
-    USERS("Пользователи", true, true, false),
-    QUIT_ADMIN_PANEL("Выйти", true, false, false),
-    TURNING_DELIVERY_TYPE("Вкл/выкл способов доставки", true, false, false),
-    BACKUP_DB("/backupdb", true, false, false),
+    REQUESTS("Заявки", false, UserRole.ADMIN_ACCESS),
+    SEND_MESSAGES("Отправка сообщений", false, UserRole.ADMIN_ACCESS),
+    BAN_UNBAN("Бан/разбан", false, UserRole.ADMIN_ACCESS),
+    BOT_SETTINGS("Настройки бота", false, UserRole.ADMIN_ACCESS),
+    REPORTS("Отчеты", false, UserRole.ADMIN_ACCESS),
+    EDIT_CONTACTS("Редактирование контактов", false, UserRole.ADMIN_ACCESS),
+    USER_REFERRAL_BALANCE("Реф.баланс юзера", false, UserRole.ADMIN_ACCESS),
+    TURNING_CURRENCY("Включение криптовалют", false, UserRole.ADMIN_ACCESS),
+    DISCOUNTS("Скидки", false, UserRole.ADMIN_ACCESS),
+    USERS("Пользователи", false, UserRole.ADMIN_ACCESS),
+    QUIT_ADMIN_PANEL("Выйти", false, UserRole.OBSERVER_ACCESS),
+    TURNING_DELIVERY_TYPE("Вкл/выкл способов доставки", false, UserRole.ADMIN_ACCESS),
+    BACKUP_DB("/backupdb", true, UserRole.ADMIN_ACCESS),
 
-    DEALS_COUNT("Кол-во возможных сделок", true, false, false),
+    DEALS_COUNT("Кол-во возможных сделок", false, UserRole.ADMIN_ACCESS),
 
     /**
      * DISCOUNTS
      */
-    RANK_DISCOUNT("Ранговая скидка(персональная)", true, false, false),
-    CHANGE_RANK_DISCOUNT("change_rank_discount", true, false, false),
-    PERSONAL_BUY_DISCOUNT("Персональная, покупка", true, false, false),
-    PERSONAL_SELL_DISCOUNT("Персональная, продажа", true, false, false),
-    BULK_DISCOUNTS("Оптовые скидки", true, false, false),
-    REFERRAL_PERCENT("Процент реферала", true, false, false),
-    TURN_RANK_DISCOUNT("Ранговая скидка(для всех)", true, false, false),
-    TURNING_RANK_DISCOUNT("turning_rd", true, false, false),
+    RANK_DISCOUNT("Ранговая скидка(персональная)", false, UserRole.ADMIN_ACCESS),
+    CHANGE_RANK_DISCOUNT("change_rank_discount", false, UserRole.ADMIN_ACCESS),
+    PERSONAL_BUY_DISCOUNT("Персональная, покупка", false, UserRole.ADMIN_ACCESS),
+    PERSONAL_SELL_DISCOUNT("Персональная, продажа", false, UserRole.ADMIN_ACCESS),
+    REFERRAL_PERCENT("Процент реферала", false, UserRole.ADMIN_ACCESS),
+    TURN_RANK_DISCOUNT("Ранговая скидка(для всех)", false, UserRole.ADMIN_ACCESS),
+    TURNING_RANK_DISCOUNT("TURNING_RANK_DISCOUNT", false, UserRole.ADMIN_ACCESS),
 
     /**
      * TURNING CURRENCIES
      */
-    TURN_ON_CURRENCY("turn_on_currency", true, false, false),
-    TURN_OFF_CURRENCY("turn_off_currency", true, false, false),
+    TURN_ON_CURRENCY("turn_on_currency", false, UserRole.ADMIN_ACCESS),
+    TURN_OFF_CURRENCY("turn_off_currency", false, UserRole.ADMIN_ACCESS),
 
     /**
      * EDIT CONTACTS
      */
-    ADD_CONTACT("Добавить контакт", true, false, false),
-    DELETE_CONTACT("Удалить контакт", true, false, false),
+    ADD_CONTACT("Добавить контакт", false, UserRole.ADMIN_ACCESS),
+    DELETE_CONTACT("Удалить контакт", false, UserRole.ADMIN_ACCESS),
 
     /**
      * SEND MESSAGES
      */
-    MAILING_LIST("Рассылка", true, false, false),
-    SEND_MESSAGE_TO_USER("Сообщение пользователю", true, false, false),
+    MAILING_LIST("Рассылка", false, UserRole.OBSERVER_ACCESS),
+    SEND_MESSAGE_TO_USER("Сообщение пользователю", false, UserRole.ADMIN_ACCESS),
 
     /**
      * BOT SETTINGS
      */
-    CURRENT_DATA("Текущие данные", true, false, false),
-    ON_BOT("Вкл.бота", true, false, false),
-    OFF_BOT("Выкл.бота", true, false, false),
-    BOT_MESSAGES("Сообщения бота", true, false, false),
-    BOT_VARIABLES("Переменные бота", true, false, false),
-    SYSTEM_MESSAGES("Сис.сообщения", true, false, false),
-    PAYMENT_TYPES("Типы оплаты", true, false, false),
+    CURRENT_DATA("Текущие данные", false, UserRole.ADMIN_ACCESS),
+    ON_BOT("Вкл.бота", false, UserRole.ADMIN_ACCESS),
+    OFF_BOT("Выкл.бота", false, UserRole.ADMIN_ACCESS),
+    BOT_MESSAGES("Сообщения бота", false, UserRole.ADMIN_ACCESS),
+    BOT_VARIABLES("Переменные бота", false, UserRole.ADMIN_ACCESS),
+    SYSTEM_MESSAGES("Сис.сообщения", false, UserRole.ADMIN_ACCESS),
+    PAYMENT_TYPES("Типы оплаты", false, UserRole.OPERATOR_ACCESS),
 
     /**
      * DEAL
      */
-    DEAL("deal_proc", false, false, false),
-    PAID(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.getString("PAID"), false, false, false),
-    CANCEL_DEAL("Отменить заявку", false, false, false),
-    DELETE_DEAL("Удалить заявку", false, false, false),
-    SHOW_DEAL("Показать", true, false, false),
-    SHOW_API_DEAL("show_api_deal", true, false, false),
-    DELETE_USER_DEAL("delete_deal", true, false, false),
-    DELETE_DEAL_AND_BLOCK_USER("deleteDeal_and_block_user", true, false, false),
-    CONFIRM_USER_DEAL("confirm_deal", true, false, false),
-    ADDITIONAL_VERIFICATION("add_verification", true, false, false),
-    USER_ADDITIONAL_VERIFICATION("user_verification", false, false, false),
-    SHARE_REVIEW("share_review", false, false, false),
-    CHOOSING_FIAT_CURRENCY("chs_fc", false, false, false),
-    USE_PROMO(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.getString("USE_PROMO"), false, false, false),
-    DONT_USE_PROMO(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.getString("DONT_USE_PROMO"), false, false, false),
+    DEAL("DEAL", false, UserRole.USER_ACCESS),
+    PAID(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.name(), false, UserRole.USER_ACCESS),
+    CANCEL_DEAL("Отменить заявку", false, UserRole.USER_ACCESS),
+    DELETE_DEAL("Удалить", false, UserRole.USER_ACCESS),
+    SHOW_DEAL("Показать", false, UserRole.OBSERVER_ACCESS),
+    SHOW_API_DEAL("show_api_deal", false, UserRole.OPERATOR_ACCESS),
+    DELETE_USER_DEAL("Удалить", false, UserRole.OPERATOR_ACCESS),
+    DELETE_DEAL_AND_BLOCK_USER("Удалить и заблокировать", false, UserRole.OPERATOR_ACCESS),
+    CONFIRM_USER_DEAL("Подтвердить", false, UserRole.OPERATOR_ACCESS),
+    AUTO_WITHDRAWAL_DEAL("Автовывод", false, UserRole.OPERATOR_ACCESS),
+    BITCOIN_POOL_WITHDRAWAL("Автовывод", false, UserRole.OPERATOR_ACCESS),
+    CONFIRM_POOL_WITHDRAWAL("Да", false, UserRole.OPERATOR_ACCESS),
+    ADD_TO_POOL("Добавить в пул", false, UserRole.OPERATOR_ACCESS),
+    CLEAR_POOL("Очистить пул", false, UserRole.OPERATOR_ACCESS),
+    CONFIRM_CLEAR_POOL("Да", false, UserRole.OPERATOR_ACCESS),
+    DELETE_FROM_POOL("/deletefrompool", true, UserRole.OPERATOR_ACCESS),
+    CONFIRM_AUTO_WITHDRAWAL_DEAL("Продолжить", false, UserRole.OPERATOR_ACCESS),
+    ADDITIONAL_VERIFICATION("Доп.верификация", false, UserRole.OPERATOR_ACCESS),
+    USER_ADDITIONAL_VERIFICATION("USER_ADDITIONAL_VERIFICATION", false, UserRole.USER_ACCESS),
+    SHARE_REVIEW("Оставить", false, UserRole.USER_ACCESS),
+    CHOOSING_FIAT_CURRENCY("CHOOSING_FIAT_CURRENCY", false, UserRole.USER_ACCESS),
+    USE_PROMO(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.name(), false, UserRole.USER_ACCESS),
+    DONT_USE_PROMO(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.name(), false, UserRole.USER_ACCESS),
+    USE_SAVED_WALLET("USE_SAVED_WALLET", false, UserRole.USER_ACCESS),
 
     /**
      * REQUESTS
      */
-    NEW_DEALS("Новые заявки", true, false, false),
-    NEW_WITHDRAWALS("Вывод средств", true, false, false),
-    NEW_REVIEWS("Новые отзывы", true, false, false),
+    NEW_DEALS("Новые заявки", false, UserRole.OBSERVER_ACCESS),
+    BITCOIN_POOL("Пул сделок BTC", false, UserRole.OPERATOR_ACCESS),
+    NEW_WITHDRAWALS("Вывод средств", false, UserRole.OPERATOR_ACCESS),
+    NEW_REVIEWS("Новые отзывы", false, UserRole.OPERATOR_ACCESS),
 
-    PUBLISH_REVIEW("pub_review", true, false, false),
-    DELETE_REVIEW("del_review", true, false, false),
+    PUBLISH_REVIEW("Опубликовать", false, UserRole.OPERATOR_ACCESS),
+    DELETE_REVIEW("Удалить", false, UserRole.OPERATOR_ACCESS),
 
     /**
      * REPORTS
      */
-    USERS_REPORT("Отчет по пользователям", true, false, false),
-    USER_INFORMATION("Информация о пользователе", true, false, false),
-    USERS_DEALS_REPORT("Отчет сделки пользователей", true, false, false),
-    DEAL_REPORTS("Отчет по сделкам", true, false, false),
-    PARTNERS_REPORT("Отчет по партнерам", true, false, false),
-    CHECKS_FOR_DATE("Чеки по дате", true, false, false),
-    SEND_CHECKS_FOR_DATE("send_checks_for_dats", true, false, false),
-    LOTTERY_REPORT("Отчет по лотереи", true, false, false),
+    USERS_REPORT("Отчет по пользователям", false, UserRole.ADMIN_ACCESS),
+    USER_INFORMATION("Информация о пользователе", false, UserRole.ADMIN_ACCESS),
+    USERS_DEALS_REPORT("Отчет сделки пользователей", false, UserRole.ADMIN_ACCESS),
+    DEAL_REPORTS("Отчет по сделкам", false, Set.of(UserRole.OBSERVER, UserRole.ADMIN)),
+    PARTNERS_REPORT("Отчет по партнерам", false, UserRole.ADMIN_ACCESS),
+    CHECKS_FOR_DATE("Чеки по дате", false, UserRole.ADMIN_ACCESS),
+    SEND_CHECKS_FOR_DATE("SEND_CHECKS_FOR_DATE", false, UserRole.ADMIN_ACCESS),
+    LOTTERY_REPORT("Отчет по лотереи", false, UserRole.ADMIN_ACCESS),
 
-    CHANNEL_POST("channel_post", false, false, false),
+    CHANNEL_POST("CHANNEL_POST", false, UserRole.USER_ACCESS),
 
     /**
      * RECEIPTS
      */
-    CONTINUE("Продолжить", true, false, false),
-    RECEIPTS_CANCEL_DEAL("Отменить сделку", true, false, false),
+    RECEIPTS_CANCEL_DEAL("Отменить сделку", false, UserRole.USER_ACCESS),
 
     /**
      * PAYMENT TYPES
      */
-    NEW_PAYMENT_TYPE("Создать тип оплаты", true, false, false),
-    DELETE_PAYMENT_TYPE("Удалить тип оплаты", true, false, false),
-    DELETING_PAYMENT_TYPE("deleting_pt", true, false, false),
-    NEW_PAYMENT_TYPE_REQUISITE("Создать реквизит", true, false, false),
-    DELETE_PAYMENT_TYPE_REQUISITE("Удалить реквизит", true, false, false),
-    DELETING_PAYMENT_TYPE_REQUISITE("delete_ptr", true, false, false),
-    TURN_PAYMENT_TYPES("Включение типов оплат", true, false, false),
-    TURNING_PAYMENT_TYPES("turning_pt", true, false, false),
-    CHANGE_MIN_SUM("Мин.сумма", true, false, false),
-    TURN_DYNAMIC_REQUISITES("Динамические реквизиты", true, false, false),
-    TURNING_DYNAMIC_REQUISITES("turning_dr", true, false, false),
+    NEW_PAYMENT_TYPE("Создать тип оплаты", false, UserRole.OPERATOR_ACCESS),
+    DELETE_PAYMENT_TYPE("Удалить тип оплаты", false, UserRole.OPERATOR_ACCESS),
+    DELETING_PAYMENT_TYPE("DELETING_PAYMENT_TYPE", false, UserRole.OPERATOR_ACCESS),
+    NEW_PAYMENT_TYPE_REQUISITE("Создать реквизит", false, UserRole.OPERATOR_ACCESS),
+    DELETE_PAYMENT_TYPE_REQUISITE("Удалить реквизит", false, UserRole.OPERATOR_ACCESS),
+    DELETING_PAYMENT_TYPE_REQUISITE("DELETING_PAYMENT_TYPE_REQUISITE", false, UserRole.OPERATOR_ACCESS),
+    TURN_PAYMENT_TYPES("Включение типов оплат", false, UserRole.OPERATOR_ACCESS),
+    TURNING_PAYMENT_TYPES("TURNING_PAYMENT_TYPES", false, UserRole.OPERATOR_ACCESS),
+    CHANGE_MIN_SUM("Мин.сумма", false, UserRole.OPERATOR_ACCESS),
+    TURN_DYNAMIC_REQUISITES("Динамические реквизиты", false, UserRole.OPERATOR_ACCESS),
+    TURNING_DYNAMIC_REQUISITES("TURNING_DYNAMIC_REQUISITES", false, UserRole.OPERATOR_ACCESS),
 
     /**
      * ANTISPAM
      */
-    SHOW_SPAM_BANNED_USER("show_sb_user", true, false, false),
-    KEEP_SPAM_BAN("keep_sb", true, false, false),
-    SPAM_UNBAN("spam_unban", true, false, false),
-    NEW_SPAM_BANS("Антиспам блоки", true, false, false),
+    SHOW_SPAM_BANNED_USER("Показать", false, UserRole.OPERATOR_ACCESS),
+    KEEP_SPAM_BAN("Оставить в бане", false, UserRole.OPERATOR_ACCESS),
+    SPAM_UNBAN("Разблокировать", false, UserRole.OPERATOR_ACCESS),
+    NEW_SPAM_BANS("Антиспам блоки", false, UserRole.OPERATOR_ACCESS),
 
     /**
      * USERS STATES
      */
-    NONE_CALCULATOR("none_calc", false, false, false),
-    INLINE_QUERY_CALCULATOR("inline_q_calc", false, false, false),
-    INLINE_CALCULATOR("inline_calculator", false, false, false),
+    NONE_CALCULATOR("NONE_CALCULATOR", false, UserRole.USER_ACCESS),
+    INLINE_QUERY_CALCULATOR("INLINE_QUERY_CALCULATOR", false, UserRole.USER_ACCESS),
+    INLINE_CALCULATOR("INLINE_CALCULATOR", false, UserRole.USER_ACCESS),
 
-    WEB_ADMIN_PANEL("Веб админ-панель", true, false, false),
+    WEB_ADMIN_PANEL("Веб админ-панель", false, UserRole.OPERATOR_ACCESS),
 
     /**
      * API DEALS
      */
-    CONFIRM_API_DEAL("confirm_api_deal", true, false, false),
-    CANCEL_API_DEAL("cancel_api_deal", true, false, false),
-    NEW_API_DEALS("Новые API заявки", true, false, false),
+    CONFIRM_API_DEAL("Подтвердить", false, UserRole.OPERATOR_ACCESS),
+    CANCEL_API_DEAL("Отклонить", false, UserRole.OPERATOR_ACCESS),
+    NEW_API_DEALS("Новые API заявки", false, UserRole.OPERATOR_ACCESS),
 
     /**
      * TURNING DELIVERY
      */
-    TURN_PROCESS_DELIVERY("turn_process_delivery", true, false, false),
+    TURN_PROCESS_DELIVERY("TURN_PROCESS_DELIVERY", false, UserRole.ADMIN_ACCESS),
 
     /**
      * WEB
      */
-    SUBMIT_LOGIN("Подтвердить вход", false, false, false),
-    SUBMIT_REGISTER("Подтвердить регистрацию", false, false, false),
-    LOGOUT("Закрыть сессию", false, false, false)
-    ;
+    SUBMIT_LOGIN("Подтвердить вход", false, UserRole.USER_ACCESS),
+    SUBMIT_REGISTER("Подтвердить регистрацию", false, UserRole.USER_ACCESS),
+    LOGOUT("Закрыть сессию", false, UserRole.USER_ACCESS);
+
+    public static final Set<Command> HIDDEN_COMMANDS = Arrays.stream(Command.values())
+            .filter(Command::isHidden)
+            .collect(Collectors.toSet());
 
     final String text;
-    final boolean isAdmin;
-    final boolean isSimple;
     final boolean isHidden;
+    final Set<UserRole> roles;
 
-    Command(String text, boolean isAdmin, boolean isSimple, boolean isHidden) {
+    Command(String text, boolean isHidden, Set<UserRole> roles) {
         this.text = text;
-        this.isAdmin = isAdmin;
-        this.isSimple = isSimple;
         this.isHidden = isHidden;
+        this.roles = roles;
     }
 
-    public boolean isSimple() {
-        return isSimple;
-    }
 
     public String getText() {
         return text;
     }
 
-    public boolean isAdmin() {
-        return isAdmin;
+    public Set<UserRole> getRoles() {
+        return roles;
+    }
+
+    public boolean hasAccess(UserRole role) {
+        return this.getRoles().contains(role);
     }
 
     public boolean isHidden() {
         return isHidden;
-    }
-
-    public static Command fromUpdate(Update update) {
-        switch (UpdateType.fromUpdate(update)) {
-            case MESSAGE:
-                return findByText(update.getMessage().getText());
-            case CALLBACK_QUERY:
-                return findByText(update.getCallbackQuery().getData());
-            case INLINE_QUERY:
-                return findByText(update.getInlineQuery().getQuery());
-            case CHANNEL_POST:
-                return Command.CHANNEL_POST;
-            default:
-                return Command.START;
-        }
-    }
-
-    public static Command findByText(String value) {
-        return Arrays.stream(Command.values())
-                .filter(command -> (Objects.nonNull(command.getText()) && value.startsWith(command.getText())) || value.startsWith(command.name()))
-                .findFirst()
-                .orElse(null);
     }
 }

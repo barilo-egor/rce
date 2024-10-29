@@ -3,41 +3,39 @@ package tgb.btc.rce.service.processors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Conditional;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.bean.bot.SpamBan;
+import tgb.btc.library.constants.enums.bot.UserRole;
 import tgb.btc.library.exception.BaseException;
 import tgb.btc.library.interfaces.service.bean.bot.ISpamBanService;
 import tgb.btc.library.service.process.BanningUserService;
 import tgb.btc.rce.annotation.CommandProcessor;
-import tgb.btc.rce.conditional.AntispamCondition;
-import tgb.btc.rce.enums.BotKeyboard;
 import tgb.btc.rce.enums.Command;
-import tgb.btc.rce.service.AntiSpam;
+import tgb.btc.rce.service.ICaptchaSender;
+import tgb.btc.rce.service.INotifyService;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.service.impl.AdminService;
-import tgb.btc.rce.service.schedule.CaptchaSender;
-import tgb.btc.rce.util.CallbackQueryUtil;
-import tgb.btc.rce.util.KeyboardUtil;
-import tgb.btc.rce.util.UpdateUtil;
+import tgb.btc.rce.service.captcha.IAntiSpam;
+import tgb.btc.rce.service.processors.tool.Start;
 import tgb.btc.rce.vo.InlineButton;
 
 import java.util.List;
+import java.util.Set;
 
 @CommandProcessor(command = Command.CAPTCHA)
-@Conditional(AntispamCondition.class)
 @Slf4j
+@ConditionalOnExpression("'${anti.spam}' != 'NONE'")
 public class CaptchaProcessor extends Processor {
 
-    private CaptchaSender captchaSender;
+    private ICaptchaSender captchaSender;
 
     private Start start;
 
-    private AntiSpam antiSpam;
+    private IAntiSpam antiSpam;
 
     private ISpamBanService spamBanService;
 
-    private AdminService adminService;
+    private INotifyService notifyService;
 
     private BanningUserService banningUserService;
 
@@ -47,8 +45,8 @@ public class CaptchaProcessor extends Processor {
     }
 
     @Autowired
-    public void setAdminService(AdminService adminService) {
-        this.adminService = adminService;
+    public void setAdminService(INotifyService notifyService) {
+        this.notifyService = notifyService;
     }
 
     @Autowired
@@ -57,7 +55,7 @@ public class CaptchaProcessor extends Processor {
     }
 
     @Autowired
-    public void setAntiSpam(AntiSpam antiSpam) {
+    public void setAntiSpam(IAntiSpam antiSpam) {
         this.antiSpam = antiSpam;
     }
 
@@ -67,13 +65,13 @@ public class CaptchaProcessor extends Processor {
     }
 
     @Autowired
-    public void setCaptchaSender(CaptchaSender captchaSender) {
+    public void setCaptchaSender(ICaptchaSender captchaSender) {
         this.captchaSender = captchaSender;
     }
 
     @Override
     public void run(Update update) {
-        Long chatId = UpdateUtil.getChatId(update);
+        Long chatId = updateService.getChatId(update);
         if (!Command.CAPTCHA.name().equals(readUserService.getCommandByChatId(chatId)))
             modifyUserService.setDefaultValues(chatId);
         switch (readUserService.getStepByChatId(chatId)) {
@@ -84,8 +82,8 @@ public class CaptchaProcessor extends Processor {
                 break;
             case 1:
             case 2:
-                if (!UpdateUtil.hasMessageText(update) && !update.hasCallbackQuery()) return;
-                String cashedCaptcha = AntiSpam.CAPTCHA_CASH.get(chatId);
+                if (!updateService.hasMessageText(update) && !update.hasCallbackQuery()) return;
+                String cashedCaptcha = antiSpam.getFromCaptchaCash(chatId);
                 if (StringUtils.isEmpty(cashedCaptcha))
                     throw new BaseException("Не найдена строка капчи в кэше.");
                 if (isEnteredCaptchaIsRight(update)) {
@@ -99,17 +97,17 @@ public class CaptchaProcessor extends Processor {
                 } else {
                     banningUserService.ban(chatId);
                     log.debug("Пользователь chatId={} был заблокирован после неправильных вводов капчи.", chatId);
-                    responseSender.sendMessage(chatId, "Вы были заблокированы.", BotKeyboard.OPERATOR);
+                    responseSender.sendMessage(chatId, "Вы были заблокированы.", keyboardService.getOperator());
                     SpamBan spamBan = spamBanService.save(chatId);
-                    adminService.notify("Антиспам система заблокировала пользователя.",
-                            KeyboardUtil.buildInline(List.of(
+                    notifyService.notifyMessage("Антиспам система заблокировала пользователя.",
+                            keyboardBuildService.buildInline(List.of(
                                     InlineButton.builder()
-                                            .text("Показать")
-                                            .data(CallbackQueryUtil.buildCallbackData(
-                                                    Command.SHOW_SPAM_BANNED_USER.getText(), spamBan.getPid().toString())
+                                            .text(commandService.getText(Command.SHOW_SPAM_BANNED_USER))
+                                            .data(callbackQueryService.buildCallbackData(
+                                                    Command.SHOW_SPAM_BANNED_USER, spamBan.getPid().toString())
                                             )
                                             .build()
-                            )));
+                            )), Set.of(UserRole.ADMIN, UserRole.OPERATOR));
                     modifyUserService.setDefaultValues(chatId);
                     antiSpam.removeUser(chatId);
                 }
@@ -120,18 +118,18 @@ public class CaptchaProcessor extends Processor {
 
     private void removeUserFromSpam(Long chatId) {
         antiSpam.removeUser(chatId);
-        AntiSpam.CAPTCHA_CASH.remove(chatId);
+        antiSpam.removeFromCaptchaCash(chatId);
         start.run(chatId);
     }
 
     private boolean isEnteredCaptchaIsRight(Update update) {
         String text;
-        if (UpdateUtil.hasMessageText(update)) {
-            text = UpdateUtil.getMessageText(update);
+        if (updateService.hasMessageText(update)) {
+            text = updateService.getMessageText(update);
         } else {
-            text = CallbackQueryUtil.getSplitData(update, 1);
+            text = callbackQueryService.getSplitData(update, 1);
         }
-        return text.equals(AntiSpam.CAPTCHA_CASH.get(UpdateUtil.getChatId(update)));
+        return text.equals(antiSpam.getFromCaptchaCash(updateService.getChatId(update)));
     }
 
     public void send(Long chatId) {
