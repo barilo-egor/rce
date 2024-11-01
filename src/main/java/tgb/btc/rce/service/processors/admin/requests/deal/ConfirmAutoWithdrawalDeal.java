@@ -69,7 +69,7 @@ public class ConfirmAutoWithdrawalDeal extends Processor {
                 return;
             }
             withdrawalMessage = responseSender.sendMessage(chatId, "Автовывод в процессе, пожалуйста подождите.");
-            hash = cryptoWithdrawalService.withdrawal(deal.getCryptoCurrency(), deal.getAmount(), deal.getWallet());
+            hash = cryptoWithdrawalService.withdrawal(deal.getCryptoCurrency(), deal.getCryptoAmount(), deal.getWallet());
         } catch (Exception e) {
             responseSender.sendMessage(chatId, "Ошибка при попытке автовывода сделки " + dealPid + ": " + e.getMessage());
             return;
