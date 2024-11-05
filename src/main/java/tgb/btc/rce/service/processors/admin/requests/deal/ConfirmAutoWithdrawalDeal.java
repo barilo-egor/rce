@@ -7,7 +7,6 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.bean.bot.Deal;
 import tgb.btc.library.constants.enums.bot.DealStatus;
-import tgb.btc.library.interfaces.service.IAutoWithdrawalService;
 import tgb.btc.library.interfaces.service.bean.bot.IGroupChatService;
 import tgb.btc.library.interfaces.service.bean.bot.deal.IModifyDealService;
 import tgb.btc.library.interfaces.service.bean.bot.deal.IReadDealService;
@@ -23,8 +22,6 @@ import java.util.Optional;
 @Slf4j
 public class ConfirmAutoWithdrawalDeal extends Processor {
 
-    private final IAutoWithdrawalService autoWithdrawalService;
-
     private final IGroupChatService groupChatService;
 
     private final IModifyDealService modifyDealService;
@@ -36,11 +33,10 @@ public class ConfirmAutoWithdrawalDeal extends Processor {
     private final ICryptoWithdrawalService cryptoWithdrawalService;
 
     @Autowired
-    public ConfirmAutoWithdrawalDeal(IAutoWithdrawalService autoWithdrawalService, IGroupChatService groupChatService,
+    public ConfirmAutoWithdrawalDeal(IGroupChatService groupChatService,
                                      IModifyDealService modifyDealService, Notifier notifier,
                                      IReadDealService readDealService,
                                      ICryptoWithdrawalService cryptoWithdrawalService) {
-        this.autoWithdrawalService = autoWithdrawalService;
         this.groupChatService = groupChatService;
         this.modifyDealService = modifyDealService;
         this.notifier = notifier;

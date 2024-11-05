@@ -14,7 +14,6 @@ import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
 import tgb.btc.library.constants.enums.web.ApiDealStatus;
 import tgb.btc.library.interfaces.enums.IDeliveryTypeService;
-import tgb.btc.library.interfaces.service.IAutoWithdrawalService;
 import tgb.btc.library.interfaces.service.bean.bot.IGroupChatService;
 import tgb.btc.library.interfaces.service.bean.bot.ISecurePaymentDetailsService;
 import tgb.btc.library.interfaces.service.bean.bot.deal.IReadDealService;
@@ -22,6 +21,7 @@ import tgb.btc.library.interfaces.service.bean.bot.deal.read.IDealCountService;
 import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.library.interfaces.service.bean.web.IApiDealService;
 import tgb.btc.library.interfaces.util.IBigDecimalService;
+import tgb.btc.library.interfaces.web.ICryptoWithdrawalService;
 import tgb.btc.library.service.bean.bot.deal.read.DealPropertyService;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
@@ -63,11 +63,11 @@ public class DealSupportService {
 
     private DealPropertyService dealPropertyService;
 
-    private IAutoWithdrawalService autoWithdrawalService;
+    private ICryptoWithdrawalService cryptoWithdrawalService;
 
     @Autowired
-    public void setAutoWithdrawalService(IAutoWithdrawalService autoWithdrawalService) {
-        this.autoWithdrawalService = autoWithdrawalService;
+    public void setCryptoWithdrawalService(ICryptoWithdrawalService cryptoWithdrawalService) {
+        this.cryptoWithdrawalService = cryptoWithdrawalService;
     }
 
     @Autowired
@@ -225,13 +225,13 @@ public class DealSupportService {
                     .data(callbackQueryService.buildCallbackData(Command.CONFIRM_USER_DEAL, new Object[]{pid, true}))
                     .build());
         CryptoCurrency cryptoCurrency = dealPropertyService.getCryptoCurrencyByPid(pid);
-        if (autoWithdrawalService.isAutoWithdrawalOn(cryptoCurrency)) {
+        if (cryptoWithdrawalService.isOn(cryptoCurrency)) {
             buttons.add(InlineButton.builder()
                     .text(commandService.getText(Command.AUTO_WITHDRAWAL_DEAL))
                     .data(callbackQueryService.buildCallbackData(Command.AUTO_WITHDRAWAL_DEAL, pid))
                     .build());
         }
-        if (CryptoCurrency.BITCOIN.equals(cryptoCurrency) && autoWithdrawalService.isAutoWithdrawalOn(CryptoCurrency.BITCOIN)) {
+        if (CryptoCurrency.BITCOIN.equals(cryptoCurrency) && cryptoWithdrawalService.isOn(CryptoCurrency.BITCOIN)) {
             buttons.add(InlineButton.builder()
                     .text(commandService.getText(Command.ADD_TO_POOL))
                     .data(callbackQueryService.buildCallbackData(Command.ADD_TO_POOL, pid))
