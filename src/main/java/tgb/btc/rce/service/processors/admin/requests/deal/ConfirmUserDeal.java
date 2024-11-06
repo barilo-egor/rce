@@ -8,6 +8,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.api.web.INotifier;
 import tgb.btc.library.interfaces.service.bean.bot.IGroupChatService;
 import tgb.btc.library.interfaces.service.bean.bot.deal.IModifyDealService;
+import tgb.btc.library.interfaces.service.bean.bot.deal.read.IDealUserService;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.Processor;
@@ -21,6 +22,8 @@ public class ConfirmUserDeal extends Processor {
     private INotifier notifier;
 
     private IGroupChatService groupChatService;
+
+    private IDealUserService dealUserService;
 
     @Autowired
     public void setGroupChatService(IGroupChatService groupChatService) {
@@ -52,6 +55,10 @@ public class ConfirmUserDeal extends Processor {
             return;
         }
         modifyDealService.confirm(dealPid);
+        Long userChatId = dealUserService.getUserChatIdByDealPid(dealPid);
+        if (Command.USER_ADDITIONAL_VERIFICATION.equals(Command.valueOf(readUserService.getCommandByChatId(userChatId)))) {
+            processToMainMenu(userChatId);
+        }
         String username = readUserService.getUsernameByChatId(chatId);
         log.debug("Админ {} подтвердил сделку {}.", chatId, dealPid);
         if (isNeedRequest) {
