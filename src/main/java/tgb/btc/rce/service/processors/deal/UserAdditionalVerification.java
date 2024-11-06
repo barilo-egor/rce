@@ -8,6 +8,7 @@ import tgb.btc.library.constants.enums.bot.UserRole;
 import tgb.btc.library.constants.enums.properties.VariableType;
 import tgb.btc.library.interfaces.service.bean.bot.deal.IModifyDealService;
 import tgb.btc.library.interfaces.service.bean.bot.deal.IReadDealService;
+import tgb.btc.library.service.bean.bot.deal.read.DealPropertyService;
 import tgb.btc.library.service.properties.VariablePropertiesReader;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
@@ -33,6 +34,8 @@ public class UserAdditionalVerification extends Processor {
     private IBotImageService botImageService;
 
     private VariablePropertiesReader variablePropertiesReader;
+
+    private DealPropertyService dealPropertyService;
 
     @Autowired
     public void setVariablePropertiesReader(VariablePropertiesReader variablePropertiesReader) {
@@ -64,12 +67,24 @@ public class UserAdditionalVerification extends Processor {
         this.modifyDealService = modifyDealService;
     }
 
+    @Autowired
+    public void setDealPropertyService(DealPropertyService dealPropertyService) {
+        this.dealPropertyService = dealPropertyService;
+    }
+
     @Override
     public void run(Update update) {
         Long chatId = updateService.getChatId(update);
         Long dealPid = Long.parseLong(readUserService.getBufferVariable(chatId));
         if (!readDealService.existsById(dealPid)) {
             responseSender.sendMessage(chatId, "Заявки не существует.");
+            modifyUserService.setDefaultValues(chatId);
+            processToMainMenu(chatId);
+            return;
+        }
+        DealStatus dealStatus = dealPropertyService.getDealStatusByPid(dealPid);
+        if (!DealStatus.AWAITING_VERIFICATION.equals(dealStatus)) {
+            responseSender.sendMessage(chatId, "Заявка уже обработана.");
             modifyUserService.setDefaultValues(chatId);
             processToMainMenu(chatId);
             return;
