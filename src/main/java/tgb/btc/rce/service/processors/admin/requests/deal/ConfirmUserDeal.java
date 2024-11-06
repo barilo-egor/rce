@@ -26,6 +26,11 @@ public class ConfirmUserDeal extends Processor {
     private IDealUserService dealUserService;
 
     @Autowired
+    public void setDealUserService(IDealUserService dealUserService) {
+        this.dealUserService = dealUserService;
+    }
+
+    @Autowired
     public void setGroupChatService(IGroupChatService groupChatService) {
         this.groupChatService = groupChatService;
     }
