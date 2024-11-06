@@ -6,7 +6,7 @@ import tgb.btc.library.constants.enums.ReferralType;
 import tgb.btc.library.constants.enums.bot.CryptoCurrency;
 import tgb.btc.library.constants.enums.bot.UserRole;
 import tgb.btc.library.interfaces.IModule;
-import tgb.btc.library.interfaces.service.IAutoWithdrawalService;
+import tgb.btc.library.interfaces.web.ICryptoWithdrawalService;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.Menu;
 import tgb.btc.rce.service.IMenu;
@@ -23,11 +23,11 @@ public class RequestsMenu implements IMenu {
 
     private IReplyButtonService replyButtonService;
 
-    private IAutoWithdrawalService autoWithdrawalService;
+    private ICryptoWithdrawalService cryptoWithdrawalService;
 
     @Autowired
-    public void setAutoWithdrawalService(IAutoWithdrawalService autoWithdrawalService) {
-        this.autoWithdrawalService = autoWithdrawalService;
+    public void setCryptoWithdrawalService(ICryptoWithdrawalService cryptoWithdrawalService) {
+        this.cryptoWithdrawalService = cryptoWithdrawalService;
     }
 
     @Autowired
@@ -51,7 +51,7 @@ public class RequestsMenu implements IMenu {
         if (!referralModule.isCurrent(ReferralType.STANDARD)) {
             resultCommands.remove(Command.NEW_WITHDRAWALS);
         }
-        if (!autoWithdrawalService.isAutoWithdrawalOn(CryptoCurrency.BITCOIN)) {
+        if (!cryptoWithdrawalService.isOn(CryptoCurrency.BITCOIN)) {
             resultCommands.remove(Command.BITCOIN_POOL);
         }
         return replyButtonService.fromCommands(resultCommands);
