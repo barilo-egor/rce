@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.bean.bot.Deal;
+import tgb.btc.library.constants.enums.bot.CryptoCurrency;
 import tgb.btc.library.constants.enums.bot.DealStatus;
 import tgb.btc.library.interfaces.service.bean.bot.IGroupChatService;
 import tgb.btc.library.interfaces.service.bean.bot.deal.IModifyDealService;
@@ -15,6 +16,7 @@ import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.impl.web.Notifier;
+import tgb.btc.rce.service.util.ITelegramPropertiesService;
 
 import java.util.Optional;
 
@@ -32,16 +34,20 @@ public class ConfirmAutoWithdrawalDeal extends Processor {
 
     private final ICryptoWithdrawalService cryptoWithdrawalService;
 
+    private final String botUsername;
+
     @Autowired
     public ConfirmAutoWithdrawalDeal(IGroupChatService groupChatService,
                                      IModifyDealService modifyDealService, Notifier notifier,
                                      IReadDealService readDealService,
-                                     ICryptoWithdrawalService cryptoWithdrawalService) {
+                                     ICryptoWithdrawalService cryptoWithdrawalService,
+                                     ITelegramPropertiesService telegramPropertiesService) {
         this.groupChatService = groupChatService;
         this.modifyDealService = modifyDealService;
         this.notifier = notifier;
         this.readDealService = readDealService;
         this.cryptoWithdrawalService = cryptoWithdrawalService;
+        this.botUsername = telegramPropertiesService.getUsername();
     }
 
     @Override
@@ -56,7 +62,7 @@ public class ConfirmAutoWithdrawalDeal extends Processor {
                             "разделе \"Сделки из бота\".\n", true);
             return;
         }
-        Optional<Message> withdrawalMessage;
+        Optional<Message> withdrawalMessage = responseSender.sendMessage(chatId, "Автовывод в процессе, пожалуйста подождите.");;
         String hash;
         try {
             Deal deal = readDealService.findByPid(dealPid);
@@ -64,15 +70,15 @@ public class ConfirmAutoWithdrawalDeal extends Processor {
                 responseSender.sendMessage(chatId, "Сделка уже находится в статусе \"Подтверждена\".");
                 return;
             }
-            withdrawalMessage = responseSender.sendMessage(chatId, "Автовывод в процессе, пожалуйста подождите.");
             hash = cryptoWithdrawalService.withdrawal(deal.getCryptoCurrency(), deal.getCryptoAmount(), deal.getWallet());
         } catch (Exception e) {
             responseSender.sendMessage(chatId, "Ошибка при попытке автовывода сделки " + dealPid + ": " + e.getMessage());
             return;
+        } finally {
+            withdrawalMessage.ifPresent(msg -> responseSender.deleteMessage(chatId, msg.getMessageId()));
         }
-        withdrawalMessage.ifPresent(msg -> responseSender.deleteMessage(chatId, msg.getMessageId()));
-
-        modifyDealService.confirm(dealPid);
+        modifyDealService.confirm(dealPid, hash);
+        new Thread(() -> cryptoWithdrawalService.deleteFromPool(botUsername, dealPid)).start();
         String username = readUserService.getUsernameByChatId(chatId);
         log.debug("Админ {} подтвердил сделку {} с автовыводом. Хеш транзакции: {}", chatId, dealPid, hash);
         notifier.sendAutoWithdrawDeal(
@@ -84,5 +90,6 @@ public class ConfirmAutoWithdrawalDeal extends Processor {
         log.debug("Сделка {} была отправлена в группу автовывода сделок.", dealPid);
         responseSender.deleteMessage(chatId, callbackQueryService.getSplitIntData(update, 2));
         responseSender.deleteMessage(chatId, updateService.getMessage(update).getMessageId());
+        responseSender.sendMessage(chatId, "Транзакция сделки №{}", String.format(CryptoCurrency.BITCOIN.getHashUrl(), hash));
     }
 }

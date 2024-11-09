@@ -1,15 +1,16 @@
 package tgb.btc.rce.service.processors.admin.requests.deal;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.interfaces.service.bean.bot.deal.IModifyDealService;
 import tgb.btc.library.interfaces.service.bean.bot.deal.read.IDealUserService;
+import tgb.btc.library.interfaces.web.ICryptoWithdrawalService;
 import tgb.btc.library.service.schedule.DealDeleteScheduler;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.Processor;
+import tgb.btc.rce.service.util.ITelegramPropertiesService;
 
 
 @CommandProcessor(command = Command.DELETE_USER_DEAL)
@@ -20,14 +21,17 @@ public class DeleteUserDeal extends Processor {
 
     private IModifyDealService modifyDealService;
 
-    @Autowired
-    public void setDealUserService(IDealUserService dealUserService) {
-        this.dealUserService = dealUserService;
-    }
+    private ICryptoWithdrawalService cryptoWithdrawalService;
 
-    @Autowired
-    public void setModifyDealService(IModifyDealService modifyDealService) {
+    private String botUsername;
+
+    public DeleteUserDeal(IDealUserService dealUserService, IModifyDealService modifyDealService,
+                          ICryptoWithdrawalService cryptoWithdrawalService,
+                          ITelegramPropertiesService telegramPropertiesService) {
+        this.dealUserService = dealUserService;
         this.modifyDealService = modifyDealService;
+        this.cryptoWithdrawalService = cryptoWithdrawalService;
+        botUsername = telegramPropertiesService.getUsername();
     }
 
     @Override
@@ -38,6 +42,7 @@ public class DeleteUserDeal extends Processor {
                 update.getCallbackQuery().getData().split(BotStringConstants.CALLBACK_DATA_SPLITTER)[1]);
         Long userChatId = dealUserService.getUserChatIdByDealPid(dealPid);
         modifyDealService.deleteById(dealPid);
+        new Thread(() -> cryptoWithdrawalService.deleteFromPool(botUsername, dealPid)).start();
         log.info("Админ " + chatId + " удалил сделку " + dealPid + " пользователя " + userChatId);
         modifyUserService.updateCurrentDealByChatId(null, userChatId);
         DealDeleteScheduler.deleteCryptoDeal(dealPid);

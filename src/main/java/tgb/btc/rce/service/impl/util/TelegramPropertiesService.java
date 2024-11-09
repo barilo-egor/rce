@@ -1,5 +1,6 @@
 package tgb.btc.rce.service.impl.util;
 
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import tgb.btc.library.constants.enums.properties.PropertiesPath;
 import tgb.btc.library.exception.BaseException;
@@ -15,6 +16,7 @@ public class TelegramPropertiesService implements ITelegramPropertiesService {
     private String botUsername;
 
     @Override
+    @Cacheable("botTokenCache")
     public String getToken() {
         if (Objects.isNull(botToken)) {
             botToken = PropertiesPath.BOT_PROPERTIES.getString("bot.token");
@@ -24,6 +26,7 @@ public class TelegramPropertiesService implements ITelegramPropertiesService {
     }
 
     @Override
+    @Cacheable("botUsernameCache")
     public String getUsername() {
         if (Objects.isNull(botUsername)) {
             botUsername = PropertiesPath.BOT_PROPERTIES.getString("bot.username");

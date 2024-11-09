@@ -2,14 +2,14 @@ package tgb.btc.rce.service.processors.admin.requests.deal;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
-import tgb.btc.library.bean.bot.Deal;
 import tgb.btc.library.constants.enums.bot.CryptoCurrency;
-import tgb.btc.library.constants.enums.bot.DealStatus;
-import tgb.btc.library.interfaces.service.bean.bot.deal.IReadDealService;
-import tgb.btc.library.service.AutoWithdrawalService;
+import tgb.btc.library.exception.ApiResponseErrorException;
+import tgb.btc.library.interfaces.web.ICryptoWithdrawalService;
 import tgb.btc.library.service.util.BigDecimalService;
+import tgb.btc.library.vo.web.PoolDeal;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.Processor;
@@ -17,48 +17,63 @@ import tgb.btc.rce.vo.InlineButton;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 @CommandProcessor(command = Command.BITCOIN_POOL)
 public class BitcoinPool extends Processor {
 
     private final BigDecimalService bigDecimalService;
-    private final IReadDealService readDealService;
-    private final AutoWithdrawalService autoWithdrawalService;
+    private final ICryptoWithdrawalService cryptoWithdrawalService;
 
     @Autowired
-    public BitcoinPool(IReadDealService readDealService, BigDecimalService bigDecimalService, AutoWithdrawalService autoWithdrawalService) {
-        this.readDealService = readDealService;
+    public BitcoinPool(BigDecimalService bigDecimalService, ICryptoWithdrawalService cryptoWithdrawalService) {
         this.bigDecimalService = bigDecimalService;
-        this.autoWithdrawalService = autoWithdrawalService;
+        this.cryptoWithdrawalService = cryptoWithdrawalService;
     }
 
     @Override
     public void run(Update update) {
         Long chatId = updateService.getChatId(update);
-        List<Deal> deals = readDealService.getAllByDealStatusAndCryptoCurrency(DealStatus.AWAITING_WITHDRAWAL, CryptoCurrency.BITCOIN);
+        List<PoolDeal> deals;
+        Optional<Message> poolMessage = responseSender.sendMessage(chatId, "Получение пула сделок BTC.");
+        try {
+            deals = cryptoWithdrawalService.getAllPoolDeals();
+        } catch (ApiResponseErrorException e) {
+            responseSender.sendMessage(chatId, e.getMessage());
+            return;
+        } finally {
+            poolMessage.ifPresent(message -> responseSender.deleteMessage(chatId, message.getMessageId()));
+        }
+        Map<String, List<PoolDeal>> sortedByBotDeals = deals.stream()
+                .collect(Collectors.groupingBy(PoolDeal::getBot, TreeMap::new, Collectors.toList()));
         if (CollectionUtils.isEmpty(deals)) {
             responseSender.sendMessage(chatId, "Текущий пул сделок BTC пуст.");
             return;
         }
         BigDecimal totalAmount = BigDecimal.ZERO;
-        StringBuilder dealsInfo = new StringBuilder();
-        dealsInfo.append("Текущий пул сделок BTC:\n");
-        for (Deal deal : deals) {
-            dealsInfo.append("-----------").append("\n")
-                    .append("Сделка №").append(deal.getPid()).append("\n")
-                    .append("-----------").append("\n")
-                    .append("Адрес: <code>").append(deal.getWallet()).append("</code>").append("\n")
-                    .append("Сумма: <code>")
-                    .append(bigDecimalService.roundToPlainString(deal.getCryptoAmount(), CryptoCurrency.BITCOIN.getScale()))
-                    .append("</code>\n")
-                    .append("Для удаления сделки из пула введите <code>/deletefrompool ").append(deal.getPid()).append("</code>").append("\n")
-                    .append("\n");
-            totalAmount = totalAmount.add(deal.getCryptoAmount());
+        responseSender.sendMessage(chatId, "Текущий пул сделок BTC:");
+        for (String bot : sortedByBotDeals.keySet()) {
+            StringBuilder botDeals = new StringBuilder();
+            botDeals.append("\uD83E\uDD16 ").append(bot).append(" ⬇\uFE0F\n");
+            for (PoolDeal poolDeal : sortedByBotDeals.get(bot)) {
+                botDeals.append("〰\uFE0F〰\uFE0F〰\uFE0F〰\uFE0F〰\uFE0F〰\uFE0F").append("\n")
+                        .append("<b>Сделка</b> №<code>").append(poolDeal.getPid()).append("</code> (пул ID ").append(poolDeal.getId())
+                        .append(")\n")
+                        .append("<b>Данные</b>: <code>").append(poolDeal.getAddress()).append(",")
+                        .append(poolDeal.getAmount()).append("</code>").append("\n")
+                        .append("<i>Для удаления сделки из пула введите</i> <code>/deletefrompool ")
+                        .append(poolDeal.getId()).append("</code>").append("\n");
+                totalAmount = totalAmount.add(new BigDecimal(poolDeal.getAmount()));
+            }
+            responseSender.sendMessage(chatId, botDeals.toString(), "html");
         }
-        dealsInfo.append("-----------").append("\n");
+        StringBuilder dealsInfo = new StringBuilder();
         String strTotalAmount = bigDecimalService.roundToPlainString(totalAmount, CryptoCurrency.BITCOIN.getScale());
-        dealsInfo.append("Общая сумма: <code>").append(bigDecimalService.roundToPlainString(totalAmount, CryptoCurrency.BITCOIN.getScale())).append("</code>\n");
-        dealsInfo.append("Баланс кошелька: <code>").append(autoWithdrawalService.getBalance(CryptoCurrency.BITCOIN)).append("</code>");
+        dealsInfo.append("<b>Общая сумма</b>: <code>").append(bigDecimalService.roundToPlainString(totalAmount, CryptoCurrency.BITCOIN.getScale())).append("</code>\n");
+        dealsInfo.append("<b>Баланс кошелька</b>: <code>").append(cryptoWithdrawalService.getBalance(CryptoCurrency.BITCOIN)).append("</code>");
         ReplyKeyboard replyKeyboard = keyboardBuildService.buildInline(
                 List.of(
                         InlineButton.builder()
