@@ -27,7 +27,7 @@ public class ConfirmBitcoinPoolWithdrawal extends Processor {
     public void run(Update update) {
         Long chatId = updateService.getChatId(update);
         Integer messageId = callbackQueryService.getSplitIntData(update, 1);
-        Optional<Message> completeMessage = responseSender.sendMessage(chatId, "Выполняется завершение пула.");
+        Optional<Message> completeMessage = responseSender.sendMessage(chatId, "Выполняется завершение пула, пожалуйста подождите.");
         try {
             cryptoWithdrawalService.complete();
         }  catch (ApiResponseErrorException e) {

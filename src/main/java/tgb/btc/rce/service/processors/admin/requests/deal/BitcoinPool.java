@@ -2,6 +2,7 @@ package tgb.btc.rce.service.processors.admin.requests.deal;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import tgb.btc.library.constants.enums.bot.CryptoCurrency;
@@ -17,6 +18,7 @@ import tgb.btc.rce.vo.InlineButton;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
@@ -36,11 +38,14 @@ public class BitcoinPool extends Processor {
     public void run(Update update) {
         Long chatId = updateService.getChatId(update);
         List<PoolDeal> deals;
+        Optional<Message> poolMessage = responseSender.sendMessage(chatId, "Получение пула сделок BTC.");
         try {
             deals = cryptoWithdrawalService.getAllPoolDeals();
-        }  catch (ApiResponseErrorException e) {
+        } catch (ApiResponseErrorException e) {
             responseSender.sendMessage(chatId, e.getMessage());
             return;
+        } finally {
+            poolMessage.ifPresent(message -> responseSender.deleteMessage(chatId, message.getMessageId()));
         }
         Map<String, List<PoolDeal>> sortedByBotDeals = deals.stream()
                 .collect(Collectors.groupingBy(PoolDeal::getBot, TreeMap::new, Collectors.toList()));

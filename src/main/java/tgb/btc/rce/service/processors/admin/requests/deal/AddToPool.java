@@ -2,6 +2,7 @@ package tgb.btc.rce.service.processors.admin.requests.deal;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.bean.bot.Deal;
 import tgb.btc.library.constants.enums.bot.DealStatus;
@@ -15,6 +16,8 @@ import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.util.ITelegramPropertiesService;
+
+import java.util.Optional;
 
 @CommandProcessor(command = Command.ADD_TO_POOL)
 @Slf4j
@@ -42,6 +45,7 @@ public class AddToPool extends Processor {
         Long chatId = updateService.getChatId(update);
         Long dealPid = callbackQueryService.getSplitLongData(update, 1);
         Deal deal = readDealService.findByPid(dealPid);
+        Optional<Message> addMessage = responseSender.sendMessage(chatId, "Добавление сделки в пул, пожалуйста подождите.");
         try {
             cryptoWithdrawalService.addPoolDeal(PoolDeal.builder()
                     .pid(dealPid)
@@ -52,6 +56,8 @@ public class AddToPool extends Processor {
         }  catch (ApiResponseErrorException e) {
             responseSender.sendMessage(chatId, e.getMessage());
             return;
+        } finally {
+            addMessage.ifPresent(message -> responseSender.deleteMessage(chatId, message.getMessageId()));
         }
         modifyDealService.updateDealStatusByPid(DealStatus.AWAITING_WITHDRAWAL, dealPid);
         log.debug("Пользователь chatId={} добавил сделку {} в пул.", chatId, dealPid);

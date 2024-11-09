@@ -2,16 +2,17 @@ package tgb.btc.rce.service.processors.admin.requests.deal;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.api.web.INotifier;
 import tgb.btc.library.interfaces.service.bean.bot.IGroupChatService;
 import tgb.btc.library.interfaces.service.bean.bot.deal.IModifyDealService;
 import tgb.btc.library.interfaces.service.bean.bot.deal.read.IDealUserService;
+import tgb.btc.library.interfaces.web.ICryptoWithdrawalService;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.Processor;
+import tgb.btc.rce.service.util.ITelegramPropertiesService;
 
 @CommandProcessor(command = Command.CONFIRM_USER_DEAL)
 @Slf4j
@@ -25,24 +26,19 @@ public class ConfirmUserDeal extends Processor {
 
     private IDealUserService dealUserService;
 
-    @Autowired
-    public void setDealUserService(IDealUserService dealUserService) {
-        this.dealUserService = dealUserService;
-    }
+    private ICryptoWithdrawalService cryptoWithdrawalService;
 
-    @Autowired
-    public void setGroupChatService(IGroupChatService groupChatService) {
-        this.groupChatService = groupChatService;
-    }
+    private String botUsername;
 
-    @Autowired
-    public void setNotifier(INotifier notifier) {
-        this.notifier = notifier;
-    }
-
-    @Autowired
-    public void setModifyDealService(IModifyDealService modifyDealService) {
+    public ConfirmUserDeal(IModifyDealService modifyDealService, INotifier notifier, IGroupChatService groupChatService,
+                           IDealUserService dealUserService, ICryptoWithdrawalService cryptoWithdrawalService,
+                           ITelegramPropertiesService telegramPropertiesService) {
         this.modifyDealService = modifyDealService;
+        this.notifier = notifier;
+        this.groupChatService = groupChatService;
+        this.dealUserService = dealUserService;
+        this.cryptoWithdrawalService = cryptoWithdrawalService;
+        this.botUsername = telegramPropertiesService.getUsername();
     }
 
     @Override
@@ -60,6 +56,7 @@ public class ConfirmUserDeal extends Processor {
             return;
         }
         modifyDealService.confirm(dealPid);
+        new Thread(() -> cryptoWithdrawalService.deleteFromPool(botUsername, dealPid)).start();
         Long userChatId = dealUserService.getUserChatIdByDealPid(dealPid);
         if (Command.USER_ADDITIONAL_VERIFICATION.equals(Command.valueOf(readUserService.getCommandByChatId(userChatId)))) {
             processToMainMenu(userChatId);

@@ -7,50 +7,49 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 import tgb.btc.library.constants.enums.bot.UserRole;
-import tgb.btc.library.interfaces.service.bean.bot.deal.IModifyDealService;
 import tgb.btc.rce.service.INotifyService;
+import tgb.btc.rce.service.operation.IPoolOperation;
 import tgb.btc.rce.service.util.ITelegramPropertiesService;
-import tgb.btc.rce.vo.PoolComplete;
-import tgb.btc.rce.vo.PoolCompleteResult;
+import tgb.btc.rce.vo.PoolOperation;
 
-import java.util.Objects;
-import java.util.Optional;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class BitcoinPoolConsumer {
 
     private final INotifyService notifyService;
 
-    private final IModifyDealService modifyDealService;
-
-    private final ITelegramPropertiesService telegramPropertiesService;
-
     private final ObjectMapper objectMapper = new ObjectMapper();
 
+    private final Map<String, IPoolOperation> poolOperationsMap;
+
+    private final String botUsername;
+
     @Autowired
-    public BitcoinPoolConsumer(INotifyService notifyService, IModifyDealService modifyDealService,
+    public BitcoinPoolConsumer(List<IPoolOperation> poolOperations, INotifyService notifyService,
                                ITelegramPropertiesService telegramPropertiesService) {
         this.notifyService = notifyService;
-        this.modifyDealService = modifyDealService;
-        this.telegramPropertiesService = telegramPropertiesService;
+        this.poolOperationsMap = poolOperations.stream()
+                .collect(Collectors.toMap(IPoolOperation::getOperationName, operation -> operation));
+        this.botUsername = telegramPropertiesService.getUsername();
     }
 
-    @KafkaListener(topics = "pool", groupId = "rce")
+    @KafkaListener(topics = "pool", groupId = "${bot.name}")
     public void receive(ConsumerRecord<String, String> record) throws JsonProcessingException {
         String key = record.key();
-        if (Objects.equals(key, "update")) {
-            notifyService.notifyMessage(record.value(), Set.of(UserRole.ADMIN, UserRole.OPERATOR));
-        } else if (Objects.equals(key, "complete")) {
-            PoolComplete poolComplete = objectMapper.readValue(record.value(), PoolComplete.class);
-            Optional<PoolCompleteResult> botResult = poolComplete.getResults().stream()
-                    .filter(result -> result.getBot().equals(telegramPropertiesService.getUsername()))
-                    .findAny();
-            if (botResult.isEmpty()) {
-                return;
-            }
-            PoolCompleteResult poolCompleteResult = botResult.get();
-            poolCompleteResult.getPids().forEach(pid -> modifyDealService.confirm(pid, poolComplete.getHash()));
+        if ("operation".equals(key)) {
+            PoolOperation poolOperation = objectMapper.readValue(record.value(), PoolOperation.class);
+            poolOperation.getPoolDeals().removeIf(poolDeal -> !botUsername.equals(poolDeal.getBot()));
+            poolOperationsMap.get(poolOperation.getOperation()).process(poolOperation);
+        } else if ("message".equals(key)) {
+            processMessage(record.value());
         }
+    }
+
+    private void processMessage(String message) {
+        notifyService.notifyMessage(message, Set.of(UserRole.OPERATOR, UserRole.ADMIN));
     }
 }
