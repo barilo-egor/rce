@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.bean.bot.Deal;
+import tgb.btc.library.constants.enums.bot.CryptoCurrency;
 import tgb.btc.library.constants.enums.bot.DealStatus;
 import tgb.btc.library.interfaces.service.bean.bot.IGroupChatService;
 import tgb.btc.library.interfaces.service.bean.bot.deal.IModifyDealService;
@@ -71,8 +72,7 @@ public class ConfirmAutoWithdrawalDeal extends Processor {
             return;
         }
         withdrawalMessage.ifPresent(msg -> responseSender.deleteMessage(chatId, msg.getMessageId()));
-
-        modifyDealService.confirm(dealPid);
+        modifyDealService.confirm(dealPid, hash);
         String username = readUserService.getUsernameByChatId(chatId);
         log.debug("Админ {} подтвердил сделку {} с автовыводом. Хеш транзакции: {}", chatId, dealPid, hash);
         notifier.sendAutoWithdrawDeal(
@@ -84,5 +84,6 @@ public class ConfirmAutoWithdrawalDeal extends Processor {
         log.debug("Сделка {} была отправлена в группу автовывода сделок.", dealPid);
         responseSender.deleteMessage(chatId, callbackQueryService.getSplitIntData(update, 2));
         responseSender.deleteMessage(chatId, updateService.getMessage(update).getMessageId());
+        responseSender.sendMessage(chatId, "Транзакция сделки №{}", String.format(CryptoCurrency.BITCOIN.getHashUrl(), hash));
     }
 }

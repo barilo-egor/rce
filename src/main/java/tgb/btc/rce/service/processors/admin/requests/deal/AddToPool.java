@@ -56,6 +56,5 @@ public class AddToPool extends Processor {
         modifyDealService.updateDealStatusByPid(DealStatus.AWAITING_WITHDRAWAL, dealPid);
         log.debug("Пользователь chatId={} добавил сделку {} в пул.", chatId, dealPid);
         responseSender.deleteCallbackMessageIfExists(update);
-        responseSender.sendMessage(chatId, "Сделка №" + dealPid + " добавлена в пул.");
     }
 }

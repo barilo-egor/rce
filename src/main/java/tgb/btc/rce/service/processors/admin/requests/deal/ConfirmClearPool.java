@@ -1,5 +1,6 @@
 package tgb.btc.rce.service.processors.admin.requests.deal;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -12,6 +13,7 @@ import tgb.btc.rce.service.Processor;
 import java.util.Optional;
 
 @CommandProcessor(command = Command.CONFIRM_CLEAR_POOL)
+@Slf4j
 public class ConfirmClearPool extends Processor {
 
     private final ICryptoWithdrawalService cryptoWithdrawalService;
@@ -35,6 +37,6 @@ public class ConfirmClearPool extends Processor {
         Integer poolMessageId = callbackQueryService.getSplitIntData(update, 1);
         responseSender.deleteMessage(chatId, poolMessageId);
         responseSender.deleteCallbackMessageIfExists(update);
-        responseSender.sendMessage(chatId, "Пул BTC очищен.");
+        log.debug("Пользователь {} очистил BTC пул.", chatId);
     }
 }
