@@ -145,6 +145,7 @@ public class DealProcessor extends Processor {
 
     private void switchByStep(Update update, Long chatId, Integer userStep, boolean isBack) {
         DealType dealType;
+        Long currentDealPid = readUserService.getCurrentDealByChatId(chatId);
         switch (userStep) {
             case 0:
                 if (!isBack) modifyUserService.updateCommandByChatId(Command.DEAL.name(), chatId);
@@ -171,7 +172,6 @@ public class DealProcessor extends Processor {
                 calculatorTypeService.run(update);
                 break;
             case 3:
-                Long currentDealPid = readUserService.getCurrentDealByChatId(chatId);
                 dealType = dealPropertyService.getDealTypeByPid(readUserService.getCurrentDealByChatId(chatId));
                 if (!isBack) exchangeService.sendTotalDealAmount(chatId, dealType, dealPropertyService.getCryptoCurrencyByPid(currentDealPid),
                         dealPropertyService.getFiatCurrencyByPid(currentDealPid));
@@ -202,7 +202,8 @@ public class DealProcessor extends Processor {
                 }
                 responseSender.deleteCallbackMessageIfExists(update);
                 if (exchangeService.isFewPaymentTypes(chatId)
-                        && (!DealType.isBuy(dealType) || securePaymentDetailsService.hasAccessToPaymentTypes(chatId))) {
+                        && (!DealType.isBuy(dealType)
+                        || securePaymentDetailsService.hasAccessToPaymentTypes(chatId, dealPropertyService.getFiatCurrencyByPid(currentDealPid)))) {
                     modifyUserService.nextStep(chatId);
                     exchangeService.askForPaymentType(update);
                     break;
@@ -211,7 +212,8 @@ public class DealProcessor extends Processor {
                 break;
             case 6:
                 dealType = dealPropertyService.getDealTypeByPid(readUserService.getCurrentDealByChatId(chatId));
-                if (!isBack && (!DealType.isBuy(dealType) || securePaymentDetailsService.hasAccessToPaymentTypes(chatId))) {
+                if (!isBack && (!DealType.isBuy(dealType)
+                        || securePaymentDetailsService.hasAccessToPaymentTypes(chatId, dealPropertyService.getFiatCurrencyByPid(currentDealPid)))) {
                     if (!exchangeService.savePaymentType(update)) return;
                 }
                 exchangeService.askForUserRequisites(update);

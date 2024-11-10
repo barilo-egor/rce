@@ -182,9 +182,9 @@ public class DealSupportService {
 
     public String dealToString(Deal deal) {
         User user = deal.getUser();
-        SecurePaymentDetails securePaymentDetails = securePaymentDetailsService.hasAccessToPaymentTypes(user.getChatId()) || !DealType.isBuy(deal.getDealType())
+        SecurePaymentDetails securePaymentDetails = securePaymentDetailsService.hasAccessToPaymentTypes(user.getChatId(), deal.getFiatCurrency()) || !DealType.isBuy(deal.getDealType())
                 ? null
-                : securePaymentDetailsService.getByChatId(user.getChatId());
+                : securePaymentDetailsService.getByChatIdAndFiatCurrency(user.getChatId(), deal.getFiatCurrency());
         String paymentTypeName = Objects.nonNull(deal.getPaymentType())
                 ? deal.getPaymentType().getName()
                 : Objects.nonNull(securePaymentDetails)
