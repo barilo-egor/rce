@@ -404,9 +404,21 @@ public class ExchangeService {
         if (isLessThanMin(chatId, deal.getDealType(), deal.getCryptoCurrency(), dealAmount.getCryptoAmount())) {
             return false;
         }
+        if (DealType.isBuy(deal.getDealType()) && isMoreThanMax(chatId, deal.getFiatCurrency(), dealAmount.getAmount())) {
+            return false;
+        }
         dealAmount.updateDeal(deal);
         modifyDealService.save(deal);
         return true;
+    }
+
+    private boolean isMoreThanMax(Long chatId, FiatCurrency fiatCurrency, BigDecimal amount) {
+        Integer maxSum = variablePropertiesReader.getInt(VariableType.MAX_SUM, fiatCurrency, fiatCurrency.getDefaultMaxSum());
+        if (amount.compareTo(new BigDecimal(maxSum)) > 0) {
+            messageImageResponseSender.sendMessage(MessageImage.MAX_AMOUNT, chatId);
+            return true;
+        }
+        return false;
     }
 
     private boolean isLessThanMin(Long chatId, DealType dealType, CryptoCurrency cryptoCurrency, BigDecimal dealCryptoAmount) {
