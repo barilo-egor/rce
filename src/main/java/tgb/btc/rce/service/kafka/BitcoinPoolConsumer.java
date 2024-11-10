@@ -37,7 +37,7 @@ public class BitcoinPoolConsumer {
         this.botUsername = telegramPropertiesService.getUsername();
     }
 
-    @KafkaListener(topics = "pool", groupId = "${bot.name}")
+    @KafkaListener(topics = "pool", groupId = "${bot.username}")
     public void receive(ConsumerRecord<String, String> record) throws JsonProcessingException {
         String key = record.key();
         if ("operation".equals(key)) {
