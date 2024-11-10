@@ -691,7 +691,7 @@ public class ExchangeService {
                     deal.getUsedReferralDiscount(), deal.getDiscount(), deal.getFiatCurrency());
             deal.setAmount(dealAmount);
             String requisite;
-            if (securePaymentDetailsService.hasAccessToPaymentTypes(chatId)) {
+            if (securePaymentDetailsService.hasAccessToPaymentTypes(chatId, deal.getFiatCurrency())) {
                 try {
                     requisite = paymentRequisiteService.getRequisite(paymentType);
                 } catch (BaseException e) {
@@ -699,7 +699,7 @@ public class ExchangeService {
                     return;
                 }
             } else {
-                requisite = securePaymentDetailsService.getByChatId(chatId).getDetails();
+                requisite = securePaymentDetailsService.getByChatIdAndFiatCurrency(chatId, deal.getFiatCurrency()).getDetails();
             }
             deal.setDetails(requisite);
 
