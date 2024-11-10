@@ -1,6 +1,5 @@
 package tgb.btc.rce.service.processors.admin.requests.review;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.bean.bot.Review;
 import tgb.btc.library.interfaces.service.bean.bot.IReviewService;
@@ -12,29 +11,26 @@ import tgb.btc.rce.vo.InlineButton;
 
 import java.util.List;
 
-@CommandProcessor(command = Command.NEW_REVIEWS)
-public class NewReviews extends Processor {
+@CommandProcessor(command = Command.REVIEW_NAVIGATION)
+public class NextReviews extends Processor {
 
-    private IReviewService reviewService;
+    private final IReviewService reviewService;
 
-    private IReviewProcessService reviewProcessService;
+    private final IReviewProcessService reviewProcessService;
 
-    @Autowired
-    public void setReviewService(IReviewService reviewService) {
+    public NextReviews(IReviewService reviewService, IReviewProcessService reviewProcessService) {
         this.reviewService = reviewService;
-    }
-
-    @Autowired
-    public void setReviewProcessService(IReviewProcessService reviewProcessService) {
         this.reviewProcessService = reviewProcessService;
     }
 
     @Override
     public void run(Update update) {
         Long chatId = updateService.getChatId(update);
-        List<Review> reviews = reviewService.findAllByIsPublished(false, 0, 5);
+        Long lastPid = callbackQueryService.getSplitLongData(update, 1);
+
+        List<Review> reviews = reviewService.findMoreThanPid(lastPid, 5);
         if (reviews.isEmpty()) {
-            responseSender.sendMessage(chatId, "Новых отзывов нет.");
+            responseSender.sendMessage(chatId, "Больше отзывов нет.");
             return;
         }
         reviewProcessService.sendNewReviews(chatId, reviews);
@@ -43,8 +39,8 @@ public class NewReviews extends Processor {
                         .text("Следующие 5")
                         .data(callbackQueryService.buildCallbackData(
                                 Command.REVIEW_NAVIGATION,
-                                reviews.get(reviews.size() - 1).getPid()))
-                        .build()
+                                reviews.get(reviews.size() - 1).getPid())
+                        ).build()
         );
     }
 }

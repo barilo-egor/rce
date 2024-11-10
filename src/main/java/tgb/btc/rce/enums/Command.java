@@ -171,6 +171,7 @@ public enum Command implements ICommand {
     BITCOIN_POOL("Пул сделок BTC", false, UserRole.OPERATOR_ACCESS),
     NEW_WITHDRAWALS("Вывод средств", false, UserRole.OPERATOR_ACCESS),
     NEW_REVIEWS("Новые отзывы", false, UserRole.OPERATOR_ACCESS),
+    REVIEW_NAVIGATION("REVIEW_NAVIGATION", false, UserRole.OPERATOR_ACCESS),
 
     PUBLISH_REVIEW("Опубликовать", false, UserRole.OPERATOR_ACCESS),
     DELETE_REVIEW("Удалить", false, UserRole.OPERATOR_ACCESS),
