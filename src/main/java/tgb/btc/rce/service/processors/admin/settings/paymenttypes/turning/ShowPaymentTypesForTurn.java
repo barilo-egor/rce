@@ -1,7 +1,7 @@
 package tgb.btc.rce.service.processors.admin.settings.paymenttypes.turning;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.bean.bot.PaymentType;
