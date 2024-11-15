@@ -1,5 +1,6 @@
 package tgb.btc.rce.service.impl.util;
 
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -11,7 +12,6 @@ import tgb.btc.rce.enums.UpdateType;
 import tgb.btc.rce.service.IUpdateService;
 import tgb.btc.rce.service.util.ICommandService;
 
-import javax.annotation.PostConstruct;
 import java.util.*;
 import java.util.stream.Collectors;
 
