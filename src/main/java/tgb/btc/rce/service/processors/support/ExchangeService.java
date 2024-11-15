@@ -478,6 +478,7 @@ public class ExchangeService {
         MessageImage messageImage;
         Integer subType;
         String lastWalletMessage = "";
+        String message = null;
         if (DealType.isBuy(deal.getDealType())) {
             messageImage = MessageImage.getInputWallet(cryptoCurrency);
             subType = messageImageService.getSubType(messageImage);
@@ -493,31 +494,40 @@ public class ExchangeService {
             }
             buttons.add(BotInlineButton.CANCEL.getButton());
             keyboard = keyboardBuildService.buildInline(buttons);
-
+            switch (subType) {
+                case 1:
+                    message = String.format(messageImageService.getMessage(messageImage),
+                            cryptoCurrenciesDesignService.getDisplayName(cryptoCurrency),
+                            bigDecimalService.roundToPlainString(deal.getCryptoAmount(), cryptoCurrency.getScale()),
+                            cryptoCurrency.getShortName(),
+                            lastWalletMessage);
+                    break;
+                case 2:
+                    message = String.format(messageImageService.getMessage(messageImage),
+                            bigDecimalService.roundToPlainString(deal.getCryptoAmount(), cryptoCurrency.getScale()),
+                            cryptoCurrency.getShortName(),
+                            lastWalletMessage);
+                    break;
+            }
         } else {
             keyboard = keyboardService.getInlineCancel();
             messageImage = MessageImage.FIAT_INPUT_DETAILS;
             subType = messageImageService.getSubType(messageImage);
+            switch (subType) {
+                case 1:
+                    message = String.format(messageImageService.getMessage(messageImage),
+                            deal.getPaymentType().getName(),
+                            bigDecimalService.roundToPlainString(deal.getCryptoAmount(), cryptoCurrency.getScale()),
+                            cryptoCurrency.getShortName());
+                    break;
+                case 2:
+                    message = String.format(messageImageService.getMessage(messageImage),
+                            bigDecimalService.roundToPlainString(deal.getCryptoAmount(), cryptoCurrency.getScale()),
+                            cryptoCurrency.getShortName());
+                    break;
+            }
         }
-        switch (subType) {
-            case 1:
-                messageImageResponseSender.sendMessage(messageImage, chatId,
-                        String.format(messageImageService.getMessage(messageImage),
-                                cryptoCurrenciesDesignService.getDisplayName(cryptoCurrency),
-                                bigDecimalService.roundToPlainString(deal.getCryptoAmount(), cryptoCurrency.getScale()),
-                                cryptoCurrency.getShortName(),
-                                lastWalletMessage),
-                        keyboard);
-                break;
-            case 2:
-                messageImageResponseSender.sendMessage(messageImage, chatId,
-                        String.format(messageImageService.getMessage(messageImage),
-                                bigDecimalService.roundToPlainString(deal.getCryptoAmount(), cryptoCurrency.getScale()),
-                                cryptoCurrency.getShortName(),
-                                lastWalletMessage),
-                        keyboard);
-                break;
-        }
+        messageImageResponseSender.sendMessage(messageImage, chatId, message, keyboard);
     }
 
     public void askForUserPromoCode(Long chatId) {
