@@ -517,13 +517,13 @@ public class ExchangeService {
                 case 1:
                     message = String.format(messageImageService.getMessage(messageImage),
                             deal.getPaymentType().getName(),
-                            bigDecimalService.roundToPlainString(deal.getCryptoAmount(), cryptoCurrency.getScale()),
-                            cryptoCurrency.getShortName());
+                            bigDecimalService.roundToPlainString(deal.getAmount()),
+                            deal.getFiatCurrency().getGenitive());
                     break;
                 case 2:
                     message = String.format(messageImageService.getMessage(messageImage),
-                            bigDecimalService.roundToPlainString(deal.getCryptoAmount(), cryptoCurrency.getScale()),
-                            cryptoCurrency.getShortName());
+                            bigDecimalService.roundToPlainString(deal.getAmount()),
+                            deal.getFiatCurrency().getGenitive());
                     break;
             }
         }
