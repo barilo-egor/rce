@@ -1,6 +1,6 @@
 package tgb.btc.rce.service.impl;
 
-import org.apache.commons.lang.RandomStringUtils;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -26,11 +26,11 @@ class UpdateServiceTest {
     @BeforeAll
     static void init() {
         for (int i = 1; i <= numberOfTestUpdates; i++) {
-            long randomChatId = RandomUtils.nextLong(0, 99999999);
+            long randomChatId = RandomUtils.secure().randomLong(0, 99999999);
 
             User user = new User();
             user.setId(randomChatId);
-            user.setUserName(RandomStringUtils.randomAlphanumeric(10));
+            user.setUserName(RandomStringUtils.secure().nextAlphanumeric(10));
             users.add(user);
 
             Chat chat = new Chat();
@@ -219,7 +219,7 @@ class UpdateServiceTest {
         for (int i = 1; i <= numberOfTestUpdates; i++) {
             Update update = new Update();
             Message message = new Message();
-            Integer randomMessageId = RandomUtils.nextInt(0, 999999);
+            Integer randomMessageId = RandomUtils.secure().randomInt(0, 999999);
             message.setMessageId(randomMessageId);
             update.setMessage(message);
             assertEquals(randomMessageId, updateService.getMessageId(update));
@@ -258,7 +258,7 @@ class UpdateServiceTest {
         for (int i = 1; i <= numberOfTestUpdates; i++) {
             Update update = new Update();
             Message message = new Message();
-            String messageText = RandomStringUtils.randomAlphanumeric(10);
+            String messageText = RandomStringUtils.secure().nextAlphanumeric(10);
             message.setText(messageText);
             update.setMessage(message);
             assertEquals(messageText, updateService.getMessageText(update));
@@ -273,7 +273,7 @@ class UpdateServiceTest {
     @Test
     void getLongFromText() {
         for (int i = 1; i <= numberOfTestUpdates; i++) {
-            Long randomLong = RandomUtils.nextLong(0, 1000);
+            Long randomLong = RandomUtils.secure().randomLong(0, 1000);
             String strRandom = randomLong.toString();
             Update update = new Update();
             Message message = new Message();
@@ -286,7 +286,7 @@ class UpdateServiceTest {
     @Test
     void getBigDecimalFromText() {
         for (int i = 1; i <= numberOfTestUpdates; i++) {
-            double randomDouble = RandomUtils.nextDouble(0, 1000);
+            double randomDouble = RandomUtils.secure().randomDouble(0, 1000);
             Update update = new Update();
             Message message = new Message();
             message.setText(Double.toString(randomDouble));

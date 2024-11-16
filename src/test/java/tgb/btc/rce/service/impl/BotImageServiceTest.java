@@ -1,6 +1,6 @@
 package tgb.btc.rce.service.impl;
 
-import org.apache.commons.lang.RandomStringUtils;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.Test;
 import org.telegram.telegrambots.meta.api.objects.PhotoSize;
@@ -23,13 +23,13 @@ class BotImageServiceTest {
         for (int i = 1; i <= numberOfTries; i++) {
             List<PhotoSize> photoSizeList = new ArrayList<>();
             PhotoSize maxPhotoSize = new PhotoSize();
-            int randomMaxSize = RandomUtils.nextInt(1000, 9999);
+            int randomMaxSize = RandomUtils.secure().randomInt(1000, 9999);
             maxPhotoSize.setFileSize(randomMaxSize);
-            String randomFileId = RandomStringUtils.randomAlphanumeric(10);
+            String randomFileId = RandomStringUtils.secure().nextAlphanumeric(10);
             maxPhotoSize.setFileId(randomFileId);
             photoSizeList.add(maxPhotoSize);
             PhotoSize photoSize = new PhotoSize();
-            photoSize.setFileSize(RandomUtils.nextInt(1, 999));
+            photoSize.setFileSize(RandomUtils.secure().randomInt(1, 999));
             photoSizeList.add(photoSize);
             assertEquals(randomFileId, botImageService.getImageId(photoSizeList));
         }
