@@ -93,11 +93,12 @@ public class FileDownloader implements IFileDownloader {
                 }
                 sent = true;
                 break;
-            } catch (Exception ignored) {
+            } catch (Exception e) {
+                log.error("Ошибка отправки файла для сохранения fileId: ", e);
             }
         }
         if (!sent || Objects.isNull(message) || sentChatId == 0) {
-            throw new BaseException("Не получилось отправить чек диспута в ТГ операторам или администраторам.");
+            throw new BaseException("Не получилось отправить файл для сохранения fileId в ТГ операторам или администраторам.");
         }
         String result;
         if (file.getName().endsWith(".pdf")) {

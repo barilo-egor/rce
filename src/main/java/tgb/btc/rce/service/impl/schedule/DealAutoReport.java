@@ -1,7 +1,7 @@
 package tgb.btc.rce.service.impl.schedule;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.exception.ExceptionUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -186,7 +186,7 @@ public class DealAutoReport {
         } catch (Exception e) {
             String message = "Ошибка при формировании периодического отчета за " + data.getPeriod() + ":\n"
                     + e.getMessage() + "\n"
-                    + ExceptionUtils.getFullStackTrace(e);
+                    + ExceptionUtils.getStackTrace(e);
             notifyService.notifyMessage(message, Set.of(UserRole.ADMIN));
         }
     }

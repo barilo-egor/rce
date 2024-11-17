@@ -1,6 +1,6 @@
 package tgb.btc.rce.service.processors.deal;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.api.web.INotificationsAPI;

@@ -1,6 +1,6 @@
 package tgb.btc.rce.service.processors.admin.hidden;
 
-import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.bean.bot.User;
 import tgb.btc.rce.annotation.CommandProcessor;
