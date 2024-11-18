@@ -24,7 +24,8 @@ public enum TextCommand {
     REQUESTS("Заявки"),
     SEND_MESSAGES("Отправка сообщений"),
     USERS("Пользователи"),
-    NEW_API_DEALS("Новые API заявки");
+    NEW_API_DEALS("Новые API заявки"),
+    NEW_DEALS("Новые заявки");
 
     private final String text;
 }
