@@ -3,6 +3,7 @@ package tgb.btc.rce.service.processors.deal;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.bean.bot.User;
 import tgb.btc.library.constants.enums.DeliveryKind;
@@ -26,6 +27,7 @@ import tgb.btc.rce.service.handler.util.IStartService;
 import tgb.btc.rce.service.process.IDealBotProcessService;
 import tgb.btc.rce.service.processors.support.ExchangeService;
 import tgb.btc.rce.service.util.IUpdateDispatcher;
+import tgb.btc.rce.vo.TelegramUpdateEvent;
 
 import java.util.HashSet;
 import java.util.Objects;
@@ -294,14 +296,19 @@ public class DealProcessor extends Processor {
         startService.process(chatId);
     }
 
+    private ApplicationEventPublisher eventPublisher;
+
+    @Autowired
+    public void setEventPublisher(ApplicationEventPublisher eventPublisher) {
+        this.eventPublisher = eventPublisher;
+    }
+
     public boolean isMainMenuCommand(Update update) {
         if (!update.hasMessage() || !update.getMessage().hasText()) return false;
         Long chatId = updateService.getChatId(update);
         Command commandFromUpdate = commandService.fromUpdate(update);
         Command mainMenuCommand = null;
         Set<Command> commands = new HashSet<>(Menu.MAIN.getCommands());
-        commands.add(Command.ADMIN_PANEL);
-        commands.add(Command.OPERATOR_PANEL);
         commands.add(Command.START);
         for (Command command : commands) {
             if (command.equals(commandFromUpdate)) mainMenuCommand = command;
@@ -317,7 +324,8 @@ public class DealProcessor extends Processor {
             modifyUserService.updateCurrentDealByChatId(null, chatId);
         }
         responseSender.deleteCallbackMessageIfExists(update);
-        updateDispatcher.runProcessor(mainMenuCommand, chatId, update);
+        TelegramUpdateEvent telegramUpdateEvent = new TelegramUpdateEvent(this, update);
+        eventPublisher.publishEvent(telegramUpdateEvent);
         return true;
     }
 }
