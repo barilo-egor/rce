@@ -7,7 +7,8 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum TextCommand {
     BUY_BITCOIN("Купить"),
-    SELL_BITCOIN("Продать");
+    SELL_BITCOIN("Продать"),
+    CONTACTS("Контакты");
 
     private final String text;
 }
