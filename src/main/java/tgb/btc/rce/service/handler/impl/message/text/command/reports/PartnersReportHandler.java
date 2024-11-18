@@ -1,4 +1,4 @@
-package tgb.btc.rce.service.processors.admin.settings.reports;
+package tgb.btc.rce.service.handler.impl.message.text.command.reports;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -6,14 +6,15 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.telegram.telegrambots.meta.api.objects.Update;
+import org.springframework.stereotype.Service;
+import org.telegram.telegrambots.meta.api.objects.Message;
 import tgb.btc.library.bean.bot.User;
 import tgb.btc.library.exception.BaseException;
 import tgb.btc.library.interfaces.service.bean.bot.deal.read.IDealCountService;
-import tgb.btc.rce.annotation.CommandProcessor;
-import tgb.btc.rce.enums.Command;
-import tgb.btc.rce.service.Processor;
+import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
+import tgb.btc.rce.enums.update.TextCommand;
+import tgb.btc.rce.sender.IResponseSender;
+import tgb.btc.rce.service.handler.message.text.ITextCommandHandler;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -22,20 +23,26 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@CommandProcessor(command = Command.PARTNERS_REPORT)
+@Service
 @Slf4j
-public class PartnersReport extends Processor {
+public class PartnersReportHandler implements ITextCommandHandler {
 
-    private IDealCountService dealCountService;
+    private final IReadUserService readUserService;
 
-    @Autowired
-    public void setDealCountService(IDealCountService dealCountService) {
+    private final IResponseSender responseSender;
+
+    private final IDealCountService dealCountService;
+
+    public PartnersReportHandler(IReadUserService readUserService, IResponseSender responseSender,
+                                 IDealCountService dealCountService) {
+        this.readUserService = readUserService;
+        this.responseSender = responseSender;
         this.dealCountService = dealCountService;
     }
 
     @Override
-    public void run(Update update) {
-        Long chatId = updateService.getChatId(update);
+    public void handle(Message message) {
+        Long chatId = message.getChatId();
         List<User> users = readUserService.findAll().stream().filter(user -> !user.getReferralUsers().isEmpty()).collect(Collectors.toList());
         if (users.isEmpty()) {
             responseSender.sendMessage(chatId, "Нет пользователей с рефералами.");
@@ -95,5 +102,10 @@ public class PartnersReport extends Processor {
             log.error("Ошибка при выгрузке файла " + this.getClass().getSimpleName(), e);
             throw new BaseException("Ошибка при выгрузке файла: " + e.getMessage());
         }
+    }
+
+    @Override
+    public TextCommand getTextCommand() {
+        return TextCommand.PARTNERS_REPORT;
     }
 }

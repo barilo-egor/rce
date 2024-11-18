@@ -31,7 +31,8 @@ public enum TextCommand {
     NEW_WITHDRAWALS("Заявки на вывод"),
     ON_BOT("Вкл.бота"),
     OFF_BOT("Выкл.бота"),
-    LOTTERY_REPORT("Отчет по лотереи");
+    LOTTERY_REPORT("Отчет по лотереи"),
+    PARTNERS_REPORT("Отчет по партнерам");
 
     private final String text;
 }
