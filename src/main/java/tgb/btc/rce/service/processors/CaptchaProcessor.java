@@ -16,7 +16,7 @@ import tgb.btc.rce.service.ICaptchaSender;
 import tgb.btc.rce.service.INotifyService;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.captcha.IAntiSpam;
-import tgb.btc.rce.service.processors.tool.Start;
+import tgb.btc.rce.service.handler.service.IStartService;
 import tgb.btc.rce.vo.InlineButton;
 
 import java.util.List;
@@ -29,7 +29,7 @@ public class CaptchaProcessor extends Processor {
 
     private ICaptchaSender captchaSender;
 
-    private Start start;
+    private IStartService startService;
 
     private IAntiSpam antiSpam;
 
@@ -45,7 +45,7 @@ public class CaptchaProcessor extends Processor {
     }
 
     @Autowired
-    public void setAdminService(INotifyService notifyService) {
+    public void setNotifyService(INotifyService notifyService) {
         this.notifyService = notifyService;
     }
 
@@ -60,8 +60,8 @@ public class CaptchaProcessor extends Processor {
     }
 
     @Autowired
-    public void setStart(Start start) {
-        this.start = start;
+    public void setStartService(IStartService startService) {
+        this.startService = startService;
     }
 
     @Autowired
@@ -119,7 +119,7 @@ public class CaptchaProcessor extends Processor {
     private void removeUserFromSpam(Long chatId) {
         antiSpam.removeUser(chatId);
         antiSpam.removeFromCaptchaCash(chatId);
-        start.run(chatId);
+        startService.process(chatId);
     }
 
     private boolean isEnteredCaptchaIsRight(Update update) {
