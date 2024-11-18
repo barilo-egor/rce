@@ -17,7 +17,8 @@ public enum TextCommand {
     ROULETTE("Рулетка"),
     BOT_SETTINGS("Настройки бота"),
     DISCOUNTS("Скидки"),
-    EDIT_CONTACTS("Редактирование контактов");
+    EDIT_CONTACTS("Редактирование контактов"),
+    OBSERVER_PANEL("Панель наблюдателя");
 
     private final String text;
 }
