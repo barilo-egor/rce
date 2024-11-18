@@ -10,7 +10,8 @@ import java.util.Set;
 @AllArgsConstructor
 public enum SlashCommand {
     START("/start", UserRole.USER_ACCESS),
-    HELP("/help", UserRole.OPERATOR_ACCESS);
+    HELP("/help", UserRole.OPERATOR_ACCESS),
+    CHAT_ID("/chatid", UserRole.USER_ACCESS);
 
     private final String text;
     private final Set<UserRole> roles;
