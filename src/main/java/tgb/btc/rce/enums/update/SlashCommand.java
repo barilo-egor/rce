@@ -11,7 +11,11 @@ import java.util.Set;
 public enum SlashCommand {
     START("/start", UserRole.USER_ACCESS),
     HELP("/help", UserRole.OPERATOR_ACCESS),
-    CHAT_ID("/chatid", UserRole.USER_ACCESS);
+    CHAT_ID("/chatid", UserRole.USER_ACCESS),
+    MAKE_USER("/makeuser", UserRole.ADMIN_ACCESS),
+    MAKE_OBSERVER("/makeobserver", UserRole.ADMIN_ACCESS),
+    MAKE_OPERATOR("/makeoperator", UserRole.ADMIN_ACCESS),
+    MAKE_ADMIN("/makeadmin", UserRole.ADMIN_ACCESS);
 
     private final String text;
     private final Set<UserRole> roles;
