@@ -251,8 +251,9 @@ public enum Command implements ICommand {
             .filter(Command::isHidden)
             .collect(Collectors.toSet());
 
-    public static final List<Command> NEW_HANDLE = List.of(START, HELP, CHAT_ID, MAKE_USER, MAKE_OBSERVER, MAKE_OPERATOR,
-            MAKE_ADMIN);
+    public static final List<Command> NEW_HANDLE = List.of(
+            START, HELP, CHAT_ID, MAKE_USER, MAKE_OBSERVER, MAKE_OPERATOR, MAKE_ADMIN, BACKUP_DB
+    );
 
     final String text;
     final boolean isHidden;

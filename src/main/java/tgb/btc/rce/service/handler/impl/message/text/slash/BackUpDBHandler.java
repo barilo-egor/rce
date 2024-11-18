@@ -1,41 +1,35 @@
-package tgb.btc.rce.service.processors.admin.hidden;
+package tgb.btc.rce.service.handler.impl.message.text.slash;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.telegram.telegrambots.meta.api.objects.Update;
+import org.springframework.stereotype.Service;
+import org.telegram.telegrambots.meta.api.objects.Message;
 import tgb.btc.library.constants.enums.properties.PropertiesPath;
 import tgb.btc.library.service.process.BackupService;
-import tgb.btc.rce.annotation.CommandProcessor;
-import tgb.btc.rce.enums.Command;
+import tgb.btc.rce.enums.update.SlashCommand;
 import tgb.btc.rce.sender.IResponseSender;
-import tgb.btc.rce.service.Processor;
+import tgb.btc.rce.service.handler.message.text.ISlashCommandHandler;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-@CommandProcessor(command = Command.BACKUP_DB)
+@Service
 @Slf4j
-public class BackupBD extends Processor {
+public class BackUpDBHandler implements ISlashCommandHandler {
 
-    private BackupService backupService;
+    private final IResponseSender responseSender;
 
-    private IResponseSender responseSender;
+    private final BackupService backupService;
 
-    @Autowired
-    public void setResponseSender(IResponseSender responseSender) {
+    public BackUpDBHandler(IResponseSender responseSender, BackupService backupService) {
         this.responseSender = responseSender;
-    }
-
-    @Autowired(required = false)
-    public void setBackupService(BackupService backupService) {
         this.backupService = backupService;
     }
 
     @Override
-    public void run(Update update) {
-        Long chatId = updateService.getChatId(update);
+    public void handle(Message message) {
+        Long chatId = message.getChatId();
 
         String strChatIds = PropertiesPath.CONFIG_PROPERTIES.getString("backup.chatIds");
         if (StringUtils.isBlank(strChatIds)) {
@@ -62,5 +56,10 @@ public class BackupBD extends Processor {
         backupService.backup(file -> responseSender.sendFile(chatId, file));
         log.debug("Пользователь chatId={} выгрузил бэкап БД вручную.", chatId);
         responseSender.sendMessage(chatId, "Процесс резервного копирования запущен. По окончанию вам будет отправлен файл.");
+    }
+
+    @Override
+    public SlashCommand getSlashCommand() {
+        return SlashCommand.BACKUP_DB;
     }
 }
