@@ -18,7 +18,8 @@ public enum SlashCommand {
     MAKE_ADMIN("/makeadmin", UserRole.ADMIN_ACCESS),
     BACKUP_DB("/backupdb", UserRole.ADMIN_ACCESS),
     DELETE_FROM_POOL("/deletefrompool", UserRole.OPERATOR_ACCESS),
-    DELETE_USER("/deleteuser", UserRole.ADMIN_ACCESS);
+    DELETE_USER("/deleteuser", UserRole.ADMIN_ACCESS),
+    NOTIFICATIONS("/notifications", UserRole.OBSERVER_ACCESS);
 
     private final String text;
     private final Set<UserRole> roles;

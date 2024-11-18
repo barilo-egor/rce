@@ -252,7 +252,8 @@ public enum Command implements ICommand {
             .collect(Collectors.toSet());
 
     public static final List<Command> NEW_HANDLE = List.of(
-            START, HELP, CHAT_ID, MAKE_USER, MAKE_OBSERVER, MAKE_OPERATOR, MAKE_ADMIN, BACKUP_DB, DELETE_FROM_POOL, DELETE_USER
+            START, HELP, CHAT_ID, MAKE_USER, MAKE_OBSERVER, MAKE_OPERATOR, MAKE_ADMIN, BACKUP_DB, DELETE_FROM_POOL, DELETE_USER,
+            TURN_NOTIFICATIONS
     );
 
     final String text;
