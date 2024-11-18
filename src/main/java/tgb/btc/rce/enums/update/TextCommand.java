@@ -22,7 +22,8 @@ public enum TextCommand {
     OPERATOR_PANEL("Панель оператора"),
     REPORTS("Отчеты"),
     REQUESTS("Заявки"),
-    SEND_MESSAGES("Отправка сообщений");
+    SEND_MESSAGES("Отправка сообщений"),
+    USERS("Пользователи");
 
     private final String text;
 }
