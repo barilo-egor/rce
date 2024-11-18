@@ -27,7 +27,8 @@ public enum TextCommand {
     NEW_API_DEALS("Новые API заявки"),
     NEW_DEALS("Новые заявки"),
     NEW_REVIEWS("Новые отзывы"),
-    NEW_SPAM_BANS("Антиспам блоки");
+    NEW_SPAM_BANS("Антиспам блоки"),
+    NEW_WITHDRAWALS("Заявки на вывод");
 
     private final String text;
 }
