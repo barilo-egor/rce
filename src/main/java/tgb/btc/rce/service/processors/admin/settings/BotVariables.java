@@ -5,6 +5,7 @@ import org.apache.commons.io.FileUtils;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import tgb.btc.library.constants.enums.properties.PropertiesPath;
+import tgb.btc.library.service.properties.VariablePropertiesReader;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.Processor;
@@ -15,6 +16,12 @@ import java.io.IOException;
 @Slf4j
 @CommandProcessor(command = Command.BOT_VARIABLES)
 public class BotVariables extends Processor {
+
+    private final VariablePropertiesReader variablePropertiesReader;
+
+    public BotVariables(VariablePropertiesReader variablePropertiesReader) {
+        this.variablePropertiesReader = variablePropertiesReader;
+    }
 
     @Override
     public void run(Update update) {
@@ -64,7 +71,7 @@ public class BotVariables extends Processor {
                     + PropertiesPath.VARIABLE_BUFFER_PROPERTIES.getFileName() + " в " + PropertiesPath.VARIABLE_PROPERTIES.getFileName());
             return;
         }
-        PropertiesPath.VARIABLE_PROPERTIES.reload();
+        variablePropertiesReader.reload();
         responseSender.sendMessage(chatId, "Переменные обновлены.");
     }
 }
