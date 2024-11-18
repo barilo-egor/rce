@@ -1,5 +1,6 @@
 package tgb.btc.rce.enums;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import tgb.btc.library.constants.enums.bot.UserRole;
 import tgb.btc.library.constants.enums.properties.PropertiesPath;
@@ -11,6 +12,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Slf4j
+@Getter
 public enum Command implements ICommand {
     /*
      * CallbackQuery
@@ -253,7 +255,7 @@ public enum Command implements ICommand {
 
     public static final List<Command> NEW_HANDLE = List.of(
             START, HELP, CHAT_ID, MAKE_USER, MAKE_OBSERVER, MAKE_OPERATOR, MAKE_ADMIN, BACKUP_DB, DELETE_FROM_POOL, DELETE_USER,
-            TURN_NOTIFICATIONS
+            TURN_NOTIFICATIONS, BUY_BITCOIN
     );
 
     final String text;
@@ -266,20 +268,7 @@ public enum Command implements ICommand {
         this.roles = roles;
     }
 
-
-    public String getText() {
-        return text;
-    }
-
-    public Set<UserRole> getRoles() {
-        return roles;
-    }
-
     public boolean hasAccess(UserRole role) {
         return this.getRoles().contains(role);
-    }
-
-    public boolean isHidden() {
-        return isHidden;
     }
 }

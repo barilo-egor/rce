@@ -22,6 +22,7 @@ import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.Menu;
 import tgb.btc.rce.service.ICalculatorTypeService;
 import tgb.btc.rce.service.Processor;
+import tgb.btc.rce.service.handler.util.IStartService;
 import tgb.btc.rce.service.process.IDealBotProcessService;
 import tgb.btc.rce.service.processors.support.ExchangeService;
 import tgb.btc.rce.service.util.IUpdateDispatcher;
@@ -57,6 +58,13 @@ public class DealProcessor extends Processor {
     private IModule<DeliveryKind> deliveryKindModule;
 
     private ISecurePaymentDetailsService securePaymentDetailsService;
+
+    private IStartService startService;
+
+    @Autowired
+    public void setStartService(IStartService startService) {
+        this.startService = startService;
+    }
 
     @Autowired
     public void setSecurePaymentDetailsService(ISecurePaymentDetailsService securePaymentDetailsService) {
@@ -283,7 +291,7 @@ public class DealProcessor extends Processor {
 
     private void processToStart(Long chatId, Update update) {
         responseSender.deleteCallbackMessageIfExists(update);
-        updateDispatcher.runProcessor(Command.START, chatId, update);
+        startService.process(chatId);
     }
 
     public boolean isMainMenuCommand(Update update) {

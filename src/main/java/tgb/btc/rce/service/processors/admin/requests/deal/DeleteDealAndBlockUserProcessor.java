@@ -11,7 +11,7 @@ import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.service.handler.service.IStartService;
+import tgb.btc.rce.service.handler.util.IStartService;
 
 @CommandProcessor(command = Command.DELETE_DEAL_AND_BLOCK_USER)
 @Slf4j

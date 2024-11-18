@@ -43,6 +43,6 @@ public class SlashCommandHandler implements ITextMessageHandler {
 
     @Override
     public TextMessageType getTextMessageType() {
-        return TextMessageType.SLASH;
+        return TextMessageType.SLASH_COMMAND;
     }
 }
