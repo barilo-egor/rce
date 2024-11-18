@@ -103,7 +103,6 @@ public class UpdateDispatcher implements IUpdateDispatcher {
 
     public void dispatch(Update update) {
         Long chatId = updateService.getChatId(update);
-        if (IS_LOG_UDPATES) log.info(chatId.toString());
         if (bannedUserCache.get(chatId)) return;
         Command command = getCommand(update, chatId);
         if (Command.NEW_HANDLE.contains(command)) {

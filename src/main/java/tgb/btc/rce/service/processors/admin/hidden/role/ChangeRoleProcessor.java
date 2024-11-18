@@ -5,16 +5,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.constants.enums.bot.UserRole;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.service.processors.tool.Start;
+import tgb.btc.rce.service.handler.service.IStartService;
 
 
 public abstract class ChangeRoleProcessor extends Processor {
 
-    private Start start;
+    private IStartService startService;
 
     @Autowired
-    public void setStart(Start start) {
-        this.start = start;
+    public void setStartService(IStartService startService) {
+        this.startService = startService;
     }
 
     protected void changeRole(Update update, UserRole userRole) {
@@ -37,7 +37,7 @@ public abstract class ChangeRoleProcessor extends Processor {
         modifyUserService.updateUserRoleByChatId(userRole, userChatId);
         responseSender.sendMessage(chatId, "Пользователю " + userChatId + " сменена роль на \"" + userRole.getDisplayName() + "\".");
         responseSender.sendMessage(userChatId, "Вы были переведены в роль \"" + userRole.getDisplayName() + "\".");
-        start.run(userChatId);
+        startService.process(chatId);
         getLogger().debug("Админ {} сменил пользователю {} роль на {}.", chatId, userChatId, userRole.getDisplayName());
     }
 

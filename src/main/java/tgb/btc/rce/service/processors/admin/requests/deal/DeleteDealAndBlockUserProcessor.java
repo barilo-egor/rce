@@ -11,8 +11,7 @@ import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.service.processors.tool.Start;
-
+import tgb.btc.rce.service.handler.service.IStartService;
 
 @CommandProcessor(command = Command.DELETE_DEAL_AND_BLOCK_USER)
 @Slf4j
@@ -20,11 +19,16 @@ public class DeleteDealAndBlockUserProcessor extends Processor {
 
     private IDealUserService dealUserService;
 
-    private Start start;
-
     private IModifyDealService modifyDealService;
 
     private ICryptoWithdrawalService cryptoWithdrawalService;
+
+    private IStartService startService;
+
+    @Autowired
+    public void setStartService(IStartService startService) {
+        this.startService = startService;
+    }
 
     @Value("${bot.username}")
     private String botUsername;
@@ -44,11 +48,6 @@ public class DeleteDealAndBlockUserProcessor extends Processor {
         this.dealUserService = dealUserService;
     }
 
-    @Autowired
-    public void setStart(Start start) {
-        this.start = start;
-    }
-
     @Override
     public void run(Update update) {
         if (!update.hasCallbackQuery()) return;
@@ -61,6 +60,6 @@ public class DeleteDealAndBlockUserProcessor extends Processor {
         new Thread(() -> cryptoWithdrawalService.deleteFromPool(botUsername, dealPid)).start();
         responseSender.sendMessage(chatId, "Заявка №" + dealPid + " удалена.");
         responseSender.deleteMessage(chatId, update.getCallbackQuery().getMessage().getMessageId());
-        start.run(userChatId);
+        startService.process(userChatId);
     }
 }
