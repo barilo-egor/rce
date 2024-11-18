@@ -30,8 +30,12 @@ public class CommandService implements ICommandService {
                                 .anyMatch(propertiesPath -> propertiesPath.name().equals(command.getText())))
                 .collect(Collectors.collectingAndThen(Collectors.toSet(), Collections::unmodifiableSet));
         for (Command command : Command.values()) {
-            if (propertiesCommands.contains(command))
-                propertiesCommandsText.put(command, PropertiesPath.valueOf(command.getText()).getString(command.name()));
+            if (propertiesCommands.contains(command)) {
+                String value = PropertiesPath.valueOf(command.getText()).getString(command.name());
+                if (Objects.nonNull(value)) {
+                    propertiesCommandsText.put(command, value);
+                }
+            }
         }
     }
 

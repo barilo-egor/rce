@@ -16,7 +16,7 @@ import tgb.btc.rce.service.ICaptchaSender;
 import tgb.btc.rce.service.INotifyService;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.captcha.IAntiSpam;
-import tgb.btc.rce.service.handler.service.IStartService;
+import tgb.btc.rce.service.handler.util.IStartService;
 import tgb.btc.rce.vo.InlineButton;
 
 import java.util.List;

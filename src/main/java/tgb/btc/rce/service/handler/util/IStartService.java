@@ -1,4 +1,4 @@
-package tgb.btc.rce.service.handler.service;
+package tgb.btc.rce.service.handler.util;
 
 public interface IStartService {
 
