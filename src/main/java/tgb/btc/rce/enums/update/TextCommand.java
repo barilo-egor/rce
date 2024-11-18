@@ -21,7 +21,8 @@ public enum TextCommand {
     OBSERVER_PANEL("Панель наблюдателя"),
     OPERATOR_PANEL("Панель оператора"),
     REPORTS("Отчеты"),
-    REQUESTS("Заявки");
+    REQUESTS("Заявки"),
+    SEND_MESSAGES("Отправка сообщений");
 
     private final String text;
 }
