@@ -11,10 +11,11 @@ public enum TextCommand {
     CONTACTS("Контакты"),
     DRAWS("Розыгрыши"),
     REFERRAL("Реферальная программа"),
-    ADMIN_PANEL("Админ-панель"),
+    ADMIN_PANEL("Админ панель"),
     WEB_ADMIN_PANEL("Веб админ-панель"),
     LOTTERY("Лотерея"),
-    ROULETTE("Рулетка");
+    ROULETTE("Рулетка"),
+    BOT_SETTINGS("Настройки бота");
 
     private final String text;
 }

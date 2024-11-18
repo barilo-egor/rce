@@ -30,6 +30,8 @@ public class TextCommandService implements ITextCommandService {
             String value = buttonsDesignPropertiesReader.getString(textCommand.name(), null);
             if (Objects.nonNull(value)) {
                 commandTextMap.put(textCommand, value);
+            } else {
+                commandTextMap.put(textCommand, textCommand.getText());
             }
         }
     }

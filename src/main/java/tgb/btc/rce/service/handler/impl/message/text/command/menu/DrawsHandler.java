@@ -1,4 +1,4 @@
-package tgb.btc.rce.service.handler.impl.message.text.command;
+package tgb.btc.rce.service.handler.impl.message.text.command.menu;
 
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Message;
