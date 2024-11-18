@@ -28,7 +28,9 @@ public enum TextCommand {
     NEW_DEALS("Новые заявки"),
     NEW_REVIEWS("Новые отзывы"),
     NEW_SPAM_BANS("Антиспам блоки"),
-    NEW_WITHDRAWALS("Заявки на вывод");
+    NEW_WITHDRAWALS("Заявки на вывод"),
+    ON_BOT("Вкл.бота"),
+    OFF_BOT("Выкл.бота");
 
     private final String text;
 }
