@@ -8,7 +8,8 @@ import lombok.Getter;
 public enum TextCommand {
     BUY_BITCOIN("Купить"),
     SELL_BITCOIN("Продать"),
-    CONTACTS("Контакты");
+    CONTACTS("Контакты"),
+    DRAWS("Розыгрыши");
 
     private final String text;
 }
