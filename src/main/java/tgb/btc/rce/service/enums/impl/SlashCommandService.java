@@ -10,7 +10,7 @@ public class SlashCommandService implements ISlashCommandService {
 
     public static final String CACHE_NAME = "slashCommandService";
 
-    @Cacheable(CACHE_NAME)
+    @Cacheable(CACHE_NAME + "fromMessageText")
     @Override
     public SlashCommand fromMessageText(String text) {
         int spaceIndex = text.indexOf(" ");
@@ -25,7 +25,7 @@ public class SlashCommandService implements ISlashCommandService {
         }
     }
 
-    @Cacheable(CACHE_NAME)
+    @Cacheable(CACHE_NAME + "fromText")
     @Override
     public SlashCommand fromText(String text) {
         for (SlashCommand slashCommand: SlashCommand.values()) {

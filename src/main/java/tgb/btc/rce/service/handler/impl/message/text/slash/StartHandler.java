@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import tgb.btc.rce.enums.update.SlashCommand;
 import tgb.btc.rce.service.handler.message.text.ISlashCommandHandler;
-import tgb.btc.rce.service.handler.service.IStartService;
+import tgb.btc.rce.service.handler.util.IStartService;
 
 @Service
 @Slf4j

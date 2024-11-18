@@ -8,7 +8,7 @@ import tgb.btc.library.interfaces.service.bean.bot.user.IModifyUserService;
 import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.rce.sender.IResponseSender;
 import tgb.btc.rce.service.enums.IChangeRoleService;
-import tgb.btc.rce.service.handler.service.IStartService;
+import tgb.btc.rce.service.handler.util.IStartService;
 
 @Service
 @Slf4j

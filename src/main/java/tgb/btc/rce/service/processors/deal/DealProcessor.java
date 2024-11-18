@@ -3,6 +3,7 @@ package tgb.btc.rce.service.processors.deal;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.bean.bot.User;
 import tgb.btc.library.constants.enums.DeliveryKind;
@@ -22,9 +23,11 @@ import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.Menu;
 import tgb.btc.rce.service.ICalculatorTypeService;
 import tgb.btc.rce.service.Processor;
+import tgb.btc.rce.service.handler.util.IStartService;
 import tgb.btc.rce.service.process.IDealBotProcessService;
 import tgb.btc.rce.service.processors.support.ExchangeService;
 import tgb.btc.rce.service.util.IUpdateDispatcher;
+import tgb.btc.rce.vo.TelegramUpdateEvent;
 
 import java.util.HashSet;
 import java.util.Objects;
@@ -57,6 +60,13 @@ public class DealProcessor extends Processor {
     private IModule<DeliveryKind> deliveryKindModule;
 
     private ISecurePaymentDetailsService securePaymentDetailsService;
+
+    private IStartService startService;
+
+    @Autowired
+    public void setStartService(IStartService startService) {
+        this.startService = startService;
+    }
 
     @Autowired
     public void setSecurePaymentDetailsService(ISecurePaymentDetailsService securePaymentDetailsService) {
@@ -283,7 +293,14 @@ public class DealProcessor extends Processor {
 
     private void processToStart(Long chatId, Update update) {
         responseSender.deleteCallbackMessageIfExists(update);
-        updateDispatcher.runProcessor(Command.START, chatId, update);
+        startService.process(chatId);
+    }
+
+    private ApplicationEventPublisher eventPublisher;
+
+    @Autowired
+    public void setEventPublisher(ApplicationEventPublisher eventPublisher) {
+        this.eventPublisher = eventPublisher;
     }
 
     public boolean isMainMenuCommand(Update update) {
@@ -292,8 +309,6 @@ public class DealProcessor extends Processor {
         Command commandFromUpdate = commandService.fromUpdate(update);
         Command mainMenuCommand = null;
         Set<Command> commands = new HashSet<>(Menu.MAIN.getCommands());
-        commands.add(Command.ADMIN_PANEL);
-        commands.add(Command.OPERATOR_PANEL);
         commands.add(Command.START);
         for (Command command : commands) {
             if (command.equals(commandFromUpdate)) mainMenuCommand = command;
@@ -309,7 +324,8 @@ public class DealProcessor extends Processor {
             modifyUserService.updateCurrentDealByChatId(null, chatId);
         }
         responseSender.deleteCallbackMessageIfExists(update);
-        updateDispatcher.runProcessor(mainMenuCommand, chatId, update);
+        TelegramUpdateEvent telegramUpdateEvent = new TelegramUpdateEvent(this, update);
+        eventPublisher.publishEvent(telegramUpdateEvent);
         return true;
     }
 }
