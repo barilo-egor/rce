@@ -11,7 +11,8 @@ public enum TextCommand {
     CONTACTS("Контакты"),
     DRAWS("Розыгрыши"),
     REFERRAL("Реферальная программа"),
-    ADMIN_PANEL("Админ панель");
+    ADMIN_PANEL("Админ-панель"),
+    WEB_ADMIN_PANEL("Веб админ-панель");
 
     private final String text;
 }
