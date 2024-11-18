@@ -1,4 +1,4 @@
-package tgb.btc.rce.service.processors.admin.settings.reports;
+package tgb.btc.rce.service.handler.impl.message.text.command.reports;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -7,34 +7,36 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.telegram.telegrambots.meta.api.objects.Update;
+import org.springframework.stereotype.Service;
+import org.telegram.telegrambots.meta.api.objects.Message;
 import tgb.btc.library.bean.bot.LotteryWin;
 import tgb.btc.library.exception.BaseException;
 import tgb.btc.library.interfaces.service.bean.bot.ILotteryWinService;
-import tgb.btc.rce.annotation.CommandProcessor;
-import tgb.btc.rce.enums.Command;
-import tgb.btc.rce.service.Processor;
+import tgb.btc.rce.enums.update.TextCommand;
+import tgb.btc.rce.sender.IResponseSender;
+import tgb.btc.rce.service.handler.message.text.ITextCommandHandler;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-@CommandProcessor(command = Command.LOTTERY_REPORT)
+@Service
 @Slf4j
-public class LotteryReport extends Processor {
+public class LotteryReportHandler implements ITextCommandHandler {
 
-    private ILotteryWinService lotteryWinService;
+    private final ILotteryWinService lotteryWinService;
 
-    @Autowired
-    public void setLotteryWinService(ILotteryWinService lotteryWinService) {
+    private final IResponseSender responseSender;
+
+    public LotteryReportHandler(ILotteryWinService lotteryWinService, IResponseSender responseSender) {
         this.lotteryWinService = lotteryWinService;
+        this.responseSender = responseSender;
     }
 
     @Override
-    public void run(Update update) {
-        Long chatId = updateService.getChatId(update);
+    public void handle(Message message) {
+        Long chatId = message.getChatId();
         List<LotteryWin> lotteryWins = lotteryWinService.findAll();
         if (CollectionUtils.isEmpty(lotteryWins)) {
             responseSender.sendMessage(chatId, "Список выигрышей пуст.");
@@ -79,4 +81,8 @@ public class LotteryReport extends Processor {
         }
     }
 
+    @Override
+    public TextCommand getTextCommand() {
+        return TextCommand.LOTTERY_REPORT;
+    }
 }

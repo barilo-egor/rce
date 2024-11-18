@@ -30,7 +30,8 @@ public enum TextCommand {
     NEW_SPAM_BANS("Антиспам блоки"),
     NEW_WITHDRAWALS("Заявки на вывод"),
     ON_BOT("Вкл.бота"),
-    OFF_BOT("Выкл.бота");
+    OFF_BOT("Выкл.бота"),
+    LOTTERY_REPORT("Отчет по лотереи");
 
     private final String text;
 }
