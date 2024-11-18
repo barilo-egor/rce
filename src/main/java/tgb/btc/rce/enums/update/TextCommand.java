@@ -9,7 +9,8 @@ public enum TextCommand {
     BUY_BITCOIN("Купить"),
     SELL_BITCOIN("Продать"),
     CONTACTS("Контакты"),
-    DRAWS("Розыгрыши");
+    DRAWS("Розыгрыши"),
+    REFERRAL("Реферальная программа");
 
     private final String text;
 }

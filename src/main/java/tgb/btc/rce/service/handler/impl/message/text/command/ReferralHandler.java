@@ -1,58 +1,61 @@
-package tgb.btc.rce.service.processors.referral;
+package tgb.btc.rce.service.handler.impl.message.text.command;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.telegram.telegrambots.meta.api.objects.Update;
+import org.springframework.stereotype.Service;
+import org.telegram.telegrambots.meta.api.objects.Message;
 import tgb.btc.library.bean.bot.ReferralUser;
 import tgb.btc.library.constants.enums.properties.PropertiesPath;
 import tgb.btc.library.interfaces.service.bean.bot.deal.read.IDealCountService;
+import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.library.interfaces.util.IBigDecimalService;
-import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.InlineType;
 import tgb.btc.rce.enums.MessageImage;
 import tgb.btc.rce.enums.Rank;
+import tgb.btc.rce.enums.update.TextCommand;
 import tgb.btc.rce.sender.IMessageImageResponseSender;
 import tgb.btc.rce.service.IMessageImageService;
-import tgb.btc.rce.service.Processor;
+import tgb.btc.rce.service.handler.message.text.ITextCommandHandler;
+import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
+import tgb.btc.rce.service.util.ICommandService;
 import tgb.btc.rce.vo.InlineButton;
 
 import java.math.BigDecimal;
 import java.util.List;
 
-@CommandProcessor(command = Command.REFERRAL)
-public class Referral extends Processor {
+@Service
+public class ReferralHandler implements ITextCommandHandler {
 
-    private IDealCountService dealCountService;
+    private final ICommandService commandService;
 
-    private IBigDecimalService bigDecimalService;
+    private final IReadUserService readUserService;
 
-    private IMessageImageService messageImageService;
+    private final IBigDecimalService bigDecimalService;
 
-    private IMessageImageResponseSender messageImageResponseSender;
+    private final IDealCountService dealCountService;
 
-    @Autowired
-    public void setMessageImageService(IMessageImageService messageImageService) {
-        this.messageImageService = messageImageService;
-    }
+    private final IMessageImageService messageImageService;
 
-    @Autowired
-    public void setMessageImageResponseSender(IMessageImageResponseSender messageImageResponseSender) {
-        this.messageImageResponseSender = messageImageResponseSender;
-    }
+    private final IMessageImageResponseSender messageImageResponseSender;
 
-    @Autowired
-    public void setBigDecimalService(IBigDecimalService bigDecimalService) {
+    private final IKeyboardBuildService keyboardBuildService;
+
+    public ReferralHandler(ICommandService commandService, IReadUserService readUserService,
+                           IBigDecimalService bigDecimalService, IDealCountService dealCountService,
+                           IMessageImageService messageImageService,
+                           IMessageImageResponseSender messageImageResponseSender,
+                           IKeyboardBuildService keyboardBuildService) {
+        this.commandService = commandService;
+        this.readUserService = readUserService;
         this.bigDecimalService = bigDecimalService;
-    }
-
-    @Autowired
-    public void setDealCountService(IDealCountService dealCountService) {
         this.dealCountService = dealCountService;
+        this.messageImageService = messageImageService;
+        this.messageImageResponseSender = messageImageResponseSender;
+        this.keyboardBuildService = keyboardBuildService;
     }
 
     @Override
-    public void run(Update update) {
-        Long chatId = updateService.getChatId(update);
+    public void handle(Message message) {
+        Long chatId = message.getChatId();
         String startParameter = "?start=" + chatId;
         String refLink = PropertiesPath.BOT_PROPERTIES.getString("SEND_LINK").concat(startParameter);
         BigDecimal referralBalance = BigDecimal.valueOf(readUserService.getReferralBalanceByChatId(chatId));
@@ -100,5 +103,10 @@ public class Referral extends Processor {
                         .data(Command.WITHDRAWAL_OF_FUNDS.name())
                         .inlineType(InlineType.CALLBACK_DATA)
                         .build());
+    }
+
+    @Override
+    public TextCommand getTextCommand() {
+        return TextCommand.REFERRAL;
     }
 }
