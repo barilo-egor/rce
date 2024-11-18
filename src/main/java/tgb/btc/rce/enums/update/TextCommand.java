@@ -18,7 +18,8 @@ public enum TextCommand {
     BOT_SETTINGS("Настройки бота"),
     DISCOUNTS("Скидки"),
     EDIT_CONTACTS("Редактирование контактов"),
-    OBSERVER_PANEL("Панель наблюдателя");
+    OBSERVER_PANEL("Панель наблюдателя"),
+    OPERATOR_PANEL("Панель оператора");
 
     private final String text;
 }

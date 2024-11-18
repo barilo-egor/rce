@@ -59,7 +59,7 @@ public class ChangeRoleService implements IChangeRoleService {
         modifyUserService.updateUserRoleByChatId(role, userChatId);
         responseSender.sendMessage(chatId, "Пользователю " + userChatId + " сменена роль на \"" + role.getDisplayName() + "\".");
         responseSender.sendMessage(userChatId, "Вы были переведены в роль \"" + role.getDisplayName() + "\".");
-        startService.process(chatId);
+        startService.process(userChatId);
         log.debug("Админ {} сменил пользователю {} роль на {}.", chatId, userChatId, role.getDisplayName());
     }
 }
