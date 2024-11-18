@@ -19,7 +19,8 @@ public enum TextCommand {
     DISCOUNTS("Скидки"),
     EDIT_CONTACTS("Редактирование контактов"),
     OBSERVER_PANEL("Панель наблюдателя"),
-    OPERATOR_PANEL("Панель оператора");
+    OPERATOR_PANEL("Панель оператора"),
+    REPORTS("Отчеты");
 
     private final String text;
 }
