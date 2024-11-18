@@ -15,7 +15,8 @@ public enum TextCommand {
     WEB_ADMIN_PANEL("Веб админ-панель"),
     LOTTERY("Лотерея"),
     ROULETTE("Рулетка"),
-    BOT_SETTINGS("Настройки бота");
+    BOT_SETTINGS("Настройки бота"),
+    DISCOUNTS("Скидки");
 
     private final String text;
 }
