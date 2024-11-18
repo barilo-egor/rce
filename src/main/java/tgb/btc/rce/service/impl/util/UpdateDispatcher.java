@@ -4,6 +4,7 @@ import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -19,6 +20,7 @@ import tgb.btc.rce.service.process.IUserProcessService;
 import tgb.btc.rce.service.util.ICommandProcessorLoader;
 import tgb.btc.rce.service.util.ICommandService;
 import tgb.btc.rce.service.util.IUpdateDispatcher;
+import tgb.btc.rce.vo.TelegramUpdateEvent;
 
 import java.util.Objects;
 
@@ -45,6 +47,13 @@ public class UpdateDispatcher implements IUpdateDispatcher {
     private ICommandService commandService;
 
     private IUpdateService updateService;
+
+    private ApplicationEventPublisher eventPublisher;
+
+    @Autowired
+    public void setEventPublisher(ApplicationEventPublisher eventPublisher) {
+        this.eventPublisher = eventPublisher;
+    }
 
     @Autowired
     public void setUpdateService(IUpdateService updateService) {
@@ -96,7 +105,12 @@ public class UpdateDispatcher implements IUpdateDispatcher {
         Long chatId = updateService.getChatId(update);
         if (IS_LOG_UDPATES) log.info(chatId.toString());
         if (bannedUserCache.get(chatId)) return;
-        runProcessor(getCommand(update, chatId), chatId, update);
+        Command command = getCommand(update, chatId);
+        if (Command.NEW_HANDLE.contains(command)) {
+            eventPublisher.publishEvent(new TelegramUpdateEvent(this, update));
+        } else {
+            runProcessor(command, chatId, update);
+        }
     }
 
     public void runProcessor(Command command, Long chatId, Update update) {

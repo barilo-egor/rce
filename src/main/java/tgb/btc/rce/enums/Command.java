@@ -6,6 +6,7 @@ import tgb.btc.library.constants.enums.properties.PropertiesPath;
 import tgb.btc.library.interfaces.ICommand;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -249,6 +250,8 @@ public enum Command implements ICommand {
     public static final Set<Command> HIDDEN_COMMANDS = Arrays.stream(Command.values())
             .filter(Command::isHidden)
             .collect(Collectors.toSet());
+
+    public static final List<Command> NEW_HANDLE = List.of(START);
 
     final String text;
     final boolean isHidden;
