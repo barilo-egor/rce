@@ -8,7 +8,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.constants.enums.properties.PropertiesPath;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
-import tgb.btc.rce.enums.UpdateType;
+import tgb.btc.rce.enums.update.UpdateType;
 import tgb.btc.rce.service.IUpdateService;
 import tgb.btc.rce.service.util.ICommandService;
 

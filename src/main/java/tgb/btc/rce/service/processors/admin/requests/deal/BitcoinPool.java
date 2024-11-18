@@ -37,6 +37,10 @@ public class BitcoinPool extends Processor {
     @Override
     public void run(Update update) {
         Long chatId = updateService.getChatId(update);
+        processPool(chatId);
+    }
+
+    public void processPool(Long chatId) {
         List<PoolDeal> deals;
         Optional<Message> poolMessage = responseSender.sendMessage(chatId, "Получение пула сделок BTC.");
         try {
