@@ -12,7 +12,9 @@ public enum TextCommand {
     DRAWS("Розыгрыши"),
     REFERRAL("Реферальная программа"),
     ADMIN_PANEL("Админ-панель"),
-    WEB_ADMIN_PANEL("Веб админ-панель");
+    WEB_ADMIN_PANEL("Веб админ-панель"),
+    LOTTERY("Лотерея"),
+    ROULETTE("Рулетка");
 
     private final String text;
 }
