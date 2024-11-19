@@ -4,8 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
-import tgb.btc.library.constants.enums.properties.PropertiesPath;
 import tgb.btc.library.service.process.VerifiedUserCache;
+import tgb.btc.library.service.properties.AntiSpamPropertiesReader;
 import tgb.btc.rce.service.captcha.IAntiSpam;
 
 import java.util.ArrayList;
@@ -24,6 +24,13 @@ public class AntiSpam implements IAntiSpam {
     private final Map<Long, String> captchaCash = new ConcurrentHashMap<>();
 
     private VerifiedUserCache verifiedUserCache;
+
+    private AntiSpamPropertiesReader antiSpamPropertiesReader;
+
+    @Autowired
+    public void setAntiSpamPropertiesReader(AntiSpamPropertiesReader antiSpamPropertiesReader) {
+        this.antiSpamPropertiesReader = antiSpamPropertiesReader;
+    }
 
     @Autowired
     public void setVerifiedUserCache(VerifiedUserCache verifiedUserCache) {
@@ -72,7 +79,7 @@ public class AntiSpam implements IAntiSpam {
     @Async
     public void check() {
         synchronized (this) {
-            int allowedCount = PropertiesPath.ANTI_SPAM_PROPERTIES.getInteger("allowed.count", 20);
+            int allowedCount = antiSpamPropertiesReader.getInteger("allowed.count", 20);
             for (Map.Entry<Long, Integer> entry : MESSAGES_COUNTER.entrySet()) {
                 if (entry.getValue() > allowedCount) addUser(entry.getKey());
             }
