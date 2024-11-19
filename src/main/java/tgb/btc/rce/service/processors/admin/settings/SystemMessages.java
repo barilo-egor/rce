@@ -65,7 +65,7 @@ public class SystemMessages extends Processor {
             return;
         }
         try {
-            FileUtils.moveFile(PropertiesPath.MESSAGE_BUFFER_PROPERTIES.getFile(), new File(PropertiesPath.MESSAGE_PROPERTIES.getFileName()));
+            FileUtils.moveFile(new File(PropertiesPath.MESSAGE_BUFFER_PROPERTIES.getFileName()), new File(PropertiesPath.MESSAGE_PROPERTIES.getFileName()));
         } catch (IOException e) {
             log.error("Ошибки при перемещении файла + " + PropertiesPath.MESSAGE_BUFFER_PROPERTIES.getFileName()
                     + " в " + PropertiesPath.MESSAGE_PROPERTIES.getFileName(), e);
