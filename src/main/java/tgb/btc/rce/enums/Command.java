@@ -5,10 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import tgb.btc.library.constants.enums.bot.UserRole;
 import tgb.btc.library.interfaces.ICommand;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Getter
@@ -131,32 +129,28 @@ public enum Command implements ICommand {
     RECEIPTS_CANCEL_DEAL("Отменить сделку", false, UserRole.USER_ACCESS),
     NEW_PAYMENT_TYPE("Создать тип оплаты", false, UserRole.OPERATOR_ACCESS),
     DELETE_PAYMENT_TYPE("Удалить тип оплаты", false, UserRole.OPERATOR_ACCESS),
-
-
     NEW_PAYMENT_TYPE_REQUISITE("Создать реквизит", false, UserRole.OPERATOR_ACCESS),
     DELETE_PAYMENT_TYPE_REQUISITE("Удалить реквизит", false, UserRole.OPERATOR_ACCESS),
-    DELETING_PAYMENT_TYPE_REQUISITE("DELETING_PAYMENT_TYPE_REQUISITE", false, UserRole.OPERATOR_ACCESS),
     TURN_PAYMENT_TYPES("Включение типов оплат", false, UserRole.OPERATOR_ACCESS),
-    TURNING_PAYMENT_TYPES("TURNING_PAYMENT_TYPES", false, UserRole.OPERATOR_ACCESS),
     CHANGE_MIN_SUM("Мин.сумма", false, UserRole.OPERATOR_ACCESS),
     TURN_DYNAMIC_REQUISITES("Динамические реквизиты", false, UserRole.OPERATOR_ACCESS),
+    NONE_CALCULATOR("NONE_CALCULATOR", false, UserRole.USER_ACCESS),
+    INLINE_QUERY_CALCULATOR("INLINE_QUERY_CALCULATOR", false, UserRole.USER_ACCESS),
+    INLINE_CALCULATOR("INLINE_CALCULATOR", false, UserRole.USER_ACCESS),
+
+
+    DELETING_PAYMENT_TYPE_REQUISITE("DELETING_PAYMENT_TYPE_REQUISITE", false, UserRole.OPERATOR_ACCESS),
+    TURNING_PAYMENT_TYPES("TURNING_PAYMENT_TYPES", false, UserRole.OPERATOR_ACCESS),
     TURNING_DYNAMIC_REQUISITES("TURNING_DYNAMIC_REQUISITES", false, UserRole.OPERATOR_ACCESS),
     SHOW_SPAM_BANNED_USER("Показать", false, UserRole.OPERATOR_ACCESS),
     KEEP_SPAM_BAN("Оставить в бане", false, UserRole.OPERATOR_ACCESS),
     SPAM_UNBAN("Разблокировать", false, UserRole.OPERATOR_ACCESS),
-    NONE_CALCULATOR("NONE_CALCULATOR", false, UserRole.USER_ACCESS),
-    INLINE_QUERY_CALCULATOR("INLINE_QUERY_CALCULATOR", false, UserRole.USER_ACCESS),
-    INLINE_CALCULATOR("INLINE_CALCULATOR", false, UserRole.USER_ACCESS),
     CONFIRM_API_DEAL("Подтвердить", false, UserRole.OPERATOR_ACCESS),
     CANCEL_API_DEAL("Отклонить", false, UserRole.OPERATOR_ACCESS),
     TURN_PROCESS_DELIVERY("TURN_PROCESS_DELIVERY", false, UserRole.ADMIN_ACCESS),
     SUBMIT_LOGIN("Подтвердить вход", false, UserRole.USER_ACCESS),
     SUBMIT_REGISTER("Подтвердить регистрацию", false, UserRole.USER_ACCESS),
     LOGOUT("Закрыть сессию", false, UserRole.USER_ACCESS);
-
-    public static final Set<Command> HIDDEN_COMMANDS = Arrays.stream(Command.values())
-            .filter(Command::isHidden)
-            .collect(Collectors.toSet());
 
     public static final List<Command> NEW_HANDLE = List.of(
             START, HELP, CHAT_ID, MAKE_USER, MAKE_OBSERVER, MAKE_OPERATOR, MAKE_ADMIN, BACKUP_DB, DELETE_FROM_POOL, DELETE_USER, TURN_NOTIFICATIONS,
