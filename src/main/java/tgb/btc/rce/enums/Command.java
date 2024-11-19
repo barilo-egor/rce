@@ -3,7 +3,6 @@ package tgb.btc.rce.enums;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import tgb.btc.library.constants.enums.bot.UserRole;
-import tgb.btc.library.constants.enums.properties.PropertiesPath;
 import tgb.btc.library.interfaces.ICommand;
 
 import java.util.Arrays;
@@ -29,7 +28,7 @@ public enum Command implements ICommand {
     /**
      * UTIL
      */
-    BACK(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.name(), false, UserRole.USER_ACCESS), // +
+    BACK("Назад", false, UserRole.USER_ACCESS), // +
     ADMIN_BACK("Назад", false, UserRole.OPERATOR_ACCESS),
     CANCEL("Отмена", false, UserRole.USER_ACCESS),
     SHARE_CONTACT("Поделиться контактом", false, UserRole.USER_ACCESS),
@@ -51,12 +50,12 @@ public enum Command implements ICommand {
     /**
      * MAIN
      */
-    BUY_BITCOIN(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.name(), false, UserRole.USER_ACCESS),// +
-    SELL_BITCOIN(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.name(), false, UserRole.USER_ACCESS),// +
-    CABINET(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.name(), false, UserRole.USER_ACCESS),
-    CONTACTS(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.name(), false, UserRole.USER_ACCESS),// +
-    DRAWS(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.name(), false, UserRole.USER_ACCESS),// +
-    REFERRAL(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.name(), false, UserRole.USER_ACCESS),// +
+    BUY_BITCOIN("Купить", false, UserRole.USER_ACCESS),// +
+    SELL_BITCOIN("Продать", false, UserRole.USER_ACCESS),// +
+    CABINET("Кабинет", false, UserRole.USER_ACCESS),
+    CONTACTS("Контакты", false, UserRole.USER_ACCESS),// +
+    DRAWS("Розыгрыши", false, UserRole.USER_ACCESS),// +
+    REFERRAL("Реферальная программа", false, UserRole.USER_ACCESS),// +
     ADMIN_PANEL("Админ панель", false, UserRole.ADMIN_ACCESS),// +
     OPERATOR_PANEL("Панель оператора", false, UserRole.OPERATOR_ACCESS),// +
     OBSERVER_PANEL("Панель наблюдателя", false, UserRole.OBSERVER_ACCESS),// +
@@ -64,11 +63,11 @@ public enum Command implements ICommand {
     /**
      * DRAWS
      */
-    LOTTERY(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.name(), false, UserRole.USER_ACCESS),// +
-    ROULETTE(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.name(), false, UserRole.USER_ACCESS),// +
-    SLOT_REEL(PropertiesPath.SLOT_REEL_PROPERTIES.name(), false, UserRole.USER_ACCESS),
-    DICE(PropertiesPath.DICE_PROPERTIES.name(), false, UserRole.USER_ACCESS),
-    RPS(PropertiesPath.RPS_PROPERTIES.name(), false, UserRole.USER_ACCESS),
+    LOTTERY("Лотерея", false, UserRole.USER_ACCESS),// +
+    ROULETTE("Рулетка", false, UserRole.USER_ACCESS),// +
+    SLOT_REEL("Барабан", false, UserRole.USER_ACCESS),
+    DICE("Кубик", false, UserRole.USER_ACCESS),
+    RPS("Камень/ножницы/бумага", false, UserRole.USER_ACCESS),
 
     /**
      * REFERRAL
@@ -142,7 +141,7 @@ public enum Command implements ICommand {
      * DEAL
      */
     DEAL("DEAL", false, UserRole.USER_ACCESS),
-    PAID(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.name(), false, UserRole.USER_ACCESS),
+    PAID("Оплатил", false, UserRole.USER_ACCESS),
     CANCEL_DEAL("Отменить заявку", false, UserRole.USER_ACCESS),
     DELETE_DEAL("Удалить", false, UserRole.USER_ACCESS),
     SHOW_DEAL("Показать", false, UserRole.OBSERVER_ACCESS),
@@ -162,9 +161,9 @@ public enum Command implements ICommand {
     USER_ADDITIONAL_VERIFICATION("USER_ADDITIONAL_VERIFICATION", false, UserRole.USER_ACCESS),
     SHARE_REVIEW("Оставить", false, UserRole.USER_ACCESS),
     CHOOSING_FIAT_CURRENCY("CHOOSING_FIAT_CURRENCY", false, UserRole.USER_ACCESS),
-    USE_PROMO(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.name(), false, UserRole.USER_ACCESS),
-    DONT_USE_PROMO(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.name(), false, UserRole.USER_ACCESS),
-    USE_SAVED_WALLET("USE_SAVED_WALLET", false, UserRole.USER_ACCESS),
+    USE_PROMO("Использовать промокод", false, UserRole.USER_ACCESS),
+    DONT_USE_PROMO("Не использовать промокод", false, UserRole.USER_ACCESS),
+    USE_SAVED_WALLET("Использовать сохраненный", false, UserRole.USER_ACCESS),
 
     /**
      * REQUESTS
