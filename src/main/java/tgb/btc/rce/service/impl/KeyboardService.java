@@ -27,13 +27,11 @@ import tgb.btc.rce.enums.BotInlineButton;
 import tgb.btc.rce.enums.BotReplyButton;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.InlineType;
+import tgb.btc.rce.enums.update.CallbackQueryData;
 import tgb.btc.rce.service.IKeyboardService;
 import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
 import tgb.btc.rce.service.processors.calculator.InlineCalculator;
-import tgb.btc.rce.service.util.ICallbackQueryService;
-import tgb.btc.rce.service.util.ICommandService;
-import tgb.btc.rce.service.util.ICryptoCurrenciesDesignService;
-import tgb.btc.rce.service.util.ITurningCurrenciesService;
+import tgb.btc.rce.service.util.*;
 import tgb.btc.rce.vo.InlineButton;
 import tgb.btc.rce.vo.InlineCalculatorVO;
 import tgb.btc.rce.vo.ReplyButton;
@@ -80,6 +78,13 @@ public class KeyboardService implements IKeyboardService {
     private DesignPropertiesReader designPropertiesReader;
 
     private RPSPropertiesReader rpsPropertiesReader;
+
+    private ICallbackDataService callbackDataService;
+
+    @Autowired
+    public void setCallbackDataService(ICallbackDataService callbackDataService) {
+        this.callbackDataService = callbackDataService;
+    }
 
     @Autowired
     public void setRpsPropertiesReader(RPSPropertiesReader rpsPropertiesReader) {
@@ -209,9 +214,8 @@ public class KeyboardService implements IKeyboardService {
     public ReplyKeyboard getShowDeal(Long dealPid) {
         return keyboardBuildService.buildInline(List.of(
                 InlineButton.builder()
-                        .text(commandService.getText(Command.SHOW_DEAL))
-                        .data(Command.SHOW_DEAL.name() + BotStringConstants.CALLBACK_DATA_SPLITTER
-                                + dealPid)
+                        .text("Показать")
+                        .data(callbackDataService.buildData(CallbackQueryData.SHOW_DEAL, dealPid))
                         .build()
         ));
     }
