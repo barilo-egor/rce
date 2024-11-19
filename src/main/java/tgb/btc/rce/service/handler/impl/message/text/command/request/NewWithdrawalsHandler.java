@@ -4,14 +4,14 @@ import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import tgb.btc.library.bean.bot.WithdrawalRequest;
 import tgb.btc.library.interfaces.service.bean.bot.IWithdrawalRequestService;
-import tgb.btc.rce.constants.BotStringConstants;
-import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.InlineType;
+import tgb.btc.rce.enums.update.CallbackQueryData;
 import tgb.btc.rce.enums.update.TextCommand;
 import tgb.btc.rce.sender.IResponseSender;
 import tgb.btc.rce.service.handler.message.text.ITextCommandHandler;
 import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
 import tgb.btc.rce.service.processors.support.WithdrawalOfFundsService;
+import tgb.btc.rce.service.util.ICallbackDataService;
 import tgb.btc.rce.service.util.ICommandService;
 import tgb.btc.rce.vo.InlineButton;
 
@@ -30,14 +30,18 @@ public class NewWithdrawalsHandler implements ITextCommandHandler {
 
     private final ICommandService commandService;
 
+    private final ICallbackDataService callbackDataService;
+
     public NewWithdrawalsHandler(IResponseSender responseSender, IWithdrawalRequestService withdrawalRequestService,
                                  WithdrawalOfFundsService withdrawalOfFundsService,
-                                 IKeyboardBuildService keyboardBuildService, ICommandService commandService) {
+                                 IKeyboardBuildService keyboardBuildService, ICommandService commandService,
+                                 ICallbackDataService callbackDataService) {
         this.responseSender = responseSender;
         this.withdrawalRequestService = withdrawalRequestService;
         this.withdrawalOfFundsService = withdrawalOfFundsService;
         this.keyboardBuildService = keyboardBuildService;
         this.commandService = commandService;
+        this.callbackDataService = callbackDataService;
     }
 
     @Override
@@ -53,9 +57,8 @@ public class NewWithdrawalsHandler implements ITextCommandHandler {
         withdrawalRequests.forEach(withdrawalRequest ->
                 responseSender.sendMessage(chatId, withdrawalOfFundsService.toString(withdrawalRequest),
                         keyboardBuildService.buildInline(List.of(InlineButton.builder()
-                                .text(commandService.getText(Command.HIDE_WITHDRAWAL))
-                                .data(Command.HIDE_WITHDRAWAL.name() + BotStringConstants.CALLBACK_DATA_SPLITTER
-                                        + withdrawalRequest.getPid())
+                                .text("Скрыть")
+                                .data(callbackDataService.buildData(CallbackQueryData.HIDE_WITHDRAWAL, withdrawalRequest.getPid()))
                                 .inlineType(InlineType.CALLBACK_DATA)
                                 .build()))));
     }
