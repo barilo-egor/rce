@@ -8,6 +8,7 @@ import org.junit.jupiter.params.provider.EmptySource;
 import org.junit.jupiter.params.provider.NullSource;
 import org.mockito.junit.jupiter.MockitoExtension;
 import tgb.btc.library.exception.BaseException;
+import tgb.btc.library.service.properties.ButtonsDesignPropertiesReader;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.impl.UpdateService;
 import tgb.btc.rce.service.impl.util.CommandService;
@@ -23,7 +24,9 @@ class ReplyButtonServiceTest {
 
     private final IReplyButtonService replyButtonService = new ReplyButtonService();
 
-    private final CommandService commandService = new CommandService(new UpdateService());
+    private final ButtonsDesignPropertiesReader buttonsDesignPropertiesReader = new ButtonsDesignPropertiesReader();
+
+    private final CommandService commandService = new CommandService(new UpdateService(), buttonsDesignPropertiesReader);
 
     @NullSource
     @EmptySource

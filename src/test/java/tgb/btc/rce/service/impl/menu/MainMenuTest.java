@@ -9,8 +9,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import tgb.btc.library.constants.enums.ReferralType;
 import tgb.btc.library.constants.enums.bot.UserRole;
 import tgb.btc.library.interfaces.IModule;
-import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.Menu;
+import tgb.btc.rce.enums.update.TextCommand;
 import tgb.btc.rce.service.keyboard.IReplyButtonService;
 
 import java.util.ArrayList;
@@ -49,63 +49,63 @@ class MainMenuTest {
     @DisplayName("Должен вернуть меню для USER.")
     void buildUser() {
         when(referralModule.isCurrent(ReferralType.STANDARD)).thenReturn(true);
-        List<Command> expectedCommands = new ArrayList<>(Menu.MAIN.getCommands());
-        expectedCommands.remove(Command.ADMIN_PANEL);
-        expectedCommands.remove(Command.WEB_ADMIN_PANEL);
-        expectedCommands.remove(Command.OPERATOR_PANEL);
-        expectedCommands.remove(Command.OBSERVER_PANEL);
+        List<TextCommand> expectedCommands = new ArrayList<>(Menu.MAIN.getTextCommands());
+        expectedCommands.remove(TextCommand.ADMIN_PANEL);
+        expectedCommands.remove(TextCommand.WEB_ADMIN_PANEL);
+        expectedCommands.remove(TextCommand.OPERATOR_PANEL);
+        expectedCommands.remove(TextCommand.OBSERVER_PANEL);
         mainMenu.build(UserRole.USER);
-        verify(replyButtonService).fromCommands(expectedCommands);
+        verify(replyButtonService).fromTextCommands(expectedCommands);
         when(referralModule.isCurrent(ReferralType.STANDARD)).thenReturn(false);
-        expectedCommands.remove(Command.REFERRAL);
+        expectedCommands.remove(TextCommand.REFERRAL);
         mainMenu.build(UserRole.USER);
-        verify(replyButtonService).fromCommands(expectedCommands);
+        verify(replyButtonService).fromTextCommands(expectedCommands);
     }
 
     @Test
     @DisplayName("Должен вернуть меню для ADMIN.")
     void buildAdmin() {
         when(referralModule.isCurrent(ReferralType.STANDARD)).thenReturn(true);
-        List<Command> expectedCommands = new ArrayList<>(Menu.MAIN.getCommands());
-        expectedCommands.remove(Command.OPERATOR_PANEL);
-        expectedCommands.remove(Command.OBSERVER_PANEL);
+        List<TextCommand> expectedCommands = new ArrayList<>(Menu.MAIN.getTextCommands());
+        expectedCommands.remove(TextCommand.OPERATOR_PANEL);
+        expectedCommands.remove(TextCommand.OBSERVER_PANEL);
         mainMenu.build(UserRole.ADMIN);
-        verify(replyButtonService).fromCommands(expectedCommands);
+        verify(replyButtonService).fromTextCommands(expectedCommands);
         when(referralModule.isCurrent(ReferralType.STANDARD)).thenReturn(false);
-        expectedCommands.remove(Command.REFERRAL);
+        expectedCommands.remove(TextCommand.REFERRAL);
         mainMenu.build(UserRole.ADMIN);
-        verify(replyButtonService).fromCommands(expectedCommands);
+        verify(replyButtonService).fromTextCommands(expectedCommands);
     }
 
     @Test
     @DisplayName("Должен вернуть меню для OPERATOR.")
     void buildOperator() {
         when(referralModule.isCurrent(ReferralType.STANDARD)).thenReturn(true);
-        List<Command> expectedCommands = new ArrayList<>(Menu.MAIN.getCommands());
-        expectedCommands.remove(Command.ADMIN_PANEL);
-        expectedCommands.remove(Command.WEB_ADMIN_PANEL);
-        expectedCommands.remove(Command.OBSERVER_PANEL);
+        List<TextCommand> expectedCommands = new ArrayList<>(Menu.MAIN.getTextCommands());
+        expectedCommands.remove(TextCommand.ADMIN_PANEL);
+        expectedCommands.remove(TextCommand.WEB_ADMIN_PANEL);
+        expectedCommands.remove(TextCommand.OBSERVER_PANEL);
         mainMenu.build(UserRole.OPERATOR);
-        verify(replyButtonService).fromCommands(expectedCommands);
+        verify(replyButtonService).fromTextCommands(expectedCommands);
         when(referralModule.isCurrent(ReferralType.STANDARD)).thenReturn(false);
-        expectedCommands.remove(Command.REFERRAL);
+        expectedCommands.remove(TextCommand.REFERRAL);
         mainMenu.build(UserRole.OPERATOR);
-        verify(replyButtonService).fromCommands(expectedCommands);
+        verify(replyButtonService).fromTextCommands(expectedCommands);
     }
 
     @Test
     @DisplayName("Должен вернуть меню для OBSERVER.")
     void buildObserver() {
         when(referralModule.isCurrent(ReferralType.STANDARD)).thenReturn(true);
-        List<Command> expectedCommands = new ArrayList<>(Menu.MAIN.getCommands());
-        expectedCommands.remove(Command.ADMIN_PANEL);
-        expectedCommands.remove(Command.WEB_ADMIN_PANEL);
-        expectedCommands.remove(Command.OPERATOR_PANEL);
+        List<TextCommand> expectedCommands = new ArrayList<>(Menu.MAIN.getTextCommands());
+        expectedCommands.remove(TextCommand.ADMIN_PANEL);
+        expectedCommands.remove(TextCommand.WEB_ADMIN_PANEL);
+        expectedCommands.remove(TextCommand.OPERATOR_PANEL);
         mainMenu.build(UserRole.OBSERVER);
-        verify(replyButtonService).fromCommands(expectedCommands);
+        verify(replyButtonService).fromTextCommands(expectedCommands);
         when(referralModule.isCurrent(ReferralType.STANDARD)).thenReturn(false);
-        expectedCommands.remove(Command.REFERRAL);
+        expectedCommands.remove(TextCommand.REFERRAL);
         mainMenu.build(UserRole.OBSERVER);
-        verify(replyButtonService).fromCommands(expectedCommands);
+        verify(replyButtonService).fromTextCommands(expectedCommands);
     }
 }

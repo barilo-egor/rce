@@ -39,4 +39,10 @@ public class AntiSpamModule implements IModule<AntiSpamType> {
             throw new BaseException(message, e);
         }
     }
+
+    @Override
+    public void set(AntiSpamType antiSpamType) {
+        modulesPropertiesReader.setProperty("anti.spam", antiSpamType.name());
+        current = antiSpamType;
+    }
 }

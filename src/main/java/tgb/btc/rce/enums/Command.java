@@ -13,17 +13,10 @@ import java.util.stream.Collectors;
 @Slf4j
 @Getter
 public enum Command implements ICommand {
-    /*
-     * CallbackQuery
-     */
 
     START("/start", false, UserRole.USER_ACCESS), // +
     NONE("none", false, UserRole.USER_ACCESS),
     CHAT_ID("/chatid", false, UserRole.USER_ACCESS), // +
-
-    /*
-      Reply
-     */
 
     /**
      * UTIL

@@ -10,6 +10,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import tgb.btc.library.bean.bot.Contact;
 import tgb.btc.library.exception.BaseException;
+import tgb.btc.library.service.properties.ButtonsDesignPropertiesReader;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.InlineType;
 import tgb.btc.rce.service.impl.UpdateService;
@@ -27,9 +28,11 @@ class KeyboardBuildServiceTest {
 
     private final CallbackQueryService callbackQueryService = new CallbackQueryService();
 
+    private final ButtonsDesignPropertiesReader buttonsDesignPropertiesReader = new ButtonsDesignPropertiesReader();
+
     private final KeyboardBuildService keyboardBuildService = new KeyboardBuildService(callbackQueryService);
 
-    private final CommandService commandService = new CommandService(new UpdateService());
+    private final CommandService commandService = new CommandService(new UpdateService(), buttonsDesignPropertiesReader);
 
     @Test
     void buildReplyButtonsLessThanColumns() {

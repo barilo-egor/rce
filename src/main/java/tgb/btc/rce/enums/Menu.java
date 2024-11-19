@@ -18,7 +18,7 @@ public enum Menu {
             TextCommand.ADMIN_PANEL, TextCommand.WEB_ADMIN_PANEL, TextCommand.OPERATOR_PANEL, TextCommand.OBSERVER_PANEL)
     ),
     DRAWS(2, List.of(
-            Command.LOTTERY, Command.ROULETTE, Command.SLOT_REEL, Command.DICE, Command.RPS, Command.BACK
+            Command.LOTTERY, Command.ROULETTE, Command.BACK
     ),
             List.of(TextCommand.LOTTERY, TextCommand.ROULETTE, TextCommand.BACK)
     ),

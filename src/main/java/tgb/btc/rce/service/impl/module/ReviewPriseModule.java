@@ -38,4 +38,10 @@ public class ReviewPriseModule implements IModule<ReviewPriseType> {
             throw new BaseException(message, e);
         }
     }
+
+    @Override
+    public void set(ReviewPriseType reviewPriseType) {
+        modulesPropertiesReader.setProperty("review.prise", reviewPriseType.name());
+        current = reviewPriseType;
+    }
 }
