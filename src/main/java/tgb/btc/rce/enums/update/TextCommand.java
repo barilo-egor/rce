@@ -40,7 +40,8 @@ public enum TextCommand {
     TURNING_CURRENCY("Включение криптовалют", UserRole.ADMIN_ACCESS),
     QUIT_ADMIN_PANEL("Выйти", UserRole.OBSERVER_ACCESS),
     TURNING_DELIVERY_TYPE("Вкл/выкл способов доставки", UserRole.ADMIN_ACCESS),
-    TURN_RANK_DISCOUNT("Ранговая скидка(для всех)", UserRole.ADMIN_ACCESS);
+    TURN_RANK_DISCOUNT("Ранговая скидка(для всех)", UserRole.ADMIN_ACCESS),
+    CURRENT_DATA("Текущие данные", UserRole.ADMIN_ACCESS);
 
     private final String text;
 
