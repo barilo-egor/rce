@@ -8,9 +8,11 @@ import org.apache.commons.configuration2.convert.DefaultListDelimiterHandler;
 import org.apache.commons.configuration2.convert.ListDelimiterHandler;
 import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.constants.enums.properties.PropertiesPath;
 import tgb.btc.library.constants.enums.properties.VariableType;
+import tgb.btc.library.service.properties.VariablePropertiesReader;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
@@ -21,6 +23,13 @@ import java.io.File;
 
 @CommandProcessor(command = Command.TURNING_RANK_DISCOUNT)
 public class TurningRankDiscount extends Processor {
+
+    private VariablePropertiesReader variablePropertiesReader;
+
+    @Autowired
+    public void setVariablePropertiesReader(VariablePropertiesReader variablePropertiesReader) {
+        this.variablePropertiesReader = variablePropertiesReader;
+    }
 
     @Override
     public void run(Update update) {
@@ -53,7 +62,7 @@ public class TurningRankDiscount extends Processor {
         responseSender.sendMessage(chatId, newValue ? "Скидка включена." : "Скидка выключена.");
         responseSender.deleteMessage(chatId, update.getCallbackQuery().getMessage().getMessageId());
         processToAdminMainPanel(chatId);
-        PropertiesPath.VARIABLE_PROPERTIES.reload();
+        variablePropertiesReader.reload();
     }
 
 }

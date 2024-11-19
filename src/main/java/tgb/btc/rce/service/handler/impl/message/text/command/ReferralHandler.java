@@ -3,10 +3,11 @@ package tgb.btc.rce.service.handler.impl.message.text.command;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import tgb.btc.library.bean.bot.ReferralUser;
-import tgb.btc.library.constants.enums.properties.PropertiesPath;
 import tgb.btc.library.interfaces.service.bean.bot.deal.read.IDealCountService;
 import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.library.interfaces.util.IBigDecimalService;
+import tgb.btc.library.service.properties.BotPropertiesReader;
+import tgb.btc.library.service.properties.VariablePropertiesReader;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.InlineType;
 import tgb.btc.rce.enums.MessageImage;
@@ -39,11 +40,16 @@ public class ReferralHandler implements ITextCommandHandler {
 
     private final IKeyboardBuildService keyboardBuildService;
 
+    private final BotPropertiesReader botPropertiesReader;
+    
+    private final VariablePropertiesReader variablePropertiesReader;
+
     public ReferralHandler(ICommandService commandService, IReadUserService readUserService,
                            IBigDecimalService bigDecimalService, IDealCountService dealCountService,
                            IMessageImageService messageImageService,
                            IMessageImageResponseSender messageImageResponseSender,
-                           IKeyboardBuildService keyboardBuildService) {
+                           IKeyboardBuildService keyboardBuildService, BotPropertiesReader botPropertiesReader, 
+                           VariablePropertiesReader variablePropertiesReader) {
         this.commandService = commandService;
         this.readUserService = readUserService;
         this.bigDecimalService = bigDecimalService;
@@ -51,13 +57,15 @@ public class ReferralHandler implements ITextCommandHandler {
         this.messageImageService = messageImageService;
         this.messageImageResponseSender = messageImageResponseSender;
         this.keyboardBuildService = keyboardBuildService;
+        this.botPropertiesReader = botPropertiesReader;
+        this.variablePropertiesReader = variablePropertiesReader;
     }
 
     @Override
     public void handle(Message message) {
         Long chatId = message.getChatId();
         String startParameter = "?start=" + chatId;
-        String refLink = PropertiesPath.BOT_PROPERTIES.getString("SEND_LINK").concat(startParameter);
+        String refLink = botPropertiesReader.getString("SEND_LINK").concat(startParameter);
         BigDecimal referralBalance = BigDecimal.valueOf(readUserService.getReferralBalanceByChatId(chatId));
         String currentBalance = bigDecimalService.roundToPlainString(referralBalance);
         List<ReferralUser> referralUsers = readUserService.getUserReferralsByChatId(chatId);
@@ -79,8 +87,8 @@ public class ReferralHandler implements ITextCommandHandler {
                         keyboardBuildService.buildInline(getButtons(refLink)));
                 break;
             case 2:
-                String refBalanceString = PropertiesPath.VARIABLE_PROPERTIES.isNotBlank("course.rub.byn")
-                        ? bigDecimalService.roundToPlainString(referralBalance.multiply(PropertiesPath.VARIABLE_PROPERTIES.getBigDecimal("course.rub.byn")), 2)
+                String refBalanceString = variablePropertiesReader.isNotBlank("course.rub.byn")
+                        ? bigDecimalService.roundToPlainString(referralBalance.multiply(variablePropertiesReader.getBigDecimal("course.rub.byn")), 2)
                         : bigDecimalService.roundToPlainString(referralBalance);
                 messageImageResponseSender.sendMessage(messageImage, chatId,
                         String.format(messageImageService.getMessage(messageImage),

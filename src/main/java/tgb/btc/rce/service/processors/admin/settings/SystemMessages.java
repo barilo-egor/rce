@@ -2,9 +2,11 @@ package tgb.btc.rce.service.processors.admin.settings;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import tgb.btc.library.constants.enums.properties.PropertiesPath;
+import tgb.btc.library.service.properties.MessagePropertiesReader;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.Processor;
@@ -15,6 +17,13 @@ import java.io.IOException;
 @CommandProcessor(command = Command.SYSTEM_MESSAGES)
 @Slf4j
 public class SystemMessages extends Processor {
+
+    private MessagePropertiesReader messagePropertiesReader;
+
+    @Autowired
+    public void setMessagePropertiesReader(MessagePropertiesReader messagePropertiesReader) {
+        this.messagePropertiesReader = messagePropertiesReader;
+    }
 
     @Override
     public void run(Update update) {
@@ -56,7 +65,7 @@ public class SystemMessages extends Processor {
             return;
         }
         try {
-            FileUtils.moveFile(PropertiesPath.MESSAGE_BUFFER_PROPERTIES.getFile(), PropertiesPath.MESSAGE_PROPERTIES.getFile());
+            FileUtils.moveFile(new File(PropertiesPath.MESSAGE_BUFFER_PROPERTIES.getFileName()), new File(PropertiesPath.MESSAGE_PROPERTIES.getFileName()));
         } catch (IOException e) {
             log.error("Ошибки при перемещении файла + " + PropertiesPath.MESSAGE_BUFFER_PROPERTIES.getFileName()
                     + " в " + PropertiesPath.MESSAGE_PROPERTIES.getFileName(), e);
@@ -64,7 +73,7 @@ public class SystemMessages extends Processor {
                     + PropertiesPath.MESSAGE_BUFFER_PROPERTIES.getFileName() + " в " + PropertiesPath.MESSAGE_PROPERTIES.getFileName());
             return;
         }
-        PropertiesPath.MESSAGE_PROPERTIES.reload();
+        messagePropertiesReader.reload();
         responseSender.sendMessage(chatId, "Переменные обновлены.");
     }
 }

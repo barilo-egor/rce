@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.constants.enums.bot.CryptoCurrency;
 import tgb.btc.library.constants.enums.bot.DealType;
-import tgb.btc.library.constants.enums.properties.PropertiesPath;
+import tgb.btc.library.service.properties.CurrenciesTurningPropertiesReader;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
@@ -19,6 +19,13 @@ public class TurnOnCurrencyProcessor extends Processor {
     private ITurningCurrencyService turningCurrencyService;
 
     private ITurningCurrenciesService turningCurrenciesService;
+
+    private CurrenciesTurningPropertiesReader currenciesTurningPropertiesReader;
+
+    @Autowired
+    public void setCurrenciesTurningPropertiesReader(CurrenciesTurningPropertiesReader currenciesTurningPropertiesReader) {
+        this.currenciesTurningPropertiesReader = currenciesTurningPropertiesReader;
+    }
 
     @Autowired
     public void setTurningCurrenciesService(ITurningCurrenciesService turningCurrenciesService) {
@@ -38,10 +45,10 @@ public class TurnOnCurrencyProcessor extends Processor {
 
         if (DealType.BUY.equals(dealType)) {
             turningCurrenciesService.addBuy(currency, true);
-            PropertiesPath.CURRENCIES_TURNING_PROPERTIES.setProperty("buy." + currency.name(), true);
+            currenciesTurningPropertiesReader.setProperty("buy." + currency.name(), true);
         } else {
             turningCurrenciesService.addSell(currency, true);
-            PropertiesPath.CURRENCIES_TURNING_PROPERTIES.setProperty("sell." + currency.name(), true);
+            currenciesTurningPropertiesReader.setProperty("sell." + currency.name(), true);
         }
         Long chatId = update.getCallbackQuery().getFrom().getId();
         responseSender.deleteMessage(chatId, update.getCallbackQuery().getMessage().getMessageId());

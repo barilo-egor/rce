@@ -61,11 +61,18 @@ public class DealProcessor extends Processor {
 
     private ISecurePaymentDetailsService securePaymentDetailsService;
 
+    private ApplicationEventPublisher eventPublisher;
+
     private IStartService startService;
 
     @Autowired
     public void setStartService(IStartService startService) {
         this.startService = startService;
+    }
+
+    @Autowired
+    public void setEventPublisher(ApplicationEventPublisher eventPublisher) {
+        this.eventPublisher = eventPublisher;
     }
 
     @Autowired
@@ -265,7 +272,7 @@ public class DealProcessor extends Processor {
                 if (isReceiptsCancel(update)) {
                     exchangeService.cancelDeal(update.getMessage().getMessageId(), chatId,
                             readUserService.getCurrentDealByChatId(chatId));
-                    updateDispatcher.runProcessor(Command.START, chatId, update);
+                    startService.process(chatId);
                     return;
                 }
                 if (!exchangeService.saveReceipts(update)) return;
@@ -294,13 +301,6 @@ public class DealProcessor extends Processor {
     private void processToStart(Long chatId, Update update) {
         responseSender.deleteCallbackMessageIfExists(update);
         startService.process(chatId);
-    }
-
-    private ApplicationEventPublisher eventPublisher;
-
-    @Autowired
-    public void setEventPublisher(ApplicationEventPublisher eventPublisher) {
-        this.eventPublisher = eventPublisher;
     }
 
     public boolean isMainMenuCommand(Update update) {

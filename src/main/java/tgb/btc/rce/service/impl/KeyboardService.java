@@ -12,7 +12,6 @@ import tgb.btc.library.constants.enums.bot.CryptoCurrency;
 import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.constants.enums.bot.DeliveryType;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
-import tgb.btc.library.constants.enums.properties.PropertiesPath;
 import tgb.btc.library.constants.enums.properties.VariableType;
 import tgb.btc.library.exception.BaseException;
 import tgb.btc.library.interfaces.IModule;
@@ -22,8 +21,7 @@ import tgb.btc.library.interfaces.service.bean.bot.IPaymentTypeService;
 import tgb.btc.library.interfaces.util.IBigDecimalService;
 import tgb.btc.library.interfaces.util.IFiatCurrencyService;
 import tgb.btc.library.service.process.RPSService;
-import tgb.btc.library.service.properties.ButtonsDesignPropertiesReader;
-import tgb.btc.library.service.properties.VariablePropertiesReader;
+import tgb.btc.library.service.properties.*;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.BotInlineButton;
 import tgb.btc.rce.enums.BotReplyButton;
@@ -44,7 +42,6 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static tgb.btc.library.constants.enums.properties.PropertiesPath.RPS_PROPERTIES;
 import static tgb.btc.rce.enums.InlineCalculatorButton.*;
 
 @Service
@@ -77,6 +74,27 @@ public class KeyboardService implements IKeyboardService {
     private ICommandService commandService;
 
     private IModule<DeliveryKind> deliveryKindModule;
+
+    private FunctionsPropertiesReader functionsPropertiesReader;
+
+    private DesignPropertiesReader designPropertiesReader;
+
+    private RPSPropertiesReader rpsPropertiesReader;
+
+    @Autowired
+    public void setRpsPropertiesReader(RPSPropertiesReader rpsPropertiesReader) {
+        this.rpsPropertiesReader = rpsPropertiesReader;
+    }
+
+    @Autowired
+    public void setDesignPropertiesReader(DesignPropertiesReader designPropertiesReader) {
+        this.designPropertiesReader = designPropertiesReader;
+    }
+
+    @Autowired
+    public void setFunctionsPropertiesReader(FunctionsPropertiesReader functionsPropertiesReader) {
+        this.functionsPropertiesReader = functionsPropertiesReader;
+    }
 
     @Autowired
     public void setDeliveryKindModule(IModule<DeliveryKind> deliveryKindModule) {
@@ -179,7 +197,7 @@ public class KeyboardService implements IKeyboardService {
                                 .inlineType(InlineType.CALLBACK_DATA)
                                 .build())
                         .collect(Collectors.toList());
-        Integer numberOfColumns = PropertiesPath.FUNCTIONS_PROPERTIES.getInteger("payment.types.columns", null);
+        Integer numberOfColumns = functionsPropertiesReader.getInteger("payment.types.columns", null);
         if (Objects.nonNull(numberOfColumns)) {
             return keyboardBuildService.buildInlineSingleLast(buttons, numberOfColumns, keyboardBuildService.getInlineBackButton());
         }
@@ -280,9 +298,9 @@ public class KeyboardService implements IKeyboardService {
     public ReplyKeyboard getDeliveryTypes(FiatCurrency fiatCurrency, DealType dealType, CryptoCurrency cryptoCurrency) {
         List<InlineButton> buttons = new ArrayList<>();
         Arrays.stream(DeliveryType.values()).forEach(x -> {
-            String text = PropertiesPath.DESIGN_PROPERTIES.getString(x.name());
+            String text = designPropertiesReader.getString(x.name());
             if (DeliveryType.VIP.equals(x) &&
-                    PropertiesPath.FUNCTIONS_PROPERTIES.getBoolean("vip.button.add.sum", false)) {
+                    functionsPropertiesReader.getBoolean("vip.button.add.sum", false)) {
                 Integer fix;
                 try {
                     fix = variablePropertiesReader.getInt(VariableType.FIX_COMMISSION_VIP,
@@ -321,7 +339,7 @@ public class KeyboardService implements IKeyboardService {
     @Override
     public ReplyKeyboard getRPSRates() {
         List<InlineButton> buttons = new ArrayList<>();
-        String[] sums = RPS_PROPERTIES.getString("sums").split(",");
+        String[] sums = rpsPropertiesReader.getString("sums").split(",");
         Arrays.asList(sums).forEach(sum -> buttons.add(InlineButton.builder()
                 .text(sum)
                 .data(sum)
@@ -378,7 +396,7 @@ public class KeyboardService implements IKeyboardService {
         return keyboardBuildService.buildInline(List.of(
                 InlineButton.builder()
                         .text("Связь с оператором")
-                        .data(PropertiesPath.VARIABLE_PROPERTIES.getString(VariableType.OPERATOR_LINK.getKey()))
+                        .data(variablePropertiesReader.getString(VariableType.OPERATOR_LINK.getKey()))
                         .inlineType(InlineType.URL)
                         .build()
         ));

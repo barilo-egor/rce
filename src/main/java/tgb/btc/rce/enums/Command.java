@@ -3,7 +3,6 @@ package tgb.btc.rce.enums;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import tgb.btc.library.constants.enums.bot.UserRole;
-import tgb.btc.library.constants.enums.properties.PropertiesPath;
 import tgb.btc.library.interfaces.ICommand;
 
 import java.util.Arrays;
@@ -29,7 +28,7 @@ public enum Command implements ICommand {
     /**
      * UTIL
      */
-    BACK(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.name(), false, UserRole.USER_ACCESS), // +
+    BACK("Назад", false, UserRole.USER_ACCESS), // +
     ADMIN_BACK("Назад", false, UserRole.OPERATOR_ACCESS),
     CANCEL("Отмена", false, UserRole.USER_ACCESS),
     SHARE_CONTACT("Поделиться контактом", false, UserRole.USER_ACCESS),
@@ -51,12 +50,12 @@ public enum Command implements ICommand {
     /**
      * MAIN
      */
-    BUY_BITCOIN(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.name(), false, UserRole.USER_ACCESS),// +
-    SELL_BITCOIN(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.name(), false, UserRole.USER_ACCESS),// +
-    CABINET(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.name(), false, UserRole.USER_ACCESS),
-    CONTACTS(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.name(), false, UserRole.USER_ACCESS),// +
-    DRAWS(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.name(), false, UserRole.USER_ACCESS),// +
-    REFERRAL(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.name(), false, UserRole.USER_ACCESS),// +
+    BUY_BITCOIN("Купить", false, UserRole.USER_ACCESS),// +
+    SELL_BITCOIN("Продать", false, UserRole.USER_ACCESS),// +
+    CABINET("Кабинет", false, UserRole.USER_ACCESS),
+    CONTACTS("Контакты", false, UserRole.USER_ACCESS),// +
+    DRAWS("Розыгрыши", false, UserRole.USER_ACCESS),// +
+    REFERRAL("Реферальная программа", false, UserRole.USER_ACCESS),// +
     ADMIN_PANEL("Админ панель", false, UserRole.ADMIN_ACCESS),// +
     OPERATOR_PANEL("Панель оператора", false, UserRole.OPERATOR_ACCESS),// +
     OBSERVER_PANEL("Панель наблюдателя", false, UserRole.OBSERVER_ACCESS),// +
@@ -64,18 +63,17 @@ public enum Command implements ICommand {
     /**
      * DRAWS
      */
-    LOTTERY(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.name(), false, UserRole.USER_ACCESS),// +
-    ROULETTE(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.name(), false, UserRole.USER_ACCESS),// +
-    SLOT_REEL(PropertiesPath.SLOT_REEL_PROPERTIES.name(), false, UserRole.USER_ACCESS),
-    DICE(PropertiesPath.DICE_PROPERTIES.name(), false, UserRole.USER_ACCESS),
-    RPS(PropertiesPath.RPS_PROPERTIES.name(), false, UserRole.USER_ACCESS),
+    LOTTERY("Лотерея", false, UserRole.USER_ACCESS),// +
+    ROULETTE("Рулетка", false, UserRole.USER_ACCESS),// +
+    SLOT_REEL("Барабан", false, UserRole.USER_ACCESS),
+    DICE("Кубик", false, UserRole.USER_ACCESS),
+    RPS("Камень/ножницы/бумага", false, UserRole.USER_ACCESS),
 
     /**
      * REFERRAL
      */
     WITHDRAWAL_OF_FUNDS("Вывод средств", false, UserRole.USER_ACCESS),
     SHOW_WITHDRAWAL_REQUEST("SHOW_WITHDRAWAL_REQUEST", false, UserRole.USER_ACCESS),
-    SEND_LINK(PropertiesPath.BOT_PROPERTIES.name(), false, UserRole.USER_ACCESS),
     HIDE_WITHDRAWAL("Скрыть", false, UserRole.ADMIN_ACCESS),
     CHANGE_REFERRAL_BALANCE("Изменить", false, UserRole.ADMIN_ACCESS),
     DELETE_WITHDRAWAL_REQUEST("Удалить", false, UserRole.USER_ACCESS),
@@ -93,9 +91,9 @@ public enum Command implements ICommand {
     TURNING_CURRENCY("Включение криптовалют", false, UserRole.ADMIN_ACCESS),// +
     DISCOUNTS("Скидки", false, UserRole.ADMIN_ACCESS),// +
     USERS("Пользователи", false, UserRole.ADMIN_ACCESS),// +
-    QUIT_ADMIN_PANEL("Выйти", false, UserRole.OBSERVER_ACCESS),
-    TURNING_DELIVERY_TYPE("Вкл/выкл способов доставки", false, UserRole.ADMIN_ACCESS),
-    BACKUP_DB("/backupdb", true, UserRole.ADMIN_ACCESS),
+    QUIT_ADMIN_PANEL("Выйти", false, UserRole.OBSERVER_ACCESS),// +
+    TURNING_DELIVERY_TYPE("Вкл/выкл способов доставки", false, UserRole.ADMIN_ACCESS),// +
+    BACKUP_DB("/backupdb", true, UserRole.ADMIN_ACCESS),// +
 
     DEALS_COUNT("Кол-во возможных сделок", false, UserRole.ADMIN_ACCESS),
 
@@ -107,7 +105,7 @@ public enum Command implements ICommand {
     PERSONAL_BUY_DISCOUNT("Персональная, покупка", false, UserRole.ADMIN_ACCESS),
     PERSONAL_SELL_DISCOUNT("Персональная, продажа", false, UserRole.ADMIN_ACCESS),
     REFERRAL_PERCENT("Процент реферала", false, UserRole.ADMIN_ACCESS),
-    TURN_RANK_DISCOUNT("Ранговая скидка(для всех)", false, UserRole.ADMIN_ACCESS),
+    TURN_RANK_DISCOUNT("Ранговая скидка(для всех)", false, UserRole.ADMIN_ACCESS), //+
     TURNING_RANK_DISCOUNT("TURNING_RANK_DISCOUNT", false, UserRole.ADMIN_ACCESS),
 
     /**
@@ -143,7 +141,7 @@ public enum Command implements ICommand {
      * DEAL
      */
     DEAL("DEAL", false, UserRole.USER_ACCESS),
-    PAID(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.name(), false, UserRole.USER_ACCESS),
+    PAID("Оплатил", false, UserRole.USER_ACCESS),
     CANCEL_DEAL("Отменить заявку", false, UserRole.USER_ACCESS),
     DELETE_DEAL("Удалить", false, UserRole.USER_ACCESS),
     SHOW_DEAL("Показать", false, UserRole.OBSERVER_ACCESS),
@@ -163,8 +161,8 @@ public enum Command implements ICommand {
     USER_ADDITIONAL_VERIFICATION("USER_ADDITIONAL_VERIFICATION", false, UserRole.USER_ACCESS),
     SHARE_REVIEW("Оставить", false, UserRole.USER_ACCESS),
     CHOOSING_FIAT_CURRENCY("CHOOSING_FIAT_CURRENCY", false, UserRole.USER_ACCESS),
-    USE_PROMO(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.name(), false, UserRole.USER_ACCESS),
-    DONT_USE_PROMO(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.name(), false, UserRole.USER_ACCESS),
+    USE_PROMO("Использовать промокод", false, UserRole.USER_ACCESS),
+    DONT_USE_PROMO("Не использовать промокод", false, UserRole.USER_ACCESS),
     USE_SAVED_WALLET("USE_SAVED_WALLET", false, UserRole.USER_ACCESS),
 
     /**
@@ -258,7 +256,7 @@ public enum Command implements ICommand {
             BUY_BITCOIN, SELL_BITCOIN, CONTACTS, DRAWS, REFERRAL, ADMIN_PANEL, WEB_ADMIN_PANEL, LOTTERY, ROULETTE, BOT_SETTINGS,
             DISCOUNTS, EDIT_CONTACTS, OBSERVER_PANEL, OPERATOR_PANEL, REPORTS, REQUESTS, SEND_MESSAGES, USERS, NEW_API_DEALS,
             NEW_DEALS, NEW_REVIEWS, NEW_SPAM_BANS, NEW_WITHDRAWALS, ON_BOT, OFF_BOT, LOTTERY_REPORT, PARTNERS_REPORT, BACK,
-            TURNING_CURRENCY, QUIT_ADMIN_PANEL
+            TURNING_CURRENCY, QUIT_ADMIN_PANEL, TURNING_DELIVERY_TYPE, TURN_RANK_DISCOUNT
     );
 
     final String text;

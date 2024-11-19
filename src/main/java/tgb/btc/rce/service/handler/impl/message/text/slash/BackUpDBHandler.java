@@ -4,8 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Message;
-import tgb.btc.library.constants.enums.properties.PropertiesPath;
 import tgb.btc.library.service.process.BackupService;
+import tgb.btc.library.service.properties.ConfigPropertiesReader;
 import tgb.btc.rce.enums.update.SlashCommand;
 import tgb.btc.rce.sender.IResponseSender;
 import tgb.btc.rce.service.handler.message.text.ISlashCommandHandler;
@@ -22,16 +22,20 @@ public class BackUpDBHandler implements ISlashCommandHandler {
 
     private final BackupService backupService;
 
-    public BackUpDBHandler(IResponseSender responseSender, BackupService backupService) {
+    private final ConfigPropertiesReader configPropertiesReader;
+
+    public BackUpDBHandler(IResponseSender responseSender, BackupService backupService,
+                           ConfigPropertiesReader configPropertiesReader) {
         this.responseSender = responseSender;
         this.backupService = backupService;
+        this.configPropertiesReader = configPropertiesReader;
     }
 
     @Override
     public void handle(Message message) {
         Long chatId = message.getChatId();
 
-        String strChatIds = PropertiesPath.CONFIG_PROPERTIES.getString("backup.chatIds");
+        String strChatIds = configPropertiesReader.getString("backup.chatIds");
         if (StringUtils.isBlank(strChatIds)) {
             log.info("Не найден ни один chatId доступных для выгрузки бэкапа.");
             return;

@@ -1,11 +1,13 @@
 package tgb.btc.rce.service.impl.util;
 
-import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import tgb.btc.library.constants.enums.properties.PropertiesPath;
+import tgb.btc.library.service.properties.ButtonsDesignPropertiesReader;
+import tgb.btc.library.service.properties.DiceProperties;
+import tgb.btc.library.service.properties.RPSPropertiesReader;
+import tgb.btc.library.service.properties.SlotReelPropertiesReader;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.update.UpdateType;
@@ -13,30 +15,50 @@ import tgb.btc.rce.service.IUpdateService;
 import tgb.btc.rce.service.util.ICommandService;
 
 import java.util.*;
-import java.util.stream.Collectors;
+
+import static tgb.btc.rce.enums.Command.*;
 
 @Service
 public class CommandService implements ICommandService {
 
-    private final Map<Command, String> propertiesCommandsText = new EnumMap<>(Command.class);
-
     private final IUpdateService updateService;
 
-    @PostConstruct
-    private void init() {
-        Set<Command> propertiesCommands = Arrays.stream(Command.values())
-                .filter(command ->
-                        Arrays.stream(PropertiesPath.values())
-                                .anyMatch(propertiesPath -> propertiesPath.name().equals(command.getText())))
-                .collect(Collectors.collectingAndThen(Collectors.toSet(), Collections::unmodifiableSet));
-        for (Command command : Command.values()) {
-            if (propertiesCommands.contains(command)) {
-                String value = PropertiesPath.valueOf(command.getText()).getString(command.name());
-                if (Objects.nonNull(value)) {
-                    propertiesCommandsText.put(command, value);
-                }
-            }
-        }
+    private final Set<Command> BUTTONS_DESIGN_COMMANDS = Set.of(
+            BACK, BUY_BITCOIN, SELL_BITCOIN, CABINET, CONTACTS, DRAWS, REFERRAL, LOTTERY, ROULETTE
+    );
+
+    private final Set<Command> SLOT_REEL_COMMANDS = Set.of(SLOT_REEL);
+
+    private final Set<Command> DICE_COMMANDS = Set.of(DICE);
+
+    private final Set<Command> RPS_COMMANDS = Set.of(RPS);
+
+    private ButtonsDesignPropertiesReader buttonsDesignPropertiesReader;
+
+    private SlotReelPropertiesReader slotReelPropertiesReader;
+
+    private DiceProperties diceProperties;
+
+    private RPSPropertiesReader rpsPropertiesReader;
+
+    @Autowired
+    public void setButtonsDesignPropertiesReader(ButtonsDesignPropertiesReader buttonsDesignPropertiesReader) {
+        this.buttonsDesignPropertiesReader = buttonsDesignPropertiesReader;
+    }
+
+    @Autowired
+    public void setSlotReelPropertiesReader(SlotReelPropertiesReader slotReelPropertiesReader) {
+        this.slotReelPropertiesReader = slotReelPropertiesReader;
+    }
+
+    @Autowired
+    public void setDiceProperties(DiceProperties diceProperties) {
+        this.diceProperties = diceProperties;
+    }
+
+    @Autowired
+    public void setRpsPropertiesReader(RPSPropertiesReader rpsPropertiesReader) {
+        this.rpsPropertiesReader = rpsPropertiesReader;
     }
 
     @Autowired
@@ -46,21 +68,31 @@ public class CommandService implements ICommandService {
 
     @Override
     public boolean isStartCommand(Update update) {
-        return updateService.hasMessageText(update) && update.getMessage().getText().startsWith(Command.START.getText());
+        return updateService.hasMessageText(update) && update.getMessage().getText().startsWith(START.getText());
     }
 
     @Override
     public boolean isSubmitCommand(Update update) {
         return update.hasCallbackQuery() &&
-                (update.getCallbackQuery().getData().startsWith(Command.SUBMIT_LOGIN.name())
-                        || update.getCallbackQuery().getData().startsWith(Command.SUBMIT_REGISTER.name()));
+                (update.getCallbackQuery().getData().startsWith(SUBMIT_LOGIN.name())
+                        || update.getCallbackQuery().getData().startsWith(SUBMIT_REGISTER.name()));
     }
 
     @Override
     @Cacheable(value = "commandTextCache")
     public String getText(Command command) {
-        if (propertiesCommandsText.containsKey(command))
-            return propertiesCommandsText.get(command);
+        if (BUTTONS_DESIGN_COMMANDS.contains(command)) {
+            return buttonsDesignPropertiesReader.getString(command.name());
+        }
+        if (SLOT_REEL_COMMANDS.contains(command)) {
+            return slotReelPropertiesReader.getString(command.name());
+        }
+        if (DICE_COMMANDS.contains(command)) {
+            return diceProperties.getString(command.name());
+        }
+        if (RPS_COMMANDS.contains(command)) {
+            return rpsPropertiesReader.getString(command.name());
+        }
         return command.getText();
     }
 
@@ -74,13 +106,13 @@ public class CommandService implements ICommandService {
             case INLINE_QUERY:
                 return findByTextOrName(update.getInlineQuery().getQuery());
             case CHANNEL_POST:
-                return Command.CHANNEL_POST;
+                return CHANNEL_POST;
             case EDITED_CHANNEL_POST:
             case MY_CHAT_MEMBER:
                 // TODO переделать логику, чтобы регистрировало по myChatMember а не по команде /start
-                return Command.NONE;
+                return NONE;
             default:
-                return Command.START;
+                return START;
         }
     }
 
@@ -90,7 +122,7 @@ public class CommandService implements ICommandService {
             value = value.split(BotStringConstants.CALLBACK_DATA_SPLITTER)[0];
         }
         try {
-            return Command.valueOf(value);
+            return valueOf(value);
         } catch (IllegalArgumentException e) {
             return null;
         }
@@ -98,7 +130,7 @@ public class CommandService implements ICommandService {
 
     @Override
     public Command findByTextOrName(String value) {
-        return Arrays.stream(Command.values())
+        return Arrays.stream(values())
                 .filter(command -> (Objects.nonNull(getText(command))
                         && (value.equals(getText(command))) || (command.isHidden() && value.startsWith(command.getText()))))
                 .findFirst()

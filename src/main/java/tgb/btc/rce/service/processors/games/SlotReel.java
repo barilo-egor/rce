@@ -8,15 +8,17 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.constants.enums.SlotReelType;
 import tgb.btc.library.constants.enums.bot.UserRole;
-import tgb.btc.library.constants.enums.properties.PropertiesPath;
 import tgb.btc.library.interfaces.IModule;
 import tgb.btc.library.service.process.SlotReelService;
+import tgb.btc.library.service.properties.SlotReelMessagePropertiesReader;
+import tgb.btc.library.service.properties.SlotReelPropertiesReader;
 import tgb.btc.library.vo.slotReel.ScrollResult;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.Menu;
 import tgb.btc.rce.sender.IResponseSender;
 import tgb.btc.rce.service.Processor;
+import tgb.btc.rce.service.handler.util.IStartService;
 import tgb.btc.rce.service.util.IUpdateDispatcher;
 import tgb.btc.rce.vo.InlineButton;
 
@@ -36,6 +38,27 @@ public class SlotReel extends Processor {
     private IUpdateDispatcher updateDispatcher;
 
     private IModule<SlotReelType> slotReelModule;
+
+    private IStartService startService;
+
+    private SlotReelPropertiesReader slotReelPropertiesReader;
+
+    private SlotReelMessagePropertiesReader slotReelMessagePropertiesReader;
+
+    @Autowired
+    public void setSlotReelMessagePropertiesReader(SlotReelMessagePropertiesReader slotReelMessagePropertiesReader) {
+        this.slotReelMessagePropertiesReader = slotReelMessagePropertiesReader;
+    }
+
+    @Autowired
+    public void setSlotReelPropertiesReader(SlotReelPropertiesReader slotReelPropertiesReader) {
+        this.slotReelPropertiesReader = slotReelPropertiesReader;
+    }
+
+    @Autowired
+    public void setStartService(IStartService startService) {
+        this.startService = startService;
+    }
 
     @Autowired
     public void setSlotReelModule(IModule<SlotReelType> slotReelModule) {
@@ -70,7 +93,7 @@ public class SlotReel extends Processor {
             return;
         }
         if (isDrawsCommand(update)) return;
-        if (PropertiesPath.SLOT_REEL_PROPERTIES.getString("button.try.text")
+        if (slotReelPropertiesReader.getString("button.try.text")
                 .equals(callbackQueryService.getSplitData(update.getCallbackQuery(), 1))) {
             scroll(chatId);
         } else {
@@ -96,11 +119,11 @@ public class SlotReel extends Processor {
 
     private void scroll(Long chatId) {
         log.trace("Пользователь " + chatId + " крутит барабан");
-        if (readUserService.getReferralBalanceByChatId(chatId) < PropertiesPath.SLOT_REEL_PROPERTIES.getInteger("try", 10)) {
-            responseSender.sendMessage(chatId, PropertiesPath.SLOT_REEL_MESSAGE.getString("balance.empty"));
+        if (readUserService.getReferralBalanceByChatId(chatId) < slotReelPropertiesReader.getInteger("try", 10)) {
+            responseSender.sendMessage(chatId, slotReelMessagePropertiesReader.getString("balance.empty"));
             return;
         }
-        String scrollText = PropertiesPath.SLOT_REEL_MESSAGE.getString("scroll");
+        String scrollText = slotReelMessagePropertiesReader.getString("scroll");
         if (StringUtils.isNotBlank(scrollText)) {
             responseSender.sendMessage(chatId, scrollText);
         }
@@ -110,7 +133,7 @@ public class SlotReel extends Processor {
         }
         Integer referralBalance = readUserService.getReferralBalanceByChatId(chatId);
         log.trace("Исходный баланс пользователя " + chatId + " :" + referralBalance);
-        referralBalance -= PropertiesPath.SLOT_REEL_PROPERTIES.getInteger("try", 10);
+        referralBalance -= slotReelPropertiesReader.getInteger("try", 10);
         int diceValue = message.getDice().getValue();
         ScrollResult scrollResult = slotReelService.scrollResult(diceValue);
         log.trace("Пользователь " + chatId + " зароллил " + Arrays.toString(scrollResult.getSlotValues()) + "(" + diceValue + ")");
@@ -119,10 +142,10 @@ public class SlotReel extends Processor {
                 .append(slotReelService.slotCombinationToText(scrollResult.getSlotValues(), ", ")).append(System.lineSeparator()).append(System.lineSeparator());
         if (scrollResult.getWinAmount() != null) {
             referralBalance += Integer.parseInt(scrollResult.getWinAmount());
-            sb.append("*").append(PropertiesPath.SLOT_REEL_MESSAGE.getString("win")).append("* ").append(scrollResult.getWinAmount())
+            sb.append("*").append(slotReelMessagePropertiesReader.getString("win")).append("* ").append(scrollResult.getWinAmount())
                     .append("₽!").append(System.lineSeparator()).append(System.lineSeparator());
         } else {
-            sb.append(PropertiesPath.SLOT_REEL_MESSAGE.getString("lose")).append(System.lineSeparator()).append(System.lineSeparator());
+            sb.append(slotReelMessagePropertiesReader.getString("lose")).append(System.lineSeparator()).append(System.lineSeparator());
         }
         log.trace("Сохранение баланса пользователя " + chatId + " :" + referralBalance);
         modifyUserService.updateReferralBalanceByChatId(referralBalance, chatId);
@@ -132,8 +155,8 @@ public class SlotReel extends Processor {
     }
 
     private void drawSlotButtons(Long chatId, String text) {
-        String tryText = PropertiesPath.SLOT_REEL_PROPERTIES.getString("button.try.text");
-        String closeText = PropertiesPath.SLOT_REEL_PROPERTIES.getString("button.close.text");
+        String tryText = slotReelPropertiesReader.getString("button.try.text");
+        String closeText = slotReelPropertiesReader.getString("button.close.text");
         List<InlineButton> buttons = new ArrayList<>();
         buttons.add(InlineButton.builder()
                 .text(tryText)
@@ -149,7 +172,7 @@ public class SlotReel extends Processor {
 
     private void processToStart(Long chatId, Update update) {
         responseSender.deleteCallbackMessageIfExists(update);
-        updateDispatcher.runProcessor(Command.START, chatId, update);
+        startService.process(chatId);
     }
 
 }
