@@ -18,6 +18,7 @@ import tgb.btc.library.interfaces.service.bean.bot.user.IModifyUserService;
 import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.library.service.bean.bot.ReferralUserService;
 import tgb.btc.rce.enums.Command;
+import tgb.btc.rce.enums.update.SlashCommand;
 import tgb.btc.rce.service.IUpdateService;
 import tgb.btc.rce.service.process.IUserProcessService;
 import tgb.btc.rce.service.util.ICommandService;
@@ -114,7 +115,7 @@ public class UserProcessService implements IUserProcessService {
         if (commandService.isStartCommand(update) && referralModule.isCurrent(ReferralType.STANDARD)) {
             try {
                 Long chatIdFrom = Long.parseLong(update.getMessage().getText()
-                        .replaceAll(commandService.getText(Command.START), "").trim());
+                        .replaceAll(SlashCommand.START.getText(), "").trim());
                 if (!readUserService.existsByChatId(chatIdFrom)) throw new BaseException();
                 inviter = readUserService.getByChatId(chatIdFrom);
                 newUser.setFromChatId(chatIdFrom);

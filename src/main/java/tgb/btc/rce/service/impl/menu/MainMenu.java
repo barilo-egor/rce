@@ -5,8 +5,8 @@ import org.springframework.stereotype.Service;
 import tgb.btc.library.constants.enums.ReferralType;
 import tgb.btc.library.constants.enums.bot.UserRole;
 import tgb.btc.library.interfaces.IModule;
-import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.Menu;
+import tgb.btc.rce.enums.update.TextCommand;
 import tgb.btc.rce.service.IMenu;
 import tgb.btc.rce.service.keyboard.IReplyButtonService;
 import tgb.btc.rce.vo.ReplyButton;
@@ -38,21 +38,21 @@ public class MainMenu implements IMenu {
 
     @Override
     public List<ReplyButton> build(UserRole userRole) {
-        List<Command> resultCommands = new ArrayList<>(getMenu().getCommands());
+        List<TextCommand> resultTextCommands = new ArrayList<>(getMenu().getTextCommands());
         if (!referralModule.isCurrent(ReferralType.STANDARD)) {
-            resultCommands.remove(Command.REFERRAL);
+            resultTextCommands.remove(TextCommand.REFERRAL);
         }
         if (!UserRole.ADMIN.equals(userRole)) {
-            resultCommands.remove(Command.ADMIN_PANEL);
-            resultCommands.remove(Command.WEB_ADMIN_PANEL);
+            resultTextCommands.remove(TextCommand.ADMIN_PANEL);
+            resultTextCommands.remove(TextCommand.WEB_ADMIN_PANEL);
         }
         if (!UserRole.OPERATOR.equals(userRole)) {
-            resultCommands.remove(Command.OPERATOR_PANEL);
+            resultTextCommands.remove(TextCommand.OPERATOR_PANEL);
         }
         if (!UserRole.OBSERVER.equals(userRole)) {
-            resultCommands.remove(Command.OBSERVER_PANEL);
+            resultTextCommands.remove(TextCommand.OBSERVER_PANEL);
         }
-        return replyButtonService.fromCommands(resultCommands);
+        return replyButtonService.fromTextCommands(resultTextCommands);
     }
 
     @Override

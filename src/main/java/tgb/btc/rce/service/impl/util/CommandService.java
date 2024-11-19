@@ -10,6 +10,8 @@ import tgb.btc.library.service.properties.RPSPropertiesReader;
 import tgb.btc.library.service.properties.SlotReelPropertiesReader;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
+import tgb.btc.rce.enums.update.SlashCommand;
+import tgb.btc.rce.enums.update.TextCommand;
 import tgb.btc.rce.enums.update.UpdateType;
 import tgb.btc.rce.service.IUpdateService;
 import tgb.btc.rce.service.util.ICommandService;
@@ -32,6 +34,11 @@ public class CommandService implements ICommandService {
     private final Set<Command> DICE_COMMANDS = Set.of(DICE);
 
     private final Set<Command> RPS_COMMANDS = Set.of(RPS);
+
+    private final Set<TextCommand> BUTTONS_DESIGN_TEXT_COMMANDS = Set.of(
+            TextCommand.BACK, TextCommand.BUY_BITCOIN, TextCommand.SELL_BITCOIN, TextCommand.CONTACTS, TextCommand.DRAWS,
+            TextCommand.REFERRAL, TextCommand.LOTTERY, TextCommand.ROULETTE
+    );
 
     private ButtonsDesignPropertiesReader buttonsDesignPropertiesReader;
 
@@ -68,7 +75,7 @@ public class CommandService implements ICommandService {
 
     @Override
     public boolean isStartCommand(Update update) {
-        return updateService.hasMessageText(update) && update.getMessage().getText().startsWith(START.getText());
+        return updateService.hasMessageText(update) && update.getMessage().getText().startsWith(SlashCommand.START.getText());
     }
 
     @Override
@@ -92,6 +99,15 @@ public class CommandService implements ICommandService {
         }
         if (RPS_COMMANDS.contains(command)) {
             return rpsPropertiesReader.getString(command.name());
+        }
+        return command.getText();
+    }
+
+    @Override
+    @Cacheable(value = "textCommandTextCache")
+    public String getText(TextCommand command) {
+        if (BUTTONS_DESIGN_TEXT_COMMANDS.contains(command)) {
+            return buttonsDesignPropertiesReader.getString(command.name());
         }
         return command.getText();
     }

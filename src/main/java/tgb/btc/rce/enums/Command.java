@@ -184,10 +184,10 @@ public enum Command implements ICommand {
     USER_INFORMATION("Информация о пользователе", false, UserRole.ADMIN_ACCESS),
     USERS_DEALS_REPORT("Отчет сделки пользователей", false, UserRole.ADMIN_ACCESS),//+
     DEAL_REPORTS("Отчет по сделкам", false, Set.of(UserRole.OBSERVER, UserRole.ADMIN)),
-    PARTNERS_REPORT("Отчет по партнерам", false, UserRole.ADMIN_ACCESS),
+    PARTNERS_REPORT("Отчет по партнерам", false, UserRole.ADMIN_ACCESS),//+
     CHECKS_FOR_DATE("Чеки по дате", false, UserRole.ADMIN_ACCESS),
     SEND_CHECKS_FOR_DATE("SEND_CHECKS_FOR_DATE", false, UserRole.ADMIN_ACCESS),
-    LOTTERY_REPORT("Отчет по лотереи", false, UserRole.ADMIN_ACCESS),
+    LOTTERY_REPORT("Отчет по лотереи", false, UserRole.ADMIN_ACCESS),//+
 
     CHANNEL_POST("CHANNEL_POST", false, UserRole.USER_ACCESS),
 
@@ -217,7 +217,7 @@ public enum Command implements ICommand {
     SHOW_SPAM_BANNED_USER("Показать", false, UserRole.OPERATOR_ACCESS),
     KEEP_SPAM_BAN("Оставить в бане", false, UserRole.OPERATOR_ACCESS),
     SPAM_UNBAN("Разблокировать", false, UserRole.OPERATOR_ACCESS),
-    NEW_SPAM_BANS("Антиспам блоки", false, UserRole.OPERATOR_ACCESS),
+    NEW_SPAM_BANS("Антиспам блоки", false, UserRole.OPERATOR_ACCESS),//+
 
     /**
      * USERS STATES
@@ -226,14 +226,14 @@ public enum Command implements ICommand {
     INLINE_QUERY_CALCULATOR("INLINE_QUERY_CALCULATOR", false, UserRole.USER_ACCESS),
     INLINE_CALCULATOR("INLINE_CALCULATOR", false, UserRole.USER_ACCESS),
 
-    WEB_ADMIN_PANEL("Веб админ-панель", false, UserRole.OPERATOR_ACCESS),
+    WEB_ADMIN_PANEL("Веб админ-панель", false, UserRole.OPERATOR_ACCESS),//+
 
     /**
      * API DEALS
      */
     CONFIRM_API_DEAL("Подтвердить", false, UserRole.OPERATOR_ACCESS),
     CANCEL_API_DEAL("Отклонить", false, UserRole.OPERATOR_ACCESS),
-    NEW_API_DEALS("Новые API заявки", false, UserRole.OPERATOR_ACCESS),
+    NEW_API_DEALS("Новые API заявки", false, UserRole.OPERATOR_ACCESS),//+
 
     /**
      * TURNING DELIVERY
