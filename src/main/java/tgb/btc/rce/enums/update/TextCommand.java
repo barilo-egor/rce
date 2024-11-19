@@ -48,7 +48,6 @@ public enum TextCommand {
     USERS_DEALS_REPORT("Отчет сделки пользователей", UserRole.ADMIN_ACCESS);
 
     private final String text;
-
     private final Set<UserRole> roles;
 
     public boolean hasAccess(UserRole role) {

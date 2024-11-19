@@ -67,7 +67,10 @@ public enum Command implements ICommand {
     NEW_SPAM_BANS("Антиспам блоки", false, UserRole.OPERATOR_ACCESS),
     WEB_ADMIN_PANEL("Веб админ-панель", false, UserRole.OPERATOR_ACCESS),
     NEW_API_DEALS("Новые API заявки", false, UserRole.OPERATOR_ACCESS),
-    
+    DELETE_FROM_POOL("/deletefrompool", true, UserRole.OPERATOR_ACCESS),
+
+
+
 
     NONE("none", false, UserRole.USER_ACCESS),
     ADMIN_BACK("Назад", false, UserRole.OPERATOR_ACCESS),
@@ -94,6 +97,7 @@ public enum Command implements ICommand {
     SYSTEM_MESSAGES("Сис.сообщения", false, UserRole.ADMIN_ACCESS),
     DEAL("DEAL", false, UserRole.USER_ACCESS),
     PAID("Оплатил", false, UserRole.USER_ACCESS),
+
     CANCEL_DEAL("Отменить заявку", false, UserRole.USER_ACCESS),
     DELETE_DEAL("Удалить", false, UserRole.USER_ACCESS),
     SHOW_DEAL("Показать", false, UserRole.OBSERVER_ACCESS),
@@ -107,7 +111,7 @@ public enum Command implements ICommand {
     ADD_TO_POOL("Добавить в пул", false, UserRole.OPERATOR_ACCESS),
     CLEAR_POOL("Очистить пул", false, UserRole.OPERATOR_ACCESS),
     CONFIRM_CLEAR_POOL("Да", false, UserRole.OPERATOR_ACCESS),
-    DELETE_FROM_POOL("/deletefrompool", true, UserRole.OPERATOR_ACCESS),
+
     CONFIRM_AUTO_WITHDRAWAL_DEAL("Продолжить", false, UserRole.OPERATOR_ACCESS),
     ADDITIONAL_VERIFICATION("Доп.верификация", false, UserRole.OPERATOR_ACCESS),
     USER_ADDITIONAL_VERIFICATION("USER_ADDITIONAL_VERIFICATION", false, UserRole.USER_ACCESS),
