@@ -10,9 +10,10 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMa
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import tgb.btc.library.constants.enums.DiceType;
 import tgb.btc.library.constants.enums.bot.UserRole;
-import tgb.btc.library.constants.enums.properties.PropertiesPath;
 import tgb.btc.library.interfaces.IModule;
 import tgb.btc.library.service.process.DiceService;
+import tgb.btc.library.service.properties.DiceMessagePropertiesReader;
+import tgb.btc.library.service.properties.DiceProperties;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.Menu;
@@ -37,6 +38,20 @@ public class Dice extends Processor {
     private IModule<DiceType> diceModule;
 
     private IStartService startService;
+
+    private DiceMessagePropertiesReader diceMessagePropertiesReader;
+    
+    private DiceProperties diceProperties;
+
+    @Autowired
+    public void setDiceProperties(DiceProperties diceProperties) {
+        this.diceProperties = diceProperties;
+    }
+
+    @Autowired
+    public void setDiceMessagePropertiesReader(DiceMessagePropertiesReader diceMessagePropertiesReader) {
+        this.diceMessagePropertiesReader = diceMessagePropertiesReader;
+    }
 
     @Autowired
     public void setStartService(IStartService startService) {
@@ -89,7 +104,7 @@ public class Dice extends Processor {
 
     private void numberCallBack(Update update) {
         Long chatId = updateService.getChatId(update);
-        if (PropertiesPath.DICE_PROPERTIES.getString("button.back.text").equals(callbackQueryService.getSplitData(update.getCallbackQuery(), 2))) {
+        if (diceProperties.getString("button.back.text").equals(callbackQueryService.getSplitData(update.getCallbackQuery(), 2))) {
             responseSender.deleteCallbackMessageIfExists(update);
             Integer referralBalance = readUserService.getReferralBalanceByChatId(chatId);
             drawDiceBetButtons(chatId, String.format(diceService.selectBetMessage(), referralBalance));
@@ -102,20 +117,20 @@ public class Dice extends Processor {
     }
 
     private void betCallBack(Update update) {
-        if (PropertiesPath.DICE_PROPERTIES.getString("button.close.text")
+        if (diceProperties.getString("button.close.text")
                 .equals(callbackQueryService.getSplitData(update.getCallbackQuery(), 2))) {
             responseSender.deleteCallbackMessageIfExists(update);
         } else {
             Long chatId = updateService.getChatId(update);
             Integer bet = Integer.parseInt(callbackQueryService.getSplitData(update.getCallbackQuery(), 2));
             if (readUserService.getReferralBalanceByChatId(chatId) < bet) {
-                responseSender.sendMessage(chatId, PropertiesPath.DICE_MESSAGE.getString("balance.empty"));
+                responseSender.sendMessage(chatId, diceMessagePropertiesReader.getString("balance.empty"));
                 return;
             }
             responseSender.deleteCallbackMessageIfExists(update);
 
             Integer referralBalance = readUserService.getReferralBalanceByChatId(chatId);
-            String text = PropertiesPath.DICE_MESSAGE.getString("selected.bet") + " " + bet + "₽" +
+            String text = diceMessagePropertiesReader.getString("selected.bet") + " " + bet + "₽" +
                     System.lineSeparator() + System.lineSeparator() +
                     "Выберите число:";
             drawDiceSelectWinNumber(chatId, String.format(text, referralBalance), bet);
@@ -125,12 +140,12 @@ public class Dice extends Processor {
 
     private void rollDice(Long chatId, Integer selectedNumber, Integer bet) {
         if (readUserService.getReferralBalanceByChatId(chatId) < bet) {
-            responseSender.sendMessage(chatId, PropertiesPath.DICE_MESSAGE.getString("balance.empty"));
+            responseSender.sendMessage(chatId, diceMessagePropertiesReader.getString("balance.empty"));
             return;
         }
-        String rollText = PropertiesPath.DICE_MESSAGE.getString("roll") + System.lineSeparator() + System.lineSeparator() +
-                PropertiesPath.DICE_MESSAGE.getString("selected.number") + " " + selectedNumber + System.lineSeparator() +
-                PropertiesPath.DICE_MESSAGE.getString("selected.bet") + " " + bet + "₽";
+        String rollText = diceMessagePropertiesReader.getString("roll") + System.lineSeparator() + System.lineSeparator() +
+                diceMessagePropertiesReader.getString("selected.number") + " " + selectedNumber + System.lineSeparator() +
+                diceMessagePropertiesReader.getString("selected.bet") + " " + bet + "₽";
         responseSender.sendMessage(chatId, rollText);
         Message message = responseSender.execute(SendDice.builder().chatId(chatId.toString()).emoji("\uD83C\uDFB2").build());
         if (message == null) {
@@ -158,7 +173,7 @@ public class Dice extends Processor {
     }
 
     private void drawDiceSelectWinNumber(Long chatId, String text, Integer bet) {
-        String backText = PropertiesPath.DICE_PROPERTIES.getString("button.back.text");
+        String backText = diceProperties.getString("button.back.text");
         List<InlineButton> buttons = new ArrayList<>();
         for (int i = 0; i < 6; i++) {
             buttons.add(InlineButton.builder()
@@ -175,8 +190,8 @@ public class Dice extends Processor {
     }
 
     private void drawDiceBetButtons(Long chatId, String text) {
-        String closeText = PropertiesPath.DICE_PROPERTIES.getString("button.close.text");
-        String[] sums = PropertiesPath.DICE_PROPERTIES.getStringArray("sums");
+        String closeText = diceProperties.getString("button.close.text");
+        String[] sums = diceProperties.getStringArray("sums");
 
         List<InlineButton> buttons = new ArrayList<>();
 
