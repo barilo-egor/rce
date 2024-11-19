@@ -10,10 +10,11 @@ import tgb.btc.library.interfaces.util.IBigDecimalService;
 import tgb.btc.library.interfaces.web.ICryptoWithdrawalService;
 import tgb.btc.library.vo.web.PoolDeal;
 import tgb.btc.rce.enums.Command;
+import tgb.btc.rce.enums.update.CallbackQueryData;
 import tgb.btc.rce.sender.IResponseSender;
 import tgb.btc.rce.service.handler.util.IBitcoinPoolService;
 import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
-import tgb.btc.rce.service.util.ICallbackQueryService;
+import tgb.btc.rce.service.util.ICallbackDataService;
 import tgb.btc.rce.service.util.ICommandService;
 import tgb.btc.rce.vo.InlineButton;
 
@@ -37,17 +38,17 @@ public class BitcoinPoolService implements IBitcoinPoolService {
 
     private final IKeyboardBuildService keyboardBuildService;
 
-    private final ICallbackQueryService callbackQueryService;
+    private final ICallbackDataService callbackDataService;
 
     public BitcoinPoolService(IResponseSender responseSender, ICryptoWithdrawalService cryptoWithdrawalService,
                               IBigDecimalService bigDecimalService, ICommandService commandService,
-                              IKeyboardBuildService keyboardBuildService, ICallbackQueryService callbackQueryService) {
+                              IKeyboardBuildService keyboardBuildService, ICallbackDataService callbackDataService) {
         this.responseSender = responseSender;
         this.cryptoWithdrawalService = cryptoWithdrawalService;
         this.bigDecimalService = bigDecimalService;
         this.commandService = commandService;
         this.keyboardBuildService = keyboardBuildService;
-        this.callbackQueryService = callbackQueryService;
+        this.callbackDataService = callbackDataService;
     }
 
     @Override
@@ -92,12 +93,12 @@ public class BitcoinPoolService implements IBitcoinPoolService {
         ReplyKeyboard replyKeyboard = keyboardBuildService.buildInline(
                 List.of(
                         InlineButton.builder()
-                                .text(commandService.getText(Command.BITCOIN_POOL_WITHDRAWAL))
-                                .data(callbackQueryService.buildCallbackData(Command.BITCOIN_POOL_WITHDRAWAL, new Object[]{deals.size(), strTotalAmount}))
+                                .text("Автовывод")
+                                .data(callbackDataService.buildData(CallbackQueryData.BITCOIN_POOL_WITHDRAWAL, deals.size(), strTotalAmount))
                                 .build(),
                         InlineButton.builder()
-                                .text(commandService.getText(Command.CLEAR_POOL))
-                                .data(callbackQueryService.buildCallbackData(Command.CLEAR_POOL, deals.size()))
+                                .text("Очистить пул")
+                                .data(callbackDataService.buildData(CallbackQueryData.CLEAR_POOL, deals.size()))
                                 .build(),
                         InlineButton.builder().text(commandService.getText(Command.INLINE_DELETE)).data(Command.INLINE_DELETE.name()).build()
                 ), 2);
