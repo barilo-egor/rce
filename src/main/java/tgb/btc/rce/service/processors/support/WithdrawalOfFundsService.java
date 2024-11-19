@@ -11,13 +11,14 @@ import tgb.btc.library.constants.enums.bot.WithdrawalRequestStatus;
 import tgb.btc.library.interfaces.service.bean.bot.IWithdrawalRequestService;
 import tgb.btc.library.interfaces.service.bean.bot.user.IModifyUserService;
 import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
-import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.PropertiesMessage;
-import tgb.btc.rce.service.INotifyService;
+import tgb.btc.rce.enums.update.CallbackQueryData;
 import tgb.btc.rce.sender.IResponseSender;
+import tgb.btc.rce.service.INotifyService;
 import tgb.btc.rce.service.IUpdateService;
 import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
+import tgb.btc.rce.service.util.ICallbackDataService;
 import tgb.btc.rce.service.util.ICommandService;
 import tgb.btc.rce.service.util.IMessagePropertiesService;
 import tgb.btc.rce.vo.ReplyButton;
@@ -45,6 +46,13 @@ public class WithdrawalOfFundsService {
     private IUpdateService updateService;
 
     private ICommandService commandService;
+
+    private ICallbackDataService callbackDataService;
+
+    @Autowired
+    public void setCallbackDataService(ICallbackDataService callbackDataService) {
+        this.callbackDataService = callbackDataService;
+    }
 
     @Autowired
     public void setCommandService(ICommandService commandService) {
@@ -101,8 +109,8 @@ public class WithdrawalOfFundsService {
         WithdrawalRequest request = withdrawalRequestService.save(
                 buildFromUpdate(readUserService.findByChatId(updateService.getChatId(update)), update));
         notifyService.notifyMessage(messagePropertiesService.getMessage(PropertiesMessage.ADMIN_NOTIFY_WITHDRAWAL_NEW),
-                Command.SHOW_WITHDRAWAL_REQUEST.name() + BotStringConstants.CALLBACK_DATA_SPLITTER +
-                        request.getPid(), Set.of(UserRole.OPERATOR, UserRole.ADMIN));
+                callbackDataService.buildData(CallbackQueryData.SHOW_WITHDRAWAL_REQUEST, request.getPid()),
+                Set.of(UserRole.OPERATOR, UserRole.ADMIN));
         responseSender.sendMessage(chatId,
                 messagePropertiesService.getMessage(PropertiesMessage.USER_RESPONSE_WITHDRAWAL_REQUEST_CREATED));
         return true;
