@@ -46,6 +46,7 @@ public enum Command implements ICommand {
     REVIEW_NAVIGATION("REVIEW_NAVIGATION", false, UserRole.OPERATOR_ACCESS),
     PUBLISH_REVIEW("Опубликовать", false, UserRole.OPERATOR_ACCESS),
     DELETE_REVIEW("Удалить", false, UserRole.OPERATOR_ACCESS),
+    DELETING_PAYMENT_TYPE("DELETING_PAYMENT_TYPE", false, UserRole.OPERATOR_ACCESS),
 
     // HAS USAGE
     START("/start", false, UserRole.USER_ACCESS),
@@ -121,8 +122,6 @@ public enum Command implements ICommand {
     USE_PROMO("Использовать промокод", false, UserRole.USER_ACCESS),
     DONT_USE_PROMO("Не использовать промокод", false, UserRole.USER_ACCESS),
     USE_SAVED_WALLET("USE_SAVED_WALLET", false, UserRole.USER_ACCESS),
-
-
     USER_INFORMATION("Информация о пользователе", false, UserRole.ADMIN_ACCESS),
     DEAL_REPORTS("Отчет по сделкам", false, Set.of(UserRole.OBSERVER, UserRole.ADMIN)),
     CHECKS_FOR_DATE("Чеки по дате", false, UserRole.ADMIN_ACCESS),
@@ -132,7 +131,8 @@ public enum Command implements ICommand {
     RECEIPTS_CANCEL_DEAL("Отменить сделку", false, UserRole.USER_ACCESS),
     NEW_PAYMENT_TYPE("Создать тип оплаты", false, UserRole.OPERATOR_ACCESS),
     DELETE_PAYMENT_TYPE("Удалить тип оплаты", false, UserRole.OPERATOR_ACCESS),
-    DELETING_PAYMENT_TYPE("DELETING_PAYMENT_TYPE", false, UserRole.OPERATOR_ACCESS),
+
+
     NEW_PAYMENT_TYPE_REQUISITE("Создать реквизит", false, UserRole.OPERATOR_ACCESS),
     DELETE_PAYMENT_TYPE_REQUISITE("Удалить реквизит", false, UserRole.OPERATOR_ACCESS),
     DELETING_PAYMENT_TYPE_REQUISITE("DELETING_PAYMENT_TYPE_REQUISITE", false, UserRole.OPERATOR_ACCESS),
@@ -168,7 +168,7 @@ public enum Command implements ICommand {
             CHANGE_RANK_DISCOUNT, TURN_ON_CURRENCY, TURN_OFF_CURRENCY, TURNING_RANK_DISCOUNT, SHOW_DEAL, SHOW_API_DEAL,
             DELETE_USER_DEAL, DELETE_DEAL_AND_BLOCK_USER, CONFIRM_USER_DEAL, AUTO_WITHDRAWAL_DEAL, BITCOIN_POOL_WITHDRAWAL,
             CLEAR_POOL, CONFIRM_POOL_WITHDRAWAL, CONFIRM_CLEAR_POOL, ADD_TO_POOL, CONFIRM_AUTO_WITHDRAWAL_DEAL,
-            ADDITIONAL_VERIFICATION, REVIEW_NAVIGATION, PUBLISH_REVIEW, DELETE_REVIEW
+            ADDITIONAL_VERIFICATION, REVIEW_NAVIGATION, PUBLISH_REVIEW, DELETE_REVIEW, DELETING_PAYMENT_TYPE
     );
 
     final String text;

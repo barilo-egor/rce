@@ -65,7 +65,7 @@ public class BitcoinPoolService implements IBitcoinPoolService {
         }
         Map<String, List<PoolDeal>> sortedByBotDeals = deals.stream()
                 .collect(Collectors.groupingBy(PoolDeal::getBot, TreeMap::new, Collectors.toList()));
-        deals.add(PoolDeal.builder().bot("qwe").amount("0.001").address("asd").pid(123L).id(12L).build()); // TODO УДАЛИТЬ
+//        deals.add(PoolDeal.builder().bot("qwe").amount("0.001").address("asd").pid(123L).id(12L).build()); // TODO УДАЛИТЬ
         if (CollectionUtils.isEmpty(deals)) {
             responseSender.sendMessage(chatId, "Текущий пул сделок BTC пуст.");
             return;
