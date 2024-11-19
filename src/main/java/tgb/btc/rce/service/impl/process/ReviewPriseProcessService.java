@@ -8,11 +8,11 @@ import tgb.btc.api.library.IReviewPriseProcessService;
 import tgb.btc.library.bean.bot.Deal;
 import tgb.btc.library.constants.enums.ReferralType;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
-import tgb.btc.library.constants.enums.properties.PropertiesPath;
 import tgb.btc.library.constants.enums.properties.VariableType;
 import tgb.btc.library.exception.PropertyValueNotFoundException;
 import tgb.btc.library.interfaces.IModule;
 import tgb.btc.library.interfaces.service.bean.bot.deal.IReadDealService;
+import tgb.btc.library.service.properties.ReviewPrisePropertiesReader;
 import tgb.btc.library.service.properties.VariablePropertiesReader;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.ReviewPriseType;
@@ -48,6 +48,13 @@ public class ReviewPriseProcessService implements IReviewPriseProcessService, IR
     private IModule<ReferralType> referralModule;
 
     private IModule<ReviewPriseType> reviewPriseModule;
+
+    private ReviewPrisePropertiesReader reviewPrisePropertiesReader;
+
+    @Autowired
+    public void setReviewPrisePropertiesReader(ReviewPrisePropertiesReader reviewPrisePropertiesReader) {
+        this.reviewPrisePropertiesReader = reviewPrisePropertiesReader;
+    }
 
     @Autowired
     public void setReferralModule(IModule<ReferralType> referralModule) {
@@ -134,7 +141,7 @@ public class ReviewPriseProcessService implements IReviewPriseProcessService, IR
     @PostConstruct
     private void load() {
         reviewPrises.clear();
-        for (String key : PropertiesPath.REVIEW_PRISE_PROPERTIES.getKeys()) {
+        for (String key : reviewPrisePropertiesReader.getKeys()) {
             int sum;
             if (StringUtils.isBlank(key)) {
                 throw new PropertyValueNotFoundException("Не указано название для одного из ключей" + key + ".");
@@ -144,7 +151,7 @@ public class ReviewPriseProcessService implements IReviewPriseProcessService, IR
             } catch (NumberFormatException e) {
                 throw new PropertyValueNotFoundException("Не корректное название для ключа " + key + ".");
             }
-            String[] priseValues = PropertiesPath.REVIEW_PRISE_PROPERTIES.getStringArray(key);
+            String[] priseValues = reviewPrisePropertiesReader.getStringArray(key);
             if (priseValues.length == 0) {
                 throw new PropertyValueNotFoundException("Не указано значение для ключа " + key + ".");
             }
