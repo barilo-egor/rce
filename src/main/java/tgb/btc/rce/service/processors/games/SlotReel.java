@@ -17,6 +17,7 @@ import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.Menu;
 import tgb.btc.rce.sender.IResponseSender;
 import tgb.btc.rce.service.Processor;
+import tgb.btc.rce.service.handler.util.IStartService;
 import tgb.btc.rce.service.util.IUpdateDispatcher;
 import tgb.btc.rce.vo.InlineButton;
 
@@ -36,6 +37,13 @@ public class SlotReel extends Processor {
     private IUpdateDispatcher updateDispatcher;
 
     private IModule<SlotReelType> slotReelModule;
+
+    private IStartService startService;
+
+    @Autowired
+    public void setStartService(IStartService startService) {
+        this.startService = startService;
+    }
 
     @Autowired
     public void setSlotReelModule(IModule<SlotReelType> slotReelModule) {
@@ -149,7 +157,7 @@ public class SlotReel extends Processor {
 
     private void processToStart(Long chatId, Update update) {
         responseSender.deleteCallbackMessageIfExists(update);
-        updateDispatcher.runProcessor(Command.START, chatId, update);
+        startService.process(chatId);
     }
 
 }

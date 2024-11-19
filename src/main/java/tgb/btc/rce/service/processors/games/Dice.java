@@ -18,6 +18,7 @@ import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.Menu;
 import tgb.btc.rce.sender.IResponseSender;
 import tgb.btc.rce.service.Processor;
+import tgb.btc.rce.service.handler.util.IStartService;
 import tgb.btc.rce.service.util.IUpdateDispatcher;
 import tgb.btc.rce.vo.InlineButton;
 
@@ -34,6 +35,13 @@ public class Dice extends Processor {
     private IUpdateDispatcher updateDispatcher;
 
     private IModule<DiceType> diceModule;
+
+    private IStartService startService;
+
+    @Autowired
+    public void setStartService(IStartService startService) {
+        this.startService = startService;
+    }
 
     @Autowired
     public void setDiceModule(IModule<DiceType> diceModule) {
@@ -212,7 +220,7 @@ public class Dice extends Processor {
 
     private void processToStart(Long chatId, Update update) {
         responseSender.deleteCallbackMessageIfExists(update);
-        updateDispatcher.runProcessor(Command.START, chatId, update);
+        startService.process(chatId);
     }
 
 }
