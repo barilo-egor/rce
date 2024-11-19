@@ -11,6 +11,7 @@ import tgb.btc.library.constants.enums.bot.UserRole;
 import tgb.btc.library.constants.enums.properties.PropertiesPath;
 import tgb.btc.library.interfaces.IModule;
 import tgb.btc.library.service.process.SlotReelService;
+import tgb.btc.library.service.properties.SlotReelPropertiesReader;
 import tgb.btc.library.vo.slotReel.ScrollResult;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
@@ -39,6 +40,13 @@ public class SlotReel extends Processor {
     private IModule<SlotReelType> slotReelModule;
 
     private IStartService startService;
+
+    private SlotReelPropertiesReader slotReelPropertiesReader;
+
+    @Autowired
+    public void setSlotReelPropertiesReader(SlotReelPropertiesReader slotReelPropertiesReader) {
+        this.slotReelPropertiesReader = slotReelPropertiesReader;
+    }
 
     @Autowired
     public void setStartService(IStartService startService) {
@@ -78,7 +86,7 @@ public class SlotReel extends Processor {
             return;
         }
         if (isDrawsCommand(update)) return;
-        if (PropertiesPath.SLOT_REEL_PROPERTIES.getString("button.try.text")
+        if (slotReelPropertiesReader.getString("button.try.text")
                 .equals(callbackQueryService.getSplitData(update.getCallbackQuery(), 1))) {
             scroll(chatId);
         } else {
@@ -104,7 +112,7 @@ public class SlotReel extends Processor {
 
     private void scroll(Long chatId) {
         log.trace("Пользователь " + chatId + " крутит барабан");
-        if (readUserService.getReferralBalanceByChatId(chatId) < PropertiesPath.SLOT_REEL_PROPERTIES.getInteger("try", 10)) {
+        if (readUserService.getReferralBalanceByChatId(chatId) < slotReelPropertiesReader.getInteger("try", 10)) {
             responseSender.sendMessage(chatId, PropertiesPath.SLOT_REEL_MESSAGE.getString("balance.empty"));
             return;
         }
@@ -118,7 +126,7 @@ public class SlotReel extends Processor {
         }
         Integer referralBalance = readUserService.getReferralBalanceByChatId(chatId);
         log.trace("Исходный баланс пользователя " + chatId + " :" + referralBalance);
-        referralBalance -= PropertiesPath.SLOT_REEL_PROPERTIES.getInteger("try", 10);
+        referralBalance -= slotReelPropertiesReader.getInteger("try", 10);
         int diceValue = message.getDice().getValue();
         ScrollResult scrollResult = slotReelService.scrollResult(diceValue);
         log.trace("Пользователь " + chatId + " зароллил " + Arrays.toString(scrollResult.getSlotValues()) + "(" + diceValue + ")");
@@ -140,8 +148,8 @@ public class SlotReel extends Processor {
     }
 
     private void drawSlotButtons(Long chatId, String text) {
-        String tryText = PropertiesPath.SLOT_REEL_PROPERTIES.getString("button.try.text");
-        String closeText = PropertiesPath.SLOT_REEL_PROPERTIES.getString("button.close.text");
+        String tryText = slotReelPropertiesReader.getString("button.try.text");
+        String closeText = slotReelPropertiesReader.getString("button.close.text");
         List<InlineButton> buttons = new ArrayList<>();
         buttons.add(InlineButton.builder()
                 .text(tryText)
