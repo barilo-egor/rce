@@ -6,6 +6,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum TextCommand {
+    BACK("Назад"),
     BUY_BITCOIN("Купить"),
     SELL_BITCOIN("Продать"),
     CONTACTS("Контакты"),
