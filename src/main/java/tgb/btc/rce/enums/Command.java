@@ -18,9 +18,9 @@ public enum Command implements ICommand {
      * CallbackQuery
      */
 
-    START("/start", false, UserRole.USER_ACCESS),
+    START("/start", false, UserRole.USER_ACCESS), // +
     NONE("none", false, UserRole.USER_ACCESS),
-    CHAT_ID("/chatid", false, UserRole.USER_ACCESS),
+    CHAT_ID("/chatid", false, UserRole.USER_ACCESS), // +
 
     /*
       Reply
@@ -29,7 +29,7 @@ public enum Command implements ICommand {
     /**
      * UTIL
      */
-    BACK(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.name(), false, UserRole.USER_ACCESS),
+    BACK(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.name(), false, UserRole.USER_ACCESS), // +
     ADMIN_BACK("Назад", false, UserRole.OPERATOR_ACCESS),
     CANCEL("Отмена", false, UserRole.USER_ACCESS),
     SHARE_CONTACT("Поделиться контактом", false, UserRole.USER_ACCESS),
@@ -40,32 +40,32 @@ public enum Command implements ICommand {
     /**
      * HIDDEN
      */
-    DELETE_USER("/deleteuser", true, UserRole.ADMIN_ACCESS),
-    MAKE_ADMIN("/makeadmin", true, UserRole.ADMIN_ACCESS),
-    MAKE_OPERATOR("/makeoperator", true, UserRole.ADMIN_ACCESS),
-    MAKE_OBSERVER("/makeobserver", true, UserRole.ADMIN_ACCESS),
-    MAKE_USER("/makeuser", true, UserRole.ADMIN_ACCESS),
-    HELP("/help", false, UserRole.ADMIN_ACCESS),
-    TURN_NOTIFICATIONS("/notifications", true, UserRole.OBSERVER_ACCESS),
+    DELETE_USER("/deleteuser", true, UserRole.ADMIN_ACCESS),// +
+    MAKE_ADMIN("/makeadmin", true, UserRole.ADMIN_ACCESS),// +
+    MAKE_OPERATOR("/makeoperator", true, UserRole.ADMIN_ACCESS),// +
+    MAKE_OBSERVER("/makeobserver", true, UserRole.ADMIN_ACCESS),// +
+    MAKE_USER("/makeuser", true, UserRole.ADMIN_ACCESS),// +
+    HELP("/help", false, UserRole.ADMIN_ACCESS),// +
+    TURN_NOTIFICATIONS("/notifications", true, UserRole.OBSERVER_ACCESS),// +
 
     /**
      * MAIN
      */
-    BUY_BITCOIN(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.name(), false, UserRole.USER_ACCESS),
-    SELL_BITCOIN(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.name(), false, UserRole.USER_ACCESS),
+    BUY_BITCOIN(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.name(), false, UserRole.USER_ACCESS),// +
+    SELL_BITCOIN(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.name(), false, UserRole.USER_ACCESS),// +
     CABINET(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.name(), false, UserRole.USER_ACCESS),
-    CONTACTS(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.name(), false, UserRole.USER_ACCESS),
-    DRAWS(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.name(), false, UserRole.USER_ACCESS),
-    REFERRAL(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.name(), false, UserRole.USER_ACCESS),
-    ADMIN_PANEL("Админ панель", false, UserRole.ADMIN_ACCESS),
-    OPERATOR_PANEL("Панель оператора", false, UserRole.OPERATOR_ACCESS),
-    OBSERVER_PANEL("Панель наблюдателя", false, UserRole.OBSERVER_ACCESS),
+    CONTACTS(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.name(), false, UserRole.USER_ACCESS),// +
+    DRAWS(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.name(), false, UserRole.USER_ACCESS),// +
+    REFERRAL(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.name(), false, UserRole.USER_ACCESS),// +
+    ADMIN_PANEL("Админ панель", false, UserRole.ADMIN_ACCESS),// +
+    OPERATOR_PANEL("Панель оператора", false, UserRole.OPERATOR_ACCESS),// +
+    OBSERVER_PANEL("Панель наблюдателя", false, UserRole.OBSERVER_ACCESS),// +
 
     /**
      * DRAWS
      */
-    LOTTERY(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.name(), false, UserRole.USER_ACCESS),
-    ROULETTE(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.name(), false, UserRole.USER_ACCESS),
+    LOTTERY(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.name(), false, UserRole.USER_ACCESS),// +
+    ROULETTE(PropertiesPath.BUTTONS_DESIGN_PROPERTIES.name(), false, UserRole.USER_ACCESS),// +
     SLOT_REEL(PropertiesPath.SLOT_REEL_PROPERTIES.name(), false, UserRole.USER_ACCESS),
     DICE(PropertiesPath.DICE_PROPERTIES.name(), false, UserRole.USER_ACCESS),
     RPS(PropertiesPath.RPS_PROPERTIES.name(), false, UserRole.USER_ACCESS),
@@ -83,16 +83,16 @@ public enum Command implements ICommand {
     /**
      * ADMIN PANEL
      */
-    REQUESTS("Заявки", false, UserRole.ADMIN_ACCESS),
-    SEND_MESSAGES("Отправка сообщений", false, UserRole.ADMIN_ACCESS),
+    REQUESTS("Заявки", false, UserRole.ADMIN_ACCESS),// +
+    SEND_MESSAGES("Отправка сообщений", false, UserRole.ADMIN_ACCESS),// +
     BAN_UNBAN("Бан/разбан", false, UserRole.ADMIN_ACCESS),
-    BOT_SETTINGS("Настройки бота", false, UserRole.ADMIN_ACCESS),
-    REPORTS("Отчеты", false, UserRole.ADMIN_ACCESS),
-    EDIT_CONTACTS("Редактирование контактов", false, UserRole.ADMIN_ACCESS),
+    BOT_SETTINGS("Настройки бота", false, UserRole.ADMIN_ACCESS),// +
+    REPORTS("Отчеты", false, UserRole.ADMIN_ACCESS),// +
+    EDIT_CONTACTS("Редактирование контактов", false, UserRole.ADMIN_ACCESS),// +
     USER_REFERRAL_BALANCE("Реф.баланс юзера", false, UserRole.ADMIN_ACCESS),
-    TURNING_CURRENCY("Включение криптовалют", false, UserRole.ADMIN_ACCESS),
-    DISCOUNTS("Скидки", false, UserRole.ADMIN_ACCESS),
-    USERS("Пользователи", false, UserRole.ADMIN_ACCESS),
+    TURNING_CURRENCY("Включение криптовалют", false, UserRole.ADMIN_ACCESS),// +
+    DISCOUNTS("Скидки", false, UserRole.ADMIN_ACCESS),// +
+    USERS("Пользователи", false, UserRole.ADMIN_ACCESS),// +
     QUIT_ADMIN_PANEL("Выйти", false, UserRole.OBSERVER_ACCESS),
     TURNING_DELIVERY_TYPE("Вкл/выкл способов доставки", false, UserRole.ADMIN_ACCESS),
     BACKUP_DB("/backupdb", true, UserRole.ADMIN_ACCESS),
@@ -172,7 +172,7 @@ public enum Command implements ICommand {
      */
     NEW_DEALS("Новые заявки", false, UserRole.OBSERVER_ACCESS),
     BITCOIN_POOL("Пул сделок BTC", false, UserRole.OPERATOR_ACCESS),
-    NEW_WITHDRAWALS("Вывод средств", false, UserRole.OPERATOR_ACCESS),
+    NEW_WITHDRAWALS("Заявки на вывод", false, UserRole.OPERATOR_ACCESS),
     NEW_REVIEWS("Новые отзывы", false, UserRole.OPERATOR_ACCESS),
     REVIEW_NAVIGATION("REVIEW_NAVIGATION", false, UserRole.OPERATOR_ACCESS),
 
@@ -255,7 +255,10 @@ public enum Command implements ICommand {
 
     public static final List<Command> NEW_HANDLE = List.of(
             START, HELP, CHAT_ID, MAKE_USER, MAKE_OBSERVER, MAKE_OPERATOR, MAKE_ADMIN, BACKUP_DB, DELETE_FROM_POOL, DELETE_USER, TURN_NOTIFICATIONS,
-            BUY_BITCOIN, SELL_BITCOIN
+            BUY_BITCOIN, SELL_BITCOIN, CONTACTS, DRAWS, REFERRAL, ADMIN_PANEL, WEB_ADMIN_PANEL, LOTTERY, ROULETTE, BOT_SETTINGS,
+            DISCOUNTS, EDIT_CONTACTS, OBSERVER_PANEL, OPERATOR_PANEL, REPORTS, REQUESTS, SEND_MESSAGES, USERS, NEW_API_DEALS,
+            NEW_DEALS, NEW_REVIEWS, NEW_SPAM_BANS, NEW_WITHDRAWALS, ON_BOT, OFF_BOT, LOTTERY_REPORT, PARTNERS_REPORT, BACK,
+            TURNING_CURRENCY, QUIT_ADMIN_PANEL
     );
 
     final String text;

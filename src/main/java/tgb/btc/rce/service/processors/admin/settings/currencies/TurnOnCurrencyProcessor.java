@@ -9,13 +9,14 @@ import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.Processor;
+import tgb.btc.rce.service.handler.util.ITurningCurrencyService;
 import tgb.btc.rce.service.util.ITurningCurrenciesService;
 
 
 @CommandProcessor(command = Command.TURN_ON_CURRENCY)
 public class TurnOnCurrencyProcessor extends Processor {
 
-    private TurningCurrencyProcessor turningCurrencyProcessor;
+    private ITurningCurrencyService turningCurrencyService;
 
     private ITurningCurrenciesService turningCurrenciesService;
 
@@ -24,10 +25,9 @@ public class TurnOnCurrencyProcessor extends Processor {
         this.turningCurrenciesService = turningCurrenciesService;
     }
 
-
     @Autowired
-    public void setTurningCurrencyProcessor(TurningCurrencyProcessor turningCurrencyProcessor) {
-        this.turningCurrencyProcessor = turningCurrencyProcessor;
+    public void setTurningCurrencyService(ITurningCurrencyService turningCurrencyService) {
+        this.turningCurrencyService = turningCurrencyService;
     }
 
     @Override
@@ -43,7 +43,8 @@ public class TurnOnCurrencyProcessor extends Processor {
             turningCurrenciesService.addSell(currency, true);
             PropertiesPath.CURRENCIES_TURNING_PROPERTIES.setProperty("sell." + currency.name(), true);
         }
-        responseSender.deleteMessage(updateService.getChatId(update), update.getCallbackQuery().getMessage().getMessageId());
-        turningCurrencyProcessor.run(update);
+        Long chatId = update.getCallbackQuery().getFrom().getId();
+        responseSender.deleteMessage(chatId, update.getCallbackQuery().getMessage().getMessageId());
+        turningCurrencyService.process(chatId);
     }
 }
