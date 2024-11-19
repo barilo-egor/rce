@@ -8,9 +8,9 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.constants.enums.SlotReelType;
 import tgb.btc.library.constants.enums.bot.UserRole;
-import tgb.btc.library.constants.enums.properties.PropertiesPath;
 import tgb.btc.library.interfaces.IModule;
 import tgb.btc.library.service.process.SlotReelService;
+import tgb.btc.library.service.properties.SlotReelMessagePropertiesReader;
 import tgb.btc.library.service.properties.SlotReelPropertiesReader;
 import tgb.btc.library.vo.slotReel.ScrollResult;
 import tgb.btc.rce.annotation.CommandProcessor;
@@ -42,6 +42,13 @@ public class SlotReel extends Processor {
     private IStartService startService;
 
     private SlotReelPropertiesReader slotReelPropertiesReader;
+
+    private SlotReelMessagePropertiesReader slotReelMessagePropertiesReader;
+
+    @Autowired
+    public void setSlotReelMessagePropertiesReader(SlotReelMessagePropertiesReader slotReelMessagePropertiesReader) {
+        this.slotReelMessagePropertiesReader = slotReelMessagePropertiesReader;
+    }
 
     @Autowired
     public void setSlotReelPropertiesReader(SlotReelPropertiesReader slotReelPropertiesReader) {
@@ -113,10 +120,10 @@ public class SlotReel extends Processor {
     private void scroll(Long chatId) {
         log.trace("Пользователь " + chatId + " крутит барабан");
         if (readUserService.getReferralBalanceByChatId(chatId) < slotReelPropertiesReader.getInteger("try", 10)) {
-            responseSender.sendMessage(chatId, PropertiesPath.SLOT_REEL_MESSAGE.getString("balance.empty"));
+            responseSender.sendMessage(chatId, slotReelMessagePropertiesReader.getString("balance.empty"));
             return;
         }
-        String scrollText = PropertiesPath.SLOT_REEL_MESSAGE.getString("scroll");
+        String scrollText = slotReelMessagePropertiesReader.getString("scroll");
         if (StringUtils.isNotBlank(scrollText)) {
             responseSender.sendMessage(chatId, scrollText);
         }
@@ -135,10 +142,10 @@ public class SlotReel extends Processor {
                 .append(slotReelService.slotCombinationToText(scrollResult.getSlotValues(), ", ")).append(System.lineSeparator()).append(System.lineSeparator());
         if (scrollResult.getWinAmount() != null) {
             referralBalance += Integer.parseInt(scrollResult.getWinAmount());
-            sb.append("*").append(PropertiesPath.SLOT_REEL_MESSAGE.getString("win")).append("* ").append(scrollResult.getWinAmount())
+            sb.append("*").append(slotReelMessagePropertiesReader.getString("win")).append("* ").append(scrollResult.getWinAmount())
                     .append("₽!").append(System.lineSeparator()).append(System.lineSeparator());
         } else {
-            sb.append(PropertiesPath.SLOT_REEL_MESSAGE.getString("lose")).append(System.lineSeparator()).append(System.lineSeparator());
+            sb.append(slotReelMessagePropertiesReader.getString("lose")).append(System.lineSeparator()).append(System.lineSeparator());
         }
         log.trace("Сохранение баланса пользователя " + chatId + " :" + referralBalance);
         modifyUserService.updateReferralBalanceByChatId(referralBalance, chatId);
