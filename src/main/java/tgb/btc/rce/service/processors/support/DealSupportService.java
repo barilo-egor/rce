@@ -224,20 +224,20 @@ public class DealSupportService {
     public ReplyKeyboard dealToStringButtons(Long pid) {
         List<InlineButton> buttons = new ArrayList<>();
         buttons.add(InlineButton.builder()
-                .text(commandService.getText(Command.CONFIRM_USER_DEAL))
-                .data(callbackQueryService.buildCallbackData(Command.CONFIRM_USER_DEAL, new Object[]{pid, false}))
+                .text("Подтвердить")
+                .data(callbackDataService.buildData(CallbackQueryData.CONFIRM_USER_DEAL, pid, false))
                 .build());
         boolean hasDefaultGroupChat = groupChatService.hasDealRequests();
         if (hasDefaultGroupChat)
             buttons.add(InlineButton.builder()
-                    .text(commandService.getText(Command.CONFIRM_USER_DEAL) + " с запросом")
-                    .data(callbackQueryService.buildCallbackData(Command.CONFIRM_USER_DEAL, new Object[]{pid, true}))
+                    .text("Подтвердить с запросом")
+                    .data(callbackDataService.buildData(CallbackQueryData.CONFIRM_USER_DEAL, new Object[]{pid, true}))
                     .build());
         CryptoCurrency cryptoCurrency = dealPropertyService.getCryptoCurrencyByPid(pid);
         if (cryptoWithdrawalService.isOn(cryptoCurrency)) {
             buttons.add(InlineButton.builder()
-                    .text(commandService.getText(Command.AUTO_WITHDRAWAL_DEAL))
-                    .data(callbackQueryService.buildCallbackData(Command.AUTO_WITHDRAWAL_DEAL, pid))
+                    .text("Автовывод")
+                    .data(callbackDataService.buildData(CallbackQueryData.AUTO_WITHDRAWAL_DEAL, pid))
                     .build());
         }
         if (CryptoCurrency.BITCOIN.equals(cryptoCurrency) && cryptoWithdrawalService.isOn(CryptoCurrency.BITCOIN)) {
