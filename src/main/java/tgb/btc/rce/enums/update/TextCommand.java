@@ -43,7 +43,8 @@ public enum TextCommand {
     TURN_RANK_DISCOUNT("Ранговая скидка(для всех)", UserRole.ADMIN_ACCESS),
     CURRENT_DATA("Текущие данные", UserRole.ADMIN_ACCESS),
     PAYMENT_TYPES("Типы оплаты", UserRole.OPERATOR_ACCESS),
-    BITCOIN_POOL("Пул сделок BTC", UserRole.OPERATOR_ACCESS);
+    BITCOIN_POOL("Пул сделок BTC", UserRole.OPERATOR_ACCESS),
+    USERS_REPORT("Отчет по пользователям", UserRole.ADMIN_ACCESS);
 
     private final String text;
 

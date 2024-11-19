@@ -170,8 +170,8 @@ public enum Command implements ICommand {
      */
     NEW_DEALS("Новые заявки", false, UserRole.OBSERVER_ACCESS),//+
     BITCOIN_POOL("Пул сделок BTC", false, UserRole.OPERATOR_ACCESS),//+
-    NEW_WITHDRAWALS("Заявки на вывод", false, UserRole.OPERATOR_ACCESS),
-    NEW_REVIEWS("Новые отзывы", false, UserRole.OPERATOR_ACCESS),
+    NEW_WITHDRAWALS("Заявки на вывод", false, UserRole.OPERATOR_ACCESS),//+
+    NEW_REVIEWS("Новые отзывы", false, UserRole.OPERATOR_ACCESS),//+
     REVIEW_NAVIGATION("REVIEW_NAVIGATION", false, UserRole.OPERATOR_ACCESS),
 
     PUBLISH_REVIEW("Опубликовать", false, UserRole.OPERATOR_ACCESS),
@@ -257,7 +257,7 @@ public enum Command implements ICommand {
             DISCOUNTS, EDIT_CONTACTS, OBSERVER_PANEL, OPERATOR_PANEL, REPORTS, REQUESTS, SEND_MESSAGES, USERS, NEW_API_DEALS,
             NEW_DEALS, NEW_REVIEWS, NEW_SPAM_BANS, NEW_WITHDRAWALS, ON_BOT, OFF_BOT, LOTTERY_REPORT, PARTNERS_REPORT, BACK,
             TURNING_CURRENCY, QUIT_ADMIN_PANEL, TURNING_DELIVERY_TYPE, TURN_RANK_DISCOUNT, CURRENT_DATA, PAYMENT_TYPES,
-            BITCOIN_POOL
+            BITCOIN_POOL, USERS_REPORT
     );
 
     final String text;

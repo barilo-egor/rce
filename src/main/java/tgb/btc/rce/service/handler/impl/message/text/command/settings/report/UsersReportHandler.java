@@ -1,4 +1,4 @@
-package tgb.btc.rce.service.processors.admin.settings.reports;
+package tgb.btc.rce.service.handler.impl.message.text.command.settings.report;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -6,19 +6,26 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
-import org.telegram.telegrambots.meta.api.objects.Update;
+import org.springframework.stereotype.Service;
+import org.telegram.telegrambots.meta.api.objects.Message;
 import tgb.btc.library.constants.enums.bot.CryptoCurrency;
 import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
+import tgb.btc.library.constants.enums.bot.UserRole;
 import tgb.btc.library.exception.BaseException;
 import tgb.btc.library.interfaces.service.bean.bot.deal.read.IReportDealService;
+import tgb.btc.library.interfaces.service.bean.bot.user.IModifyUserService;
+import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.library.interfaces.util.IBigDecimalService;
 import tgb.btc.library.interfaces.util.IFiatCurrencyService;
-import tgb.btc.rce.annotation.CommandProcessor;
-import tgb.btc.rce.enums.Command;
-import tgb.btc.rce.service.Processor;
+import tgb.btc.rce.enums.Menu;
+import tgb.btc.rce.enums.PropertiesMessage;
+import tgb.btc.rce.enums.update.TextCommand;
+import tgb.btc.rce.sender.IResponseSender;
+import tgb.btc.rce.service.handler.message.text.ITextCommandHandler;
+import tgb.btc.rce.service.util.IMenuService;
+import tgb.btc.rce.service.util.IMessagePropertiesService;
 import tgb.btc.rce.vo.report.ReportDealVO;
 import tgb.btc.rce.vo.report.ReportUserVO;
 
@@ -29,39 +36,67 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@CommandProcessor(command = Command.USERS_REPORT)
+@Service
 @Slf4j
-public class UsersReport extends Processor {
+public class UsersReportHandler implements ITextCommandHandler {
 
-    private IReportDealService reportDealService;
+    private final IResponseSender responseSender;
 
-    private IFiatCurrencyService fiatCurrencyService;
+    private final IFiatCurrencyService fiatCurrencyService;
 
-    private IBigDecimalService bigDecimalService;
+    private final IBigDecimalService bigDecimalService;
 
-    @Autowired
-    public void setBigDecimalService(IBigDecimalService bigDecimalService) {
-        this.bigDecimalService = bigDecimalService;
-    }
+    private final IReadUserService readUserService;
 
-    @Autowired
-    public void setFiatCurrencyService(IFiatCurrencyService fiatCurrencyService) {
+    private final IReportDealService reportDealService;
+
+    private final IModifyUserService modifyUserService;
+
+    private final IMessagePropertiesService messagePropertiesService;
+
+    private final IMenuService menuService;
+
+    public UsersReportHandler(IResponseSender responseSender, IFiatCurrencyService fiatCurrencyService,
+                              IBigDecimalService bigDecimalService, IReadUserService readUserService,
+                              IReportDealService reportDealService, IModifyUserService modifyUserService,
+                              IMessagePropertiesService messagePropertiesService, IMenuService menuService) {
+        this.responseSender = responseSender;
         this.fiatCurrencyService = fiatCurrencyService;
-    }
-
-    @Autowired
-    public void setReportDealService(IReportDealService reportDealService) {
+        this.bigDecimalService = bigDecimalService;
+        this.readUserService = readUserService;
         this.reportDealService = reportDealService;
+        this.modifyUserService = modifyUserService;
+        this.messagePropertiesService = messagePropertiesService;
+        this.menuService = menuService;
     }
 
     @Override
+    public void handle(Message message) {
+        process(message.getChatId());
+    }
+
     @Async
-    public void run(Update update) {
+    public void process(Long chatId) {
         log.info("Старт отчета по пользователям.");
-        Long chatId = updateService.getChatId(update);
         responseSender.sendMessage(chatId, "Формирование отчета запущено.");
         responseSender.sendMessage(chatId, "Отчет придет после того, как сформируется. Это может занять некоторое время.");
-        processToAdminMainPanel(chatId);
+        modifyUserService.setDefaultValues(chatId);
+        UserRole role = readUserService.getUserRoleByChatId(chatId);
+        switch (role) {
+            case ADMIN:
+                responseSender.sendMessage(chatId,
+                        messagePropertiesService.getMessage(PropertiesMessage.MENU_MAIN_ADMIN),
+                        menuService.build(Menu.ADMIN_PANEL, role));
+                break;
+            case OPERATOR:
+                responseSender.sendMessage(chatId,
+                        messagePropertiesService.getMessage(PropertiesMessage.MENU_MAIN_OPERATOR),
+                        menuService.build(Menu.OPERATOR_PANEL, role));
+                break;
+            case OBSERVER:
+                responseSender.sendMessage(chatId, "Вы перешли в панель наблюдателя", Menu.OBSERVER_PANEL);
+                break;
+        }
         try {
             HSSFWorkbook book = new HSSFWorkbook();
             Sheet sheet = book.createSheet("Пользователи");
@@ -167,6 +202,7 @@ public class UsersReport extends Processor {
         }
     }
 
+
     private boolean isErrorDeal(ReportDealVO reportDealVO) {
         return Objects.isNull(reportDealVO.getAmount()) || Objects.isNull(reportDealVO.getCryptoAmount())
                 || Objects.isNull(reportDealVO.getDealType()) || Objects.isNull(reportDealVO.getCryptoCurrency())
@@ -178,5 +214,10 @@ public class UsersReport extends Processor {
                 cryptoAmount,
                 cryptoCurrency.getScale()).toPlainString()
         );
+    }
+
+    @Override
+    public TextCommand getTextCommand() {
+        return TextCommand.USERS_REPORT;
     }
 }
