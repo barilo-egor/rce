@@ -20,4 +20,5 @@ public enum CallbackQueryData {
     CONFIRM_POOL_WITHDRAWAL,
     CONFIRM_CLEAR_POOL,
     ADD_TO_POOL,
+    ADDITIONAL_VERIFICATION
 }

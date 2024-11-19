@@ -23,7 +23,6 @@ import tgb.btc.library.interfaces.service.bean.web.IApiDealService;
 import tgb.btc.library.interfaces.util.IBigDecimalService;
 import tgb.btc.library.interfaces.web.ICryptoWithdrawalService;
 import tgb.btc.library.service.bean.bot.deal.read.DealPropertyService;
-import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.update.CallbackQueryData;
 import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
 import tgb.btc.rce.service.util.ICallbackDataService;
@@ -247,8 +246,8 @@ public class DealSupportService {
                     .build());
         }
         buttons.add(InlineButton.builder()
-                .text(commandService.getText(Command.ADDITIONAL_VERIFICATION))
-                .data(callbackQueryService.buildCallbackData(Command.ADDITIONAL_VERIFICATION, pid))
+                .text("Доп.верификация")
+                .data(callbackDataService.buildData(CallbackQueryData.ADDITIONAL_VERIFICATION, pid))
                 .build());
         buttons.add(InlineButton.builder()
                 .text("Удалить")
