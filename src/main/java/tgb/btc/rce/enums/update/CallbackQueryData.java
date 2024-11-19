@@ -10,5 +10,6 @@ public enum CallbackQueryData {
     TURNING_RANK_DISCOUNT,
     SHOW_DEAL,
     SHOW_API_DEAL,
-    DELETE_USER_DEAL
+    DELETE_USER_DEAL,
+    DELETE_DEAL_AND_BLOCK_USER
 }
