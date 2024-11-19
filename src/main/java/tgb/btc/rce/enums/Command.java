@@ -13,46 +13,50 @@ import java.util.stream.Collectors;
 @Slf4j
 @Getter
 public enum Command implements ICommand {
-
-    START("/start", false, UserRole.USER_ACCESS), // +
-    CHAT_ID("/chatid", false, UserRole.USER_ACCESS), // +
-    BACK("Назад", false, UserRole.USER_ACCESS), // +
-    DELETE_USER("/deleteuser", true, UserRole.ADMIN_ACCESS),// +
-    MAKE_ADMIN("/makeadmin", true, UserRole.ADMIN_ACCESS),// +
-    MAKE_OPERATOR("/makeoperator", true, UserRole.ADMIN_ACCESS),// +
-    MAKE_OBSERVER("/makeobserver", true, UserRole.ADMIN_ACCESS),// +
-    MAKE_USER("/makeuser", true, UserRole.ADMIN_ACCESS),// +
-    HELP("/help", false, UserRole.ADMIN_ACCESS),// +
-    TURN_NOTIFICATIONS("/notifications", true, UserRole.OBSERVER_ACCESS),// +
-    BUY_BITCOIN("Купить", false, UserRole.USER_ACCESS),// +
-    SELL_BITCOIN("Продать", false, UserRole.USER_ACCESS),// +
-    CONTACTS("Контакты", false, UserRole.USER_ACCESS),// +
-    DRAWS("Розыгрыши", false, UserRole.USER_ACCESS),// +
-    REFERRAL("Реферальная программа", false, UserRole.USER_ACCESS),// +
-    ADMIN_PANEL("Админ панель", false, UserRole.ADMIN_ACCESS),// +
-    OPERATOR_PANEL("Панель оператора", false, UserRole.OPERATOR_ACCESS),// +
-    OBSERVER_PANEL("Панель наблюдателя", false, UserRole.OBSERVER_ACCESS),// +
-    LOTTERY("Лотерея", false, UserRole.USER_ACCESS),// +
-    ROULETTE("Рулетка", false, UserRole.USER_ACCESS),// +
-    SHOW_WITHDRAWAL_REQUEST("SHOW_WITHDRAWAL_REQUEST", false, UserRole.USER_ACCESS), 
-    HIDE_WITHDRAWAL("Скрыть", false, UserRole.ADMIN_ACCESS), 
-    DELETE_WITHDRAWAL_REQUEST("Удалить", false, UserRole.USER_ACCESS), 
-    REQUESTS("Заявки", false, UserRole.ADMIN_ACCESS),// +
-    SEND_MESSAGES("Отправка сообщений", false, UserRole.ADMIN_ACCESS),// +
-    BOT_SETTINGS("Настройки бота", false, UserRole.ADMIN_ACCESS),// +
-    REPORTS("Отчеты", false, UserRole.ADMIN_ACCESS),// +
-    EDIT_CONTACTS("Редактирование контактов", false, UserRole.ADMIN_ACCESS),// +
-    TURNING_CURRENCY("Включение криптовалют", false, UserRole.ADMIN_ACCESS),// +
-    DISCOUNTS("Скидки", false, UserRole.ADMIN_ACCESS),// +
-    USERS("Пользователи", false, UserRole.ADMIN_ACCESS),// +
-    QUIT_ADMIN_PANEL("Выйти", false, UserRole.OBSERVER_ACCESS),// +
-    TURNING_DELIVERY_TYPE("Вкл/выкл способов доставки", false, UserRole.ADMIN_ACCESS),// +
-    BACKUP_DB("/backupdb", true, UserRole.ADMIN_ACCESS),// +
-    CHANGE_RANK_DISCOUNT("change_rank_discount", false, UserRole.ADMIN_ACCESS), 
-    TURN_RANK_DISCOUNT("Ранговая скидка(для всех)", false, UserRole.ADMIN_ACCESS), 
-    TURNING_RANK_DISCOUNT("TURNING_RANK_DISCOUNT", false, UserRole.ADMIN_ACCESS), 
-    TURN_ON_CURRENCY("turn_on_currency", false, UserRole.ADMIN_ACCESS), 
+    // NO USAGE
+    CHAT_ID("/chatid", false, UserRole.USER_ACCESS),
+    DELETE_USER("/deleteuser", true, UserRole.ADMIN_ACCESS),
+    MAKE_ADMIN("/makeadmin", true, UserRole.ADMIN_ACCESS),
+    MAKE_OPERATOR("/makeoperator", true, UserRole.ADMIN_ACCESS),
+    MAKE_OBSERVER("/makeobserver", true, UserRole.ADMIN_ACCESS),
+    MAKE_USER("/makeuser", true, UserRole.ADMIN_ACCESS),
+    HELP("/help", false, UserRole.ADMIN_ACCESS),
+    TURN_NOTIFICATIONS("/notifications", true, UserRole.OBSERVER_ACCESS),
+    SHOW_WITHDRAWAL_REQUEST("SHOW_WITHDRAWAL_REQUEST", false, UserRole.USER_ACCESS),
+    HIDE_WITHDRAWAL("Скрыть", false, UserRole.ADMIN_ACCESS),
+    DELETE_WITHDRAWAL_REQUEST("Удалить", false, UserRole.USER_ACCESS),
+    CHANGE_RANK_DISCOUNT("change_rank_discount", false, UserRole.ADMIN_ACCESS),
+    TURNING_RANK_DISCOUNT("TURNING_RANK_DISCOUNT", false, UserRole.ADMIN_ACCESS),
+    TURN_ON_CURRENCY("turn_on_currency", false, UserRole.ADMIN_ACCESS),
     TURN_OFF_CURRENCY("turn_off_currency", false, UserRole.ADMIN_ACCESS),
+    DELETE_FROM_POOL("/deletefrompool", true, UserRole.OPERATOR_ACCESS),
+
+
+    // HAS USAGE
+    START("/start", false, UserRole.USER_ACCESS),
+    BACK("Назад", false, UserRole.USER_ACCESS),
+    BUY_BITCOIN("Купить", false, UserRole.USER_ACCESS),
+    SELL_BITCOIN("Продать", false, UserRole.USER_ACCESS),
+    CONTACTS("Контакты", false, UserRole.USER_ACCESS),
+    DRAWS("Розыгрыши", false, UserRole.USER_ACCESS),
+    REFERRAL("Реферальная программа", false, UserRole.USER_ACCESS),
+    ADMIN_PANEL("Админ панель", false, UserRole.ADMIN_ACCESS),
+    OPERATOR_PANEL("Панель оператора", false, UserRole.OPERATOR_ACCESS),
+    OBSERVER_PANEL("Панель наблюдателя", false, UserRole.OBSERVER_ACCESS),
+    LOTTERY("Лотерея", false, UserRole.USER_ACCESS),
+    ROULETTE("Рулетка", false, UserRole.USER_ACCESS),
+    REQUESTS("Заявки", false, UserRole.ADMIN_ACCESS),
+    SEND_MESSAGES("Отправка сообщений", false, UserRole.ADMIN_ACCESS),
+    BOT_SETTINGS("Настройки бота", false, UserRole.ADMIN_ACCESS),
+    REPORTS("Отчеты", false, UserRole.ADMIN_ACCESS),
+    EDIT_CONTACTS("Редактирование контактов", false, UserRole.ADMIN_ACCESS),
+    TURNING_CURRENCY("Включение криптовалют", false, UserRole.ADMIN_ACCESS),
+    DISCOUNTS("Скидки", false, UserRole.ADMIN_ACCESS),
+    USERS("Пользователи", false, UserRole.ADMIN_ACCESS),
+    QUIT_ADMIN_PANEL("Выйти", false, UserRole.OBSERVER_ACCESS),
+    TURNING_DELIVERY_TYPE("Вкл/выкл способов доставки", false, UserRole.ADMIN_ACCESS),
+    BACKUP_DB("/backupdb", true, UserRole.ADMIN_ACCESS),
+    TURN_RANK_DISCOUNT("Ранговая скидка(для всех)", false, UserRole.ADMIN_ACCESS),
     CURRENT_DATA("Текущие данные", false, UserRole.ADMIN_ACCESS),  
     ON_BOT("Вкл.бота", false, UserRole.ADMIN_ACCESS),  
     OFF_BOT("Выкл.бота", false, UserRole.ADMIN_ACCESS),  
@@ -67,10 +71,9 @@ public enum Command implements ICommand {
     NEW_SPAM_BANS("Антиспам блоки", false, UserRole.OPERATOR_ACCESS),
     WEB_ADMIN_PANEL("Веб админ-панель", false, UserRole.OPERATOR_ACCESS),
     NEW_API_DEALS("Новые API заявки", false, UserRole.OPERATOR_ACCESS),
-    DELETE_FROM_POOL("/deletefrompool", true, UserRole.OPERATOR_ACCESS),
 
 
-
+    // NO HANDLER
 
     NONE("none", false, UserRole.USER_ACCESS),
     ADMIN_BACK("Назад", false, UserRole.OPERATOR_ACCESS),
