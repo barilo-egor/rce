@@ -40,6 +40,7 @@ public enum Command implements ICommand {
     CLEAR_POOL("Очистить пул", false, UserRole.OPERATOR_ACCESS),
     CONFIRM_POOL_WITHDRAWAL("Да", false, UserRole.OPERATOR_ACCESS),
     CONFIRM_CLEAR_POOL("Да", false, UserRole.OPERATOR_ACCESS),
+    ADD_TO_POOL("Добавить в пул", false, UserRole.OPERATOR_ACCESS),
 
     // HAS USAGE
     START("/start", false, UserRole.USER_ACCESS),
@@ -110,7 +111,7 @@ public enum Command implements ICommand {
     DEAL("DEAL", false, UserRole.USER_ACCESS),
     PAID("Оплатил", false, UserRole.USER_ACCESS),
 
-    ADD_TO_POOL("Добавить в пул", false, UserRole.OPERATOR_ACCESS),
+
 
     CONFIRM_AUTO_WITHDRAWAL_DEAL("Продолжить", false, UserRole.OPERATOR_ACCESS),
     ADDITIONAL_VERIFICATION("Доп.верификация", false, UserRole.OPERATOR_ACCESS),
@@ -167,7 +168,7 @@ public enum Command implements ICommand {
             BITCOIN_POOL, USERS_REPORT, USERS_DEALS_REPORT, SHOW_WITHDRAWAL_REQUEST, HIDE_WITHDRAWAL, DELETE_WITHDRAWAL_REQUEST,
             CHANGE_RANK_DISCOUNT, TURN_ON_CURRENCY, TURN_OFF_CURRENCY, TURNING_RANK_DISCOUNT, SHOW_DEAL, SHOW_API_DEAL,
             DELETE_USER_DEAL, DELETE_DEAL_AND_BLOCK_USER, CONFIRM_USER_DEAL, AUTO_WITHDRAWAL_DEAL, BITCOIN_POOL_WITHDRAWAL,
-            CLEAR_POOL, CONFIRM_POOL_WITHDRAWAL, CONFIRM_CLEAR_POOL
+            CLEAR_POOL, CONFIRM_POOL_WITHDRAWAL, CONFIRM_CLEAR_POOL, ADD_TO_POOL
     );
 
     final String text;

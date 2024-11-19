@@ -242,8 +242,8 @@ public class DealSupportService {
         }
         if (CryptoCurrency.BITCOIN.equals(cryptoCurrency) && cryptoWithdrawalService.isOn(CryptoCurrency.BITCOIN)) {
             buttons.add(InlineButton.builder()
-                    .text(commandService.getText(Command.ADD_TO_POOL))
-                    .data(callbackQueryService.buildCallbackData(Command.ADD_TO_POOL, pid))
+                    .text("Добавить в пул")
+                    .data(callbackDataService.buildData(CallbackQueryData.ADD_TO_POOL, pid))
                     .build());
         }
         buttons.add(InlineButton.builder()
