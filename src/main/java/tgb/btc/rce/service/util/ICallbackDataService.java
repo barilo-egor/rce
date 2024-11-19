@@ -10,4 +10,6 @@ public interface ICallbackDataService {
     String getArgument(String data, int index);
 
     Long getLongArgument(String data, int index);
+
+    Integer getIntArgument(String data, int index);
 }

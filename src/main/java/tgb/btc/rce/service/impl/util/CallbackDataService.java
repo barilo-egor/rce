@@ -56,4 +56,17 @@ public class CallbackDataService implements ICallbackDataService {
             throw new BaseException("Ошибка при парсинге к Long: data=" + data + ", index=" + index, e);
         }
     }
+
+    @Override
+    public Integer getIntArgument(String data, int index) {
+        String argument = getArgument(data, index);
+        if (argument == null) {
+            return null;
+        }
+        try {
+            return Integer.parseInt(argument);
+        } catch (NumberFormatException e) {
+            throw new BaseException("Ошибка при парсинге к Integer: data=" + data + ", index=" + index, e);
+        }
+    }
 }
