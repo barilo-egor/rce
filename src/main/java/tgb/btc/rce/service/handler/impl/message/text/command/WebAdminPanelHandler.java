@@ -2,7 +2,7 @@ package tgb.btc.rce.service.handler.impl.message.text.command;
 
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Message;
-import tgb.btc.library.constants.enums.properties.PropertiesPath;
+import tgb.btc.library.service.properties.ServerPropertiesReader;
 import tgb.btc.rce.enums.InlineType;
 import tgb.btc.rce.enums.update.TextCommand;
 import tgb.btc.rce.sender.IResponseSender;
@@ -19,9 +19,13 @@ public class WebAdminPanelHandler implements ITextCommandHandler {
 
     private final IKeyboardBuildService keyboardBuildService;
 
-    public WebAdminPanelHandler(IResponseSender responseSender, IKeyboardBuildService keyboardBuildService) {
+    private final ServerPropertiesReader serverPropertiesReader;
+
+    public WebAdminPanelHandler(IResponseSender responseSender, IKeyboardBuildService keyboardBuildService,
+                                ServerPropertiesReader serverPropertiesReader) {
         this.responseSender = responseSender;
         this.keyboardBuildService = keyboardBuildService;
+        this.serverPropertiesReader = serverPropertiesReader;
     }
 
     @Override
@@ -30,7 +34,7 @@ public class WebAdminPanelHandler implements ITextCommandHandler {
         responseSender.sendMessage(chatId, "Для перехода в веб-админ панель нажмите на кнопку.",
                 keyboardBuildService.buildInline(List.of(InlineButton.builder()
                         .text("Перейти")
-                        .data(PropertiesPath.SERVER_PROPERTIES.getString("main.url"))
+                        .data(serverPropertiesReader.getString("main.url"))
                         .inlineType(InlineType.URL)
                         .build())));
     }
