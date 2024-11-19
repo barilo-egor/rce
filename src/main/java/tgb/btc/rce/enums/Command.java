@@ -65,7 +65,7 @@ public enum Command implements ICommand {
     SHOW_WITHDRAWAL_REQUEST("SHOW_WITHDRAWAL_REQUEST", false, UserRole.USER_ACCESS), //+
     HIDE_WITHDRAWAL("Скрыть", false, UserRole.ADMIN_ACCESS), //+
     CHANGE_REFERRAL_BALANCE("Изменить", false, UserRole.ADMIN_ACCESS),
-    DELETE_WITHDRAWAL_REQUEST("Удалить", false, UserRole.USER_ACCESS),
+    DELETE_WITHDRAWAL_REQUEST("Удалить", false, UserRole.USER_ACCESS), //+
 
     /**
      * ADMIN PANEL
@@ -90,7 +90,7 @@ public enum Command implements ICommand {
      * DISCOUNTS
      */
     RANK_DISCOUNT("Ранговая скидка(персональная)", false, UserRole.ADMIN_ACCESS),
-    CHANGE_RANK_DISCOUNT("change_rank_discount", false, UserRole.ADMIN_ACCESS),
+    CHANGE_RANK_DISCOUNT("change_rank_discount", false, UserRole.ADMIN_ACCESS), //+
     PERSONAL_BUY_DISCOUNT("Персональная, покупка", false, UserRole.ADMIN_ACCESS),
     PERSONAL_SELL_DISCOUNT("Персональная, продажа", false, UserRole.ADMIN_ACCESS),
     REFERRAL_PERCENT("Процент реферала", false, UserRole.ADMIN_ACCESS),
@@ -246,7 +246,8 @@ public enum Command implements ICommand {
             DISCOUNTS, EDIT_CONTACTS, OBSERVER_PANEL, OPERATOR_PANEL, REPORTS, REQUESTS, SEND_MESSAGES, USERS, NEW_API_DEALS,
             NEW_DEALS, NEW_REVIEWS, NEW_SPAM_BANS, NEW_WITHDRAWALS, ON_BOT, OFF_BOT, LOTTERY_REPORT, PARTNERS_REPORT, BACK,
             TURNING_CURRENCY, QUIT_ADMIN_PANEL, TURNING_DELIVERY_TYPE, TURN_RANK_DISCOUNT, CURRENT_DATA, PAYMENT_TYPES,
-            BITCOIN_POOL, USERS_REPORT, USERS_DEALS_REPORT, SHOW_WITHDRAWAL_REQUEST, HIDE_WITHDRAWAL, DELETE_WITHDRAWAL_REQUEST
+            BITCOIN_POOL, USERS_REPORT, USERS_DEALS_REPORT, SHOW_WITHDRAWAL_REQUEST, HIDE_WITHDRAWAL, DELETE_WITHDRAWAL_REQUEST,
+            CHANGE_RANK_DISCOUNT
     );
 
     final String text;
