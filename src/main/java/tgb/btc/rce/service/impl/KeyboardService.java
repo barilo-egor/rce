@@ -225,8 +225,7 @@ public class KeyboardService implements IKeyboardService {
         return keyboardBuildService.buildInline(List.of(
                 InlineButton.builder()
                         .text("Показать")
-                        .data(Command.SHOW_API_DEAL.name() + BotStringConstants.CALLBACK_DATA_SPLITTER
-                                + pid)
+                        .data(callbackDataService.buildData(CallbackQueryData.SHOW_API_DEAL, pid))
                         .build()
         ));
     }

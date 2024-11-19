@@ -30,7 +30,7 @@ public enum Command implements ICommand {
     TURN_ON_CURRENCY("turn_on_currency", false, UserRole.ADMIN_ACCESS),
     TURN_OFF_CURRENCY("turn_off_currency", false, UserRole.ADMIN_ACCESS),
     DELETE_FROM_POOL("/deletefrompool", true, UserRole.OPERATOR_ACCESS),
-
+    SHOW_DEAL("Показать", false, UserRole.OBSERVER_ACCESS),
 
     // HAS USAGE
     START("/start", false, UserRole.USER_ACCESS),
@@ -101,7 +101,6 @@ public enum Command implements ICommand {
     DEAL("DEAL", false, UserRole.USER_ACCESS),
     PAID("Оплатил", false, UserRole.USER_ACCESS),
 
-    SHOW_DEAL("Показать", false, UserRole.OBSERVER_ACCESS),
     SHOW_API_DEAL("show_api_deal", false, UserRole.OPERATOR_ACCESS),
     DELETE_USER_DEAL("Удалить", false, UserRole.OPERATOR_ACCESS),
     DELETE_DEAL_AND_BLOCK_USER("Удалить и заблокировать", false, UserRole.OPERATOR_ACCESS),
@@ -166,7 +165,7 @@ public enum Command implements ICommand {
             NEW_DEALS, NEW_REVIEWS, NEW_SPAM_BANS, NEW_WITHDRAWALS, ON_BOT, OFF_BOT, LOTTERY_REPORT, PARTNERS_REPORT, BACK,
             TURNING_CURRENCY, QUIT_ADMIN_PANEL, TURNING_DELIVERY_TYPE, TURN_RANK_DISCOUNT, CURRENT_DATA, PAYMENT_TYPES,
             BITCOIN_POOL, USERS_REPORT, USERS_DEALS_REPORT, SHOW_WITHDRAWAL_REQUEST, HIDE_WITHDRAWAL, DELETE_WITHDRAWAL_REQUEST,
-            CHANGE_RANK_DISCOUNT, TURN_ON_CURRENCY, TURN_OFF_CURRENCY, TURNING_RANK_DISCOUNT, SHOW_DEAL
+            CHANGE_RANK_DISCOUNT, TURN_ON_CURRENCY, TURN_OFF_CURRENCY, TURNING_RANK_DISCOUNT, SHOW_DEAL, SHOW_API_DEAL
     );
 
     final String text;
