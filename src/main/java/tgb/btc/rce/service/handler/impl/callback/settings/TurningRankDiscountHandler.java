@@ -1,4 +1,4 @@
-package tgb.btc.rce.service.processors.admin.discounts;
+package tgb.btc.rce.service.handler.impl.callback.settings;
 
 import org.apache.commons.configuration2.PropertiesConfiguration;
 import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
@@ -8,34 +8,44 @@ import org.apache.commons.configuration2.convert.DefaultListDelimiterHandler;
 import org.apache.commons.configuration2.convert.ListDelimiterHandler;
 import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.telegram.telegrambots.meta.api.objects.Update;
+import org.springframework.stereotype.Service;
+import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import tgb.btc.library.constants.enums.properties.PropertiesPath;
 import tgb.btc.library.constants.enums.properties.VariableType;
+import tgb.btc.library.interfaces.service.bean.bot.user.IModifyUserService;
 import tgb.btc.library.service.properties.VariablePropertiesReader;
-import tgb.btc.rce.annotation.CommandProcessor;
-import tgb.btc.rce.constants.BotStringConstants;
-import tgb.btc.rce.enums.Command;
-import tgb.btc.rce.service.Processor;
+import tgb.btc.rce.enums.update.CallbackQueryData;
+import tgb.btc.rce.sender.IResponseSender;
+import tgb.btc.rce.service.handler.callback.ICallbackQueryHandler;
+import tgb.btc.rce.service.util.ICallbackDataService;
 
 import java.io.File;
 
+@Service
+public class TurningRankDiscountHandler implements ICallbackQueryHandler {
 
-@CommandProcessor(command = Command.TURNING_RANK_DISCOUNT)
-public class TurningRankDiscount extends Processor {
+    private final VariablePropertiesReader variablePropertiesReader;
 
-    private VariablePropertiesReader variablePropertiesReader;
+    private final IModifyUserService modifyUserService;
 
-    @Autowired
-    public void setVariablePropertiesReader(VariablePropertiesReader variablePropertiesReader) {
+    private final IResponseSender responseSender;
+
+    private final ICallbackDataService callbackDataService;
+
+    public TurningRankDiscountHandler(VariablePropertiesReader variablePropertiesReader,
+                                      IModifyUserService modifyUserService, IResponseSender responseSender,
+                                      ICallbackDataService callbackDataService) {
         this.variablePropertiesReader = variablePropertiesReader;
+        this.modifyUserService = modifyUserService;
+        this.responseSender = responseSender;
+        this.callbackDataService = callbackDataService;
     }
 
+
     @Override
-    public void run(Update update) {
-        Long chatId = updateService.getChatId(update);
-        String[] values = update.getCallbackQuery().getData().split(BotStringConstants.CALLBACK_DATA_SPLITTER);
-        Boolean newValue = Boolean.valueOf(values[1]);
+    public void handle(CallbackQuery callbackQuery) {
+        Long chatId = callbackQuery.getFrom().getId();
+        Boolean newValue = Boolean.valueOf(callbackDataService.getArgument(callbackQuery.getData(), 1));
         PropertiesConfiguration conf;
         try {
             File file = new File(PropertiesPath.VARIABLE_PROPERTIES.getFileName());
@@ -60,9 +70,12 @@ public class TurningRankDiscount extends Processor {
         }
         conf.setProperty(VariableType.DEAL_RANK_DISCOUNT_ENABLE.getKey(), newValue);
         responseSender.sendMessage(chatId, newValue ? "Скидка включена." : "Скидка выключена.");
-        responseSender.deleteMessage(chatId, update.getCallbackQuery().getMessage().getMessageId());
-        processToAdminMainPanel(chatId);
+        responseSender.deleteMessage(chatId, callbackQuery.getMessage().getMessageId());
         variablePropertiesReader.reload();
     }
 
+    @Override
+    public CallbackQueryData getCallbackQueryData() {
+        return CallbackQueryData.TURNING_RANK_DISCOUNT;
+    }
 }

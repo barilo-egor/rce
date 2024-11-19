@@ -95,13 +95,13 @@ public enum Command implements ICommand {
     PERSONAL_SELL_DISCOUNT("Персональная, продажа", false, UserRole.ADMIN_ACCESS),
     REFERRAL_PERCENT("Процент реферала", false, UserRole.ADMIN_ACCESS),
     TURN_RANK_DISCOUNT("Ранговая скидка(для всех)", false, UserRole.ADMIN_ACCESS), //+
-    TURNING_RANK_DISCOUNT("TURNING_RANK_DISCOUNT", false, UserRole.ADMIN_ACCESS),
+    TURNING_RANK_DISCOUNT("TURNING_RANK_DISCOUNT", false, UserRole.ADMIN_ACCESS), //+
 
     /**
      * TURNING CURRENCIES
      */
-    TURN_ON_CURRENCY("turn_on_currency", false, UserRole.ADMIN_ACCESS),
-    TURN_OFF_CURRENCY("turn_off_currency", false, UserRole.ADMIN_ACCESS),
+    TURN_ON_CURRENCY("turn_on_currency", false, UserRole.ADMIN_ACCESS), //+
+    TURN_OFF_CURRENCY("turn_off_currency", false, UserRole.ADMIN_ACCESS),//+
 
     /**
      * EDIT CONTACTS
@@ -247,7 +247,7 @@ public enum Command implements ICommand {
             NEW_DEALS, NEW_REVIEWS, NEW_SPAM_BANS, NEW_WITHDRAWALS, ON_BOT, OFF_BOT, LOTTERY_REPORT, PARTNERS_REPORT, BACK,
             TURNING_CURRENCY, QUIT_ADMIN_PANEL, TURNING_DELIVERY_TYPE, TURN_RANK_DISCOUNT, CURRENT_DATA, PAYMENT_TYPES,
             BITCOIN_POOL, USERS_REPORT, USERS_DEALS_REPORT, SHOW_WITHDRAWAL_REQUEST, HIDE_WITHDRAWAL, DELETE_WITHDRAWAL_REQUEST,
-            CHANGE_RANK_DISCOUNT, TURN_ON_CURRENCY, TURN_OFF_CURRENCY
+            CHANGE_RANK_DISCOUNT, TURN_ON_CURRENCY, TURN_OFF_CURRENCY, TURNING_RANK_DISCOUNT
     );
 
     final String text;
