@@ -55,7 +55,7 @@ public class BotVariables extends Processor {
             return;
         }
         try {
-            FileUtils.delete(PropertiesPath.VARIABLE_PROPERTIES.getFile());
+            FileUtils.delete(new File(PropertiesPath.VARIABLE_PROPERTIES.getFileName()));
         } catch (IOException e) {
             log.error("Ошибки при удалении " + PropertiesPath.VARIABLE_PROPERTIES.getFileName(), e);
             responseSender.sendMessage(chatId, "Ошибки при удалении " + PropertiesPath.VARIABLE_PROPERTIES.getFileName() + ":"
@@ -63,7 +63,7 @@ public class BotVariables extends Processor {
             return;
         }
         try {
-            FileUtils.moveFile(PropertiesPath.VARIABLE_BUFFER_PROPERTIES.getFile(), PropertiesPath.VARIABLE_PROPERTIES.getFile());
+            FileUtils.moveFile(PropertiesPath.VARIABLE_BUFFER_PROPERTIES.getFile(), new File(PropertiesPath.VARIABLE_PROPERTIES.getFileName()));
         } catch (IOException e) {
             log.error("Ошибки при перемещении файла + " + PropertiesPath.VARIABLE_BUFFER_PROPERTIES.getFileName()
                     + " в " + PropertiesPath.VARIABLE_PROPERTIES.getFileName(), e);

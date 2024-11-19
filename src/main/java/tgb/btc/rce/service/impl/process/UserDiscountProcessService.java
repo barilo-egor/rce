@@ -7,7 +7,6 @@ import tgb.btc.library.bean.bot.Deal;
 import tgb.btc.library.constants.enums.ReferralType;
 import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
-import tgb.btc.library.constants.enums.properties.PropertiesPath;
 import tgb.btc.library.constants.enums.properties.VariableType;
 import tgb.btc.library.interfaces.IModule;
 import tgb.btc.library.interfaces.service.bean.bot.IUserDiscountService;
@@ -96,8 +95,8 @@ public class UserDiscountProcessService implements IUserDiscountProcessService {
                     dealAmount = dealAmount.subtract(BigDecimal.valueOf(referralBalance));
                 else dealAmount = BigDecimal.ZERO;
             } else {
-                if (PropertiesPath.VARIABLE_PROPERTIES.isNotBlank("course.rub.byn")) {
-                    BigDecimal bynReferralBalance = BigDecimal.valueOf(referralBalance).multiply(PropertiesPath.VARIABLE_PROPERTIES.getBigDecimal("course.rub.byn"));
+                if (variablePropertiesReader.isNotBlank("course.rub.byn")) {
+                    BigDecimal bynReferralBalance = BigDecimal.valueOf(referralBalance).multiply(variablePropertiesReader.getBigDecimal("course.rub.byn"));
                     if (bynReferralBalance.compareTo(dealAmount) < 1)
                         dealAmount = dealAmount.subtract(bynReferralBalance);
                     else dealAmount = BigDecimal.ZERO;

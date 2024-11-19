@@ -378,7 +378,7 @@ public class KeyboardService implements IKeyboardService {
         return keyboardBuildService.buildInline(List.of(
                 InlineButton.builder()
                         .text("Связь с оператором")
-                        .data(PropertiesPath.VARIABLE_PROPERTIES.getString(VariableType.OPERATOR_LINK.getKey()))
+                        .data(variablePropertiesReader.getString(VariableType.OPERATOR_LINK.getKey()))
                         .inlineType(InlineType.URL)
                         .build()
         ));
