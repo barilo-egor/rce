@@ -1,18 +1,20 @@
-package tgb.btc.rce.service.processors.admin.requests.deal;
+package tgb.btc.rce.service.handler.util.impl.handler;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Message;
-import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import tgb.btc.library.constants.enums.bot.CryptoCurrency;
 import tgb.btc.library.exception.ApiResponseErrorException;
+import tgb.btc.library.interfaces.util.IBigDecimalService;
 import tgb.btc.library.interfaces.web.ICryptoWithdrawalService;
-import tgb.btc.library.service.util.BigDecimalService;
 import tgb.btc.library.vo.web.PoolDeal;
-import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
-import tgb.btc.rce.service.Processor;
+import tgb.btc.rce.sender.IResponseSender;
+import tgb.btc.rce.service.handler.util.IBitcoinPoolService;
+import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
+import tgb.btc.rce.service.util.ICallbackQueryService;
+import tgb.btc.rce.service.util.ICommandService;
 import tgb.btc.rce.vo.InlineButton;
 
 import java.math.BigDecimal;
@@ -22,25 +24,34 @@ import java.util.Optional;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
-@CommandProcessor(command = Command.BITCOIN_POOL)
-public class BitcoinPool extends Processor {
+@Service
+public class BitcoinPoolService implements IBitcoinPoolService {
 
-    private final BigDecimalService bigDecimalService;
+    private final IResponseSender responseSender;
+
     private final ICryptoWithdrawalService cryptoWithdrawalService;
 
-    @Autowired
-    public BitcoinPool(BigDecimalService bigDecimalService, ICryptoWithdrawalService cryptoWithdrawalService) {
-        this.bigDecimalService = bigDecimalService;
+    private final IBigDecimalService bigDecimalService;
+
+    private final ICommandService commandService;
+
+    private final IKeyboardBuildService keyboardBuildService;
+
+    private final ICallbackQueryService callbackQueryService;
+
+    public BitcoinPoolService(IResponseSender responseSender, ICryptoWithdrawalService cryptoWithdrawalService,
+                              IBigDecimalService bigDecimalService, ICommandService commandService,
+                              IKeyboardBuildService keyboardBuildService, ICallbackQueryService callbackQueryService) {
+        this.responseSender = responseSender;
         this.cryptoWithdrawalService = cryptoWithdrawalService;
+        this.bigDecimalService = bigDecimalService;
+        this.commandService = commandService;
+        this.keyboardBuildService = keyboardBuildService;
+        this.callbackQueryService = callbackQueryService;
     }
 
     @Override
-    public void run(Update update) {
-        Long chatId = updateService.getChatId(update);
-        processPool(chatId);
-    }
-
-    public void processPool(Long chatId) {
+    public void process(Long chatId) {
         List<PoolDeal> deals;
         Optional<Message> poolMessage = responseSender.sendMessage(chatId, "Получение пула сделок BTC.");
         try {

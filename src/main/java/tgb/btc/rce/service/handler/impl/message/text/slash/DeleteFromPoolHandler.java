@@ -8,7 +8,7 @@ import tgb.btc.library.interfaces.web.ICryptoWithdrawalService;
 import tgb.btc.rce.enums.update.SlashCommand;
 import tgb.btc.rce.sender.IResponseSender;
 import tgb.btc.rce.service.handler.message.text.ISlashCommandHandler;
-import tgb.btc.rce.service.processors.admin.requests.deal.BitcoinPool;
+import tgb.btc.rce.service.handler.util.IBitcoinPoolService;
 
 @Service
 @Slf4j
@@ -18,13 +18,13 @@ public class DeleteFromPoolHandler implements ISlashCommandHandler {
 
     private final ICryptoWithdrawalService cryptoWithdrawalService;
 
-    private final BitcoinPool bitcoinPool;
+    private final IBitcoinPoolService bitcoinPoolService;
 
     public DeleteFromPoolHandler(IResponseSender responseSender, ICryptoWithdrawalService cryptoWithdrawalService,
-                                 BitcoinPool bitcoinPool) {
+                                 IBitcoinPoolService bitcoinPoolService) {
         this.responseSender = responseSender;
         this.cryptoWithdrawalService = cryptoWithdrawalService;
-        this.bitcoinPool = bitcoinPool;
+        this.bitcoinPoolService = bitcoinPoolService;
     }
 
     @Override
@@ -39,7 +39,7 @@ public class DeleteFromPoolHandler implements ISlashCommandHandler {
             return;
         }
         log.debug("Пользователь {} удалил сделку id={} из BTC пула.", chatId, poolId);
-        bitcoinPool.processPool(chatId);
+        bitcoinPoolService.process(chatId);
     }
 
     @Override
