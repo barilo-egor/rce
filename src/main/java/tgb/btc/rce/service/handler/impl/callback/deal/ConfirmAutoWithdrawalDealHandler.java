@@ -1,28 +1,30 @@
-package tgb.btc.rce.service.processors.admin.requests.deal;
+package tgb.btc.rce.service.handler.impl.callback.deal;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Message;
-import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.bean.bot.Deal;
 import tgb.btc.library.constants.enums.bot.CryptoCurrency;
 import tgb.btc.library.constants.enums.bot.DealStatus;
 import tgb.btc.library.interfaces.service.bean.bot.IGroupChatService;
 import tgb.btc.library.interfaces.service.bean.bot.deal.IModifyDealService;
 import tgb.btc.library.interfaces.service.bean.bot.deal.IReadDealService;
+import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.library.interfaces.web.ICryptoWithdrawalService;
-import tgb.btc.rce.annotation.CommandProcessor;
-import tgb.btc.rce.enums.Command;
-import tgb.btc.rce.service.Processor;
+import tgb.btc.rce.enums.update.CallbackQueryData;
+import tgb.btc.rce.sender.IResponseSender;
+import tgb.btc.rce.service.handler.callback.ICallbackQueryHandler;
 import tgb.btc.rce.service.impl.web.Notifier;
-import tgb.btc.rce.service.util.ITelegramPropertiesService;
+import tgb.btc.rce.service.util.ICallbackDataService;
 
 import java.util.Optional;
 
-@CommandProcessor(command = Command.CONFIRM_AUTO_WITHDRAWAL_DEAL)
+@Service
 @Slf4j
-public class ConfirmAutoWithdrawalDeal extends Processor {
+public class ConfirmAutoWithdrawalDealHandler implements ICallbackQueryHandler {
 
     private final IGroupChatService groupChatService;
 
@@ -34,29 +36,36 @@ public class ConfirmAutoWithdrawalDeal extends Processor {
 
     private final ICryptoWithdrawalService cryptoWithdrawalService;
 
-    private final String botUsername;
+    private final IResponseSender responseSender;
 
-    @Autowired
-    public ConfirmAutoWithdrawalDeal(IGroupChatService groupChatService,
-                                     IModifyDealService modifyDealService, Notifier notifier,
-                                     IReadDealService readDealService,
-                                     ICryptoWithdrawalService cryptoWithdrawalService,
-                                     ITelegramPropertiesService telegramPropertiesService) {
+    private final ICallbackDataService callbackDataService;
+
+    private final IReadUserService readUserService;
+
+    @Value("${bot.username}")
+    private String botUsername;
+
+    public ConfirmAutoWithdrawalDealHandler(IGroupChatService groupChatService, IModifyDealService modifyDealService,
+                                            Notifier notifier, IReadDealService readDealService,
+                                            ICryptoWithdrawalService cryptoWithdrawalService,
+                                            IResponseSender responseSender, ICallbackDataService callbackDataService,
+                                            IReadUserService readUserService) {
         this.groupChatService = groupChatService;
         this.modifyDealService = modifyDealService;
         this.notifier = notifier;
         this.readDealService = readDealService;
         this.cryptoWithdrawalService = cryptoWithdrawalService;
-        this.botUsername = telegramPropertiesService.getUsername();
+        this.responseSender = responseSender;
+        this.callbackDataService = callbackDataService;
+        this.readUserService = readUserService;
     }
 
     @Override
-    public void run(Update update) {
-        if (!update.hasCallbackQuery()) return;
-        Long chatId = updateService.getChatId(update);
-        Long dealPid = callbackQueryService.getSplitLongData(update, 1);
+    public void handle(CallbackQuery callbackQuery) {
+        Long chatId = callbackQuery.getFrom().getId();
+        Long dealPid = callbackDataService.getLongArgument(callbackQuery.getData(), 1);
         if (!groupChatService.hasAutoWithdrawal()) {
-            responseSender.sendAnswerCallbackQuery(update.getCallbackQuery().getId(),
+            responseSender.sendAnswerCallbackQuery(callbackQuery.getId(),
                     "Не найдена установленная группа для автовывода сделок. " +
                             "Добавьте бота в группу, выдайте разрешения на отправку сообщений и выберите группу на сайте в " +
                             "разделе \"Сделки из бота\".\n", true);
@@ -88,8 +97,13 @@ public class ConfirmAutoWithdrawalDeal extends Processor {
                         : "chatid:" + chatId,
                 dealPid);
         log.debug("Сделка {} была отправлена в группу автовывода сделок.", dealPid);
-        responseSender.deleteMessage(chatId, callbackQueryService.getSplitIntData(update, 2));
-        responseSender.deleteMessage(chatId, updateService.getMessage(update).getMessageId());
+        responseSender.deleteMessage(chatId, callbackDataService.getIntArgument(callbackQuery.getData(), 2));
+        responseSender.deleteMessage(chatId, callbackQuery.getMessage().getMessageId());
         responseSender.sendMessage(chatId, "Транзакция сделки №{}", String.format(CryptoCurrency.BITCOIN.getHashUrl(), hash));
+    }
+
+    @Override
+    public CallbackQueryData getCallbackQueryData() {
+        return CallbackQueryData.CONFIRM_AUTO_WITHDRAWAL_DEAL;
     }
 }

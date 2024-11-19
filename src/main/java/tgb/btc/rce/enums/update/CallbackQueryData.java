@@ -19,5 +19,5 @@ public enum CallbackQueryData {
     CLEAR_POOL,
     CONFIRM_POOL_WITHDRAWAL,
     CONFIRM_CLEAR_POOL,
-    ADD_TO_POOL
+    ADD_TO_POOL,
 }
