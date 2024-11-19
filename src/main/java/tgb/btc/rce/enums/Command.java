@@ -57,9 +57,6 @@ public enum Command implements ICommand {
      */
     LOTTERY("Лотерея", false, UserRole.USER_ACCESS),// +
     ROULETTE("Рулетка", false, UserRole.USER_ACCESS),// +
-    SLOT_REEL("Барабан", false, UserRole.USER_ACCESS),
-    DICE("Кубик", false, UserRole.USER_ACCESS),
-    RPS("Камень/ножницы/бумага", false, UserRole.USER_ACCESS),
 
     /**
      * REFERRAL
@@ -249,7 +246,7 @@ public enum Command implements ICommand {
             DISCOUNTS, EDIT_CONTACTS, OBSERVER_PANEL, OPERATOR_PANEL, REPORTS, REQUESTS, SEND_MESSAGES, USERS, NEW_API_DEALS,
             NEW_DEALS, NEW_REVIEWS, NEW_SPAM_BANS, NEW_WITHDRAWALS, ON_BOT, OFF_BOT, LOTTERY_REPORT, PARTNERS_REPORT, BACK,
             TURNING_CURRENCY, QUIT_ADMIN_PANEL, TURNING_DELIVERY_TYPE, TURN_RANK_DISCOUNT, CURRENT_DATA, PAYMENT_TYPES,
-            BITCOIN_POOL, USERS_REPORT, USERS_DEALS_REPORT
+            BITCOIN_POOL, USERS_REPORT, USERS_DEALS_REPORT, SHOW_WITHDRAWAL_REQUEST
     );
 
     final String text;

@@ -3,7 +3,6 @@ package tgb.btc.rce.service.impl.keyboard;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.EmptySource;
 import org.junit.jupiter.params.provider.NullSource;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -15,7 +14,6 @@ import tgb.btc.rce.service.impl.util.CommandService;
 import tgb.btc.rce.service.keyboard.IReplyButtonService;
 
 import java.util.List;
-import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -42,15 +40,6 @@ class ReplyButtonServiceTest {
 //    void fromCommandsSizeTest(List<Command> commands) {
 //        assertEquals(commands.size(), replyButtonService.fromCommands(commands).size());
 //    }
-
-    static Stream<Arguments> getCommands() {
-        return Stream.of(
-                Arguments.of(List.of(Command.START)),
-                Arguments.of(List.of(Command.DRAWS, Command.NEW_PAYMENT_TYPE_REQUISITE,Command.NEW_DEALS)),
-                Arguments.of(List.of(Command.OPERATOR_PANEL, Command.ADMIN_PANEL, Command.TURN_PAYMENT_TYPES, Command.CAPTCHA,
-                        Command.SLOT_REEL))
-        );
-    }
 
     // TODO
 //    @Test
