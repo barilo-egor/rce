@@ -180,9 +180,9 @@ public enum Command implements ICommand {
     /**
      * REPORTS
      */
-    USERS_REPORT("Отчет по пользователям", false, UserRole.ADMIN_ACCESS),
+    USERS_REPORT("Отчет по пользователям", false, UserRole.ADMIN_ACCESS),//+
     USER_INFORMATION("Информация о пользователе", false, UserRole.ADMIN_ACCESS),
-    USERS_DEALS_REPORT("Отчет сделки пользователей", false, UserRole.ADMIN_ACCESS),
+    USERS_DEALS_REPORT("Отчет сделки пользователей", false, UserRole.ADMIN_ACCESS),//+
     DEAL_REPORTS("Отчет по сделкам", false, Set.of(UserRole.OBSERVER, UserRole.ADMIN)),
     PARTNERS_REPORT("Отчет по партнерам", false, UserRole.ADMIN_ACCESS),
     CHECKS_FOR_DATE("Чеки по дате", false, UserRole.ADMIN_ACCESS),
@@ -257,7 +257,7 @@ public enum Command implements ICommand {
             DISCOUNTS, EDIT_CONTACTS, OBSERVER_PANEL, OPERATOR_PANEL, REPORTS, REQUESTS, SEND_MESSAGES, USERS, NEW_API_DEALS,
             NEW_DEALS, NEW_REVIEWS, NEW_SPAM_BANS, NEW_WITHDRAWALS, ON_BOT, OFF_BOT, LOTTERY_REPORT, PARTNERS_REPORT, BACK,
             TURNING_CURRENCY, QUIT_ADMIN_PANEL, TURNING_DELIVERY_TYPE, TURN_RANK_DISCOUNT, CURRENT_DATA, PAYMENT_TYPES,
-            BITCOIN_POOL, USERS_REPORT
+            BITCOIN_POOL, USERS_REPORT, USERS_DEALS_REPORT
     );
 
     final String text;
