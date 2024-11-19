@@ -31,6 +31,7 @@ public enum Command implements ICommand {
     TURN_OFF_CURRENCY("turn_off_currency", false, UserRole.ADMIN_ACCESS),
     DELETE_FROM_POOL("/deletefrompool", true, UserRole.OPERATOR_ACCESS),
     SHOW_DEAL("Показать", false, UserRole.OBSERVER_ACCESS),
+    SHOW_API_DEAL("show_api_deal", false, UserRole.OPERATOR_ACCESS),
 
     // HAS USAGE
     START("/start", false, UserRole.USER_ACCESS),
@@ -101,7 +102,7 @@ public enum Command implements ICommand {
     DEAL("DEAL", false, UserRole.USER_ACCESS),
     PAID("Оплатил", false, UserRole.USER_ACCESS),
 
-    SHOW_API_DEAL("show_api_deal", false, UserRole.OPERATOR_ACCESS),
+
     DELETE_USER_DEAL("Удалить", false, UserRole.OPERATOR_ACCESS),
     DELETE_DEAL_AND_BLOCK_USER("Удалить и заблокировать", false, UserRole.OPERATOR_ACCESS),
     CONFIRM_USER_DEAL("Подтвердить", false, UserRole.OPERATOR_ACCESS),
