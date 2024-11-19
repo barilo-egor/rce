@@ -129,13 +129,13 @@ public enum Command implements ICommand {
     /**
      * BOT SETTINGS
      */
-    CURRENT_DATA("Текущие данные", false, UserRole.ADMIN_ACCESS),
-    ON_BOT("Вкл.бота", false, UserRole.ADMIN_ACCESS),
-    OFF_BOT("Выкл.бота", false, UserRole.ADMIN_ACCESS),
+    CURRENT_DATA("Текущие данные", false, UserRole.ADMIN_ACCESS),  //+
+    ON_BOT("Вкл.бота", false, UserRole.ADMIN_ACCESS),  //+
+    OFF_BOT("Выкл.бота", false, UserRole.ADMIN_ACCESS),  //+
     BOT_MESSAGES("Сообщения бота", false, UserRole.ADMIN_ACCESS),
     BOT_VARIABLES("Переменные бота", false, UserRole.ADMIN_ACCESS),
     SYSTEM_MESSAGES("Сис.сообщения", false, UserRole.ADMIN_ACCESS),
-    PAYMENT_TYPES("Типы оплаты", false, UserRole.OPERATOR_ACCESS),
+    PAYMENT_TYPES("Типы оплаты", false, UserRole.OPERATOR_ACCESS), //+
 
     /**
      * DEAL
@@ -256,7 +256,7 @@ public enum Command implements ICommand {
             BUY_BITCOIN, SELL_BITCOIN, CONTACTS, DRAWS, REFERRAL, ADMIN_PANEL, WEB_ADMIN_PANEL, LOTTERY, ROULETTE, BOT_SETTINGS,
             DISCOUNTS, EDIT_CONTACTS, OBSERVER_PANEL, OPERATOR_PANEL, REPORTS, REQUESTS, SEND_MESSAGES, USERS, NEW_API_DEALS,
             NEW_DEALS, NEW_REVIEWS, NEW_SPAM_BANS, NEW_WITHDRAWALS, ON_BOT, OFF_BOT, LOTTERY_REPORT, PARTNERS_REPORT, BACK,
-            TURNING_CURRENCY, QUIT_ADMIN_PANEL, TURNING_DELIVERY_TYPE, TURN_RANK_DISCOUNT, CURRENT_DATA
+            TURNING_CURRENCY, QUIT_ADMIN_PANEL, TURNING_DELIVERY_TYPE, TURN_RANK_DISCOUNT, CURRENT_DATA, PAYMENT_TYPES
     );
 
     final String text;

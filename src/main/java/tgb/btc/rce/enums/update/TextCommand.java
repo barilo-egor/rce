@@ -41,7 +41,8 @@ public enum TextCommand {
     QUIT_ADMIN_PANEL("Выйти", UserRole.OBSERVER_ACCESS),
     TURNING_DELIVERY_TYPE("Вкл/выкл способов доставки", UserRole.ADMIN_ACCESS),
     TURN_RANK_DISCOUNT("Ранговая скидка(для всех)", UserRole.ADMIN_ACCESS),
-    CURRENT_DATA("Текущие данные", UserRole.ADMIN_ACCESS);
+    CURRENT_DATA("Текущие данные", UserRole.ADMIN_ACCESS),
+    PAYMENT_TYPES("Типы оплаты", UserRole.OPERATOR_ACCESS);
 
     private final String text;
 
