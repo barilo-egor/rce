@@ -15,7 +15,7 @@ import java.util.Optional;
 
 @Service
 @Slf4j
-public class ConfirmBitcoinPoolWithdrawal implements ICallbackQueryHandler {
+public class ConfirmBitcoinPoolWithdrawalHandler implements ICallbackQueryHandler {
 
     private final ICryptoWithdrawalService cryptoWithdrawalService;
 
@@ -23,8 +23,8 @@ public class ConfirmBitcoinPoolWithdrawal implements ICallbackQueryHandler {
 
     private final IResponseSender responseSender;
 
-    public ConfirmBitcoinPoolWithdrawal(ICryptoWithdrawalService cryptoWithdrawalService,
-                                        ICallbackDataService callbackDataService, IResponseSender responseSender) {
+    public ConfirmBitcoinPoolWithdrawalHandler(ICryptoWithdrawalService cryptoWithdrawalService,
+                                               ICallbackDataService callbackDataService, IResponseSender responseSender) {
         this.cryptoWithdrawalService = cryptoWithdrawalService;
         this.callbackDataService = callbackDataService;
         this.responseSender = responseSender;
