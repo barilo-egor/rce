@@ -7,6 +7,7 @@ import tgb.btc.library.constants.enums.properties.PropertiesPath;
 import tgb.btc.library.interfaces.service.bean.bot.deal.read.IDealCountService;
 import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.library.interfaces.util.IBigDecimalService;
+import tgb.btc.library.service.properties.BotPropertiesReader;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.InlineType;
 import tgb.btc.rce.enums.MessageImage;
@@ -39,11 +40,13 @@ public class ReferralHandler implements ITextCommandHandler {
 
     private final IKeyboardBuildService keyboardBuildService;
 
+    private final BotPropertiesReader botPropertiesReader;
+
     public ReferralHandler(ICommandService commandService, IReadUserService readUserService,
                            IBigDecimalService bigDecimalService, IDealCountService dealCountService,
                            IMessageImageService messageImageService,
                            IMessageImageResponseSender messageImageResponseSender,
-                           IKeyboardBuildService keyboardBuildService) {
+                           IKeyboardBuildService keyboardBuildService, BotPropertiesReader botPropertiesReader) {
         this.commandService = commandService;
         this.readUserService = readUserService;
         this.bigDecimalService = bigDecimalService;
@@ -51,13 +54,14 @@ public class ReferralHandler implements ITextCommandHandler {
         this.messageImageService = messageImageService;
         this.messageImageResponseSender = messageImageResponseSender;
         this.keyboardBuildService = keyboardBuildService;
+        this.botPropertiesReader = botPropertiesReader;
     }
 
     @Override
     public void handle(Message message) {
         Long chatId = message.getChatId();
         String startParameter = "?start=" + chatId;
-        String refLink = PropertiesPath.BOT_PROPERTIES.getString("SEND_LINK").concat(startParameter);
+        String refLink = botPropertiesReader.getString("SEND_LINK").concat(startParameter);
         BigDecimal referralBalance = BigDecimal.valueOf(readUserService.getReferralBalanceByChatId(chatId));
         String currentBalance = bigDecimalService.roundToPlainString(referralBalance);
         List<ReferralUser> referralUsers = readUserService.getUserReferralsByChatId(chatId);

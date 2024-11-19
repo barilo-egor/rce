@@ -75,7 +75,6 @@ public enum Command implements ICommand {
      */
     WITHDRAWAL_OF_FUNDS("Вывод средств", false, UserRole.USER_ACCESS),
     SHOW_WITHDRAWAL_REQUEST("SHOW_WITHDRAWAL_REQUEST", false, UserRole.USER_ACCESS),
-    SEND_LINK(PropertiesPath.BOT_PROPERTIES.name(), false, UserRole.USER_ACCESS),
     HIDE_WITHDRAWAL("Скрыть", false, UserRole.ADMIN_ACCESS),
     CHANGE_REFERRAL_BALANCE("Изменить", false, UserRole.ADMIN_ACCESS),
     DELETE_WITHDRAWAL_REQUEST("Удалить", false, UserRole.USER_ACCESS),
