@@ -90,9 +90,9 @@ public enum Command implements ICommand {
     REPORTS("Отчеты", false, UserRole.ADMIN_ACCESS),// +
     EDIT_CONTACTS("Редактирование контактов", false, UserRole.ADMIN_ACCESS),// +
     USER_REFERRAL_BALANCE("Реф.баланс юзера", false, UserRole.ADMIN_ACCESS),
-    TURNING_CURRENCY("Включение криптовалют", false, UserRole.ADMIN_ACCESS),
-    DISCOUNTS("Скидки", false, UserRole.ADMIN_ACCESS),
-    USERS("Пользователи", false, UserRole.ADMIN_ACCESS),
+    TURNING_CURRENCY("Включение криптовалют", false, UserRole.ADMIN_ACCESS),// +
+    DISCOUNTS("Скидки", false, UserRole.ADMIN_ACCESS),// +
+    USERS("Пользователи", false, UserRole.ADMIN_ACCESS),// +
     QUIT_ADMIN_PANEL("Выйти", false, UserRole.OBSERVER_ACCESS),
     TURNING_DELIVERY_TYPE("Вкл/выкл способов доставки", false, UserRole.ADMIN_ACCESS),
     BACKUP_DB("/backupdb", true, UserRole.ADMIN_ACCESS),
@@ -258,7 +258,7 @@ public enum Command implements ICommand {
             BUY_BITCOIN, SELL_BITCOIN, CONTACTS, DRAWS, REFERRAL, ADMIN_PANEL, WEB_ADMIN_PANEL, LOTTERY, ROULETTE, BOT_SETTINGS,
             DISCOUNTS, EDIT_CONTACTS, OBSERVER_PANEL, OPERATOR_PANEL, REPORTS, REQUESTS, SEND_MESSAGES, USERS, NEW_API_DEALS,
             NEW_DEALS, NEW_REVIEWS, NEW_SPAM_BANS, NEW_WITHDRAWALS, ON_BOT, OFF_BOT, LOTTERY_REPORT, PARTNERS_REPORT, BACK,
-            TURNING_CURRENCY
+            TURNING_CURRENCY, QUIT_ADMIN_PANEL
     );
 
     final String text;

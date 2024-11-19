@@ -34,7 +34,8 @@ public enum TextCommand {
     OFF_BOT("Выкл.бота"),
     LOTTERY_REPORT("Отчет по лотереи"),
     PARTNERS_REPORT("Отчет по партнерам"),
-    TURNING_CURRENCY("Включение криптовалют");
+    TURNING_CURRENCY("Включение криптовалют"),
+    QUIT_ADMIN_PANEL("Выйти");
 
     private final String text;
 }
