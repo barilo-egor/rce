@@ -23,6 +23,7 @@ import tgb.btc.library.interfaces.util.IBigDecimalService;
 import tgb.btc.library.interfaces.util.IFiatCurrencyService;
 import tgb.btc.library.service.process.RPSService;
 import tgb.btc.library.service.properties.ButtonsDesignPropertiesReader;
+import tgb.btc.library.service.properties.FunctionsPropertiesReader;
 import tgb.btc.library.service.properties.VariablePropertiesReader;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.BotInlineButton;
@@ -77,6 +78,13 @@ public class KeyboardService implements IKeyboardService {
     private ICommandService commandService;
 
     private IModule<DeliveryKind> deliveryKindModule;
+
+    private FunctionsPropertiesReader functionsPropertiesReader;
+
+    @Autowired
+    public void setFunctionsPropertiesReader(FunctionsPropertiesReader functionsPropertiesReader) {
+        this.functionsPropertiesReader = functionsPropertiesReader;
+    }
 
     @Autowired
     public void setDeliveryKindModule(IModule<DeliveryKind> deliveryKindModule) {
@@ -179,7 +187,7 @@ public class KeyboardService implements IKeyboardService {
                                 .inlineType(InlineType.CALLBACK_DATA)
                                 .build())
                         .collect(Collectors.toList());
-        Integer numberOfColumns = PropertiesPath.FUNCTIONS_PROPERTIES.getInteger("payment.types.columns", null);
+        Integer numberOfColumns = functionsPropertiesReader.getInteger("payment.types.columns", null);
         if (Objects.nonNull(numberOfColumns)) {
             return keyboardBuildService.buildInlineSingleLast(buttons, numberOfColumns, keyboardBuildService.getInlineBackButton());
         }
@@ -282,7 +290,7 @@ public class KeyboardService implements IKeyboardService {
         Arrays.stream(DeliveryType.values()).forEach(x -> {
             String text = PropertiesPath.DESIGN_PROPERTIES.getString(x.name());
             if (DeliveryType.VIP.equals(x) &&
-                    PropertiesPath.FUNCTIONS_PROPERTIES.getBoolean("vip.button.add.sum", false)) {
+                    functionsPropertiesReader.getBoolean("vip.button.add.sum", false)) {
                 Integer fix;
                 try {
                     fix = variablePropertiesReader.getInt(VariableType.FIX_COMMISSION_VIP,

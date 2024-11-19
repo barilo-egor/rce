@@ -6,9 +6,9 @@ import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.constants.enums.bot.DealType;
-import tgb.btc.library.constants.enums.properties.PropertiesPath;
 import tgb.btc.library.exception.BaseException;
 import tgb.btc.library.service.bean.bot.deal.ModifyDealService;
+import tgb.btc.library.service.properties.FunctionsPropertiesReader;
 import tgb.btc.rce.enums.update.TextCommand;
 import tgb.btc.rce.sender.IResponseSender;
 import tgb.btc.rce.service.handler.message.text.ITextCommandHandler;
@@ -29,11 +29,15 @@ public class BuyHandler implements ITextCommandHandler {
 
     private final ModifyDealService modifyDealService;
 
-    public BuyHandler(IResponseSender responseSender, DealProcessor dealProcessor, ExchangeService exchangeService, ModifyDealService modifyDealService) {
+    private final FunctionsPropertiesReader functionsPropertiesReader;
+
+    public BuyHandler(IResponseSender responseSender, DealProcessor dealProcessor, ExchangeService exchangeService,
+                      ModifyDealService modifyDealService, FunctionsPropertiesReader functionsPropertiesReader) {
         this.responseSender = responseSender;
         this.dealProcessor = dealProcessor;
         this.exchangeService = exchangeService;
         this.modifyDealService = modifyDealService;
+        this.functionsPropertiesReader = functionsPropertiesReader;
     }
 
     @Override
@@ -52,7 +56,7 @@ public class BuyHandler implements ITextCommandHandler {
     }
 
     private boolean checkAllowedDealsCount(Long chatId) {
-        String allowedDealsCountStr = PropertiesPath.FUNCTIONS_PROPERTIES.getString("allowed.deals.count");
+        String allowedDealsCountStr = functionsPropertiesReader.getString("allowed.deals.count");
         Integer allowedDealsCount;
         try {
             allowedDealsCount = Integer.parseInt(allowedDealsCountStr);

@@ -9,7 +9,6 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.constants.enums.bot.UserRole;
-import tgb.btc.library.constants.enums.properties.PropertiesPath;
 import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.library.interfaces.service.bean.common.bot.IUserCommonService;
 import tgb.btc.library.service.process.BannedUserCache;
@@ -30,8 +29,6 @@ import java.util.Objects;
 public class UpdateDispatcher implements IUpdateDispatcher {
 
     private static boolean IS_ON = true;
-
-    private static final boolean IS_LOG_UDPATES = PropertiesPath.FUNCTIONS_PROPERTIES.getBoolean("log.updates", false);
 
     private IReadUserService readUserService;
 
