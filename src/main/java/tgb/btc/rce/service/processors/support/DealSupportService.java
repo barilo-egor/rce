@@ -24,7 +24,9 @@ import tgb.btc.library.interfaces.util.IBigDecimalService;
 import tgb.btc.library.interfaces.web.ICryptoWithdrawalService;
 import tgb.btc.library.service.bean.bot.deal.read.DealPropertyService;
 import tgb.btc.rce.enums.Command;
+import tgb.btc.rce.enums.update.CallbackQueryData;
 import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
+import tgb.btc.rce.service.util.ICallbackDataService;
 import tgb.btc.rce.service.util.ICallbackQueryService;
 import tgb.btc.rce.service.util.ICommandService;
 import tgb.btc.rce.vo.InlineButton;
@@ -64,6 +66,13 @@ public class DealSupportService {
     private DealPropertyService dealPropertyService;
 
     private ICryptoWithdrawalService cryptoWithdrawalService;
+
+    private ICallbackDataService callbackDataService;
+
+    @Autowired
+    public void setCallbackDataService(ICallbackDataService callbackDataService) {
+        this.callbackDataService = callbackDataService;
+    }
 
     @Autowired
     public void setCryptoWithdrawalService(ICryptoWithdrawalService cryptoWithdrawalService) {
@@ -242,8 +251,8 @@ public class DealSupportService {
                 .data(callbackQueryService.buildCallbackData(Command.ADDITIONAL_VERIFICATION, pid))
                 .build());
         buttons.add(InlineButton.builder()
-                .text(commandService.getText(Command.DELETE_USER_DEAL))
-                .data(callbackQueryService.buildCallbackData(Command.DELETE_USER_DEAL, pid))
+                .text("Удалить")
+                .data(callbackDataService.buildData(CallbackQueryData.DELETE_USER_DEAL, pid))
                 .build());
         buttons.add(InlineButton.builder()
                 .text(commandService.getText(Command.DELETE_DEAL_AND_BLOCK_USER))

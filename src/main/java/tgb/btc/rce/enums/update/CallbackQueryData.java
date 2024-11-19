@@ -9,5 +9,6 @@ public enum CallbackQueryData {
     TURN_OFF_CURRENCY,
     TURNING_RANK_DISCOUNT,
     SHOW_DEAL,
-    SHOW_API_DEAL
+    SHOW_API_DEAL,
+    DELETE_USER_DEAL
 }
