@@ -12,7 +12,6 @@ import tgb.btc.rce.enums.update.CallbackQueryData;
 import tgb.btc.rce.sender.IResponseSender;
 import tgb.btc.rce.service.handler.callback.ICallbackQueryHandler;
 import tgb.btc.rce.service.util.ICallbackDataService;
-import tgb.btc.rce.service.util.ICallbackQueryService;
 import tgb.btc.rce.vo.InlineButton;
 
 import java.math.BigDecimal;
@@ -22,8 +21,6 @@ import java.util.Optional;
 @Slf4j
 public class AutoWithdrawalDealHandler implements ICallbackQueryHandler {
 
-    private final ICallbackQueryService callbackQueryService;
-
     private final IReadDealService readDealService;
 
     private final ICryptoWithdrawalService cryptoWithdrawalService;
@@ -32,10 +29,9 @@ public class AutoWithdrawalDealHandler implements ICallbackQueryHandler {
 
     private final IResponseSender responseSender;
 
-    public AutoWithdrawalDealHandler(ICallbackQueryService callbackQueryService, IReadDealService readDealService,
+    public AutoWithdrawalDealHandler(IReadDealService readDealService,
                                      ICryptoWithdrawalService cryptoWithdrawalService, ICallbackDataService callbackDataService,
                                      IResponseSender responseSender) {
-        this.callbackQueryService = callbackQueryService;
         this.readDealService = readDealService;
         this.cryptoWithdrawalService = cryptoWithdrawalService;
         this.callbackDataService = callbackDataService;
