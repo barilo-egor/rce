@@ -12,7 +12,6 @@ import tgb.btc.library.constants.enums.bot.CryptoCurrency;
 import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.constants.enums.bot.DeliveryType;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
-import tgb.btc.library.constants.enums.properties.PropertiesPath;
 import tgb.btc.library.constants.enums.properties.VariableType;
 import tgb.btc.library.exception.BaseException;
 import tgb.btc.library.interfaces.IModule;
@@ -23,6 +22,7 @@ import tgb.btc.library.interfaces.util.IBigDecimalService;
 import tgb.btc.library.interfaces.util.IFiatCurrencyService;
 import tgb.btc.library.service.process.RPSService;
 import tgb.btc.library.service.properties.ButtonsDesignPropertiesReader;
+import tgb.btc.library.service.properties.DesignPropertiesReader;
 import tgb.btc.library.service.properties.FunctionsPropertiesReader;
 import tgb.btc.library.service.properties.VariablePropertiesReader;
 import tgb.btc.rce.constants.BotStringConstants;
@@ -80,6 +80,13 @@ public class KeyboardService implements IKeyboardService {
     private IModule<DeliveryKind> deliveryKindModule;
 
     private FunctionsPropertiesReader functionsPropertiesReader;
+
+    private DesignPropertiesReader designPropertiesReader;
+
+    @Autowired
+    public void setDesignPropertiesReader(DesignPropertiesReader designPropertiesReader) {
+        this.designPropertiesReader = designPropertiesReader;
+    }
 
     @Autowired
     public void setFunctionsPropertiesReader(FunctionsPropertiesReader functionsPropertiesReader) {
@@ -288,7 +295,7 @@ public class KeyboardService implements IKeyboardService {
     public ReplyKeyboard getDeliveryTypes(FiatCurrency fiatCurrency, DealType dealType, CryptoCurrency cryptoCurrency) {
         List<InlineButton> buttons = new ArrayList<>();
         Arrays.stream(DeliveryType.values()).forEach(x -> {
-            String text = PropertiesPath.DESIGN_PROPERTIES.getString(x.name());
+            String text = designPropertiesReader.getString(x.name());
             if (DeliveryType.VIP.equals(x) &&
                     functionsPropertiesReader.getBoolean("vip.button.add.sum", false)) {
                 Integer fix;
