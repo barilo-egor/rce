@@ -1,33 +1,41 @@
-package tgb.btc.rce.service.processors.admin.settings.currencies;
+package tgb.btc.rce.service.handler.util.impl.handler;
 
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.telegram.telegrambots.meta.api.objects.Update;
+import org.springframework.stereotype.Service;
 import tgb.btc.library.constants.enums.bot.CryptoCurrency;
 import tgb.btc.library.constants.enums.bot.DealType;
-import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
-import tgb.btc.rce.service.Processor;
+import tgb.btc.rce.sender.IResponseSender;
+import tgb.btc.rce.service.handler.util.ITurningCurrencyService;
+import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
+import tgb.btc.rce.service.util.ICallbackQueryService;
 import tgb.btc.rce.service.util.ITurningCurrenciesService;
 import tgb.btc.rce.vo.InlineButton;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@CommandProcessor(command = Command.TURNING_CURRENCY)
-@Slf4j
-public class TurningCurrencyProcessor extends Processor {
+@Service
+public class TurningCurrencyService implements ITurningCurrencyService {
 
-    private ITurningCurrenciesService turningCurrenciesService;
+    private final IResponseSender responseSender;
 
-    @Autowired
-    public void setTurningCurrenciesService(ITurningCurrenciesService turningCurrenciesService) {
+    private final IKeyboardBuildService keyboardBuildService;
+
+    private final ITurningCurrenciesService turningCurrenciesService;
+
+    private final ICallbackQueryService callbackQueryService;
+
+    public TurningCurrencyService(IResponseSender responseSender, IKeyboardBuildService keyboardBuildService,
+                                  ITurningCurrenciesService turningCurrenciesService,
+                                  ICallbackQueryService callbackQueryService) {
+        this.responseSender = responseSender;
+        this.keyboardBuildService = keyboardBuildService;
         this.turningCurrenciesService = turningCurrenciesService;
+        this.callbackQueryService = callbackQueryService;
     }
 
     @Override
-    public void run(Update update) {
-        Long chatId = updateService.getChatId(update);
+    public void process(Long chatId) {
         List<InlineButton> buttons = new ArrayList<>();
         buttons.add(InlineButton.builder()
                 .text("Покупка ⬇️")
