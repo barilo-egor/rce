@@ -13,6 +13,7 @@ import tgb.btc.library.constants.enums.properties.PropertiesPath;
 import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.library.interfaces.service.bean.common.bot.IUserCommonService;
 import tgb.btc.library.service.process.BannedUserCache;
+import tgb.btc.library.service.properties.ConfigPropertiesReader;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.IUpdateService;
 import tgb.btc.rce.service.captcha.IAntiSpam;
@@ -49,6 +50,13 @@ public class UpdateDispatcher implements IUpdateDispatcher {
     private IUpdateService updateService;
 
     private ApplicationEventPublisher eventPublisher;
+
+    private ConfigPropertiesReader configPropertiesReader;
+
+    @Autowired
+    public void setConfigPropertiesReader(ConfigPropertiesReader configPropertiesReader) {
+        this.configPropertiesReader = configPropertiesReader;
+    }
 
     @Autowired
     public void setEventPublisher(ApplicationEventPublisher eventPublisher) {
@@ -97,7 +105,7 @@ public class UpdateDispatcher implements IUpdateDispatcher {
 
     @PostConstruct
     public void setIsOn() {
-        Boolean turnOffOnStart = PropertiesPath.CONFIG_PROPERTIES.getBoolean("turn.off.on.start");
+        Boolean turnOffOnStart = configPropertiesReader.getBoolean("turn.off.on.start");
         if (BooleanUtils.isTrue(turnOffOnStart)) setIsOn(false);
     }
 
