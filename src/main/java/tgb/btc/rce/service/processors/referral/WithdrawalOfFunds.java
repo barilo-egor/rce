@@ -6,9 +6,10 @@ import tgb.btc.library.constants.enums.properties.VariableType;
 import tgb.btc.library.interfaces.service.bean.bot.IWithdrawalRequestService;
 import tgb.btc.library.service.properties.VariablePropertiesReader;
 import tgb.btc.rce.annotation.CommandProcessor;
-import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
+import tgb.btc.rce.enums.update.CallbackQueryData;
 import tgb.btc.rce.service.Processor;
+import tgb.btc.rce.service.impl.util.CallbackDataService;
 import tgb.btc.rce.service.processors.support.WithdrawalOfFundsService;
 import tgb.btc.rce.vo.InlineButton;
 
@@ -22,6 +23,13 @@ public class WithdrawalOfFunds extends Processor {
     private IWithdrawalRequestService withdrawalRequestService;
 
     private VariablePropertiesReader variablePropertiesReader;
+
+    private CallbackDataService callbackDataService;
+
+    @Autowired
+    public void setCallbackDataService(CallbackDataService callbackDataService) {
+        this.callbackDataService = callbackDataService;
+    }
 
     @Autowired
     public void setVariablePropertiesReader(VariablePropertiesReader variablePropertiesReader) {
@@ -48,10 +56,11 @@ public class WithdrawalOfFunds extends Processor {
                     responseSender.sendMessage(chatId, "У вас уже есть активная заявка.",
                             keyboardBuildService.buildInline(List.of(
                                     InlineButton.builder()
-                                            .text(commandService.getText(Command.DELETE_WITHDRAWAL_REQUEST))
-                                            .data(Command.DELETE_WITHDRAWAL_REQUEST.name()
-                                                    + BotStringConstants.CALLBACK_DATA_SPLITTER
-                                                    + withdrawalRequestService.getPidByUserChatId(chatId))
+                                            .text("Удалить")
+                                            .data(callbackDataService.buildData(
+                                                    CallbackQueryData.DELETE_WITHDRAWAL_REQUEST,
+                                                    withdrawalRequestService.getPidByUserChatId(chatId)
+                                            ))
                                             .build()
                             )));
                     return;

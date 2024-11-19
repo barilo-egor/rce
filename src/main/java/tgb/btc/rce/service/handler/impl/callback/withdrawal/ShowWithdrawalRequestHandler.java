@@ -1,4 +1,4 @@
-package tgb.btc.rce.service.handler.impl.callback;
+package tgb.btc.rce.service.handler.impl.callback.withdrawal;
 
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
