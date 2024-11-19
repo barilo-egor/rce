@@ -15,22 +15,8 @@ import java.util.stream.Collectors;
 public enum Command implements ICommand {
 
     START("/start", false, UserRole.USER_ACCESS), // +
-    NONE("none", false, UserRole.USER_ACCESS),
     CHAT_ID("/chatid", false, UserRole.USER_ACCESS), // +
-
-    /**
-     * UTIL
-     */
     BACK("Назад", false, UserRole.USER_ACCESS), // +
-    ADMIN_BACK("Назад", false, UserRole.OPERATOR_ACCESS),
-    CANCEL("Отмена", false, UserRole.USER_ACCESS),
-    BOT_OFFED("BOT_OFFED", false, UserRole.USER_ACCESS),
-    INLINE_DELETE("❌ Закрыть", false, UserRole.USER_ACCESS),
-    CAPTCHA("captcha", false, UserRole.USER_ACCESS),
-
-    /**
-     * HIDDEN
-     */
     DELETE_USER("/deleteuser", true, UserRole.ADMIN_ACCESS),// +
     MAKE_ADMIN("/makeadmin", true, UserRole.ADMIN_ACCESS),// +
     MAKE_OPERATOR("/makeoperator", true, UserRole.ADMIN_ACCESS),// +
@@ -38,97 +24,74 @@ public enum Command implements ICommand {
     MAKE_USER("/makeuser", true, UserRole.ADMIN_ACCESS),// +
     HELP("/help", false, UserRole.ADMIN_ACCESS),// +
     TURN_NOTIFICATIONS("/notifications", true, UserRole.OBSERVER_ACCESS),// +
-
-    /**
-     * MAIN
-     */
     BUY_BITCOIN("Купить", false, UserRole.USER_ACCESS),// +
     SELL_BITCOIN("Продать", false, UserRole.USER_ACCESS),// +
-    CABINET("Кабинет", false, UserRole.USER_ACCESS),
     CONTACTS("Контакты", false, UserRole.USER_ACCESS),// +
     DRAWS("Розыгрыши", false, UserRole.USER_ACCESS),// +
     REFERRAL("Реферальная программа", false, UserRole.USER_ACCESS),// +
     ADMIN_PANEL("Админ панель", false, UserRole.ADMIN_ACCESS),// +
     OPERATOR_PANEL("Панель оператора", false, UserRole.OPERATOR_ACCESS),// +
     OBSERVER_PANEL("Панель наблюдателя", false, UserRole.OBSERVER_ACCESS),// +
-
-    /**
-     * DRAWS
-     */
     LOTTERY("Лотерея", false, UserRole.USER_ACCESS),// +
     ROULETTE("Рулетка", false, UserRole.USER_ACCESS),// +
-
-    /**
-     * REFERRAL
-     */
-    WITHDRAWAL_OF_FUNDS("Вывод средств", false, UserRole.USER_ACCESS),
-    SHOW_WITHDRAWAL_REQUEST("SHOW_WITHDRAWAL_REQUEST", false, UserRole.USER_ACCESS), //+
-    HIDE_WITHDRAWAL("Скрыть", false, UserRole.ADMIN_ACCESS), //+
-    CHANGE_REFERRAL_BALANCE("Изменить", false, UserRole.ADMIN_ACCESS),
-    DELETE_WITHDRAWAL_REQUEST("Удалить", false, UserRole.USER_ACCESS), //+
-
-    /**
-     * ADMIN PANEL
-     */
+    SHOW_WITHDRAWAL_REQUEST("SHOW_WITHDRAWAL_REQUEST", false, UserRole.USER_ACCESS), 
+    HIDE_WITHDRAWAL("Скрыть", false, UserRole.ADMIN_ACCESS), 
+    DELETE_WITHDRAWAL_REQUEST("Удалить", false, UserRole.USER_ACCESS), 
     REQUESTS("Заявки", false, UserRole.ADMIN_ACCESS),// +
     SEND_MESSAGES("Отправка сообщений", false, UserRole.ADMIN_ACCESS),// +
-    BAN_UNBAN("Бан/разбан", false, UserRole.ADMIN_ACCESS),
     BOT_SETTINGS("Настройки бота", false, UserRole.ADMIN_ACCESS),// +
     REPORTS("Отчеты", false, UserRole.ADMIN_ACCESS),// +
     EDIT_CONTACTS("Редактирование контактов", false, UserRole.ADMIN_ACCESS),// +
-    USER_REFERRAL_BALANCE("Реф.баланс юзера", false, UserRole.ADMIN_ACCESS),
     TURNING_CURRENCY("Включение криптовалют", false, UserRole.ADMIN_ACCESS),// +
     DISCOUNTS("Скидки", false, UserRole.ADMIN_ACCESS),// +
     USERS("Пользователи", false, UserRole.ADMIN_ACCESS),// +
     QUIT_ADMIN_PANEL("Выйти", false, UserRole.OBSERVER_ACCESS),// +
     TURNING_DELIVERY_TYPE("Вкл/выкл способов доставки", false, UserRole.ADMIN_ACCESS),// +
     BACKUP_DB("/backupdb", true, UserRole.ADMIN_ACCESS),// +
+    CHANGE_RANK_DISCOUNT("change_rank_discount", false, UserRole.ADMIN_ACCESS), 
+    TURN_RANK_DISCOUNT("Ранговая скидка(для всех)", false, UserRole.ADMIN_ACCESS), 
+    TURNING_RANK_DISCOUNT("TURNING_RANK_DISCOUNT", false, UserRole.ADMIN_ACCESS), 
+    TURN_ON_CURRENCY("turn_on_currency", false, UserRole.ADMIN_ACCESS), 
+    TURN_OFF_CURRENCY("turn_off_currency", false, UserRole.ADMIN_ACCESS),
+    CURRENT_DATA("Текущие данные", false, UserRole.ADMIN_ACCESS),  
+    ON_BOT("Вкл.бота", false, UserRole.ADMIN_ACCESS),  
+    OFF_BOT("Выкл.бота", false, UserRole.ADMIN_ACCESS),  
+    PAYMENT_TYPES("Типы оплаты", false, UserRole.OPERATOR_ACCESS), 
+    NEW_DEALS("Новые заявки", false, UserRole.OBSERVER_ACCESS),
+    BITCOIN_POOL("Пул сделок BTC", false, UserRole.OPERATOR_ACCESS),
+    NEW_WITHDRAWALS("Заявки на вывод", false, UserRole.OPERATOR_ACCESS),
+    NEW_REVIEWS("Новые отзывы", false, UserRole.OPERATOR_ACCESS),
+    USERS_REPORT("Отчет по пользователям", false, UserRole.ADMIN_ACCESS),
+    USERS_DEALS_REPORT("Отчет сделки пользователей", false, UserRole.ADMIN_ACCESS),
+    PARTNERS_REPORT("Отчет по партнерам", false, UserRole.ADMIN_ACCESS),
+    NEW_SPAM_BANS("Антиспам блоки", false, UserRole.OPERATOR_ACCESS),
+    WEB_ADMIN_PANEL("Веб админ-панель", false, UserRole.OPERATOR_ACCESS),
+    NEW_API_DEALS("Новые API заявки", false, UserRole.OPERATOR_ACCESS),
+    
 
+    NONE("none", false, UserRole.USER_ACCESS),
+    ADMIN_BACK("Назад", false, UserRole.OPERATOR_ACCESS),
+    CANCEL("Отмена", false, UserRole.USER_ACCESS),
+    BOT_OFFED("BOT_OFFED", false, UserRole.USER_ACCESS),
+    INLINE_DELETE("❌ Закрыть", false, UserRole.USER_ACCESS),
+    CAPTCHA("captcha", false, UserRole.USER_ACCESS),
+    CABINET("Кабинет", false, UserRole.USER_ACCESS),
+    WITHDRAWAL_OF_FUNDS("Вывод средств", false, UserRole.USER_ACCESS),
+    CHANGE_REFERRAL_BALANCE("Изменить", false, UserRole.ADMIN_ACCESS),
+    BAN_UNBAN("Бан/разбан", false, UserRole.ADMIN_ACCESS),
+    USER_REFERRAL_BALANCE("Реф.баланс юзера", false, UserRole.ADMIN_ACCESS),
     DEALS_COUNT("Кол-во возможных сделок", false, UserRole.ADMIN_ACCESS),
-
-    /**
-     * DISCOUNTS
-     */
     RANK_DISCOUNT("Ранговая скидка(персональная)", false, UserRole.ADMIN_ACCESS),
-    CHANGE_RANK_DISCOUNT("change_rank_discount", false, UserRole.ADMIN_ACCESS), //+
     PERSONAL_BUY_DISCOUNT("Персональная, покупка", false, UserRole.ADMIN_ACCESS),
     PERSONAL_SELL_DISCOUNT("Персональная, продажа", false, UserRole.ADMIN_ACCESS),
     REFERRAL_PERCENT("Процент реферала", false, UserRole.ADMIN_ACCESS),
-    TURN_RANK_DISCOUNT("Ранговая скидка(для всех)", false, UserRole.ADMIN_ACCESS), //+
-    TURNING_RANK_DISCOUNT("TURNING_RANK_DISCOUNT", false, UserRole.ADMIN_ACCESS), //+
-
-    /**
-     * TURNING CURRENCIES
-     */
-    TURN_ON_CURRENCY("turn_on_currency", false, UserRole.ADMIN_ACCESS), //+
-    TURN_OFF_CURRENCY("turn_off_currency", false, UserRole.ADMIN_ACCESS),//+
-
-    /**
-     * EDIT CONTACTS
-     */
     ADD_CONTACT("Добавить контакт", false, UserRole.ADMIN_ACCESS),
     DELETE_CONTACT("Удалить контакт", false, UserRole.ADMIN_ACCESS),
-
-    /**
-     * SEND MESSAGES
-     */
     MAILING_LIST("Рассылка", false, UserRole.OBSERVER_ACCESS),
     SEND_MESSAGE_TO_USER("Сообщение пользователю", false, UserRole.ADMIN_ACCESS),
-
-    /**
-     * BOT SETTINGS
-     */
-    CURRENT_DATA("Текущие данные", false, UserRole.ADMIN_ACCESS),  //+
-    ON_BOT("Вкл.бота", false, UserRole.ADMIN_ACCESS),  //+
-    OFF_BOT("Выкл.бота", false, UserRole.ADMIN_ACCESS),  //+
     BOT_MESSAGES("Сообщения бота", false, UserRole.ADMIN_ACCESS),
     BOT_VARIABLES("Переменные бота", false, UserRole.ADMIN_ACCESS),
     SYSTEM_MESSAGES("Сис.сообщения", false, UserRole.ADMIN_ACCESS),
-    PAYMENT_TYPES("Типы оплаты", false, UserRole.OPERATOR_ACCESS), //+
-
-    /**
-     * DEAL
-     */
     DEAL("DEAL", false, UserRole.USER_ACCESS),
     PAID("Оплатил", false, UserRole.USER_ACCESS),
     CANCEL_DEAL("Отменить заявку", false, UserRole.USER_ACCESS),
@@ -153,41 +116,16 @@ public enum Command implements ICommand {
     USE_PROMO("Использовать промокод", false, UserRole.USER_ACCESS),
     DONT_USE_PROMO("Не использовать промокод", false, UserRole.USER_ACCESS),
     USE_SAVED_WALLET("USE_SAVED_WALLET", false, UserRole.USER_ACCESS),
-
-    /**
-     * REQUESTS
-     */
-    NEW_DEALS("Новые заявки", false, UserRole.OBSERVER_ACCESS),//+
-    BITCOIN_POOL("Пул сделок BTC", false, UserRole.OPERATOR_ACCESS),//+
-    NEW_WITHDRAWALS("Заявки на вывод", false, UserRole.OPERATOR_ACCESS),//+
-    NEW_REVIEWS("Новые отзывы", false, UserRole.OPERATOR_ACCESS),//+
     REVIEW_NAVIGATION("REVIEW_NAVIGATION", false, UserRole.OPERATOR_ACCESS),
-
     PUBLISH_REVIEW("Опубликовать", false, UserRole.OPERATOR_ACCESS),
     DELETE_REVIEW("Удалить", false, UserRole.OPERATOR_ACCESS),
-
-    /**
-     * REPORTS
-     */
-    USERS_REPORT("Отчет по пользователям", false, UserRole.ADMIN_ACCESS),//+
     USER_INFORMATION("Информация о пользователе", false, UserRole.ADMIN_ACCESS),
-    USERS_DEALS_REPORT("Отчет сделки пользователей", false, UserRole.ADMIN_ACCESS),//+
     DEAL_REPORTS("Отчет по сделкам", false, Set.of(UserRole.OBSERVER, UserRole.ADMIN)),
-    PARTNERS_REPORT("Отчет по партнерам", false, UserRole.ADMIN_ACCESS),//+
     CHECKS_FOR_DATE("Чеки по дате", false, UserRole.ADMIN_ACCESS),
     SEND_CHECKS_FOR_DATE("SEND_CHECKS_FOR_DATE", false, UserRole.ADMIN_ACCESS),
-    LOTTERY_REPORT("Отчет по лотереи", false, UserRole.ADMIN_ACCESS),//+
-
+    LOTTERY_REPORT("Отчет по лотереи", false, UserRole.ADMIN_ACCESS),
     CHANNEL_POST("CHANNEL_POST", false, UserRole.USER_ACCESS),
-
-    /**
-     * RECEIPTS
-     */
     RECEIPTS_CANCEL_DEAL("Отменить сделку", false, UserRole.USER_ACCESS),
-
-    /**
-     * PAYMENT TYPES
-     */
     NEW_PAYMENT_TYPE("Создать тип оплаты", false, UserRole.OPERATOR_ACCESS),
     DELETE_PAYMENT_TYPE("Удалить тип оплаты", false, UserRole.OPERATOR_ACCESS),
     DELETING_PAYMENT_TYPE("DELETING_PAYMENT_TYPE", false, UserRole.OPERATOR_ACCESS),
@@ -199,39 +137,15 @@ public enum Command implements ICommand {
     CHANGE_MIN_SUM("Мин.сумма", false, UserRole.OPERATOR_ACCESS),
     TURN_DYNAMIC_REQUISITES("Динамические реквизиты", false, UserRole.OPERATOR_ACCESS),
     TURNING_DYNAMIC_REQUISITES("TURNING_DYNAMIC_REQUISITES", false, UserRole.OPERATOR_ACCESS),
-
-    /**
-     * ANTISPAM
-     */
     SHOW_SPAM_BANNED_USER("Показать", false, UserRole.OPERATOR_ACCESS),
     KEEP_SPAM_BAN("Оставить в бане", false, UserRole.OPERATOR_ACCESS),
     SPAM_UNBAN("Разблокировать", false, UserRole.OPERATOR_ACCESS),
-    NEW_SPAM_BANS("Антиспам блоки", false, UserRole.OPERATOR_ACCESS),//+
-
-    /**
-     * USERS STATES
-     */
     NONE_CALCULATOR("NONE_CALCULATOR", false, UserRole.USER_ACCESS),
     INLINE_QUERY_CALCULATOR("INLINE_QUERY_CALCULATOR", false, UserRole.USER_ACCESS),
     INLINE_CALCULATOR("INLINE_CALCULATOR", false, UserRole.USER_ACCESS),
-
-    WEB_ADMIN_PANEL("Веб админ-панель", false, UserRole.OPERATOR_ACCESS),//+
-
-    /**
-     * API DEALS
-     */
     CONFIRM_API_DEAL("Подтвердить", false, UserRole.OPERATOR_ACCESS),
     CANCEL_API_DEAL("Отклонить", false, UserRole.OPERATOR_ACCESS),
-    NEW_API_DEALS("Новые API заявки", false, UserRole.OPERATOR_ACCESS),//+
-
-    /**
-     * TURNING DELIVERY
-     */
     TURN_PROCESS_DELIVERY("TURN_PROCESS_DELIVERY", false, UserRole.ADMIN_ACCESS),
-
-    /**
-     * WEB
-     */
     SUBMIT_LOGIN("Подтвердить вход", false, UserRole.USER_ACCESS),
     SUBMIT_REGISTER("Подтвердить регистрацию", false, UserRole.USER_ACCESS),
     LOGOUT("Закрыть сессию", false, UserRole.USER_ACCESS);
