@@ -730,7 +730,7 @@ public class ExchangeService {
                         + deliveryTypeText
                         + "☑️После успешного перевода денег по указанным реквизитам нажмите на кнопку <b>\""
                         + commandService.getText(Command.PAID) + "\"</b> или же вы можете отменить данную заявку, нажав на кнопку <b>\""
-                        + commandService.getText(Command.CANCEL_DEAL) + "\"</b>."
+                        + "Отменить заявку" + "\"</b>."
                         + promoCodeText;
             }
         } else {
@@ -752,7 +752,7 @@ public class ExchangeService {
                         + deliveryTypeText
                         + "☑️После успешного перевода денег по указанному кошельку нажмите на кнопку <b>\""
                         + commandService.getText(Command.PAID) + "\"</b> или же вы можете отменить данную заявку, нажав на кнопку <b>\""
-                        + commandService.getText(Command.CANCEL_DEAL) + "\"</b>."
+                        + "Отменить заявку" + "\"</b>."
                         + promoCodeText;
             }
         }

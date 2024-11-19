@@ -420,8 +420,8 @@ public class KeyboardService implements IKeyboardService {
                         .inlineType(InlineType.CALLBACK_DATA)
                         .build(),
                 InlineButton.builder()
-                        .text(commandService.getText(Command.CANCEL_DEAL))
-                        .data(Command.CANCEL_DEAL.name())
+                        .text("Отменить заявку")
+                        .data("cancel")
                         .inlineType(InlineType.CALLBACK_DATA)
                         .build()
         ));

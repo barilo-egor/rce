@@ -101,8 +101,6 @@ public enum Command implements ICommand {
     DEAL("DEAL", false, UserRole.USER_ACCESS),
     PAID("Оплатил", false, UserRole.USER_ACCESS),
 
-    CANCEL_DEAL("Отменить заявку", false, UserRole.USER_ACCESS),
-    DELETE_DEAL("Удалить", false, UserRole.USER_ACCESS),
     SHOW_DEAL("Показать", false, UserRole.OBSERVER_ACCESS),
     SHOW_API_DEAL("show_api_deal", false, UserRole.OPERATOR_ACCESS),
     DELETE_USER_DEAL("Удалить", false, UserRole.OPERATOR_ACCESS),
