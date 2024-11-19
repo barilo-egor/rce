@@ -21,10 +21,7 @@ import tgb.btc.library.interfaces.service.bean.bot.IPaymentTypeService;
 import tgb.btc.library.interfaces.util.IBigDecimalService;
 import tgb.btc.library.interfaces.util.IFiatCurrencyService;
 import tgb.btc.library.service.process.RPSService;
-import tgb.btc.library.service.properties.ButtonsDesignPropertiesReader;
-import tgb.btc.library.service.properties.DesignPropertiesReader;
-import tgb.btc.library.service.properties.FunctionsPropertiesReader;
-import tgb.btc.library.service.properties.VariablePropertiesReader;
+import tgb.btc.library.service.properties.*;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.BotInlineButton;
 import tgb.btc.rce.enums.BotReplyButton;
@@ -45,7 +42,6 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static tgb.btc.library.constants.enums.properties.PropertiesPath.RPS_PROPERTIES;
 import static tgb.btc.rce.enums.InlineCalculatorButton.*;
 
 @Service
@@ -82,6 +78,13 @@ public class KeyboardService implements IKeyboardService {
     private FunctionsPropertiesReader functionsPropertiesReader;
 
     private DesignPropertiesReader designPropertiesReader;
+
+    private RPSPropertiesReader rpsPropertiesReader;
+
+    @Autowired
+    public void setRpsPropertiesReader(RPSPropertiesReader rpsPropertiesReader) {
+        this.rpsPropertiesReader = rpsPropertiesReader;
+    }
 
     @Autowired
     public void setDesignPropertiesReader(DesignPropertiesReader designPropertiesReader) {
@@ -336,7 +339,7 @@ public class KeyboardService implements IKeyboardService {
     @Override
     public ReplyKeyboard getRPSRates() {
         List<InlineButton> buttons = new ArrayList<>();
-        String[] sums = RPS_PROPERTIES.getString("sums").split(",");
+        String[] sums = rpsPropertiesReader.getString("sums").split(",");
         Arrays.asList(sums).forEach(sum -> buttons.add(InlineButton.builder()
                 .text(sum)
                 .data(sum)
