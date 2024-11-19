@@ -31,7 +31,6 @@ public enum Command implements ICommand {
     BACK("Назад", false, UserRole.USER_ACCESS), // +
     ADMIN_BACK("Назад", false, UserRole.OPERATOR_ACCESS),
     CANCEL("Отмена", false, UserRole.USER_ACCESS),
-    SHARE_CONTACT("Поделиться контактом", false, UserRole.USER_ACCESS),
     BOT_OFFED("BOT_OFFED", false, UserRole.USER_ACCESS),
     INLINE_DELETE("❌ Закрыть", false, UserRole.USER_ACCESS),
     CAPTCHA("captcha", false, UserRole.USER_ACCESS),

@@ -22,9 +22,10 @@ public enum Menu {
     ),
             List.of(TextCommand.LOTTERY, TextCommand.ROULETTE, TextCommand.BACK)
     ),
-    ASK_CONTACT(1, List.of(Command.SHARE_CONTACT, Command.CANCEL), List.of()),
     ADMIN_PANEL(2, List.of(Command.REQUESTS, Command.BOT_SETTINGS, Command.REPORTS, Command.DISCOUNTS,
-            Command.USERS, Command.DEALS_COUNT, Command.QUIT_ADMIN_PANEL), List.of()),
+            Command.USERS, Command.DEALS_COUNT, Command.QUIT_ADMIN_PANEL),
+            List.of()
+    ),
     OPERATOR_PANEL(2, List.of(Command.NEW_DEALS, Command.NEW_API_DEALS, Command.NEW_REVIEWS, Command.NEW_WITHDRAWALS, Command.NEW_SPAM_BANS,
             Command.PAYMENT_TYPES, Command.QUIT_ADMIN_PANEL), List.of()),
     OBSERVER_PANEL(2, List.of(Command.NEW_DEALS, Command.DEAL_REPORTS, Command.MAILING_LIST, Command.QUIT_ADMIN_PANEL), List.of()),

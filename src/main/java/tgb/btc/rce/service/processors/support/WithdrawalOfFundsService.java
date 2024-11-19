@@ -127,7 +127,7 @@ public class WithdrawalOfFundsService {
         modifyUserService.nextStep(chatId, Command.WITHDRAWAL_OF_FUNDS.name());
         ReplyKeyboard keyboard = keyboardBuildService.buildReply(List.of(
                 ReplyButton.builder()
-                        .text(commandService.getText(Command.SHARE_CONTACT))
+                        .text("Поделиться контактом")
                         .isRequestContact(true)
                         .isRequestLocation(false)
                         .build(),
