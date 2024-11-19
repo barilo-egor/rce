@@ -255,8 +255,8 @@ public class DealSupportService {
                 .data(callbackDataService.buildData(CallbackQueryData.DELETE_USER_DEAL, pid))
                 .build());
         buttons.add(InlineButton.builder()
-                .text(commandService.getText(Command.DELETE_DEAL_AND_BLOCK_USER))
-                .data(callbackQueryService.buildCallbackData(Command.DELETE_DEAL_AND_BLOCK_USER, pid))
+                .text("Удалить и заблокировать")
+                .data(callbackDataService.buildData(CallbackQueryData.DELETE_DEAL_AND_BLOCK_USER, pid))
                 .build());
         return keyboardBuildService.buildInline(buttons, 2);
     }
