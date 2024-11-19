@@ -163,7 +163,7 @@ public enum Command implements ICommand {
     CHOOSING_FIAT_CURRENCY("CHOOSING_FIAT_CURRENCY", false, UserRole.USER_ACCESS),
     USE_PROMO("Использовать промокод", false, UserRole.USER_ACCESS),
     DONT_USE_PROMO("Не использовать промокод", false, UserRole.USER_ACCESS),
-    USE_SAVED_WALLET("Использовать сохраненный", false, UserRole.USER_ACCESS),
+    USE_SAVED_WALLET("USE_SAVED_WALLET", false, UserRole.USER_ACCESS),
 
     /**
      * REQUESTS
