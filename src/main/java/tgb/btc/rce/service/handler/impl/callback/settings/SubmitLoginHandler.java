@@ -3,7 +3,6 @@ package tgb.btc.rce.service.handler.impl.callback.settings;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import tgb.btc.api.bot.WebAPI;
-import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.update.CallbackQueryData;
 import tgb.btc.rce.sender.IResponseSender;
 import tgb.btc.rce.service.handler.callback.ICallbackQueryHandler;
@@ -33,7 +32,7 @@ public class SubmitLoginHandler implements ICallbackQueryHandler {
         responseSender.sendMessage(chatId, "Вы можете, если потребуется, закрыть сессию по кнопке ниже.",
                 InlineButton.builder()
                         .text("Закрыть сессию")
-                        .data(Command.LOGOUT.name())
+                        .data(CallbackQueryData.LOGOUT.name())
                         .build());
     }
 
