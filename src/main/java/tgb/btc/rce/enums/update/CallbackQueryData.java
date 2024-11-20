@@ -31,5 +31,6 @@ public enum CallbackQueryData {
     SHOW_SPAM_BANNED_USER,
     KEEP_SPAM_BAN,
     SPAM_UNBAN,
-    CONFIRM_API_DEAL
+    CONFIRM_API_DEAL,
+    CANCEL_API_DEAL
 }

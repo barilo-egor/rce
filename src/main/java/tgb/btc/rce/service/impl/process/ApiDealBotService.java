@@ -7,7 +7,6 @@ import tgb.btc.library.constants.enums.ApiDealType;
 import tgb.btc.library.constants.enums.bot.ReceiptFormat;
 import tgb.btc.library.interfaces.service.bean.bot.IGroupChatService;
 import tgb.btc.library.interfaces.service.bean.web.IApiDealService;
-import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.update.CallbackQueryData;
 import tgb.btc.rce.sender.IResponseSender;
 import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
@@ -20,8 +19,6 @@ import tgb.btc.rce.vo.InlineButton;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static tgb.btc.rce.constants.BotStringConstants.CALLBACK_DATA_SPLITTER;
 
 @Service
 public class ApiDealBotService implements IApiDealBotService {
@@ -98,8 +95,8 @@ public class ApiDealBotService implements IApiDealBotService {
                     .data(callbackDataService.buildData(CallbackQueryData.CONFIRM_API_DEAL, pid, true))
                     .build());
         buttons.add(InlineButton.builder()
-                .text(commandService.getText(Command.CANCEL_API_DEAL))
-                .data(Command.CANCEL_API_DEAL.name() + CALLBACK_DATA_SPLITTER + pid)
+                .text("Отклонить")
+                .data(callbackDataService.buildData(CallbackQueryData.CANCEL_API_DEAL, pid))
                 .build());
         responseSender.sendMessage(chatId, dealInfo, keyboardBuildService.buildInline(buttons));
         ApiDealType apiDealType = apiDealService.getApiDealTypeByPid(pid);
