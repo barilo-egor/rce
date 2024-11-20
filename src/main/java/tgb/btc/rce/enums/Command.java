@@ -57,6 +57,7 @@ public enum Command implements ICommand {
     SUBMIT_LOGIN("Подтвердить вход", false, UserRole.USER_ACCESS),
     SUBMIT_REGISTER("Подтвердить регистрацию", false, UserRole.USER_ACCESS),
     LOGOUT("Закрыть сессию", false, UserRole.USER_ACCESS),
+    INLINE_DELETE("❌ Закрыть", false, UserRole.USER_ACCESS),
 
     // HAS USAGE
     START("/start", false, UserRole.USER_ACCESS),
@@ -105,7 +106,6 @@ public enum Command implements ICommand {
     ADMIN_BACK("Назад", false, UserRole.OPERATOR_ACCESS),
     CANCEL("Отмена", false, UserRole.USER_ACCESS),
     BOT_OFFED("BOT_OFFED", false, UserRole.USER_ACCESS),
-    INLINE_DELETE("❌ Закрыть", false, UserRole.USER_ACCESS),
     CAPTCHA("captcha", false, UserRole.USER_ACCESS),
     WITHDRAWAL_OF_FUNDS("Вывод средств", false, UserRole.USER_ACCESS),
     CHANGE_REFERRAL_BALANCE("Изменить", false, UserRole.ADMIN_ACCESS),
@@ -162,7 +162,7 @@ public enum Command implements ICommand {
             ADDITIONAL_VERIFICATION, REVIEW_NAVIGATION, PUBLISH_REVIEW, DELETE_REVIEW, DELETING_PAYMENT_TYPE,
             DELETING_PAYMENT_TYPE_REQUISITE, TURNING_PAYMENT_TYPES, TURNING_DYNAMIC_REQUISITES, SHOW_SPAM_BANNED_USER,
             KEEP_SPAM_BAN, SPAM_UNBAN, CONFIRM_API_DEAL, CANCEL_API_DEAL, TURN_PROCESS_DELIVERY, SUBMIT_LOGIN, SUBMIT_REGISTER,
-            LOGOUT
+            LOGOUT, INLINE_DELETE
     );
 
     final String text;

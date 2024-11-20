@@ -73,7 +73,7 @@ public class TurnDynamicRequisites extends Processor {
         }
         buttons.add(InlineButton.builder()
                 .text("❌ Закрыть")
-                .data(Command.INLINE_DELETE.name())
+                .data(CallbackQueryData.INLINE_DELETE.name())
                 .build());
         responseSender.sendMessage(chatId, "Выберите тип оплаты для включения/выключения динамических реквизитов.",
                 keyboardBuildService.buildInline(buttons));

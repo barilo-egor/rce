@@ -40,7 +40,7 @@ public class ClearPoolHandler implements ICallbackQueryHandler {
                         .build(),
                 InlineButton.builder()
                         .text("Нет")
-                        .data(Command.INLINE_DELETE.name())
+                        .data(CallbackQueryData.INLINE_DELETE.name())
                         .build()
         ), 2);
         responseSender.sendMessage(chatId, "Вы собираетесь удалить все <b>" + dealsSize + "</b> сделок из BTC пула. Продолжить?",

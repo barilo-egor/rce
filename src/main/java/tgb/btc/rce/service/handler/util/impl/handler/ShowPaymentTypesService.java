@@ -63,7 +63,7 @@ public class ShowPaymentTypesService implements IShowPaymentTypesService {
         }
         buttons.add(InlineButton.builder()
                 .text("Удалить")
-                .data(Command.INLINE_DELETE.name())
+                .data(CallbackQueryData.INLINE_DELETE.name())
                 .build());
         responseSender.sendMessage(chatId, "Выберите тип оплаты для включения/выключения.",
                 keyboardBuildService.buildInline(buttons));
