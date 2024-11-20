@@ -335,7 +335,7 @@ public class KeyboardService implements IKeyboardService {
         }
         return InlineButton.builder()
                 .text(text)
-                .data(callbackQueryService.buildCallbackData(Command.TURN_PROCESS_DELIVERY, deliveryKind.name()))
+                .data(callbackDataService.buildData(CallbackQueryData.TURN_PROCESS_DELIVERY, deliveryKind.name()))
                 .build();
     }
 
