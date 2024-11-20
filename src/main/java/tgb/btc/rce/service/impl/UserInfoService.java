@@ -11,7 +11,6 @@ import tgb.btc.library.interfaces.service.bean.bot.ILotteryWinService;
 import tgb.btc.library.interfaces.service.bean.bot.ISpamBanService;
 import tgb.btc.library.interfaces.service.bean.bot.deal.read.IDealCountService;
 import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
-import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.PropertiesMessage;
 import tgb.btc.rce.enums.update.CallbackQueryData;
 import tgb.btc.rce.sender.IResponseSender;
@@ -154,9 +153,9 @@ public class UserInfoService implements IUserInfoService {
                                             ))
                                             .build(),
                                     InlineButton.builder()
-                                            .text(commandService.getText(Command.SPAM_UNBAN))
-                                            .data(callbackQueryService.buildCallbackData(
-                                                    Command.SPAM_UNBAN, spamBanPid.toString()
+                                            .text("Разблокировать")
+                                            .data(callbackDataService.buildData(
+                                                    CallbackQueryData.SPAM_UNBAN, spamBanPid.toString()
                                             ))
                                             .build()
                             )));
