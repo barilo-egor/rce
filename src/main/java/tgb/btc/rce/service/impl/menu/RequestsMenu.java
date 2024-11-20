@@ -7,8 +7,8 @@ import tgb.btc.library.constants.enums.bot.CryptoCurrency;
 import tgb.btc.library.constants.enums.bot.UserRole;
 import tgb.btc.library.interfaces.IModule;
 import tgb.btc.library.interfaces.web.ICryptoWithdrawalService;
-import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.Menu;
+import tgb.btc.rce.enums.update.TextCommand;
 import tgb.btc.rce.service.IMenu;
 import tgb.btc.rce.service.keyboard.IReplyButtonService;
 import tgb.btc.rce.vo.ReplyButton;
@@ -47,14 +47,14 @@ public class RequestsMenu implements IMenu {
 
     @Override
     public List<ReplyButton> build(UserRole userRole) {
-        List<Command> resultCommands = new ArrayList<>(getMenu().getCommands());
+        List<TextCommand> resultCommands = new ArrayList<>(getMenu().getTextCommands());
         if (!referralModule.isCurrent(ReferralType.STANDARD)) {
-            resultCommands.remove(Command.NEW_WITHDRAWALS);
+            resultCommands.remove(TextCommand.NEW_WITHDRAWALS);
         }
         if (!cryptoWithdrawalService.isOn(CryptoCurrency.BITCOIN)) {
-            resultCommands.remove(Command.BITCOIN_POOL);
+            resultCommands.remove(TextCommand.BITCOIN_POOL);
         }
-        return replyButtonService.fromCommands(resultCommands);
+        return replyButtonService.fromTextCommands(resultCommands);
     }
 
     @Override

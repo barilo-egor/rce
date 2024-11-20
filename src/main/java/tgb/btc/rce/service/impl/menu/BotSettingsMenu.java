@@ -3,8 +3,8 @@ package tgb.btc.rce.service.impl.menu;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tgb.btc.library.constants.enums.bot.UserRole;
-import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.Menu;
+import tgb.btc.rce.enums.update.TextCommand;
 import tgb.btc.rce.service.IMenu;
 import tgb.btc.rce.service.keyboard.IReplyButtonService;
 import tgb.btc.rce.service.util.IUpdateDispatcher;
@@ -37,10 +37,10 @@ public class BotSettingsMenu implements IMenu {
 
     @Override
     public List<ReplyButton> build(UserRole userRole) {
-        List<Command> resultCommands = new ArrayList<>(getMenu().getCommands());
+        List<TextCommand> resultCommands = new ArrayList<>(getMenu().getTextCommands());
         resultCommands.removeIf(command ->
-                (updateDispatcher.isOn() && Command.ON_BOT.equals(command)) || (!updateDispatcher.isOn() && Command.OFF_BOT.equals(command)));
-        return replyButtonService.fromCommands(resultCommands);
+                (updateDispatcher.isOn() && TextCommand.ON_BOT.equals(command)) || (!updateDispatcher.isOn() && TextCommand.OFF_BOT.equals(command)));
+        return replyButtonService.fromTextCommands(resultCommands);
     }
 
     @Override

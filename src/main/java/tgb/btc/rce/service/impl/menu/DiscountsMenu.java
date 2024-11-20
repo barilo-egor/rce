@@ -5,8 +5,8 @@ import org.springframework.stereotype.Service;
 import tgb.btc.library.constants.enums.ReferralType;
 import tgb.btc.library.constants.enums.bot.UserRole;
 import tgb.btc.library.interfaces.IModule;
-import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.Menu;
+import tgb.btc.rce.enums.update.TextCommand;
 import tgb.btc.rce.service.IMenu;
 import tgb.btc.rce.service.keyboard.IReplyButtonService;
 import tgb.btc.rce.vo.ReplyButton;
@@ -38,11 +38,11 @@ public class DiscountsMenu implements IMenu {
 
     @Override
     public List<ReplyButton> build(UserRole userRole) {
-        List<Command> resultCommands = new ArrayList<>(getMenu().getCommands());
+        List<TextCommand> resultCommands = new ArrayList<>(getMenu().getTextCommands());
         if (!referralModule.isCurrent(ReferralType.STANDARD)) {
-            resultCommands.remove(Command.REFERRAL_PERCENT);
+            resultCommands.remove(TextCommand.REFERRAL_PERCENT);
         }
-        return replyButtonService.fromCommands(resultCommands);
+        return replyButtonService.fromTextCommands(resultCommands);
     }
 
     @Override
