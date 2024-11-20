@@ -1,10 +1,7 @@
 package tgb.btc.rce.service.processors.admin.settings.paymenttypes.turning;
 
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import tgb.btc.library.bean.bot.PaymentType;
 import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
 import tgb.btc.library.interfaces.service.bean.bot.IPaymentTypeService;
@@ -14,10 +11,8 @@ import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.vo.InlineButton;
-
-import java.util.ArrayList;
-import java.util.List;
+import tgb.btc.rce.service.handler.util.IShowPaymentTypesService;
+import tgb.btc.rce.service.util.ICallbackDataService;
 
 @CommandProcessor(command = Command.TURN_PAYMENT_TYPES, step = 2)
 public class ShowPaymentTypesForTurn extends Processor {
@@ -27,6 +22,20 @@ public class ShowPaymentTypesForTurn extends Processor {
     private IUserDataService userDataService;
 
     private IFiatCurrencyService fiatCurrencyService;
+
+    private ICallbackDataService callbackDataService;
+
+    private IShowPaymentTypesService showPaymentTypesService;
+
+    @Autowired
+    public void setShowPaymentTypesService(IShowPaymentTypesService showPaymentTypesService) {
+        this.showPaymentTypesService = showPaymentTypesService;
+    }
+
+    @Autowired
+    public void setCallbackDataService(ICallbackDataService callbackDataService) {
+        this.callbackDataService = callbackDataService;
+    }
 
     @Autowired
     public void setFiatCurrencyService(IFiatCurrencyService fiatCurrencyService) {
@@ -62,36 +71,7 @@ public class ShowPaymentTypesForTurn extends Processor {
         FiatCurrency fiatCurrency = fiatCurrencyService.isFew()
                 ? userDataService.getFiatCurrencyByChatId(chatId)
                 : fiatCurrencyService.getFirst();
-        sendPaymentTypes(chatId, dealType, fiatCurrency);
+        showPaymentTypesService.sendForTurn(chatId, dealType, fiatCurrency);
         processToAdminMainPanel(chatId);
     }
-
-    public void sendPaymentTypes(Long chatId, DealType dealType, FiatCurrency fiatCurrency) {
-        List<PaymentType> paymentTypes = paymentTypeService.getByDealTypeAndFiatCurrency(dealType, fiatCurrency);
-        if (CollectionUtils.isEmpty(paymentTypes)) {
-            responseSender.sendMessage(chatId, "Список тип оплат на " + dealType.getAccusative() + " пуст."); //todo fiat
-            processToAdminMainPanel(chatId);
-            return;
-        }
-        List<InlineButton> buttons = new ArrayList<>();
-        for (PaymentType paymentType : paymentTypes) {
-            boolean isOn = BooleanUtils.isTrue(paymentType.getOn());
-            String text = paymentType.getName() + " - " +
-                    (isOn ? "выключить" : "включить");
-            String data = Command.TURNING_PAYMENT_TYPES.name()
-                    + BotStringConstants.CALLBACK_DATA_SPLITTER + paymentType.getPid()
-                    + BotStringConstants.CALLBACK_DATA_SPLITTER + (isOn ? Boolean.FALSE.toString() : Boolean.TRUE.toString());
-            buttons.add(InlineButton.builder()
-                    .text(text)
-                    .data(data)
-                    .build());
-        }
-        buttons.add(InlineButton.builder()
-                .text(commandService.getText(Command.INLINE_DELETE))
-                .data(Command.INLINE_DELETE.name())
-                .build());
-        responseSender.sendMessage(chatId, "Выберите тип оплаты для включения/выключения.",
-                keyboardBuildService.buildInline(buttons));
-    }
-
 }
