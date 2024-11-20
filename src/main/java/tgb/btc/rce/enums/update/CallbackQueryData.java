@@ -39,6 +39,8 @@ public enum CallbackQueryData {
     SUBMIT_LOGIN,
     SUBMIT_REGISTER,
     LOGOUT,
+
+
     CHOOSING_FIAT_CURRENCY,
     INLINE_CALCULATOR,
     SHARE_REVIEW

@@ -26,7 +26,7 @@ public class CommandService implements ICommandService {
     private final IUpdateService updateService;
 
     private final Set<Command> BUTTONS_DESIGN_COMMANDS = Set.of(
-            BACK, BUY_BITCOIN, SELL_BITCOIN, CABINET, CONTACTS, DRAWS, REFERRAL, LOTTERY, ROULETTE
+            BACK, BUY_BITCOIN, SELL_BITCOIN, CONTACTS, DRAWS, REFERRAL, LOTTERY, ROULETTE
     );
 
     private final Set<TextCommand> BUTTONS_DESIGN_TEXT_COMMANDS = Set.of(

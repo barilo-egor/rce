@@ -107,7 +107,6 @@ public enum Command implements ICommand {
     BOT_OFFED("BOT_OFFED", false, UserRole.USER_ACCESS),
     INLINE_DELETE("❌ Закрыть", false, UserRole.USER_ACCESS),
     CAPTCHA("captcha", false, UserRole.USER_ACCESS),
-    CABINET("Кабинет", false, UserRole.USER_ACCESS),
     WITHDRAWAL_OF_FUNDS("Вывод средств", false, UserRole.USER_ACCESS),
     CHANGE_REFERRAL_BALANCE("Изменить", false, UserRole.ADMIN_ACCESS),
     BAN_UNBAN("Бан/разбан", false, UserRole.ADMIN_ACCESS),
