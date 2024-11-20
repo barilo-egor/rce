@@ -39,4 +39,10 @@ public class CalculatorModule implements IModule<CalculatorType> {
             throw new BaseException(message, e);
         }
     }
+
+    @Override
+    public void set(CalculatorType calculatorType) {
+        modulesPropertiesReader.setProperty("calculator.type", calculatorType.name());
+        current = calculatorType;
+    }
 }

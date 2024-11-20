@@ -11,12 +11,12 @@ import tgb.btc.library.interfaces.service.bean.bot.IReviewService;
 import tgb.btc.library.interfaces.service.bean.bot.user.IModifyUserService;
 import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.library.service.properties.VariablePropertiesReader;
-import tgb.btc.rce.constants.BotStringConstants;
-import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.ReviewPriseType;
+import tgb.btc.rce.enums.update.CallbackQueryData;
 import tgb.btc.rce.sender.IResponseSender;
 import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
 import tgb.btc.rce.service.process.IReviewProcessService;
+import tgb.btc.rce.service.util.ICallbackDataService;
 import tgb.btc.rce.service.util.ICommandService;
 import tgb.btc.rce.vo.InlineButton;
 
@@ -46,11 +46,14 @@ public class ReviewProcessService implements IReviewProcessService {
 
     private final ICommandService commandService;
 
+    private final ICallbackDataService callbackDataService;
+
     @Autowired
     public ReviewProcessService(VariablePropertiesReader variablePropertiesReader, IReviewService reviewService,
                                 IResponseSender responseSender, IModule<ReviewPriseType> reviewPriseModule,
                                 IReadUserService readUserService, IModifyUserService modifyUserService,
-                                IKeyboardBuildService keyboardBuildService, ICommandService commandService) {
+                                IKeyboardBuildService keyboardBuildService, ICommandService commandService,
+                                ICallbackDataService callbackDataService) {
         this.variablePropertiesReader = variablePropertiesReader;
         this.reviewService = reviewService;
         this.responseSender = responseSender;
@@ -59,6 +62,7 @@ public class ReviewProcessService implements IReviewProcessService {
         this.modifyUserService = modifyUserService;
         this.keyboardBuildService = keyboardBuildService;
         this.commandService = commandService;
+        this.callbackDataService = callbackDataService;
     }
 
     @Override
@@ -87,12 +91,12 @@ public class ReviewProcessService implements IReviewProcessService {
             List<InlineButton> buttons = new ArrayList<>();
 
             buttons.add(InlineButton.builder()
-                    .text(commandService.getText(Command.PUBLISH_REVIEW))
-                    .data(Command.PUBLISH_REVIEW.name() + BotStringConstants.CALLBACK_DATA_SPLITTER + review.getPid())
+                    .text("Опубликовать")
+                    .data(callbackDataService.buildData(CallbackQueryData.PUBLISH_REVIEW, review.getPid()))
                     .build());
             buttons.add(InlineButton.builder()
-                    .text(commandService.getText(Command.DELETE_REVIEW))
-                    .data(Command.DELETE_REVIEW.name() + BotStringConstants.CALLBACK_DATA_SPLITTER + review.getPid())
+                    .text("Удалить")
+                    .data(callbackDataService.buildData(CallbackQueryData.DELETE_REVIEW, review.getPid()))
                     .build());
 
             responseSender.sendMessage(chatId, review.getText()

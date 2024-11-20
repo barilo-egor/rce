@@ -12,7 +12,9 @@ import tgb.btc.library.interfaces.util.IFiatCurrencyService;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
+import tgb.btc.rce.enums.update.CallbackQueryData;
 import tgb.btc.rce.service.Processor;
+import tgb.btc.rce.service.util.ICallbackDataService;
 import tgb.btc.rce.vo.InlineButton;
 
 import java.util.List;
@@ -25,6 +27,13 @@ public class ShowPaymentTypesForDelete extends Processor {
     private IUserDataService userDataService;
 
     private IFiatCurrencyService fiatCurrencyService;
+
+    private ICallbackDataService callbackDataService;
+
+    @Autowired
+    public void setCallbackDataService(ICallbackDataService callbackDataService) {
+        this.callbackDataService = callbackDataService;
+    }
 
     @Autowired
     public void setFiatCurrencyService(IFiatCurrencyService fiatCurrencyService) {
@@ -75,8 +84,7 @@ public class ShowPaymentTypesForDelete extends Processor {
         List<InlineButton> buttons = paymentTypes.stream()
                 .map(paymentType -> InlineButton.builder()
                         .text(paymentType.getName())
-                        .data(Command.DELETING_PAYMENT_TYPE.name()
-                                      + BotStringConstants.CALLBACK_DATA_SPLITTER + paymentType.getPid())
+                        .data(callbackDataService.buildData(CallbackQueryData.DELETING_PAYMENT_TYPE, paymentType.getPid()))
                         .build())
                 .collect(Collectors.toList());
         buttons.add(InlineButton.builder()

@@ -5,16 +5,17 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.service.properties.ButtonsDesignPropertiesReader;
-import tgb.btc.library.service.properties.DiceProperties;
-import tgb.btc.library.service.properties.RPSPropertiesReader;
-import tgb.btc.library.service.properties.SlotReelPropertiesReader;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
+import tgb.btc.rce.enums.update.SlashCommand;
+import tgb.btc.rce.enums.update.TextCommand;
 import tgb.btc.rce.enums.update.UpdateType;
 import tgb.btc.rce.service.IUpdateService;
 import tgb.btc.rce.service.util.ICommandService;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Objects;
+import java.util.Set;
 
 import static tgb.btc.rce.enums.Command.*;
 
@@ -27,48 +28,22 @@ public class CommandService implements ICommandService {
             BACK, BUY_BITCOIN, SELL_BITCOIN, CABINET, CONTACTS, DRAWS, REFERRAL, LOTTERY, ROULETTE
     );
 
-    private final Set<Command> SLOT_REEL_COMMANDS = Set.of(SLOT_REEL);
+    private final Set<TextCommand> BUTTONS_DESIGN_TEXT_COMMANDS = Set.of(
+            TextCommand.BACK, TextCommand.BUY_BITCOIN, TextCommand.SELL_BITCOIN, TextCommand.CONTACTS, TextCommand.DRAWS,
+            TextCommand.REFERRAL, TextCommand.LOTTERY, TextCommand.ROULETTE
+    );
 
-    private final Set<Command> DICE_COMMANDS = Set.of(DICE);
-
-    private final Set<Command> RPS_COMMANDS = Set.of(RPS);
-
-    private ButtonsDesignPropertiesReader buttonsDesignPropertiesReader;
-
-    private SlotReelPropertiesReader slotReelPropertiesReader;
-
-    private DiceProperties diceProperties;
-
-    private RPSPropertiesReader rpsPropertiesReader;
+    private final ButtonsDesignPropertiesReader buttonsDesignPropertiesReader;
 
     @Autowired
-    public void setButtonsDesignPropertiesReader(ButtonsDesignPropertiesReader buttonsDesignPropertiesReader) {
-        this.buttonsDesignPropertiesReader = buttonsDesignPropertiesReader;
-    }
-
-    @Autowired
-    public void setSlotReelPropertiesReader(SlotReelPropertiesReader slotReelPropertiesReader) {
-        this.slotReelPropertiesReader = slotReelPropertiesReader;
-    }
-
-    @Autowired
-    public void setDiceProperties(DiceProperties diceProperties) {
-        this.diceProperties = diceProperties;
-    }
-
-    @Autowired
-    public void setRpsPropertiesReader(RPSPropertiesReader rpsPropertiesReader) {
-        this.rpsPropertiesReader = rpsPropertiesReader;
-    }
-
-    @Autowired
-    public CommandService(IUpdateService updateService) {
+    public CommandService(IUpdateService updateService, ButtonsDesignPropertiesReader buttonsDesignPropertiesReader) {
         this.updateService = updateService;
+        this.buttonsDesignPropertiesReader = buttonsDesignPropertiesReader;
     }
 
     @Override
     public boolean isStartCommand(Update update) {
-        return updateService.hasMessageText(update) && update.getMessage().getText().startsWith(START.getText());
+        return updateService.hasMessageText(update) && update.getMessage().getText().startsWith(SlashCommand.START.getText());
     }
 
     @Override
@@ -84,14 +59,14 @@ public class CommandService implements ICommandService {
         if (BUTTONS_DESIGN_COMMANDS.contains(command)) {
             return buttonsDesignPropertiesReader.getString(command.name());
         }
-        if (SLOT_REEL_COMMANDS.contains(command)) {
-            return slotReelPropertiesReader.getString(command.name());
-        }
-        if (DICE_COMMANDS.contains(command)) {
-            return diceProperties.getString(command.name());
-        }
-        if (RPS_COMMANDS.contains(command)) {
-            return rpsPropertiesReader.getString(command.name());
+        return command.getText();
+    }
+
+    @Override
+    @Cacheable(value = "textCommandTextCache")
+    public String getText(TextCommand command) {
+        if (BUTTONS_DESIGN_TEXT_COMMANDS.contains(command)) {
+            return buttonsDesignPropertiesReader.getString(command.name());
         }
         return command.getText();
     }

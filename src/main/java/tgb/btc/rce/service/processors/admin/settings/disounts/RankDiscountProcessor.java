@@ -5,9 +5,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.interfaces.service.bean.bot.IUserDiscountService;
 import tgb.btc.rce.annotation.CommandProcessor;
-import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
+import tgb.btc.rce.enums.update.CallbackQueryData;
 import tgb.btc.rce.service.Processor;
+import tgb.btc.rce.service.util.ICallbackDataService;
 import tgb.btc.rce.vo.InlineButton;
 import tgb.btc.rce.vo.ReplyButton;
 
@@ -17,6 +18,13 @@ import java.util.List;
 public class RankDiscountProcessor extends Processor {
 
     private IUserDiscountService userDiscountService;
+
+    private ICallbackDataService callbackDataService;
+
+    @Autowired
+    public void setCallbackDataService(ICallbackDataService callbackDataService) {
+        this.callbackDataService = callbackDataService;
+    }
 
     @Autowired
     public void setUserDiscountService(IUserDiscountService userDiscountService) {
@@ -55,9 +63,7 @@ public class RankDiscountProcessor extends Processor {
         responseSender.sendMessage(chatId, "Пользователь chat id=" + userChatId + ".",
                 keyboardBuildService.buildInline(List.of(InlineButton.builder()
                         .text(isRankDiscountOn ? "Выключить" : "Включить")
-                        .data(Command.CHANGE_RANK_DISCOUNT.name()
-                                + BotStringConstants.CALLBACK_DATA_SPLITTER + userChatId
-                                + BotStringConstants.CALLBACK_DATA_SPLITTER + (!isRankDiscountOn))
+                        .data(callbackDataService.buildData(CallbackQueryData.CHANGE_RANK_DISCOUNT, userChatId, !isRankDiscountOn))
                         .build())));
     }
 }

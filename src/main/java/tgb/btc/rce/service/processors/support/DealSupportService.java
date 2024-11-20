@@ -23,8 +23,9 @@ import tgb.btc.library.interfaces.service.bean.web.IApiDealService;
 import tgb.btc.library.interfaces.util.IBigDecimalService;
 import tgb.btc.library.interfaces.web.ICryptoWithdrawalService;
 import tgb.btc.library.service.bean.bot.deal.read.DealPropertyService;
-import tgb.btc.rce.enums.Command;
+import tgb.btc.rce.enums.update.CallbackQueryData;
 import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
+import tgb.btc.rce.service.util.ICallbackDataService;
 import tgb.btc.rce.service.util.ICallbackQueryService;
 import tgb.btc.rce.service.util.ICommandService;
 import tgb.btc.rce.vo.InlineButton;
@@ -64,6 +65,13 @@ public class DealSupportService {
     private DealPropertyService dealPropertyService;
 
     private ICryptoWithdrawalService cryptoWithdrawalService;
+
+    private ICallbackDataService callbackDataService;
+
+    @Autowired
+    public void setCallbackDataService(ICallbackDataService callbackDataService) {
+        this.callbackDataService = callbackDataService;
+    }
 
     @Autowired
     public void setCryptoWithdrawalService(ICryptoWithdrawalService cryptoWithdrawalService) {
@@ -215,39 +223,39 @@ public class DealSupportService {
     public ReplyKeyboard dealToStringButtons(Long pid) {
         List<InlineButton> buttons = new ArrayList<>();
         buttons.add(InlineButton.builder()
-                .text(commandService.getText(Command.CONFIRM_USER_DEAL))
-                .data(callbackQueryService.buildCallbackData(Command.CONFIRM_USER_DEAL, new Object[]{pid, false}))
+                .text("Подтвердить")
+                .data(callbackDataService.buildData(CallbackQueryData.CONFIRM_USER_DEAL, pid, false))
                 .build());
         boolean hasDefaultGroupChat = groupChatService.hasDealRequests();
         if (hasDefaultGroupChat)
             buttons.add(InlineButton.builder()
-                    .text(commandService.getText(Command.CONFIRM_USER_DEAL) + " с запросом")
-                    .data(callbackQueryService.buildCallbackData(Command.CONFIRM_USER_DEAL, new Object[]{pid, true}))
+                    .text("Подтвердить с запросом")
+                    .data(callbackDataService.buildData(CallbackQueryData.CONFIRM_USER_DEAL, new Object[]{pid, true}))
                     .build());
         CryptoCurrency cryptoCurrency = dealPropertyService.getCryptoCurrencyByPid(pid);
         if (cryptoWithdrawalService.isOn(cryptoCurrency)) {
             buttons.add(InlineButton.builder()
-                    .text(commandService.getText(Command.AUTO_WITHDRAWAL_DEAL))
-                    .data(callbackQueryService.buildCallbackData(Command.AUTO_WITHDRAWAL_DEAL, pid))
+                    .text("Автовывод")
+                    .data(callbackDataService.buildData(CallbackQueryData.AUTO_WITHDRAWAL_DEAL, pid))
                     .build());
         }
         if (CryptoCurrency.BITCOIN.equals(cryptoCurrency) && cryptoWithdrawalService.isOn(CryptoCurrency.BITCOIN)) {
             buttons.add(InlineButton.builder()
-                    .text(commandService.getText(Command.ADD_TO_POOL))
-                    .data(callbackQueryService.buildCallbackData(Command.ADD_TO_POOL, pid))
+                    .text("Добавить в пул")
+                    .data(callbackDataService.buildData(CallbackQueryData.ADD_TO_POOL, pid))
                     .build());
         }
         buttons.add(InlineButton.builder()
-                .text(commandService.getText(Command.ADDITIONAL_VERIFICATION))
-                .data(callbackQueryService.buildCallbackData(Command.ADDITIONAL_VERIFICATION, pid))
+                .text("Доп.верификация")
+                .data(callbackDataService.buildData(CallbackQueryData.ADDITIONAL_VERIFICATION, pid))
                 .build());
         buttons.add(InlineButton.builder()
-                .text(commandService.getText(Command.DELETE_USER_DEAL))
-                .data(callbackQueryService.buildCallbackData(Command.DELETE_USER_DEAL, pid))
+                .text("Удалить")
+                .data(callbackDataService.buildData(CallbackQueryData.DELETE_USER_DEAL, pid))
                 .build());
         buttons.add(InlineButton.builder()
-                .text(commandService.getText(Command.DELETE_DEAL_AND_BLOCK_USER))
-                .data(callbackQueryService.buildCallbackData(Command.DELETE_DEAL_AND_BLOCK_USER, pid))
+                .text("Удалить и заблокировать")
+                .data(callbackDataService.buildData(CallbackQueryData.DELETE_DEAL_AND_BLOCK_USER, pid))
                 .build());
         return keyboardBuildService.buildInline(buttons, 2);
     }

@@ -4,12 +4,12 @@ import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import tgb.btc.library.bean.bot.Review;
 import tgb.btc.library.interfaces.service.bean.bot.IReviewService;
-import tgb.btc.rce.enums.Command;
+import tgb.btc.rce.enums.update.CallbackQueryData;
 import tgb.btc.rce.enums.update.TextCommand;
 import tgb.btc.rce.sender.IResponseSender;
 import tgb.btc.rce.service.handler.message.text.ITextCommandHandler;
 import tgb.btc.rce.service.process.IReviewProcessService;
-import tgb.btc.rce.service.util.ICallbackQueryService;
+import tgb.btc.rce.service.util.ICallbackDataService;
 import tgb.btc.rce.vo.InlineButton;
 
 import java.util.List;
@@ -23,14 +23,14 @@ public class NewReviewsHandler implements ITextCommandHandler {
 
     private final IReviewProcessService reviewProcessService;
 
-    private final ICallbackQueryService callbackQueryService;
+    private final ICallbackDataService callbackDataService;
 
     public NewReviewsHandler(IReviewService reviewService, IResponseSender responseSender,
-                             IReviewProcessService reviewProcessService, ICallbackQueryService callbackQueryService) {
+                             IReviewProcessService reviewProcessService, ICallbackDataService callbackDataService) {
         this.reviewService = reviewService;
         this.responseSender = responseSender;
         this.reviewProcessService = reviewProcessService;
-        this.callbackQueryService = callbackQueryService;
+        this.callbackDataService = callbackDataService;
     }
 
     @Override
@@ -45,8 +45,8 @@ public class NewReviewsHandler implements ITextCommandHandler {
         responseSender.sendMessage(chatId, "Навигация по отзывам.",
                 InlineButton.builder()
                         .text("Следующие 5")
-                        .data(callbackQueryService.buildCallbackData(
-                                Command.REVIEW_NAVIGATION,
+                        .data(callbackDataService.buildData(
+                                CallbackQueryData.REVIEW_NAVIGATION,
                                 reviews.get(reviews.size() - 1).getPid()))
                         .build()
         );

@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import tgb.btc.library.service.properties.ButtonsDesignPropertiesReader;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.IUpdateService;
 import tgb.btc.rce.service.impl.util.CommandService;
@@ -15,7 +16,9 @@ class CommandServiceTest {
 
     private final IUpdateService updateService = new UpdateService();
 
-    private final CommandService commandService = new CommandService(updateService);
+    private final ButtonsDesignPropertiesReader buttonsDesignPropertiesReader = new ButtonsDesignPropertiesReader();
+
+    private final CommandService commandService = new CommandService(updateService, buttonsDesignPropertiesReader);
 
 
     @Test

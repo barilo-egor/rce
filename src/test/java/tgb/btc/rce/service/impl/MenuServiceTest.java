@@ -9,6 +9,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import tgb.btc.library.constants.enums.bot.UserRole;
+import tgb.btc.library.service.properties.ButtonsDesignPropertiesReader;
 import tgb.btc.rce.enums.Menu;
 import tgb.btc.rce.service.IMenu;
 import tgb.btc.rce.service.impl.menu.BotSettingsMenu;
@@ -36,7 +37,9 @@ class MenuServiceTest {
     @Mock
     private IKeyboardBuildService keyboardBuildService;
 
-    private final CommandService commandService = new CommandService(new UpdateService());
+    private final ButtonsDesignPropertiesReader buttonsDesignPropertiesReader = new ButtonsDesignPropertiesReader();
+
+    private final CommandService commandService = new CommandService(new UpdateService(), buttonsDesignPropertiesReader);
 
     @Captor
     private ArgumentCaptor<List<ReplyButton>> replyButtonCaptor;
