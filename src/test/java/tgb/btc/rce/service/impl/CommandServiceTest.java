@@ -68,7 +68,7 @@ class CommandServiceTest {
         Update update = new Update();
         CallbackQuery callbackQuery = new CallbackQuery();
         update.setCallbackQuery(callbackQuery);
-        callbackQuery.setData(Command.SUBMIT_REGISTER.name());
+        callbackQuery.setData(CallbackQueryData.SUBMIT_REGISTER.name());
         assertTrue(commandService.isSubmitCommand(update));
     }
 

@@ -51,7 +51,7 @@ public class CommandService implements ICommandService {
     public boolean isSubmitCommand(Update update) {
         return update.hasCallbackQuery() &&
                 (update.getCallbackQuery().getData().startsWith(CallbackQueryData.SUBMIT_LOGIN.name())
-                        || update.getCallbackQuery().getData().startsWith(SUBMIT_REGISTER.name()));
+                        || update.getCallbackQuery().getData().startsWith(CallbackQueryData.SUBMIT_REGISTER.name()));
     }
 
     @Override

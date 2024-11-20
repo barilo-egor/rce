@@ -16,8 +16,6 @@ import tgb.btc.library.interfaces.service.bean.bot.deal.read.IDealUserService;
 import tgb.btc.library.interfaces.service.bean.web.IApiDealService;
 import tgb.btc.library.interfaces.service.bean.web.IApiUserService;
 import tgb.btc.library.service.properties.VariablePropertiesReader;
-import tgb.btc.rce.constants.BotStringConstants;
-import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.InlineType;
 import tgb.btc.rce.enums.update.CallbackQueryData;
 import tgb.btc.rce.sender.IResponseSender;
@@ -164,8 +162,8 @@ public class Notifier implements INotifier {
         responseSender.sendMessage(chatId, "Кто-то пытается зарегистрироваться на сайте под вашим chat id. Если это не вы, то проигнорируйте это сообщение.",
                 InlineButton.builder()
                         .inlineType(InlineType.CALLBACK_DATA)
-                        .text(commandService.getText(Command.SUBMIT_REGISTER))
-                        .data(Command.SUBMIT_REGISTER.name() + BotStringConstants.CALLBACK_DATA_SPLITTER + chatId)
+                        .text("Подтвердить регистрацию")
+                        .data(callbackDataService.buildData(CallbackQueryData.SUBMIT_REGISTER, chatId))
                         .build());
     }
 

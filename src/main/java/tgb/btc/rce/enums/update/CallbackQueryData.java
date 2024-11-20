@@ -34,5 +34,6 @@ public enum CallbackQueryData {
     CONFIRM_API_DEAL,
     CANCEL_API_DEAL,
     TURN_PROCESS_DELIVERY,
-    SUBMIT_LOGIN
+    SUBMIT_LOGIN,
+    SUBMIT_REGISTER
 }
