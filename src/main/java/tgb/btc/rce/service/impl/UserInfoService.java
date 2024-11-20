@@ -13,9 +13,11 @@ import tgb.btc.library.interfaces.service.bean.bot.deal.read.IDealCountService;
 import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.PropertiesMessage;
+import tgb.btc.rce.enums.update.CallbackQueryData;
 import tgb.btc.rce.sender.IResponseSender;
 import tgb.btc.rce.service.IUserInfoService;
 import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
+import tgb.btc.rce.service.util.ICallbackDataService;
 import tgb.btc.rce.service.util.ICallbackQueryService;
 import tgb.btc.rce.service.util.ICommandService;
 import tgb.btc.rce.service.util.IMessagePropertiesService;
@@ -46,6 +48,13 @@ public class UserInfoService implements IUserInfoService {
     private ICommandService commandService;
 
     private IModule<ReferralType> referralModule;
+
+    private ICallbackDataService callbackDataService;
+
+    @Autowired
+    public void setCallbackDataService(ICallbackDataService callbackDataService) {
+        this.callbackDataService = callbackDataService;
+    }
 
     @Autowired
     public void setReferralModule(IModule<ReferralType> referralModule) {
@@ -139,9 +148,9 @@ public class UserInfoService implements IUserInfoService {
         sendUserInformation(messageChatId, spamBanService.getUserChatIdByPid(spamBanPid),
                             keyboardBuildService.buildInline(List.of(
                                     InlineButton.builder()
-                                            .text(commandService.getText(Command.KEEP_SPAM_BAN))
-                                            .data(callbackQueryService.buildCallbackData(
-                                                    Command.KEEP_SPAM_BAN, spamBanPid.toString()
+                                            .text("Оставить в бане")
+                                            .data(callbackDataService.buildData(
+                                                    CallbackQueryData.KEEP_SPAM_BAN, spamBanPid.toString()
                                             ))
                                             .build(),
                                     InlineButton.builder()
