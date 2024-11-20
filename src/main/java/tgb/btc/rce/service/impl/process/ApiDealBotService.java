@@ -8,10 +8,12 @@ import tgb.btc.library.constants.enums.bot.ReceiptFormat;
 import tgb.btc.library.interfaces.service.bean.bot.IGroupChatService;
 import tgb.btc.library.interfaces.service.bean.web.IApiDealService;
 import tgb.btc.rce.enums.Command;
+import tgb.btc.rce.enums.update.CallbackQueryData;
 import tgb.btc.rce.sender.IResponseSender;
 import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
 import tgb.btc.rce.service.process.IApiDealBotService;
 import tgb.btc.rce.service.processors.support.DealSupportService;
+import tgb.btc.rce.service.util.ICallbackDataService;
 import tgb.btc.rce.service.util.ICallbackQueryService;
 import tgb.btc.rce.service.util.ICommandService;
 import tgb.btc.rce.vo.InlineButton;
@@ -37,6 +39,13 @@ public class ApiDealBotService implements IApiDealBotService {
     private IResponseSender responseSender;
 
     private IKeyboardBuildService keyboardBuildService;
+
+    private ICallbackDataService callbackDataService;
+
+    @Autowired
+    public void setCallbackDataService(ICallbackDataService callbackDataService) {
+        this.callbackDataService = callbackDataService;
+    }
 
     @Autowired
     public void setDealSupportService(DealSupportService dealSupportService) {
@@ -79,14 +88,14 @@ public class ApiDealBotService implements IApiDealBotService {
         String dealInfo = dealSupportService.apiDealToString(apiDeal);
         List<InlineButton> buttons = new ArrayList<>();
         buttons.add(InlineButton.builder()
-                .text(commandService.getText(Command.CONFIRM_API_DEAL))
-                .data(callbackQueryService.buildCallbackData(Command.CONFIRM_API_DEAL, new Object[]{pid, false}))
+                .text("Подтвердить")
+                .data(callbackDataService.buildData(CallbackQueryData.CONFIRM_API_DEAL, pid, false))
                 .build());
         boolean hasDefaultGroupChat = groupChatService.hasGroupChat(apiDealService.getApiUserPidByDealPid(pid));
         if (hasDefaultGroupChat)
             buttons.add(InlineButton.builder()
-                    .text(commandService.getText(Command.CONFIRM_API_DEAL) + " запросом")
-                    .data(callbackQueryService.buildCallbackData(Command.CONFIRM_API_DEAL, new Object[]{pid, true}))
+                    .text("Подтвердить с запросом")
+                    .data(callbackDataService.buildData(CallbackQueryData.CONFIRM_API_DEAL, pid, true))
                     .build());
         buttons.add(InlineButton.builder()
                 .text(commandService.getText(Command.CANCEL_API_DEAL))

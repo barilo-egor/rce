@@ -30,5 +30,6 @@ public enum CallbackQueryData {
     TURNING_DYNAMIC_REQUISITES,
     SHOW_SPAM_BANNED_USER,
     KEEP_SPAM_BAN,
-    SPAM_UNBAN
+    SPAM_UNBAN,
+    CONFIRM_API_DEAL
 }

@@ -69,4 +69,18 @@ public class CallbackDataService implements ICallbackDataService {
             throw new BaseException("Ошибка при парсинге к Integer: data=" + data + ", index=" + index, e);
         }
     }
+
+    @Override
+    public Boolean getBoolArgument(String data, int index) {
+        String argument = getArgument(data, index);
+        if (argument == null) {
+            return null;
+        }
+        if (Boolean.TRUE.toString().equalsIgnoreCase(argument)) {
+            return true;
+        } else if (Boolean.FALSE.toString().equalsIgnoreCase(argument)) {
+            return false;
+        }
+        throw new BaseException("Ошибка при парсинге к Boolean: data=" + data + ", index=" + index);
+    }
 }
