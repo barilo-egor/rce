@@ -19,10 +19,12 @@ import tgb.btc.library.service.properties.VariablePropertiesReader;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.InlineType;
+import tgb.btc.rce.enums.update.CallbackQueryData;
 import tgb.btc.rce.sender.IResponseSender;
 import tgb.btc.rce.service.IKeyboardService;
 import tgb.btc.rce.service.INotifyService;
 import tgb.btc.rce.service.processors.support.DealSupportService;
+import tgb.btc.rce.service.util.ICallbackDataService;
 import tgb.btc.rce.service.util.ICommandService;
 import tgb.btc.rce.service.util.IMessagePropertiesService;
 import tgb.btc.rce.vo.InlineButton;
@@ -58,6 +60,13 @@ public class Notifier implements INotifier {
     private IApiUserService apiUserService;
 
     private IApiDealService apiDealService;
+
+    private ICallbackDataService callbackDataService;
+
+    @Autowired
+    public void setCallbackDataService(ICallbackDataService callbackDataService) {
+        this.callbackDataService = callbackDataService;
+    }
 
     @Autowired
     public void setApiDealService(IApiDealService apiDealService) {
@@ -145,8 +154,8 @@ public class Notifier implements INotifier {
         responseSender.sendMessage(chatId, "Кто-то пытается авторизоваться на сайте под вашим chat id. Если это не вы, то проигнорируйте это сообщение.",
                 InlineButton.builder()
                         .inlineType(InlineType.CALLBACK_DATA)
-                        .text(commandService.getText(Command.SUBMIT_LOGIN))
-                        .data(Command.SUBMIT_LOGIN.name() + BotStringConstants.CALLBACK_DATA_SPLITTER + chatId)
+                        .text("Подтвердить вход")
+                        .data(callbackDataService.buildData(CallbackQueryData.SUBMIT_LOGIN, chatId))
                         .build());
     }
 

@@ -6,6 +6,7 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.service.properties.ButtonsDesignPropertiesReader;
 import tgb.btc.rce.enums.Command;
+import tgb.btc.rce.enums.update.CallbackQueryData;
 import tgb.btc.rce.service.IUpdateService;
 import tgb.btc.rce.service.impl.util.CommandService;
 
@@ -58,7 +59,7 @@ class CommandServiceTest {
         Update update = new Update();
         CallbackQuery callbackQuery = new CallbackQuery();
         update.setCallbackQuery(callbackQuery);
-        callbackQuery.setData(Command.SUBMIT_LOGIN.name());
+        callbackQuery.setData(CallbackQueryData.SUBMIT_LOGIN.name());
         assertTrue(commandService.isSubmitCommand(update));
     }
 

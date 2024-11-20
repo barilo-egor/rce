@@ -54,6 +54,7 @@ public enum Command implements ICommand {
     CONFIRM_API_DEAL("Подтвердить", false, UserRole.OPERATOR_ACCESS),
     CANCEL_API_DEAL("Отклонить", false, UserRole.OPERATOR_ACCESS),
     TURN_PROCESS_DELIVERY("TURN_PROCESS_DELIVERY", false, UserRole.ADMIN_ACCESS),
+    SUBMIT_LOGIN("Подтвердить вход", false, UserRole.USER_ACCESS),
 
     // HAS USAGE
     START("/start", false, UserRole.USER_ACCESS),
@@ -149,8 +150,6 @@ public enum Command implements ICommand {
 
 
 
-
-    SUBMIT_LOGIN("Подтвердить вход", false, UserRole.USER_ACCESS),
     SUBMIT_REGISTER("Подтвердить регистрацию", false, UserRole.USER_ACCESS),
     LOGOUT("Закрыть сессию", false, UserRole.USER_ACCESS);
 
@@ -166,7 +165,7 @@ public enum Command implements ICommand {
             CLEAR_POOL, CONFIRM_POOL_WITHDRAWAL, CONFIRM_CLEAR_POOL, ADD_TO_POOL, CONFIRM_AUTO_WITHDRAWAL_DEAL,
             ADDITIONAL_VERIFICATION, REVIEW_NAVIGATION, PUBLISH_REVIEW, DELETE_REVIEW, DELETING_PAYMENT_TYPE,
             DELETING_PAYMENT_TYPE_REQUISITE, TURNING_PAYMENT_TYPES, TURNING_DYNAMIC_REQUISITES, SHOW_SPAM_BANNED_USER,
-            KEEP_SPAM_BAN, SPAM_UNBAN, CONFIRM_API_DEAL, CANCEL_API_DEAL, TURN_PROCESS_DELIVERY
+            KEEP_SPAM_BAN, SPAM_UNBAN, CONFIRM_API_DEAL, CANCEL_API_DEAL, TURN_PROCESS_DELIVERY, SUBMIT_LOGIN
     );
 
     final String text;

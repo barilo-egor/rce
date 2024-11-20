@@ -33,5 +33,6 @@ public enum CallbackQueryData {
     SPAM_UNBAN,
     CONFIRM_API_DEAL,
     CANCEL_API_DEAL,
-    TURN_PROCESS_DELIVERY
+    TURN_PROCESS_DELIVERY,
+    SUBMIT_LOGIN
 }

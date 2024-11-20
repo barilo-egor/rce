@@ -7,6 +7,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.service.properties.ButtonsDesignPropertiesReader;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
+import tgb.btc.rce.enums.update.CallbackQueryData;
 import tgb.btc.rce.enums.update.SlashCommand;
 import tgb.btc.rce.enums.update.TextCommand;
 import tgb.btc.rce.enums.update.UpdateType;
@@ -49,7 +50,7 @@ public class CommandService implements ICommandService {
     @Override
     public boolean isSubmitCommand(Update update) {
         return update.hasCallbackQuery() &&
-                (update.getCallbackQuery().getData().startsWith(SUBMIT_LOGIN.name())
+                (update.getCallbackQuery().getData().startsWith(CallbackQueryData.SUBMIT_LOGIN.name())
                         || update.getCallbackQuery().getData().startsWith(SUBMIT_REGISTER.name()));
     }
 
