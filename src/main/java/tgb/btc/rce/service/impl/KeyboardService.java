@@ -31,6 +31,7 @@ import tgb.btc.rce.enums.update.CallbackQueryData;
 import tgb.btc.rce.service.IKeyboardService;
 import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
 import tgb.btc.rce.service.processors.calculator.InlineCalculator;
+import tgb.btc.rce.service.processors.support.ExchangeService;
 import tgb.btc.rce.service.util.*;
 import tgb.btc.rce.vo.InlineButton;
 import tgb.btc.rce.vo.InlineCalculatorVO;
@@ -411,8 +412,8 @@ public class KeyboardService implements IKeyboardService {
     public ReplyKeyboard getBuildDeal() {
         return keyboardBuildService.buildInline(List.of(
                 InlineButton.builder()
-                        .text(commandService.getText(Command.PAID))
-                        .data(Command.PAID.name())
+                        .text(ExchangeService.PAID_TEXT)
+                        .data(ExchangeService.PAID_DATA)
                         .inlineType(InlineType.CALLBACK_DATA)
                         .build(),
                 InlineButton.builder()

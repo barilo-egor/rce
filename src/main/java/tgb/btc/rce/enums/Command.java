@@ -124,7 +124,6 @@ public enum Command implements ICommand {
     BOT_VARIABLES("Переменные бота", false, UserRole.ADMIN_ACCESS),
     SYSTEM_MESSAGES("Сис.сообщения", false, UserRole.ADMIN_ACCESS),
     DEAL("DEAL", false, UserRole.USER_ACCESS),
-    PAID("Оплатил", false, UserRole.USER_ACCESS),
     USER_ADDITIONAL_VERIFICATION("USER_ADDITIONAL_VERIFICATION", false, UserRole.USER_ACCESS),
     SHARE_REVIEW("Оставить", false, UserRole.USER_ACCESS),
     CHOOSING_FIAT_CURRENCY("CHOOSING_FIAT_CURRENCY", false, UserRole.USER_ACCESS),

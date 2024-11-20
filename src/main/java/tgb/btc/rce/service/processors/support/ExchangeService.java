@@ -52,6 +52,11 @@ import java.util.*;
 @Service
 @Slf4j
 public class ExchangeService {
+
+    public static final String PAID_TEXT = "Оплатил";
+
+    public static final String PAID_DATA = "PAID";
+
     private IKeyboardService keyboardService;
 
     private IReadDealService readDealService;
@@ -712,7 +717,7 @@ public class ExchangeService {
                         VariableType.DEAL_ACTIVE_TIME) + " минут" + "\n\n"
                         + deliveryTypeText
                         + "☑️После успешного перевода денег по указанным реквизитам нажмите на кнопку <b>\""
-                        + commandService.getText(Command.PAID) + "\"</b> или же вы можете отменить данную заявку, нажав на кнопку <b>\""
+                        + PAID_TEXT + "\"</b> или же вы можете отменить данную заявку, нажав на кнопку <b>\""
                         + "Отменить заявку" + "\"</b>."
                         + promoCodeText;
             }
@@ -734,7 +739,7 @@ public class ExchangeService {
                         VariableType.DEAL_ACTIVE_TIME) + " минут" + "\n\n"
                         + deliveryTypeText
                         + "☑️После успешного перевода денег по указанному кошельку нажмите на кнопку <b>\""
-                        + commandService.getText(Command.PAID) + "\"</b> или же вы можете отменить данную заявку, нажав на кнопку <b>\""
+                        + PAID_TEXT + "\"</b> или же вы можете отменить данную заявку, нажав на кнопку <b>\""
                         + "Отменить заявку" + "\"</b>."
                         + promoCodeText;
             }
@@ -791,7 +796,7 @@ public class ExchangeService {
             responseSender.sendMessage(chatId, String.format(messagePropertiesService.getMessage("deal.deleted.auto"), dealActiveTime));
             return false;
         }
-        if (Command.PAID.name().equals(update.getCallbackQuery().getData())) {
+        if (PAID_DATA.equals(update.getCallbackQuery().getData())) {
             responseSender.sendEditedMessageText(chatId, update.getCallbackQuery().getMessage().getMessageId(),
                     update.getCallbackQuery().getMessage().getText(), null);
 //            responseSender.deleteMessage(chatId, update.getCallbackQuery().getMessage().getMessageId());
