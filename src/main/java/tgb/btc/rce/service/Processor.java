@@ -16,10 +16,7 @@ import tgb.btc.rce.enums.PropertiesMessage;
 import tgb.btc.rce.enums.update.UpdateType;
 import tgb.btc.rce.sender.IResponseSender;
 import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
-import tgb.btc.rce.service.util.ICallbackQueryService;
-import tgb.btc.rce.service.util.ICommandService;
-import tgb.btc.rce.service.util.IMenuService;
-import tgb.btc.rce.service.util.IMessagePropertiesService;
+import tgb.btc.rce.service.util.*;
 
 @Slf4j
 public abstract class Processor {
@@ -38,7 +35,7 @@ public abstract class Processor {
 
     protected IKeyboardService keyboardService;
 
-    protected ICallbackQueryService callbackQueryService;
+    protected ICallbackDataService callbackDataService;
     
     protected IMessagePropertiesService messagePropertiesService;
 
@@ -59,11 +56,6 @@ public abstract class Processor {
     @Autowired
     public void setMessagePropertiesService(IMessagePropertiesService messagePropertiesService) {
         this.messagePropertiesService = messagePropertiesService;
-    }
-
-    @Autowired
-    public void setCallbackQueryService(ICallbackQueryService callbackQueryService) {
-        this.callbackQueryService = callbackQueryService;
     }
 
     @Autowired

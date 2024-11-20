@@ -83,4 +83,13 @@ public class CallbackDataService implements ICallbackDataService {
         }
         throw new BaseException("Ошибка при парсинге к Boolean: data=" + data + ", index=" + index);
     }
+
+    @Override
+    public boolean isCallbackQueryData(CallbackQueryData callbackQueryData, String data) {
+        CallbackQueryData fromData = fromData(data);
+        if (fromData == null) {
+            return false;
+        }
+        return fromData.equals(callbackQueryData);
+    }
 }

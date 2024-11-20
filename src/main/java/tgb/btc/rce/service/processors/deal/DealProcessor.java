@@ -21,6 +21,7 @@ import tgb.btc.library.service.bean.bot.BotMessageService;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.Menu;
+import tgb.btc.rce.enums.update.CallbackQueryData;
 import tgb.btc.rce.service.ICalculatorTypeService;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.handler.util.IStartService;
@@ -139,7 +140,7 @@ public class DealProcessor extends Processor {
     public void run(Update update) {
         Long chatId = updateService.getChatId(update);
         Integer userStep = readUserService.getStepByChatId(chatId);
-        boolean isBack = callbackQueryService.isBack(update);
+        boolean isBack = update.hasCallbackQuery() && callbackDataService.isCallbackQueryData(CallbackQueryData.BACK, update.getCallbackQuery().getData());
         if (!User.isDefault(userStep)) {
             if (isMainMenuCommand(update)) return;
             if (isBack) {

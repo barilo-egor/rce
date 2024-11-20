@@ -49,8 +49,6 @@ public class KeyboardService implements IKeyboardService {
 
     private IKeyboardBuildService keyboardBuildService;
     
-    private ICallbackQueryService callbackQueryService;
-    
     private ICryptoCurrenciesDesignService cryptoCurrenciesDesignService;
 
     private ButtonsDesignPropertiesReader buttonsDesignPropertiesReader;
@@ -157,11 +155,6 @@ public class KeyboardService implements IKeyboardService {
     }
 
     @Autowired
-    public void setCallbackQueryService(ICallbackQueryService callbackQueryService) {
-        this.callbackQueryService = callbackQueryService;
-    }
-
-    @Autowired
     public void setKeyboardBuildService(IKeyboardBuildService keyboardBuildService) {
         this.keyboardBuildService = keyboardBuildService;
     }
@@ -185,7 +178,7 @@ public class KeyboardService implements IKeyboardService {
         List<InlineButton> buttons = fiatCurrencyService.getFiatCurrencies().stream()
                 .map(fiatCurrency -> InlineButton.builder()
                         .text(buttonsDesignPropertiesReader.getString(fiatCurrency.name()))
-                        .data(callbackQueryService.buildCallbackData(Command.CHOOSING_FIAT_CURRENCY, fiatCurrency.name()))
+                        .data(callbackDataService.buildData(CallbackQueryData.CHOOSING_FIAT_CURRENCY, fiatCurrency.name()))
                         .build())
                 .collect(Collectors.toList());
         buttons.add(keyboardBuildService.getInlineBackButton());
@@ -269,21 +262,21 @@ public class KeyboardService implements IKeyboardService {
         List<InlineButton> inlineButtons = new ArrayList<>();
         String[] strings = new String[]{"7", "8", "9", "4", "5", "6", "1", "2", "3", "0"};
         for (String string : strings) {
-            inlineButtons.add(keyboardBuildService.createCallBackDataButton(string, Command.INLINE_CALCULATOR, NUMBER.getData(), string));
+            inlineButtons.add(keyboardBuildService.createCallBackDataButton(string, CallbackQueryData.INLINE_CALCULATOR, NUMBER.getData(), string));
         }
-        inlineButtons.add(keyboardBuildService.createCallBackDataButton(COMMA.getData(), Command.INLINE_CALCULATOR, COMMA.getData()));
-        inlineButtons.add(keyboardBuildService.createCallBackDataButton(DEL.getData(), Command.INLINE_CALCULATOR, DEL.getData()));
+        inlineButtons.add(keyboardBuildService.createCallBackDataButton(COMMA.getData(), CallbackQueryData.INLINE_CALCULATOR, COMMA.getData()));
+        inlineButtons.add(keyboardBuildService.createCallBackDataButton(DEL.getData(), CallbackQueryData.INLINE_CALCULATOR, DEL.getData()));
         InlineButton backButton = BotInlineButton.CANCEL.getButton();
         backButton.setText(CANCEL.getData());
         inlineButtons.add(backButton);
-        inlineButtons.add(keyboardBuildService.createCallBackDataButton(SWITCH_CALCULATOR.getData(), Command.INLINE_CALCULATOR, SWITCH_CALCULATOR.getData()));
-        inlineButtons.add(keyboardBuildService.createCallBackDataButton(READY.getData(), Command.INLINE_CALCULATOR, READY.getData()));
+        inlineButtons.add(keyboardBuildService.createCallBackDataButton(SWITCH_CALCULATOR.getData(), CallbackQueryData.INLINE_CALCULATOR, SWITCH_CALCULATOR.getData()));
+        inlineButtons.add(keyboardBuildService.createCallBackDataButton(READY.getData(), CallbackQueryData.INLINE_CALCULATOR, READY.getData()));
         InlineCalculatorVO calculator = InlineCalculator.cache.get(chaId);
         String text = !calculator.getSwitched()
                 ? calculator.getFiatCurrency().getFlag() + "Ввести сумму в " + calculator.getFiatCurrency().getCode().toUpperCase()
                 : "\uD83D\uDD38Ввести сумму в " + calculator.getCryptoCurrency().getShortName().toUpperCase();
         List<InlineButton> currencySwitcher = Collections.singletonList(keyboardBuildService.createCallBackDataButton(text,
-                Command.INLINE_CALCULATOR, CURRENCY_SWITCHER.getData()));
+                CallbackQueryData.INLINE_CALCULATOR, CURRENCY_SWITCHER.getData()));
         List<List<InlineKeyboardButton>> rows = keyboardBuildService.buildInlineRows(inlineButtons, 3);
         rows.add(4, keyboardBuildService.buildInlineRows(currencySwitcher, 1).get(0));
         return keyboardBuildService.buildInlineByRows(rows);
@@ -292,7 +285,7 @@ public class KeyboardService implements IKeyboardService {
     @Override
     public ReplyKeyboard getInlineCalculatorSwitcher() {
         List<InlineButton> buttons = new ArrayList<>();
-        buttons.add(keyboardBuildService.createCallBackDataButton(SWITCH_TO_MAIN_CALCULATOR.getData(), Command.INLINE_CALCULATOR, SWITCH_TO_MAIN_CALCULATOR.getData()));
+        buttons.add(keyboardBuildService.createCallBackDataButton(SWITCH_TO_MAIN_CALCULATOR.getData(), CallbackQueryData.INLINE_CALCULATOR, SWITCH_TO_MAIN_CALCULATOR.getData()));
         buttons.add(keyboardBuildService.getInlineBackButton());
         return keyboardBuildService.buildInline(buttons);
     }

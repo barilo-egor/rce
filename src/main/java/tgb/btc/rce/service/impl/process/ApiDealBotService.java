@@ -13,8 +13,6 @@ import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
 import tgb.btc.rce.service.process.IApiDealBotService;
 import tgb.btc.rce.service.processors.support.DealSupportService;
 import tgb.btc.rce.service.util.ICallbackDataService;
-import tgb.btc.rce.service.util.ICallbackQueryService;
-import tgb.btc.rce.service.util.ICommandService;
 import tgb.btc.rce.vo.InlineButton;
 
 import java.util.ArrayList;
@@ -24,10 +22,6 @@ import java.util.List;
 public class ApiDealBotService implements IApiDealBotService {
 
     private DealSupportService dealSupportService;
-
-    private ICommandService commandService;
-
-    private ICallbackQueryService callbackQueryService;
 
     private IApiDealService apiDealService;
 
@@ -47,16 +41,6 @@ public class ApiDealBotService implements IApiDealBotService {
     @Autowired
     public void setDealSupportService(DealSupportService dealSupportService) {
         this.dealSupportService = dealSupportService;
-    }
-
-    @Autowired
-    public void setCommandService(ICommandService commandService) {
-        this.commandService = commandService;
-    }
-
-    @Autowired
-    public void setCallbackQueryService(ICallbackQueryService callbackQueryService) {
-        this.callbackQueryService = callbackQueryService;
     }
 
     @Autowired

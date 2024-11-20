@@ -14,4 +14,6 @@ public interface ICallbackDataService {
     Integer getIntArgument(String data, int index);
 
     Boolean getBoolArgument(String data, int index);
+
+    boolean isCallbackQueryData(CallbackQueryData callbackQueryData, String data);
 }

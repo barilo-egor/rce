@@ -17,8 +17,6 @@ import tgb.btc.rce.sender.IResponseSender;
 import tgb.btc.rce.service.IUserInfoService;
 import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
 import tgb.btc.rce.service.util.ICallbackDataService;
-import tgb.btc.rce.service.util.ICallbackQueryService;
-import tgb.btc.rce.service.util.ICommandService;
 import tgb.btc.rce.service.util.IMessagePropertiesService;
 import tgb.btc.rce.vo.InlineButton;
 
@@ -40,11 +38,7 @@ public class UserInfoService implements IUserInfoService {
 
     private IKeyboardBuildService keyboardBuildService;
 
-    private ICallbackQueryService callbackQueryService;
-
     private IMessagePropertiesService messagePropertiesService;
-
-    private ICommandService commandService;
 
     private IModule<ReferralType> referralModule;
 
@@ -61,20 +55,9 @@ public class UserInfoService implements IUserInfoService {
     }
 
     @Autowired
-    public void setCommandService(ICommandService commandService) {
-        this.commandService = commandService;
-    }
-
-    @Autowired
     public void setMessagePropertiesService(IMessagePropertiesService messagePropertiesService) {
         this.messagePropertiesService = messagePropertiesService;
     }
-
-    @Autowired
-    public void setCallbackQueryService(ICallbackQueryService callbackQueryService) {
-        this.callbackQueryService = callbackQueryService;
-    }
-
     @Autowired
     public void setKeyboardBuildService(IKeyboardBuildService keyboardBuildService) {
         this.keyboardBuildService = keyboardBuildService;

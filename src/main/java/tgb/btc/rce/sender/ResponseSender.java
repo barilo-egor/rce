@@ -31,7 +31,6 @@ import tgb.btc.rce.enums.Menu;
 import tgb.btc.rce.enums.PropertiesMessage;
 import tgb.btc.rce.service.IUpdateService;
 import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
-import tgb.btc.rce.service.util.ICallbackQueryService;
 import tgb.btc.rce.service.util.IMenuService;
 import tgb.btc.rce.service.util.IMessagePropertiesService;
 import tgb.btc.rce.vo.InlineButton;
@@ -57,8 +56,6 @@ public class ResponseSender implements IResponseSender {
 
     private IKeyboardBuildService keyboardBuildService;
 
-    private ICallbackQueryService callbackQueryService;
-
     private IMessagePropertiesService messagePropertiesService;
 
     private IUpdateService updateService;
@@ -71,11 +68,6 @@ public class ResponseSender implements IResponseSender {
     @Autowired
     public void setMessagePropertiesService(IMessagePropertiesService messagePropertiesService) {
         this.messagePropertiesService = messagePropertiesService;
-    }
-
-    @Autowired
-    public void setCallbackQueryService(ICallbackQueryService callbackQueryService) {
-        this.callbackQueryService = callbackQueryService;
     }
 
     @Autowired
@@ -456,14 +448,14 @@ public class ResponseSender implements IResponseSender {
     @Override
     public void deleteCallbackMessageIfExists(Update update) {
         if (update.hasCallbackQuery())
-            deleteMessage(updateService.getChatId(update), callbackQueryService.messageId(update));
+            deleteMessage(updateService.getChatId(update), update.getCallbackQuery().getMessage().getMessageId());
     }
 
     @Override
     public void deleteCallbackMessageButtonsIfExists(Update update) {
         if (update.hasCallbackQuery()) {
             String text = update.getCallbackQuery().getMessage().getText();
-            deleteMessage(updateService.getChatId(update), callbackQueryService.messageId(update));
+            deleteMessage(updateService.getChatId(update), update.getCallbackQuery().getMessage().getMessageId());
             sendMessage(updateService.getChatId(update), text);
         }
     }

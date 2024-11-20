@@ -136,7 +136,7 @@ public class CaptchaProcessor extends Processor {
         if (updateService.hasMessageText(update)) {
             text = updateService.getMessageText(update);
         } else {
-            text = callbackQueryService.getSplitData(update, 1);
+            text = callbackDataService.getArgument(update.getCallbackQuery().getData(), 1);
         }
         return text.equals(antiSpam.getFromCaptchaCash(updateService.getChatId(update)));
     }

@@ -14,7 +14,7 @@ import tgb.btc.library.service.properties.ButtonsDesignPropertiesReader;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.InlineType;
 import tgb.btc.rce.service.impl.UpdateService;
-import tgb.btc.rce.service.impl.util.CallbackQueryService;
+import tgb.btc.rce.service.impl.util.CallbackDataService;
 import tgb.btc.rce.service.impl.util.CommandService;
 import tgb.btc.rce.vo.InlineButton;
 import tgb.btc.rce.vo.ReplyButton;
@@ -26,11 +26,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class KeyboardBuildServiceTest {
 
-    private final CallbackQueryService callbackQueryService = new CallbackQueryService();
+    private final CallbackDataService callbackDataService = new CallbackDataService();
 
     private final ButtonsDesignPropertiesReader buttonsDesignPropertiesReader = new ButtonsDesignPropertiesReader();
 
-    private final KeyboardBuildService keyboardBuildService = new KeyboardBuildService(callbackQueryService);
+    private final KeyboardBuildService keyboardBuildService = new KeyboardBuildService(callbackDataService);
 
     private final CommandService commandService = new CommandService(new UpdateService(), buttonsDesignPropertiesReader);
 
@@ -388,18 +388,6 @@ class KeyboardBuildServiceTest {
                 () -> assertEquals(contacts.get(1).getUrl(), rows.get(1).get(0).getUrl()),
                 () -> assertEquals(contacts.get(2).getLabel(), rows.get(2).get(0).getText()),
                 () -> assertEquals(contacts.get(2).getUrl(), rows.get(2).get(0).getUrl())
-        );
-    }
-
-    @Test
-    void createCallbackDataButton() {
-        String text = commandService.getText(Command.START);
-        Command command = Command.START;
-        String[] variables = new String[] {"qwe", "123", "asd"};
-        InlineButton inlineButton = keyboardBuildService.createCallBackDataButton(text, command, variables);
-        assertAll(
-                () -> assertEquals(text, inlineButton.getText()),
-                () -> assertEquals(callbackQueryService.buildCallbackData(command, variables), inlineButton.getData())
         );
     }
 

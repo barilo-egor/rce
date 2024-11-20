@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
+import tgb.btc.rce.enums.update.CallbackQueryData;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.processors.deal.DealProcessor;
 import tgb.btc.rce.service.processors.support.ExchangeService;
@@ -30,7 +31,7 @@ public class InlineQueryCalculator extends Processor {
     public void run(Update update) {
         if (dealProcessor.isMainMenuCommand(update)) return;
         Long chatId = updateService.getChatId(update);
-        if (callbackQueryService.isBack(update)) {
+        if (update.hasCallbackQuery() && callbackDataService.isCallbackQueryData(CallbackQueryData.BACK, update.getCallbackQuery().getData())) {
             modifyUserService.updateStepAndCommandByChatId(chatId, Command.DEAL.name(), DealProcessor.AFTER_CALCULATOR_STEP);
             dealProcessor.run(update);
             return;

@@ -1,6 +1,8 @@
 package tgb.btc.rce.enums.update;
 
 public enum CallbackQueryData {
+    START,
+    BACK,
     SHOW_WITHDRAWAL_REQUEST,
     HIDE_WITHDRAWAL,
     DELETE_WITHDRAWAL_REQUEST,
@@ -36,5 +38,8 @@ public enum CallbackQueryData {
     TURN_PROCESS_DELIVERY,
     SUBMIT_LOGIN,
     SUBMIT_REGISTER,
-    LOGOUT
+    LOGOUT,
+    CHOOSING_FIAT_CURRENCY,
+    INLINE_CALCULATOR,
+    SHARE_REVIEW
 }

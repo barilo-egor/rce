@@ -16,9 +16,10 @@ import tgb.btc.library.service.properties.ReviewPrisePropertiesReader;
 import tgb.btc.library.service.properties.VariablePropertiesReader;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.ReviewPriseType;
+import tgb.btc.rce.enums.update.CallbackQueryData;
 import tgb.btc.rce.sender.IResponseSender;
 import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
-import tgb.btc.rce.service.util.ICallbackQueryService;
+import tgb.btc.rce.service.util.ICallbackDataService;
 import tgb.btc.rce.service.util.ICommandService;
 import tgb.btc.rce.service.util.IReviewPriseBotProcessService;
 import tgb.btc.rce.vo.InlineButton;
@@ -39,7 +40,7 @@ public class ReviewPriseProcessService implements IReviewPriseProcessService, IR
 
     private IKeyboardBuildService keyboardBuildService;
 
-    private ICallbackQueryService callbackQueryService;
+    private ICallbackDataService callbackDataService;
 
     private VariablePropertiesReader variablePropertiesReader;
 
@@ -50,6 +51,11 @@ public class ReviewPriseProcessService implements IReviewPriseProcessService, IR
     private IModule<ReviewPriseType> reviewPriseModule;
 
     private ReviewPrisePropertiesReader reviewPrisePropertiesReader;
+
+    @Autowired
+    public void setCallbackDataService(ICallbackDataService callbackDataService) {
+        this.callbackDataService = callbackDataService;
+    }
 
     @Autowired
     public void setReviewPrisePropertiesReader(ReviewPrisePropertiesReader reviewPrisePropertiesReader) {
@@ -77,11 +83,6 @@ public class ReviewPriseProcessService implements IReviewPriseProcessService, IR
     }
 
     @Autowired
-    public void setCallbackQueryService(ICallbackQueryService callbackQueryService) {
-        this.callbackQueryService = callbackQueryService;
-    }
-
-    @Autowired
     public void setKeyboardBuildService(IKeyboardBuildService keyboardBuildService) {
         this.keyboardBuildService = keyboardBuildService;
     }
@@ -105,8 +106,8 @@ public class ReviewPriseProcessService implements IReviewPriseProcessService, IR
             if (reviewPriseModule.isCurrent(ReviewPriseType.DYNAMIC)) {
                 ReviewPrise reviewPriseVo = getReviewPrise(deal.getAmount(), deal.getFiatCurrency());
                 if (Objects.nonNull(reviewPriseVo)) {
-                    data = callbackQueryService.buildCallbackData(Command.SHARE_REVIEW,
-                            new Object[]{String.valueOf(reviewPriseVo.getMinPrise()), String.valueOf(reviewPriseVo.getMaxPrise())});
+                    data = callbackDataService.buildData(CallbackQueryData.SHARE_REVIEW,
+                            String.valueOf(reviewPriseVo.getMinPrise()), String.valueOf(reviewPriseVo.getMaxPrise()));
                     amount = "от " + reviewPriseVo.getMinPrise() + "₽" + " до " + reviewPriseVo.getMaxPrise() + "₽";
                 }
                 else return;
