@@ -14,6 +14,8 @@ import tgb.btc.library.interfaces.service.bean.common.bot.IUserCommonService;
 import tgb.btc.library.service.process.BannedUserCache;
 import tgb.btc.library.service.properties.ConfigPropertiesReader;
 import tgb.btc.rce.enums.Command;
+import tgb.btc.rce.enums.UserState;
+import tgb.btc.rce.service.IRedisUserStateService;
 import tgb.btc.rce.service.IUpdateService;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.captcha.IAntiSpam;
@@ -50,6 +52,13 @@ public class UpdateDispatcher implements IUpdateDispatcher {
     private ApplicationEventPublisher eventPublisher;
 
     private ConfigPropertiesReader configPropertiesReader;
+
+    private IRedisUserStateService redisUserStateService;
+
+    @Autowired
+    public void setRedisUserStateService(IRedisUserStateService redisUserStateService) {
+        this.redisUserStateService = redisUserStateService;
+    }
 
     @Autowired
     public void setConfigPropertiesReader(ConfigPropertiesReader configPropertiesReader) {
@@ -110,12 +119,15 @@ public class UpdateDispatcher implements IUpdateDispatcher {
     public void dispatch(Update update) {
         Long chatId = updateService.getChatId(update);
         if (bannedUserCache.get(chatId)) return;
-        Command command = getCommand(update, chatId);
-        if (Command.NEW_HANDLE.contains(command)) {
-            eventPublisher.publishEvent(new TelegramUpdateEvent(this, update));
-        } else {
-            runProcessor(command, chatId, update);
+        UserState userState = redisUserStateService.get(chatId);
+        if (Objects.isNull(userState)) {
+            Command command = getCommand(update, chatId);
+            if (!Command.NEW_HANDLE.contains(command)) {
+                runProcessor(command, chatId, update);
+                return;
+            }
         }
+        eventPublisher.publishEvent(new TelegramUpdateEvent(this, update));
     }
 
     public void runProcessor(Command command, Long chatId, Update update) {

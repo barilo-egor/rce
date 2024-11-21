@@ -59,6 +59,7 @@ public enum Command implements ICommand {
     LOGOUT("Закрыть сессию", false, UserRole.USER_ACCESS),
     INLINE_DELETE("❌ Закрыть", false, UserRole.USER_ACCESS),
     BAN_UNBAN("Бан/разбан", false, UserRole.ADMIN_ACCESS),
+    USER_REFERRAL_BALANCE("Реф.баланс юзера", false, UserRole.ADMIN_ACCESS),
 
     // HAS USAGE
     START("/start", false, UserRole.USER_ACCESS),
@@ -110,7 +111,6 @@ public enum Command implements ICommand {
     CAPTCHA("captcha", false, UserRole.USER_ACCESS),
     WITHDRAWAL_OF_FUNDS("Вывод средств", false, UserRole.USER_ACCESS),
     CHANGE_REFERRAL_BALANCE("Изменить", false, UserRole.ADMIN_ACCESS),
-    USER_REFERRAL_BALANCE("Реф.баланс юзера", false, UserRole.ADMIN_ACCESS),
     DEALS_COUNT("Кол-во возможных сделок", false, UserRole.ADMIN_ACCESS),
     RANK_DISCOUNT("Ранговая скидка(персональная)", false, UserRole.ADMIN_ACCESS),
     PERSONAL_BUY_DISCOUNT("Персональная, покупка", false, UserRole.ADMIN_ACCESS),
@@ -162,7 +162,7 @@ public enum Command implements ICommand {
             ADDITIONAL_VERIFICATION, REVIEW_NAVIGATION, PUBLISH_REVIEW, DELETE_REVIEW, DELETING_PAYMENT_TYPE,
             DELETING_PAYMENT_TYPE_REQUISITE, TURNING_PAYMENT_TYPES, TURNING_DYNAMIC_REQUISITES, SHOW_SPAM_BANNED_USER,
             KEEP_SPAM_BAN, SPAM_UNBAN, CONFIRM_API_DEAL, CANCEL_API_DEAL, TURN_PROCESS_DELIVERY, SUBMIT_LOGIN, SUBMIT_REGISTER,
-            LOGOUT, INLINE_DELETE, BAN_UNBAN
+            LOGOUT, INLINE_DELETE, BAN_UNBAN, USER_REFERRAL_BALANCE
     );
 
     final String text;

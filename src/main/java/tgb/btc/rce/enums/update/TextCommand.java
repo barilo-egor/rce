@@ -46,6 +46,7 @@ public enum TextCommand {
     BITCOIN_POOL("Пул сделок BTC", UserRole.OPERATOR_ACCESS),
     USERS_REPORT("Отчет по пользователям", UserRole.ADMIN_ACCESS),
     USERS_DEALS_REPORT("Отчет сделки пользователей", UserRole.ADMIN_ACCESS),
+    USER_REFERRAL_BALANCE("Реф.баланс юзера", UserRole.ADMIN_ACCESS),
 
     DEALS_COUNT("Кол-во возможных сделок", UserRole.ADMIN_ACCESS),
     DEAL_REPORTS("Отчет по сделкам", Set.of(UserRole.OBSERVER, UserRole.ADMIN)),
@@ -57,7 +58,6 @@ public enum TextCommand {
     ADMIN_BACK("Назад", UserRole.OPERATOR_ACCESS),
     BAN_UNBAN("Бан/разбан", UserRole.ADMIN_ACCESS),
     USER_INFORMATION("Информация о пользователе", UserRole.ADMIN_ACCESS),
-    USER_REFERRAL_BALANCE("Реф.баланс юзера", UserRole.ADMIN_ACCESS),
     ADD_CONTACT("Добавить контакт", UserRole.ADMIN_ACCESS),
     DELETE_CONTACT("Удалить контакт", UserRole.ADMIN_ACCESS),
     SEND_MESSAGE_TO_USER("Сообщение пользователю", UserRole.ADMIN_ACCESS),
