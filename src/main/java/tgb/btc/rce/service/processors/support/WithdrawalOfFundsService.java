@@ -3,7 +3,6 @@ package tgb.btc.rce.service.processors.support;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import tgb.btc.library.bean.bot.User;
 import tgb.btc.library.bean.bot.WithdrawalRequest;
 import tgb.btc.library.constants.enums.bot.UserRole;
@@ -11,7 +10,6 @@ import tgb.btc.library.constants.enums.bot.WithdrawalRequestStatus;
 import tgb.btc.library.interfaces.service.bean.bot.IWithdrawalRequestService;
 import tgb.btc.library.interfaces.service.bean.bot.user.IModifyUserService;
 import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
-import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.PropertiesMessage;
 import tgb.btc.rce.enums.update.CallbackQueryData;
 import tgb.btc.rce.sender.IResponseSender;
@@ -21,9 +19,7 @@ import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
 import tgb.btc.rce.service.util.ICallbackDataService;
 import tgb.btc.rce.service.util.ICommandService;
 import tgb.btc.rce.service.util.IMessagePropertiesService;
-import tgb.btc.rce.vo.ReplyButton;
 
-import java.util.List;
 import java.util.Set;
 
 @Service
@@ -128,22 +124,5 @@ public class WithdrawalOfFundsService {
     public String toString(WithdrawalRequest withdrawalRequest) {
         return String.format(messagePropertiesService.getMessage(PropertiesMessage.WITHDRAWAL_TO_STRING),
                 withdrawalRequest.getPid(), withdrawalRequest.getPhoneNumber(), withdrawalRequest.getUser().getChatId());
-    }
-
-    public void askForContact(Long chatId, Integer messageId) {
-        responseSender.deleteMessage(chatId, messageId);
-        modifyUserService.nextStep(chatId, Command.WITHDRAWAL_OF_FUNDS.name());
-        ReplyKeyboard keyboard = keyboardBuildService.buildReply(List.of(
-                ReplyButton.builder()
-                        .text("Поделиться контактом")
-                        .isRequestContact(true)
-                        .isRequestLocation(false)
-                        .build(),
-                ReplyButton.builder()
-                        .text(commandService.getText(Command.CANCEL))
-                        .build()
-        ));
-        responseSender.sendMessage(chatId, messagePropertiesService.getMessage(PropertiesMessage.WITHDRAWAL_ASK_CONTACT),
-                keyboard);
     }
 }

@@ -4,5 +4,6 @@ public enum UserState {
     BAN_UNBAN,
     USER_REFERRAL_BALANCE,
     RANK_DISCOUNT,
-    DEALS_COUNT
+    DEALS_COUNT,
+    WITHDRAWAL_OF_FUNDS
 }

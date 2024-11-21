@@ -9,6 +9,7 @@ import java.util.Set;
 @Getter
 @AllArgsConstructor
 public enum TextCommand {
+    CANCEL("Отмена", UserRole.USER_ACCESS),
     BACK("Назад", UserRole.USER_ACCESS),
     BUY_BITCOIN("Купить", UserRole.USER_ACCESS),
     SELL_BITCOIN("Продать", UserRole.USER_ACCESS),
