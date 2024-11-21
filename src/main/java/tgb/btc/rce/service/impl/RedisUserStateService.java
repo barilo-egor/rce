@@ -5,6 +5,9 @@ import org.springframework.stereotype.Service;
 import tgb.btc.rce.enums.UserState;
 import tgb.btc.rce.service.IRedisUserStateService;
 
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
+
 @Service
 public class RedisUserStateService implements IRedisUserStateService {
 
@@ -16,7 +19,7 @@ public class RedisUserStateService implements IRedisUserStateService {
 
     @Override
     public void save(Long chatId, UserState state) {
-        redisTemplate.opsForValue().set(chatId, state);
+        redisTemplate.opsForValue().set(chatId, state, Duration.of(20, ChronoUnit.MINUTES));
     }
 
     @Override
