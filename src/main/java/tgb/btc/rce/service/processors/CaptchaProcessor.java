@@ -12,11 +12,13 @@ import tgb.btc.library.interfaces.service.bean.bot.ISpamBanService;
 import tgb.btc.library.service.process.BanningUserService;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
+import tgb.btc.rce.enums.update.CallbackQueryData;
 import tgb.btc.rce.service.ICaptchaSender;
 import tgb.btc.rce.service.INotifyService;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.captcha.IAntiSpam;
 import tgb.btc.rce.service.handler.util.IStartService;
+import tgb.btc.rce.service.util.ICallbackDataService;
 import tgb.btc.rce.vo.InlineButton;
 
 import java.util.List;
@@ -38,6 +40,13 @@ public class CaptchaProcessor extends Processor {
     private INotifyService notifyService;
 
     private BanningUserService banningUserService;
+
+    private ICallbackDataService callbackDataService;
+
+    @Autowired
+    public void setCallbackDataService(ICallbackDataService callbackDataService) {
+        this.callbackDataService = callbackDataService;
+    }
 
     @Autowired
     public void setBanningUserService(BanningUserService banningUserService) {
@@ -102,9 +111,9 @@ public class CaptchaProcessor extends Processor {
                     notifyService.notifyMessage("Антиспам система заблокировала пользователя.",
                             keyboardBuildService.buildInline(List.of(
                                     InlineButton.builder()
-                                            .text(commandService.getText(Command.SHOW_SPAM_BANNED_USER))
-                                            .data(callbackQueryService.buildCallbackData(
-                                                    Command.SHOW_SPAM_BANNED_USER, spamBan.getPid().toString())
+                                            .text("Показать")
+                                            .data(callbackDataService.buildData(
+                                                    CallbackQueryData.SHOW_SPAM_BANNED_USER, spamBan.getPid().toString())
                                             )
                                             .build()
                             )), Set.of(UserRole.ADMIN, UserRole.OPERATOR));
@@ -127,7 +136,7 @@ public class CaptchaProcessor extends Processor {
         if (updateService.hasMessageText(update)) {
             text = updateService.getMessageText(update);
         } else {
-            text = callbackQueryService.getSplitData(update, 1);
+            text = callbackDataService.getArgument(update.getCallbackQuery().getData(), 1);
         }
         return text.equals(antiSpam.getFromCaptchaCash(updateService.getChatId(update)));
     }

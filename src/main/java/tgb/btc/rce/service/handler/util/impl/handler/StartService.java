@@ -11,6 +11,7 @@ import tgb.btc.rce.enums.MessageImage;
 import tgb.btc.rce.enums.PropertiesMessage;
 import tgb.btc.rce.sender.IMessageImageResponseSender;
 import tgb.btc.rce.sender.IResponseSender;
+import tgb.btc.rce.service.IRedisUserStateService;
 import tgb.btc.rce.service.handler.util.IStartService;
 import tgb.btc.rce.service.util.IMenuService;
 import tgb.btc.rce.service.util.IMessagePropertiesService;
@@ -37,10 +38,13 @@ public class StartService implements IStartService {
 
     private final IMenuService menuService;
 
+    private final IRedisUserStateService redisUserStateService;
+
     public StartService(IResponseSender responseSender, IReadDealService readDealService,
                         IModifyDealService modifyDealService, IMessageImageResponseSender messageImageResponseSender,
                         IModifyUserService modifyUserService, IReadUserService readUserService,
-                        IMessagePropertiesService messagePropertiesService, IMenuService menuService) {
+                        IMessagePropertiesService messagePropertiesService, IMenuService menuService,
+                        IRedisUserStateService redisUserStateService) {
         this.responseSender = responseSender;
         this.readDealService = readDealService;
         this.modifyDealService = modifyDealService;
@@ -49,6 +53,7 @@ public class StartService implements IStartService {
         this.readUserService = readUserService;
         this.messagePropertiesService = messagePropertiesService;
         this.menuService = menuService;
+        this.redisUserStateService = redisUserStateService;
     }
 
     @Override
@@ -64,6 +69,7 @@ public class StartService implements IStartService {
             modifyUserService.updateCurrentDealByChatId(null, chatId);
         }
         modifyUserService.setDefaultValues(chatId);
+        redisUserStateService.delete(chatId);
         responseSender.sendMessage(chatId,
                 messagePropertiesService.getMessage(PropertiesMessage.MENU_MAIN),
                 menuService.build(Menu.MAIN, readUserService.getUserRoleByChatId(chatId)), "HTML");

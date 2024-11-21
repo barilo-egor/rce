@@ -41,10 +41,7 @@ import tgb.btc.rce.sender.IResponseSender;
 import tgb.btc.rce.service.*;
 import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
 import tgb.btc.rce.service.process.IUserDiscountProcessService;
-import tgb.btc.rce.service.util.ICallbackQueryService;
-import tgb.btc.rce.service.util.ICommandService;
-import tgb.btc.rce.service.util.ICryptoCurrenciesDesignService;
-import tgb.btc.rce.service.util.IMessagePropertiesService;
+import tgb.btc.rce.service.util.*;
 import tgb.btc.rce.vo.CalculatorQuery;
 import tgb.btc.rce.vo.InlineButton;
 
@@ -55,9 +52,12 @@ import java.util.*;
 @Service
 @Slf4j
 public class ExchangeService {
-    private IKeyboardService keyboardService;
 
-    private IMessageService messageService;
+    public static final String PAID_TEXT = "Оплатил";
+
+    public static final String PAID_DATA = "PAID";
+
+    private IKeyboardService keyboardService;
 
     private IReadDealService readDealService;
 
@@ -77,8 +77,6 @@ public class ExchangeService {
 
     private CalculateService calculateService;
 
-    private IBotMessageService botMessageService;
-
     private IPaymentTypeService paymentTypeService;
 
     private IPaymentRequisiteService paymentRequisiteService;
@@ -93,7 +91,7 @@ public class ExchangeService {
 
     private IKeyboardBuildService keyboardBuildService;
 
-    private ICallbackQueryService callbackQueryService;
+    private ICallbackDataService callbackDataService;
 
     private ICryptoCurrenciesDesignService cryptoCurrenciesDesignService;
 
@@ -124,6 +122,11 @@ public class ExchangeService {
     private IMessageImageResponseSender messageImageResponseSender;
 
     private IMessageImageService messageImageService;
+
+    @Autowired
+    public void setCallbackDataService(ICallbackDataService callbackDataService) {
+        this.callbackDataService = callbackDataService;
+    }
 
     @Autowired
     public void setMessageImageService(IMessageImageService messageImageService) {
@@ -206,18 +209,8 @@ public class ExchangeService {
     }
 
     @Autowired
-    public void setCallbackQueryService(ICallbackQueryService callbackQueryService) {
-        this.callbackQueryService = callbackQueryService;
-    }
-
-    @Autowired
     public void setKeyboardBuildService(IKeyboardBuildService keyboardBuildService) {
         this.keyboardBuildService = keyboardBuildService;
-    }
-
-    @Autowired
-    public void setBotMessageService(IBotMessageService botMessageService) {
-        this.botMessageService = botMessageService;
     }
 
     @Autowired
@@ -291,11 +284,6 @@ public class ExchangeService {
     }
 
     @Autowired
-    public void setMessageService(IMessageService messageService) {
-        this.messageService = messageService;
-    }
-
-    @Autowired
     public void setKeyboardService(IKeyboardService keyboardService) {
         this.keyboardService = keyboardService;
     }
@@ -314,7 +302,7 @@ public class ExchangeService {
                 responseSender.sendMessage(chatId, "Выберите валюту.");
                 return false;
             }
-            fiatCurrency = FiatCurrency.valueOf(callbackQueryService.getSplitData(update.getCallbackQuery(), 1));
+            fiatCurrency = FiatCurrency.valueOf(callbackDataService.getArgument(update.getCallbackQuery().getData(), 1));
         } else {
             fiatCurrency = fiatCurrencyService.getFirst();
         }
@@ -729,7 +717,7 @@ public class ExchangeService {
                         VariableType.DEAL_ACTIVE_TIME) + " минут" + "\n\n"
                         + deliveryTypeText
                         + "☑️После успешного перевода денег по указанным реквизитам нажмите на кнопку <b>\""
-                        + commandService.getText(Command.PAID) + "\"</b> или же вы можете отменить данную заявку, нажав на кнопку <b>\""
+                        + PAID_TEXT + "\"</b> или же вы можете отменить данную заявку, нажав на кнопку <b>\""
                         + "Отменить заявку" + "\"</b>."
                         + promoCodeText;
             }
@@ -751,7 +739,7 @@ public class ExchangeService {
                         VariableType.DEAL_ACTIVE_TIME) + " минут" + "\n\n"
                         + deliveryTypeText
                         + "☑️После успешного перевода денег по указанному кошельку нажмите на кнопку <b>\""
-                        + commandService.getText(Command.PAID) + "\"</b> или же вы можете отменить данную заявку, нажав на кнопку <b>\""
+                        + PAID_TEXT + "\"</b> или же вы можете отменить данную заявку, нажав на кнопку <b>\""
                         + "Отменить заявку" + "\"</b>."
                         + promoCodeText;
             }
@@ -808,7 +796,7 @@ public class ExchangeService {
             responseSender.sendMessage(chatId, String.format(messagePropertiesService.getMessage("deal.deleted.auto"), dealActiveTime));
             return false;
         }
-        if (Command.PAID.name().equals(update.getCallbackQuery().getData())) {
+        if (PAID_DATA.equals(update.getCallbackQuery().getData())) {
             responseSender.sendEditedMessageText(chatId, update.getCallbackQuery().getMessage().getMessageId(),
                     update.getCallbackQuery().getMessage().getText(), null);
 //            responseSender.deleteMessage(chatId, update.getCallbackQuery().getMessage().getMessageId());
@@ -816,7 +804,7 @@ public class ExchangeService {
             modifyUserService.nextStep(chatId);
             return true;
         } else {
-            cancelDeal(callbackQueryService.messageId(update), chatId, dealPid);
+            cancelDeal(update.getCallbackQuery().getMessage().getMessageId(), chatId, dealPid);
             return false;
         }
     }

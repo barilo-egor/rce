@@ -50,7 +50,7 @@ public class MenuService implements IMenuService {
         IMenu iMenu = menuMap.get(menu);
         if (Objects.nonNull(iMenu))
             return keyboardBuildService.buildReply(menu.getNumberOfColumns(), iMenu.build(userRole), iMenu.isOneTime());
-        return keyboardBuildService.buildReply(menu.getNumberOfColumns(), menu.getCommands().stream()
+        return keyboardBuildService.buildReply(menu.getNumberOfColumns(), menu.getTextCommands().stream()
                 .map(command -> ReplyButton.builder().text(commandService.getText(command)).build())
                 .collect(Collectors.toList()), false);
     }

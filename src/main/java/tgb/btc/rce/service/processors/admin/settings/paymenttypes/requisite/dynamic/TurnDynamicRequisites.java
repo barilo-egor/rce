@@ -10,9 +10,10 @@ import tgb.btc.library.constants.enums.bot.FiatCurrency;
 import tgb.btc.library.interfaces.service.bean.bot.IPaymentTypeService;
 import tgb.btc.library.interfaces.util.IFiatCurrencyService;
 import tgb.btc.rce.annotation.CommandProcessor;
-import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
+import tgb.btc.rce.enums.update.CallbackQueryData;
 import tgb.btc.rce.service.Processor;
+import tgb.btc.rce.service.util.ICallbackDataService;
 import tgb.btc.rce.vo.InlineButton;
 
 import java.util.ArrayList;
@@ -24,6 +25,13 @@ public class TurnDynamicRequisites extends Processor {
     private IPaymentTypeService paymentTypeService;
 
     private IFiatCurrencyService fiatCurrencyService;
+
+    private ICallbackDataService callbackDataService;
+
+    @Autowired
+    public void setCallbackDataService(ICallbackDataService callbackDataService) {
+        this.callbackDataService = callbackDataService;
+    }
 
     @Autowired
     public void setFiatCurrencyService(IFiatCurrencyService fiatCurrencyService) {
@@ -57,17 +65,15 @@ public class TurnDynamicRequisites extends Processor {
             boolean isDynamicOn = BooleanUtils.isTrue(paymentType.getDynamicOn());
             String text = paymentType.getName() + " - " +
                     (isDynamicOn ? "выключить" : "включить");
-            String data = Command.TURNING_DYNAMIC_REQUISITES.name()
-                    + BotStringConstants.CALLBACK_DATA_SPLITTER + paymentType.getPid()
-                    + BotStringConstants.CALLBACK_DATA_SPLITTER + (isDynamicOn ? Boolean.FALSE.toString() : Boolean.TRUE.toString());
+            String strIsOn = isDynamicOn ? Boolean.FALSE.toString() : Boolean.TRUE.toString();
             buttons.add(InlineButton.builder()
                     .text(text)
-                    .data(data)
+                    .data(callbackDataService.buildData(CallbackQueryData.TURNING_DYNAMIC_REQUISITES, paymentType.getPid(), strIsOn))
                     .build());
         }
         buttons.add(InlineButton.builder()
                 .text("❌ Закрыть")
-                .data(Command.INLINE_DELETE.name())
+                .data(CallbackQueryData.INLINE_DELETE.name())
                 .build());
         responseSender.sendMessage(chatId, "Выберите тип оплаты для включения/выключения динамических реквизитов.",
                 keyboardBuildService.buildInline(buttons));

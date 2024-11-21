@@ -11,13 +11,12 @@ import tgb.btc.library.interfaces.service.bean.bot.ILotteryWinService;
 import tgb.btc.library.interfaces.service.bean.bot.ISpamBanService;
 import tgb.btc.library.interfaces.service.bean.bot.deal.read.IDealCountService;
 import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
-import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.PropertiesMessage;
+import tgb.btc.rce.enums.update.CallbackQueryData;
 import tgb.btc.rce.sender.IResponseSender;
 import tgb.btc.rce.service.IUserInfoService;
 import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
-import tgb.btc.rce.service.util.ICallbackQueryService;
-import tgb.btc.rce.service.util.ICommandService;
+import tgb.btc.rce.service.util.ICallbackDataService;
 import tgb.btc.rce.service.util.IMessagePropertiesService;
 import tgb.btc.rce.vo.InlineButton;
 
@@ -39,13 +38,16 @@ public class UserInfoService implements IUserInfoService {
 
     private IKeyboardBuildService keyboardBuildService;
 
-    private ICallbackQueryService callbackQueryService;
-
     private IMessagePropertiesService messagePropertiesService;
 
-    private ICommandService commandService;
-
     private IModule<ReferralType> referralModule;
+
+    private ICallbackDataService callbackDataService;
+
+    @Autowired
+    public void setCallbackDataService(ICallbackDataService callbackDataService) {
+        this.callbackDataService = callbackDataService;
+    }
 
     @Autowired
     public void setReferralModule(IModule<ReferralType> referralModule) {
@@ -53,20 +55,9 @@ public class UserInfoService implements IUserInfoService {
     }
 
     @Autowired
-    public void setCommandService(ICommandService commandService) {
-        this.commandService = commandService;
-    }
-
-    @Autowired
     public void setMessagePropertiesService(IMessagePropertiesService messagePropertiesService) {
         this.messagePropertiesService = messagePropertiesService;
     }
-
-    @Autowired
-    public void setCallbackQueryService(ICallbackQueryService callbackQueryService) {
-        this.callbackQueryService = callbackQueryService;
-    }
-
     @Autowired
     public void setKeyboardBuildService(IKeyboardBuildService keyboardBuildService) {
         this.keyboardBuildService = keyboardBuildService;
@@ -139,15 +130,15 @@ public class UserInfoService implements IUserInfoService {
         sendUserInformation(messageChatId, spamBanService.getUserChatIdByPid(spamBanPid),
                             keyboardBuildService.buildInline(List.of(
                                     InlineButton.builder()
-                                            .text(commandService.getText(Command.KEEP_SPAM_BAN))
-                                            .data(callbackQueryService.buildCallbackData(
-                                                    Command.KEEP_SPAM_BAN, spamBanPid.toString()
+                                            .text("Оставить в бане")
+                                            .data(callbackDataService.buildData(
+                                                    CallbackQueryData.KEEP_SPAM_BAN, spamBanPid.toString()
                                             ))
                                             .build(),
                                     InlineButton.builder()
-                                            .text(commandService.getText(Command.SPAM_UNBAN))
-                                            .data(callbackQueryService.buildCallbackData(
-                                                    Command.SPAM_UNBAN, spamBanPid.toString()
+                                            .text("Разблокировать")
+                                            .data(callbackDataService.buildData(
+                                                    CallbackQueryData.SPAM_UNBAN, spamBanPid.toString()
                                             ))
                                             .build()
                             )));

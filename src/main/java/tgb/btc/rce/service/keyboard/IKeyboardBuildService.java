@@ -4,7 +4,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMa
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import tgb.btc.library.bean.bot.Contact;
-import tgb.btc.rce.enums.Command;
+import tgb.btc.rce.enums.update.CallbackQueryData;
 import tgb.btc.rce.vo.InlineButton;
 import tgb.btc.rce.vo.ReplyButton;
 
@@ -34,7 +34,7 @@ public interface IKeyboardBuildService {
 
     InlineKeyboardMarkup buildContacts(List<Contact> contacts);
 
-    InlineButton createCallBackDataButton(String text, Command command, String... string);
+    InlineButton createCallBackDataButton(String text, CallbackQueryData callbackQueryData, String... string);
 
     InlineKeyboardMarkup getLink(String text, String data);
 }

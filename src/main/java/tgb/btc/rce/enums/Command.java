@@ -47,6 +47,18 @@ public enum Command implements ICommand {
     DELETING_PAYMENT_TYPE("DELETING_PAYMENT_TYPE", false, UserRole.OPERATOR_ACCESS),
     DELETING_PAYMENT_TYPE_REQUISITE("DELETING_PAYMENT_TYPE_REQUISITE", false, UserRole.OPERATOR_ACCESS),
     TURNING_PAYMENT_TYPES("TURNING_PAYMENT_TYPES", false, UserRole.OPERATOR_ACCESS),
+    TURNING_DYNAMIC_REQUISITES("TURNING_DYNAMIC_REQUISITES", false, UserRole.OPERATOR_ACCESS),
+    SHOW_SPAM_BANNED_USER("Показать", false, UserRole.OPERATOR_ACCESS),
+    KEEP_SPAM_BAN("Оставить в бане", false, UserRole.OPERATOR_ACCESS),
+    SPAM_UNBAN("Разблокировать", false, UserRole.OPERATOR_ACCESS),
+    CONFIRM_API_DEAL("Подтвердить", false, UserRole.OPERATOR_ACCESS),
+    CANCEL_API_DEAL("Отклонить", false, UserRole.OPERATOR_ACCESS),
+    TURN_PROCESS_DELIVERY("TURN_PROCESS_DELIVERY", false, UserRole.ADMIN_ACCESS),
+    SUBMIT_LOGIN("Подтвердить вход", false, UserRole.USER_ACCESS),
+    SUBMIT_REGISTER("Подтвердить регистрацию", false, UserRole.USER_ACCESS),
+    LOGOUT("Закрыть сессию", false, UserRole.USER_ACCESS),
+    INLINE_DELETE("❌ Закрыть", false, UserRole.USER_ACCESS),
+    BAN_UNBAN("Бан/разбан", false, UserRole.ADMIN_ACCESS),
 
     // HAS USAGE
     START("/start", false, UserRole.USER_ACCESS),
@@ -95,12 +107,9 @@ public enum Command implements ICommand {
     ADMIN_BACK("Назад", false, UserRole.OPERATOR_ACCESS),
     CANCEL("Отмена", false, UserRole.USER_ACCESS),
     BOT_OFFED("BOT_OFFED", false, UserRole.USER_ACCESS),
-    INLINE_DELETE("❌ Закрыть", false, UserRole.USER_ACCESS),
     CAPTCHA("captcha", false, UserRole.USER_ACCESS),
-    CABINET("Кабинет", false, UserRole.USER_ACCESS),
     WITHDRAWAL_OF_FUNDS("Вывод средств", false, UserRole.USER_ACCESS),
     CHANGE_REFERRAL_BALANCE("Изменить", false, UserRole.ADMIN_ACCESS),
-    BAN_UNBAN("Бан/разбан", false, UserRole.ADMIN_ACCESS),
     USER_REFERRAL_BALANCE("Реф.баланс юзера", false, UserRole.ADMIN_ACCESS),
     DEALS_COUNT("Кол-во возможных сделок", false, UserRole.ADMIN_ACCESS),
     RANK_DISCOUNT("Ранговая скидка(персональная)", false, UserRole.ADMIN_ACCESS),
@@ -115,7 +124,6 @@ public enum Command implements ICommand {
     BOT_VARIABLES("Переменные бота", false, UserRole.ADMIN_ACCESS),
     SYSTEM_MESSAGES("Сис.сообщения", false, UserRole.ADMIN_ACCESS),
     DEAL("DEAL", false, UserRole.USER_ACCESS),
-    PAID("Оплатил", false, UserRole.USER_ACCESS),
     USER_ADDITIONAL_VERIFICATION("USER_ADDITIONAL_VERIFICATION", false, UserRole.USER_ACCESS),
     SHARE_REVIEW("Оставить", false, UserRole.USER_ACCESS),
     CHOOSING_FIAT_CURRENCY("CHOOSING_FIAT_CURRENCY", false, UserRole.USER_ACCESS),
@@ -138,21 +146,8 @@ public enum Command implements ICommand {
     TURN_DYNAMIC_REQUISITES("Динамические реквизиты", false, UserRole.OPERATOR_ACCESS),
     NONE_CALCULATOR("NONE_CALCULATOR", false, UserRole.USER_ACCESS),
     INLINE_QUERY_CALCULATOR("INLINE_QUERY_CALCULATOR", false, UserRole.USER_ACCESS),
-    INLINE_CALCULATOR("INLINE_CALCULATOR", false, UserRole.USER_ACCESS),
-
-
-
-
-    TURNING_DYNAMIC_REQUISITES("TURNING_DYNAMIC_REQUISITES", false, UserRole.OPERATOR_ACCESS),
-    SHOW_SPAM_BANNED_USER("Показать", false, UserRole.OPERATOR_ACCESS),
-    KEEP_SPAM_BAN("Оставить в бане", false, UserRole.OPERATOR_ACCESS),
-    SPAM_UNBAN("Разблокировать", false, UserRole.OPERATOR_ACCESS),
-    CONFIRM_API_DEAL("Подтвердить", false, UserRole.OPERATOR_ACCESS),
-    CANCEL_API_DEAL("Отклонить", false, UserRole.OPERATOR_ACCESS),
-    TURN_PROCESS_DELIVERY("TURN_PROCESS_DELIVERY", false, UserRole.ADMIN_ACCESS),
-    SUBMIT_LOGIN("Подтвердить вход", false, UserRole.USER_ACCESS),
-    SUBMIT_REGISTER("Подтвердить регистрацию", false, UserRole.USER_ACCESS),
-    LOGOUT("Закрыть сессию", false, UserRole.USER_ACCESS);
+    INLINE_CALCULATOR("INLINE_CALCULATOR", false, UserRole.USER_ACCESS)
+    ;
 
     public static final List<Command> NEW_HANDLE = List.of(
             START, HELP, CHAT_ID, MAKE_USER, MAKE_OBSERVER, MAKE_OPERATOR, MAKE_ADMIN, BACKUP_DB, DELETE_FROM_POOL, DELETE_USER, TURN_NOTIFICATIONS,
@@ -165,7 +160,9 @@ public enum Command implements ICommand {
             DELETE_USER_DEAL, DELETE_DEAL_AND_BLOCK_USER, CONFIRM_USER_DEAL, AUTO_WITHDRAWAL_DEAL, BITCOIN_POOL_WITHDRAWAL,
             CLEAR_POOL, CONFIRM_POOL_WITHDRAWAL, CONFIRM_CLEAR_POOL, ADD_TO_POOL, CONFIRM_AUTO_WITHDRAWAL_DEAL,
             ADDITIONAL_VERIFICATION, REVIEW_NAVIGATION, PUBLISH_REVIEW, DELETE_REVIEW, DELETING_PAYMENT_TYPE,
-            DELETING_PAYMENT_TYPE_REQUISITE, TURNING_PAYMENT_TYPES
+            DELETING_PAYMENT_TYPE_REQUISITE, TURNING_PAYMENT_TYPES, TURNING_DYNAMIC_REQUISITES, SHOW_SPAM_BANNED_USER,
+            KEEP_SPAM_BAN, SPAM_UNBAN, CONFIRM_API_DEAL, CANCEL_API_DEAL, TURN_PROCESS_DELIVERY, SUBMIT_LOGIN, SUBMIT_REGISTER,
+            LOGOUT, INLINE_DELETE, BAN_UNBAN
     );
 
     final String text;

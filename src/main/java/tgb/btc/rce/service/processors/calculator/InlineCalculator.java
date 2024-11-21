@@ -13,6 +13,7 @@ import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.InlineCalculatorButton;
 import tgb.btc.rce.enums.PropertiesMessage;
+import tgb.btc.rce.enums.update.CallbackQueryData;
 import tgb.btc.rce.service.IFunctionsService;
 import tgb.btc.rce.service.IKeyboardService;
 import tgb.btc.rce.service.IMessageService;
@@ -100,7 +101,7 @@ public class InlineCalculator extends Processor {
     @Override
     public void run(Update update) {
         Long chatId = updateService.getChatId(update);
-        if (callbackQueryService.isBack(update)) {
+        if (update.hasCallbackQuery() && callbackDataService.isCallbackQueryData(CallbackQueryData.BACK, update.getCallbackQuery().getData())) {
             modifyUserService.updateStepAndCommandByChatId(chatId, Command.DEAL.name(), DealProcessor.AFTER_CALCULATOR_STEP);
             dealProcessor.run(update);
             return;

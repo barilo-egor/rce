@@ -1,12 +1,12 @@
 package tgb.btc.rce.service.impl.util;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.service.properties.ButtonsDesignPropertiesReader;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.Command;
+import tgb.btc.rce.enums.update.CallbackQueryData;
 import tgb.btc.rce.enums.update.SlashCommand;
 import tgb.btc.rce.enums.update.TextCommand;
 import tgb.btc.rce.enums.update.UpdateType;
@@ -25,7 +25,7 @@ public class CommandService implements ICommandService {
     private final IUpdateService updateService;
 
     private final Set<Command> BUTTONS_DESIGN_COMMANDS = Set.of(
-            BACK, BUY_BITCOIN, SELL_BITCOIN, CABINET, CONTACTS, DRAWS, REFERRAL, LOTTERY, ROULETTE
+            BACK, BUY_BITCOIN, SELL_BITCOIN, CONTACTS, DRAWS, REFERRAL, LOTTERY, ROULETTE
     );
 
     private final Set<TextCommand> BUTTONS_DESIGN_TEXT_COMMANDS = Set.of(
@@ -49,12 +49,11 @@ public class CommandService implements ICommandService {
     @Override
     public boolean isSubmitCommand(Update update) {
         return update.hasCallbackQuery() &&
-                (update.getCallbackQuery().getData().startsWith(SUBMIT_LOGIN.name())
-                        || update.getCallbackQuery().getData().startsWith(SUBMIT_REGISTER.name()));
+                (update.getCallbackQuery().getData().startsWith(CallbackQueryData.SUBMIT_LOGIN.name())
+                        || update.getCallbackQuery().getData().startsWith(CallbackQueryData.SUBMIT_REGISTER.name()));
     }
 
     @Override
-    @Cacheable(value = "commandTextCache")
     public String getText(Command command) {
         if (BUTTONS_DESIGN_COMMANDS.contains(command)) {
             return buttonsDesignPropertiesReader.getString(command.name());
@@ -63,7 +62,6 @@ public class CommandService implements ICommandService {
     }
 
     @Override
-    @Cacheable(value = "textCommandTextCache")
     public String getText(TextCommand command) {
         if (BUTTONS_DESIGN_TEXT_COMMANDS.contains(command)) {
             return buttonsDesignPropertiesReader.getString(command.name());

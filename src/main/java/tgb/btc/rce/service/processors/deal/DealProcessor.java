@@ -21,6 +21,9 @@ import tgb.btc.library.service.bean.bot.BotMessageService;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.Menu;
+import tgb.btc.rce.enums.update.CallbackQueryData;
+import tgb.btc.rce.enums.update.SlashCommand;
+import tgb.btc.rce.enums.update.TextCommand;
 import tgb.btc.rce.service.ICalculatorTypeService;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.handler.util.IStartService;
@@ -29,9 +32,9 @@ import tgb.btc.rce.service.processors.support.ExchangeService;
 import tgb.btc.rce.service.util.IUpdateDispatcher;
 import tgb.btc.rce.vo.TelegramUpdateEvent;
 
-import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @CommandProcessor(command = Command.DEAL)
 @Slf4j
@@ -139,7 +142,7 @@ public class DealProcessor extends Processor {
     public void run(Update update) {
         Long chatId = updateService.getChatId(update);
         Integer userStep = readUserService.getStepByChatId(chatId);
-        boolean isBack = callbackQueryService.isBack(update);
+        boolean isBack = update.hasCallbackQuery() && callbackDataService.isCallbackQueryData(CallbackQueryData.BACK, update.getCallbackQuery().getData());
         if (!User.isDefault(userStep)) {
             if (isMainMenuCommand(update)) return;
             if (isBack) {
@@ -305,15 +308,17 @@ public class DealProcessor extends Processor {
 
     public boolean isMainMenuCommand(Update update) {
         if (!update.hasMessage() || !update.getMessage().hasText()) return false;
-        Long chatId = updateService.getChatId(update);
-        Command commandFromUpdate = commandService.fromUpdate(update);
-        Command mainMenuCommand = null;
-        Set<Command> commands = new HashSet<>(Menu.MAIN.getCommands());
-        commands.add(Command.START);
-        for (Command command : commands) {
-            if (command.equals(commandFromUpdate)) mainMenuCommand = command;
+        Long chatId = update.getMessage().getChatId();
+        boolean isMainMenu = false;
+        Set<String> commands = Menu.MAIN.getTextCommands().stream().map(TextCommand::getText).collect(Collectors.toSet());
+        commands.add(SlashCommand.START.getText());
+        for (String command : commands) {
+            if (command.equals(update.getMessage().getText())) {
+                isMainMenu = true;
+                break;
+            }
         }
-        if (Objects.isNull(mainMenuCommand)) return false;
+        if (!isMainMenu) return false;
         modifyUserService.setDefaultValues(chatId);
         Long currentDealPid = readUserService.getCurrentDealByChatId(chatId);
         if (Objects.nonNull(currentDealPid)) {

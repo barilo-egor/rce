@@ -9,7 +9,6 @@ import tgb.btc.library.exception.ApiResponseErrorException;
 import tgb.btc.library.interfaces.util.IBigDecimalService;
 import tgb.btc.library.interfaces.web.ICryptoWithdrawalService;
 import tgb.btc.library.vo.web.PoolDeal;
-import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.update.CallbackQueryData;
 import tgb.btc.rce.sender.IResponseSender;
 import tgb.btc.rce.service.handler.util.IBitcoinPoolService;
@@ -101,7 +100,10 @@ public class BitcoinPoolService implements IBitcoinPoolService {
                                 .text("Очистить пул")
                                 .data(callbackDataService.buildData(CallbackQueryData.CLEAR_POOL, deals.size()))
                                 .build(),
-                        InlineButton.builder().text(commandService.getText(Command.INLINE_DELETE)).data(Command.INLINE_DELETE.name()).build()
+                        InlineButton.builder()
+                                .text("❌ Закрыть")
+                                .data(CallbackQueryData.INLINE_DELETE.name())
+                                .build()
                 ), 2);
         responseSender.sendMessage(chatId, dealsInfo.toString(), replyKeyboard, "html");
     }

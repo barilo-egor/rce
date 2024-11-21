@@ -6,8 +6,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.Menu;
+import tgb.btc.rce.enums.update.TextCommand;
 import tgb.btc.rce.service.keyboard.IReplyButtonService;
 import tgb.btc.rce.service.util.IUpdateDispatcher;
 
@@ -48,11 +48,11 @@ class BotSettingsMenuTest {
     void buildWithBotOn() {
         when(updateDispatcher.isOn()).thenReturn(true);
 
-        List<Command> expectedCommands = new ArrayList<>(Menu.BOT_SETTINGS.getCommands());
-        expectedCommands.removeIf(Command.ON_BOT::equals);
+        List<TextCommand> expectedCommands = new ArrayList<>(Menu.BOT_SETTINGS.getTextCommands());
+        expectedCommands.removeIf(TextCommand.ON_BOT::equals);
 
         botSettingsMenu.build(null);
-        verify(replyButtonService).fromCommands(expectedCommands);
+        verify(replyButtonService).fromTextCommands(expectedCommands);
     }
 
     @Test
@@ -60,10 +60,10 @@ class BotSettingsMenuTest {
     void buildWithBotOff() {
         when(updateDispatcher.isOn()).thenReturn(false);
 
-        List<Command> expectedCommands = new ArrayList<>(Menu.BOT_SETTINGS.getCommands());
-        expectedCommands.removeIf(Command.OFF_BOT::equals);
+        List<TextCommand> expectedCommands = new ArrayList<>(Menu.BOT_SETTINGS.getTextCommands());
+        expectedCommands.removeIf(TextCommand.OFF_BOT::equals);
 
         botSettingsMenu.build(null);
-        verify(replyButtonService).fromCommands(expectedCommands);
+        verify(replyButtonService).fromTextCommands(expectedCommands);
     }
 }

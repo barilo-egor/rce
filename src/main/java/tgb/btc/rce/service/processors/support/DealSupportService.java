@@ -26,8 +26,6 @@ import tgb.btc.library.service.bean.bot.deal.read.DealPropertyService;
 import tgb.btc.rce.enums.update.CallbackQueryData;
 import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
 import tgb.btc.rce.service.util.ICallbackDataService;
-import tgb.btc.rce.service.util.ICallbackQueryService;
-import tgb.btc.rce.service.util.ICommandService;
 import tgb.btc.rce.vo.InlineButton;
 
 import java.math.RoundingMode;
@@ -52,13 +50,9 @@ public class DealSupportService {
 
     private IKeyboardBuildService keyboardBuildService;
 
-    private ICallbackQueryService callbackQueryService;
-
     private IDeliveryTypeService deliveryTypeService;
 
     private IBigDecimalService bigDecimalService;
-
-    private ICommandService commandService;
 
     private ISecurePaymentDetailsService securePaymentDetailsService;
 
@@ -89,11 +83,6 @@ public class DealSupportService {
     }
 
     @Autowired
-    public void setCommandService(ICommandService commandService) {
-        this.commandService = commandService;
-    }
-
-    @Autowired
     public void setBigDecimalService(IBigDecimalService bigDecimalService) {
         this.bigDecimalService = bigDecimalService;
     }
@@ -101,11 +90,6 @@ public class DealSupportService {
     @Autowired
     public void setDeliveryTypeService(IDeliveryTypeService deliveryTypeService) {
         this.deliveryTypeService = deliveryTypeService;
-    }
-
-    @Autowired
-    public void setCallbackQueryService(ICallbackQueryService callbackQueryService) {
-        this.callbackQueryService = callbackQueryService;
     }
 
     @Autowired

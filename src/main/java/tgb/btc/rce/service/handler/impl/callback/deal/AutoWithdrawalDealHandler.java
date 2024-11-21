@@ -7,7 +7,6 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import tgb.btc.library.bean.bot.Deal;
 import tgb.btc.library.interfaces.service.bean.bot.deal.IReadDealService;
 import tgb.btc.library.interfaces.web.ICryptoWithdrawalService;
-import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.update.CallbackQueryData;
 import tgb.btc.rce.sender.IResponseSender;
 import tgb.btc.rce.service.handler.callback.ICallbackQueryHandler;
@@ -61,7 +60,7 @@ public class AutoWithdrawalDealHandler implements ICallbackQueryHandler {
                                 dealPid,
                                 callbackQuery.getMessage().getMessageId()
                         )).build(),
-                InlineButton.builder().text("Отмена").data(Command.INLINE_DELETE.name()).build());
+                InlineButton.builder().text("Отмена").data(CallbackQueryData.INLINE_DELETE.name()).build());
     }
 
     @Override
