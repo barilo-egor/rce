@@ -12,10 +12,13 @@ import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.Menu;
 import tgb.btc.rce.enums.UserState;
+import tgb.btc.rce.sender.ResponseSender;
 import tgb.btc.rce.service.IRedisUserStateService;
 import tgb.btc.rce.service.IUpdateService;
-import tgb.btc.rce.sender.ResponseSender;
+import tgb.btc.rce.service.handler.util.IStartService;
 import tgb.btc.rce.service.util.IMenuService;
+
+import java.util.Objects;
 
 
 @Service
@@ -32,6 +35,13 @@ public class MessagesService {
     private IUpdateService updateService;
 
     private IRedisUserStateService redisUserStateService;
+
+    private IStartService startService;
+
+    @Autowired
+    public void setStartService(IStartService startService) {
+        this.startService = startService;
+    }
 
     @Autowired
     public void setRedisUserStateService(IRedisUserStateService redisUserStateService) {
@@ -127,5 +137,13 @@ public class MessagesService {
                     }
                 });
         responseSender.sendMessage(chatId, "Рассылка успешно завершена.");
+    }
+
+    public void sendNoHandler(Long chatId) {
+        if (Objects.isNull(chatId)) {
+            return;
+        }
+        responseSender.sendMessage(chatId, "Что-то пошло не так. Я верну тебя в главное меню, попробуй ещё раз, пожалуйста.");
+        startService.processToMainMenu(chatId);
     }
 }

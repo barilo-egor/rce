@@ -34,19 +34,21 @@ public class TextCommandHandler implements ITextMessageHandler {
     }
 
     @Override
-    public void handle(Message message) {
+    public boolean handle(Message message) {
         TextCommand textCommand = textCommandService.fromText(message.getText());
         if (Objects.isNull(textCommand)) {
-            return;
+            return false;
         }
         UserRole userRole = readUserService.getUserRoleByChatId(message.getFrom().getId());
         if (!textCommand.hasAccess(userRole)) {
-            return;
+            return false;
         }
         ITextCommandHandler handler = textCommandHandlerMap.get(textCommand);
         if (Objects.nonNull(handler)) {
             handler.handle(message);
+            return true;
         }
+        return false;
     }
 
     @Override

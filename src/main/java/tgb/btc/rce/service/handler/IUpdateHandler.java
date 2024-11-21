@@ -12,7 +12,7 @@ public interface IUpdateHandler {
      * Обработка апдейта
      * @param update апдейт, который следует обработать
      */
-    void handle(Update update);
+    boolean handle(Update update);
 
     /**
      * Тип обрабатываемых апдейтов

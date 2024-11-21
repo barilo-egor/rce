@@ -28,12 +28,13 @@ public class CallbackQueryUpdateHandler implements IUpdateHandler {
     }
 
     @Override
-    public void handle(Update update) {
+    public boolean handle(Update update) {
         CallbackQueryData callbackQueryData = callbackDataService.fromData(update.getCallbackQuery().getData());
-        if (Objects.isNull(callbackQueryData)) return;
+        if (Objects.isNull(callbackQueryData)) return false;
         ICallbackQueryHandler callbackQueryHandler = callbackQueryHandlerMap.get(callbackQueryData);
-        if (Objects.isNull(callbackQueryHandler)) return;
+        if (Objects.isNull(callbackQueryHandler)) return false;
         callbackQueryHandler.handle(update.getCallbackQuery());
+        return true;
     }
 
 

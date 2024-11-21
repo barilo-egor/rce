@@ -24,13 +24,14 @@ public class MessageUpdateHandler implements IUpdateHandler {
     }
 
     @Override
-    public void handle(Update update) {
+    public boolean handle(Update update) {
         Message message = update.getMessage();
         MessageType messageType = MessageType.fromMessage(message);
         IMessageHandler messageHandler = messageHandlerMap.get(messageType);
         if (Objects.nonNull(messageHandler)) {
-            messageHandler.handleMessage(message);
+            return messageHandler.handleMessage(message);
         }
+        return false;
     }
 
     @Override

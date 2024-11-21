@@ -9,6 +9,7 @@ import tgb.btc.rce.enums.update.UpdateType;
 import tgb.btc.rce.service.IRedisUserStateService;
 import tgb.btc.rce.service.handler.IStateHandler;
 import tgb.btc.rce.service.handler.IUpdateHandler;
+import tgb.btc.rce.service.processors.support.MessagesService;
 import tgb.btc.rce.vo.TelegramUpdateEvent;
 
 import java.util.HashMap;
@@ -26,9 +27,12 @@ public class TelegramUpdateEventListener {
 
     private final Map<UserState, IStateHandler> stateHandlerMap;
 
+    private final MessagesService messagesService;
+
     public TelegramUpdateEventListener(IRedisUserStateService redisUserStateService, List<IUpdateHandler> updateHandlers,
-                                       List<IStateHandler> stateHandlers) {
+                                       List<IStateHandler> stateHandlers, MessagesService messagesService) {
         this.redisUserStateService = redisUserStateService;
+        this.messagesService = messagesService;
         log.debug("Загрузка обработчиков апдейтов.");
         this.updateHandlers = new HashMap<>(updateHandlers.size());
         for (IUpdateHandler updateHandler : updateHandlers) {
@@ -63,8 +67,12 @@ public class TelegramUpdateEventListener {
             }
         }
         IUpdateHandler updateHandler = updateHandlers.get(updateType);
+        boolean isHandled = false;
         if (updateHandler != null) {
-            updateHandler.handle(update);
+            isHandled = updateHandler.handle(update);
+        }
+        if (!isHandled) {
+            messagesService.sendNoHandler(UpdateType.getChatId(update));
         }
     }
 }
