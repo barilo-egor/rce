@@ -2,25 +2,28 @@ package tgb.btc.rce.service.handler.impl.message.text.state;
 
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Message;
+import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.bean.bot.WithdrawalRequest;
 import tgb.btc.library.constants.enums.bot.UserRole;
 import tgb.btc.library.constants.enums.bot.WithdrawalRequestStatus;
 import tgb.btc.library.interfaces.service.bean.bot.IWithdrawalRequestService;
 import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
-import tgb.btc.rce.enums.BotReplyButton;
 import tgb.btc.rce.enums.PropertiesMessage;
 import tgb.btc.rce.enums.UserState;
 import tgb.btc.rce.enums.update.CallbackQueryData;
+import tgb.btc.rce.enums.update.TextCommand;
+import tgb.btc.rce.enums.update.UpdateType;
 import tgb.btc.rce.sender.IResponseSender;
 import tgb.btc.rce.service.INotifyService;
-import tgb.btc.rce.service.IRedisUserStateService;
-import tgb.btc.rce.service.handler.message.text.IStateTextMessageHandler;
+import tgb.btc.rce.service.handler.IStateHandler;
 import tgb.btc.rce.service.handler.util.IStartService;
 import tgb.btc.rce.service.util.ICallbackDataService;
 import tgb.btc.rce.service.util.IMessagePropertiesService;
 
 @Service
-public class WithdrawalOfFundsStateHandler implements IStateTextMessageHandler {
+public class WithdrawalOfFundsStateHandler implements IStateHandler {
+
+    private final static String ERROR_MESSAGE = "Нажми \"Поделиться контактом\" чтобы отправить нам контакт, либо \"Отмена\".";
 
     private final IStartService startService;
 
@@ -36,14 +39,11 @@ public class WithdrawalOfFundsStateHandler implements IStateTextMessageHandler {
 
     private final IMessagePropertiesService messagePropertiesService;
 
-    private final IRedisUserStateService redisUserStateService;
-
     public WithdrawalOfFundsStateHandler(IStartService startService, IResponseSender responseSender,
                                          IWithdrawalRequestService withdrawalRequestService,
                                          IReadUserService readUserService, INotifyService notifyService,
                                          ICallbackDataService callbackDataService,
-                                         IMessagePropertiesService messagePropertiesService,
-                                         IRedisUserStateService redisUserStateService) {
+                                         IMessagePropertiesService messagePropertiesService) {
         this.startService = startService;
         this.responseSender = responseSender;
         this.withdrawalRequestService = withdrawalRequestService;
@@ -51,20 +51,24 @@ public class WithdrawalOfFundsStateHandler implements IStateTextMessageHandler {
         this.notifyService = notifyService;
         this.callbackDataService = callbackDataService;
         this.messagePropertiesService = messagePropertiesService;
-        this.redisUserStateService = redisUserStateService;
     }
 
     @Override
-    public void handle(Message message) {
-        Long chatId = message.getChatId();
-        if (!message.hasContact()) {
-            if (message.hasText() && message.getText().equals(BotReplyButton.CANCEL.getText())) {
-                startService.processToMainMenu(chatId);
-                return;
-            }
-            responseSender.sendMessage(chatId, "Поделитесь контактом, либо нажмите \"" + BotReplyButton.CANCEL.getText() + "\".");
+    public void handle(Update update) {
+        if (!update.hasMessage()) {
+            sendErrorMessage(UpdateType.getChatId(update));
             return;
         }
+        Message message = update.getMessage();
+        if (message.hasText() && message.getText().equals(TextCommand.CANCEL.getText())) {
+            startService.processToMainMenu(message.getChatId());
+            return;
+        }
+        if (!message.hasContact()) {
+            sendErrorMessage(UpdateType.getChatId(update));
+            return;
+        }
+        Long chatId = message.getChatId();
         WithdrawalRequest request = new WithdrawalRequest();
         request.setUser(readUserService.findByChatId(message.getChatId()));
         request.setStatus(WithdrawalRequestStatus.CREATED);
@@ -77,6 +81,10 @@ public class WithdrawalOfFundsStateHandler implements IStateTextMessageHandler {
         responseSender.sendMessage(chatId,
                 messagePropertiesService.getMessage(PropertiesMessage.USER_RESPONSE_WITHDRAWAL_REQUEST_CREATED));
         startService.processToMainMenu(chatId);
+    }
+
+    private void sendErrorMessage(Long chatId) {
+        responseSender.sendMessage(chatId, ERROR_MESSAGE);
     }
 
     @Override
