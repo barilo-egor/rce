@@ -11,6 +11,8 @@ import tgb.btc.library.interfaces.service.bean.bot.user.IModifyUserService;
 import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.Menu;
+import tgb.btc.rce.enums.UserState;
+import tgb.btc.rce.service.IRedisUserStateService;
 import tgb.btc.rce.service.IUpdateService;
 import tgb.btc.rce.sender.ResponseSender;
 import tgb.btc.rce.service.util.IMenuService;
@@ -28,6 +30,13 @@ public class MessagesService {
     private IMenuService menuService;
     
     private IUpdateService updateService;
+
+    private IRedisUserStateService redisUserStateService;
+
+    @Autowired
+    public void setRedisUserStateService(IRedisUserStateService redisUserStateService) {
+        this.redisUserStateService = redisUserStateService;
+    }
 
     @Autowired
     public void setUpdateService(IUpdateService updateService) {
@@ -57,6 +66,12 @@ public class MessagesService {
     public void askForChatId(Update update, Command command) {
         Long chatId = updateService.getChatId(update);
         modifyUserService.nextStep(chatId, command.name());
+        responseSender.sendMessage(chatId, "Введите ID пользователя.",
+                menuService.build(Menu.ADMIN_BACK, readUserService.getUserRoleByChatId(chatId)));
+    }
+
+    public void askForChatId(Long chatId, UserState userState) {
+        redisUserStateService.save(chatId, userState);
         responseSender.sendMessage(chatId, "Введите ID пользователя.",
                 menuService.build(Menu.ADMIN_BACK, readUserService.getUserRoleByChatId(chatId)));
     }

@@ -44,6 +44,11 @@ public abstract class Processor {
     protected ICommandService commandService;
 
     @Autowired
+    public void setCallbackDataService(ICallbackDataService callbackDataService) {
+        this.callbackDataService = callbackDataService;
+    }
+
+    @Autowired
     public void setCommandService(ICommandService commandService) {
         this.commandService = commandService;
     }
