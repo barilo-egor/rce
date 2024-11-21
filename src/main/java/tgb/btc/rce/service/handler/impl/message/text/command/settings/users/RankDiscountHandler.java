@@ -10,19 +10,19 @@ import tgb.btc.rce.service.IRedisUserStateService;
 import tgb.btc.rce.service.handler.message.text.ITextCommandHandler;
 
 @Service
-public class BanUnbanHandler implements ITextCommandHandler {
+public class RankDiscountHandler implements ITextCommandHandler {
 
     private final IResponseSender responseSender;
 
-    private final IKeyboardService keyboardService;
-
     private final IRedisUserStateService redisUserStateService;
 
-    public BanUnbanHandler(IResponseSender responseSender, IKeyboardService keyboardService,
-                           IRedisUserStateService redisUserStateService) {
+    private final IKeyboardService keyboardService;
+
+    public RankDiscountHandler(IResponseSender responseSender, IRedisUserStateService redisUserStateService,
+                               IKeyboardService keyboardService) {
         this.responseSender = responseSender;
-        this.keyboardService = keyboardService;
         this.redisUserStateService = redisUserStateService;
+        this.keyboardService = keyboardService;
     }
 
     @Override
@@ -30,14 +30,14 @@ public class BanUnbanHandler implements ITextCommandHandler {
         Long chatId = message.getChatId();
         responseSender.sendMessage(
                 chatId,
-                "Введите chat id для блокировки/разблокировки пользователя.",
+                "Введите chat id пользователя для включения/выключения реферальной скидки",
                 keyboardService.getReplyCancel()
         );
-        redisUserStateService.save(chatId, UserState.BAN_UNBAN);
+        redisUserStateService.save(chatId, UserState.RANK_DISCOUNT);
     }
 
     @Override
     public TextCommand getTextCommand() {
-        return TextCommand.BAN_UNBAN;
+        return TextCommand.RANK_DISCOUNT;
     }
 }
