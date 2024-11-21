@@ -1,7 +1,5 @@
 package tgb.btc.rce.bot;
 
-import jakarta.annotation.PostConstruct;
-import jakarta.annotation.PreDestroy;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,9 +7,7 @@ import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import tgb.btc.library.constants.enums.bot.UserRole;
 import tgb.btc.rce.service.IGroupUpdateDispatcher;
-import tgb.btc.rce.service.INotifyService;
 import tgb.btc.rce.service.IUpdateService;
 import tgb.btc.rce.service.util.ITelegramPropertiesService;
 import tgb.btc.rce.service.util.IUpdateDispatcher;
@@ -27,13 +23,6 @@ public class RceBot extends TelegramLongPollingBot {
     private ITelegramPropertiesService telegramPropertiesService;
 
     private IUpdateService updateService;
-
-    private INotifyService notifyService;
-
-    @Autowired
-    public void setNotifyService(INotifyService notifyService) {
-        this.notifyService = notifyService;
-    }
 
     @Autowired
     public void setUpdateService(IUpdateService updateService) {
@@ -91,16 +80,6 @@ public class RceBot extends TelegramLongPollingBot {
             } catch (Exception ignored) {
             }
         }
-    }
-
-    @PostConstruct
-    public void init() {
-        notifyService.notifyMessage("\uD83D\uDFE2 Запуск бота.", UserRole.OPERATOR_ACCESS);
-    }
-
-    @PreDestroy
-    public void destroy() {
-        notifyService.notifyMessage("⚠️ Рестарт бота.", UserRole.OPERATOR_ACCESS);
     }
 
 }
