@@ -308,18 +308,17 @@ public class DealProcessor extends Processor {
 
     public boolean isMainMenuCommand(Update update) {
         if (!update.hasMessage() || !update.getMessage().hasText()) return false;
-        Long chatId = updateService.getChatId(update);
-        Command commandFromUpdate = commandService.fromUpdate(update);
+        Long chatId = update.getMessage().getChatId();
         boolean isMainMenu = false;
         Set<String> commands = Menu.MAIN.getTextCommands().stream().map(TextCommand::getText).collect(Collectors.toSet());
         commands.add(SlashCommand.START.getText());
         for (String command : commands) {
-            if (command.equals(commandFromUpdate.getText())) {
+            if (command.equals(update.getMessage().getText())) {
                 isMainMenu = true;
                 break;
             }
         }
-        if (isMainMenu) return false;
+        if (!isMainMenu) return false;
         modifyUserService.setDefaultValues(chatId);
         Long currentDealPid = readUserService.getCurrentDealByChatId(chatId);
         if (Objects.nonNull(currentDealPid)) {

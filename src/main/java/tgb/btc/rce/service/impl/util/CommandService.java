@@ -1,7 +1,6 @@
 package tgb.btc.rce.service.impl.util;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.service.properties.ButtonsDesignPropertiesReader;
@@ -55,7 +54,6 @@ public class CommandService implements ICommandService {
     }
 
     @Override
-    @Cacheable(value = "commandTextCache")
     public String getText(Command command) {
         if (BUTTONS_DESIGN_COMMANDS.contains(command)) {
             return buttonsDesignPropertiesReader.getString(command.name());
@@ -64,7 +62,6 @@ public class CommandService implements ICommandService {
     }
 
     @Override
-    @Cacheable(value = "textCommandTextCache")
     public String getText(TextCommand command) {
         if (BUTTONS_DESIGN_TEXT_COMMANDS.contains(command)) {
             return buttonsDesignPropertiesReader.getString(command.name());
