@@ -10,6 +10,8 @@ public interface INotifyService {
 
     void notifyMessage(String message, Set<UserRole> roles);
 
+    void notifyMessage(String message, Set<UserRole> roles, boolean withExclude);
+
     void notifyMessage(String message, Set<UserRole> roles, List<Long> excludeChatIds);
 
     void notifyMessageAndPhoto(String message, String imageId, Set<UserRole> roles);
