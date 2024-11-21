@@ -34,7 +34,7 @@ public class TelegramUpdateEventListener {
     }
 
     /**
-     * Перенаправляет апдейт на нужный обработчик.
+     * Перенаправляет апдейт нужному обработчику.
      * @param event ивент, содержащий новый апдейт
      */
     @EventListener

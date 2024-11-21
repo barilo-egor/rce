@@ -1,7 +1,11 @@
 package tgb.btc.rce.enums;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import tgb.btc.rce.vo.ReplyButton;
 
+@AllArgsConstructor
+@Getter
 public enum BotReplyButton {
     CANCEL(ReplyButton.builder()
             .text("Отмена")
@@ -9,11 +13,7 @@ public enum BotReplyButton {
 
     private final ReplyButton button;
 
-    BotReplyButton(ReplyButton button) {
-        this.button = button;
-    }
-
-    public ReplyButton getButton() {
-        return button;
+    public String getText() {
+        return button.getText();
     }
 }

@@ -7,9 +7,9 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.library.service.process.BannedUserCache;
 import tgb.btc.library.service.process.BanningUserService;
+import tgb.btc.rce.enums.BotReplyButton;
 import tgb.btc.rce.enums.Menu;
 import tgb.btc.rce.enums.UserState;
-import tgb.btc.rce.enums.update.TextCommand;
 import tgb.btc.rce.sender.IResponseSender;
 import tgb.btc.rce.service.IRedisUserStateService;
 import tgb.btc.rce.service.handler.message.text.IStateTextMessageHandler;
@@ -50,7 +50,7 @@ public class BanUnbanStateHandler implements IStateTextMessageHandler {
     @Override
     public void handle(Message message) {
         Long chatId = message.getChatId();
-        if (message.getText().equals(TextCommand.ADMIN_BACK.getText())) {
+        if (message.getText().equals(BotReplyButton.CANCEL.getText())) {
             redisUserStateService.delete(chatId);
         } else {
             Long inputChatId = Long.parseLong(message.getText());
