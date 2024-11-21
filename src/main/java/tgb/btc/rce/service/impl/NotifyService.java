@@ -33,7 +33,7 @@ public class NotifyService implements INotifyService {
 
     @Override
     public void notifyMessage(String message, Set<UserRole> roles) {
-        notifyMessage(message, roles, false);
+        notifyMessage(message, roles, true);
     }
 
     @Override

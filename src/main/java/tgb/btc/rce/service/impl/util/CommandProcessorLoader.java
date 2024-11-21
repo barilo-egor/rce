@@ -14,6 +14,7 @@ import tgb.btc.rce.service.util.ICommandProcessorLoader;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 @Service
 @Slf4j
@@ -50,6 +51,9 @@ public final class CommandProcessorLoader implements ICommandProcessorLoader {
                 return processorMap.get(Command.START).get(0);
             }
             Map<Integer, Processor> stepProcessors = processorMap.get(command);
+            if (Objects.isNull(stepProcessors)) {
+                return null;
+            }
             if (stepProcessors.size() > 1)
                 return processorMap.get(command).get(step);
             return stepProcessors.values().iterator().next();

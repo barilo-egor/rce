@@ -15,6 +15,7 @@ import tgb.btc.library.service.process.BannedUserCache;
 import tgb.btc.library.service.properties.ConfigPropertiesReader;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.service.IUpdateService;
+import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.captcha.IAntiSpam;
 import tgb.btc.rce.service.process.IUserProcessService;
 import tgb.btc.rce.service.util.ICommandProcessorLoader;
@@ -118,7 +119,12 @@ public class UpdateDispatcher implements IUpdateDispatcher {
     }
 
     public void runProcessor(Command command, Long chatId, Update update) {
-        commandProcessorLoader.getByCommand(command, readUserService.getStepByChatId(chatId)).process(update);
+        Processor processor = commandProcessorLoader.getByCommand(command, readUserService.getStepByChatId(chatId));
+        if (Objects.nonNull(processor)) {
+            processor.process(update);
+            return;
+        }
+        eventPublisher.publishEvent(new TelegramUpdateEvent(this, update));
     }
 
     private Command getCommand(Update update, Long chatId) {
