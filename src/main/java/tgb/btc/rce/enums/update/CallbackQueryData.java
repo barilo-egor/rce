@@ -40,7 +40,7 @@ public enum CallbackQueryData {
     SUBMIT_REGISTER,
     LOGOUT,
     INLINE_DELETE,
-
+    WITHDRAWAL_OF_FUNDS,
 
     CHOOSING_FIAT_CURRENCY,
     INLINE_CALCULATOR,

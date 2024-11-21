@@ -1,4 +1,4 @@
-package tgb.btc.rce.service.handler.impl.message.text.command.settings.users;
+package tgb.btc.rce.service.handler.impl.message.text.command.settings;
 
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Message;
@@ -10,7 +10,7 @@ import tgb.btc.rce.service.IRedisUserStateService;
 import tgb.btc.rce.service.handler.message.text.ITextCommandHandler;
 
 @Service
-public class BanUnbanHandler implements ITextCommandHandler {
+public class DealsCountHandler implements ITextCommandHandler {
 
     private final IResponseSender responseSender;
 
@@ -18,8 +18,8 @@ public class BanUnbanHandler implements ITextCommandHandler {
 
     private final IRedisUserStateService redisUserStateService;
 
-    public BanUnbanHandler(IResponseSender responseSender, IKeyboardService keyboardService,
-                           IRedisUserStateService redisUserStateService) {
+    public DealsCountHandler(IResponseSender responseSender, IKeyboardService keyboardService,
+                             IRedisUserStateService redisUserStateService) {
         this.responseSender = responseSender;
         this.keyboardService = keyboardService;
         this.redisUserStateService = redisUserStateService;
@@ -30,14 +30,14 @@ public class BanUnbanHandler implements ITextCommandHandler {
         Long chatId = message.getChatId();
         responseSender.sendMessage(
                 chatId,
-                "Введите chat id для блокировки/разблокировки пользователя.",
+                "Введите новое значение для количества возможных активных сделок.",
                 keyboardService.getReplyCancel()
         );
-        redisUserStateService.save(chatId, UserState.BAN_UNBAN);
+        redisUserStateService.save(chatId, UserState.DEALS_COUNT);
     }
 
     @Override
     public TextCommand getTextCommand() {
-        return TextCommand.BAN_UNBAN;
+        return TextCommand.DEALS_COUNT;
     }
 }

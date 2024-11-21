@@ -47,27 +47,29 @@ public class TextMessageHandler implements IMessageHandler {
     }
 
     @Override
-    public void handleMessage(Message message) {
+    public boolean handleMessage(Message message) {
         String text = message.getText();
         if (SlashCommand.START.getText().equals(text)) {
             startService.process(message.getChatId());
-            return;
+            return true;
         }
         UserState userState = redisUserStateService.get(message.getChatId());
         if (Objects.nonNull(userState)) {
             IStateTextMessageHandler stateTextMessageHandler = stateIStateTextMessageHandlerMap.get(userState);
             if (Objects.nonNull(stateTextMessageHandler)) {
                 stateTextMessageHandler.handle(message);
+                return true;
             }
-            return;
+            return false;
         }
         TextMessageType textMessageType = textMessageTypeService.fromText(text);
         if (Objects.nonNull(textMessageType)) {
             ITextMessageHandler textMessageHandler = textMessageHandlersMap.get(textMessageType);
             if (textMessageHandler != null) {
-                textMessageHandler.handle(message);
+                return textMessageHandler.handle(message);
             }
         }
+        return false;
     }
 
     @Override

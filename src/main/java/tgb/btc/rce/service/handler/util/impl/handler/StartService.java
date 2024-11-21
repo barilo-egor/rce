@@ -74,4 +74,20 @@ public class StartService implements IStartService {
                 messagePropertiesService.getMessage(PropertiesMessage.MENU_MAIN),
                 menuService.build(Menu.MAIN, readUserService.getUserRoleByChatId(chatId)), "HTML");
     }
+
+    @Override
+    public void processToMainMenu(Long chatId) {
+        Long currentDealPid = readUserService.getCurrentDealByChatId(chatId);
+        if (Objects.nonNull(currentDealPid)) {
+            if (readDealService.existsById(currentDealPid)) {
+                modifyDealService.deleteById(currentDealPid);
+            }
+            modifyUserService.updateCurrentDealByChatId(null, chatId);
+        }
+        redisUserStateService.delete(chatId);
+        modifyUserService.setDefaultValues(chatId);
+        responseSender.sendMessage(chatId,
+                messagePropertiesService.getMessage(PropertiesMessage.MENU_MAIN),
+                menuService.build(Menu.MAIN, readUserService.getUserRoleByChatId(chatId)), "HTML");
+    }
 }

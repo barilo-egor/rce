@@ -5,7 +5,7 @@ import tgb.btc.rce.enums.update.TextMessageType;
 
 public interface ITextMessageHandler {
 
-    void handle(Message message);
+    boolean handle(Message message);
 
     TextMessageType getTextMessageType();
 }

@@ -5,7 +5,7 @@ import tgb.btc.rce.enums.update.MessageType;
 
 public interface IMessageHandler {
 
-    void handleMessage(Message message);
+    boolean handleMessage(Message message);
 
     MessageType getMessageType();
 }

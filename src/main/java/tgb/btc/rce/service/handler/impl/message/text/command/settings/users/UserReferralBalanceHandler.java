@@ -28,7 +28,11 @@ public class UserReferralBalanceHandler implements ITextCommandHandler {
     @Override
     public void handle(Message message) {
         Long chatId  = message.getChatId();
-        responseSender.sendMessage(chatId, "Введите чат айди пользователя.", keyboardService.getReplyCancel());
+        responseSender.sendMessage(
+                chatId,
+                "Введите chat id для получения/изменения реферального баланса пользователя.",
+                keyboardService.getReplyCancel()
+        );
         redisUserStateService.save(chatId, UserState.USER_REFERRAL_BALANCE);
     }
 

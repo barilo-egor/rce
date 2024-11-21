@@ -31,14 +31,16 @@ public class SlashCommandHandler implements ITextMessageHandler {
         }
     }
 
-    public void handle(Message message) {
+    public boolean handle(Message message) {
         SlashCommand slashCommand = slashCommandService.fromMessageText(message.getText());
         if (Objects.nonNull(slashCommand) && slashCommand.hasAccess(readUserService.getUserRoleByChatId(message.getChatId()))) {
             ISlashCommandHandler slashCommandHandler = handlers.get(slashCommand);
             if (Objects.nonNull(slashCommandHandler)) {
                 slashCommandHandler.handle(message);
+                return true;
             }
         }
+        return false;
     }
 
     @Override

@@ -2,6 +2,8 @@ package tgb.btc.rce.enums.update;
 
 import org.telegram.telegrambots.meta.api.objects.Update;
 
+import java.util.Set;
+
 /**
  * Типы апдейтов телеграма
  */
@@ -91,6 +93,8 @@ public enum UpdateType {
      */
     CHAT_JOIN_REQUEST;
 
+    public static final Set<UpdateType> STATE_UPDATE_TYPES = Set.of(MESSAGE, CALLBACK_QUERY, INLINE_QUERY);
+
     /**
      * Получение типа апдейта
      * @param update апдейт
@@ -111,5 +115,28 @@ public enum UpdateType {
         if (update.hasChatMember()) return CHAT_MEMBER;
         if (update.hasChatJoinRequest()) return CHAT_JOIN_REQUEST;
         throw new RuntimeException("Неизвестный тип у update.");
+    }
+
+    /**
+     * Получение chat id
+     * @param update апдейт
+     * @return chatId
+     */
+    public static Long getChatId(Update update) {
+        if (update.hasMessage()) return update.getMessage().getChatId();
+        if (update.hasInlineQuery()) return update.getInlineQuery().getFrom().getId();
+        if (update.hasCallbackQuery()) return update.getCallbackQuery().getFrom().getId();
+        if (update.hasEditedMessage()) return update.getEditedMessage().getChatId();
+        if (update.hasChannelPost()) return update.getChannelPost().getChatId();
+        if (update.hasEditedChannelPost()) return update.getEditedChannelPost().getChatId();
+        if (update.hasShippingQuery()) return update.getShippingQuery().getFrom().getId();
+        if (update.hasPreCheckoutQuery()) return update.getPreCheckoutQuery().getFrom().getId();
+        if (update.hasPoll() || update.hasPollAnswer()) {
+            return null;
+        }
+        if (update.hasMyChatMember()) return update.getMyChatMember().getChat().getId();
+        if (update.hasChatMember()) return update.getChatMember().getChat().getId();
+        if (update.hasChatJoinRequest()) return update.getChatJoinRequest().getChat().getId();
+        return null;
     }
 }

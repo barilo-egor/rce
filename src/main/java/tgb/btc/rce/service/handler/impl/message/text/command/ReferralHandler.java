@@ -8,10 +8,10 @@ import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.library.interfaces.util.IBigDecimalService;
 import tgb.btc.library.service.properties.BotPropertiesReader;
 import tgb.btc.library.service.properties.VariablePropertiesReader;
-import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.InlineType;
 import tgb.btc.rce.enums.MessageImage;
 import tgb.btc.rce.enums.Rank;
+import tgb.btc.rce.enums.update.CallbackQueryData;
 import tgb.btc.rce.enums.update.TextCommand;
 import tgb.btc.rce.sender.IMessageImageResponseSender;
 import tgb.btc.rce.service.IMessageImageService;
@@ -107,8 +107,8 @@ public class ReferralHandler implements ITextCommandHandler {
                         .inlineType(InlineType.SWITCH_INLINE_QUERY)
                         .build(),
                 InlineButton.builder()
-                        .text(commandService.getText(Command.WITHDRAWAL_OF_FUNDS))
-                        .data(Command.WITHDRAWAL_OF_FUNDS.name())
+                        .text("Вывод средств")
+                        .data(CallbackQueryData.WITHDRAWAL_OF_FUNDS.name())
                         .inlineType(InlineType.CALLBACK_DATA)
                         .build());
     }
