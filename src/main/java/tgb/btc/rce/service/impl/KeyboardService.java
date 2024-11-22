@@ -1,6 +1,7 @@
 package tgb.btc.rce.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
@@ -29,10 +30,14 @@ import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.InlineType;
 import tgb.btc.rce.enums.update.CallbackQueryData;
 import tgb.btc.rce.service.IKeyboardService;
+import tgb.btc.rce.service.handler.impl.callback.settings.DealReportsCallbackHandler;
 import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
 import tgb.btc.rce.service.processors.calculator.InlineCalculator;
 import tgb.btc.rce.service.processors.support.ExchangeService;
-import tgb.btc.rce.service.util.*;
+import tgb.btc.rce.service.util.ICallbackDataService;
+import tgb.btc.rce.service.util.ICommandService;
+import tgb.btc.rce.service.util.ICryptoCurrenciesDesignService;
+import tgb.btc.rce.service.util.ITurningCurrenciesService;
 import tgb.btc.rce.vo.InlineButton;
 import tgb.btc.rce.vo.InlineCalculatorVO;
 import tgb.btc.rce.vo.ReplyButton;
@@ -49,7 +54,7 @@ public class KeyboardService implements IKeyboardService {
     private IPaymentTypeService paymentTypeService;
 
     private IKeyboardBuildService keyboardBuildService;
-    
+
     private ICryptoCurrenciesDesignService cryptoCurrenciesDesignService;
 
     private ButtonsDesignPropertiesReader buttonsDesignPropertiesReader;
@@ -63,7 +68,7 @@ public class KeyboardService implements IKeyboardService {
     private RPSService rpsService;
 
     private VariablePropertiesReader variablePropertiesReader;
-    
+
     private IFiatCurrencyService fiatCurrencyService;
 
     private IBigDecimalService bigDecimalService;
@@ -305,7 +310,7 @@ public class KeyboardService implements IKeyboardService {
                 } catch (NumberFormatException e) {
                     throw new BaseException("Значение фиксированной комиссии для " + deliveryTypeService.getDisplayName(DeliveryType.VIP) + " должно быть целочисленным.");
                 }
-                text = text +  "(+" + fix + fiatCurrency.getGenitive() + ")";
+                text = text + "(+" + fix + fiatCurrency.getGenitive() + ")";
             }
             buttons.add(InlineButton.builder()
                     .text(text)
@@ -430,5 +435,16 @@ public class KeyboardService implements IKeyboardService {
                 ReplyButton.builder()
                         .text(commandService.getText(Command.RECEIPTS_CANCEL_DEAL))
                         .build()));
+    }
+
+    @Override
+    @Cacheable("dealReportsKeyboard")
+    public ReplyKeyboard getDealReports() {
+        return keyboardBuildService.buildInline(List.of(
+            InlineButton.builder().text("За сегодня").data(callbackDataService.buildData(CallbackQueryData.DEAL_REPORTS, DealReportsCallbackHandler.TODAY)).build(),
+            InlineButton.builder().text("За десять дней").data(callbackDataService.buildData(CallbackQueryData.DEAL_REPORTS, DealReportsCallbackHandler.TEN_DAYS)).build(),
+            InlineButton.builder().text("За месяц").data(callbackDataService.buildData(CallbackQueryData.DEAL_REPORTS, DealReportsCallbackHandler.MONTH)).build(),
+            InlineButton.builder().text("За дату").data(callbackDataService.buildData(CallbackQueryData.DEAL_REPORTS, DealReportsCallbackHandler.DATE)).build()
+        ));
     }
 }
