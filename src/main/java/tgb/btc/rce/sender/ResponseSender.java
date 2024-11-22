@@ -99,6 +99,7 @@ public class ResponseSender implements IResponseSender {
         return Optional.ofNullable(executeSendMessage(SendMessage.builder()
                 .chatId(chatId.toString())
                 .text(text)
+                .parseMode("html")
                 .build()));
     }
 

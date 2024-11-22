@@ -5,6 +5,7 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
 import tgb.btc.library.exception.BaseException;
+import tgb.btc.rce.enums.update.SlashCommand;
 import tgb.btc.rce.enums.update.UpdateType;
 import tgb.btc.rce.service.IUpdateService;
 
@@ -99,5 +100,10 @@ public class UpdateService implements IUpdateService {
                 return update.getCallbackQuery().getMessage();
         }
         throw new BaseException("Не найден тип апдейта для получения месседжа.");
+    }
+
+    @Override
+    public boolean isStart(Update update) {
+        return update.hasMessage() && update.getMessage().hasText() && update.getMessage().getText().equals(SlashCommand.START.getText());
     }
 }

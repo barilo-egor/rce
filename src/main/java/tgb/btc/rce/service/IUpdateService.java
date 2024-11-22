@@ -1,5 +1,6 @@
 package tgb.btc.rce.service;
 
+import org.springframework.cache.annotation.Cacheable;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
@@ -25,4 +26,7 @@ public interface IUpdateService {
     BigDecimal getBigDecimalFromText(Update update);
 
     Message getMessage(Update update);
+
+    @Cacheable(value = "startUpdates", key = "#update.updateId")
+    boolean isStart(Update update);
 }
