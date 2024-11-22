@@ -95,6 +95,9 @@ public enum Command implements ICommand {
     ADD_CONTACT("Добавить контакт", false, UserRole.ADMIN_ACCESS),
     DELETE_CONTACT("Удалить контакт", false, UserRole.ADMIN_ACCESS),
     CHANGE_REFERRAL_BALANCE("Изменить", false, UserRole.ADMIN_ACCESS),
+    LOTTERY_REPORT("Отчет по лотереи", false, UserRole.ADMIN_ACCESS),
+    CHECKS_FOR_DATE("Чеки по дате", false, UserRole.ADMIN_ACCESS),
+    DEAL_REPORTS("Отчет по сделкам", false, Set.of(UserRole.OBSERVER, UserRole.ADMIN)),
 
     // HAS USAGE
     START("/start", false, UserRole.USER_ACCESS),
@@ -129,10 +132,6 @@ public enum Command implements ICommand {
     DONT_USE_PROMO("Не использовать промокод", false, UserRole.USER_ACCESS),
     USE_SAVED_WALLET("USE_SAVED_WALLET", false, UserRole.USER_ACCESS),
     USER_INFORMATION("Информация о пользователе", false, UserRole.ADMIN_ACCESS),
-    DEAL_REPORTS("Отчет по сделкам", false, Set.of(UserRole.OBSERVER, UserRole.ADMIN)),
-    CHECKS_FOR_DATE("Чеки по дате", false, UserRole.ADMIN_ACCESS),
-    SEND_CHECKS_FOR_DATE("SEND_CHECKS_FOR_DATE", false, UserRole.ADMIN_ACCESS),
-    LOTTERY_REPORT("Отчет по лотереи", false, UserRole.ADMIN_ACCESS),
     CHANNEL_POST("CHANNEL_POST", false, UserRole.USER_ACCESS),
     RECEIPTS_CANCEL_DEAL("Отменить сделку", false, UserRole.USER_ACCESS),
     NEW_PAYMENT_TYPE("Создать тип оплаты", false, UserRole.OPERATOR_ACCESS),
@@ -161,7 +160,8 @@ public enum Command implements ICommand {
             DELETING_PAYMENT_TYPE, DELETING_PAYMENT_TYPE_REQUISITE, TURNING_PAYMENT_TYPES, TURNING_DYNAMIC_REQUISITES,
             SHOW_SPAM_BANNED_USER, KEEP_SPAM_BAN, SPAM_UNBAN, CONFIRM_API_DEAL, CANCEL_API_DEAL, TURN_PROCESS_DELIVERY,
             SUBMIT_LOGIN, SUBMIT_REGISTER, LOGOUT, INLINE_DELETE, BAN_UNBAN, USER_REFERRAL_BALANCE, RANK_DISCOUNT, DEALS_COUNT,
-            WITHDRAWAL_OF_FUNDS, MAILING_LIST, ADD_CONTACT, DELETE_CONTACT, CHANGE_REFERRAL_BALANCE
+            WITHDRAWAL_OF_FUNDS, MAILING_LIST, ADD_CONTACT, DELETE_CONTACT, CHANGE_REFERRAL_BALANCE, CHECKS_FOR_DATE,
+            DEAL_REPORTS
     );
 
     final String text;

@@ -1,4 +1,4 @@
-package tgb.btc.rce.service.processors.admin.settings.reports;
+package tgb.btc.rce.service.handler.util.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -7,198 +7,45 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.telegram.telegrambots.meta.api.objects.Update;
+import org.springframework.stereotype.Service;
 import tgb.btc.library.bean.bot.Deal;
 import tgb.btc.library.bean.web.api.ApiDeal;
 import tgb.btc.library.constants.enums.bot.CryptoCurrency;
 import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
 import tgb.btc.library.exception.BaseException;
-import tgb.btc.library.interfaces.service.bean.bot.deal.read.IDateDealService;
-import tgb.btc.library.interfaces.service.bean.web.IApiDealService;
 import tgb.btc.library.interfaces.util.IBigDecimalService;
-import tgb.btc.rce.annotation.CommandProcessor;
-import tgb.btc.rce.enums.Command;
-import tgb.btc.rce.service.Processor;
+import tgb.btc.rce.sender.IResponseSender;
+import tgb.btc.rce.service.handler.util.ILoadReportService;
 import tgb.btc.rce.service.util.ICryptoCurrenciesDesignService;
-import tgb.btc.rce.vo.ReplyButton;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.time.DateTimeException;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
-@CommandProcessor(command = Command.DEAL_REPORTS)
+@Service
 @Slf4j
-public class DealReports extends Processor {
+public class LoadReportService implements ILoadReportService {
 
-    private final static String TODAY = "За сегодня";
-    private final static String TEN_DAYS = "За десять дней";
-    private final static String MONTH = "За месяц";
-    private final static String DATE = "За дату";
+    private final IResponseSender responseSender;
 
-    private IDateDealService dateDealService;
+    private final IBigDecimalService bigDecimalService;
 
-    private IApiDealService apiDealService;
+    private final ICryptoCurrenciesDesignService cryptoCurrenciesDesignService;
 
-    private ICryptoCurrenciesDesignService cryptoCurrenciesDesignService;
-
-    private IBigDecimalService bigDecimalService;
-
-    @Autowired
-    public void setBigDecimalService(IBigDecimalService bigDecimalService) {
+    public LoadReportService(IResponseSender responseSender, IBigDecimalService bigDecimalService,
+                             ICryptoCurrenciesDesignService cryptoCurrenciesDesignService) {
+        this.responseSender = responseSender;
         this.bigDecimalService = bigDecimalService;
-    }
-
-    @Autowired
-    public void setCryptoCurrenciesDesignService(ICryptoCurrenciesDesignService cryptoCurrenciesDesignService) {
         this.cryptoCurrenciesDesignService = cryptoCurrenciesDesignService;
     }
 
-    @Autowired
-    public void setDateDealService(IDateDealService dateDealService) {
-        this.dateDealService = dateDealService;
-    }
-
-    @Autowired
-    public void setApiDealService(IApiDealService apiDealService) {
-        this.apiDealService = apiDealService;
-    }
-
     @Override
-    public void run(Update update) {
-        Long chatId = updateService.getChatId(update);
-        if (checkForCancel(update)) return;
-        switch (readUserService.getStepByChatId(chatId)) {
-            case 0:
-                responseSender.sendMessage(chatId, "Выберите период.",
-                        keyboardBuildService.buildReply(2,
-                                List.of(
-                                        ReplyButton.builder()
-                                                .text(TODAY)
-                                                .build(),
-                                        ReplyButton.builder()
-                                                .text(TEN_DAYS)
-                                                .build(),
-                                        ReplyButton.builder()
-                                                .text(MONTH)
-                                                .build(),
-                                        ReplyButton.builder()
-                                                .text(DATE)
-                                                .build(),
-                                        ReplyButton.builder()
-                                                .text(commandService.getText(Command.ADMIN_BACK))
-                                                .build()
-                                )));
-                modifyUserService.nextStep(chatId, Command.DEAL_REPORTS.name());
-                break;
-            case 1:
-                String period = updateService.getMessageText(update);
-                switch (period) {
-                    case TODAY:
-                        try {
-                            loadReport(dateDealService.getConfirmedByDateBetween(LocalDate.now()), chatId, period, apiDealService.getAcceptedByDate(LocalDateTime.now()));
-                        } catch (Exception e) {
-                            log.error("Ошибка при выгрузке отчета.", e);
-                        }
-                        break;
-                    case TEN_DAYS:
-                        try {
-                            loadReport(dateDealService.getConfirmedByDateBetween(LocalDate.now().minusDays(10), LocalDate.now()),
-                                    chatId, period, apiDealService.getAcceptedByDateBetween(LocalDateTime.now().minusDays(10), LocalDateTime.now()));
-                        } catch (Exception e) {
-                            log.error("Ошибка при выгрузке отчета.", e);
-                        }
-                        break;
-                    case MONTH:
-                        try {
-                            loadReport(dateDealService.getConfirmedByDateBetween(LocalDate.now().minusDays(30), LocalDate.now()), chatId, period,
-                                    apiDealService.getAcceptedByDateBetween(LocalDateTime.now().minusDays(30), LocalDateTime.now()));
-                        } catch (Exception e) {
-                            log.error("Ошибка при выгрузке отчета.", e);
-                        }
-                        break;
-                    case DATE:
-                        responseSender.sendMessage(chatId, "Введите дату в формате дд.мм.гггг");
-                        modifyUserService.nextStep(chatId);
-                        return;
-                    case "Назад":
-                        processToAdminMainPanel(chatId);
-                        break;
-                    default:
-                        responseSender.sendMessage(chatId, "Указанный период не определен.");
-                        return;
-                }
-                processToAdminMainPanel(chatId);
-                break;
-            case 2:
-                try {
-                    LocalDate date = getDate(update);
-                    LocalDateTime dateTime = date.atStartOfDay();
-                    loadReport(dateDealService.getConfirmedByDateBetween(date), chatId, date.format(DateTimeFormatter.ISO_DATE), apiDealService.getAcceptedByDate(dateTime));
-                    processToAdminMainPanel(chatId);
-                } catch (Exception e) {
-                    responseSender.sendMessage(chatId, e.getMessage());
-                }
-                break;
-        }
-    }
-
-    public LocalDate getDate(Update update) {
-        if (!updateService.hasMessageText(update)) throw new BaseException("Отсутствует message text.");
-        String[] values = updateService.getMessageText(update).split("\\.");
-        try {
-            if (values.length != 3) throw new BaseException("Неверный формат даты.");
-            return LocalDate.of(Integer.parseInt(values[2]), Integer.parseInt(values[1]), Integer.parseInt(values[0]));
-        } catch (DateTimeException e) {
-            throw new BaseException("Неверный формат даты.");
-        }
-    }
-
-    private void fillDealHeadCell(Cell headCell, Row headRow) {
-        headCell.setCellValue("Тип сделки");
-        headCell = headRow.createCell(1);
-        headCell.setCellValue("Кошелек");
-        headCell = headRow.createCell(2);
-        headCell.setCellValue("Дата, время");
-        headCell = headRow.createCell(3);
-        headCell.setCellValue("Фиатная сумма");
-        headCell = headRow.createCell(4);
-        headCell.setCellValue("Фиатная валюта");
-        headCell = headRow.createCell(5);
-        headCell.setCellValue("Сумма крипты");
-        headCell = headRow.createCell(6);
-        headCell.setCellValue("Крипто валюта");
-        headCell = headRow.createCell(7);
-        headCell.setCellValue("Оплата");
-        headCell = headRow.createCell(8);
-        headCell.setCellValue("ID");
-    }
-
-    private void fillApiDealHeadCell(Cell headCell, Row headRow) {
-        headCell.setCellValue("Тип сделки");
-        headCell = headRow.createCell(1);
-        headCell.setCellValue("Дата, время");
-        headCell = headRow.createCell(2);
-        headCell.setCellValue("Фиатная сумма");
-        headCell = headRow.createCell(3);
-        headCell.setCellValue("Фиатная валюта");
-        headCell = headRow.createCell(4);
-        headCell.setCellValue("Сумма крипты");
-        headCell = headRow.createCell(5);
-        headCell.setCellValue("Крипто валюта");
-        headCell = headRow.createCell(6);
-        headCell.setCellValue("ID");
-    }
-
-    private void loadReport(List<Deal> deals, Long chatId, String period, List<ApiDeal> apiDeals) {
+    public void loadReport(List<Deal> deals, Long chatId, String period, List<ApiDeal> apiDeals) {
         if (CollectionUtils.isEmpty(deals) && CollectionUtils.isEmpty(apiDeals)) {
             responseSender.sendMessage(chatId, "Сделки отсутствуют.");
             return;
@@ -404,5 +251,41 @@ public class DealReports extends Processor {
                 cryptoCurrency.getScale()));
         cell = row.createCell(startCell + 1);
         cell.setCellValue(cryptoCurrenciesDesignService.getDisplayName(cryptoCurrency));
+    }
+
+    private void fillDealHeadCell(Cell headCell, Row headRow) {
+        headCell.setCellValue("Тип сделки");
+        headCell = headRow.createCell(1);
+        headCell.setCellValue("Кошелек");
+        headCell = headRow.createCell(2);
+        headCell.setCellValue("Дата, время");
+        headCell = headRow.createCell(3);
+        headCell.setCellValue("Фиатная сумма");
+        headCell = headRow.createCell(4);
+        headCell.setCellValue("Фиатная валюта");
+        headCell = headRow.createCell(5);
+        headCell.setCellValue("Сумма крипты");
+        headCell = headRow.createCell(6);
+        headCell.setCellValue("Крипто валюта");
+        headCell = headRow.createCell(7);
+        headCell.setCellValue("Оплата");
+        headCell = headRow.createCell(8);
+        headCell.setCellValue("ID");
+    }
+
+    private void fillApiDealHeadCell(Cell headCell, Row headRow) {
+        headCell.setCellValue("Тип сделки");
+        headCell = headRow.createCell(1);
+        headCell.setCellValue("Дата, время");
+        headCell = headRow.createCell(2);
+        headCell.setCellValue("Фиатная сумма");
+        headCell = headRow.createCell(3);
+        headCell.setCellValue("Фиатная валюта");
+        headCell = headRow.createCell(4);
+        headCell.setCellValue("Сумма крипты");
+        headCell = headRow.createCell(5);
+        headCell.setCellValue("Крипто валюта");
+        headCell = headRow.createCell(6);
+        headCell.setCellValue("ID");
     }
 }

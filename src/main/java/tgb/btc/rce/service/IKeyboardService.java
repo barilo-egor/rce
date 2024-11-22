@@ -52,4 +52,6 @@ public interface IKeyboardService {
     ReplyKeyboard getBuildDeal();
 
     ReplyKeyboard getCancelDeal();
+
+    ReplyKeyboard getDealReports();
 }

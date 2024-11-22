@@ -13,6 +13,8 @@ import tgb.btc.rce.service.IRedisUserStateService;
 import tgb.btc.rce.service.handler.IStateHandler;
 import tgb.btc.rce.service.handler.util.IAdminPanelService;
 
+import java.util.Objects;
+
 @Service
 @Slf4j
 public class ChangeReferralBalanceStateHandler implements IStateHandler {
@@ -55,6 +57,9 @@ public class ChangeReferralBalanceStateHandler implements IStateHandler {
         int total;
         if (text.startsWith("+") || text.startsWith("-")) {
             Integer userReferralBalance = readUserService.getReferralBalanceByChatId(userChatId);
+            if (Objects.isNull(userReferralBalance)) {
+                userReferralBalance = 0;
+            }
             Integer enteredSum = Integer.parseInt(text.substring(1));
             if (text.startsWith("+")) {
                 total = userReferralBalance + enteredSum;
