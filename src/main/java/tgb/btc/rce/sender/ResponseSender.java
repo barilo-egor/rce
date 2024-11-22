@@ -21,11 +21,8 @@ import org.telegram.telegrambots.meta.api.objects.media.InputMedia;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-import tgb.btc.library.bean.bot.BotMessage;
-import tgb.btc.library.constants.enums.bot.BotMessageType;
 import tgb.btc.library.exception.BaseException;
 import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
-import tgb.btc.library.service.bean.bot.BotMessageService;
 import tgb.btc.rce.bot.RceBot;
 import tgb.btc.rce.enums.Menu;
 import tgb.btc.rce.enums.PropertiesMessage;
@@ -47,8 +44,6 @@ import java.util.Optional;
 public class ResponseSender implements IResponseSender {
 
     private RceBot bot;
-
-    private BotMessageService botMessageService;
 
     private IReadUserService readUserService;
 
@@ -83,11 +78,6 @@ public class ResponseSender implements IResponseSender {
     @Autowired
     public void setReadUserService(IReadUserService readUserService) {
         this.readUserService = readUserService;
-    }
-
-    @Autowired
-    public void setBotMessageService(BotMessageService botMessageService) {
-        this.botMessageService = botMessageService;
     }
 
     @Autowired
@@ -187,35 +177,6 @@ public class ResponseSender implements IResponseSender {
 
     private Message executeSendMessageThrows(SendMessage sendMessage) throws TelegramApiException {
         return bot.execute(sendMessage);
-    }
-
-    public Optional<Message> sendBotMessage(BotMessageType botMessageType, Long chatId) {
-        return sendBotMessage(botMessageService.findByTypeNullSafe(botMessageType), chatId, null);
-    }
-
-    public Optional<Message> sendBotMessage(BotMessage botMessage, Long chatId) {
-        return sendBotMessage(botMessage, chatId, null);
-    }
-
-    public Optional<Message> sendBotMessage(BotMessageType botMessageType, Long chatId, Menu menu) {
-        return sendBotMessage(botMessageType, chatId, menuService.build(menu, readUserService.getUserRoleByChatId(chatId)));
-    }
-
-    public Optional<Message> sendBotMessage(BotMessageType botMessageType, Long chatId, ReplyKeyboard replyKeyboard) {
-        BotMessage botMessage = botMessageService.findByTypeNullSafe(botMessageType);
-        return sendBotMessage(botMessage, chatId, replyKeyboard);
-    }
-
-    public Optional<Message> sendBotMessage(BotMessage botMessage, Long chatId, ReplyKeyboard replyKeyboard) {
-        switch (botMessage.getMessageType()) {
-            case TEXT:
-                return sendMessage(chatId, botMessage.getText(), replyKeyboard);
-            case IMAGE:
-                return sendPhoto(chatId, botMessage.getText(), botMessage.getImage(), replyKeyboard);
-            case ANIMATION:
-                return sendAnimation(chatId, botMessage.getText(), botMessage.getAnimation(), replyKeyboard);
-        }
-        return Optional.empty();
     }
 
     public Optional<Message> sendPhoto(Long chatId, String caption, String photo) {

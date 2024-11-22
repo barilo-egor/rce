@@ -7,29 +7,27 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.bean.bot.User;
 import tgb.btc.library.constants.enums.DeliveryKind;
-import tgb.btc.library.constants.enums.bot.BotMessageType;
 import tgb.btc.library.constants.enums.bot.CryptoCurrency;
 import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.interfaces.IModule;
-import tgb.btc.library.interfaces.service.bean.bot.IBotMessageService;
 import tgb.btc.library.interfaces.service.bean.bot.ISecurePaymentDetailsService;
 import tgb.btc.library.interfaces.service.bean.bot.deal.IModifyDealService;
 import tgb.btc.library.interfaces.service.bean.bot.deal.IReadDealService;
 import tgb.btc.library.interfaces.service.bean.bot.deal.read.IDealPropertyService;
 import tgb.btc.library.interfaces.util.IFiatCurrencyService;
-import tgb.btc.library.service.bean.bot.BotMessageService;
 import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.Menu;
+import tgb.btc.rce.enums.MessageImage;
 import tgb.btc.rce.enums.update.CallbackQueryData;
 import tgb.btc.rce.enums.update.SlashCommand;
 import tgb.btc.rce.enums.update.TextCommand;
+import tgb.btc.rce.sender.IMessageImageResponseSender;
 import tgb.btc.rce.service.ICalculatorTypeService;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.handler.util.IStartService;
 import tgb.btc.rce.service.process.IDealBotProcessService;
 import tgb.btc.rce.service.processors.support.ExchangeService;
-import tgb.btc.rce.service.util.IUpdateDispatcher;
 import tgb.btc.rce.vo.TelegramUpdateEvent;
 
 import java.util.Objects;
@@ -42,8 +40,6 @@ public class DealProcessor extends Processor {
 
     public static final int AFTER_CALCULATOR_STEP = 3;
 
-    private IUpdateDispatcher updateDispatcher;
-
     private ExchangeService exchangeService;
 
     private ICalculatorTypeService calculatorTypeService;
@@ -53,8 +49,6 @@ public class DealProcessor extends Processor {
     private IReadDealService readDealService;
 
     private IModifyDealService modifyDealService;
-
-    private IBotMessageService botMessageService;
 
     private IDealBotProcessService dealProcessService;
 
@@ -67,6 +61,13 @@ public class DealProcessor extends Processor {
     private ApplicationEventPublisher eventPublisher;
 
     private IStartService startService;
+
+    private IMessageImageResponseSender messageImageResponseSender;
+
+    @Autowired
+    public void setMessageImageResponseSender(IMessageImageResponseSender messageImageResponseSender) {
+        this.messageImageResponseSender = messageImageResponseSender;
+    }
 
     @Autowired
     public void setStartService(IStartService startService) {
@@ -86,11 +87,6 @@ public class DealProcessor extends Processor {
     @Autowired
     public void setDeliveryKindModule(IModule<DeliveryKind> deliveryKindModule) {
         this.deliveryKindModule = deliveryKindModule;
-    }
-
-    @Autowired
-    public void setBotMessageService(IBotMessageService botMessageService) {
-        this.botMessageService = botMessageService;
     }
 
     @Autowired
@@ -119,11 +115,6 @@ public class DealProcessor extends Processor {
     }
 
     @Autowired
-    public void setBotMessageService(BotMessageService botMessageService) {
-        this.botMessageService = botMessageService;
-    }
-
-    @Autowired
     public void setCalculatorTypeService(ICalculatorTypeService calculatorTypeService) {
         this.calculatorTypeService = calculatorTypeService;
     }
@@ -131,11 +122,6 @@ public class DealProcessor extends Processor {
     @Autowired
     public void setExchangeService(ExchangeService exchangeService) {
         this.exchangeService = exchangeService;
-    }
-
-    @Autowired
-    public void setUpdateDispatcher(IUpdateDispatcher updateDispatcher) {
-        this.updateDispatcher = updateDispatcher;
     }
 
     @Override
@@ -280,7 +266,7 @@ public class DealProcessor extends Processor {
                 }
                 if (!exchangeService.saveReceipts(update)) return;
                 exchangeService.confirmDeal(update);
-                responseSender.sendBotMessage(botMessageService.findByTypeNullSafe(BotMessageType.START), chatId);
+                messageImageResponseSender.sendMessage(MessageImage.START, chatId);
                 processToMainMenu(chatId);
                 break;
         }

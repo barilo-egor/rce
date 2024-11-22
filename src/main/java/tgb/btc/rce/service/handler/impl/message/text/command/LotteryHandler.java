@@ -6,16 +6,16 @@ import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import tgb.btc.library.bean.bot.LotteryWin;
 import tgb.btc.library.bean.bot.User;
-import tgb.btc.library.constants.enums.bot.BotMessageType;
 import tgb.btc.library.constants.enums.bot.UserRole;
 import tgb.btc.library.constants.enums.properties.VariableType;
-import tgb.btc.library.interfaces.service.bean.bot.IBotMessageService;
 import tgb.btc.library.interfaces.service.bean.bot.ILotteryWinService;
 import tgb.btc.library.interfaces.service.bean.bot.user.IModifyUserService;
 import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.library.service.properties.VariablePropertiesReader;
+import tgb.btc.rce.enums.MessageImage;
 import tgb.btc.rce.enums.PropertiesMessage;
 import tgb.btc.rce.enums.update.TextCommand;
+import tgb.btc.rce.sender.IMessageImageResponseSender;
 import tgb.btc.rce.sender.IResponseSender;
 import tgb.btc.rce.service.INotifyService;
 import tgb.btc.rce.service.handler.message.text.ITextCommandHandler;
@@ -30,8 +30,6 @@ import java.util.Set;
 @Service
 @Slf4j
 public class LotteryHandler implements ITextCommandHandler {
-
-    private final IBotMessageService botMessageService;
 
     private final ILotteryWinService lotteryWinService;
 
@@ -49,12 +47,13 @@ public class LotteryHandler implements ITextCommandHandler {
 
     private final IModifyUserService modifyUserService;
 
-    public LotteryHandler(IBotMessageService botMessageService, ILotteryWinService lotteryWinService,
+    private final IMessageImageResponseSender messageImageResponseSender;
+
+    public LotteryHandler(ILotteryWinService lotteryWinService,
                           INotifyService notifyService, VariablePropertiesReader variablePropertiesReader,
                           IReadUserService readUserService, IResponseSender responseSender,
                           IMessagePropertiesService messagePropertiesService, IKeyboardBuildService keyboardBuildService,
-                          IModifyUserService modifyUserService) {
-        this.botMessageService = botMessageService;
+                          IModifyUserService modifyUserService, IMessageImageResponseSender messageImageResponseSender) {
         this.lotteryWinService = lotteryWinService;
         this.notifyService = notifyService;
         this.variablePropertiesReader = variablePropertiesReader;
@@ -63,6 +62,7 @@ public class LotteryHandler implements ITextCommandHandler {
         this.messagePropertiesService = messagePropertiesService;
         this.keyboardBuildService = keyboardBuildService;
         this.modifyUserService = modifyUserService;
+        this.messageImageResponseSender = messageImageResponseSender;
     }
 
     @Override
@@ -80,18 +80,18 @@ public class LotteryHandler implements ITextCommandHandler {
     private void processLottery(Long chatId, User user) {
         float probability = variablePropertiesReader.getFloat(VariableType.PROBABILITY);
         if (((double) new Random().nextInt(101) < ((double) probability))) {
-            responseSender.sendBotMessage(botMessageService.findByTypeNullSafe(BotMessageType.WON_LOTTERY), user.getChatId(),
+            messageImageResponseSender.sendMessage(MessageImage.WON_LOTTERY, user.getChatId(),
                     keyboardBuildService.getLink("Написать оператору",
                             variablePropertiesReader.getVariable(VariableType.OPERATOR_LINK)));
             String username = user.getUsername();
             notifyService.notifyMessage("Пользователь chatId=" + chatId
                     + ", username=" + (StringUtils.isNotEmpty(username) ? username : "скрыт")
                     + " выиграл лотерею.", Set.of(UserRole.OPERATOR, UserRole.ADMIN));
-            log.debug("Пользователь " + chatId + " выиграл лотерею. Probability=" + probability);
+            log.debug("Пользователь {} выиграл лотерею. Probability={}", chatId, probability);
             lotteryWinService.save(new LotteryWin(user, LocalDateTime.now()));
         } else {
-            responseSender.sendBotMessage(botMessageService.findByTypeNullSafe(BotMessageType.LOSE_LOTTERY), user.getChatId());
-            log.trace("Пользователь " + chatId + " проиграл лотерею.");
+            messageImageResponseSender.sendMessage(MessageImage.LOSE_LOTTERY, user.getChatId());
+            log.trace("Пользователь {} проиграл лотерею.", chatId);
         }
         user.setLotteryCount(user.getLotteryCount() - 1);
         modifyUserService.save(user);
