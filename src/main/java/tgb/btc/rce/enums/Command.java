@@ -63,6 +63,7 @@ public enum Command implements ICommand {
     RANK_DISCOUNT("Ранговая скидка(персональная)", false, UserRole.ADMIN_ACCESS),
     DEALS_COUNT("Кол-во возможных сделок", false, UserRole.ADMIN_ACCESS),
     WITHDRAWAL_OF_FUNDS("Вывод средств", false, UserRole.USER_ACCESS),
+    MAILING_LIST("Рассылка", false, UserRole.OBSERVER_ACCESS),
 
     // HAS USAGE
     START("/start", false, UserRole.USER_ACCESS),
@@ -118,7 +119,6 @@ public enum Command implements ICommand {
     REFERRAL_PERCENT("Процент реферала", false, UserRole.ADMIN_ACCESS),
     ADD_CONTACT("Добавить контакт", false, UserRole.ADMIN_ACCESS),
     DELETE_CONTACT("Удалить контакт", false, UserRole.ADMIN_ACCESS),
-    MAILING_LIST("Рассылка", false, UserRole.OBSERVER_ACCESS),
     SEND_MESSAGE_TO_USER("Сообщение пользователю", false, UserRole.ADMIN_ACCESS),
     BOT_MESSAGES("Сообщения бота", false, UserRole.ADMIN_ACCESS),
     BOT_VARIABLES("Переменные бота", false, UserRole.ADMIN_ACCESS),
@@ -163,7 +163,7 @@ public enum Command implements ICommand {
             DELETING_PAYMENT_TYPE, DELETING_PAYMENT_TYPE_REQUISITE, TURNING_PAYMENT_TYPES, TURNING_DYNAMIC_REQUISITES,
             SHOW_SPAM_BANNED_USER, KEEP_SPAM_BAN, SPAM_UNBAN, CONFIRM_API_DEAL, CANCEL_API_DEAL, TURN_PROCESS_DELIVERY,
             SUBMIT_LOGIN, SUBMIT_REGISTER, LOGOUT, INLINE_DELETE, BAN_UNBAN, USER_REFERRAL_BALANCE, RANK_DISCOUNT, DEALS_COUNT,
-            WITHDRAWAL_OF_FUNDS
+            WITHDRAWAL_OF_FUNDS, MAILING_LIST
     );
 
     final String text;

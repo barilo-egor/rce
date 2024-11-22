@@ -41,6 +41,7 @@ public enum CallbackQueryData {
     LOGOUT,
     INLINE_DELETE,
     WITHDRAWAL_OF_FUNDS,
+    MAILING_LIST,
 
     CHOOSING_FIAT_CURRENCY,
     INLINE_CALCULATOR,

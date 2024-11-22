@@ -120,16 +120,13 @@ public class MessagesService {
     }
 
     @Async
-    public void sendMessageToUsers(Update update) {
-        Long chatId = updateService.getChatId(update);
-        responseSender.sendMessage(chatId, "Рассылка успешно инициирована. По завершении процесса вы получите уведомление.");
+    public void sendMessageToUsers(Long chatId, String text) {
         readUserService.getChatIdsForMailing()
                 .forEach(userChatId -> {
                     try {
-                        responseSender.sendMessageThrows(userChatId, updateService.getMessageText(update));
+                        responseSender.sendMessageThrows(userChatId, text);
                     } catch (TelegramApiException e) {
-                        if (e instanceof TelegramApiRequestException) {
-                            TelegramApiRequestException exception = (TelegramApiRequestException) e;
+                        if (e instanceof TelegramApiRequestException exception) {
                             if (exception.getApiResponse().contains("bot was blocked by the user")) {
                                 modifyUserService.updateIsActiveByChatId(false, userChatId);
                             }
