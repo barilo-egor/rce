@@ -10,15 +10,16 @@ import tgb.btc.library.interfaces.service.bean.bot.IContactService;
 import tgb.btc.library.interfaces.service.bean.bot.user.IModifyUserService;
 import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.rce.enums.Command;
-import tgb.btc.rce.enums.Menu;
 import tgb.btc.rce.enums.PropertiesMessage;
-import tgb.btc.rce.service.IUpdateService;
 import tgb.btc.rce.sender.ResponseSender;
+import tgb.btc.rce.service.IUpdateService;
 import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
 import tgb.btc.rce.service.util.IMenuService;
 import tgb.btc.rce.service.util.IMessagePropertiesService;
 import tgb.btc.rce.vo.InlineButton;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -84,18 +85,10 @@ public class EditContactsService {
         this.contactService = contactService;
     }
 
-    public void askInput(Long chatId) {
-        modifyUserService.nextStep(chatId, Command.ADD_CONTACT.name());
-        responseSender.sendMessage(chatId, messagePropertiesService.getMessage(PropertiesMessage.CONTACT_ASK_INPUT),
-                menuService.build(Menu.ADMIN_BACK, readUserService.getUserRoleByChatId(chatId)));
-    }
-
-    public void save(Update update) {
-        String[] contactData = update.getMessage().getText().split("\n");
+    public void save(String message) throws MalformedURLException {
+        String[] contactData = message.split("\n");
+        new URL(contactData[1]);
         contactService.save(Contact.builder().label(contactData[0]).url(contactData[1]).build());
-
-        Long chatId = updateService.getChatId(update);
-        responseSender.sendMessage(chatId, "Контакт добавлен.");
     }
 
     public void askForChoose(Update update) {
