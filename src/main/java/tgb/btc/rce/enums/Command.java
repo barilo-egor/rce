@@ -94,6 +94,7 @@ public enum Command implements ICommand {
     OBSERVER_PANEL("Панель наблюдателя", false, UserRole.OBSERVER_ACCESS),
     ADD_CONTACT("Добавить контакт", false, UserRole.ADMIN_ACCESS),
     DELETE_CONTACT("Удалить контакт", false, UserRole.ADMIN_ACCESS),
+    CHANGE_REFERRAL_BALANCE("Изменить", false, UserRole.ADMIN_ACCESS),
 
     // HAS USAGE
     START("/start", false, UserRole.USER_ACCESS),
@@ -114,7 +115,6 @@ public enum Command implements ICommand {
     CANCEL("Отмена", false, UserRole.USER_ACCESS),
     BOT_OFFED("BOT_OFFED", false, UserRole.USER_ACCESS),
     CAPTCHA("captcha", false, UserRole.USER_ACCESS),
-    CHANGE_REFERRAL_BALANCE("Изменить", false, UserRole.ADMIN_ACCESS),
     PERSONAL_BUY_DISCOUNT("Персональная, покупка", false, UserRole.ADMIN_ACCESS),
     PERSONAL_SELL_DISCOUNT("Персональная, продажа", false, UserRole.ADMIN_ACCESS),
     REFERRAL_PERCENT("Процент реферала", false, UserRole.ADMIN_ACCESS),
@@ -161,7 +161,7 @@ public enum Command implements ICommand {
             DELETING_PAYMENT_TYPE, DELETING_PAYMENT_TYPE_REQUISITE, TURNING_PAYMENT_TYPES, TURNING_DYNAMIC_REQUISITES,
             SHOW_SPAM_BANNED_USER, KEEP_SPAM_BAN, SPAM_UNBAN, CONFIRM_API_DEAL, CANCEL_API_DEAL, TURN_PROCESS_DELIVERY,
             SUBMIT_LOGIN, SUBMIT_REGISTER, LOGOUT, INLINE_DELETE, BAN_UNBAN, USER_REFERRAL_BALANCE, RANK_DISCOUNT, DEALS_COUNT,
-            WITHDRAWAL_OF_FUNDS, MAILING_LIST, ADD_CONTACT, DELETE_CONTACT
+            WITHDRAWAL_OF_FUNDS, MAILING_LIST, ADD_CONTACT, DELETE_CONTACT, CHANGE_REFERRAL_BALANCE
     );
 
     final String text;

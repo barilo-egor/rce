@@ -4,11 +4,10 @@ import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
-import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.BotReplyButton;
-import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.InlineType;
 import tgb.btc.rce.enums.UserState;
+import tgb.btc.rce.enums.update.CallbackQueryData;
 import tgb.btc.rce.enums.update.TextCommand;
 import tgb.btc.rce.enums.update.UpdateType;
 import tgb.btc.rce.sender.IResponseSender;
@@ -16,6 +15,7 @@ import tgb.btc.rce.service.IRedisUserStateService;
 import tgb.btc.rce.service.handler.IStateHandler;
 import tgb.btc.rce.service.handler.util.IAdminPanelService;
 import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
+import tgb.btc.rce.service.util.ICallbackDataService;
 import tgb.btc.rce.vo.InlineButton;
 
 import java.util.List;
@@ -33,14 +33,19 @@ public class UserReferralBalanceStateHandler implements IStateHandler {
 
     private final IRedisUserStateService redisUserStateService;
 
+    private final ICallbackDataService callbackDataService;
+
     public UserReferralBalanceStateHandler(IReadUserService readUserService, IResponseSender responseSender,
                                            IKeyboardBuildService keyboardBuildService,
-                                           IAdminPanelService adminPanelService, IRedisUserStateService redisUserStateService) {
+                                           IAdminPanelService adminPanelService,
+                                           IRedisUserStateService redisUserStateService,
+                                           ICallbackDataService callbackDataService) {
         this.readUserService = readUserService;
         this.responseSender = responseSender;
         this.keyboardBuildService = keyboardBuildService;
         this.adminPanelService = adminPanelService;
         this.redisUserStateService = redisUserStateService;
+        this.callbackDataService = callbackDataService;
     }
 
     @Override
@@ -65,8 +70,7 @@ public class UserReferralBalanceStateHandler implements IStateHandler {
                             InlineButton.builder()
                                     .inlineType(InlineType.CALLBACK_DATA)
                                     .text("Изменить")
-                                    .data(Command.CHANGE_REFERRAL_BALANCE.name()
-                                            + BotStringConstants.CALLBACK_DATA_SPLITTER + userChatId)
+                                    .data(callbackDataService.buildData(CallbackQueryData.CHANGE_REFERRAL_BALANCE, userChatId))
                                     .build()
                     )));
             redisUserStateService.delete(chatId);

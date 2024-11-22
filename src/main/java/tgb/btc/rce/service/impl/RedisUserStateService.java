@@ -11,24 +11,26 @@ import java.time.temporal.ChronoUnit;
 @Service
 public class RedisUserStateService implements IRedisUserStateService {
 
-    private final RedisTemplate<Long, UserState> redisTemplate;
+    private final String prefix = "state_";
 
-    public RedisUserStateService(RedisTemplate<Long, UserState> redisTemplate) {
+    private final RedisTemplate<String, UserState> redisTemplate;
+
+    public RedisUserStateService(RedisTemplate<String, UserState> redisTemplate) {
         this.redisTemplate = redisTemplate;
     }
 
     @Override
     public void save(Long chatId, UserState state) {
-        redisTemplate.opsForValue().set(chatId, state, Duration.of(20, ChronoUnit.MINUTES));
+        redisTemplate.opsForValue().set(prefix + chatId, state, Duration.of(20, ChronoUnit.MINUTES));
     }
 
     @Override
     public UserState get(Long key) {
-        return redisTemplate.opsForValue().get(key);
+        return redisTemplate.opsForValue().get(prefix + key);
     }
 
     @Override
     public void delete(Long key) {
-        redisTemplate.delete(key);
+        redisTemplate.delete(prefix + key);
     }
 }

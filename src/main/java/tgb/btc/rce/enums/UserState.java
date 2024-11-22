@@ -7,5 +7,6 @@ public enum UserState {
     DEALS_COUNT,
     WITHDRAWAL_OF_FUNDS,
     MAILING_LIST,
-    ADD_CONTACT
+    ADD_CONTACT,
+    CHANGE_REFERRAL_BALANCE,
 }
