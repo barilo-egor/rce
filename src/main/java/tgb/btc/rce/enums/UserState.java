@@ -9,4 +9,5 @@ public enum UserState {
     MAILING_LIST,
     ADD_CONTACT,
     CHANGE_REFERRAL_BALANCE,
+    CHECK_FOR_DATE
 }
