@@ -49,7 +49,6 @@ public enum TextCommand {
     USER_REFERRAL_BALANCE("Реф.баланс юзера", UserRole.ADMIN_ACCESS),
     RANK_DISCOUNT("Ранговая скидка(персональная)", UserRole.ADMIN_ACCESS),
     DEALS_COUNT("Кол-во возможных сделок", UserRole.ADMIN_ACCESS),
-
     DEAL_REPORTS("Отчет по сделкам", Set.of(UserRole.OBSERVER, UserRole.ADMIN)),
     MAILING_LIST("Рассылка", UserRole.OBSERVER_ACCESS),
     PERSONAL_BUY_DISCOUNT("Персональная, покупка", UserRole.ADMIN_ACCESS),
