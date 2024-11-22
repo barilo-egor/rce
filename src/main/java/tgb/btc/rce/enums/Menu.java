@@ -67,7 +67,7 @@ public enum Menu {
     ),
     BOT_SETTINGS(2,
             List.of(
-                    TextCommand.CURRENT_DATA, TextCommand.ON_BOT, TextCommand.OFF_BOT, TextCommand.BOT_MESSAGES,
+                    TextCommand.ON_BOT, TextCommand.OFF_BOT,
                     TextCommand.BOT_VARIABLES, TextCommand.SYSTEM_MESSAGES, TextCommand.PAYMENT_TYPES,
                     TextCommand.TURNING_CURRENCY, TextCommand.EDIT_CONTACTS, TextCommand.TURNING_DELIVERY_TYPE,
                     TextCommand.ADMIN_BACK

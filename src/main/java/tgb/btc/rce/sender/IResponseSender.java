@@ -11,8 +11,6 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.media.InputMedia;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-import tgb.btc.library.bean.bot.BotMessage;
-import tgb.btc.library.constants.enums.bot.BotMessageType;
 import tgb.btc.rce.enums.Menu;
 import tgb.btc.rce.enums.PropertiesMessage;
 import tgb.btc.rce.vo.InlineButton;
@@ -55,16 +53,6 @@ public interface IResponseSender {
     Message sendAnimation(Long chatId, File file);
 
     Optional<Message> sendAnimation(Long chatId, String caption, String animation, ReplyKeyboard replyKeyboard);
-
-    Optional<Message> sendBotMessage(BotMessageType botMessageType, Long chatId, Menu menu);
-
-    Optional<Message> sendBotMessage(BotMessageType botMessageType, Long chatId, ReplyKeyboard replyKeyboard);
-
-    Optional<Message> sendBotMessage(BotMessage botMessage, Long chatId, ReplyKeyboard replyKeyboard);
-
-    Optional<Message> sendBotMessage(BotMessageType botMessageType, Long chatId);
-
-    Optional<Message> sendBotMessage(BotMessage botMessage, Long chatId);
 
     void deleteMessage(Long chatId, Integer messageId);
 
