@@ -99,6 +99,7 @@ public class ResponseSender implements IResponseSender {
         return Optional.ofNullable(executeSendMessage(SendMessage.builder()
                 .chatId(chatId.toString())
                 .text(text)
+                .parseMode("html")
                 .build()));
     }
 
@@ -164,6 +165,7 @@ public class ResponseSender implements IResponseSender {
                 .text(text)
                 .replyToMessageId(replyToMessageId)
                 .replyMarkup(replyKeyboard)
+                .parseMode("html")
                 .build();
         if (Strings.isNotEmpty(parseMode)) sendMessage.setParseMode(parseMode);
         return Optional.ofNullable(executeSendMessage(sendMessage));
@@ -293,10 +295,16 @@ public class ResponseSender implements IResponseSender {
                     .messageId(messageId)
                     .text(text)
                     .replyMarkup(keyboard)
+                            .parseMode("html")
                     .build());
         } catch (TelegramApiException e) {
             log.debug("Не получилось отправить измененное сообщение: chatId" + chatId + ", text=" + text, e);
         }
+    }
+
+    @Override
+    public void sendEditedMessageText(Long chatId, Integer messageId, String text) {
+        sendEditedMessageText(chatId, messageId, text, null);
     }
 
     public void sendEditedMessageText(Long chatId, Integer messageId, String text, ReplyKeyboard replyKeyboard) {

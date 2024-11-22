@@ -7,8 +7,10 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.enums.UserState;
 import tgb.btc.rce.enums.update.UpdateType;
 import tgb.btc.rce.service.IRedisUserStateService;
+import tgb.btc.rce.service.IUpdateService;
 import tgb.btc.rce.service.handler.IStateHandler;
 import tgb.btc.rce.service.handler.IUpdateHandler;
+import tgb.btc.rce.service.handler.impl.message.text.slash.StartHandler;
 import tgb.btc.rce.service.processors.support.MessagesService;
 import tgb.btc.rce.vo.TelegramUpdateEvent;
 
@@ -29,10 +31,17 @@ public class TelegramUpdateEventListener {
 
     private final MessagesService messagesService;
 
+    private final IUpdateService updateService;
+
+    private final StartHandler startHandler;
+
     public TelegramUpdateEventListener(IRedisUserStateService redisUserStateService, List<IUpdateHandler> updateHandlers,
-                                       List<IStateHandler> stateHandlers, MessagesService messagesService) {
+                                       List<IStateHandler> stateHandlers, MessagesService messagesService,
+                                       IUpdateService updateService, StartHandler startHandler) {
         this.redisUserStateService = redisUserStateService;
         this.messagesService = messagesService;
+        this.updateService = updateService;
+        this.startHandler = startHandler;
         log.debug("Загрузка обработчиков апдейтов.");
         this.updateHandlers = new HashMap<>(updateHandlers.size());
         for (IUpdateHandler updateHandler : updateHandlers) {
@@ -54,6 +63,10 @@ public class TelegramUpdateEventListener {
     public void update(TelegramUpdateEvent event) {
         log.trace("Получен апдейт: {}", event.getUpdate());
         Update update = event.getUpdate();
+        if (updateService.isStart(update)) {
+            startHandler.handle(update.getMessage());
+            return;
+        }
         UpdateType updateType = UpdateType.fromUpdate(update);
         if (UpdateType.STATE_UPDATE_TYPES.contains(updateType)) {
             Long chatId = UpdateType.getChatId(update);
