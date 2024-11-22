@@ -165,6 +165,7 @@ public class ResponseSender implements IResponseSender {
                 .text(text)
                 .replyToMessageId(replyToMessageId)
                 .replyMarkup(replyKeyboard)
+                .parseMode("html")
                 .build();
         if (Strings.isNotEmpty(parseMode)) sendMessage.setParseMode(parseMode);
         return Optional.ofNullable(executeSendMessage(sendMessage));

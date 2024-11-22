@@ -42,6 +42,7 @@ public enum CallbackQueryData {
     INLINE_DELETE,
     WITHDRAWAL_OF_FUNDS,
     MAILING_LIST,
+    BAN_UNBAN,
 
     CHOOSING_FIAT_CURRENCY,
     INLINE_CALCULATOR,
