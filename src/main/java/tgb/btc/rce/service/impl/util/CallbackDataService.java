@@ -6,7 +6,9 @@ import tgb.btc.rce.enums.update.CallbackQueryData;
 import tgb.btc.rce.service.util.ICallbackDataService;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -71,6 +73,19 @@ public class CallbackDataService implements ICallbackDataService {
     }
 
     @Override
+    public Set<Integer> getIntArguments(String data) {
+        String[] split = data.split(SPLITTER);
+        Set<Integer> result = new HashSet<>();
+        if (split.length <= 1) {
+            return result;
+        }
+        for (int i = 1; i < split.length; i++) {
+            result.add(Integer.parseInt(split[i]));
+        }
+        return result;
+    }
+
+    @Override
     public Boolean getBoolArgument(String data, int index) {
         String argument = getArgument(data, index);
         if (argument == null) {
@@ -91,5 +106,14 @@ public class CallbackDataService implements ICallbackDataService {
             return false;
         }
         return fromData.equals(callbackQueryData);
+    }
+
+    @Override
+    public boolean hasArguments(String data) {
+        if (Objects.isNull(data)) {
+            return false;
+        }
+        String[] split = data.split(SPLITTER);
+        return split.length > 1;
     }
 }

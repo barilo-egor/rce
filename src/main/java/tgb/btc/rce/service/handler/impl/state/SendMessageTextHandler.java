@@ -1,6 +1,7 @@
 package tgb.btc.rce.service.handler.impl.state;
 
 import org.springframework.stereotype.Service;
+import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.enums.UserState;
 import tgb.btc.rce.enums.update.CallbackQueryData;
@@ -13,6 +14,8 @@ import tgb.btc.rce.service.redis.IRedisStringService;
 import tgb.btc.rce.service.redis.IRedisUserStateService;
 import tgb.btc.rce.service.util.ICallbackDataService;
 import tgb.btc.rce.vo.InlineButton;
+
+import java.util.Optional;
 
 @Service
 public class SendMessageTextHandler implements IStateHandler {
@@ -53,7 +56,7 @@ public class SendMessageTextHandler implements IStateHandler {
             return;
         }
         Long userChatId = Long.parseLong(redisStringService.get(chatId));
-        responseSender.sendMessage(chatId, "Предварительный просмотр сообщения, отправляемого пользователю <b>"
+        Optional<Message> message = responseSender.sendMessage(chatId, "Предварительный просмотр сообщения, отправляемого пользователю <b>"
                 + userChatId + "</b>:");
         responseSender.sendMessage(chatId, text,
                 InlineButton.builder()
@@ -62,7 +65,7 @@ public class SendMessageTextHandler implements IStateHandler {
                         .build(),
                 InlineButton.builder()
                         .text("Отмена")
-                        .data(CallbackQueryData.INLINE_DELETE.name())
+                        .data(callbackDataService.buildData(CallbackQueryData.INLINE_DELETE, message.get().getMessageId()))
                         .build()
         );
         redisStringService.delete(chatId);
