@@ -1,9 +1,9 @@
-package tgb.btc.rce.service.impl;
+package tgb.btc.rce.service.impl.redis;
 
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import tgb.btc.rce.enums.UserState;
-import tgb.btc.rce.service.IRedisUserStateService;
+import tgb.btc.rce.service.redis.IRedisUserStateService;
 
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;

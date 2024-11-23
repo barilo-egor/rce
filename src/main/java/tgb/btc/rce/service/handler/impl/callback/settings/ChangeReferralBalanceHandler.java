@@ -6,8 +6,10 @@ import tgb.btc.rce.enums.UserState;
 import tgb.btc.rce.enums.update.CallbackQueryData;
 import tgb.btc.rce.sender.IResponseSender;
 import tgb.btc.rce.service.IKeyboardService;
-import tgb.btc.rce.service.IRedisUserStateService;
 import tgb.btc.rce.service.handler.callback.ICallbackQueryHandler;
+import tgb.btc.rce.service.redis.IRedisStringService;
+import tgb.btc.rce.service.redis.IRedisUserStateService;
+import tgb.btc.rce.service.util.ICallbackDataService;
 
 @Service
 public class ChangeReferralBalanceHandler implements ICallbackQueryHandler {
@@ -18,16 +20,25 @@ public class ChangeReferralBalanceHandler implements ICallbackQueryHandler {
 
     private final IRedisUserStateService redisUserStateService;
 
+    private final ICallbackDataService callbackDataService;
+
+    private final IRedisStringService redisStringService;
+
     public ChangeReferralBalanceHandler(IResponseSender responseSender, IKeyboardService keyboardService,
-                                        IRedisUserStateService redisUserStateService) {
+                                        IRedisUserStateService redisUserStateService,
+                                        ICallbackDataService callbackDataService, IRedisStringService redisStringService) {
         this.responseSender = responseSender;
         this.keyboardService = keyboardService;
         this.redisUserStateService = redisUserStateService;
+        this.callbackDataService = callbackDataService;
+        this.redisStringService = redisStringService;
     }
 
     @Override
     public void handle(CallbackQuery callbackQuery) {
+        Long userChatId = callbackDataService.getLongArgument(callbackQuery.getData(), 1);
         Long chatId = callbackQuery.getFrom().getId();
+        redisStringService.save(chatId, userChatId.toString());
         responseSender.sendMessage(chatId, """
                         Введите новую сумму для пользователя.
                         Для того, чтобы полностью заменить значение, отправьте новое число без знаков. Пример:

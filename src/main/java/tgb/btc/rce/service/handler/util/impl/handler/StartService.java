@@ -11,8 +11,8 @@ import tgb.btc.rce.enums.MessageImage;
 import tgb.btc.rce.enums.PropertiesMessage;
 import tgb.btc.rce.sender.IMessageImageResponseSender;
 import tgb.btc.rce.sender.IResponseSender;
-import tgb.btc.rce.service.IRedisUserStateService;
 import tgb.btc.rce.service.handler.util.IStartService;
+import tgb.btc.rce.service.redis.IRedisUserStateService;
 import tgb.btc.rce.service.util.IMenuService;
 import tgb.btc.rce.service.util.IMessagePropertiesService;
 

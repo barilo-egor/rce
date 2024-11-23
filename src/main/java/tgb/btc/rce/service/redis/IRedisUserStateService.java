@@ -1,4 +1,4 @@
-package tgb.btc.rce.service;
+package tgb.btc.rce.service.redis;
 
 import tgb.btc.rce.enums.UserState;
 

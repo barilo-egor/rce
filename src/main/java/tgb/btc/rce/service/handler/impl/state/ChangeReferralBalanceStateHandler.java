@@ -9,9 +9,10 @@ import tgb.btc.rce.enums.UserState;
 import tgb.btc.rce.enums.update.TextCommand;
 import tgb.btc.rce.enums.update.UpdateType;
 import tgb.btc.rce.sender.IResponseSender;
-import tgb.btc.rce.service.IRedisUserStateService;
 import tgb.btc.rce.service.handler.IStateHandler;
 import tgb.btc.rce.service.handler.util.IAdminPanelService;
+import tgb.btc.rce.service.redis.IRedisStringService;
+import tgb.btc.rce.service.redis.IRedisUserStateService;
 
 import java.util.Objects;
 
@@ -29,14 +30,17 @@ public class ChangeReferralBalanceStateHandler implements IStateHandler {
 
     private final IRedisUserStateService redisUserStateService;
 
+    private final IRedisStringService redisStringService;
+
     public ChangeReferralBalanceStateHandler(IReadUserService readUserService, IModifyUserService modifyUserService,
                                              IResponseSender responseSender, IAdminPanelService adminPanelService,
-                                             IRedisUserStateService redisUserStateService) {
+                                             IRedisUserStateService redisUserStateService, IRedisStringService redisStringService) {
         this.readUserService = readUserService;
         this.modifyUserService = modifyUserService;
         this.responseSender = responseSender;
         this.adminPanelService = adminPanelService;
         this.redisUserStateService = redisUserStateService;
+        this.redisStringService = redisStringService;
     }
 
     @Override
@@ -53,7 +57,7 @@ public class ChangeReferralBalanceStateHandler implements IStateHandler {
             adminPanelService.send(chatId);
             return;
         }
-        Long userChatId = Long.parseLong(readUserService.getBufferVariable(chatId));
+        Long userChatId = Long.parseLong(redisStringService.get(chatId));
         int total;
         if (text.startsWith("+") || text.startsWith("-")) {
             Integer userReferralBalance = readUserService.getReferralBalanceByChatId(userChatId);
