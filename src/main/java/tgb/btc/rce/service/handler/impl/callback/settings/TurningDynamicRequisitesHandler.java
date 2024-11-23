@@ -9,7 +9,7 @@ import tgb.btc.library.interfaces.service.bean.bot.IPaymentTypeService;
 import tgb.btc.rce.enums.update.CallbackQueryData;
 import tgb.btc.rce.sender.IResponseSender;
 import tgb.btc.rce.service.handler.callback.ICallbackQueryHandler;
-import tgb.btc.rce.service.processors.admin.settings.paymenttypes.requisite.dynamic.TurnDynamicRequisites;
+import tgb.btc.rce.service.handler.util.ITurnDynamicRequisiteService;
 import tgb.btc.rce.service.util.ICallbackDataService;
 
 import java.util.List;
@@ -21,7 +21,7 @@ public class TurningDynamicRequisitesHandler implements ICallbackQueryHandler {
 
     private final IPaymentRequisiteService paymentRequisiteService;
 
-    private final TurnDynamicRequisites turnDynamicRequisites;
+    private final ITurnDynamicRequisiteService turnDynamicRequisiteService;
 
     private final IResponseSender responseSender;
 
@@ -29,11 +29,12 @@ public class TurningDynamicRequisitesHandler implements ICallbackQueryHandler {
 
     public TurningDynamicRequisitesHandler(IPaymentTypeService paymentTypeService,
                                            IPaymentRequisiteService paymentRequisiteService,
-                                           TurnDynamicRequisites turnDynamicRequisites, IResponseSender responseSender,
+                                           ITurnDynamicRequisiteService turnDynamicRequisiteService,
+                                           IResponseSender responseSender,
                                            ICallbackDataService callbackDataService) {
         this.paymentTypeService = paymentTypeService;
         this.paymentRequisiteService = paymentRequisiteService;
-        this.turnDynamicRequisites = turnDynamicRequisites;
+        this.turnDynamicRequisiteService = turnDynamicRequisiteService;
         this.responseSender = responseSender;
         this.callbackDataService = callbackDataService;
     }
@@ -46,9 +47,7 @@ public class TurningDynamicRequisitesHandler implements ICallbackQueryHandler {
         PaymentType paymentType = paymentTypeService.getByPid(pid);
         if (!value) {
             paymentTypeService.updateIsDynamicOnByPid(false, pid);
-            responseSender.deleteMessage(chatId, callbackQuery.getMessage().getMessageId());
-            responseSender.sendMessage(chatId, "Динамические реквизиты для " + paymentType.getName() + " выключены.");
-            turnDynamicRequisites.sendPaymentTypes(chatId, paymentType.getDealType(), paymentType.getFiatCurrency());
+            turnDynamicRequisiteService.sendPaymentTypes(chatId, callbackQuery.getMessage().getMessageId(), paymentType.getFiatCurrency());
         } else {
             List<PaymentRequisite> paymentRequisites = paymentRequisiteService.getByPaymentType_Pid(pid);
             if (paymentRequisites.size() <= 1) {
@@ -57,9 +56,7 @@ public class TurningDynamicRequisitesHandler implements ICallbackQueryHandler {
                 return;
             }
             paymentTypeService.updateIsDynamicOnByPid(true, pid);
-            responseSender.deleteMessage(chatId, callbackQuery.getMessage().getMessageId());
-            responseSender.sendMessage(chatId, "Динамические реквизиты для " + paymentType.getName() + " включены.");
-            turnDynamicRequisites.sendPaymentTypes(chatId, paymentType.getDealType(), paymentType.getFiatCurrency());
+            turnDynamicRequisiteService.sendPaymentTypes(chatId, callbackQuery.getMessage().getMessageId(), paymentType.getFiatCurrency());
         }
         paymentRequisiteService.removeOrder(paymentType.getPid());
     }

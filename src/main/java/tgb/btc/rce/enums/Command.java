@@ -98,6 +98,7 @@ public enum Command implements ICommand {
     LOTTERY_REPORT("Отчет по лотереи", false, UserRole.ADMIN_ACCESS),
     CHECKS_FOR_DATE("Чеки по дате", false, UserRole.ADMIN_ACCESS),
     DEAL_REPORTS("Отчет по сделкам", false, Set.of(UserRole.OBSERVER, UserRole.ADMIN)),
+    TURN_DYNAMIC_REQUISITES("Динамические реквизиты", false, UserRole.OPERATOR_ACCESS),
 
     // HAS USAGE
     START("/start", false, UserRole.USER_ACCESS),
@@ -140,7 +141,6 @@ public enum Command implements ICommand {
     DELETE_PAYMENT_TYPE_REQUISITE("Удалить реквизит", false, UserRole.OPERATOR_ACCESS),
     TURN_PAYMENT_TYPES("Включение типов оплат", false, UserRole.OPERATOR_ACCESS),
     CHANGE_MIN_SUM("Мин.сумма", false, UserRole.OPERATOR_ACCESS),
-    TURN_DYNAMIC_REQUISITES("Динамические реквизиты", false, UserRole.OPERATOR_ACCESS),
     NONE_CALCULATOR("NONE_CALCULATOR", false, UserRole.USER_ACCESS),
     INLINE_QUERY_CALCULATOR("INLINE_QUERY_CALCULATOR", false, UserRole.USER_ACCESS),
     INLINE_CALCULATOR("INLINE_CALCULATOR", false, UserRole.USER_ACCESS)
@@ -161,7 +161,7 @@ public enum Command implements ICommand {
             SHOW_SPAM_BANNED_USER, KEEP_SPAM_BAN, SPAM_UNBAN, CONFIRM_API_DEAL, CANCEL_API_DEAL, TURN_PROCESS_DELIVERY,
             SUBMIT_LOGIN, SUBMIT_REGISTER, LOGOUT, INLINE_DELETE, BAN_UNBAN, USER_REFERRAL_BALANCE, RANK_DISCOUNT, DEALS_COUNT,
             WITHDRAWAL_OF_FUNDS, MAILING_LIST, ADD_CONTACT, DELETE_CONTACT, CHANGE_REFERRAL_BALANCE, CHECKS_FOR_DATE,
-            DEAL_REPORTS
+            DEAL_REPORTS, TURN_DYNAMIC_REQUISITES
     );
 
     final String text;
