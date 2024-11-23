@@ -54,6 +54,7 @@ public class ChangeReferralBalanceStateHandler implements IStateHandler {
         String text = update.getMessage().getText();
         if (TextCommand.CANCEL.getText().equals(text)) {
             redisUserStateService.delete(chatId);
+            redisStringService.delete(chatId);
             adminPanelService.send(chatId);
             return;
         }
@@ -85,6 +86,7 @@ public class ChangeReferralBalanceStateHandler implements IStateHandler {
         }
         responseSender.sendMessage(chatId, "Баланс успешно обновлен. Текущее новое значение: <b>" + total + "₽</b>.");
         redisUserStateService.delete(chatId);
+        redisStringService.delete(chatId);
         adminPanelService.send(chatId);
     }
 
