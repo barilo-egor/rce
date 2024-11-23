@@ -64,8 +64,8 @@ public class UserReferralBalanceStateHandler implements IStateHandler {
         }
         Long userChatId = Long.parseLong(message.getText());
         if (readUserService.existsByChatId(userChatId)) {
-            responseSender.sendMessage(chatId, "У пользователя с чат айди " + userChatId
-                            + " на реферальном балансе " + readUserService.getReferralBalanceByChatId(userChatId) + "₽",
+            responseSender.sendMessage(chatId, "У пользователя с чат айди <b>" + userChatId
+                            + "</b> на реферальном балансе <b>" + readUserService.getReferralBalanceByChatId(userChatId) + "₽</b>.",
                     keyboardBuildService.buildInline(List.of(
                             InlineButton.builder()
                                     .inlineType(InlineType.CALLBACK_DATA)
