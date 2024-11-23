@@ -5,11 +5,11 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import tgb.btc.rce.enums.update.MessageType;
 import tgb.btc.rce.enums.update.SlashCommand;
 import tgb.btc.rce.enums.update.TextMessageType;
-import tgb.btc.rce.service.IRedisUserStateService;
 import tgb.btc.rce.service.handler.message.IMessageHandler;
 import tgb.btc.rce.service.handler.message.text.ITextMessageHandler;
 import tgb.btc.rce.service.handler.util.IStartService;
 import tgb.btc.rce.service.handler.util.ITextMessageTypeService;
+import tgb.btc.rce.service.redis.IRedisUserStateService;
 
 import java.util.HashMap;
 import java.util.List;

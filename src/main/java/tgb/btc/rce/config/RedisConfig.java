@@ -12,7 +12,7 @@ import tgb.btc.rce.enums.UserState;
 public class RedisConfig {
 
     @Bean
-    public RedisTemplate<String, UserState> redisTemplate(RedisConnectionFactory connectionFactory) {
+    public RedisTemplate<String, UserState> redisUserStateTemplate(RedisConnectionFactory connectionFactory) {
         RedisTemplate<String, UserState> template = new RedisTemplate<>();
         template.setConnectionFactory(connectionFactory);
         template.setKeySerializer(new StringRedisSerializer());

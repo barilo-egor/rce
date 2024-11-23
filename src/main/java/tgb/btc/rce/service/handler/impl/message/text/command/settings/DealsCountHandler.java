@@ -6,8 +6,8 @@ import tgb.btc.rce.enums.UserState;
 import tgb.btc.rce.enums.update.TextCommand;
 import tgb.btc.rce.sender.IResponseSender;
 import tgb.btc.rce.service.IKeyboardService;
-import tgb.btc.rce.service.IRedisUserStateService;
 import tgb.btc.rce.service.handler.message.text.ITextCommandHandler;
+import tgb.btc.rce.service.redis.IRedisUserStateService;
 
 @Service
 public class DealsCountHandler implements ITextCommandHandler {

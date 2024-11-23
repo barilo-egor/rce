@@ -13,9 +13,9 @@ import tgb.btc.rce.enums.UserState;
 import tgb.btc.rce.enums.update.TextCommand;
 import tgb.btc.rce.enums.update.UpdateType;
 import tgb.btc.rce.sender.IResponseSender;
-import tgb.btc.rce.service.IRedisUserStateService;
 import tgb.btc.rce.service.handler.IStateHandler;
 import tgb.btc.rce.service.handler.util.IAdminPanelService;
+import tgb.btc.rce.service.redis.IRedisUserStateService;
 
 import java.time.LocalDate;
 import java.util.List;

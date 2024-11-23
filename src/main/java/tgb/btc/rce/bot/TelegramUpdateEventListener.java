@@ -6,12 +6,12 @@ import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.enums.UserState;
 import tgb.btc.rce.enums.update.UpdateType;
-import tgb.btc.rce.service.IRedisUserStateService;
 import tgb.btc.rce.service.IUpdateService;
 import tgb.btc.rce.service.handler.IStateHandler;
 import tgb.btc.rce.service.handler.IUpdateHandler;
 import tgb.btc.rce.service.handler.impl.message.text.slash.StartHandler;
 import tgb.btc.rce.service.processors.support.MessagesService;
+import tgb.btc.rce.service.redis.IRedisUserStateService;
 import tgb.btc.rce.vo.TelegramUpdateEvent;
 
 import java.util.HashMap;

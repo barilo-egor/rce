@@ -13,9 +13,9 @@ import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.Menu;
 import tgb.btc.rce.enums.UserState;
 import tgb.btc.rce.sender.ResponseSender;
-import tgb.btc.rce.service.IRedisUserStateService;
 import tgb.btc.rce.service.IUpdateService;
 import tgb.btc.rce.service.handler.util.IStartService;
+import tgb.btc.rce.service.redis.IRedisUserStateService;
 import tgb.btc.rce.service.util.IMenuService;
 
 import java.util.Objects;
