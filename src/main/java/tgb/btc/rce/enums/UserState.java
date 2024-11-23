@@ -12,4 +12,6 @@ public enum UserState {
     CHECK_FOR_DATE,
     DEAL_REPORTS,
     DATE_DEAL_REPORT,
+    SEND_MESSAGE_CHAT_ID,
+    SEND_MESSAGE_TEXT
 }
