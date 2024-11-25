@@ -12,6 +12,7 @@ import tgb.btc.rce.enums.PropertiesMessage;
 import tgb.btc.rce.sender.IMessageImageResponseSender;
 import tgb.btc.rce.sender.IResponseSender;
 import tgb.btc.rce.service.handler.util.IStartService;
+import tgb.btc.rce.service.redis.IRedisStringService;
 import tgb.btc.rce.service.redis.IRedisUserStateService;
 import tgb.btc.rce.service.util.IMenuService;
 import tgb.btc.rce.service.util.IMessagePropertiesService;
@@ -40,11 +41,13 @@ public class StartService implements IStartService {
 
     private final IRedisUserStateService redisUserStateService;
 
+    private final IRedisStringService redisStringService;
+
     public StartService(IResponseSender responseSender, IReadDealService readDealService,
                         IModifyDealService modifyDealService, IMessageImageResponseSender messageImageResponseSender,
                         IModifyUserService modifyUserService, IReadUserService readUserService,
                         IMessagePropertiesService messagePropertiesService, IMenuService menuService,
-                        IRedisUserStateService redisUserStateService) {
+                        IRedisUserStateService redisUserStateService, IRedisStringService redisStringService) {
         this.responseSender = responseSender;
         this.readDealService = readDealService;
         this.modifyDealService = modifyDealService;
@@ -54,6 +57,7 @@ public class StartService implements IStartService {
         this.messagePropertiesService = messagePropertiesService;
         this.menuService = menuService;
         this.redisUserStateService = redisUserStateService;
+        this.redisStringService = redisStringService;
     }
 
     @Override
@@ -85,6 +89,7 @@ public class StartService implements IStartService {
             modifyUserService.updateCurrentDealByChatId(null, chatId);
         }
         redisUserStateService.delete(chatId);
+        redisStringService.delete(chatId);
         modifyUserService.setDefaultValues(chatId);
         responseSender.sendMessage(chatId,
                 messagePropertiesService.getMessage(PropertiesMessage.MENU_MAIN),

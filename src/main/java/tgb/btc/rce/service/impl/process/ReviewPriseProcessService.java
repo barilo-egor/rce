@@ -14,7 +14,6 @@ import tgb.btc.library.interfaces.IModule;
 import tgb.btc.library.interfaces.service.bean.bot.deal.IReadDealService;
 import tgb.btc.library.service.properties.ReviewPrisePropertiesReader;
 import tgb.btc.library.service.properties.VariablePropertiesReader;
-import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.ReviewPriseType;
 import tgb.btc.rce.enums.update.CallbackQueryData;
 import tgb.btc.rce.sender.IResponseSender;
@@ -27,7 +26,6 @@ import tgb.btc.rce.vo.ReviewPrise;
 
 import java.math.BigDecimal;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class ReviewPriseProcessService implements IReviewPriseProcessService, IReviewPriseBotProcessService {
@@ -112,7 +110,7 @@ public class ReviewPriseProcessService implements IReviewPriseProcessService, IR
                 }
                 else return;
             } else {
-                data = Command.SHARE_REVIEW.name();
+                data = CallbackQueryData.SHARE_REVIEW.name();
                 amount = variablePropertiesReader.getInt(VariableType.REVIEW_PRISE) +"₽";
             }
             responseSender.sendMessage(deal.getUser().getChatId(), "Хотите оставить отзыв?\n" +
@@ -120,8 +118,8 @@ public class ReviewPriseProcessService implements IReviewPriseProcessService, IR
                             " на реферальный баланс после публикации.",
                     keyboardBuildService.buildInline(List.of(
                                     InlineButton.builder()
+                                            .text("Оставить")
                                             .data(data)
-                                            .text(commandService.getText(Command.SHARE_REVIEW))
                                             .build()
                             )
                     ));
@@ -132,7 +130,7 @@ public class ReviewPriseProcessService implements IReviewPriseProcessService, IR
     public ReviewPrise getReviewPrise(BigDecimal sum, FiatCurrency fiatCurrency) {
         for (ReviewPrise reviewPrise : reviewPrises.stream()
                 .filter(reviewPrise -> reviewPrise.getFiatCurrency().equals(fiatCurrency))
-                .collect(Collectors.toList())) {
+                .toList()) {
             if (BigDecimal.valueOf(reviewPrise.getSum()).compareTo(sum) < 1)
                 return reviewPrise;
         }

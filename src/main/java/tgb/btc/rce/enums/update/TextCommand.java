@@ -58,7 +58,6 @@ public enum TextCommand {
     ADD_CONTACT("Добавить контакт", UserRole.ADMIN_ACCESS),
     DELETE_CONTACT("Удалить контакт", UserRole.ADMIN_ACCESS),
     SEND_MESSAGE_TO_USER("Сообщение пользователю", UserRole.ADMIN_ACCESS),
-    SYSTEM_MESSAGES("Сис.сообщения", UserRole.ADMIN_ACCESS),
     BOT_VARIABLES("Переменные бота", UserRole.ADMIN_ACCESS),
     CHECKS_FOR_DATE("Чеки по дате", UserRole.ADMIN_ACCESS),
     NEW_PAYMENT_TYPE("Создать тип оплаты", UserRole.OPERATOR_ACCESS),
