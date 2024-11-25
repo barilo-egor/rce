@@ -48,7 +48,7 @@ public final class CommandProcessorLoader implements ICommandProcessorLoader {
     public Processor getByCommand(Command command, int step) {
         try {
             if (Command.START.equals(command)) {
-                return processorMap.get(Command.START).get(0);
+                return null;
             }
             Map<Integer, Processor> stepProcessors = processorMap.get(command);
             if (Objects.isNull(stepProcessors)) {
