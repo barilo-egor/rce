@@ -18,4 +18,5 @@ public enum UserState {
     PERSONAL_SELL_CHAT_ID,
     NEW_PERSONAL_BUY,
     NEW_PERSONAL_SELL,
+    USER_INFORMATION
 }

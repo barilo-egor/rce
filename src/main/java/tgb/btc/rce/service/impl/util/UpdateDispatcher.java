@@ -122,10 +122,8 @@ public class UpdateDispatcher implements IUpdateDispatcher {
         UserState userState = redisUserStateService.get(chatId);
         if (Objects.isNull(userState)) {
             Command command = getCommand(update, chatId);
-            if (!Command.NEW_HANDLE.contains(command)) {
-                runProcessor(command, chatId, update);
-                return;
-            }
+            runProcessor(command, chatId, update);
+            return;
         }
         eventPublisher.publishEvent(new TelegramUpdateEvent(this, update));
     }
