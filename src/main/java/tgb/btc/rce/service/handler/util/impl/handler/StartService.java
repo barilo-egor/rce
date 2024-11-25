@@ -74,6 +74,7 @@ public class StartService implements IStartService {
         }
         modifyUserService.setDefaultValues(chatId);
         redisUserStateService.delete(chatId);
+        redisStringService.delete(chatId);
         responseSender.sendMessage(chatId,
                 messagePropertiesService.getMessage(PropertiesMessage.MENU_MAIN),
                 menuService.build(Menu.MAIN, readUserService.getUserRoleByChatId(chatId)), "HTML");

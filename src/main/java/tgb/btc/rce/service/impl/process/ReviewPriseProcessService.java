@@ -99,18 +99,14 @@ public class ReviewPriseProcessService implements IReviewPriseProcessService, IR
     public void processReviewPrise(Long dealPid) {
         Deal deal = readDealService.findByPid(dealPid);
         if (referralModule.isCurrent(ReferralType.STANDARD)) {
-            String data;
             String amount;
             if (reviewPriseModule.isCurrent(ReviewPriseType.DYNAMIC)) {
                 ReviewPrise reviewPriseVo = getReviewPrise(deal.getAmount(), deal.getFiatCurrency());
                 if (Objects.nonNull(reviewPriseVo)) {
-                    data = callbackDataService.buildData(CallbackQueryData.SHARE_REVIEW,
-                            String.valueOf(reviewPriseVo.getMinPrise()), String.valueOf(reviewPriseVo.getMaxPrise()));
                     amount = "от " + reviewPriseVo.getMinPrise() + "₽" + " до " + reviewPriseVo.getMaxPrise() + "₽";
                 }
                 else return;
             } else {
-                data = CallbackQueryData.SHARE_REVIEW.name();
                 amount = variablePropertiesReader.getInt(VariableType.REVIEW_PRISE) +"₽";
             }
             responseSender.sendMessage(deal.getUser().getChatId(), "Хотите оставить отзыв?\n" +
@@ -119,7 +115,7 @@ public class ReviewPriseProcessService implements IReviewPriseProcessService, IR
                     keyboardBuildService.buildInline(List.of(
                                     InlineButton.builder()
                                             .text("Оставить")
-                                            .data(data)
+                                            .data(callbackDataService.buildData(CallbackQueryData.SHARE_REVIEW, dealPid))
                                             .build()
                             )
                     ));
