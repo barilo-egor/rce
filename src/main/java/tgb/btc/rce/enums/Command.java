@@ -102,6 +102,7 @@ public enum Command implements ICommand {
     PERSONAL_BUY_DISCOUNT("Персональная, покупка", false, UserRole.ADMIN_ACCESS),
     PERSONAL_SELL_DISCOUNT("Персональная, продажа", false, UserRole.ADMIN_ACCESS),
     USER_INFORMATION("Информация о пользователе", false, UserRole.ADMIN_ACCESS),
+    REFERRAL_PERCENT("Процент реферала", false, UserRole.ADMIN_ACCESS),
 
     // HAS USAGE
     START("/start", false, UserRole.USER_ACCESS),
@@ -122,7 +123,6 @@ public enum Command implements ICommand {
     CANCEL("Отмена", false, UserRole.USER_ACCESS),
     BOT_OFFED("BOT_OFFED", false, UserRole.USER_ACCESS),
     CAPTCHA("captcha", false, UserRole.USER_ACCESS),
-    REFERRAL_PERCENT("Процент реферала", false, UserRole.ADMIN_ACCESS),
     BOT_VARIABLES("Переменные бота", false, UserRole.ADMIN_ACCESS),
     SYSTEM_MESSAGES("Сис.сообщения", false, UserRole.ADMIN_ACCESS),
     DEAL("DEAL", false, UserRole.USER_ACCESS),
