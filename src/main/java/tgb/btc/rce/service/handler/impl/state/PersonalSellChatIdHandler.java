@@ -3,15 +3,13 @@ package tgb.btc.rce.service.handler.impl.state;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.interfaces.service.bean.bot.IUserDiscountService;
-import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.library.interfaces.util.IBigDecimalService;
 import tgb.btc.rce.enums.UserState;
 import tgb.btc.rce.enums.update.CallbackQueryData;
-import tgb.btc.rce.enums.update.TextCommand;
-import tgb.btc.rce.enums.update.UpdateType;
 import tgb.btc.rce.sender.IResponseSender;
 import tgb.btc.rce.service.handler.IStateHandler;
 import tgb.btc.rce.service.handler.util.IAdminPanelService;
+import tgb.btc.rce.service.handler.util.IUserInputService;
 import tgb.btc.rce.service.redis.IRedisUserStateService;
 import tgb.btc.rce.service.util.ICallbackDataService;
 import tgb.btc.rce.vo.InlineButton;
@@ -28,51 +26,36 @@ public class PersonalSellChatIdHandler implements IStateHandler {
 
     private final IAdminPanelService adminPanelService;
 
-    private final IReadUserService readUserService;
-
     private final IUserDiscountService userDiscountService;
 
     private final IBigDecimalService bigDecimalService;
 
     private final ICallbackDataService callbackDataService;
 
+    private final IUserInputService userInputService;
+
     public PersonalSellChatIdHandler(IResponseSender responseSender, IRedisUserStateService redisUserStateService,
-                                    IAdminPanelService adminPanelService, IReadUserService readUserService,
-                                    IUserDiscountService userDiscountService, IBigDecimalService bigDecimalService,
-                                    ICallbackDataService callbackDataService) {
+                                     IAdminPanelService adminPanelService,
+                                     IUserDiscountService userDiscountService, IBigDecimalService bigDecimalService,
+                                     ICallbackDataService callbackDataService, IUserInputService userInputService) {
         this.responseSender = responseSender;
         this.redisUserStateService = redisUserStateService;
         this.adminPanelService = adminPanelService;
-        this.readUserService = readUserService;
         this.userDiscountService = userDiscountService;
         this.bigDecimalService = bigDecimalService;
         this.callbackDataService = callbackDataService;
+        this.userInputService = userInputService;
     }
 
 
     @Override
     public void handle(Update update) {
-        if (!update.hasMessage() || !update.getMessage().hasText()) {
-            responseSender.sendMessage(UpdateType.getChatId(update),
-                    "Введите chat id либо нажмите \"" + TextCommand.CANCEL.getText() + "\".");
+        if (!userInputService.hasTextInput(update)) {
             return;
         }
         Long chatId = update.getMessage().getChatId();
-        String text = update.getMessage().getText();
-        if (TextCommand.CANCEL.getText().equals(text)) {
-            redisUserStateService.delete(chatId);
-            adminPanelService.send(chatId);
-            return;
-        }
-        long userChatId;
-        try {
-            userChatId = Long.parseLong(text);
-        } catch (NumberFormatException e) {
-            responseSender.sendMessage(chatId, "Введите валидный chat id.");
-            return;
-        }
-        if (!readUserService.existsByChatId(userChatId)) {
-            responseSender.sendMessage(chatId, "Пользователь с таким chat id не найден.");
+        Long userChatId = userInputService.getInputChatId(chatId, update.getMessage().getText());
+        if (Objects.isNull(userChatId)) {
             return;
         }
         BigDecimal personalSell = userDiscountService.getPersonalSellByChatId(userChatId);
