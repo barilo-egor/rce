@@ -8,6 +8,7 @@ import tgb.btc.rce.enums.update.UpdateType;
 import tgb.btc.rce.sender.IResponseSender;
 import tgb.btc.rce.service.handler.util.IAdminPanelService;
 import tgb.btc.rce.service.handler.util.IUserInputService;
+import tgb.btc.rce.service.redis.IRedisStringService;
 import tgb.btc.rce.service.redis.IRedisUserStateService;
 
 @Service
@@ -16,15 +17,19 @@ public class UserInputService implements IUserInputService {
     private final IResponseSender responseSender;
     
     private final IRedisUserStateService redisUserStateService;
+
+    private final IRedisStringService redisStringService;
     
     private final IAdminPanelService adminPanelService;
 
     private final IReadUserService readUserService;
 
     public UserInputService(IResponseSender responseSender, IRedisUserStateService redisUserStateService,
+                            IRedisStringService redisStringService,
                             IAdminPanelService adminPanelService, IReadUserService readUserService) {
         this.responseSender = responseSender;
         this.redisUserStateService = redisUserStateService;
+        this.redisStringService = redisStringService;
         this.adminPanelService = adminPanelService;
         this.readUserService = readUserService;
     }
@@ -40,6 +45,7 @@ public class UserInputService implements IUserInputService {
         String text = update.getMessage().getText();
         if (TextCommand.CANCEL.getText().equals(text)) {
             redisUserStateService.delete(chatId);
+            redisStringService.delete(chatId);
             adminPanelService.send(chatId);
             return false;
         }
