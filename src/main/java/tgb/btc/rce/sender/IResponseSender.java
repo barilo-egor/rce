@@ -84,6 +84,8 @@ public interface IResponseSender {
 
     void sendEditedMessageText(Long chatId, Integer messageId, String text);
 
+    void sendEditedMessageText(Long chatId, Integer messageId, String text, List<InlineButton> buttons);
+
     void sendEditedMessageText(Long chatId, Integer messageId, String text, ReplyKeyboard replyKeyboard);
 
     void deleteCallbackMessageButtonsIfExists(Update update);

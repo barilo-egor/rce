@@ -5,6 +5,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMar
 import tgb.btc.library.constants.enums.bot.CryptoCurrency;
 import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
+import tgb.btc.rce.enums.update.CallbackQueryData;
 import tgb.btc.rce.vo.InlineButton;
 
 import java.math.BigDecimal;
@@ -45,9 +46,13 @@ public interface IKeyboardService {
 
     ReplyKeyboard getBuyOrSell();
 
+    ReplyKeyboard getInlineDealTypes(CallbackQueryData callbackQueryData, FiatCurrency fiatCurrency);
+
     ReplyKeyboard getOperator();
 
     ReplyKeyboardMarkup getFiatCurrenciesKeyboard();
+
+    ReplyKeyboard getInlineFiats(CallbackQueryData callbackQueryData);
 
     ReplyKeyboard getBuildDeal();
 

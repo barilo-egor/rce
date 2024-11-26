@@ -8,6 +8,8 @@ public interface BotStringConstants {
 
     String FIAT_CURRENCY_CHOOSE = "Выберите фиатную валюту.";
 
+    String DEAL_TYPE_CHOOSE = "Выберите тип сделки.";
+
     String USE_SAVED_WALLET = "use_saved";
 
     String USE_PROMO = "use_promo";

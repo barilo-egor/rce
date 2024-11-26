@@ -67,7 +67,7 @@ public class StartService implements IStartService {
         Long currentDealPid = readUserService.getCurrentDealByChatId(chatId);
         if (Objects.nonNull(currentDealPid)) {
             if (readDealService.existsById(currentDealPid)) {
-                log.info("Сделка " + currentDealPid + " удалена по команде /start");
+                log.info("Сделка {} удалена по команде /start", currentDealPid);
                 modifyDealService.deleteById(currentDealPid);
             }
             modifyUserService.updateCurrentDealByChatId(null, chatId);
@@ -90,7 +90,7 @@ public class StartService implements IStartService {
             modifyUserService.updateCurrentDealByChatId(null, chatId);
         }
         redisUserStateService.delete(chatId);
-        redisStringService.delete(chatId);
+        redisStringService.deleteAll(chatId);
         modifyUserService.setDefaultValues(chatId);
         responseSender.sendMessage(chatId,
                 messagePropertiesService.getMessage(PropertiesMessage.MENU_MAIN),

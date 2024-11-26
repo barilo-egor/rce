@@ -57,6 +57,7 @@ public class RceBot extends TelegramLongPollingBot {
     @SneakyThrows
     @Override
     public void onUpdateReceived(Update update) {
+        long t1 = System.currentTimeMillis();
         try {
             if (updateService.isGroupMessage(update))
                 groupUpdateDispatcher.dispatch(update);
@@ -80,6 +81,7 @@ public class RceBot extends TelegramLongPollingBot {
             } catch (Exception ignored) {
             }
         }
+        long t2 = System.currentTimeMillis();
     }
 
 }

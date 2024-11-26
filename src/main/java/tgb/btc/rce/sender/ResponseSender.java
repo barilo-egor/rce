@@ -266,9 +266,15 @@ public class ResponseSender implements IResponseSender {
 
     @Override
     public void sendEditedMessageText(Long chatId, Integer messageId, String text) {
-        sendEditedMessageText(chatId, messageId, text, null);
+        sendEditedMessageText(chatId, messageId, text, (ReplyKeyboard) null);
     }
 
+    @Override
+    public void sendEditedMessageText(Long chatId, Integer messageId, String text, List<InlineButton> buttons) {
+        sendEditedMessageText(chatId, messageId, text, keyboardBuildService.buildInline(buttons));
+    }
+
+    @Override
     public void sendEditedMessageText(Long chatId, Integer messageId, String text, ReplyKeyboard replyKeyboard) {
         try {
             bot.execute(EditMessageText.builder()

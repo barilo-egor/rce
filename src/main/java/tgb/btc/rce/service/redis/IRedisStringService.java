@@ -14,4 +14,6 @@ public interface IRedisStringService {
     void delete(Long key);
 
     void delete(RedisPrefix prefix, Long key);
+
+    void deleteAll(Long key);
 }
