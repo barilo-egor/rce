@@ -7,6 +7,7 @@ import tgb.btc.rce.service.redis.IRedisStringService;
 
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
 
 @Service
 public class RedisStringService implements IRedisStringService {
@@ -47,5 +48,11 @@ public class RedisStringService implements IRedisStringService {
     @Override
     public void delete(RedisPrefix prefix, Long key) {
         redisTemplate.delete(prefix.getPrefix() + key);
+    }
+
+    @Override
+    public void deleteAll(Long key) {
+        redisTemplate.delete(prefix + key.toString());
+        Arrays.stream(RedisPrefix.values()).forEach(prefix -> delete(prefix, key));
     }
 }

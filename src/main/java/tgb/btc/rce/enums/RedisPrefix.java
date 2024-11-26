@@ -7,7 +7,9 @@ import lombok.Getter;
 @Getter
 public enum RedisPrefix {
     MESSAGE_ID("message_id_"),
-    DEAL_PID("deal_pid_");
+    DEAL_PID("deal_pid_"),
+    DEAL_TYPE("deal_type_"),
+    FIAT_CURRENCY("fiat_currency_");
 
     final String prefix;
 }

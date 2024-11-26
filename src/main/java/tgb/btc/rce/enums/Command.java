@@ -106,6 +106,7 @@ public enum Command implements ICommand {
     BOT_VARIABLES("Переменные бота", false, UserRole.ADMIN_ACCESS),
     SHARE_REVIEW("Оставить", false, UserRole.USER_ACCESS),
     DELETE_PAYMENT_TYPE("Удалить тип оплаты", false, UserRole.OPERATOR_ACCESS),
+    NEW_PAYMENT_TYPE("Создать тип оплаты", false, UserRole.OPERATOR_ACCESS),
 
     // HAS USAGE
     START("/start", false, UserRole.USER_ACCESS),
@@ -133,7 +134,6 @@ public enum Command implements ICommand {
     USE_SAVED_WALLET("USE_SAVED_WALLET", false, UserRole.USER_ACCESS),
     CHANNEL_POST("CHANNEL_POST", false, UserRole.USER_ACCESS),
     RECEIPTS_CANCEL_DEAL("Отменить сделку", false, UserRole.USER_ACCESS),
-    NEW_PAYMENT_TYPE("Создать тип оплаты", false, UserRole.OPERATOR_ACCESS),
     NEW_PAYMENT_TYPE_REQUISITE("Создать реквизит", false, UserRole.OPERATOR_ACCESS),
     DELETE_PAYMENT_TYPE_REQUISITE("Удалить реквизит", false, UserRole.OPERATOR_ACCESS),
     TURN_PAYMENT_TYPES("Включение типов оплат", false, UserRole.OPERATOR_ACCESS),
