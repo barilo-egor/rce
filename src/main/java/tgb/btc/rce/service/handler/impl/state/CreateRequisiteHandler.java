@@ -81,7 +81,6 @@ public class CreateRequisiteHandler implements IStateHandler {
                 InlineButton.builder().text("Сохранить").data(
                         callbackDataService.buildData(
                                 CallbackQueryData.SAVE_REQUISITE,
-                                requisite,
                                 paymentTypePid)
                 ).build()
         );
