@@ -6,17 +6,17 @@ import tgb.btc.rce.enums.BotSystemMessage;
 import tgb.btc.rce.enums.update.CallbackQueryData;
 import tgb.btc.rce.sender.IResponseSender;
 import tgb.btc.rce.service.handler.callback.ICallbackQueryHandler;
-import tgb.btc.rce.service.processors.support.MessagesService;
+import tgb.btc.rce.service.util.ICallbackDataService;
 
 @Service
-public class MailingListCallbackHandler implements ICallbackQueryHandler {
+public class SendMessageToUserCallbackHandler implements ICallbackQueryHandler {
 
-    private final MessagesService messagesService;
+    private final ICallbackDataService callbackDataService;
 
     private final IResponseSender responseSender;
 
-    public MailingListCallbackHandler(MessagesService messagesService, IResponseSender responseSender) {
-        this.messagesService = messagesService;
+    public SendMessageToUserCallbackHandler(ICallbackDataService callbackDataService, IResponseSender responseSender) {
+        this.callbackDataService = callbackDataService;
         this.responseSender = responseSender;
     }
 
@@ -24,14 +24,14 @@ public class MailingListCallbackHandler implements ICallbackQueryHandler {
     public void handle(CallbackQuery callbackQuery) {
         Long chatId = callbackQuery.getFrom().getId();
         String text = callbackQuery.getMessage().getText();
-        messagesService.sendMessageToUsers(chatId, callbackQuery.getMessage().getText());
-        responseSender.sendMessage(chatId, "Рассылка запущена. По окончанию вам придет оповещение.");
+        Long userChatId = callbackDataService.getLongArgument(callbackQuery.getData(), 1);
+        responseSender.sendMessage(userChatId, text);
         responseSender.sendEditedMessageText(chatId, callbackQuery.getMessage().getMessageId(),
                 text + BotSystemMessage.MESSAGE_SENT.getText());
     }
 
     @Override
     public CallbackQueryData getCallbackQueryData() {
-        return CallbackQueryData.MAILING_LIST;
+        return CallbackQueryData.SEND_MESSAGE_TO_USER;
     }
 }

@@ -14,6 +14,8 @@ import tgb.btc.rce.service.redis.IRedisUserStateService;
 import tgb.btc.rce.service.util.ICallbackDataService;
 import tgb.btc.rce.vo.InlineButton;
 
+import java.util.Optional;
+
 @Service
 public class MailingListStateHandler implements IStateHandler {
 
@@ -42,10 +44,10 @@ public class MailingListStateHandler implements IStateHandler {
         }
         Message message = update.getMessage();
         Long chatId = message.getChatId();
-        responseSender.sendMessage(chatId, "Предварительный просмотр сообщения:");
+        Optional<Message> preMessage = responseSender.sendMessage(chatId, "Предварительный просмотр сообщения:");
         responseSender.sendMessage(message.getChatId(), message.getText(),
                 InlineButton.builder().text("Отправить пользователям").data(CallbackQueryData.MAILING_LIST.name()).build(),
-                InlineButton.builder().text("Отмена").data(CallbackQueryData.INLINE_DELETE.name()).build());
+                InlineButton.builder().text("Отмена").data(callbackDataService.buildData(CallbackQueryData.INLINE_DELETE, preMessage.get().getMessageId())).build());
         redisUserStateService.delete(chatId);
         adminPanelService.send(chatId);
     }

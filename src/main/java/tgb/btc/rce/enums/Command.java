@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import tgb.btc.library.constants.enums.bot.UserRole;
 import tgb.btc.library.interfaces.ICommand;
 
-import java.util.List;
 import java.util.Set;
 
 @Slf4j
@@ -98,6 +97,13 @@ public enum Command implements ICommand {
     LOTTERY_REPORT("Отчет по лотереи", false, UserRole.ADMIN_ACCESS),
     CHECKS_FOR_DATE("Чеки по дате", false, UserRole.ADMIN_ACCESS),
     DEAL_REPORTS("Отчет по сделкам", false, Set.of(UserRole.OBSERVER, UserRole.ADMIN)),
+    TURN_DYNAMIC_REQUISITES("Динамические реквизиты", false, UserRole.OPERATOR_ACCESS),
+    SEND_MESSAGE_TO_USER("Сообщение пользователю", false, UserRole.ADMIN_ACCESS),
+    PERSONAL_BUY_DISCOUNT("Персональная, покупка", false, UserRole.ADMIN_ACCESS),
+    PERSONAL_SELL_DISCOUNT("Персональная, продажа", false, UserRole.ADMIN_ACCESS),
+    USER_INFORMATION("Информация о пользователе", false, UserRole.ADMIN_ACCESS),
+    REFERRAL_PERCENT("Процент реферала", false, UserRole.ADMIN_ACCESS),
+    BOT_VARIABLES("Переменные бота", false, UserRole.ADMIN_ACCESS),
 
     // HAS USAGE
     START("/start", false, UserRole.USER_ACCESS),
@@ -118,20 +124,12 @@ public enum Command implements ICommand {
     CANCEL("Отмена", false, UserRole.USER_ACCESS),
     BOT_OFFED("BOT_OFFED", false, UserRole.USER_ACCESS),
     CAPTCHA("captcha", false, UserRole.USER_ACCESS),
-    PERSONAL_BUY_DISCOUNT("Персональная, покупка", false, UserRole.ADMIN_ACCESS),
-    PERSONAL_SELL_DISCOUNT("Персональная, продажа", false, UserRole.ADMIN_ACCESS),
-    REFERRAL_PERCENT("Процент реферала", false, UserRole.ADMIN_ACCESS),
-    SEND_MESSAGE_TO_USER("Сообщение пользователю", false, UserRole.ADMIN_ACCESS),
-    BOT_VARIABLES("Переменные бота", false, UserRole.ADMIN_ACCESS),
-    SYSTEM_MESSAGES("Сис.сообщения", false, UserRole.ADMIN_ACCESS),
     DEAL("DEAL", false, UserRole.USER_ACCESS),
     USER_ADDITIONAL_VERIFICATION("USER_ADDITIONAL_VERIFICATION", false, UserRole.USER_ACCESS),
     SHARE_REVIEW("Оставить", false, UserRole.USER_ACCESS),
-    CHOOSING_FIAT_CURRENCY("CHOOSING_FIAT_CURRENCY", false, UserRole.USER_ACCESS),
     USE_PROMO("Использовать промокод", false, UserRole.USER_ACCESS),
     DONT_USE_PROMO("Не использовать промокод", false, UserRole.USER_ACCESS),
     USE_SAVED_WALLET("USE_SAVED_WALLET", false, UserRole.USER_ACCESS),
-    USER_INFORMATION("Информация о пользователе", false, UserRole.ADMIN_ACCESS),
     CHANNEL_POST("CHANNEL_POST", false, UserRole.USER_ACCESS),
     RECEIPTS_CANCEL_DEAL("Отменить сделку", false, UserRole.USER_ACCESS),
     NEW_PAYMENT_TYPE("Создать тип оплаты", false, UserRole.OPERATOR_ACCESS),
@@ -140,29 +138,10 @@ public enum Command implements ICommand {
     DELETE_PAYMENT_TYPE_REQUISITE("Удалить реквизит", false, UserRole.OPERATOR_ACCESS),
     TURN_PAYMENT_TYPES("Включение типов оплат", false, UserRole.OPERATOR_ACCESS),
     CHANGE_MIN_SUM("Мин.сумма", false, UserRole.OPERATOR_ACCESS),
-    TURN_DYNAMIC_REQUISITES("Динамические реквизиты", false, UserRole.OPERATOR_ACCESS),
     NONE_CALCULATOR("NONE_CALCULATOR", false, UserRole.USER_ACCESS),
     INLINE_QUERY_CALCULATOR("INLINE_QUERY_CALCULATOR", false, UserRole.USER_ACCESS),
     INLINE_CALCULATOR("INLINE_CALCULATOR", false, UserRole.USER_ACCESS)
     ;
-
-    public static final List<Command> NEW_HANDLE = List.of(
-            START, HELP, CHAT_ID, MAKE_USER, MAKE_OBSERVER, MAKE_OPERATOR, MAKE_ADMIN, BACKUP_DB, DELETE_FROM_POOL, DELETE_USER,
-            TURN_NOTIFICATIONS, BUY_BITCOIN, SELL_BITCOIN, CONTACTS, DRAWS, REFERRAL, ADMIN_PANEL, WEB_ADMIN_PANEL, LOTTERY,
-            ROULETTE, BOT_SETTINGS, DISCOUNTS, EDIT_CONTACTS, OBSERVER_PANEL, OPERATOR_PANEL, REPORTS, REQUESTS, SEND_MESSAGES,
-            USERS, NEW_API_DEALS, NEW_DEALS, NEW_REVIEWS, NEW_SPAM_BANS, NEW_WITHDRAWALS, ON_BOT, OFF_BOT, LOTTERY_REPORT,
-            PARTNERS_REPORT, BACK, TURNING_CURRENCY, QUIT_ADMIN_PANEL, TURNING_DELIVERY_TYPE, TURN_RANK_DISCOUNT, CURRENT_DATA,
-            PAYMENT_TYPES, BITCOIN_POOL, USERS_REPORT, USERS_DEALS_REPORT, SHOW_WITHDRAWAL_REQUEST, HIDE_WITHDRAWAL,
-            DELETE_WITHDRAWAL_REQUEST, CHANGE_RANK_DISCOUNT, TURN_ON_CURRENCY, TURN_OFF_CURRENCY, TURNING_RANK_DISCOUNT,
-            SHOW_DEAL, SHOW_API_DEAL, DELETE_USER_DEAL, DELETE_DEAL_AND_BLOCK_USER, CONFIRM_USER_DEAL, AUTO_WITHDRAWAL_DEAL,
-            BITCOIN_POOL_WITHDRAWAL, CLEAR_POOL, CONFIRM_POOL_WITHDRAWAL, CONFIRM_CLEAR_POOL, ADD_TO_POOL,
-            CONFIRM_AUTO_WITHDRAWAL_DEAL, ADDITIONAL_VERIFICATION, REVIEW_NAVIGATION, PUBLISH_REVIEW, DELETE_REVIEW,
-            DELETING_PAYMENT_TYPE, DELETING_PAYMENT_TYPE_REQUISITE, TURNING_PAYMENT_TYPES, TURNING_DYNAMIC_REQUISITES,
-            SHOW_SPAM_BANNED_USER, KEEP_SPAM_BAN, SPAM_UNBAN, CONFIRM_API_DEAL, CANCEL_API_DEAL, TURN_PROCESS_DELIVERY,
-            SUBMIT_LOGIN, SUBMIT_REGISTER, LOGOUT, INLINE_DELETE, BAN_UNBAN, USER_REFERRAL_BALANCE, RANK_DISCOUNT, DEALS_COUNT,
-            WITHDRAWAL_OF_FUNDS, MAILING_LIST, ADD_CONTACT, DELETE_CONTACT, CHANGE_REFERRAL_BALANCE, CHECKS_FOR_DATE,
-            DEAL_REPORTS
-    );
 
     final String text;
     final boolean isHidden;

@@ -51,8 +51,6 @@ public enum TextCommand {
     DEALS_COUNT("Кол-во возможных сделок", UserRole.ADMIN_ACCESS),
     DEAL_REPORTS("Отчет по сделкам", Set.of(UserRole.OBSERVER, UserRole.ADMIN)),
     MAILING_LIST("Рассылка", UserRole.OBSERVER_ACCESS),
-    PERSONAL_BUY_DISCOUNT("Персональная, покупка", UserRole.ADMIN_ACCESS),
-    PERSONAL_SELL_DISCOUNT("Персональная, продажа", UserRole.ADMIN_ACCESS),
     REFERRAL_PERCENT("Процент реферала", UserRole.ADMIN_ACCESS),
     ADMIN_BACK("Назад", UserRole.OPERATOR_ACCESS),
     BAN_UNBAN("Бан/разбан", UserRole.ADMIN_ACCESS),
@@ -60,7 +58,6 @@ public enum TextCommand {
     ADD_CONTACT("Добавить контакт", UserRole.ADMIN_ACCESS),
     DELETE_CONTACT("Удалить контакт", UserRole.ADMIN_ACCESS),
     SEND_MESSAGE_TO_USER("Сообщение пользователю", UserRole.ADMIN_ACCESS),
-    SYSTEM_MESSAGES("Сис.сообщения", UserRole.ADMIN_ACCESS),
     BOT_VARIABLES("Переменные бота", UserRole.ADMIN_ACCESS),
     CHECKS_FOR_DATE("Чеки по дате", UserRole.ADMIN_ACCESS),
     NEW_PAYMENT_TYPE("Создать тип оплаты", UserRole.OPERATOR_ACCESS),
@@ -70,6 +67,8 @@ public enum TextCommand {
     TURN_PAYMENT_TYPES("Включение типов оплат", UserRole.OPERATOR_ACCESS),
     CHANGE_MIN_SUM("Мин.сумма", UserRole.OPERATOR_ACCESS),
     TURN_DYNAMIC_REQUISITES("Динамические реквизиты", UserRole.OPERATOR_ACCESS),
+    PERSONAL_BUY_DISCOUNT("Персональная, покупка", UserRole.ADMIN_ACCESS),
+    PERSONAL_SELL_DISCOUNT("Персональная, продажа", UserRole.ADMIN_ACCESS),
     ;
 
     private final String text;

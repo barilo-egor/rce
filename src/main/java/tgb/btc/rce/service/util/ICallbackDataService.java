@@ -2,6 +2,8 @@ package tgb.btc.rce.service.util;
 
 import tgb.btc.rce.enums.update.CallbackQueryData;
 
+import java.util.Set;
+
 public interface ICallbackDataService {
     String buildData(CallbackQueryData data, Object... arguments);
 
@@ -13,7 +15,11 @@ public interface ICallbackDataService {
 
     Integer getIntArgument(String data, int index);
 
+    Set<Integer> getIntArguments(String data);
+
     Boolean getBoolArgument(String data, int index);
 
     boolean isCallbackQueryData(CallbackQueryData callbackQueryData, String data);
+
+    boolean hasArguments(String data);
 }

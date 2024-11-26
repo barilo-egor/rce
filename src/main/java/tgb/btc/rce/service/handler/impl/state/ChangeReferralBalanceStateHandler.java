@@ -6,11 +6,10 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.interfaces.service.bean.bot.user.IModifyUserService;
 import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.rce.enums.UserState;
-import tgb.btc.rce.enums.update.TextCommand;
-import tgb.btc.rce.enums.update.UpdateType;
 import tgb.btc.rce.sender.IResponseSender;
 import tgb.btc.rce.service.handler.IStateHandler;
 import tgb.btc.rce.service.handler.util.IAdminPanelService;
+import tgb.btc.rce.service.handler.util.IUserInputService;
 import tgb.btc.rce.service.redis.IRedisStringService;
 import tgb.btc.rce.service.redis.IRedisUserStateService;
 
@@ -32,32 +31,32 @@ public class ChangeReferralBalanceStateHandler implements IStateHandler {
 
     private final IRedisStringService redisStringService;
 
+    private final IUserInputService userInputService;
+
     public ChangeReferralBalanceStateHandler(IReadUserService readUserService, IModifyUserService modifyUserService,
                                              IResponseSender responseSender, IAdminPanelService adminPanelService,
-                                             IRedisUserStateService redisUserStateService, IRedisStringService redisStringService) {
+                                             IRedisUserStateService redisUserStateService,
+                                             IRedisStringService redisStringService, IUserInputService userInputService) {
         this.readUserService = readUserService;
         this.modifyUserService = modifyUserService;
         this.responseSender = responseSender;
         this.adminPanelService = adminPanelService;
         this.redisUserStateService = redisUserStateService;
         this.redisStringService = redisStringService;
+        this.userInputService = userInputService;
     }
 
     @Override
     public void handle(Update update) {
-        if (!update.hasMessage() || !update.getMessage().hasText()) {
-            responseSender.sendMessage(UpdateType.getChatId(update),
-                    "Введите новый реферальный баланс для пользователя, либо нажмите \"" + TextCommand.CANCEL.getText() + "\".");
+        if (!userInputService.hasTextInput(update)) {
             return;
         }
         Long chatId = update.getMessage().getChatId();
         String text = update.getMessage().getText();
-        if (TextCommand.CANCEL.getText().equals(text)) {
-            redisUserStateService.delete(chatId);
-            adminPanelService.send(chatId);
+        Long userChatId = userInputService.getInputChatId(chatId, text);
+        if (Objects.isNull(userChatId)) {
             return;
         }
-        Long userChatId = Long.parseLong(redisStringService.get(chatId));
         int total;
         if (text.startsWith("+") || text.startsWith("-")) {
             Integer userReferralBalance = readUserService.getReferralBalanceByChatId(userChatId);
@@ -85,6 +84,7 @@ public class ChangeReferralBalanceStateHandler implements IStateHandler {
         }
         responseSender.sendMessage(chatId, "Баланс успешно обновлен. Текущее новое значение: <b>" + total + "₽</b>.");
         redisUserStateService.delete(chatId);
+        redisStringService.delete(chatId);
         adminPanelService.send(chatId);
     }
 

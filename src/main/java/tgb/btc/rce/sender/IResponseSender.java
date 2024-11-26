@@ -34,6 +34,8 @@ public interface IResponseSender {
 
     Optional<Message> sendMessage(Long chatId, String text, String parseMode);
 
+    Optional<Message> sendMessage(Long chatId, String text, List<InlineButton> buttons);
+
     Optional<Message> sendMessage(Long chatId, String text, ReplyKeyboard replyKeyboard, String parseMode);
 
     Optional<Message> sendMessage(Long chatId, String text, ReplyKeyboard replyKeyboard, String parseMode, Integer replyToMessageId);
