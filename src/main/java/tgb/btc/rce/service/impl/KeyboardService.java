@@ -394,6 +394,21 @@ public class KeyboardService implements IKeyboardService {
     }
 
     @Override
+    public ReplyKeyboard getInlineDealTypes(CallbackQueryData callbackQueryData, FiatCurrency fiatCurrency) {
+        List<InlineButton> buttons = new ArrayList<>();
+        for (DealType dealType: DealType.values()) {
+            String data = Objects.nonNull(fiatCurrency)
+                    ? callbackDataService.buildData(callbackQueryData, dealType.name(), fiatCurrency.name())
+                    : callbackDataService.buildData(callbackQueryData, dealType.name());
+            buttons.add(InlineButton.builder()
+                            .text(dealType.getNominativeFirstLetterToUpper())
+                            .data(data)
+                    .build());
+        }
+        return keyboardBuildService.buildInline(buttons);
+    }
+
+    @Override
     public ReplyKeyboard getOperator() {
         return keyboardBuildService.buildInline(List.of(
                 InlineButton.builder()
@@ -411,6 +426,21 @@ public class KeyboardService implements IKeyboardService {
                 .collect(Collectors.toList());
         buttons.add(BotReplyButton.CANCEL.getButton());
         return keyboardBuildService.buildReply(buttons);
+    }
+
+    @Override
+    public ReplyKeyboard getInlineFiats(CallbackQueryData callbackQueryData) {
+        List<InlineButton> buttons = new ArrayList<>();
+        for (FiatCurrency fiatCurrency: fiatCurrencyService.getFiatCurrencies()) {
+            buttons.add(
+                    InlineButton.builder()
+                            .text(fiatCurrency.getDisplayName())
+                            .data(callbackDataService.buildData(callbackQueryData, fiatCurrency.name()))
+                            .build()
+            );
+        }
+        buttons.add(InlineButton.builder().text("Отмена").data(CallbackQueryData.INLINE_DELETE.name()).build());
+        return keyboardBuildService.buildInline(buttons, 1);
     }
 
     @Override

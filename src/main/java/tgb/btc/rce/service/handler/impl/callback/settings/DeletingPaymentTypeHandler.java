@@ -6,10 +6,11 @@ import tgb.btc.library.bean.bot.PaymentType;
 import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.interfaces.service.bean.bot.IPaymentRequisiteService;
 import tgb.btc.library.interfaces.service.bean.bot.IPaymentTypeService;
+import tgb.btc.library.interfaces.service.bean.bot.deal.IModifyDealService;
 import tgb.btc.rce.enums.update.CallbackQueryData;
 import tgb.btc.rce.sender.IResponseSender;
 import tgb.btc.rce.service.handler.callback.ICallbackQueryHandler;
-import tgb.btc.rce.service.processors.admin.settings.paymenttypes.delete.ShowPaymentTypesForDelete;
+import tgb.btc.rce.service.handler.impl.callback.DealTypeDeletePaymentTypeHandler;
 import tgb.btc.rce.service.util.ICallbackDataService;
 
 @Service
@@ -19,20 +20,25 @@ public class DeletingPaymentTypeHandler implements ICallbackQueryHandler {
 
     private final IPaymentRequisiteService paymentRequisiteService;
 
-    private final ShowPaymentTypesForDelete showPaymentTypesForDelete;
-
     private final IResponseSender responseSender;
 
     private final ICallbackDataService callbackDataService;
 
+    private final DealTypeDeletePaymentTypeHandler dealTypeDeletePaymentTypeHandler;
+
+    private final IModifyDealService modifyDealService;
+
     public DeletingPaymentTypeHandler(IPaymentTypeService paymentTypeService, IPaymentRequisiteService paymentRequisiteService,
-                                      ShowPaymentTypesForDelete showPaymentTypesForDelete, IResponseSender responseSender,
-                                      ICallbackDataService callbackDataService) {
+                                      IResponseSender responseSender,
+                                      ICallbackDataService callbackDataService,
+                                      DealTypeDeletePaymentTypeHandler dealTypeDeletePaymentTypeHandler,
+                                      IModifyDealService modifyDealService) {
         this.paymentTypeService = paymentTypeService;
         this.paymentRequisiteService = paymentRequisiteService;
-        this.showPaymentTypesForDelete = showPaymentTypesForDelete;
         this.responseSender = responseSender;
         this.callbackDataService = callbackDataService;
+        this.dealTypeDeletePaymentTypeHandler = dealTypeDeletePaymentTypeHandler;
+        this.modifyDealService = modifyDealService;
     }
 
     @Override
@@ -40,14 +46,15 @@ public class DeletingPaymentTypeHandler implements ICallbackQueryHandler {
         Long pid = callbackDataService.getLongArgument(callbackQuery.getData(), 1);
         PaymentType paymentType = paymentTypeService.getByPid(pid);
         DealType dealType = paymentType.getDealType();
+        modifyDealService.updatePaymentTypeToNullByPaymentTypePid(paymentType.getPid());
         paymentRequisiteService.deleteByPaymentTypePid(paymentType.getPid());
         paymentRequisiteService.removeOrder(paymentType.getPid());
         paymentTypeService.deleteById(pid);
         Long chatId = callbackQuery.getFrom().getId();
-        responseSender.deleteMessage(chatId, callbackQuery.getMessage().getMessageId());
         String message = "Тип оплаты на " + paymentType.getDealType().getAccusative() + " \"" + paymentType.getName() + "\" удален.";
         responseSender.sendMessage(callbackQuery.getFrom().getId(), message);
-        showPaymentTypesForDelete.sendPaymentTypes(chatId, dealType, paymentType.getFiatCurrency());
+        dealTypeDeletePaymentTypeHandler.sendPaymentTypes(chatId, callbackQuery.getMessage().getMessageId(), dealType,
+                paymentType.getFiatCurrency());
     }
 
     @Override

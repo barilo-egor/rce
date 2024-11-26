@@ -104,6 +104,7 @@ public enum Command implements ICommand {
     USER_INFORMATION("Информация о пользователе", false, UserRole.ADMIN_ACCESS),
     REFERRAL_PERCENT("Процент реферала", false, UserRole.ADMIN_ACCESS),
     BOT_VARIABLES("Переменные бота", false, UserRole.ADMIN_ACCESS),
+    SHARE_REVIEW("Оставить", false, UserRole.USER_ACCESS),
 
     // HAS USAGE
     START("/start", false, UserRole.USER_ACCESS),
@@ -126,7 +127,6 @@ public enum Command implements ICommand {
     CAPTCHA("captcha", false, UserRole.USER_ACCESS),
     DEAL("DEAL", false, UserRole.USER_ACCESS),
     USER_ADDITIONAL_VERIFICATION("USER_ADDITIONAL_VERIFICATION", false, UserRole.USER_ACCESS),
-    SHARE_REVIEW("Оставить", false, UserRole.USER_ACCESS),
     USE_PROMO("Использовать промокод", false, UserRole.USER_ACCESS),
     DONT_USE_PROMO("Не использовать промокод", false, UserRole.USER_ACCESS),
     USE_SAVED_WALLET("USE_SAVED_WALLET", false, UserRole.USER_ACCESS),
