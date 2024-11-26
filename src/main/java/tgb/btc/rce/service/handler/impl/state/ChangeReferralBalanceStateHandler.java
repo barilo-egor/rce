@@ -53,10 +53,7 @@ public class ChangeReferralBalanceStateHandler implements IStateHandler {
         }
         Long chatId = update.getMessage().getChatId();
         String text = update.getMessage().getText();
-        Long userChatId = userInputService.getInputChatId(chatId, text);
-        if (Objects.isNull(userChatId)) {
-            return;
-        }
+        Long userChatId = Long.parseLong(redisStringService.get(chatId));
         int total;
         if (text.startsWith("+") || text.startsWith("-")) {
             Integer userReferralBalance = readUserService.getReferralBalanceByChatId(userChatId);

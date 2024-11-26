@@ -23,6 +23,7 @@ import tgb.btc.library.interfaces.util.IBigDecimalService;
 import tgb.btc.library.interfaces.util.IFiatCurrencyService;
 import tgb.btc.library.service.process.RPSService;
 import tgb.btc.library.service.properties.*;
+import tgb.btc.rce.constants.BotCacheNames;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.BotInlineButton;
 import tgb.btc.rce.enums.BotReplyButton;
@@ -247,6 +248,7 @@ public class KeyboardService implements IKeyboardService {
     }
 
     @Override
+    @Cacheable(BotCacheNames.PROMO_CODE_KEYBOARD)
     public ReplyKeyboard getPromoCode(BigDecimal sumWithDiscount, BigDecimal dealAmount) {
         return keyboardBuildService.buildInline(List.of(
                 InlineButton.builder()
@@ -394,6 +396,7 @@ public class KeyboardService implements IKeyboardService {
     }
 
     @Override
+    @Cacheable(BotCacheNames.INLINE_DEAL_TYPES_BUTTONS)
     public ReplyKeyboard getInlineDealTypes(CallbackQueryData callbackQueryData, FiatCurrency fiatCurrency) {
         List<InlineButton> buttons = new ArrayList<>();
         for (DealType dealType: DealType.values()) {
@@ -429,6 +432,7 @@ public class KeyboardService implements IKeyboardService {
     }
 
     @Override
+    @Cacheable(BotCacheNames.FIAT_INLINE_BUTTONS)
     public ReplyKeyboard getInlineFiats(CallbackQueryData callbackQueryData) {
         List<InlineButton> buttons = new ArrayList<>();
         for (FiatCurrency fiatCurrency: fiatCurrencyService.getFiatCurrencies()) {
@@ -468,7 +472,7 @@ public class KeyboardService implements IKeyboardService {
     }
 
     @Override
-    @Cacheable("dealReportsKeyboard")
+    @Cacheable(BotCacheNames.DEAL_REPORTS)
     public ReplyKeyboard getDealReports() {
         return keyboardBuildService.buildInline(List.of(
             InlineButton.builder().text("За сегодня").data(callbackDataService.buildData(CallbackQueryData.DEAL_REPORTS, DealReportsCallbackHandler.TODAY)).build(),
