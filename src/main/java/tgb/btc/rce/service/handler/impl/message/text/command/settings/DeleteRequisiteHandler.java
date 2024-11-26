@@ -21,35 +21,32 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
-public class NewPaymentTypeRequisiteHandler implements ITextCommandHandler {
-
-    private final IFiatCurrencyService fiatCurrencyService;
+public class DeleteRequisiteHandler implements ITextCommandHandler {
 
     private final IResponseSender responseSender;
+
+    private final ICallbackDataService callbackDataService;
+
+    private final IFiatCurrencyService fiatCurrencyService;
 
     private final IKeyboardService keyboardService;
 
     private final IPaymentTypeService paymentTypeService;
 
-    private final ICallbackDataService callbackDataService;
-
-    public NewPaymentTypeRequisiteHandler(IFiatCurrencyService fiatCurrencyService, IResponseSender responseSender,
-                                          IKeyboardService keyboardService, IPaymentTypeService paymentTypeService,
-                                          ICallbackDataService callbackDataService) {
-        this.fiatCurrencyService = fiatCurrencyService;
+    public DeleteRequisiteHandler(IResponseSender responseSender, ICallbackDataService callbackDataService, IFiatCurrencyService fiatCurrencyService, IKeyboardService keyboardService, IPaymentTypeService paymentTypeService) {
         this.responseSender = responseSender;
+        this.callbackDataService = callbackDataService;
+        this.fiatCurrencyService = fiatCurrencyService;
         this.keyboardService = keyboardService;
         this.paymentTypeService = paymentTypeService;
-        this.callbackDataService = callbackDataService;
     }
-
 
     @Override
     public void handle(Message message) {
         Long chatId = message.getChatId();
         if (fiatCurrencyService.isFew()) {
-            responseSender.sendMessage(chatId, "Выберите фиатную валюту для создания реквизита покупки.",
-                    keyboardService.getInlineFiats(CallbackQueryData.FIAT_CREATE_REQUISITE));
+            responseSender.sendMessage(chatId, "Выберите фиатную валюту для удаления реквизита покупки.",
+                    keyboardService.getInlineFiats(CallbackQueryData.FIAT_DELETE_REQUISITE));
             return;
         }
         sendPaymentTypes(chatId, fiatCurrencyService.getFirst(), null);
@@ -59,31 +56,30 @@ public class NewPaymentTypeRequisiteHandler implements ITextCommandHandler {
         List<PaymentType> paymentTypes = paymentTypeService.getByDealTypeAndFiatCurrency(DealType.BUY, fiatCurrency);
         if (CollectionUtils.isEmpty(paymentTypes)) {
             responseSender.sendMessage(chatId, "Список тип оплат на " + DealType.BUY.getAccusative() + "-"
-                    + fiatCurrency.getDisplayName() + " пуст.");
+                    + fiatCurrencyService.getFirst().getCode() + " пуст.");
             return;
         }
         List<InlineButton> buttons = paymentTypes.stream()
                 .map(paymentType -> InlineButton.builder()
                         .text(paymentType.getName())
                         .data(callbackDataService.buildData(
-                                CallbackQueryData.PAYMENT_TYPE_CREATE_REQUISITE,
-                                fiatCurrency.name(),
+                                CallbackQueryData.PAYMENT_TYPE_DELETE_REQUISITE,
                                 paymentType.getPid())
                         )
                         .build())
                 .collect(Collectors.toList());
         buttons.add(InlineButton.builder().text("Отмена").data(CallbackQueryData.INLINE_DELETE.name()).build());
         if (Objects.isNull(messageId)) {
-            responseSender.sendMessage(chatId, "Выберите тип оплаты для создания реквизита покупки.",
+            responseSender.sendMessage(chatId, "Выберите тип оплаты для удаления реквизита покупки.",
                     buttons);
         } else {
-            responseSender.sendEditedMessageText(chatId, messageId, "Выберите тип оплаты для создания реквизита покупки.",
+            responseSender.sendEditedMessageText(chatId, messageId, "Выберите тип оплаты для удаления реквизита покупки.",
                     buttons);
         }
     }
 
     @Override
     public TextCommand getTextCommand() {
-        return TextCommand.NEW_PAYMENT_TYPE_REQUISITE;
+        return TextCommand.DELETE_PAYMENT_TYPE_REQUISITE;
     }
 }

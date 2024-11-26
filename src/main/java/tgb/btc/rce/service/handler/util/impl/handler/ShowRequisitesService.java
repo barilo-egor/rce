@@ -39,10 +39,11 @@ public class ShowRequisitesService implements IShowRequisitesService {
     }
 
     @Override
-    public void showForDelete(Long chatId, Long paymentTypePid) {
+    public void showForDelete(Long chatId, Long paymentTypePid, Integer messageId) {
         List<PaymentRequisite> paymentRequisites = paymentRequisiteService.getByPaymentType_Pid(paymentTypePid);
         if (CollectionUtils.isEmpty(paymentRequisites)) {
             responseSender.sendMessage(chatId, "Реквизиты в этом типе оплаты отсутствуют.");
+            responseSender.deleteMessage(chatId, messageId);
             adminPanelService.send(chatId);
             return;
         }
@@ -60,6 +61,6 @@ public class ShowRequisitesService implements IShowRequisitesService {
                     .build());
             counter++;
         }
-        responseSender.sendMessage(chatId, message.toString(), keyboardBuildService.buildInline(buttons));
+        responseSender.sendEditedMessageText(chatId, messageId, message.toString(), keyboardBuildService.buildInline(buttons));
     }
 }

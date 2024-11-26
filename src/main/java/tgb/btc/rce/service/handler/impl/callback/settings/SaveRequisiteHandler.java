@@ -33,8 +33,10 @@ public class SaveRequisiteHandler implements ICallbackQueryHandler {
 
     @Override
     public void handle(CallbackQuery callbackQuery) {
-        String requisite = callbackDataService.getArgument(callbackQuery.getData(), 1);
-        Long paymentTypePid = callbackDataService.getLongArgument(callbackQuery.getData(), 2);
+        String messageText = callbackQuery.getMessage().getText();
+        String startWithRequisite = messageText.substring(messageText.lastIndexOf("Реквизит: ") + "Реквизит: ".length());
+        String requisite = startWithRequisite.substring(0, startWithRequisite.indexOf("\n"));
+        Long paymentTypePid = callbackDataService.getLongArgument(callbackQuery.getData(), 1);
         PaymentRequisite paymentRequisite = new PaymentRequisite();
         paymentRequisite.setOn(true);
         paymentRequisite.setRequisite(requisite);
