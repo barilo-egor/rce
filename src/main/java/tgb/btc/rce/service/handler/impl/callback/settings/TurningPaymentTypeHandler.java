@@ -6,7 +6,6 @@ import tgb.btc.library.bean.bot.PaymentType;
 import tgb.btc.library.interfaces.service.bean.bot.IPaymentRequisiteService;
 import tgb.btc.library.interfaces.service.bean.bot.IPaymentTypeService;
 import tgb.btc.rce.enums.update.CallbackQueryData;
-import tgb.btc.rce.sender.IResponseSender;
 import tgb.btc.rce.service.handler.callback.ICallbackQueryHandler;
 import tgb.btc.rce.service.handler.util.IShowPaymentTypesService;
 import tgb.btc.rce.service.util.ICallbackDataService;
@@ -16,20 +15,17 @@ public class TurningPaymentTypeHandler implements ICallbackQueryHandler {
 
     private final IPaymentTypeService paymentTypeService;
 
-    private final IResponseSender responseSender;
-
     private final ICallbackDataService callbackDataService;
 
     private final IPaymentRequisiteService paymentRequisiteService;
 
     private final IShowPaymentTypesService showPaymentTypesService;
 
-    public TurningPaymentTypeHandler(IPaymentTypeService paymentTypeService, IResponseSender responseSender,
+    public TurningPaymentTypeHandler(IPaymentTypeService paymentTypeService,
                                      ICallbackDataService callbackDataService,
                                      IPaymentRequisiteService paymentRequisiteService,
                                      IShowPaymentTypesService showPaymentTypesService) {
         this.paymentTypeService = paymentTypeService;
-        this.responseSender = responseSender;
         this.callbackDataService = callbackDataService;
         this.paymentRequisiteService = paymentRequisiteService;
         this.showPaymentTypesService = showPaymentTypesService;
@@ -41,9 +37,9 @@ public class TurningPaymentTypeHandler implements ICallbackQueryHandler {
         Long paymentTypePid = callbackDataService.getLongArgument(callbackQuery.getData(), 1);
         paymentTypeService.updateIsOnByPid(Boolean.valueOf(callbackDataService.getArgument(callbackQuery.getData(), 2)), paymentTypePid);
         paymentRequisiteService.removeOrder(paymentTypePid);
-        responseSender.deleteMessage(chatId, callbackQuery.getMessage().getMessageId());
         PaymentType paymentType = paymentTypeService.getByPid(paymentTypePid);
-        showPaymentTypesService.sendForTurn(chatId, paymentType.getDealType(), paymentType.getFiatCurrency());
+        showPaymentTypesService.sendForTurn(chatId, paymentType.getDealType(), paymentType.getFiatCurrency(),
+                callbackQuery.getMessage().getMessageId());
     }
 
     @Override
