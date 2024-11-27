@@ -2,7 +2,6 @@ package tgb.btc.rce.service.impl.util;
 
 import com.google.common.base.Functions;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import tgb.btc.library.constants.enums.bot.UserRole;
@@ -47,7 +46,6 @@ public class MenuService implements IMenuService {
     }
 
     @Override
-    @Cacheable("menuServiceBuildCache")
     public ReplyKeyboard build(Menu menu, UserRole userRole) {
         IMenu iMenu = menuMap.get(menu);
         if (Objects.nonNull(iMenu))

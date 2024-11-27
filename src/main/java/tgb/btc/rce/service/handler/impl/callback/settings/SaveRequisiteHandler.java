@@ -35,7 +35,7 @@ public class SaveRequisiteHandler implements ICallbackQueryHandler {
     public void handle(CallbackQuery callbackQuery) {
         String messageText = callbackQuery.getMessage().getText();
         String startWithRequisite = messageText.substring(messageText.lastIndexOf("Реквизит: ") + "Реквизит: ".length());
-        String requisite = startWithRequisite.substring(0, startWithRequisite.indexOf("\n"));
+        String requisite = startWithRequisite.substring(0, startWithRequisite.indexOf("\nФиатная"));
         Long paymentTypePid = callbackDataService.getLongArgument(callbackQuery.getData(), 1);
         PaymentRequisite paymentRequisite = new PaymentRequisite();
         paymentRequisite.setOn(true);
@@ -46,7 +46,7 @@ public class SaveRequisiteHandler implements ICallbackQueryHandler {
         paymentRequisiteService.removeOrder(paymentType.getPid());
         Long chatId = callbackQuery.getFrom().getId();
         responseSender.deleteMessage(chatId, callbackQuery.getMessage().getMessageId());
-        responseSender.sendMessage(chatId, "Реквизит <b>" + requisite + "</b> успешно сохранен.");
+        responseSender.sendMessage(chatId, "Реквизит успешно сохранен:\n <b>" + requisite + "</b>");
     }
 
     @Override
