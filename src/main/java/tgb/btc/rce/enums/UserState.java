@@ -25,5 +25,6 @@ public enum UserState {
     SHARE_REVIEW,
     CREATE_PAYMENT_TYPE,
     CREATE_REQUISITE,
-    CHANGE_MIN_SUM
+    CHANGE_MIN_SUM,
+    CAPTCHA
 }

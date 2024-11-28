@@ -15,6 +15,7 @@ import tgb.btc.rce.enums.UserState;
 import tgb.btc.rce.sender.ResponseSender;
 import tgb.btc.rce.service.IUpdateService;
 import tgb.btc.rce.service.handler.util.IStartService;
+import tgb.btc.rce.service.redis.IRedisStringService;
 import tgb.btc.rce.service.redis.IRedisUserStateService;
 import tgb.btc.rce.service.util.IMenuService;
 
@@ -37,6 +38,13 @@ public class MessagesService {
     private IRedisUserStateService redisUserStateService;
 
     private IStartService startService;
+
+    private IRedisStringService redisStringService;
+
+    @Autowired
+    public void setRedisStringService(IRedisStringService redisStringService) {
+        this.redisStringService = redisStringService;
+    }
 
     @Autowired
     public void setStartService(IStartService startService) {
@@ -141,6 +149,8 @@ public class MessagesService {
             return;
         }
         responseSender.sendMessage(chatId, "Что-то пошло не так. Я верну тебя в главное меню, попробуй ещё раз, пожалуйста.");
+        redisUserStateService.delete(chatId);
+        redisStringService.deleteAll(chatId);
         startService.processToMainMenu(chatId);
     }
 }

@@ -1,20 +1,18 @@
 package tgb.btc.rce.service.impl.util;
 
-import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import tgb.btc.library.constants.enums.bot.UserRole;
 import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.library.interfaces.service.bean.common.bot.IUserCommonService;
 import tgb.btc.library.service.process.BannedUserCache;
 import tgb.btc.library.service.properties.ConfigPropertiesReader;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.UserState;
+import tgb.btc.rce.service.IBotSwitch;
 import tgb.btc.rce.service.IUpdateService;
 import tgb.btc.rce.service.Processor;
 import tgb.btc.rce.service.captcha.IAntiSpam;
@@ -30,8 +28,6 @@ import java.util.Objects;
 @Service
 @Slf4j
 public class UpdateDispatcher implements IUpdateDispatcher {
-
-    private static boolean IS_ON = true;
 
     private IReadUserService readUserService;
 
@@ -54,6 +50,13 @@ public class UpdateDispatcher implements IUpdateDispatcher {
     private ConfigPropertiesReader configPropertiesReader;
 
     private IRedisUserStateService redisUserStateService;
+
+    private IBotSwitch botSwitch;
+
+    @Autowired
+    public void setBotSwitch(IBotSwitch botSwitch) {
+        this.botSwitch = botSwitch;
+    }
 
     @Autowired
     public void setRedisUserStateService(IRedisUserStateService redisUserStateService) {
@@ -110,12 +113,6 @@ public class UpdateDispatcher implements IUpdateDispatcher {
         this.userProcessService = userProcessService;
     }
 
-    @PostConstruct
-    public void setIsOn() {
-        Boolean turnOffOnStart = configPropertiesReader.getBoolean("turn.off.on.start");
-        if (BooleanUtils.isTrue(turnOffOnStart)) setIsOn(false);
-    }
-
     public void dispatch(Update update) {
         Long chatId = updateService.getChatId(update);
         if (bannedUserCache.get(chatId)) return;
@@ -142,7 +139,6 @@ public class UpdateDispatcher implements IUpdateDispatcher {
             if (isCaptcha(update)) return Command.CAPTCHA;
             antiSpam.saveTime(chatId);
         } else userProcessService.registerIfNotExists(update);
-        if (isOffed(chatId) && !commandService.isSubmitCommand(update)) return Command.BOT_OFFED;
         if (commandService.isStartCommand(update)) return Command.START;
         Command command;
         if (userCommonService.isDefaultStep(chatId)) command = commandService.fromUpdate(update);
@@ -153,17 +149,5 @@ public class UpdateDispatcher implements IUpdateDispatcher {
 
     private boolean isCaptcha(Update update) {
         return !userProcessService.registerIfNotExists(update) || antiSpam.isSpamUser(updateService.getChatId(update));
-    }
-
-    private boolean isOffed(Long chatId) {
-        return !isOn() && UserRole.USER.equals(readUserService.getUserRoleByChatId(chatId));
-    }
-
-    public boolean isOn() {
-        return IS_ON;
-    }
-
-    public static void setIsOn(boolean isOn) {
-        IS_ON = isOn;
     }
 }

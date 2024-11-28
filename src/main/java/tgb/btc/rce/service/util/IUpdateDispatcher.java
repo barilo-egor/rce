@@ -7,6 +7,4 @@ public interface IUpdateDispatcher {
     void dispatch(Update update);
 
     void runProcessor(Command command, Long chatId, Update update);
-
-    boolean isOn();
 }

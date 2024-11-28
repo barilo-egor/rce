@@ -4,12 +4,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import tgb.btc.rce.enums.UpdateFilterType;
 import tgb.btc.rce.enums.UserState;
 import tgb.btc.rce.enums.update.UpdateType;
-import tgb.btc.rce.service.IUpdateService;
 import tgb.btc.rce.service.handler.IStateHandler;
+import tgb.btc.rce.service.handler.IUpdateFilter;
 import tgb.btc.rce.service.handler.IUpdateHandler;
-import tgb.btc.rce.service.handler.impl.message.text.slash.StartHandler;
+import tgb.btc.rce.service.handler.util.IUpdateFilterService;
 import tgb.btc.rce.service.processors.support.MessagesService;
 import tgb.btc.rce.service.redis.IRedisUserStateService;
 import tgb.btc.rce.vo.TelegramUpdateEvent;
@@ -29,19 +30,18 @@ public class TelegramUpdateEventListener {
 
     private final Map<UserState, IStateHandler> stateHandlerMap;
 
+    private final Map<UpdateFilterType, IUpdateFilter> updateFilterMap;
+
     private final MessagesService messagesService;
 
-    private final IUpdateService updateService;
-
-    private final StartHandler startHandler;
+    private final IUpdateFilterService updateFilterService;
 
     public TelegramUpdateEventListener(IRedisUserStateService redisUserStateService, List<IUpdateHandler> updateHandlers,
                                        List<IStateHandler> stateHandlers, MessagesService messagesService,
-                                       IUpdateService updateService, StartHandler startHandler) {
+                                       List<IUpdateFilter> updateFilters, IUpdateFilterService updateFilterService) {
         this.redisUserStateService = redisUserStateService;
         this.messagesService = messagesService;
-        this.updateService = updateService;
-        this.startHandler = startHandler;
+        this.updateFilterService = updateFilterService;
         log.debug("Загрузка обработчиков апдейтов.");
         this.updateHandlers = new HashMap<>(updateHandlers.size());
         for (IUpdateHandler updateHandler : updateHandlers) {
@@ -56,6 +56,10 @@ public class TelegramUpdateEventListener {
         for (IStateHandler stateHandler : stateHandlers) {
             stateHandlerMap.put(stateHandler.getUserState(), stateHandler);
         }
+        this.updateFilterMap = new HashMap<>(updateFilters.size());
+        for (IUpdateFilter updateFilter : updateFilters) {
+            updateFilterMap.put(updateFilter.getType(), updateFilter);
+        }
         log.debug("Загружено {} обработчиков апдейтов.", updateHandlers.size());
     }
 
@@ -63,8 +67,12 @@ public class TelegramUpdateEventListener {
     public void update(TelegramUpdateEvent event) {
         log.trace("Получен апдейт: {}", event.getUpdate());
         Update update = event.getUpdate();
-        if (updateService.isStart(update)) {
-            startHandler.handle(update.getMessage());
+        UpdateFilterType updateFilterType = updateFilterService.getType(update);
+        if (Objects.nonNull(updateFilterType)) {
+            IUpdateFilter updateFilter = updateFilterMap.get(updateFilterType);
+            if (Objects.nonNull(updateFilter)) {
+                updateFilter.handle(update);
+            }
             return;
         }
         UpdateType updateType = UpdateType.fromUpdate(update);

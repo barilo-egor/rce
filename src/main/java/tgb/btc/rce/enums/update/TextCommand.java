@@ -69,6 +69,7 @@ public enum TextCommand {
     TURN_DYNAMIC_REQUISITES("Динамические реквизиты", UserRole.OPERATOR_ACCESS),
     PERSONAL_BUY_DISCOUNT("Персональная, покупка", UserRole.ADMIN_ACCESS),
     PERSONAL_SELL_DISCOUNT("Персональная, продажа", UserRole.ADMIN_ACCESS),
+    RECEIPTS_CANCEL_DEAL("Отменить сделку", UserRole.USER_ACCESS),
     ;
 
     private final String text;

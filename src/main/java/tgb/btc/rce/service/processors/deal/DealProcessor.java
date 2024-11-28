@@ -280,7 +280,7 @@ public class DealProcessor extends Processor {
     }
 
     private boolean isReceiptsCancel(Update update) {
-        return update.hasMessage() && commandService.getText(Command.RECEIPTS_CANCEL_DEAL).equals(updateService.getMessageText(update));
+        return update.hasMessage() && TextCommand.RECEIPTS_CANCEL_DEAL.getText().equals(updateService.getMessageText(update));
     }
 
     private boolean hasCheck(Update update) {
