@@ -114,6 +114,7 @@ public enum Command implements ICommand {
     DONT_USE_PROMO("Не использовать промокод", false, UserRole.USER_ACCESS),
     RECEIPTS_CANCEL_DEAL("Отменить сделку", false, UserRole.USER_ACCESS),
     CHANGE_MIN_SUM("Мин.сумма", false, UserRole.OPERATOR_ACCESS),
+    BOT_OFFED("BOT_OFFED", false, UserRole.USER_ACCESS),
 
     // HAS USAGE
     START("/start", false, UserRole.USER_ACCESS),
@@ -132,7 +133,6 @@ public enum Command implements ICommand {
     NONE("none", false, UserRole.USER_ACCESS),
     ADMIN_BACK("Назад", false, UserRole.OPERATOR_ACCESS),
     CANCEL("Отмена", false, UserRole.USER_ACCESS),
-    BOT_OFFED("BOT_OFFED", false, UserRole.USER_ACCESS),
     CAPTCHA("captcha", false, UserRole.USER_ACCESS),
     DEAL("DEAL", false, UserRole.USER_ACCESS),
     USER_ADDITIONAL_VERIFICATION("USER_ADDITIONAL_VERIFICATION", false, UserRole.USER_ACCESS),
