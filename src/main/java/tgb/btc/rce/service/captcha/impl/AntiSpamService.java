@@ -2,6 +2,7 @@ package tgb.btc.rce.service.captcha.impl;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import tgb.btc.library.service.process.VerifiedUserCache;
 import tgb.btc.rce.service.captcha.IAntiSpamService;
 import tgb.btc.rce.service.captcha.UserUpdateActivity;
 
@@ -17,12 +18,18 @@ public class AntiSpamService implements IAntiSpamService {
 
     private final static long TIME_WINDOW_MS = 10_000;
 
-    public AntiSpamService(@Value("${allowed.count}") Integer allowedCount) {
+    private final VerifiedUserCache verifiedUserCache;
+
+    public AntiSpamService(@Value("${allowed.count}") Integer allowedCount, VerifiedUserCache verifiedUserCache) {
         MESSAGE_LIMIT = allowedCount;
+        this.verifiedUserCache = verifiedUserCache;
     }
 
     @Override
     public boolean isSpam(Long chatId) {
+        if (verifiedUserCache.check(chatId)) {
+            return true;
+        }
         long currentTime = System.currentTimeMillis();
         UserUpdateActivity activity = userActivityMap.computeIfAbsent(chatId, id -> new UserUpdateActivity());
         activity.cleanOldMessages(currentTime, TIME_WINDOW_MS);
