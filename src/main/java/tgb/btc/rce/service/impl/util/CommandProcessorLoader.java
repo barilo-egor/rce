@@ -45,8 +45,8 @@ public final class CommandProcessorLoader implements ICommandProcessorLoader {
         log.info("Загружены процессоры.");
     }
 
-    public Processor getByCommand(Command command, int step) {
-        if (Objects.isNull(command)) {
+    public Processor getByCommand(Command command, Integer step) {
+        if (Objects.isNull(command) || Objects.isNull(step)) {
             return null;
         }
         try {

@@ -5,5 +5,5 @@ import tgb.btc.rce.service.Processor;
 
 public interface ICommandProcessorLoader {
 
-    Processor getByCommand(Command command, int step);
+    Processor getByCommand(Command command, Integer step);
 }

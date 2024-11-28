@@ -11,6 +11,7 @@ import tgb.btc.rce.enums.MessageImage;
 import tgb.btc.rce.enums.PropertiesMessage;
 import tgb.btc.rce.sender.IMessageImageResponseSender;
 import tgb.btc.rce.sender.IResponseSender;
+import tgb.btc.rce.service.handler.impl.MyChatMemberHandler;
 import tgb.btc.rce.service.handler.util.IStartService;
 import tgb.btc.rce.service.redis.IRedisStringService;
 import tgb.btc.rce.service.redis.IRedisUserStateService;
@@ -18,6 +19,8 @@ import tgb.btc.rce.service.util.IMenuService;
 import tgb.btc.rce.service.util.IMessagePropertiesService;
 
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 
 @Service
 @Slf4j
@@ -43,11 +46,14 @@ public class StartService implements IStartService {
 
     private final IRedisStringService redisStringService;
 
+    private final MyChatMemberHandler myChatMemberHandler;
+
     public StartService(IResponseSender responseSender, IReadDealService readDealService,
                         IModifyDealService modifyDealService, IMessageImageResponseSender messageImageResponseSender,
                         IModifyUserService modifyUserService, IReadUserService readUserService,
                         IMessagePropertiesService messagePropertiesService, IMenuService menuService,
-                        IRedisUserStateService redisUserStateService, IRedisStringService redisStringService) {
+                        IRedisUserStateService redisUserStateService, IRedisStringService redisStringService,
+                        MyChatMemberHandler myChatMemberHandler) {
         this.responseSender = responseSender;
         this.readDealService = readDealService;
         this.modifyDealService = modifyDealService;
@@ -58,10 +64,19 @@ public class StartService implements IStartService {
         this.menuService = menuService;
         this.redisUserStateService = redisUserStateService;
         this.redisStringService = redisStringService;
+        this.myChatMemberHandler = myChatMemberHandler;
     }
 
     @Override
     public void process(Long chatId) {
+        CompletableFuture<Void> future = myChatMemberHandler.getRegistering(chatId);
+        if (future != null) {
+            try {
+                future.join();
+            } catch (CompletionException e) {
+                throw new RuntimeException(e.getCause());
+            }
+        }
         modifyUserService.updateIsActiveByChatId(true, chatId);
         messageImageResponseSender.sendMessage(MessageImage.START, chatId);
         Long currentDealPid = readUserService.getCurrentDealByChatId(chatId);

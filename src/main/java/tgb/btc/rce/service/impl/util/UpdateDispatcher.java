@@ -110,7 +110,7 @@ public class UpdateDispatcher implements IUpdateDispatcher {
     }
 
     private Command getCommand(Update update, Long chatId) {
-        userProcessService.registerIfNotExists(update);
+        if (!readUserService.existsByChatId(chatId)) return null;
         if (commandService.isStartCommand(update)) return null;
         Command command;
         if (userCommonService.isDefaultStep(chatId)) command = commandService.fromUpdate(update);
