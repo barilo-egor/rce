@@ -116,6 +116,7 @@ public enum Command implements ICommand {
     CHANGE_MIN_SUM("Мин.сумма", false, UserRole.OPERATOR_ACCESS),
     BOT_OFFED("BOT_OFFED", false, UserRole.USER_ACCESS),
     CAPTCHA("captcha", false, UserRole.USER_ACCESS),
+    USER_ADDITIONAL_VERIFICATION("USER_ADDITIONAL_VERIFICATION", false, UserRole.USER_ACCESS),
 
     // HAS USAGE
     START("/start", false, UserRole.USER_ACCESS),
@@ -135,7 +136,6 @@ public enum Command implements ICommand {
     ADMIN_BACK("Назад", false, UserRole.OPERATOR_ACCESS),
     CANCEL("Отмена", false, UserRole.USER_ACCESS),
     DEAL("DEAL", false, UserRole.USER_ACCESS),
-    USER_ADDITIONAL_VERIFICATION("USER_ADDITIONAL_VERIFICATION", false, UserRole.USER_ACCESS),
     USE_SAVED_WALLET("USE_SAVED_WALLET", false, UserRole.USER_ACCESS),
     CHANNEL_POST("CHANNEL_POST", false, UserRole.USER_ACCESS),
     NONE_CALCULATOR("NONE_CALCULATOR", false, UserRole.USER_ACCESS),

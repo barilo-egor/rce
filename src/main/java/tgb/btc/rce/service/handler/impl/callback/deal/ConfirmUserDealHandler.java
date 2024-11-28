@@ -11,11 +11,12 @@ import tgb.btc.library.interfaces.service.bean.bot.deal.IModifyDealService;
 import tgb.btc.library.interfaces.service.bean.bot.deal.read.IDealUserService;
 import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.library.interfaces.web.ICryptoWithdrawalService;
-import tgb.btc.rce.enums.Command;
+import tgb.btc.rce.enums.UserState;
 import tgb.btc.rce.enums.update.CallbackQueryData;
 import tgb.btc.rce.sender.IResponseSender;
 import tgb.btc.rce.service.handler.callback.ICallbackQueryHandler;
 import tgb.btc.rce.service.handler.util.IStartService;
+import tgb.btc.rce.service.redis.IRedisUserStateService;
 import tgb.btc.rce.service.util.ICallbackDataService;
 
 @Service
@@ -40,6 +41,8 @@ public class ConfirmUserDealHandler implements ICallbackQueryHandler {
 
     private final IReadUserService readUserService;
 
+    private final IRedisUserStateService redisUserStateService;
+
     @Value("${bot.username}")
     private String botUsername;
 
@@ -47,7 +50,8 @@ public class ConfirmUserDealHandler implements ICallbackQueryHandler {
                                   IGroupChatService groupChatService, IDealUserService dealUserService,
                                   ICryptoWithdrawalService cryptoWithdrawalService,
                                   ICallbackDataService callbackDataService, IResponseSender responseSender,
-                                  IStartService startService, IReadUserService readUserService) {
+                                  IStartService startService, IReadUserService readUserService,
+                                  IRedisUserStateService redisUserStateService) {
         this.modifyDealService = modifyDealService;
         this.notifier = notifier;
         this.groupChatService = groupChatService;
@@ -57,6 +61,7 @@ public class ConfirmUserDealHandler implements ICallbackQueryHandler {
         this.responseSender = responseSender;
         this.startService = startService;
         this.readUserService = readUserService;
+        this.redisUserStateService = redisUserStateService;
     }
 
     @Override
@@ -74,7 +79,7 @@ public class ConfirmUserDealHandler implements ICallbackQueryHandler {
         modifyDealService.confirm(dealPid);
         new Thread(() -> cryptoWithdrawalService.deleteFromPool(botUsername, dealPid)).start();
         Long userChatId = dealUserService.getUserChatIdByDealPid(dealPid);
-        if (Command.USER_ADDITIONAL_VERIFICATION.equals(Command.valueOf(readUserService.getCommandByChatId(userChatId)))) {
+        if (UserState.ADDITIONAL_VERIFICATION.equals(redisUserStateService.get(userChatId))) {
             startService.process(userChatId);
         }
         String username = readUserService.getUsernameByChatId(chatId);

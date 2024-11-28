@@ -28,7 +28,7 @@ public class AntiSpamService implements IAntiSpamService {
     @Override
     public boolean isSpam(Long chatId) {
         if (verifiedUserCache.check(chatId)) {
-            return true;
+            return false;
         }
         long currentTime = System.currentTimeMillis();
         UserUpdateActivity activity = userActivityMap.computeIfAbsent(chatId, id -> new UserUpdateActivity());
