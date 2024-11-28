@@ -111,11 +111,11 @@ public class UpdateDispatcher implements IUpdateDispatcher {
 
     private Command getCommand(Update update, Long chatId) {
         userProcessService.registerIfNotExists(update);
-        if (commandService.isStartCommand(update)) return Command.START;
+        if (commandService.isStartCommand(update)) return null;
         Command command;
         if (userCommonService.isDefaultStep(chatId)) command = commandService.fromUpdate(update);
         else command = Command.valueOf(readUserService.getCommandByChatId(chatId));
-        if (Objects.isNull(command) || !command.hasAccess(readUserService.getUserRoleByChatId(chatId))) return Command.START;
+        if (Objects.isNull(command) || !command.hasAccess(readUserService.getUserRoleByChatId(chatId))) return null;
         else return command;
     }
 }

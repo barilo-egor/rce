@@ -46,6 +46,9 @@ public final class CommandProcessorLoader implements ICommandProcessorLoader {
     }
 
     public Processor getByCommand(Command command, int step) {
+        if (Objects.isNull(command)) {
+            return null;
+        }
         try {
             if (Command.START.equals(command)) {
                 return null;
