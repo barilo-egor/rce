@@ -9,13 +9,10 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.library.interfaces.service.bean.common.bot.IUserCommonService;
 import tgb.btc.library.service.process.BannedUserCache;
-import tgb.btc.library.service.properties.ConfigPropertiesReader;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.UserState;
-import tgb.btc.rce.service.IBotSwitch;
 import tgb.btc.rce.service.IUpdateService;
 import tgb.btc.rce.service.Processor;
-import tgb.btc.rce.service.captcha.IAntiSpam;
 import tgb.btc.rce.service.process.IUserProcessService;
 import tgb.btc.rce.service.redis.IRedisUserStateService;
 import tgb.btc.rce.service.util.ICommandProcessorLoader;
@@ -32,9 +29,6 @@ public class UpdateDispatcher implements IUpdateDispatcher {
     private IReadUserService readUserService;
 
     private IUserProcessService userProcessService;
-
-    private IAntiSpam antiSpam;
-
     private BannedUserCache bannedUserCache;
 
     private IUserCommonService userCommonService;
@@ -47,25 +41,11 @@ public class UpdateDispatcher implements IUpdateDispatcher {
 
     private ApplicationEventPublisher eventPublisher;
 
-    private ConfigPropertiesReader configPropertiesReader;
-
     private IRedisUserStateService redisUserStateService;
-
-    private IBotSwitch botSwitch;
-
-    @Autowired
-    public void setBotSwitch(IBotSwitch botSwitch) {
-        this.botSwitch = botSwitch;
-    }
 
     @Autowired
     public void setRedisUserStateService(IRedisUserStateService redisUserStateService) {
         this.redisUserStateService = redisUserStateService;
-    }
-
-    @Autowired
-    public void setConfigPropertiesReader(ConfigPropertiesReader configPropertiesReader) {
-        this.configPropertiesReader = configPropertiesReader;
     }
 
     @Autowired
@@ -103,11 +83,6 @@ public class UpdateDispatcher implements IUpdateDispatcher {
         this.bannedUserCache = bannedUserCache;
     }
 
-    @Autowired(required = false)
-    public void setAntiSpam(IAntiSpam antiSpam) {
-        this.antiSpam = antiSpam;
-    }
-
     @Autowired
     public void setUserProcessService(IUserProcessService userProcessService) {
         this.userProcessService = userProcessService;
@@ -135,19 +110,12 @@ public class UpdateDispatcher implements IUpdateDispatcher {
     }
 
     private Command getCommand(Update update, Long chatId) {
-        if (Objects.nonNull(antiSpam) && !antiSpam.isVerifiedUser(chatId)) {
-            if (isCaptcha(update)) return Command.CAPTCHA;
-            antiSpam.saveTime(chatId);
-        } else userProcessService.registerIfNotExists(update);
+        userProcessService.registerIfNotExists(update);
         if (commandService.isStartCommand(update)) return Command.START;
         Command command;
         if (userCommonService.isDefaultStep(chatId)) command = commandService.fromUpdate(update);
         else command = Command.valueOf(readUserService.getCommandByChatId(chatId));
         if (Objects.isNull(command) || !command.hasAccess(readUserService.getUserRoleByChatId(chatId))) return Command.START;
         else return command;
-    }
-
-    private boolean isCaptcha(Update update) {
-        return !userProcessService.registerIfNotExists(update) || antiSpam.isSpamUser(updateService.getChatId(update));
     }
 }

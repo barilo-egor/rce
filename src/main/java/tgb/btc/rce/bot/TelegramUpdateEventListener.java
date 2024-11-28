@@ -7,6 +7,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.enums.UpdateFilterType;
 import tgb.btc.rce.enums.UserState;
 import tgb.btc.rce.enums.update.UpdateType;
+import tgb.btc.rce.service.captcha.IAntiSpamService;
 import tgb.btc.rce.service.handler.IStateHandler;
 import tgb.btc.rce.service.handler.IUpdateFilter;
 import tgb.btc.rce.service.handler.IUpdateHandler;
@@ -36,12 +37,16 @@ public class TelegramUpdateEventListener {
 
     private final IUpdateFilterService updateFilterService;
 
+    private final IAntiSpamService antiSpamService;
+
     public TelegramUpdateEventListener(IRedisUserStateService redisUserStateService, List<IUpdateHandler> updateHandlers,
                                        List<IStateHandler> stateHandlers, MessagesService messagesService,
-                                       List<IUpdateFilter> updateFilters, IUpdateFilterService updateFilterService) {
+                                       List<IUpdateFilter> updateFilters, IUpdateFilterService updateFilterService,
+                                       IAntiSpamService antiSpamService) {
         this.redisUserStateService = redisUserStateService;
         this.messagesService = messagesService;
         this.updateFilterService = updateFilterService;
+        this.antiSpamService = antiSpamService;
         log.debug("Загрузка обработчиков апдейтов.");
         this.updateHandlers = new HashMap<>(updateHandlers.size());
         for (IUpdateHandler updateHandler : updateHandlers) {
@@ -67,6 +72,7 @@ public class TelegramUpdateEventListener {
     public void update(TelegramUpdateEvent event) {
         log.trace("Получен апдейт: {}", event.getUpdate());
         Update update = event.getUpdate();
+        if (antiSpamService.isSpam(UpdateType.getChatId(update))) return;
         UpdateFilterType updateFilterType = updateFilterService.getType(update);
         if (Objects.nonNull(updateFilterType)) {
             IUpdateFilter updateFilter = updateFilterMap.get(updateFilterType);
