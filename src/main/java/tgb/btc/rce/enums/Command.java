@@ -119,6 +119,8 @@ public enum Command implements ICommand {
     USER_ADDITIONAL_VERIFICATION("USER_ADDITIONAL_VERIFICATION", false, UserRole.USER_ACCESS),
     USE_SAVED_WALLET("USE_SAVED_WALLET", false, UserRole.USER_ACCESS),
     CHANNEL_POST("CHANNEL_POST", false, UserRole.USER_ACCESS),
+    NONE("none", false, UserRole.USER_ACCESS),
+    ADMIN_BACK("Назад", false, UserRole.OPERATOR_ACCESS),
 
     // HAS USAGE
     START("/start", false, UserRole.USER_ACCESS),
@@ -134,8 +136,6 @@ public enum Command implements ICommand {
 
     // NO HANDLER
 
-    NONE("none", false, UserRole.USER_ACCESS),
-    ADMIN_BACK("Назад", false, UserRole.OPERATOR_ACCESS),
     CANCEL("Отмена", false, UserRole.USER_ACCESS),
     DEAL("DEAL", false, UserRole.USER_ACCESS),
     NONE_CALCULATOR("NONE_CALCULATOR", false, UserRole.USER_ACCESS),
