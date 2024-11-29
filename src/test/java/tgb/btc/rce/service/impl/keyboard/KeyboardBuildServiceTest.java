@@ -15,7 +15,7 @@ import tgb.btc.rce.enums.InlineType;
 import tgb.btc.rce.enums.update.SlashCommand;
 import tgb.btc.rce.enums.update.TextCommand;
 import tgb.btc.rce.service.impl.util.CallbackDataService;
-import tgb.btc.rce.service.impl.util.CommandService;
+import tgb.btc.rce.service.impl.util.TextTextCommandService;
 import tgb.btc.rce.vo.InlineButton;
 import tgb.btc.rce.vo.ReplyButton;
 
@@ -32,7 +32,7 @@ class KeyboardBuildServiceTest {
 
     private final KeyboardBuildService keyboardBuildService = new KeyboardBuildService(callbackDataService);
 
-    private final CommandService commandService = new CommandService(buttonsDesignPropertiesReader);
+    private final TextTextCommandService textCommandService = new TextTextCommandService(buttonsDesignPropertiesReader);
 
     @Test
     void buildReplyButtonsLessThanColumns() {
@@ -100,12 +100,12 @@ class KeyboardBuildServiceTest {
                 .isRequestLocation(true)
                 .build());
         replyButtons.add(ReplyButton.builder()
-                .text(commandService.getText(TextCommand.BACK))
+                .text(textCommandService.getText(TextCommand.BACK))
                 .isRequestContact(true)
                 .isRequestLocation(false)
                 .build());
         replyButtons.add(ReplyButton.builder()
-                .text(commandService.getText(TextCommand.REPORTS))
+                .text(textCommandService.getText(TextCommand.REPORTS))
                 .build());
         ReplyKeyboardMarkup keyboardMarkup = keyboardBuildService.buildReply(3, true, true, replyButtons);
         KeyboardRow keyboardButtons = keyboardMarkup.getKeyboard().get(0);
@@ -115,10 +115,10 @@ class KeyboardBuildServiceTest {
                 () -> assertEquals(SlashCommand.START.getText(), keyboardButtons.get(0).getText()),
                 () -> assertTrue(keyboardButtons.get(1).getRequestContact()),
                 () -> assertNull(keyboardButtons.get(1).getRequestLocation()),
-                () -> assertEquals(commandService.getText(TextCommand.BACK), keyboardButtons.get(1).getText()),
+                () -> assertEquals(textCommandService.getText(TextCommand.BACK), keyboardButtons.get(1).getText()),
                 () -> assertNull(keyboardButtons.get(2).getRequestContact()),
                 () -> assertNull(keyboardButtons.get(2).getRequestLocation()),
-                () -> assertEquals(commandService.getText(TextCommand.REPORTS), keyboardButtons.get(2).getText())
+                () -> assertEquals(textCommandService.getText(TextCommand.REPORTS), keyboardButtons.get(2).getText())
         );
     }
 
@@ -269,12 +269,12 @@ class KeyboardBuildServiceTest {
                 .data(SlashCommand.START.name())
                 .build());
         inlineButtons.add(InlineButton.builder()
-                .text(commandService.getText(TextCommand.BACK))
+                .text(textCommandService.getText(TextCommand.BACK))
                 .inlineType(InlineType.CALLBACK_DATA)
                 .data(TextCommand.BACK.name())
                 .build());
         inlineButtons.add(InlineButton.builder()
-                .text(commandService.getText(TextCommand.REPORTS))
+                .text(textCommandService.getText(TextCommand.REPORTS))
                 .inlineType(InlineType.SWITCH_INLINE_QUERY)
                 .data(TextCommand.REPORTS.name())
                 .build());
@@ -284,7 +284,7 @@ class KeyboardBuildServiceTest {
                 .data(SlashCommand.START.name())
                 .build());
         inlineButtons.add(InlineButton.builder()
-                .text(commandService.getText(TextCommand.BACK))
+                .text(textCommandService.getText(TextCommand.BACK))
                 .inlineType(InlineType.WEB_APP)
                 .data(TextCommand.BACK.name())
                 .build());
@@ -293,13 +293,13 @@ class KeyboardBuildServiceTest {
         assertAll(
                 () -> assertEquals(SlashCommand.START.getText(), buttons.get(0).getText()),
                 () -> assertEquals(SlashCommand.START.name(), buttons.get(0).getUrl()),
-                () -> assertEquals(commandService.getText(TextCommand.BACK), buttons.get(1).getText()),
+                () -> assertEquals(textCommandService.getText(TextCommand.BACK), buttons.get(1).getText()),
                 () -> assertEquals(TextCommand.BACK.name(), buttons.get(1).getCallbackData()),
-                () -> assertEquals(commandService.getText(TextCommand.REPORTS), buttons.get(2).getText()),
+                () -> assertEquals(textCommandService.getText(TextCommand.REPORTS), buttons.get(2).getText()),
                 () -> assertEquals(TextCommand.REPORTS.name(), buttons.get(2).getSwitchInlineQuery()),
                 () -> assertEquals(SlashCommand.START.getText(), buttons.get(3).getText()),
                 () -> assertEquals(SlashCommand.START.name(), buttons.get(3).getSwitchInlineQueryCurrentChat()),
-                () -> assertEquals(commandService.getText(TextCommand.BACK), buttons.get(4).getText()),
+                () -> assertEquals(textCommandService.getText(TextCommand.BACK), buttons.get(4).getText()),
                 () -> assertEquals(TextCommand.BACK.name(), buttons.get(4).getWebApp().getUrl())
         );
     }

@@ -30,7 +30,7 @@ import tgb.btc.rce.service.ICalculatorTypeService;
 import tgb.btc.rce.service.IUpdateService;
 import tgb.btc.rce.service.handler.IStateHandler;
 import tgb.btc.rce.service.handler.util.IStartService;
-import tgb.btc.rce.service.impl.util.CommandService;
+import tgb.btc.rce.service.impl.util.TextTextCommandService;
 import tgb.btc.rce.service.process.IDealBotProcessService;
 import tgb.btc.rce.service.processors.support.ExchangeService;
 import tgb.btc.rce.service.redis.IRedisUserStateService;
@@ -85,7 +85,7 @@ public class DealHandler implements IStateHandler {
 
     private final IRedisUserStateService redisUserStateService;
 
-    private final CommandService commandService;
+    private final TextTextCommandService textCommandService;
 
     public DealHandler(ExchangeService exchangeService, ICalculatorTypeService calculatorTypeService,
                        IDealPropertyService dealPropertyService, IReadDealService readDealService,
@@ -97,7 +97,7 @@ public class DealHandler implements IStateHandler {
                        IReadUserService readUserService, ICallbackDataService callbackDataService,
                        IModifyUserService modifyUserService, IResponseSender responseSender,
                        IUserCommonService userCommonService, IRedisUserStateService redisUserStateService,
-                       CommandService commandService) {
+                       TextTextCommandService textCommandService) {
         this.exchangeService = exchangeService;
         this.calculatorTypeService = calculatorTypeService;
         this.dealPropertyService = dealPropertyService;
@@ -117,7 +117,7 @@ public class DealHandler implements IStateHandler {
         this.responseSender = responseSender;
         this.userCommonService = userCommonService;
         this.redisUserStateService = redisUserStateService;
-        this.commandService = commandService;
+        this.textCommandService = textCommandService;
     }
 
     @Override
@@ -296,7 +296,7 @@ public class DealHandler implements IStateHandler {
         Long chatId = update.getMessage().getChatId();
         boolean isMainMenu = false;
         Set<String> commands = Menu.MAIN.getTextCommands().stream()
-                .map(commandService::getText)
+                .map(textCommandService::getText)
                 .collect(Collectors.toSet());
         commands.add(SlashCommand.START.getText());
         for (String command : commands) {

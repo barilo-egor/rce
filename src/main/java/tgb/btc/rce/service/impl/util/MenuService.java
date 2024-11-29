@@ -8,7 +8,7 @@ import tgb.btc.library.constants.enums.bot.UserRole;
 import tgb.btc.rce.enums.Menu;
 import tgb.btc.rce.service.IMenu;
 import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
-import tgb.btc.rce.service.util.ICommandService;
+import tgb.btc.rce.service.util.ITextCommandService;
 import tgb.btc.rce.service.util.IMenuService;
 import tgb.btc.rce.vo.ReplyButton;
 
@@ -25,10 +25,10 @@ public class MenuService implements IMenuService {
 
     private final IKeyboardBuildService keyboardBuildService;
 
-    private ICommandService commandService;
+    private ITextCommandService commandService;
 
     @Autowired
-    public void setCommandService(ICommandService commandService) {
+    public void setCommandService(ITextCommandService commandService) {
         this.commandService = commandService;
     }
 

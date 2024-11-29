@@ -14,7 +14,7 @@ import tgb.btc.rce.sender.IResponseSender;
 import tgb.btc.rce.service.handler.util.IBitcoinPoolService;
 import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
 import tgb.btc.rce.service.util.ICallbackDataService;
-import tgb.btc.rce.service.util.ICommandService;
+import tgb.btc.rce.service.util.ITextCommandService;
 import tgb.btc.rce.vo.InlineButton;
 
 import java.math.BigDecimal;
@@ -33,14 +33,14 @@ public class BitcoinPoolService implements IBitcoinPoolService {
 
     private final IBigDecimalService bigDecimalService;
 
-    private final ICommandService commandService;
+    private final ITextCommandService commandService;
 
     private final IKeyboardBuildService keyboardBuildService;
 
     private final ICallbackDataService callbackDataService;
 
     public BitcoinPoolService(IResponseSender responseSender, ICryptoWithdrawalService cryptoWithdrawalService,
-                              IBigDecimalService bigDecimalService, ICommandService commandService,
+                              IBigDecimalService bigDecimalService, ITextCommandService commandService,
                               IKeyboardBuildService keyboardBuildService, ICallbackDataService callbackDataService) {
         this.responseSender = responseSender;
         this.cryptoWithdrawalService = cryptoWithdrawalService;

@@ -111,7 +111,7 @@ public class ExchangeService {
 
     private IBigDecimalService bigDecimalService;
 
-    private ICommandService commandService;
+    private ITextCommandService commandService;
 
     private IModule<DeliveryKind> deliveryKindModule;
 
@@ -161,7 +161,7 @@ public class ExchangeService {
     }
 
     @Autowired
-    public void setCommandService(ICommandService commandService) {
+    public void setCommandService(ITextCommandService commandService) {
         this.commandService = commandService;
     }
 

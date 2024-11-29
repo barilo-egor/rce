@@ -15,7 +15,7 @@ import tgb.btc.rce.service.IMenu;
 import tgb.btc.rce.service.impl.menu.BotSettingsMenu;
 import tgb.btc.rce.service.impl.menu.DrawsMenu;
 import tgb.btc.rce.service.impl.menu.MainMenu;
-import tgb.btc.rce.service.impl.util.CommandService;
+import tgb.btc.rce.service.impl.util.TextTextCommandService;
 import tgb.btc.rce.service.impl.util.MenuService;
 import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
 import tgb.btc.rce.vo.ReplyButton;
@@ -39,7 +39,7 @@ class MenuServiceTest {
 
     private final ButtonsDesignPropertiesReader buttonsDesignPropertiesReader = new ButtonsDesignPropertiesReader();
 
-    private final CommandService commandService = new CommandService(buttonsDesignPropertiesReader);
+    private final TextTextCommandService textCommandService = new TextTextCommandService(buttonsDesignPropertiesReader);
 
     @Captor
     private ArgumentCaptor<List<ReplyButton>> replyButtonCaptor;

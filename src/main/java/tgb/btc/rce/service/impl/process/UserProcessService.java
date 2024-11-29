@@ -20,7 +20,7 @@ import tgb.btc.library.service.bean.bot.ReferralUserService;
 import tgb.btc.rce.enums.update.SlashCommand;
 import tgb.btc.rce.service.IUpdateService;
 import tgb.btc.rce.service.process.IUserProcessService;
-import tgb.btc.rce.service.util.ICommandService;
+import tgb.btc.rce.service.util.ITextCommandService;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -39,7 +39,7 @@ public class UserProcessService implements IUserProcessService {
 
     private IUserDiscountService userDiscountService;
 
-    private ICommandService commandService;
+    private ITextCommandService commandService;
 
     private IUpdateService updateService;
 
@@ -61,7 +61,7 @@ public class UserProcessService implements IUserProcessService {
     }
 
     @Autowired
-    public void setCommandService(ICommandService commandService) {
+    public void setCommandService(ITextCommandService commandService) {
         this.commandService = commandService;
     }
 

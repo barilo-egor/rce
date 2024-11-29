@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import tgb.btc.library.exception.BaseException;
 import tgb.btc.rce.enums.update.TextCommand;
 import tgb.btc.rce.service.keyboard.IReplyButtonService;
-import tgb.btc.rce.service.util.ICommandService;
+import tgb.btc.rce.service.util.ITextCommandService;
 import tgb.btc.rce.vo.ReplyButton;
 
 import java.util.Collection;
@@ -16,10 +16,10 @@ import java.util.stream.Collectors;
 @Service
 public class ReplyButtonService implements IReplyButtonService {
 
-    private ICommandService commandService;
+    private ITextCommandService commandService;
 
     @Autowired
-    public void setCommandService(ICommandService commandService) {
+    public void setCommandService(ITextCommandService commandService) {
         this.commandService = commandService;
     }
 
