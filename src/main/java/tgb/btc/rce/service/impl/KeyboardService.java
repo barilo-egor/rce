@@ -36,7 +36,6 @@ import tgb.btc.rce.service.handler.impl.state.InlineCalculatorHandler;
 import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
 import tgb.btc.rce.service.processors.support.ExchangeService;
 import tgb.btc.rce.service.util.ICallbackDataService;
-import tgb.btc.rce.service.util.ICommandService;
 import tgb.btc.rce.service.util.ICryptoCurrenciesDesignService;
 import tgb.btc.rce.service.util.ITurningCurrenciesService;
 import tgb.btc.rce.vo.InlineButton;
@@ -74,8 +73,6 @@ public class KeyboardService implements IKeyboardService {
 
     private IBigDecimalService bigDecimalService;
 
-    private ICommandService commandService;
-
     private IModule<DeliveryKind> deliveryKindModule;
 
     private FunctionsPropertiesReader functionsPropertiesReader;
@@ -109,11 +106,6 @@ public class KeyboardService implements IKeyboardService {
     @Autowired
     public void setDeliveryKindModule(IModule<DeliveryKind> deliveryKindModule) {
         this.deliveryKindModule = deliveryKindModule;
-    }
-
-    @Autowired
-    public void setCommandService(ICommandService commandService) {
-        this.commandService = commandService;
     }
 
     @Autowired
