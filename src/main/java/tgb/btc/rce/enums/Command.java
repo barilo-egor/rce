@@ -124,6 +124,7 @@ public enum Command implements ICommand {
     TURNING_DELIVERY_TYPE("Вкл/выкл способов доставки", false, UserRole.ADMIN_ACCESS),
     NONE_CALCULATOR("NONE_CALCULATOR", false, UserRole.USER_ACCESS),
     INLINE_QUERY_CALCULATOR("INLINE_QUERY_CALCULATOR", false, UserRole.USER_ACCESS),
+    INLINE_CALCULATOR("INLINE_CALCULATOR", false, UserRole.USER_ACCESS),
 
     // HAS USAGE
     START("/start", false, UserRole.USER_ACCESS),
@@ -140,7 +141,6 @@ public enum Command implements ICommand {
 
     CANCEL("Отмена", false, UserRole.USER_ACCESS),
     DEAL("DEAL", false, UserRole.USER_ACCESS),
-    INLINE_CALCULATOR("INLINE_CALCULATOR", false, UserRole.USER_ACCESS)
     ;
 
     final String text;

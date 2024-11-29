@@ -4,12 +4,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.interfaces.service.bean.bot.deal.read.IDealPropertyService;
-import tgb.btc.library.interfaces.service.bean.bot.user.IModifyUserService;
 import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
-import tgb.btc.rce.enums.Command;
+import tgb.btc.rce.enums.UserState;
 import tgb.btc.rce.sender.IResponseSender;
-import tgb.btc.rce.service.*;
-import tgb.btc.rce.service.processors.calculator.InlineCalculator;
+import tgb.btc.rce.service.ICalculatorTypeService;
+import tgb.btc.rce.service.IKeyboardService;
+import tgb.btc.rce.service.IMessageService;
+import tgb.btc.rce.service.IUpdateService;
+import tgb.btc.rce.service.handler.impl.state.InlineCalculatorHandler;
+import tgb.btc.rce.service.redis.IRedisUserStateService;
 import tgb.btc.rce.vo.InlineCalculatorVO;
 
 public class InlineCalculatorService implements ICalculatorTypeService {
@@ -17,8 +20,6 @@ public class InlineCalculatorService implements ICalculatorTypeService {
     private IResponseSender responseSender;
 
     private IReadUserService readUserService;
-
-    private IModifyUserService modifyUserService;
 
     private IDealPropertyService dealPropertyService;
 
@@ -28,14 +29,16 @@ public class InlineCalculatorService implements ICalculatorTypeService {
 
     private IUpdateService updateService;
 
+    private IRedisUserStateService redisUserStateService;
+
     @Autowired
-    public void setUpdateService(IUpdateService updateService) {
-        this.updateService = updateService;
+    public void setRedisUserStateService(IRedisUserStateService redisUserStateService) {
+        this.redisUserStateService = redisUserStateService;
     }
 
     @Autowired
-    public void setModifyUserService(IModifyUserService modifyUserService) {
-        this.modifyUserService = modifyUserService;
+    public void setUpdateService(IUpdateService updateService) {
+        this.updateService = updateService;
     }
 
     @Autowired
@@ -73,10 +76,10 @@ public class InlineCalculatorService implements ICalculatorTypeService {
         inlineCalculatorVO.setFiatCurrency(dealPropertyService.getFiatCurrencyByPid(currentDealPid));
         inlineCalculatorVO.setSwitched(false);
         inlineCalculatorVO.setOn(true);
-        InlineCalculator.cache.put(chatId, inlineCalculatorVO);
+        InlineCalculatorHandler.cache.put(chatId, inlineCalculatorVO);
         responseSender.sendMessage(chatId, messageService.getInlineCalculatorMessage(dealType, inlineCalculatorVO),
                 keyboardService.getInlineCalculator(chatId));
-        modifyUserService.updateStepAndCommandByChatId(chatId, Command.INLINE_CALCULATOR.name(), 1);
+        redisUserStateService.save(chatId, UserState.INLINE_CALCULATOR);
     }
 
 }

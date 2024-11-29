@@ -1,25 +1,31 @@
-package tgb.btc.rce.service.processors.calculator;
+package tgb.btc.rce.service.handler.impl.state;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.interfaces.service.bean.bot.deal.read.IDealPropertyService;
+import tgb.btc.library.interfaces.service.bean.bot.user.IModifyUserService;
+import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.library.service.process.CalculateService;
 import tgb.btc.library.vo.calculate.DealAmount;
-import tgb.btc.rce.annotation.CommandProcessor;
 import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.InlineCalculatorButton;
 import tgb.btc.rce.enums.PropertiesMessage;
+import tgb.btc.rce.enums.UserState;
 import tgb.btc.rce.enums.update.CallbackQueryData;
+import tgb.btc.rce.sender.IResponseSender;
 import tgb.btc.rce.service.IFunctionsService;
 import tgb.btc.rce.service.IKeyboardService;
 import tgb.btc.rce.service.IMessageService;
-import tgb.btc.rce.service.Processor;
+import tgb.btc.rce.service.IUpdateService;
+import tgb.btc.rce.service.handler.IStateHandler;
 import tgb.btc.rce.service.processors.deal.DealProcessor;
 import tgb.btc.rce.service.processors.support.ExchangeService;
+import tgb.btc.rce.service.redis.IRedisUserStateService;
+import tgb.btc.rce.service.util.ICallbackDataService;
 import tgb.btc.rce.service.util.IMessagePropertiesService;
 import tgb.btc.rce.service.util.IUpdateDispatcher;
 import tgb.btc.rce.vo.InlineCalculatorData;
@@ -30,79 +36,72 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import static tgb.btc.rce.enums.InlineCalculatorButton.*;
 
-@CommandProcessor(command = Command.INLINE_CALCULATOR, step = 1)
-public class InlineCalculator extends Processor {
-
-    private IDealPropertyService dealPropertyService;
-
-    private ExchangeService exchangeService;
-
-    private CalculateService calculateService;
-
-    private DealProcessor dealProcessor;
-
-    private IKeyboardService keyboardService;
-
-    private IUpdateDispatcher updateDispatcher;
-
-    private IMessageService messageService;
-
-    private IFunctionsService functionsService;
-
-    private IMessagePropertiesService messagePropertiesService;
-
-    @Autowired
-    public void setMessagePropertiesService(IMessagePropertiesService messagePropertiesService) {
-        this.messagePropertiesService = messagePropertiesService;
-    }
-
-    @Autowired
-    public void setFunctionsService(IFunctionsService functionsService) {
-        this.functionsService = functionsService;
-    }
+@Service
+public class InlineCalculatorHandler implements IStateHandler {
 
     public static ConcurrentHashMap<Long, InlineCalculatorVO> cache = new ConcurrentHashMap<>();
 
-    @Autowired
-    public void setDealPropertyService(IDealPropertyService dealPropertyService) {
+    private final IDealPropertyService dealPropertyService;
+
+    private final ExchangeService exchangeService;
+
+    private final CalculateService calculateService;
+
+    private final DealProcessor dealProcessor;
+
+    private final IKeyboardService keyboardService;
+
+    private final IUpdateDispatcher updateDispatcher;
+
+    private final IMessageService messageService;
+
+    private final IFunctionsService functionsService;
+
+    private final IMessagePropertiesService messagePropertiesService;
+
+    private final ICallbackDataService callbackDataService;
+
+    private final IUpdateService updateService;
+
+    private final IModifyUserService modifyUserService;
+
+    private final IReadUserService readUserService;
+
+    private final IResponseSender responseSender;
+
+    private final IRedisUserStateService redisUserStateService;
+
+    public InlineCalculatorHandler(IDealPropertyService dealPropertyService, ExchangeService exchangeService,
+                                   CalculateService calculateService, DealProcessor dealProcessor,
+                                   IKeyboardService keyboardService, IUpdateDispatcher updateDispatcher,
+                                   IMessageService messageService, IFunctionsService functionsService,
+                                   IMessagePropertiesService messagePropertiesService,
+                                   ICallbackDataService callbackDataService, IUpdateService updateService,
+                                   IModifyUserService modifyUserService, IReadUserService readUserService,
+                                   IResponseSender responseSender, IRedisUserStateService redisUserStateService) {
         this.dealPropertyService = dealPropertyService;
-    }
-
-    @Autowired
-    public void setDealProcessor(DealProcessor dealProcessor) {
-        this.dealProcessor = dealProcessor;
-    }
-
-    @Autowired
-    public void setCalculateService(CalculateService calculateService) {
-        this.calculateService = calculateService;
-    }
-
-    @Autowired
-    public void setExchangeService(ExchangeService exchangeService) {
         this.exchangeService = exchangeService;
-    }
-
-    @Autowired
-    public void setKeyboardService(IKeyboardService keyboardService) {
+        this.calculateService = calculateService;
+        this.dealProcessor = dealProcessor;
         this.keyboardService = keyboardService;
-    }
-
-    @Autowired
-    public void setUpdateDispatcher(IUpdateDispatcher updateDispatcher) {
         this.updateDispatcher = updateDispatcher;
-    }
-
-    @Autowired
-    public void setMessageService(IMessageService messageService) {
         this.messageService = messageService;
+        this.functionsService = functionsService;
+        this.messagePropertiesService = messagePropertiesService;
+        this.callbackDataService = callbackDataService;
+        this.updateService = updateService;
+        this.modifyUserService = modifyUserService;
+        this.readUserService = readUserService;
+        this.responseSender = responseSender;
+        this.redisUserStateService = redisUserStateService;
     }
 
     @Override
-    public void run(Update update) {
+    public void handle(Update update) {
         Long chatId = updateService.getChatId(update);
         if (update.hasCallbackQuery() && callbackDataService.isCallbackQueryData(CallbackQueryData.BACK, update.getCallbackQuery().getData())) {
             modifyUserService.updateStepAndCommandByChatId(chatId, Command.DEAL.name(), DealProcessor.AFTER_CALCULATOR_STEP);
+            redisUserStateService.delete(chatId);
             dealProcessor.run(update);
             return;
         }
@@ -110,6 +109,7 @@ public class InlineCalculator extends Processor {
         if (update.hasMessage() && !calculator.getOn()) {
             if (!exchangeService.calculateDealAmount(chatId, updateService.getBigDecimalFromText(update))) return;
             modifyUserService.updateStepAndCommandByChatId(chatId, Command.DEAL.name(), DealProcessor.AFTER_CALCULATOR_STEP);
+            redisUserStateService.delete(chatId);
             updateDispatcher.runProcessor(Command.DEAL, chatId, update);
             return;
         } else if (update.hasMessage()) {
@@ -162,6 +162,7 @@ public class InlineCalculator extends Processor {
             case READY:
                 if (!exchangeService.calculateDealAmount(chatId, new BigDecimal(sum), !isSwitched)) return;
                 modifyUserService.updateStepAndCommandByChatId(chatId, Command.DEAL.name(), DealProcessor.AFTER_CALCULATOR_STEP);
+                redisUserStateService.delete(chatId);
                 updateDispatcher.runProcessor(Command.DEAL, chatId, update);
                 return;
         }
@@ -180,5 +181,10 @@ public class InlineCalculator extends Processor {
         responseSender.sendEditedMessageText(chatId, messageId,
                 messageService.getInlineCalculatorMessage(dealType, calculator, dealAmount),
                 keyboardService.getInlineCalculator(chatId));
+    }
+
+    @Override
+    public UserState getUserState() {
+        return UserState.INLINE_CALCULATOR;
     }
 }

@@ -32,8 +32,8 @@ import tgb.btc.rce.enums.update.CallbackQueryData;
 import tgb.btc.rce.enums.update.TextCommand;
 import tgb.btc.rce.service.IKeyboardService;
 import tgb.btc.rce.service.handler.impl.callback.settings.DealReportsCallbackHandler;
+import tgb.btc.rce.service.handler.impl.state.InlineCalculatorHandler;
 import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
-import tgb.btc.rce.service.processors.calculator.InlineCalculator;
 import tgb.btc.rce.service.processors.support.ExchangeService;
 import tgb.btc.rce.service.util.ICallbackDataService;
 import tgb.btc.rce.service.util.ICommandService;
@@ -279,7 +279,7 @@ public class KeyboardService implements IKeyboardService {
         inlineButtons.add(backButton);
         inlineButtons.add(keyboardBuildService.createCallBackDataButton(SWITCH_CALCULATOR.getData(), CallbackQueryData.INLINE_CALCULATOR, SWITCH_CALCULATOR.getData()));
         inlineButtons.add(keyboardBuildService.createCallBackDataButton(READY.getData(), CallbackQueryData.INLINE_CALCULATOR, READY.getData()));
-        InlineCalculatorVO calculator = InlineCalculator.cache.get(chaId);
+        InlineCalculatorVO calculator = InlineCalculatorHandler.cache.get(chaId);
         String text = !calculator.getSwitched()
                 ? calculator.getFiatCurrency().getFlag() + "Ввести сумму в " + calculator.getFiatCurrency().getCode().toUpperCase()
                 : "\uD83D\uDD38Ввести сумму в " + calculator.getCryptoCurrency().getShortName().toUpperCase();
