@@ -10,6 +10,7 @@ import java.util.Set;
 @AllArgsConstructor
 public enum TextCommand {
     CANCEL("Отмена", UserRole.USER_ACCESS),
+    RETURN("Вернуться", UserRole.OBSERVER_ACCESS),
     BACK("Назад", UserRole.USER_ACCESS),
     BUY_BITCOIN("Купить", UserRole.USER_ACCESS),
     SELL_BITCOIN("Продать", UserRole.USER_ACCESS),
@@ -52,7 +53,6 @@ public enum TextCommand {
     DEAL_REPORTS("Отчет по сделкам", Set.of(UserRole.OBSERVER, UserRole.ADMIN)),
     MAILING_LIST("Рассылка", UserRole.OBSERVER_ACCESS),
     REFERRAL_PERCENT("Процент реферала", UserRole.ADMIN_ACCESS),
-    ADMIN_BACK("Назад", UserRole.OPERATOR_ACCESS),
     BAN_UNBAN("Бан/разбан", UserRole.ADMIN_ACCESS),
     USER_INFORMATION("Информация о пользователе", UserRole.ADMIN_ACCESS),
     ADD_CONTACT("Добавить контакт", UserRole.ADMIN_ACCESS),

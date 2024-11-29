@@ -41,28 +41,28 @@ public enum Menu {
     DISCOUNTS(2,
             List.of(
                     TextCommand.RANK_DISCOUNT, TextCommand.TURN_RANK_DISCOUNT, TextCommand.PERSONAL_BUY_DISCOUNT,
-                    TextCommand.PERSONAL_SELL_DISCOUNT, TextCommand.REFERRAL_PERCENT, TextCommand.ADMIN_BACK
+                    TextCommand.PERSONAL_SELL_DISCOUNT, TextCommand.REFERRAL_PERCENT, TextCommand.RETURN
             )
     ),
     USERS(2,
             List.of(
                     TextCommand.SEND_MESSAGES, TextCommand.BAN_UNBAN, TextCommand.USER_INFORMATION, TextCommand.USER_REFERRAL_BALANCE,
-                    TextCommand.ADMIN_BACK
+                    TextCommand.RETURN
             )
     ),
     EDIT_CONTACTS(2,
             List.of(
-                    TextCommand.ADD_CONTACT, TextCommand.DELETE_CONTACT, TextCommand.ADMIN_BACK
+                    TextCommand.ADD_CONTACT, TextCommand.DELETE_CONTACT, TextCommand.RETURN
             )
     ),
     ADMIN_BACK(1,
             List.of(
-                    TextCommand.ADMIN_BACK
+                    TextCommand.RETURN
             )
     ),
     SEND_MESSAGES(2,
             List.of(
-                    TextCommand.MAILING_LIST, TextCommand.SEND_MESSAGE_TO_USER, TextCommand.ADMIN_BACK
+                    TextCommand.MAILING_LIST, TextCommand.SEND_MESSAGE_TO_USER, TextCommand.RETURN
             )
     ),
     BOT_SETTINGS(2,
@@ -70,19 +70,19 @@ public enum Menu {
                     TextCommand.ON_BOT, TextCommand.OFF_BOT,
                     TextCommand.BOT_VARIABLES, TextCommand.PAYMENT_TYPES,
                     TextCommand.TURNING_CURRENCY, TextCommand.EDIT_CONTACTS, TextCommand.TURNING_DELIVERY_TYPE,
-                    TextCommand.ADMIN_BACK
+                    TextCommand.RETURN
             )
     ),
     REQUESTS(2,
             List.of(
                     TextCommand.NEW_DEALS, TextCommand.NEW_API_DEALS, TextCommand.BITCOIN_POOL,
-                    TextCommand.NEW_SPAM_BANS, TextCommand.NEW_REVIEWS, TextCommand.NEW_WITHDRAWALS, TextCommand.ADMIN_BACK
+                    TextCommand.NEW_SPAM_BANS, TextCommand.NEW_REVIEWS, TextCommand.NEW_WITHDRAWALS, TextCommand.RETURN
             )
     ),
     REPORTS(2,
             List.of(
                     TextCommand.CHECKS_FOR_DATE, TextCommand.USERS_REPORT, TextCommand.DEAL_REPORTS, TextCommand.PARTNERS_REPORT,
-                    TextCommand.USERS_DEALS_REPORT, TextCommand.LOTTERY_REPORT, TextCommand.ADMIN_BACK
+                    TextCommand.USERS_DEALS_REPORT, TextCommand.LOTTERY_REPORT, TextCommand.RETURN
             )
     ),
 
@@ -90,7 +90,7 @@ public enum Menu {
             List.of(
                     TextCommand.NEW_PAYMENT_TYPE, TextCommand.DELETE_PAYMENT_TYPE, TextCommand.NEW_PAYMENT_TYPE_REQUISITE,
                     TextCommand.DELETE_PAYMENT_TYPE_REQUISITE, TextCommand.TURN_PAYMENT_TYPES, TextCommand.CHANGE_MIN_SUM,
-                    TextCommand.TURN_DYNAMIC_REQUISITES, TextCommand.ADMIN_BACK
+                    TextCommand.TURN_DYNAMIC_REQUISITES, TextCommand.RETURN
             )
     );
 

@@ -4,20 +4,20 @@ import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import tgb.btc.rce.enums.update.TextCommand;
 import tgb.btc.rce.service.handler.message.text.ITextCommandHandler;
-import tgb.btc.rce.service.handler.util.IAdminPanelService;
+import tgb.btc.rce.service.handler.util.IStartService;
 
 @Service
 public class BackHandler implements ITextCommandHandler {
 
-    private final IAdminPanelService adminPanelService;
+    private final IStartService startService;
 
-    public BackHandler(IAdminPanelService adminPanelService) {
-        this.adminPanelService = adminPanelService;
+    public BackHandler(IStartService startService) {
+        this.startService = startService;
     }
 
     @Override
     public void handle(Message message) {
-        adminPanelService.send(message.getChatId());
+        startService.processToMainMenu(message.getChatId());
     }
 
     @Override

@@ -4,24 +4,24 @@ import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import tgb.btc.rce.enums.update.TextCommand;
 import tgb.btc.rce.service.handler.message.text.ITextCommandHandler;
-import tgb.btc.rce.service.handler.util.IStartService;
+import tgb.btc.rce.service.handler.util.IAdminPanelService;
 
 @Service
-public class QuitAdminPanelHandler implements ITextCommandHandler {
+public class ReturnHandler implements ITextCommandHandler {
 
-    private final IStartService startService;
+    private final IAdminPanelService adminPanelService;
 
-    public QuitAdminPanelHandler(IStartService startService) {
-        this.startService = startService;
+    public ReturnHandler(IAdminPanelService adminPanelService) {
+        this.adminPanelService = adminPanelService;
     }
 
     @Override
     public void handle(Message message) {
-        startService.processToMainMenu(message.getChatId());
+        adminPanelService.send(message.getChatId());
     }
 
     @Override
     public TextCommand getTextCommand() {
-        return TextCommand.QUIT_ADMIN_PANEL;
+        return TextCommand.RETURN;
     }
 }
