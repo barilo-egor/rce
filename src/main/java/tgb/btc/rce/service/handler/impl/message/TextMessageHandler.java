@@ -6,9 +6,7 @@ import tgb.btc.rce.enums.update.MessageType;
 import tgb.btc.rce.enums.update.TextMessageType;
 import tgb.btc.rce.service.handler.message.IMessageHandler;
 import tgb.btc.rce.service.handler.message.text.ITextMessageHandler;
-import tgb.btc.rce.service.handler.util.IStartService;
 import tgb.btc.rce.service.handler.util.ITextMessageTypeService;
-import tgb.btc.rce.service.redis.IRedisUserStateService;
 
 import java.util.HashMap;
 import java.util.List;
@@ -20,19 +18,11 @@ public class TextMessageHandler implements IMessageHandler {
 
     private final ITextMessageTypeService textMessageTypeService;
 
-    private final IRedisUserStateService redisUserStateService;
-
-    private final IStartService startService;
-
     private final Map<TextMessageType, ITextMessageHandler> textMessageHandlersMap = new HashMap<>();
 
     public TextMessageHandler(List<ITextMessageHandler> textMessageHandlers,
-                              ITextMessageTypeService textMessageTypeService,
-                              IRedisUserStateService redisUserStateService,
-                              IStartService startService) {
+                              ITextMessageTypeService textMessageTypeService) {
         this.textMessageTypeService = textMessageTypeService;
-        this.redisUserStateService = redisUserStateService;
-        this.startService = startService;
         for (ITextMessageHandler textMessageHandler : textMessageHandlers) {
             textMessageHandlersMap.put(textMessageHandler.getTextMessageType(), textMessageHandler);
         }
