@@ -7,7 +7,7 @@ import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.service.properties.CurrenciesTurningPropertiesReader;
 import tgb.btc.rce.enums.update.CallbackQueryData;
 import tgb.btc.rce.sender.IResponseSender;
-import tgb.btc.rce.service.handler.callback.ICallbackQueryHandler;
+import tgb.btc.rce.service.handler.ICallbackQueryHandler;
 import tgb.btc.rce.service.handler.util.ITurningCurrencyService;
 import tgb.btc.rce.service.util.ICallbackDataService;
 import tgb.btc.rce.service.util.ITurningCurrenciesService;

@@ -8,7 +8,7 @@ import tgb.btc.library.interfaces.service.bean.bot.IPaymentRequisiteService;
 import tgb.btc.library.interfaces.service.bean.bot.IPaymentTypeService;
 import tgb.btc.rce.enums.update.CallbackQueryData;
 import tgb.btc.rce.sender.IResponseSender;
-import tgb.btc.rce.service.handler.callback.ICallbackQueryHandler;
+import tgb.btc.rce.service.handler.ICallbackQueryHandler;
 import tgb.btc.rce.service.handler.util.ITurnDynamicRequisiteService;
 import tgb.btc.rce.service.util.ICallbackDataService;
 

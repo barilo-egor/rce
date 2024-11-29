@@ -5,7 +5,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.enums.update.CallbackQueryData;
 import tgb.btc.rce.enums.update.UpdateType;
 import tgb.btc.rce.service.handler.IUpdateHandler;
-import tgb.btc.rce.service.handler.callback.ICallbackQueryHandler;
+import tgb.btc.rce.service.handler.ICallbackQueryHandler;
 import tgb.btc.rce.service.util.ICallbackDataService;
 
 import java.util.HashMap;

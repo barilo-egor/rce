@@ -15,7 +15,7 @@ import tgb.btc.rce.enums.ReviewPriseType;
 import tgb.btc.rce.enums.update.CallbackQueryData;
 import tgb.btc.rce.sender.IResponseSender;
 import tgb.btc.rce.service.INotifyService;
-import tgb.btc.rce.service.handler.callback.ICallbackQueryHandler;
+import tgb.btc.rce.service.handler.ICallbackQueryHandler;
 import tgb.btc.rce.service.impl.process.ReviewPriseProcessService;
 import tgb.btc.rce.service.util.ICallbackDataService;
 import tgb.btc.rce.vo.ReviewPrise;
