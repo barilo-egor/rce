@@ -10,7 +10,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.Keyboard
 import org.telegram.telegrambots.meta.api.objects.webapp.WebAppInfo;
 import tgb.btc.library.bean.bot.Contact;
 import tgb.btc.library.exception.BaseException;
-import tgb.btc.rce.enums.Command;
+import tgb.btc.rce.enums.BotInlineButton;
 import tgb.btc.rce.enums.InlineType;
 import tgb.btc.rce.enums.update.CallbackQueryData;
 import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
@@ -26,11 +26,6 @@ import java.util.stream.Collectors;
 @Service
 public class KeyboardBuildService implements IKeyboardBuildService {
 
-    private final InlineButton inlineBackButton = InlineButton.builder().text("Назад")
-            .inlineType(InlineType.CALLBACK_DATA)
-            .data(Command.BACK.name())
-            .build();
-
     private final ICallbackDataService callbackDataService;
 
     public KeyboardBuildService(ICallbackDataService callbackDataService) {
@@ -39,7 +34,7 @@ public class KeyboardBuildService implements IKeyboardBuildService {
 
     @Override
     public InlineButton getInlineBackButton() {
-        return inlineBackButton;
+        return BotInlineButton.CANCEL.getButton();
     }
 
     @Override

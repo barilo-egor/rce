@@ -121,6 +121,7 @@ public enum Command implements ICommand {
     CHANNEL_POST("CHANNEL_POST", false, UserRole.USER_ACCESS),
     NONE("none", false, UserRole.USER_ACCESS),
     ADMIN_BACK("Назад", false, UserRole.OPERATOR_ACCESS),
+    TURNING_DELIVERY_TYPE("Вкл/выкл способов доставки", false, UserRole.ADMIN_ACCESS),
 
     // HAS USAGE
     START("/start", false, UserRole.USER_ACCESS),
@@ -132,7 +133,6 @@ public enum Command implements ICommand {
     REFERRAL("Реферальная программа", false, UserRole.USER_ACCESS),
     LOTTERY("Лотерея", false, UserRole.USER_ACCESS),
     ROULETTE("Рулетка", false, UserRole.USER_ACCESS),
-    TURNING_DELIVERY_TYPE("Вкл/выкл способов доставки", false, UserRole.ADMIN_ACCESS),
 
     // NO HANDLER
 
