@@ -17,7 +17,6 @@ import tgb.btc.library.interfaces.service.bean.bot.IUserDiscountService;
 import tgb.btc.library.interfaces.service.bean.bot.user.IModifyUserService;
 import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.library.service.bean.bot.ReferralUserService;
-import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.update.SlashCommand;
 import tgb.btc.rce.service.IUpdateService;
 import tgb.btc.rce.service.process.IUserProcessService;
@@ -101,7 +100,6 @@ public class UserProcessService implements IUserProcessService {
         User newUser = new User();
         newUser.setChatId(updateService.getChatId(update));
         newUser.setUsername(updateService.getUsername(update));
-        newUser.setCommand(Command.START);
         newUser.setRegistrationDate(LocalDateTime.now());
         newUser.setStep(User.DEFAULT_STEP);
         newUser.setUserRole(UserRole.USER);
@@ -112,7 +110,8 @@ public class UserProcessService implements IUserProcessService {
         newUser.setCharges(0);
         newUser.setReferralPercent(BigDecimal.ZERO);
         User inviter = null;
-        if (commandService.isStartCommand(update) && referralModule.isCurrent(ReferralType.STANDARD)) {
+        if (update.hasMessage() && update.getMessage().hasText() && update.getMessage().getText().equals(SlashCommand.START.getText())
+                && referralModule.isCurrent(ReferralType.STANDARD)) {
             try {
                 Long chatIdFrom = Long.parseLong(update.getMessage().getText()
                         .replaceAll(SlashCommand.START.getText(), "").trim());

@@ -57,7 +57,7 @@ public class NoneCalculatorHandler implements IStateHandler {
         if (!exchangeService.calculateDealAmount(chatId, updateService.getBigDecimalFromText(update))) return;
         modifyUserService.updateStepAndCommandByChatId(chatId, Command.DEAL.name(), DealProcessor.AFTER_CALCULATOR_STEP);
         redisUserStateService.delete(chatId);
-        updateDispatcher.runProcessor(Command.DEAL, chatId, update);
+        dealProcessor.process(update);
     }
 
     @Override

@@ -121,7 +121,7 @@ public abstract class Processor {
         Long chatId = updateService.getChatId(update);
         if (User.DEFAULT_STEP == readUserService.getStepByChatId(chatId)) return false;
         if (this.getClass().getAnnotation(CommandProcessor.class).command().hasAccess(readUserService.getUserRoleByChatId(chatId)) &&
-                (isCommand(update, Command.ADMIN_BACK) || isCommand(update, Command.CANCEL))) {
+                (isCommand(update, Command.ADMIN_BACK))) {
             processToAdminMainPanel(chatId);
             return true;
         } else if (UpdateType.MESSAGE.equals(UpdateType.fromUpdate(update))

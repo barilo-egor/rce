@@ -125,8 +125,7 @@ public enum Command implements ICommand {
     NONE_CALCULATOR("NONE_CALCULATOR", false, UserRole.USER_ACCESS),
     INLINE_QUERY_CALCULATOR("INLINE_QUERY_CALCULATOR", false, UserRole.USER_ACCESS),
     INLINE_CALCULATOR("INLINE_CALCULATOR", false, UserRole.USER_ACCESS),
-
-    // HAS USAGE
+    CANCEL("Отмена", false, UserRole.USER_ACCESS),
     START("/start", false, UserRole.USER_ACCESS),
     BACK("Назад", false, UserRole.USER_ACCESS),
     BUY_BITCOIN("Купить", false, UserRole.USER_ACCESS),
@@ -138,8 +137,6 @@ public enum Command implements ICommand {
     ROULETTE("Рулетка", false, UserRole.USER_ACCESS),
 
     // NO HANDLER
-
-    CANCEL("Отмена", false, UserRole.USER_ACCESS),
     DEAL("DEAL", false, UserRole.USER_ACCESS),
     ;
 

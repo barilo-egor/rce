@@ -39,7 +39,7 @@ class MenuServiceTest {
 
     private final ButtonsDesignPropertiesReader buttonsDesignPropertiesReader = new ButtonsDesignPropertiesReader();
 
-    private final CommandService commandService = new CommandService(new UpdateService(), buttonsDesignPropertiesReader);
+    private final CommandService commandService = new CommandService(buttonsDesignPropertiesReader);
 
     @Captor
     private ArgumentCaptor<List<ReplyButton>> replyButtonCaptor;

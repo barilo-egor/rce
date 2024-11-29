@@ -110,7 +110,7 @@ public class InlineCalculatorHandler implements IStateHandler {
             if (!exchangeService.calculateDealAmount(chatId, updateService.getBigDecimalFromText(update))) return;
             modifyUserService.updateStepAndCommandByChatId(chatId, Command.DEAL.name(), DealProcessor.AFTER_CALCULATOR_STEP);
             redisUserStateService.delete(chatId);
-            updateDispatcher.runProcessor(Command.DEAL, chatId, update);
+            dealProcessor.process(update);
             return;
         } else if (update.hasMessage()) {
             responseSender.sendMessage(chatId, "Для ручного ввода суммы нажмите \""+ SWITCH_CALCULATOR.getData() + "\".");
@@ -163,7 +163,7 @@ public class InlineCalculatorHandler implements IStateHandler {
                 if (!exchangeService.calculateDealAmount(chatId, new BigDecimal(sum), !isSwitched)) return;
                 modifyUserService.updateStepAndCommandByChatId(chatId, Command.DEAL.name(), DealProcessor.AFTER_CALCULATOR_STEP);
                 redisUserStateService.delete(chatId);
-                updateDispatcher.runProcessor(Command.DEAL, chatId, update);
+                dealProcessor.process(update);
                 return;
         }
         Long currentDealPid = readUserService.getCurrentDealByChatId(chatId);
