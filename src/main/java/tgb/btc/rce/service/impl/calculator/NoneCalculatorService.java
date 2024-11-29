@@ -22,7 +22,7 @@ public class NoneCalculatorService extends SimpleCalculatorService {
     }
 
     @Override
-    public void setCommand(Long chatId) {
+    public void setState(Long chatId) {
         redisUserStateService.save(chatId, UserState.NONE_CALCULATOR);
     }
 

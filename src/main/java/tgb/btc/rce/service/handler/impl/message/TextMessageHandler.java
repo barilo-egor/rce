@@ -3,7 +3,6 @@ package tgb.btc.rce.service.handler.impl.message;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import tgb.btc.rce.enums.update.MessageType;
-import tgb.btc.rce.enums.update.SlashCommand;
 import tgb.btc.rce.enums.update.TextMessageType;
 import tgb.btc.rce.service.handler.message.IMessageHandler;
 import tgb.btc.rce.service.handler.message.text.ITextMessageHandler;
@@ -41,12 +40,7 @@ public class TextMessageHandler implements IMessageHandler {
 
     @Override
     public boolean handleMessage(Message message) {
-        String text = message.getText();
-        if (SlashCommand.START.getText().equals(text)) {
-            startService.process(message.getChatId());
-            return true;
-        }
-        TextMessageType textMessageType = textMessageTypeService.fromText(text);
+        TextMessageType textMessageType = textMessageTypeService.fromText(message.getText());
         if (Objects.nonNull(textMessageType)) {
             ITextMessageHandler textMessageHandler = textMessageHandlersMap.get(textMessageType);
             if (textMessageHandler != null) {
