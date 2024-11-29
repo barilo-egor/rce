@@ -11,7 +11,6 @@ import tgb.btc.library.interfaces.service.bean.bot.user.IModifyUserService;
 import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.library.service.process.CalculateService;
 import tgb.btc.library.vo.calculate.DealAmount;
-import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.InlineCalculatorButton;
 import tgb.btc.rce.enums.PropertiesMessage;
 import tgb.btc.rce.enums.UserState;
@@ -22,12 +21,10 @@ import tgb.btc.rce.service.IKeyboardService;
 import tgb.btc.rce.service.IMessageService;
 import tgb.btc.rce.service.IUpdateService;
 import tgb.btc.rce.service.handler.IStateHandler;
-import tgb.btc.rce.service.processors.deal.DealProcessor;
 import tgb.btc.rce.service.processors.support.ExchangeService;
 import tgb.btc.rce.service.redis.IRedisUserStateService;
 import tgb.btc.rce.service.util.ICallbackDataService;
 import tgb.btc.rce.service.util.IMessagePropertiesService;
-import tgb.btc.rce.service.util.IUpdateDispatcher;
 import tgb.btc.rce.vo.InlineCalculatorData;
 import tgb.btc.rce.vo.InlineCalculatorVO;
 
@@ -47,11 +44,9 @@ public class InlineCalculatorHandler implements IStateHandler {
 
     private final CalculateService calculateService;
 
-    private final DealProcessor dealProcessor;
+    private final DealHandler dealHandler;
 
     private final IKeyboardService keyboardService;
-
-    private final IUpdateDispatcher updateDispatcher;
 
     private final IMessageService messageService;
 
@@ -63,54 +58,53 @@ public class InlineCalculatorHandler implements IStateHandler {
 
     private final IUpdateService updateService;
 
-    private final IModifyUserService modifyUserService;
-
     private final IReadUserService readUserService;
 
     private final IResponseSender responseSender;
 
     private final IRedisUserStateService redisUserStateService;
 
+    private final IModifyUserService modifyUserService;
+
     public InlineCalculatorHandler(IDealPropertyService dealPropertyService, ExchangeService exchangeService,
-                                   CalculateService calculateService, DealProcessor dealProcessor,
-                                   IKeyboardService keyboardService, IUpdateDispatcher updateDispatcher,
+                                   CalculateService calculateService, DealHandler dealHandler, IKeyboardService keyboardService,
                                    IMessageService messageService, IFunctionsService functionsService,
                                    IMessagePropertiesService messagePropertiesService,
                                    ICallbackDataService callbackDataService, IUpdateService updateService,
-                                   IModifyUserService modifyUserService, IReadUserService readUserService,
-                                   IResponseSender responseSender, IRedisUserStateService redisUserStateService) {
+                                   IReadUserService readUserService,
+                                   IResponseSender responseSender, IRedisUserStateService redisUserStateService,
+                                   IModifyUserService modifyUserService) {
         this.dealPropertyService = dealPropertyService;
         this.exchangeService = exchangeService;
         this.calculateService = calculateService;
-        this.dealProcessor = dealProcessor;
+        this.dealHandler = dealHandler;
         this.keyboardService = keyboardService;
-        this.updateDispatcher = updateDispatcher;
         this.messageService = messageService;
         this.functionsService = functionsService;
         this.messagePropertiesService = messagePropertiesService;
         this.callbackDataService = callbackDataService;
         this.updateService = updateService;
-        this.modifyUserService = modifyUserService;
         this.readUserService = readUserService;
         this.responseSender = responseSender;
         this.redisUserStateService = redisUserStateService;
+        this.modifyUserService = modifyUserService;
     }
 
     @Override
     public void handle(Update update) {
         Long chatId = updateService.getChatId(update);
         if (update.hasCallbackQuery() && callbackDataService.isCallbackQueryData(CallbackQueryData.BACK, update.getCallbackQuery().getData())) {
-            modifyUserService.updateStepAndCommandByChatId(chatId, Command.DEAL.name(), DealProcessor.AFTER_CALCULATOR_STEP);
-            redisUserStateService.delete(chatId);
-            dealProcessor.run(update);
+            redisUserStateService.save(chatId, UserState.DEAL);
+            modifyUserService.updateStepByChatId(chatId, DealHandler.AFTER_CALCULATOR_STEP);
+            dealHandler.handle(update);
             return;
         }
         InlineCalculatorVO calculator = cache.get(chatId);
         if (update.hasMessage() && !calculator.getOn()) {
             if (!exchangeService.calculateDealAmount(chatId, updateService.getBigDecimalFromText(update))) return;
-            modifyUserService.updateStepAndCommandByChatId(chatId, Command.DEAL.name(), DealProcessor.AFTER_CALCULATOR_STEP);
-            redisUserStateService.delete(chatId);
-            dealProcessor.process(update);
+            redisUserStateService.save(chatId, UserState.DEAL);
+            modifyUserService.updateStepByChatId(chatId, DealHandler.AFTER_CALCULATOR_STEP);
+            dealHandler.handle(update);
             return;
         } else if (update.hasMessage()) {
             responseSender.sendMessage(chatId, "Для ручного ввода суммы нажмите \""+ SWITCH_CALCULATOR.getData() + "\".");
@@ -161,9 +155,9 @@ public class InlineCalculatorHandler implements IStateHandler {
                 break;
             case READY:
                 if (!exchangeService.calculateDealAmount(chatId, new BigDecimal(sum), !isSwitched)) return;
-                modifyUserService.updateStepAndCommandByChatId(chatId, Command.DEAL.name(), DealProcessor.AFTER_CALCULATOR_STEP);
-                redisUserStateService.delete(chatId);
-                dealProcessor.process(update);
+                redisUserStateService.save(chatId, UserState.DEAL);
+                modifyUserService.updateStepByChatId(chatId, DealHandler.AFTER_CALCULATOR_STEP);
+                dealHandler.handle(update);
                 return;
         }
         Long currentDealPid = readUserService.getCurrentDealByChatId(chatId);

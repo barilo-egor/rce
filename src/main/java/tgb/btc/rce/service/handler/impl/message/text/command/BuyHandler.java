@@ -11,8 +11,8 @@ import tgb.btc.library.service.bean.bot.deal.ModifyDealService;
 import tgb.btc.library.service.properties.FunctionsPropertiesReader;
 import tgb.btc.rce.enums.update.TextCommand;
 import tgb.btc.rce.sender.IResponseSender;
+import tgb.btc.rce.service.handler.impl.state.DealHandler;
 import tgb.btc.rce.service.handler.message.text.ITextCommandHandler;
-import tgb.btc.rce.service.processors.deal.DealProcessor;
 import tgb.btc.rce.service.processors.support.ExchangeService;
 
 import java.util.List;
@@ -23,7 +23,7 @@ public class BuyHandler implements ITextCommandHandler {
 
     private final IResponseSender responseSender;
 
-    private final DealProcessor dealProcessor;
+    private final DealHandler dealHandler;
 
     private final ExchangeService exchangeService;
 
@@ -31,10 +31,10 @@ public class BuyHandler implements ITextCommandHandler {
 
     private final FunctionsPropertiesReader functionsPropertiesReader;
 
-    public BuyHandler(IResponseSender responseSender, DealProcessor dealProcessor, ExchangeService exchangeService,
+    public BuyHandler(IResponseSender responseSender, DealHandler dealHandler, ExchangeService exchangeService,
                       ModifyDealService modifyDealService, FunctionsPropertiesReader functionsPropertiesReader) {
         this.responseSender = responseSender;
-        this.dealProcessor = dealProcessor;
+        this.dealHandler = dealHandler;
         this.exchangeService = exchangeService;
         this.modifyDealService = modifyDealService;
         this.functionsPropertiesReader = functionsPropertiesReader;
@@ -52,7 +52,7 @@ public class BuyHandler implements ITextCommandHandler {
         modifyDealService.createNewDeal(DealType.BUY, chatId);
         Update update = new Update();
         update.setMessage(message);
-        dealProcessor.run(update);
+        dealHandler.handle(update);
     }
 
     private boolean checkAllowedDealsCount(Long chatId) {
@@ -72,7 +72,7 @@ public class BuyHandler implements ITextCommandHandler {
     private void deleteUnfinishedDeal(Long chatId) {
         List<Long> pids = exchangeService.getListNewDeal(chatId);
         if (CollectionUtils.isNotEmpty(pids)) {
-            log.info(String.format("Найдено %s незавершенных сделок", pids.size()));
+            log.info("Найдено {} незавершенных сделок", pids.size());
             exchangeService.deleteByPidIn(pids);
         }
     }

@@ -135,8 +135,6 @@ public enum Command implements ICommand {
     REFERRAL("Реферальная программа", false, UserRole.USER_ACCESS),
     LOTTERY("Лотерея", false, UserRole.USER_ACCESS),
     ROULETTE("Рулетка", false, UserRole.USER_ACCESS),
-
-    // NO HANDLER
     DEAL("DEAL", false, UserRole.USER_ACCESS),
     ;
 

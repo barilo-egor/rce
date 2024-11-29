@@ -1,9 +1,9 @@
-package tgb.btc.rce.service.processors.deal;
+package tgb.btc.rce.service.handler.impl.state;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.bean.bot.User;
 import tgb.btc.library.constants.enums.DeliveryKind;
@@ -14,118 +14,115 @@ import tgb.btc.library.interfaces.service.bean.bot.ISecurePaymentDetailsService;
 import tgb.btc.library.interfaces.service.bean.bot.deal.IModifyDealService;
 import tgb.btc.library.interfaces.service.bean.bot.deal.IReadDealService;
 import tgb.btc.library.interfaces.service.bean.bot.deal.read.IDealPropertyService;
+import tgb.btc.library.interfaces.service.bean.bot.user.IModifyUserService;
+import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
+import tgb.btc.library.interfaces.service.bean.common.bot.IUserCommonService;
 import tgb.btc.library.interfaces.util.IFiatCurrencyService;
-import tgb.btc.rce.annotation.CommandProcessor;
-import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.Menu;
 import tgb.btc.rce.enums.MessageImage;
+import tgb.btc.rce.enums.UserState;
 import tgb.btc.rce.enums.update.CallbackQueryData;
 import tgb.btc.rce.enums.update.SlashCommand;
 import tgb.btc.rce.enums.update.TextCommand;
 import tgb.btc.rce.sender.IMessageImageResponseSender;
+import tgb.btc.rce.sender.IResponseSender;
 import tgb.btc.rce.service.ICalculatorTypeService;
-import tgb.btc.rce.service.Processor;
+import tgb.btc.rce.service.IUpdateService;
+import tgb.btc.rce.service.handler.IStateHandler;
 import tgb.btc.rce.service.handler.util.IStartService;
+import tgb.btc.rce.service.impl.util.CommandService;
 import tgb.btc.rce.service.process.IDealBotProcessService;
 import tgb.btc.rce.service.processors.support.ExchangeService;
+import tgb.btc.rce.service.redis.IRedisUserStateService;
+import tgb.btc.rce.service.util.ICallbackDataService;
 import tgb.btc.rce.vo.TelegramUpdateEvent;
 
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@CommandProcessor(command = Command.DEAL)
+@Service
 @Slf4j
-public class DealProcessor extends Processor {
+public class DealHandler implements IStateHandler {
 
     public static final int AFTER_CALCULATOR_STEP = 3;
 
-    private ExchangeService exchangeService;
+    private final ExchangeService exchangeService;
 
-    private ICalculatorTypeService calculatorTypeService;
+    private final ICalculatorTypeService calculatorTypeService;
 
-    private IDealPropertyService dealPropertyService;
+    private final IDealPropertyService dealPropertyService;
 
-    private IReadDealService readDealService;
+    private final IReadDealService readDealService;
 
-    private IModifyDealService modifyDealService;
+    private final IModifyDealService modifyDealService;
 
-    private IDealBotProcessService dealProcessService;
+    private final IDealBotProcessService dealProcessService;
 
-    private IFiatCurrencyService fiatCurrencyService;
+    private final IFiatCurrencyService fiatCurrencyService;
 
-    private IModule<DeliveryKind> deliveryKindModule;
+    private final IModule<DeliveryKind> deliveryKindModule;
 
-    private ISecurePaymentDetailsService securePaymentDetailsService;
+    private final ISecurePaymentDetailsService securePaymentDetailsService;
 
-    private ApplicationEventPublisher eventPublisher;
+    private final ApplicationEventPublisher eventPublisher;
 
-    private IStartService startService;
+    private final IStartService startService;
 
-    private IMessageImageResponseSender messageImageResponseSender;
+    private final IMessageImageResponseSender messageImageResponseSender;
 
-    @Autowired
-    public void setMessageImageResponseSender(IMessageImageResponseSender messageImageResponseSender) {
-        this.messageImageResponseSender = messageImageResponseSender;
-    }
+    private final IUpdateService updateService;
 
-    @Autowired
-    public void setStartService(IStartService startService) {
-        this.startService = startService;
-    }
+    private final IReadUserService readUserService;
 
-    @Autowired
-    public void setEventPublisher(ApplicationEventPublisher eventPublisher) {
-        this.eventPublisher = eventPublisher;
-    }
+    private final ICallbackDataService callbackDataService;
 
-    @Autowired
-    public void setSecurePaymentDetailsService(ISecurePaymentDetailsService securePaymentDetailsService) {
-        this.securePaymentDetailsService = securePaymentDetailsService;
-    }
+    private final IModifyUserService modifyUserService;
 
-    @Autowired
-    public void setDeliveryKindModule(IModule<DeliveryKind> deliveryKindModule) {
-        this.deliveryKindModule = deliveryKindModule;
-    }
+    private final IResponseSender responseSender;
 
-    @Autowired
-    public void setFiatCurrencyService(IFiatCurrencyService fiatCurrencyService) {
-        this.fiatCurrencyService = fiatCurrencyService;
-    }
+    private final IUserCommonService userCommonService;
 
-    @Autowired
-    public void setReadDealService(IReadDealService readDealService) {
-        this.readDealService = readDealService;
-    }
+    private final IRedisUserStateService redisUserStateService;
 
-    @Autowired
-    public void setModifyDealService(IModifyDealService modifyDealService) {
-        this.modifyDealService = modifyDealService;
-    }
+    private final CommandService commandService;
 
-    @Autowired
-    public void setDealPropertyService(IDealPropertyService dealPropertyService) {
-        this.dealPropertyService = dealPropertyService;
-    }
-
-    @Autowired
-    public void setDealProcessService(IDealBotProcessService dealProcessService) {
-        this.dealProcessService = dealProcessService;
-    }
-
-    @Autowired
-    public void setCalculatorTypeService(ICalculatorTypeService calculatorTypeService) {
-        this.calculatorTypeService = calculatorTypeService;
-    }
-
-    @Autowired
-    public void setExchangeService(ExchangeService exchangeService) {
+    public DealHandler(ExchangeService exchangeService, ICalculatorTypeService calculatorTypeService,
+                       IDealPropertyService dealPropertyService, IReadDealService readDealService,
+                       IModifyDealService modifyDealService, IDealBotProcessService dealProcessService,
+                       IFiatCurrencyService fiatCurrencyService, IModule<DeliveryKind> deliveryKindModule,
+                       ISecurePaymentDetailsService securePaymentDetailsService,
+                       ApplicationEventPublisher eventPublisher, IStartService startService,
+                       IMessageImageResponseSender messageImageResponseSender, IUpdateService updateService,
+                       IReadUserService readUserService, ICallbackDataService callbackDataService,
+                       IModifyUserService modifyUserService, IResponseSender responseSender,
+                       IUserCommonService userCommonService, IRedisUserStateService redisUserStateService,
+                       CommandService commandService) {
         this.exchangeService = exchangeService;
+        this.calculatorTypeService = calculatorTypeService;
+        this.dealPropertyService = dealPropertyService;
+        this.readDealService = readDealService;
+        this.modifyDealService = modifyDealService;
+        this.dealProcessService = dealProcessService;
+        this.fiatCurrencyService = fiatCurrencyService;
+        this.deliveryKindModule = deliveryKindModule;
+        this.securePaymentDetailsService = securePaymentDetailsService;
+        this.eventPublisher = eventPublisher;
+        this.startService = startService;
+        this.messageImageResponseSender = messageImageResponseSender;
+        this.updateService = updateService;
+        this.readUserService = readUserService;
+        this.callbackDataService = callbackDataService;
+        this.modifyUserService = modifyUserService;
+        this.responseSender = responseSender;
+        this.userCommonService = userCommonService;
+        this.redisUserStateService = redisUserStateService;
+        this.commandService = commandService;
     }
 
     @Override
-    public void run(Update update) {
+    public void handle(Update update) {
+        long t1 = System.currentTimeMillis();
         Long chatId = updateService.getChatId(update);
         Integer userStep = readUserService.getStepByChatId(chatId);
         boolean isBack = update.hasCallbackQuery() && callbackDataService.isCallbackQueryData(CallbackQueryData.BACK, update.getCallbackQuery().getData());
@@ -146,7 +143,9 @@ public class DealProcessor extends Processor {
             processToStart(chatId, update);
             return;
         }
-       switchByStep(update, chatId, userStep, isBack);
+        switchByStep(update, chatId, userStep, isBack);
+        long t2 = System.currentTimeMillis();
+        log.debug("Обработка DEAL = {} ms", (t2 - t1));
     }
 
     private void switchByStep(Update update, Long chatId, Integer userStep, boolean isBack) {
@@ -154,7 +153,7 @@ public class DealProcessor extends Processor {
         Long currentDealPid = readUserService.getCurrentDealByChatId(chatId);
         switch (userStep) {
             case 0:
-                if (!isBack) modifyUserService.updateCommandByChatId(Command.DEAL.name(), chatId);
+                if (!isBack) redisUserStateService.save(chatId, UserState.DEAL);
                 if (!fiatCurrencyService.isFew()) {
                     recursiveSwitch(update, chatId, isBack);
                     break;
@@ -267,7 +266,7 @@ public class DealProcessor extends Processor {
                 if (!exchangeService.saveReceipts(update)) return;
                 exchangeService.confirmDeal(update);
                 messageImageResponseSender.sendMessage(MessageImage.START, chatId);
-                processToMainMenu(chatId);
+                startService.processToMainMenu(chatId);
                 break;
         }
     }
@@ -296,7 +295,9 @@ public class DealProcessor extends Processor {
         if (!update.hasMessage() || !update.getMessage().hasText()) return false;
         Long chatId = update.getMessage().getChatId();
         boolean isMainMenu = false;
-        Set<String> commands = Menu.MAIN.getTextCommands().stream().map(TextCommand::getText).collect(Collectors.toSet());
+        Set<String> commands = Menu.MAIN.getTextCommands().stream()
+                .map(commandService::getText)
+                .collect(Collectors.toSet());
         commands.add(SlashCommand.START.getText());
         for (String command : commands) {
             if (command.equals(update.getMessage().getText())) {
@@ -305,11 +306,12 @@ public class DealProcessor extends Processor {
             }
         }
         if (!isMainMenu) return false;
+        redisUserStateService.delete(chatId);
         modifyUserService.setDefaultValues(chatId);
         Long currentDealPid = readUserService.getCurrentDealByChatId(chatId);
         if (Objects.nonNull(currentDealPid)) {
             if (readDealService.existsById(currentDealPid)) {
-                log.info("Сделка " + currentDealPid + " удалена по команде главного меню.");
+                log.info("Сделка {} удалена по команде главного меню.", currentDealPid);
                 modifyDealService.deleteById(currentDealPid);
             }
             modifyUserService.updateCurrentDealByChatId(null, chatId);
@@ -318,5 +320,10 @@ public class DealProcessor extends Processor {
         TelegramUpdateEvent telegramUpdateEvent = new TelegramUpdateEvent(this, update);
         eventPublisher.publishEvent(telegramUpdateEvent);
         return true;
+    }
+
+    @Override
+    public UserState getUserState() {
+        return UserState.DEAL;
     }
 }
