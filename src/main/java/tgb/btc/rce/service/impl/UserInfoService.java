@@ -12,13 +12,11 @@ import tgb.btc.library.interfaces.service.bean.bot.ISpamBanService;
 import tgb.btc.library.interfaces.service.bean.bot.deal.read.IDealCountService;
 import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.rce.enums.PropertiesMessage;
-import tgb.btc.rce.enums.update.CallbackQueryData;
 import tgb.btc.rce.sender.IResponseSender;
 import tgb.btc.rce.service.IUserInfoService;
 import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
 import tgb.btc.rce.service.util.ICallbackDataService;
 import tgb.btc.rce.service.util.IMessagePropertiesService;
-import tgb.btc.rce.vo.InlineButton;
 
 import java.util.List;
 import java.util.Objects;
@@ -107,7 +105,7 @@ public class UserInfoService implements IUserInfoService {
         String isBanned = user.getBanned() ? "да" : "нет";
         Long lotteryWinCount = lotteryWinService.getLotteryWinCount(chatId);
         String fromChatId = Objects.nonNull(user.getFromChatId()) ? String.valueOf(user.getFromChatId()) : "отсутствует";
-        String result = null;
+        String result;
         if (referralModule.isCurrent(ReferralType.STANDARD)) {
             int numberOfReferrals = referralUsers.size();
             int numberOfActiveReferrals = (int) referralUsers.stream()
@@ -123,24 +121,5 @@ public class UserInfoService implements IUserInfoService {
                     lotteryWinCount, fromChatId);
         }
         return result;
-    }
-
-    @Override
-    public void sendSpamBannedUser(Long messageChatId, Long spamBanPid) {
-        sendUserInformation(messageChatId, spamBanService.getUserChatIdByPid(spamBanPid),
-                            keyboardBuildService.buildInline(List.of(
-                                    InlineButton.builder()
-                                            .text("Оставить в бане")
-                                            .data(callbackDataService.buildData(
-                                                    CallbackQueryData.KEEP_SPAM_BAN, spamBanPid.toString()
-                                            ))
-                                            .build(),
-                                    InlineButton.builder()
-                                            .text("Разблокировать")
-                                            .data(callbackDataService.buildData(
-                                                    CallbackQueryData.SPAM_UNBAN, spamBanPid.toString()
-                                            ))
-                                            .build()
-                            )));
     }
 }

@@ -11,7 +11,7 @@ import tgb.btc.rce.service.ICalculatorTypeService;
 import tgb.btc.rce.service.IKeyboardService;
 import tgb.btc.rce.service.IMessageService;
 import tgb.btc.rce.service.IUpdateService;
-import tgb.btc.rce.service.handler.impl.state.InlineCalculatorHandler;
+import tgb.btc.rce.service.handler.impl.state.deal.InlineCalculatorHandler;
 import tgb.btc.rce.service.redis.IRedisUserStateService;
 import tgb.btc.rce.vo.InlineCalculatorVO;
 

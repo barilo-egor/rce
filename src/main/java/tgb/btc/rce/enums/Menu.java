@@ -29,7 +29,7 @@ public enum Menu {
     ),
     OPERATOR_PANEL(2,
             List.of(
-                    TextCommand.NEW_DEALS, TextCommand.NEW_API_DEALS, TextCommand.NEW_REVIEWS, TextCommand.NEW_WITHDRAWALS, TextCommand.NEW_SPAM_BANS,
+                    TextCommand.NEW_DEALS, TextCommand.NEW_API_DEALS, TextCommand.NEW_REVIEWS, TextCommand.NEW_WITHDRAWALS,
                     TextCommand.PAYMENT_TYPES, TextCommand.QUIT_ADMIN_PANEL
             )
     ),
@@ -76,7 +76,7 @@ public enum Menu {
     REQUESTS(2,
             List.of(
                     TextCommand.NEW_DEALS, TextCommand.NEW_API_DEALS, TextCommand.BITCOIN_POOL,
-                    TextCommand.NEW_SPAM_BANS, TextCommand.NEW_REVIEWS, TextCommand.NEW_WITHDRAWALS, TextCommand.RETURN
+                    TextCommand.NEW_REVIEWS, TextCommand.NEW_WITHDRAWALS, TextCommand.RETURN
             )
     ),
     REPORTS(2,

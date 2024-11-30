@@ -11,7 +11,7 @@ import tgb.btc.library.service.bean.bot.deal.ModifyDealService;
 import tgb.btc.library.service.properties.FunctionsPropertiesReader;
 import tgb.btc.rce.enums.update.TextCommand;
 import tgb.btc.rce.sender.IResponseSender;
-import tgb.btc.rce.service.handler.impl.state.DealHandler;
+import tgb.btc.rce.service.handler.impl.state.deal.DealHandler;
 import tgb.btc.rce.service.handler.message.text.ITextCommandHandler;
 import tgb.btc.rce.service.processors.support.ExchangeService;
 

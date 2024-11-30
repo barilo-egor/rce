@@ -6,7 +6,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.interfaces.service.bean.bot.deal.IModifyDealService;
 import tgb.btc.rce.enums.update.TextCommand;
-import tgb.btc.rce.service.handler.impl.state.DealHandler;
+import tgb.btc.rce.service.handler.impl.state.deal.DealHandler;
 import tgb.btc.rce.service.handler.message.text.ITextCommandHandler;
 
 @Service

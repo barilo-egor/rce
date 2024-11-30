@@ -32,7 +32,7 @@ import tgb.btc.rce.enums.update.CallbackQueryData;
 import tgb.btc.rce.enums.update.TextCommand;
 import tgb.btc.rce.service.IKeyboardService;
 import tgb.btc.rce.service.handler.impl.callback.settings.DealReportsCallbackHandler;
-import tgb.btc.rce.service.handler.impl.state.InlineCalculatorHandler;
+import tgb.btc.rce.service.handler.impl.state.deal.InlineCalculatorHandler;
 import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
 import tgb.btc.rce.service.processors.support.ExchangeService;
 import tgb.btc.rce.service.util.ICallbackDataService;

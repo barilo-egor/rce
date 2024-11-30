@@ -78,8 +78,8 @@ public class ReviewProcessService implements IReviewProcessService {
         Integer referralBalance = readUserService.getReferralBalanceByChatId(review.getChatId());
         int total = referralBalance + reviewPrise;
 
-        log.debug("Обновление реф баланса за отзыв : chatId = " + review.getChatId() + "; reviewPrise = "
-                + reviewPrise + "; referralBalance = " + referralBalance + "; total = " + total);
+        log.debug("Обновление реф баланса за отзыв : chatId = {}; reviewPrise = {}; referralBalance = {}; total = {}",
+                review.getChatId(), reviewPrise, referralBalance, total);
         modifyUserService.updateReferralBalanceByChatId(total, review.getChatId());
         responseSender.sendMessage(review.getChatId(), "Ваш отзыв опубликован.\n\nНа ваш реферальный баланс зачислено "
                 + reviewPrise + "₽.");
