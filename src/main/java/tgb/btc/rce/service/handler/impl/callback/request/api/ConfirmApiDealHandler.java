@@ -49,6 +49,11 @@ public class ConfirmApiDealHandler implements ICallbackQueryHandler {
                             "разделе \"API пользователи\".\n", true);
             return;
         }
+        ApiDealStatus apiDealStatus = apiDealService.getApiDealStatusByPid(dealPid);
+        if (!ApiDealStatus.PAID.equals(apiDealStatus)) {
+            responseSender.sendMessage(chatId, "Заявка уже обработана.");
+            return;
+        }
         responseSender.deleteMessage(chatId, callbackQuery.getMessage().getMessageId());
         apiDealService.updateApiDealStatusByPid(ApiDealStatus.ACCEPTED, dealPid);
         if (isNeedRequest)
