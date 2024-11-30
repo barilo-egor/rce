@@ -23,8 +23,8 @@ import tgb.btc.rce.service.IKeyboardService;
 import tgb.btc.rce.service.INotifyService;
 import tgb.btc.rce.service.processors.support.DealSupportService;
 import tgb.btc.rce.service.util.ICallbackDataService;
-import tgb.btc.rce.service.util.ITextCommandService;
 import tgb.btc.rce.service.util.IMessagePropertiesService;
+import tgb.btc.rce.service.util.ITextCommandService;
 import tgb.btc.rce.vo.InlineButton;
 
 import java.io.File;
@@ -252,5 +252,10 @@ public class Notifier implements INotifier {
     @Override
     public void notifyPoolChanged(Long aLong) {
         notifyAdmins("Пул сделок BTC был обновлен.", aLong);
+    }
+
+    @Override
+    public void apiDealDeclined(Long aLong) {
+        notifyAdmins("API сделка №" + aLong + " была удалена по истечению времени.");
     }
 }
