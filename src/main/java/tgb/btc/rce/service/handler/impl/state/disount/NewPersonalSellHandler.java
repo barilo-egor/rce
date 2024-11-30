@@ -57,7 +57,7 @@ public class NewPersonalSellHandler implements IStateHandler {
     public void handle(Update update) {
         if (!update.hasMessage() || !update.getMessage().hasText()) {
             responseSender.sendMessage(UpdateType.getChatId(update),
-                    "Введите новый процент персональной скидки на покупку, либо нажмите \"" + TextCommand.CANCEL.getText() + "\".");
+                    "Введите новый процент персональной скидки на продажу, либо нажмите \"" + TextCommand.CANCEL.getText() + "\".");
             return;
         }
         Message message = update.getMessage();
