@@ -256,6 +256,6 @@ public class Notifier implements INotifier {
 
     @Override
     public void apiDealDeclined(Long aLong) {
-        notifyAdmins("API сделка №" + aLong + " была удалена по истечению времени.");
+        notifyAdmins("API сделка №" + aLong + " была отклонена по истечению времени.");
     }
 }
