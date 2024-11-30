@@ -1,11 +1,20 @@
 package tgb.btc.rce.service.impl.calculator;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import tgb.btc.rce.enums.Command;
+import tgb.btc.rce.enums.UserState;
+import tgb.btc.rce.service.redis.IRedisUserStateService;
 
 import java.util.List;
 
 public class NoneCalculatorService extends SimpleCalculatorService {
+
+    private IRedisUserStateService redisUserStateService;
+
+    @Autowired
+    public void setRedisUserStateService(IRedisUserStateService redisUserStateService) {
+        this.redisUserStateService = redisUserStateService;
+    }
 
     @Override
     public void addKeyboard(SendMessage sendMessage) {
@@ -13,8 +22,8 @@ public class NoneCalculatorService extends SimpleCalculatorService {
     }
 
     @Override
-    public void setCommand(Long chatId) {
-        modifyUserService.updateStepAndCommandByChatId(chatId, Command.NONE_CALCULATOR.name(), 1);
+    public void setState(Long chatId) {
+        redisUserStateService.save(chatId, UserState.NONE_CALCULATOR);
     }
 
 }

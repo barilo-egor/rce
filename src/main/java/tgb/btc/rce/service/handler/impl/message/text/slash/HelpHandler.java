@@ -9,7 +9,7 @@ import tgb.btc.rce.enums.HelpCommand;
 import tgb.btc.rce.enums.update.SlashCommand;
 import tgb.btc.rce.sender.IResponseSender;
 import tgb.btc.rce.service.handler.message.text.ISlashCommandHandler;
-import tgb.btc.rce.service.util.ICommandService;
+import tgb.btc.rce.service.util.ITextCommandService;
 
 @Service
 @Slf4j
@@ -19,10 +19,10 @@ public class HelpHandler implements ISlashCommandHandler {
 
     private final IResponseSender responseSender;
 
-    private final ICommandService commandService;
+    private final ITextCommandService commandService;
 
     public HelpHandler(IReadUserService readUserService, IResponseSender responseSender,
-                       ICommandService commandService) {
+                       ITextCommandService commandService) {
         this.readUserService = readUserService;
         this.responseSender = responseSender;
         this.commandService = commandService;

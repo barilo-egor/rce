@@ -27,16 +27,15 @@ import tgb.btc.rce.constants.BotCacheNames;
 import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.BotInlineButton;
 import tgb.btc.rce.enums.BotReplyButton;
-import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.InlineType;
 import tgb.btc.rce.enums.update.CallbackQueryData;
+import tgb.btc.rce.enums.update.TextCommand;
 import tgb.btc.rce.service.IKeyboardService;
 import tgb.btc.rce.service.handler.impl.callback.settings.DealReportsCallbackHandler;
+import tgb.btc.rce.service.handler.impl.state.deal.InlineCalculatorHandler;
 import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
-import tgb.btc.rce.service.processors.calculator.InlineCalculator;
 import tgb.btc.rce.service.processors.support.ExchangeService;
 import tgb.btc.rce.service.util.ICallbackDataService;
-import tgb.btc.rce.service.util.ICommandService;
 import tgb.btc.rce.service.util.ICryptoCurrenciesDesignService;
 import tgb.btc.rce.service.util.ITurningCurrenciesService;
 import tgb.btc.rce.vo.InlineButton;
@@ -74,8 +73,6 @@ public class KeyboardService implements IKeyboardService {
 
     private IBigDecimalService bigDecimalService;
 
-    private ICommandService commandService;
-
     private IModule<DeliveryKind> deliveryKindModule;
 
     private FunctionsPropertiesReader functionsPropertiesReader;
@@ -109,11 +106,6 @@ public class KeyboardService implements IKeyboardService {
     @Autowired
     public void setDeliveryKindModule(IModule<DeliveryKind> deliveryKindModule) {
         this.deliveryKindModule = deliveryKindModule;
-    }
-
-    @Autowired
-    public void setCommandService(ICommandService commandService) {
-        this.commandService = commandService;
     }
 
     @Autowired
@@ -252,12 +244,12 @@ public class KeyboardService implements IKeyboardService {
     public ReplyKeyboard getPromoCode(BigDecimal sumWithDiscount, BigDecimal dealAmount) {
         return keyboardBuildService.buildInline(List.of(
                 InlineButton.builder()
-                        .text(String.format(commandService.getText(Command.USE_PROMO), bigDecimalService.roundToPlainString(sumWithDiscount)))
+                        .text("Использовать промокод")
                         .data(BotStringConstants.USE_PROMO)
                         .inlineType(InlineType.CALLBACK_DATA)
                         .build(),
                 InlineButton.builder()
-                        .text(String.format(commandService.getText(Command.DONT_USE_PROMO), bigDecimalService.roundToPlainString(dealAmount)))
+                        .text("Не использовать промокод")
                         .data(BotStringConstants.DONT_USE_PROMO)
                         .inlineType(InlineType.CALLBACK_DATA)
                         .build(),
@@ -279,7 +271,7 @@ public class KeyboardService implements IKeyboardService {
         inlineButtons.add(backButton);
         inlineButtons.add(keyboardBuildService.createCallBackDataButton(SWITCH_CALCULATOR.getData(), CallbackQueryData.INLINE_CALCULATOR, SWITCH_CALCULATOR.getData()));
         inlineButtons.add(keyboardBuildService.createCallBackDataButton(READY.getData(), CallbackQueryData.INLINE_CALCULATOR, READY.getData()));
-        InlineCalculatorVO calculator = InlineCalculator.cache.get(chaId);
+        InlineCalculatorVO calculator = InlineCalculatorHandler.cache.get(chaId);
         String text = !calculator.getSwitched()
                 ? calculator.getFiatCurrency().getFlag() + "Ввести сумму в " + calculator.getFiatCurrency().getCode().toUpperCase()
                 : "\uD83D\uDD38Ввести сумму в " + calculator.getCryptoCurrency().getShortName().toUpperCase();
@@ -467,7 +459,7 @@ public class KeyboardService implements IKeyboardService {
     public ReplyKeyboard getCancelDeal() {
         return keyboardBuildService.buildReply(List.of(
                 ReplyButton.builder()
-                        .text(commandService.getText(Command.RECEIPTS_CANCEL_DEAL))
+                        .text(TextCommand.RECEIPTS_CANCEL_DEAL.getText())
                         .build()));
     }
 

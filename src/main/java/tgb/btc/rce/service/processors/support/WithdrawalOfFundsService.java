@@ -17,7 +17,7 @@ import tgb.btc.rce.service.INotifyService;
 import tgb.btc.rce.service.IUpdateService;
 import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
 import tgb.btc.rce.service.util.ICallbackDataService;
-import tgb.btc.rce.service.util.ICommandService;
+import tgb.btc.rce.service.util.ITextCommandService;
 import tgb.btc.rce.service.util.IMessagePropertiesService;
 
 import java.util.Set;
@@ -41,7 +41,7 @@ public class WithdrawalOfFundsService {
     
     private IUpdateService updateService;
 
-    private ICommandService commandService;
+    private ITextCommandService commandService;
 
     private ICallbackDataService callbackDataService;
 
@@ -51,7 +51,7 @@ public class WithdrawalOfFundsService {
     }
 
     @Autowired
-    public void setCommandService(ICommandService commandService) {
+    public void setCommandService(ITextCommandService commandService) {
         this.commandService = commandService;
     }
 

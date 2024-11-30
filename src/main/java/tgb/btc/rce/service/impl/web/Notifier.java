@@ -23,7 +23,7 @@ import tgb.btc.rce.service.IKeyboardService;
 import tgb.btc.rce.service.INotifyService;
 import tgb.btc.rce.service.processors.support.DealSupportService;
 import tgb.btc.rce.service.util.ICallbackDataService;
-import tgb.btc.rce.service.util.ICommandService;
+import tgb.btc.rce.service.util.ITextCommandService;
 import tgb.btc.rce.service.util.IMessagePropertiesService;
 import tgb.btc.rce.vo.InlineButton;
 
@@ -53,7 +53,7 @@ public class Notifier implements INotifier {
 
     private VariablePropertiesReader variablePropertiesReader;
 
-    private ICommandService commandService;
+    private ITextCommandService commandService;
 
     private IApiUserService apiUserService;
 
@@ -77,7 +77,7 @@ public class Notifier implements INotifier {
     }
 
     @Autowired
-    public void setCommandService(ICommandService commandService) {
+    public void setCommandService(ITextCommandService commandService) {
         this.commandService = commandService;
     }
 

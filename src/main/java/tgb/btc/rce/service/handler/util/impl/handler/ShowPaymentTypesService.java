@@ -7,7 +7,6 @@ import tgb.btc.library.bean.bot.PaymentType;
 import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
 import tgb.btc.library.interfaces.service.bean.bot.IPaymentTypeService;
-import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.update.CallbackQueryData;
 import tgb.btc.rce.sender.IResponseSender;
 import tgb.btc.rce.service.handler.util.IAdminPanelService;
@@ -43,7 +42,7 @@ public class ShowPaymentTypesService implements IShowPaymentTypesService {
     }
 
     @Override
-    public void sendForTurn(Long chatId, DealType dealType, FiatCurrency fiatCurrency) {
+    public void sendForTurn(Long chatId, DealType dealType, FiatCurrency fiatCurrency, Integer messageId) {
         List<PaymentType> paymentTypes = paymentTypeService.getByDealTypeAndFiatCurrency(dealType, fiatCurrency);
         if (CollectionUtils.isEmpty(paymentTypes)) {
             responseSender.sendMessage(chatId, "Список тип оплат на " + dealType.getAccusative() + " пуст."); //todo fiat
@@ -62,10 +61,10 @@ public class ShowPaymentTypesService implements IShowPaymentTypesService {
                     .build());
         }
         buttons.add(InlineButton.builder()
-                .text("Удалить")
+                .text("Закрыть")
                 .data(CallbackQueryData.INLINE_DELETE.name())
                 .build());
-        responseSender.sendMessage(chatId, "Выберите тип оплаты для включения/выключения.",
+        responseSender.sendEditedMessageText(chatId, messageId, "Выберите тип оплаты для включения/выключения.",
                 keyboardBuildService.buildInline(buttons));
     }
 }

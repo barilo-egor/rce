@@ -57,6 +57,8 @@ public class ExchangeService {
 
     public static final String PAID_DATA = "PAID";
 
+    public static final String USE_SAVED = "USE_SAVED";
+
     private IKeyboardService keyboardService;
 
     private IReadDealService readDealService;
@@ -109,7 +111,7 @@ public class ExchangeService {
 
     private IBigDecimalService bigDecimalService;
 
-    private ICommandService commandService;
+    private ITextCommandService commandService;
 
     private IModule<DeliveryKind> deliveryKindModule;
 
@@ -159,7 +161,7 @@ public class ExchangeService {
     }
 
     @Autowired
-    public void setCommandService(ICommandService commandService) {
+    public void setCommandService(ITextCommandService commandService) {
         this.commandService = commandService;
     }
 
@@ -476,7 +478,7 @@ public class ExchangeService {
                         readDealService.getWalletFromLastPassedByChatIdAndDealTypeAndCryptoCurrency(chatId, DealType.BUY, cryptoCurrency));
                 buttons.add(InlineButton.builder()
                         .text(buttonsDesignPropertiesReader.getString("USE_SAVED_WALLET"))
-                        .data(Command.USE_SAVED_WALLET.name())
+                        .data(USE_SAVED)
                         .build());
             }
             buttons.add(BotInlineButton.CANCEL.getButton());
@@ -571,7 +573,7 @@ public class ExchangeService {
                 }
             } else {
                 if (!update.hasCallbackQuery()
-                        || !update.getCallbackQuery().getData().equals(Command.USE_SAVED_WALLET.name()))
+                        || !update.getCallbackQuery().getData().equals(USE_SAVED))
                     return false;
                 wallet = readDealService.getWalletFromLastPassedByChatIdAndDealTypeAndCryptoCurrency(
                         chatId, dealType, dealPropertyService.getCryptoCurrencyByPid(currentDealPid));

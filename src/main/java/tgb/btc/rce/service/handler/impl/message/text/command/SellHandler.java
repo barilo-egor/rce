@@ -6,19 +6,19 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.interfaces.service.bean.bot.deal.IModifyDealService;
 import tgb.btc.rce.enums.update.TextCommand;
+import tgb.btc.rce.service.handler.impl.state.deal.DealHandler;
 import tgb.btc.rce.service.handler.message.text.ITextCommandHandler;
-import tgb.btc.rce.service.processors.deal.DealProcessor;
 
 @Service
 public class SellHandler implements ITextCommandHandler {
 
     private final IModifyDealService modifyDealService;
 
-    private final DealProcessor dealProcessor;
+    private final DealHandler dealHandler;
 
-    public SellHandler(IModifyDealService modifyDealService, DealProcessor dealProcessor) {
+    public SellHandler(IModifyDealService modifyDealService, DealHandler dealHandler) {
         this.modifyDealService = modifyDealService;
-        this.dealProcessor = dealProcessor;
+        this.dealHandler = dealHandler;
     }
 
     @Override
@@ -28,7 +28,7 @@ public class SellHandler implements ITextCommandHandler {
         modifyDealService.createNewDeal(DealType.SELL, chatId);
         Update update = new Update();
         update.setMessage(message);
-        dealProcessor.run(update);
+        dealHandler.handle(update);
     }
 
     @Override

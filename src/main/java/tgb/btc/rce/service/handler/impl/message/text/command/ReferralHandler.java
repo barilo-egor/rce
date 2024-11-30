@@ -17,7 +17,7 @@ import tgb.btc.rce.sender.IMessageImageResponseSender;
 import tgb.btc.rce.service.IMessageImageService;
 import tgb.btc.rce.service.handler.message.text.ITextCommandHandler;
 import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
-import tgb.btc.rce.service.util.ICommandService;
+import tgb.btc.rce.service.util.ITextCommandService;
 import tgb.btc.rce.vo.InlineButton;
 
 import java.math.BigDecimal;
@@ -26,7 +26,7 @@ import java.util.List;
 @Service
 public class ReferralHandler implements ITextCommandHandler {
 
-    private final ICommandService commandService;
+    private final ITextCommandService commandService;
 
     private final IReadUserService readUserService;
 
@@ -44,11 +44,11 @@ public class ReferralHandler implements ITextCommandHandler {
     
     private final VariablePropertiesReader variablePropertiesReader;
 
-    public ReferralHandler(ICommandService commandService, IReadUserService readUserService,
+    public ReferralHandler(ITextCommandService commandService, IReadUserService readUserService,
                            IBigDecimalService bigDecimalService, IDealCountService dealCountService,
                            IMessageImageService messageImageService,
                            IMessageImageResponseSender messageImageResponseSender,
-                           IKeyboardBuildService keyboardBuildService, BotPropertiesReader botPropertiesReader, 
+                           IKeyboardBuildService keyboardBuildService, BotPropertiesReader botPropertiesReader,
                            VariablePropertiesReader variablePropertiesReader) {
         this.commandService = commandService;
         this.readUserService = readUserService;

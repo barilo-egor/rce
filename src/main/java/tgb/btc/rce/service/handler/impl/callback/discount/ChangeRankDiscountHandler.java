@@ -9,7 +9,7 @@ import tgb.btc.library.interfaces.service.bean.bot.IUserDiscountService;
 import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.rce.enums.update.CallbackQueryData;
 import tgb.btc.rce.sender.IResponseSender;
-import tgb.btc.rce.service.handler.callback.ICallbackQueryHandler;
+import tgb.btc.rce.service.handler.ICallbackQueryHandler;
 import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
 import tgb.btc.rce.service.util.ICallbackDataService;
 import tgb.btc.rce.vo.InlineButton;

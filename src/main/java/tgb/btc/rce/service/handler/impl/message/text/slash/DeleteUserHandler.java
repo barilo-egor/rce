@@ -16,6 +16,7 @@ import tgb.btc.rce.enums.update.SlashCommand;
 import tgb.btc.rce.sender.IResponseSender;
 import tgb.btc.rce.service.handler.message.text.ISlashCommandHandler;
 
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -84,13 +85,15 @@ public class DeleteUserHandler implements ISlashCommandHandler {
             User user = readUserService.getByChatId(userChatId);
             spamBanService.deleteByUser_Pid(user.getPid());
             WebUser webUser = webUserService.getByChatId(userChatId);
-            Optional<ApiUser> optApiUser = apiUserService.findAll().stream().filter(au -> au.getWebUsers().stream().anyMatch(wu -> wu.getPid().equals(webUser.getPid()))).findFirst();
-            if (optApiUser.isPresent()) {
-                ApiUser apiUser = optApiUser.get();
-                apiUser.getWebUsers().removeIf(wu -> wu.getPid().equals(webUser.getPid()));
-                apiUserService.save(apiUser);
+            if (Objects.nonNull(webUser)) {
+                Optional<ApiUser> optApiUser = apiUserService.findAll().stream().filter(au -> au.getWebUsers().stream().anyMatch(wu -> wu.getPid().equals(webUser.getPid()))).findFirst();
+                if (optApiUser.isPresent()) {
+                    ApiUser apiUser = optApiUser.get();
+                    apiUser.getWebUsers().removeIf(wu -> wu.getPid().equals(webUser.getPid()));
+                    apiUserService.save(apiUser);
+                }
+                webUserService.delete(webUser);
             }
-            webUserService.delete(webUser);
             modifyUserService.delete(user);
             referralUserService.deleteAll(user.getReferralUsers());
             responseSender.sendMessage(chatId, "Пользователь " + userChatId + " удален.");

@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import tgb.btc.library.constants.enums.bot.UserRole;
 import tgb.btc.rce.enums.Menu;
 import tgb.btc.rce.enums.update.TextCommand;
+import tgb.btc.rce.service.IBotSwitch;
 import tgb.btc.rce.service.IMenu;
 import tgb.btc.rce.service.keyboard.IReplyButtonService;
 import tgb.btc.rce.service.util.IUpdateDispatcher;
@@ -19,6 +20,13 @@ public class BotSettingsMenu implements IMenu {
     private IReplyButtonService replyButtonService;
 
     private IUpdateDispatcher updateDispatcher;
+
+    private IBotSwitch botSwitch;
+
+    @Autowired
+    public void setBotSwitch(IBotSwitch botSwitch) {
+        this.botSwitch = botSwitch;
+    }
 
     @Autowired
     public void setUpdateDispatcher(IUpdateDispatcher updateDispatcher) {
@@ -38,8 +46,9 @@ public class BotSettingsMenu implements IMenu {
     @Override
     public List<ReplyButton> build(UserRole userRole) {
         List<TextCommand> resultCommands = new ArrayList<>(getMenu().getTextCommands());
+        boolean isOn = botSwitch.isOn();
         resultCommands.removeIf(command ->
-                (updateDispatcher.isOn() && TextCommand.ON_BOT.equals(command)) || (!updateDispatcher.isOn() && TextCommand.OFF_BOT.equals(command)));
+                (isOn && TextCommand.ON_BOT.equals(command)) || (!isOn && TextCommand.OFF_BOT.equals(command)));
         return replyButtonService.fromTextCommands(resultCommands);
     }
 

@@ -7,7 +7,7 @@ import tgb.btc.library.bean.bot.Review;
 import tgb.btc.library.interfaces.service.bean.bot.IReviewService;
 import tgb.btc.rce.enums.update.CallbackQueryData;
 import tgb.btc.rce.sender.IResponseSender;
-import tgb.btc.rce.service.handler.callback.ICallbackQueryHandler;
+import tgb.btc.rce.service.handler.ICallbackQueryHandler;
 import tgb.btc.rce.service.util.ICallbackDataService;
 
 @Service

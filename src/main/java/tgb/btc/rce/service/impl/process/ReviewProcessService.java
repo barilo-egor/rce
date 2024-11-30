@@ -17,7 +17,7 @@ import tgb.btc.rce.sender.IResponseSender;
 import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
 import tgb.btc.rce.service.process.IReviewProcessService;
 import tgb.btc.rce.service.util.ICallbackDataService;
-import tgb.btc.rce.service.util.ICommandService;
+import tgb.btc.rce.service.util.ITextCommandService;
 import tgb.btc.rce.vo.InlineButton;
 
 import java.util.ArrayList;
@@ -44,7 +44,7 @@ public class ReviewProcessService implements IReviewProcessService {
 
     private final IKeyboardBuildService keyboardBuildService;
 
-    private final ICommandService commandService;
+    private final ITextCommandService commandService;
 
     private final ICallbackDataService callbackDataService;
 
@@ -52,7 +52,7 @@ public class ReviewProcessService implements IReviewProcessService {
     public ReviewProcessService(VariablePropertiesReader variablePropertiesReader, IReviewService reviewService,
                                 IResponseSender responseSender, IModule<ReviewPriseType> reviewPriseModule,
                                 IReadUserService readUserService, IModifyUserService modifyUserService,
-                                IKeyboardBuildService keyboardBuildService, ICommandService commandService,
+                                IKeyboardBuildService keyboardBuildService, ITextCommandService commandService,
                                 ICallbackDataService callbackDataService) {
         this.variablePropertiesReader = variablePropertiesReader;
         this.reviewService = reviewService;
@@ -78,8 +78,8 @@ public class ReviewProcessService implements IReviewProcessService {
         Integer referralBalance = readUserService.getReferralBalanceByChatId(review.getChatId());
         int total = referralBalance + reviewPrise;
 
-        log.debug("Обновление реф баланса за отзыв : chatId = " + review.getChatId() + "; reviewPrise = "
-                + reviewPrise + "; referralBalance = " + referralBalance + "; total = " + total);
+        log.debug("Обновление реф баланса за отзыв : chatId = {}; reviewPrise = {}; referralBalance = {}; total = {}",
+                review.getChatId(), reviewPrise, referralBalance, total);
         modifyUserService.updateReferralBalanceByChatId(total, review.getChatId());
         responseSender.sendMessage(review.getChatId(), "Ваш отзыв опубликован.\n\nНа ваш реферальный баланс зачислено "
                 + reviewPrise + "₽.");

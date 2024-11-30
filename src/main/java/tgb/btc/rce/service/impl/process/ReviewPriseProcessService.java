@@ -19,7 +19,7 @@ import tgb.btc.rce.enums.update.CallbackQueryData;
 import tgb.btc.rce.sender.IResponseSender;
 import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
 import tgb.btc.rce.service.util.ICallbackDataService;
-import tgb.btc.rce.service.util.ICommandService;
+import tgb.btc.rce.service.util.ITextCommandService;
 import tgb.btc.rce.service.util.IReviewPriseBotProcessService;
 import tgb.btc.rce.vo.InlineButton;
 import tgb.btc.rce.vo.ReviewPrise;
@@ -42,7 +42,7 @@ public class ReviewPriseProcessService implements IReviewPriseProcessService, IR
 
     private VariablePropertiesReader variablePropertiesReader;
 
-    private ICommandService commandService;
+    private ITextCommandService commandService;
 
     private IModule<ReferralType> referralModule;
 
@@ -71,7 +71,7 @@ public class ReviewPriseProcessService implements IReviewPriseProcessService, IR
     }
 
     @Autowired
-    public void setCommandService(ICommandService commandService) {
+    public void setCommandService(ITextCommandService commandService) {
         this.commandService = commandService;
     }
 

@@ -98,11 +98,11 @@ public abstract class SimpleCalculatorService implements ICalculatorTypeService 
         sendMessage.setText(text);
         sendMessage.setParseMode("HTML");
         addKeyboard(sendMessage);
-        setCommand(chatId);
+        setState(chatId);
         responseSender.sendMessage(sendMessage);
     }
 
     public abstract void addKeyboard(SendMessage sendMessage);
 
-    public abstract void setCommand(Long chatId);
+    public abstract void setState(Long chatId);
 }

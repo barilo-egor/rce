@@ -1,16 +1,25 @@
 package tgb.btc.rce.service.impl.calculator;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import tgb.btc.library.constants.enums.bot.CryptoCurrency;
 import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
-import tgb.btc.rce.enums.Command;
 import tgb.btc.rce.enums.InlineType;
+import tgb.btc.rce.enums.UserState;
+import tgb.btc.rce.service.redis.IRedisUserStateService;
 import tgb.btc.rce.vo.InlineButton;
 
 import java.util.List;
 
 public class InlineQueryCalculatorService extends SimpleCalculatorService {
+
+    private IRedisUserStateService redisUserStateService;
+
+    @Autowired
+    public void setRedisUserStateService(IRedisUserStateService redisUserStateService) {
+        this.redisUserStateService = redisUserStateService;
+    }
 
     @Override
     public void addKeyboard(SendMessage sendMessage) {
@@ -28,8 +37,8 @@ public class InlineQueryCalculatorService extends SimpleCalculatorService {
     }
 
     @Override
-    public void setCommand(Long chatId) {
-        modifyUserService.updateStepAndCommandByChatId(chatId, Command.INLINE_QUERY_CALCULATOR.name(), 1);
+    public void setState(Long chatId) {
+        redisUserStateService.save(chatId, UserState.INLINE_QUERY_CALCULATOR);
     }
 
 }

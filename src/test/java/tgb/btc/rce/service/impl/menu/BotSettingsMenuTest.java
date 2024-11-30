@@ -8,8 +8,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import tgb.btc.rce.enums.Menu;
 import tgb.btc.rce.enums.update.TextCommand;
+import tgb.btc.rce.service.IBotSwitch;
 import tgb.btc.rce.service.keyboard.IReplyButtonService;
-import tgb.btc.rce.service.util.IUpdateDispatcher;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +26,7 @@ class BotSettingsMenuTest {
     private IReplyButtonService replyButtonService;
 
     @Mock
-    private IUpdateDispatcher updateDispatcher;
+    private IBotSwitch botSwitch;
 
     @InjectMocks
     private BotSettingsMenu botSettingsMenu;
@@ -46,7 +46,7 @@ class BotSettingsMenuTest {
     @Test
     @DisplayName("Должна быть кнопка \"Выкл.бота\"")
     void buildWithBotOn() {
-        when(updateDispatcher.isOn()).thenReturn(true);
+        when(botSwitch.isOn()).thenReturn(true);
 
         List<TextCommand> expectedCommands = new ArrayList<>(Menu.BOT_SETTINGS.getTextCommands());
         expectedCommands.removeIf(TextCommand.ON_BOT::equals);
@@ -58,7 +58,7 @@ class BotSettingsMenuTest {
     @Test
     @DisplayName("Должна быть кнопка \"Вкл.бота\"")
     void buildWithBotOff() {
-        when(updateDispatcher.isOn()).thenReturn(false);
+        when(botSwitch.isOn()).thenReturn(false);
 
         List<TextCommand> expectedCommands = new ArrayList<>(Menu.BOT_SETTINGS.getTextCommands());
         expectedCommands.removeIf(TextCommand.OFF_BOT::equals);

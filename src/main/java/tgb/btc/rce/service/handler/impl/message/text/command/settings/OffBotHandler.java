@@ -9,8 +9,8 @@ import tgb.btc.rce.enums.Menu;
 import tgb.btc.rce.enums.PropertiesMessage;
 import tgb.btc.rce.enums.update.TextCommand;
 import tgb.btc.rce.sender.IResponseSender;
+import tgb.btc.rce.service.IBotSwitch;
 import tgb.btc.rce.service.handler.message.text.ITextCommandHandler;
-import tgb.btc.rce.service.impl.util.UpdateDispatcher;
 import tgb.btc.rce.service.util.IMenuService;
 import tgb.btc.rce.service.util.IMessagePropertiesService;
 
@@ -27,18 +27,22 @@ public class OffBotHandler implements ITextCommandHandler {
 
     private final IMenuService menuService;
 
+    private final IBotSwitch botSwitch;
+
     public OffBotHandler(IResponseSender responseSender, IModifyUserService modifyUserService,
-                        IReadUserService readUserService, IMessagePropertiesService messagePropertiesService, IMenuService menuService) {
+                         IReadUserService readUserService, IMessagePropertiesService messagePropertiesService,
+                         IMenuService menuService, IBotSwitch botSwitch) {
         this.responseSender = responseSender;
         this.modifyUserService = modifyUserService;
         this.readUserService = readUserService;
         this.messagePropertiesService = messagePropertiesService;
         this.menuService = menuService;
+        this.botSwitch = botSwitch;
     }
 
     @Override
     public void handle(Message message) {
-        UpdateDispatcher.setIsOn(false);
+        botSwitch.setOn(false);
         Long chatId = message.getChatId();
         responseSender.sendMessage(chatId, "Бот выключен");
         modifyUserService.setDefaultValues(chatId);
