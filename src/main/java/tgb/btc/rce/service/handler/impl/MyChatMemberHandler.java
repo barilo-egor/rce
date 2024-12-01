@@ -27,20 +27,20 @@ public class MyChatMemberHandler implements IUpdateHandler {
 
     @Override
     public boolean handle(Update update) {
-        if (isStartedBot(update.getMyChatMember())) {
-            Long chatId = update.getMyChatMember().getChat().getId();
-            CompletableFuture<Void> future = new CompletableFuture<>();
-            if (futures.putIfAbsent(chatId, future) != null) {
-                return false;
-            }
-            try {
-                userProcessService.registerIfNotExists(update);
-            } catch (Exception e) {
-                future.completeExceptionally(e);
-            } finally {
-                futures.remove(chatId);
-            }
-        }
+//        if (isStartedBot(update.getMyChatMember())) {
+//            Long chatId = update.getMyChatMember().getChat().getId();
+//            CompletableFuture<Void> future = new CompletableFuture<>();
+//            if (futures.putIfAbsent(chatId, future) != null) {
+//                return false;
+//            }
+//            try {
+//                userProcessService.registerIfNotExists(update);
+//            } catch (Exception e) {
+//                future.completeExceptionally(e);
+//            } finally {
+//                futures.remove(chatId);
+//            }
+//        }
         return true;
     }
 
