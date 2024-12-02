@@ -32,9 +32,6 @@ public class ConfirmClearPoolHandler implements ICallbackQueryHandler {
 
     @Override
     public void handle(CallbackQuery callbackQuery) {
-        if (true) {
-            return;
-        }
         Long chatId = callbackQuery.getFrom().getId();
         Optional<Message> processMessage = responseSender.sendMessage(chatId, "Пул в процессе очищения, пожалуйста подождите");
         try {
