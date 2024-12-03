@@ -29,6 +29,11 @@ public class UpdateFilterService implements IUpdateFilterService {
         if (UserRole.USER.equals(userRole) && !botSwitch.isOn()) return UpdateFilterType.BOT_OFFED;
         if (update.hasMessage() && update.getMessage().hasText() && update.getMessage().getText().equals(SlashCommand.START.getText()))
             return UpdateFilterType.START;
+        if ((update.hasMyChatMember() &&
+                (update.getMyChatMember().getChat().isGroupChat() || update.getMyChatMember().getChat().isSuperGroupChat()))
+                || (update.hasMessage()
+                && (update.getMessage().getChat().isGroupChat() || update.getMessage().getChat().isSuperGroupChat())))
+            return UpdateFilterType.GROUP;
         return null;
     }
 }

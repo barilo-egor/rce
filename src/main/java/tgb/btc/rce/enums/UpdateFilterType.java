@@ -7,5 +7,6 @@ import lombok.Getter;
 @Getter
 public enum UpdateFilterType {
     START,
-    BOT_OFFED
+    BOT_OFFED,
+    GROUP
 }

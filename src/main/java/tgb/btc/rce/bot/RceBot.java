@@ -2,71 +2,46 @@ package tgb.btc.rce.bot;
 
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import tgb.btc.rce.service.IGroupUpdateDispatcher;
-import tgb.btc.rce.service.IUpdateService;
-import tgb.btc.rce.service.util.ITelegramPropertiesService;
-import tgb.btc.rce.service.util.IUpdateDispatcher;
+import tgb.btc.rce.enums.update.UpdateType;
+import tgb.btc.rce.vo.TelegramUpdateEvent;
+
+import java.util.Objects;
 
 @Service
 @Slf4j
 public class RceBot extends TelegramLongPollingBot {
 
-    private final IUpdateDispatcher updateDispatcher;
+    private final ApplicationEventPublisher eventPublisher;
 
-    private IGroupUpdateDispatcher groupUpdateDispatcher;
+    private final String username;
 
-    private ITelegramPropertiesService telegramPropertiesService;
-
-    private IUpdateService updateService;
-
-    @Autowired
-    public void setUpdateService(IUpdateService updateService) {
-        this.updateService = updateService;
-    }
-
-    @Autowired
-    public void setTelegramPropertiesService(ITelegramPropertiesService telegramPropertiesService) {
-        this.telegramPropertiesService = telegramPropertiesService;
-    }
-
-    @Autowired
-    public void setGroupUpdateDispatcher(IGroupUpdateDispatcher groupUpdateDispatcher) {
-        this.groupUpdateDispatcher = groupUpdateDispatcher;
-    }
-
-    @Autowired
-    public RceBot(IUpdateDispatcher updateDispatcher) {
-        this.updateDispatcher = updateDispatcher;
+    public RceBot(ApplicationEventPublisher eventPublisher,
+                  @Value("${bot.username}") String username,
+                  @Value("${bot.token}") String token) {
+        super(token);
+        this.username = username;
+        this.eventPublisher = eventPublisher;
     }
 
     @Override
     public String getBotUsername() {
-        return telegramPropertiesService.getUsername();
-    }
-
-    @Override
-    public String getBotToken() {
-        return telegramPropertiesService.getToken();
+        return username;
     }
 
     @SneakyThrows
     @Override
     public void onUpdateReceived(Update update) {
-        long t1 = System.currentTimeMillis();
         try {
-            if (updateService.isGroupMessage(update))
-                groupUpdateDispatcher.dispatch(update);
-            else {
-                updateDispatcher.dispatch(update);
-            }
+            eventPublisher.publishEvent(new TelegramUpdateEvent(this, update));
         } catch (NumberFormatException e) {
             execute(SendMessage.builder()
-                    .chatId(updateService.getChatId(update).toString())
+                    .chatId(Objects.requireNonNull(UpdateType.getChatId(update)).toString())
                     .text("Неверный формат.")
                     .build());
         } catch (Exception e) {
@@ -77,11 +52,13 @@ public class RceBot extends TelegramLongPollingBot {
                     "Введите /start для выхода в главное меню.";
 
             try {
-                execute(SendMessage.builder().chatId(updateService.getChatId(update).toString()).text(message).build());
+                execute(SendMessage.builder()
+                        .chatId(Objects.requireNonNull(UpdateType.getChatId(update)).toString())
+                        .text(message)
+                        .build());
             } catch (Exception ignored) {
             }
         }
-        long t2 = System.currentTimeMillis();
     }
 
 }

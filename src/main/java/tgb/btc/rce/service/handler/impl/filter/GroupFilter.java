@@ -1,9 +1,7 @@
-package tgb.btc.rce.service.impl;
+package tgb.btc.rce.service.handler.impl.filter;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.chatmember.ChatMember;
@@ -15,9 +13,10 @@ import tgb.btc.library.constants.enums.MemberStatus;
 import tgb.btc.library.constants.enums.bot.GroupChatType;
 import tgb.btc.library.interfaces.service.bean.bot.IGroupChatService;
 import tgb.btc.library.interfaces.service.bean.web.IApiUserService;
+import tgb.btc.rce.enums.UpdateFilterType;
 import tgb.btc.rce.sender.IResponseSender;
-import tgb.btc.rce.service.IGroupUpdateDispatcher;
 import tgb.btc.rce.service.IUpdateService;
+import tgb.btc.rce.service.handler.IUpdateFilter;
 import tgb.btc.rce.service.util.ITelegramPropertiesService;
 
 import java.util.Objects;
@@ -27,54 +26,35 @@ import java.util.regex.Pattern;
 
 @Service
 @Slf4j
-public class GroupUpdateDispatcher implements IGroupUpdateDispatcher {
-
-    private IGroupChatService groupChatService;
-
-    private IResponseSender responseSender;
-
-    private INotificationsAPI notificationsAPI;
-
-    private ITelegramPropertiesService telegramPropertiesService;
-
-    private IUpdateService updateService;
-
-    private IApiUserService apiUserService;
-
-    @Autowired
-    public void setApiUserService(IApiUserService apiUserService) {
-        this.apiUserService = apiUserService;
-    }
-
-    @Autowired
-    public void setUpdateService(IUpdateService updateService) {
-        this.updateService = updateService;
-    }
-
-    @Autowired
-    public void setTelegramPropertiesService(ITelegramPropertiesService telegramPropertiesService) {
-        this.telegramPropertiesService = telegramPropertiesService;
-    }
-
-    @Autowired
-    public void setNotificationsAPI(INotificationsAPI notificationsAPI) {
-        this.notificationsAPI = notificationsAPI;
-    }
+public class GroupFilter implements IUpdateFilter {
 
     private final Pattern dealNumberPattern = Pattern.compile("№(\\d+)");
 
-    @Autowired
-    public void setResponseSender(@Lazy IResponseSender responseSender) {
-        this.responseSender = responseSender;
-    }
+    private final IGroupChatService groupChatService;
 
-    @Autowired
-    public void setGroupChatService(IGroupChatService groupChatService) {
+    private final IResponseSender responseSender;
+
+    private final INotificationsAPI notificationsAPI;
+
+    private final ITelegramPropertiesService telegramPropertiesService;
+
+    private final IUpdateService updateService;
+
+    private final IApiUserService apiUserService;
+
+    public GroupFilter(IGroupChatService groupChatService, IResponseSender responseSender,
+                       INotificationsAPI notificationsAPI, ITelegramPropertiesService telegramPropertiesService,
+                       IUpdateService updateService, IApiUserService apiUserService) {
         this.groupChatService = groupChatService;
+        this.responseSender = responseSender;
+        this.notificationsAPI = notificationsAPI;
+        this.telegramPropertiesService = telegramPropertiesService;
+        this.updateService = updateService;
+        this.apiUserService = apiUserService;
     }
 
     @Override
-    public void dispatch(Update update) {
+    public void handle(Update update) {
         Long chatId = updateService.getGroupChatId(update);
         if (Objects.isNull(chatId)) {
             log.warn("Chat id группы не был найден. Update:{}", update);
@@ -142,5 +122,10 @@ public class GroupUpdateDispatcher implements IGroupUpdateDispatcher {
                         "<blockquote>Заявка №{номер заявки}.\nОбработано.</blockquote>", "html");
             }
         }
+    }
+
+    @Override
+    public UpdateFilterType getType() {
+        return UpdateFilterType.GROUP;
     }
 }
