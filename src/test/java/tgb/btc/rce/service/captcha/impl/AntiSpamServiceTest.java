@@ -18,7 +18,7 @@ import static org.mockito.Mockito.when;
 class AntiSpamServiceTest {
 
     @Mock
-    public VerifiedUserCache verifiedUserCache;
+    private VerifiedUserCache verifiedUserCache;
 
     @Test
     @DisplayName("Должен вернуть false для проверенного пользователя.")

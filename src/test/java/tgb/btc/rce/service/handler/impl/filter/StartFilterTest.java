@@ -20,13 +20,13 @@ import static org.mockito.Mockito.verify;
 class StartFilterTest {
 
     @Mock
-    public IStartService startService;
+    private IStartService startService;
 
     @Mock
-    public IUserProcessService userProcessService;
+    private IUserProcessService userProcessService;
 
     @InjectMocks
-    public StartFilter startFilter;
+    private StartFilter startFilter;
 
     @Test
     protected void handle() {

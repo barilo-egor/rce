@@ -34,19 +34,19 @@ import static org.mockito.Mockito.*;
 class TelegramUpdateEventListenerTest {
 
     @Mock
-    public BannedUserCache bannedUserCache;
+    private BannedUserCache bannedUserCache;
 
     @Mock
-    public AntiSpamService antiSpamService;
+    private AntiSpamService antiSpamService;
 
     @Mock
-    public MessagesService messagesService;
+    private MessagesService messagesService;
 
     @Mock
-    public RedisUserStateService redisUserStateService;
+    private RedisUserStateService redisUserStateService;
 
     @Mock
-    public UpdateFilterService updateFilterService;
+    private UpdateFilterService updateFilterService;
 
     @DisplayName("Должен пробросить исключение отсутствия UpdateType у обработчика апдейта.")
     @Test
