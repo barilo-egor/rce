@@ -4,6 +4,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.Message;
@@ -105,6 +106,7 @@ class TelegramUpdateEventListenerTest {
     }
 
     @Test
+    @DisplayName("Должен закончить выполнение метода, если пользователь в бане.")
     protected void shouldReturnWhenBanned() {
         TelegramUpdateEventListener telegramUpdateEventListener = new TelegramUpdateEventListener(
                 redisUserStateService, new ArrayList<>(), new ArrayList<>(), messagesService, new ArrayList<>(),
@@ -121,5 +123,238 @@ class TelegramUpdateEventListenerTest {
         when(bannedUserCache.get(chatId)).thenReturn(true);
         telegramUpdateEventListener.update(telegramUpdateEvent);
         verify(antiSpamService, times(0)).isSpam(any());
+    }
+
+    @Test
+    @DisplayName("Должен закончить выполнение метода, если определен спам.")
+    protected void shouldReturnWhenSpam() {
+        TelegramUpdateEventListener telegramUpdateEventListener = new TelegramUpdateEventListener(
+                redisUserStateService, new ArrayList<>(), new ArrayList<>(), messagesService, new ArrayList<>(),
+                updateFilterService, antiSpamService, bannedUserCache
+        );
+        Update update = new Update();
+        Message message = new Message();
+        Chat chat = new Chat();
+        Long chatId = 123456789L;
+        chat.setId(chatId);
+        message.setChat(chat);
+        update.setMessage(message);
+        TelegramUpdateEvent telegramUpdateEvent = new TelegramUpdateEvent(this, update);
+        when(bannedUserCache.get(chatId)).thenReturn(false);
+        when(antiSpamService.isSpam(chatId)).thenReturn(true);
+        telegramUpdateEventListener.update(telegramUpdateEvent);
+        verify(redisUserStateService, times(0)).get(any());
+        verify(updateFilterService, times(0)).getType(any());
+        verify(messagesService, times(0)).sendNoHandler(any());
+    }
+
+    @Test
+    @DisplayName("Должен обработать UpdateFilter.")
+    protected void shouldHandleFilter() {
+        List<IUpdateFilter> updateFilters = new ArrayList<>();
+        IUpdateFilter handler = Mockito.mock(IUpdateFilter.class);
+        when(handler.getType()).thenReturn(UpdateFilterType.START);
+        updateFilters.add(handler);
+        IUpdateFilter stub = Mockito.mock(IUpdateFilter.class);
+        when(stub.getType()).thenReturn(UpdateFilterType.BOT_OFFED);
+        updateFilters.add(stub);
+        TelegramUpdateEventListener telegramUpdateEventListener = new TelegramUpdateEventListener(
+                redisUserStateService, new ArrayList<>(), new ArrayList<>(), messagesService, updateFilters,
+                updateFilterService, antiSpamService, bannedUserCache
+        );
+        Update update = new Update();
+        Message message = new Message();
+        Chat chat = new Chat();
+        Long chatId = 123456789L;
+        chat.setId(chatId);
+        message.setChat(chat);
+        update.setMessage(message);
+        TelegramUpdateEvent telegramUpdateEvent = new TelegramUpdateEvent(this, update);
+        when(updateFilterService.getType(update)).thenReturn(UpdateFilterType.START);
+        telegramUpdateEventListener.update(telegramUpdateEvent);
+        verify(handler, times(1)).handle(update);
+        verify(redisUserStateService, times(0)).get(any());
+        verify(messagesService, times(0)).sendNoHandler(any());
+    }
+
+    @Test
+    @DisplayName("Должен пропустить обработку UpdateFilter.")
+    protected void shouldNotHandleFilter() {
+        List<IUpdateFilter> updateFilters = new ArrayList<>();
+        IUpdateFilter handler = Mockito.mock(IUpdateFilter.class);
+        when(handler.getType()).thenReturn(UpdateFilterType.START);
+        updateFilters.add(handler);
+        IUpdateFilter stub = Mockito.mock(IUpdateFilter.class);
+        when(stub.getType()).thenReturn(UpdateFilterType.BOT_OFFED);
+        updateFilters.add(stub);
+        TelegramUpdateEventListener telegramUpdateEventListener = new TelegramUpdateEventListener(
+                redisUserStateService, new ArrayList<>(), new ArrayList<>(), messagesService, updateFilters,
+                updateFilterService, antiSpamService, bannedUserCache
+        );
+        Update update = new Update();
+        Message message = new Message();
+        Chat chat = new Chat();
+        Long chatId = 123456789L;
+        chat.setId(chatId);
+        message.setChat(chat);
+        update.setMessage(message);
+        TelegramUpdateEvent telegramUpdateEvent = new TelegramUpdateEvent(this, update);
+        when(updateFilterService.getType(update)).thenReturn(UpdateFilterType.GROUP);
+        telegramUpdateEventListener.update(telegramUpdateEvent);
+        verify(handler, times(0)).handle(update);
+    }
+
+    @Test
+    @DisplayName("Должен обработать StateHandler.")
+    protected void shouldHandleStateHandler() {
+        List<IStateHandler> stateHandlers = new ArrayList<>();
+        IStateHandler handler = Mockito.mock(IStateHandler.class);
+        when(handler.getUserState()).thenReturn(UserState.ADD_CONTACT);
+        stateHandlers.add(handler);
+        TelegramUpdateEventListener telegramUpdateEventListener = new TelegramUpdateEventListener(
+                redisUserStateService, new ArrayList<>(), stateHandlers, messagesService, new ArrayList<>(),
+                updateFilterService, antiSpamService, bannedUserCache
+        );
+        Update update = new Update();
+        Message message = new Message();
+        Chat chat = new Chat();
+        Long chatId = 123456789L;
+        chat.setId(chatId);
+        message.setChat(chat);
+        update.setMessage(message);
+        TelegramUpdateEvent telegramUpdateEvent = new TelegramUpdateEvent(this, update);
+        when(redisUserStateService.get(chatId)).thenReturn(UserState.ADD_CONTACT);
+        telegramUpdateEventListener.update(telegramUpdateEvent);
+        verify(handler, times(1)).handle(update);
+        verify(messagesService, times(0)).sendNoHandler(any());
+    }
+
+    @Test
+    @DisplayName("Должен пропустить обработку StateHandler из-за не поддерживаемого UpdateType.")
+    protected void shouldNotHandleStateHandlerCauseOfUpdateType() {
+        List<IStateHandler> stateHandlers = new ArrayList<>();
+        IStateHandler handler = Mockito.mock(IStateHandler.class);
+        when(handler.getUserState()).thenReturn(UserState.ADD_CONTACT);
+        stateHandlers.add(handler);
+        TelegramUpdateEventListener telegramUpdateEventListener = new TelegramUpdateEventListener(
+                redisUserStateService, new ArrayList<>(), stateHandlers, messagesService, new ArrayList<>(),
+                updateFilterService, antiSpamService, bannedUserCache
+        );
+        Update update = new Update();
+        Message message = new Message();
+        Chat chat = new Chat();
+        Long chatId = 123456789L;
+        chat.setId(chatId);
+        message.setChat(chat);
+        update.setEditedChannelPost(message);
+        TelegramUpdateEvent telegramUpdateEvent = new TelegramUpdateEvent(this, update);
+        telegramUpdateEventListener.update(telegramUpdateEvent);
+        verify(handler, times(0)).handle(update);
+        verify(messagesService, times(1)).sendNoHandler(any());
+    }
+
+    @Test
+    @DisplayName("Должен пропустить обработку StateHandler из-за отсутствия UserState у пользователя.")
+    protected void shouldNotHandleStateHandlerCauseOfNullUserState() {
+        List<IStateHandler> stateHandlers = new ArrayList<>();
+        IStateHandler handler = Mockito.mock(IStateHandler.class);
+        when(handler.getUserState()).thenReturn(UserState.ADD_CONTACT);
+        stateHandlers.add(handler);
+        TelegramUpdateEventListener telegramUpdateEventListener = new TelegramUpdateEventListener(
+                redisUserStateService, new ArrayList<>(), stateHandlers, messagesService, new ArrayList<>(),
+                updateFilterService, antiSpamService, bannedUserCache
+        );
+        Update update = new Update();
+        Message message = new Message();
+        Chat chat = new Chat();
+        Long chatId = 123456789L;
+        chat.setId(chatId);
+        message.setChat(chat);
+        update.setMessage(message);
+        TelegramUpdateEvent telegramUpdateEvent = new TelegramUpdateEvent(this, update);
+        when(redisUserStateService.get(chatId)).thenReturn(null);
+        telegramUpdateEventListener.update(telegramUpdateEvent);
+        verify(handler, times(0)).handle(update);
+        verify(messagesService, times(1)).sendNoHandler(any());
+    }
+
+    @Test
+    @DisplayName("Должен пропустить обработку StateHandler из-за отсутствия обработчика.")
+    protected void shouldNotHandleStateHandlerCauseOfNoHandler() {
+        List<IStateHandler> stateHandlers = new ArrayList<>();
+        IStateHandler handler = Mockito.mock(IStateHandler.class);
+        when(handler.getUserState()).thenReturn(UserState.ADD_CONTACT);
+        stateHandlers.add(handler);
+        TelegramUpdateEventListener telegramUpdateEventListener = new TelegramUpdateEventListener(
+                redisUserStateService, new ArrayList<>(), stateHandlers, messagesService, new ArrayList<>(),
+                updateFilterService, antiSpamService, bannedUserCache
+        );
+        Update update = new Update();
+        Message message = new Message();
+        Chat chat = new Chat();
+        Long chatId = 123456789L;
+        chat.setId(chatId);
+        message.setChat(chat);
+        update.setMessage(message);
+        TelegramUpdateEvent telegramUpdateEvent = new TelegramUpdateEvent(this, update);
+        when(redisUserStateService.get(chatId)).thenReturn(UserState.DEAL);
+        telegramUpdateEventListener.update(telegramUpdateEvent);
+        verify(handler, times(0)).handle(update);
+        verify(messagesService, times(1)).sendNoHandler(any());
+    }
+
+    @Test
+    @DisplayName("Должен обработать UpdateHandler.")
+    protected void shouldHandle() {
+        List<IUpdateHandler> updateHandlers = new ArrayList<>();
+        IUpdateHandler handler = Mockito.mock(IUpdateHandler.class);
+        when(handler.getUpdateType()).thenReturn(UpdateType.MESSAGE);
+        when(handler.handle(any())).thenReturn(true);
+        updateHandlers.add(handler);
+        IUpdateHandler stub = Mockito.mock(IUpdateHandler.class);
+        when(stub.getUpdateType()).thenReturn(UpdateType.CALLBACK_QUERY);
+        updateHandlers.add(stub);
+        TelegramUpdateEventListener telegramUpdateEventListener = new TelegramUpdateEventListener(
+                redisUserStateService, updateHandlers, new ArrayList<>(), messagesService, new ArrayList<>(),
+                updateFilterService, antiSpamService, bannedUserCache
+        );
+        Update update = new Update();
+        Message message = new Message();
+        Chat chat = new Chat();
+        Long chatId = 123456789L;
+        chat.setId(chatId);
+        message.setChat(chat);
+        update.setMessage(message);
+        TelegramUpdateEvent telegramUpdateEvent = new TelegramUpdateEvent(this, update);
+        telegramUpdateEventListener.update(telegramUpdateEvent);
+        verify(handler, times(1)).handle(update);
+        verify(messagesService, times(0)).sendNoHandler(any());
+    }
+
+    @Test
+    @DisplayName("UpdateFilter должен не обработать update.")
+    protected void shouldNotHandle() {
+        List<IUpdateHandler> updateHandlers = new ArrayList<>();
+        IUpdateHandler handler = Mockito.mock(IUpdateHandler.class);
+        when(handler.getUpdateType()).thenReturn(UpdateType.INLINE_QUERY);
+        updateHandlers.add(handler);
+        IUpdateHandler stub = Mockito.mock(IUpdateHandler.class);
+        when(stub.getUpdateType()).thenReturn(UpdateType.CALLBACK_QUERY);
+        updateHandlers.add(stub);
+        TelegramUpdateEventListener telegramUpdateEventListener = new TelegramUpdateEventListener(
+                redisUserStateService, updateHandlers, new ArrayList<>(), messagesService, new ArrayList<>(),
+                updateFilterService, antiSpamService, bannedUserCache
+        );
+        Update update = new Update();
+        Message message = new Message();
+        Chat chat = new Chat();
+        Long chatId = 123456789L;
+        chat.setId(chatId);
+        message.setChat(chat);
+        update.setMessage(message);
+        TelegramUpdateEvent telegramUpdateEvent = new TelegramUpdateEvent(this, update);
+        telegramUpdateEventListener.update(telegramUpdateEvent);
+        verify(handler, times(0)).handle(update);
+        verify(messagesService, times(1)).sendNoHandler(any());
     }
 }
