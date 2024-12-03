@@ -2,6 +2,7 @@ package tgb.btc.rce.service.handler.impl.filter;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.chatmember.ChatMember;
@@ -17,7 +18,6 @@ import tgb.btc.rce.enums.UpdateFilterType;
 import tgb.btc.rce.sender.IResponseSender;
 import tgb.btc.rce.service.IUpdateService;
 import tgb.btc.rce.service.handler.IUpdateFilter;
-import tgb.btc.rce.service.util.ITelegramPropertiesService;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -36,21 +36,22 @@ public class GroupFilter implements IUpdateFilter {
 
     private final INotificationsAPI notificationsAPI;
 
-    private final ITelegramPropertiesService telegramPropertiesService;
-
     private final IUpdateService updateService;
 
     private final IApiUserService apiUserService;
 
+    private final String botUsername;
+
     public GroupFilter(IGroupChatService groupChatService, IResponseSender responseSender,
-                       INotificationsAPI notificationsAPI, ITelegramPropertiesService telegramPropertiesService,
-                       IUpdateService updateService, IApiUserService apiUserService) {
+                       INotificationsAPI notificationsAPI,
+                       IUpdateService updateService, IApiUserService apiUserService,
+                       @Value("${bot.username}") String botUsername) {
         this.groupChatService = groupChatService;
         this.responseSender = responseSender;
         this.notificationsAPI = notificationsAPI;
-        this.telegramPropertiesService = telegramPropertiesService;
         this.updateService = updateService;
         this.apiUserService = apiUserService;
+        this.botUsername = botUsername;
     }
 
     @Override
@@ -62,7 +63,7 @@ public class GroupFilter implements IUpdateFilter {
         }
         if (update.hasMyChatMember()) {
             ChatMember newChatMember = update.getMyChatMember().getNewChatMember();
-            if (telegramPropertiesService.getUsername().equals(newChatMember.getUser().getUserName())) {
+            if (botUsername.equals(newChatMember.getUser().getUserName())) {
                 MemberStatus status = MemberStatus.valueOf(newChatMember.getStatus().toUpperCase());
                 if (MemberStatus.LEFT.equals(status) || MemberStatus.KICKED.equals(status)) {
                     log.debug("Бот был удален из группы chatid={}", chatId);
@@ -94,7 +95,7 @@ public class GroupFilter implements IUpdateFilter {
                 } else {
                     String title = update.getMyChatMember().getChat().getTitle();
                     log.debug("Зарегистрирована группа чат {}, статус бота {}, chat id {}.", title, status.name(), chatId);
-                    groupChatService.register(chatId, update.getMyChatMember().getChat().getTitle(), status, GroupChatType.DEFAULT);
+                    groupChatService.register(chatId, title, status, GroupChatType.DEFAULT);
                 }
             }
         } else if (update.hasMessage() && StringUtils.isNotEmpty(update.getMessage().getNewChatTitle())) {
