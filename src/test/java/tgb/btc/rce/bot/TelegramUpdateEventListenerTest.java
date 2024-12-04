@@ -3,6 +3,7 @@ package tgb.btc.rce.bot;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -14,6 +15,7 @@ import tgb.btc.rce.enums.UpdateFilterType;
 import tgb.btc.rce.enums.UserState;
 import tgb.btc.rce.enums.update.UpdateType;
 import tgb.btc.rce.exception.HandlerTypeNotFoundException;
+import tgb.btc.rce.sender.IResponseSender;
 import tgb.btc.rce.service.captcha.impl.AntiSpamService;
 import tgb.btc.rce.service.handler.IStateHandler;
 import tgb.btc.rce.service.handler.IUpdateFilter;
@@ -27,6 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -48,6 +51,9 @@ class TelegramUpdateEventListenerTest {
     @Mock
     private UpdateFilterService updateFilterService;
 
+    @Mock
+    private IResponseSender responseSender;
+
     @DisplayName("Должен пробросить исключение отсутствия UpdateType у обработчика апдейта.")
     @Test
     protected void shouldThrowNoUpdateType() {
@@ -64,7 +70,8 @@ class TelegramUpdateEventListenerTest {
             }
         });
         assertThrows(HandlerTypeNotFoundException.class, () -> new TelegramUpdateEventListener(null, updateHandlerList,
-                new ArrayList<>(), null, new ArrayList<>(), null, null, null));
+                new ArrayList<>(), null, new ArrayList<>(), null, null, null,
+                null));
     }
 
     @DisplayName("Должен пробросить исключение отсутствия UserState у обработчика апдейта.")
@@ -83,7 +90,7 @@ class TelegramUpdateEventListenerTest {
             }
         });
         assertThrows(HandlerTypeNotFoundException.class, () -> new TelegramUpdateEventListener(null, new ArrayList<>(),
-                stateHandlerList, null, new ArrayList<>(), null, null, null));
+                stateHandlerList, null, new ArrayList<>(), null, null, null, null));
     }
 
     @DisplayName("Должен пробросить исключение отсутствия UpdateFilterType у обработчика апдейта.")
@@ -102,7 +109,7 @@ class TelegramUpdateEventListenerTest {
             }
         });
         assertThrows(HandlerTypeNotFoundException.class, () -> new TelegramUpdateEventListener(null, new ArrayList<>(),
-                new ArrayList<>(), null, updateFilterHandlerList, null, null, null));
+                new ArrayList<>(), null, updateFilterHandlerList, null, null, null, null));
     }
 
     @Test
@@ -110,7 +117,7 @@ class TelegramUpdateEventListenerTest {
     protected void shouldReturnWhenBanned() {
         TelegramUpdateEventListener telegramUpdateEventListener = new TelegramUpdateEventListener(
                 redisUserStateService, new ArrayList<>(), new ArrayList<>(), messagesService, new ArrayList<>(),
-                updateFilterService, antiSpamService, bannedUserCache
+                updateFilterService, antiSpamService, bannedUserCache, null
         );
         Update update = new Update();
         Message message = new Message();
@@ -130,7 +137,7 @@ class TelegramUpdateEventListenerTest {
     protected void shouldReturnWhenSpam() {
         TelegramUpdateEventListener telegramUpdateEventListener = new TelegramUpdateEventListener(
                 redisUserStateService, new ArrayList<>(), new ArrayList<>(), messagesService, new ArrayList<>(),
-                updateFilterService, antiSpamService, bannedUserCache
+                updateFilterService, antiSpamService, bannedUserCache, null
         );
         Update update = new Update();
         Message message = new Message();
@@ -160,7 +167,7 @@ class TelegramUpdateEventListenerTest {
         updateFilters.add(stub);
         TelegramUpdateEventListener telegramUpdateEventListener = new TelegramUpdateEventListener(
                 redisUserStateService, new ArrayList<>(), new ArrayList<>(), messagesService, updateFilters,
-                updateFilterService, antiSpamService, bannedUserCache
+                updateFilterService, antiSpamService, bannedUserCache, null
         );
         Update update = new Update();
         Message message = new Message();
@@ -189,7 +196,7 @@ class TelegramUpdateEventListenerTest {
         updateFilters.add(stub);
         TelegramUpdateEventListener telegramUpdateEventListener = new TelegramUpdateEventListener(
                 redisUserStateService, new ArrayList<>(), new ArrayList<>(), messagesService, updateFilters,
-                updateFilterService, antiSpamService, bannedUserCache
+                updateFilterService, antiSpamService, bannedUserCache, null
         );
         Update update = new Update();
         Message message = new Message();
@@ -213,7 +220,7 @@ class TelegramUpdateEventListenerTest {
         stateHandlers.add(handler);
         TelegramUpdateEventListener telegramUpdateEventListener = new TelegramUpdateEventListener(
                 redisUserStateService, new ArrayList<>(), stateHandlers, messagesService, new ArrayList<>(),
-                updateFilterService, antiSpamService, bannedUserCache
+                updateFilterService, antiSpamService, bannedUserCache, null
         );
         Update update = new Update();
         Message message = new Message();
@@ -238,7 +245,7 @@ class TelegramUpdateEventListenerTest {
         stateHandlers.add(handler);
         TelegramUpdateEventListener telegramUpdateEventListener = new TelegramUpdateEventListener(
                 redisUserStateService, new ArrayList<>(), stateHandlers, messagesService, new ArrayList<>(),
-                updateFilterService, antiSpamService, bannedUserCache
+                updateFilterService, antiSpamService, bannedUserCache, null
         );
         Update update = new Update();
         Message message = new Message();
@@ -262,7 +269,7 @@ class TelegramUpdateEventListenerTest {
         stateHandlers.add(handler);
         TelegramUpdateEventListener telegramUpdateEventListener = new TelegramUpdateEventListener(
                 redisUserStateService, new ArrayList<>(), stateHandlers, messagesService, new ArrayList<>(),
-                updateFilterService, antiSpamService, bannedUserCache
+                updateFilterService, antiSpamService, bannedUserCache, null
         );
         Update update = new Update();
         Message message = new Message();
@@ -287,7 +294,7 @@ class TelegramUpdateEventListenerTest {
         stateHandlers.add(handler);
         TelegramUpdateEventListener telegramUpdateEventListener = new TelegramUpdateEventListener(
                 redisUserStateService, new ArrayList<>(), stateHandlers, messagesService, new ArrayList<>(),
-                updateFilterService, antiSpamService, bannedUserCache
+                updateFilterService, antiSpamService, bannedUserCache, null
         );
         Update update = new Update();
         Message message = new Message();
@@ -316,7 +323,7 @@ class TelegramUpdateEventListenerTest {
         updateHandlers.add(stub);
         TelegramUpdateEventListener telegramUpdateEventListener = new TelegramUpdateEventListener(
                 redisUserStateService, updateHandlers, new ArrayList<>(), messagesService, new ArrayList<>(),
-                updateFilterService, antiSpamService, bannedUserCache
+                updateFilterService, antiSpamService, bannedUserCache, null
         );
         Update update = new Update();
         Message message = new Message();
@@ -343,7 +350,7 @@ class TelegramUpdateEventListenerTest {
         updateHandlers.add(stub);
         TelegramUpdateEventListener telegramUpdateEventListener = new TelegramUpdateEventListener(
                 redisUserStateService, updateHandlers, new ArrayList<>(), messagesService, new ArrayList<>(),
-                updateFilterService, antiSpamService, bannedUserCache
+                updateFilterService, antiSpamService, bannedUserCache, null
         );
         Update update = new Update();
         Message message = new Message();
@@ -356,5 +363,46 @@ class TelegramUpdateEventListenerTest {
         telegramUpdateEventListener.update(telegramUpdateEvent);
         verify(handler, times(0)).handle(update);
         verify(messagesService, times(1)).sendNoHandler(any());
+    }
+
+    @Test
+    @DisplayName("Должен оповестить о неправильном формате введенного числа.")
+    protected void shouldNotifyAboutWrongNumberFormat() {
+        TelegramUpdateEventListener telegramUpdateEventListener = new TelegramUpdateEventListener(null, new ArrayList<>(),
+                new ArrayList<>(), null, new ArrayList<>(), null, null,
+                bannedUserCache, responseSender);
+        Long chatId = 123456789L;
+        when(bannedUserCache.get(chatId)).thenThrow(NumberFormatException.class);
+        Update update = new Update();
+        Message message = new Message();
+        Chat chat = new Chat();
+        chat.setId(chatId);
+        message.setChat(chat);
+        update.setMessage(message);
+        TelegramUpdateEvent telegramUpdateEvent = new TelegramUpdateEvent(this, update);
+        telegramUpdateEventListener.update(telegramUpdateEvent);
+        verify(responseSender, times(1)).sendMessage(chatId, "Неверный формат.");
+    }
+
+    @Test
+    @DisplayName("Должен оповестить о непредвиденной ошибке.")
+    protected void shouldNotifyAboutException() {
+        TelegramUpdateEventListener telegramUpdateEventListener = new TelegramUpdateEventListener(null, new ArrayList<>(),
+                new ArrayList<>(), null, new ArrayList<>(), null, null,
+                bannedUserCache, responseSender);
+        Long chatId = 123456789L;
+        when(bannedUserCache.get(chatId)).thenThrow(RuntimeException.class);
+        Update update = new Update();
+        Message message = new Message();
+        Chat chat = new Chat();
+        chat.setId(chatId);
+        message.setChat(chat);
+        update.setMessage(message);
+        TelegramUpdateEvent telegramUpdateEvent = new TelegramUpdateEvent(this, update);
+        telegramUpdateEventListener.update(telegramUpdateEvent);
+        ArgumentCaptor<String> textCaptor = ArgumentCaptor.forClass(String.class);
+        verify(responseSender, times(1)).sendMessage(eq(chatId), textCaptor.capture());
+        assertTrue(textCaptor.getValue().startsWith("Произошла ошибка.\n"));
+        assertTrue(textCaptor.getValue().endsWith("\nВведите /start для выхода в главное меню."));
     }
 }

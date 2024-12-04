@@ -9,6 +9,7 @@ import tgb.btc.rce.enums.UpdateFilterType;
 import tgb.btc.rce.enums.UserState;
 import tgb.btc.rce.enums.update.UpdateType;
 import tgb.btc.rce.exception.HandlerTypeNotFoundException;
+import tgb.btc.rce.sender.IResponseSender;
 import tgb.btc.rce.service.captcha.IAntiSpamService;
 import tgb.btc.rce.service.handler.IStateHandler;
 import tgb.btc.rce.service.handler.IUpdateFilter;
@@ -43,15 +44,19 @@ public class TelegramUpdateEventListener {
 
     private final BannedUserCache bannedUserCache;
 
+    private final IResponseSender responseSender;
+
     public TelegramUpdateEventListener(IRedisUserStateService redisUserStateService, List<IUpdateHandler> updateHandlers,
                                        List<IStateHandler> stateHandlers, MessagesService messagesService,
                                        List<IUpdateFilter> updateFilters, IUpdateFilterService updateFilterService,
-                                       IAntiSpamService antiSpamService, BannedUserCache bannedUserCache) {
+                                       IAntiSpamService antiSpamService, BannedUserCache bannedUserCache,
+                                       IResponseSender responseSender) {
         this.redisUserStateService = redisUserStateService;
         this.messagesService = messagesService;
         this.updateFilterService = updateFilterService;
         this.antiSpamService = antiSpamService;
         this.bannedUserCache = bannedUserCache;
+        this.responseSender = responseSender;
         log.debug("Загрузка обработчиков апдейтов.");
         this.updateHandlers = new HashMap<>(updateHandlers.size());
         for (IUpdateHandler updateHandler : updateHandlers) {
@@ -83,16 +88,27 @@ public class TelegramUpdateEventListener {
 
     @EventListener
     public void update(TelegramUpdateEvent event) {
-        log.trace("Получен апдейт: {}", event.getUpdate());
         Update update = event.getUpdate();
+        log.trace("Получен апдейт: {}", event.getUpdate());
         Long chatId = UpdateType.getChatId(update);
-        if (bannedUserCache.get(chatId)) return;
-        if (antiSpamService.isSpam(chatId)) return;
-        if (handleFilter(update)) return;
-        UpdateType updateType = UpdateType.fromUpdate(update);
-        if (handleState(update, updateType, chatId)) return;
-        if (!handle(update, updateType)) {
-            messagesService.sendNoHandler(UpdateType.getChatId(update));
+        try {
+            if (bannedUserCache.get(chatId)) return;
+            if (antiSpamService.isSpam(chatId)) return;
+            if (handleFilter(update)) return;
+            UpdateType updateType = UpdateType.fromUpdate(update);
+            if (handleState(update, updateType, chatId)) return;
+            if (!handle(update, updateType)) {
+                messagesService.sendNoHandler(UpdateType.getChatId(update));
+            }
+        } catch (NumberFormatException e) {
+            responseSender.sendMessage(chatId, "Неверный формат.");
+        } catch (Exception e) {
+            Long time = System.currentTimeMillis();
+            log.error("{} Необработанная ошибка.", time, e);
+            responseSender.sendMessage(chatId,
+                    "Произошла ошибка." + System.lineSeparator() + time + System.lineSeparator()
+                            + "Введите /start для выхода в главное меню."
+            );
         }
     }
 
