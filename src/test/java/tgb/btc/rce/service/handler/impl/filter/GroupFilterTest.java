@@ -272,6 +272,8 @@ class GroupFilterTest {
     @DisplayName("Должен пропустить обновление title, если нет message.")
     protected void shouldSkipUpdateTitleWithoutMessage() {
         Update update = new Update();
+        CallbackQuery callbackQuery = new CallbackQuery();
+        update.setCallbackQuery(callbackQuery);
         Long chatId = 123456789L;
         when(updateService.getGroupChatId(update)).thenReturn(chatId);
         groupFilter.handle(update);
