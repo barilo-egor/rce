@@ -118,9 +118,11 @@ public class GroupFilter implements IUpdateFilter {
                             update.getMessage().getMessageId());
                 }
             } else if (update.getMessage().getText().startsWith("/help")) {
-                responseSender.sendMessage(chatId, "Чтобы отметить заявку обработанной, " +
-                        "ответьте на сообщение бота с текстом \"+\". Текст будет заменен на следующий:\n" +
-                        "<blockquote>Заявка №{номер заявки}.\nОбработано.</blockquote>", "html");
+                responseSender.sendMessage(chatId, """
+                        Чтобы отметить заявку обработанной, \
+                        ответьте на сообщение бота с текстом "+". Текст будет заменен на следующий:
+                        <blockquote>Заявка №{номер заявки}.
+                        Обработано.</blockquote>""", "html");
             }
         }
     }

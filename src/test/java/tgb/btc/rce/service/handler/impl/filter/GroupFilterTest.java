@@ -255,7 +255,7 @@ class GroupFilterTest {
     }
 
     @Test
-    @DisplayName("Должен обновить title группы")
+    @DisplayName("Должен обновить title группы.")
     protected void shouldUpdateTitle() {
         Update update = new Update();
         Message message = new Message();
@@ -268,6 +268,158 @@ class GroupFilterTest {
         verify(groupChatService, times(1)).updateTitleByChatId(chatId, title);
     }
 
+    @Test
+    @DisplayName("Должен пропустить обновление title, если нет message.")
+    protected void shouldSkipUpdateTitleWithoutMessage() {
+        Update update = new Update();
+        Long chatId = 123456789L;
+        when(updateService.getGroupChatId(update)).thenReturn(chatId);
+        groupFilter.handle(update);
+        verify(groupChatService, times(0)).updateTitleByChatId(anyLong(), anyString());
+    }
+
+    @Test
+    @DisplayName("Должен пропустить обновление title, если есть текст, но нет newChatTitle.")
+    protected void shouldSkipUpdateTitleWithoutNewChatTitle() {
+        Update update = new Update();
+        Message message = new Message();
+        update.setMessage(message);
+        Long chatId = 123456789L;
+        when(updateService.getGroupChatId(update)).thenReturn(chatId);
+        groupFilter.handle(update);
+        verify(groupChatService, times(0)).updateTitleByChatId(anyLong(), anyString());
+    }
+
+    @Test
+    @DisplayName("Должен пропустить обработку, если сообщение не из группы запросов.")
+    protected void shouldSkipIfNotDealRequest() {
+        Update update = new Update();
+        Message message = new Message();
+        message.setText("/help");
+        update.setMessage(message);
+        Long chatId = 123456789L;
+        when(updateService.getGroupChatId(update)).thenReturn(chatId);
+        when(groupChatService.isDealRequest(chatId)).thenReturn(false);
+        groupFilter.handle(update);
+        verify(responseSender, times(0)).sendMessage(any(), any());
+    }
+
+    @Test
+    @DisplayName("Должен пропустить, если сообщение не ответ на другое сообщение.")
+    protected void shouldSkipIfNotReply() {
+        Update update = new Update();
+        Message message = new Message();
+        message.setText("+");
+        update.setMessage(message);
+        Long chatId = 123456789L;
+        when(updateService.getGroupChatId(update)).thenReturn(chatId);
+        when(groupChatService.isDealRequest(chatId)).thenReturn(true);
+        groupFilter.handle(update);
+        verify(responseSender, times(0)).sendMessage(anyLong(), anyString(), anyInt());
+        verify(responseSender, times(0)).sendEditedMessageText(anyLong(), anyInt(), anyString());
+    }
+
+    @Test
+    @DisplayName("Должен пропустить, если сообщение не ответ на другое сообщение бота.")
+    protected void shouldSkipIfNotReplyToBot() {
+        Update update = new Update();
+        Message message = new Message();
+        message.setText("+");
+        Message replyMessage = new Message();
+        Chat chat = new Chat();
+        chat.setId(987654321L);
+        replyMessage.setChat(chat);
+        message.setReplyToMessage(replyMessage);
+        update.setMessage(message);
+        Long chatId = 123456789L;
+        when(updateService.getGroupChatId(update)).thenReturn(chatId);
+        when(groupChatService.isDealRequest(chatId)).thenReturn(true);
+        groupFilter.handle(update);
+        verify(responseSender, times(0)).sendMessage(anyLong(), anyString(), anyInt());
+        verify(responseSender, times(0)).sendEditedMessageText(anyLong(), anyInt(), anyString());
+    }
+
+    @Test
+    @DisplayName("Должен пропустить, если сообщение не равно \"+\".")
+    protected void shouldSkipIfNotPlusMessage() {
+        Update update = new Update();
+        Message message = new Message();
+        message.setText("-");
+        Message replyMessage = new Message();
+        Chat chat = new Chat();
+        Long chatId = 123456789L;
+        chat.setId(chatId);
+        replyMessage.setChat(chat);
+        message.setReplyToMessage(replyMessage);
+        update.setMessage(message);
+        when(updateService.getGroupChatId(update)).thenReturn(chatId);
+        when(groupChatService.isDealRequest(chatId)).thenReturn(true);
+        groupFilter.handle(update);
+        verify(responseSender, times(0)).sendMessage(anyLong(), anyString(), anyInt());
+        verify(responseSender, times(0)).sendEditedMessageText(anyLong(), anyInt(), anyString());
+    }
+
+    @Test
+    @DisplayName("Должен сообщить, что не получилось найти номер сделки.")
+    protected void shouldNotifyIfNotFindDealNumber() {
+        Update update = new Update();
+        Message message = new Message();
+        message.setText("+");
+        Integer messageId = 100000;
+        message.setMessageId(messageId);
+        Message replyMessage = new Message();
+        Chat chat = new Chat();
+        Long chatId = 123456789L;
+        chat.setId(chatId);
+        replyMessage.setChat(chat);
+        replyMessage.setText("text");
+        message.setReplyToMessage(replyMessage);
+        update.setMessage(message);
+        when(updateService.getGroupChatId(update)).thenReturn(chatId);
+        when(groupChatService.isDealRequest(chatId)).thenReturn(true);
+        groupFilter.handle(update);
+        verify(responseSender, times(1)).sendMessage(eq(chatId), anyString(), eq(messageId));
+    }
+
+    @Test
+    @DisplayName("Должен изменить текст обработанной заявки.")
+    protected void shouldUpdateDealMessage() {
+        Update update = new Update();
+        Message message = new Message();
+        update.setMessage(message);
+        message.setText("+");
+        Integer messageId = 100000;
+        Message replyMessage = new Message();
+        Chat chat = new Chat();
+        Long chatId = 123456789L;
+        chat.setId(chatId);
+        replyMessage.setChat(chat);
+        replyMessage.setMessageId(messageId);
+        replyMessage.setText("Заявка №123\nСумма: 0.001\nДата: 01.01.2020");
+        message.setReplyToMessage(replyMessage);
+        when(updateService.getGroupChatId(update)).thenReturn(chatId);
+        when(groupChatService.isDealRequest(chatId)).thenReturn(true);
+        groupFilter.handle(update);
+        verify(responseSender, times(1)).sendEditedMessageText(chatId, messageId, "Заявка №123\nОбработано.");
+    }
+
+    @Test
+    @DisplayName("Должен отправить /help сообщение.")
+    protected void shouldSendHelpMessage() {
+        Update update = new Update();
+        Message message = new Message();
+        message.setText("/help");
+        update.setMessage(message);
+        Long chatId = 123456789L;
+        when(updateService.getGroupChatId(update)).thenReturn(chatId);
+        when(groupChatService.isDealRequest(chatId)).thenReturn(true);
+        groupFilter.handle(update);
+        verify(responseSender, times(1)).sendMessage(chatId, """
+                        Чтобы отметить заявку обработанной, \
+                        ответьте на сообщение бота с текстом "+". Текст будет заменен на следующий:
+                        <blockquote>Заявка №{номер заявки}.
+                        Обработано.</blockquote>""", "html");
+    }
 
     @Test
     void getType() {
