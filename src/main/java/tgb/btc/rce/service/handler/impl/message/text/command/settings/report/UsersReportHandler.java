@@ -22,6 +22,7 @@ import tgb.btc.library.interfaces.util.IFiatCurrencyService;
 import tgb.btc.rce.enums.Menu;
 import tgb.btc.rce.enums.PropertiesMessage;
 import tgb.btc.rce.enums.update.TextCommand;
+import tgb.btc.rce.sender.IMenuSender;
 import tgb.btc.rce.sender.IResponseSender;
 import tgb.btc.rce.service.handler.message.text.ITextCommandHandler;
 import tgb.btc.rce.service.util.IMenuService;
@@ -56,10 +57,13 @@ public class UsersReportHandler implements ITextCommandHandler {
 
     private final IMenuService menuService;
 
+    private final IMenuSender menuSender;
+
     public UsersReportHandler(IResponseSender responseSender, IFiatCurrencyService fiatCurrencyService,
                               IBigDecimalService bigDecimalService, IReadUserService readUserService,
                               IReportDealService reportDealService, IModifyUserService modifyUserService,
-                              IMessagePropertiesService messagePropertiesService, IMenuService menuService) {
+                              IMessagePropertiesService messagePropertiesService, IMenuService menuService,
+                              IMenuSender menuSender) {
         this.responseSender = responseSender;
         this.fiatCurrencyService = fiatCurrencyService;
         this.bigDecimalService = bigDecimalService;
@@ -68,6 +72,7 @@ public class UsersReportHandler implements ITextCommandHandler {
         this.modifyUserService = modifyUserService;
         this.messagePropertiesService = messagePropertiesService;
         this.menuService = menuService;
+        this.menuSender = menuSender;
     }
 
     @Override
@@ -94,7 +99,7 @@ public class UsersReportHandler implements ITextCommandHandler {
                         menuService.build(Menu.OPERATOR_PANEL, role));
                 break;
             case OBSERVER:
-                responseSender.sendMessage(chatId, "Вы перешли в панель наблюдателя", Menu.OBSERVER_PANEL);
+                menuSender.send(chatId, "Вы перешли в панель наблюдателя", Menu.OBSERVER_PANEL);
                 break;
         }
         try {

@@ -3,7 +3,6 @@ package tgb.btc.rce.sender;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.util.Strings;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.AnswerInlineQuery;
@@ -21,15 +20,9 @@ import org.telegram.telegrambots.meta.api.objects.media.InputMedia;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-import tgb.btc.library.exception.BaseException;
-import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.rce.bot.RceBot;
-import tgb.btc.rce.enums.Menu;
-import tgb.btc.rce.enums.PropertiesMessage;
-import tgb.btc.rce.service.IUpdateService;
+import tgb.btc.rce.enums.update.UpdateType;
 import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
-import tgb.btc.rce.service.util.IMenuService;
-import tgb.btc.rce.service.util.IMessagePropertiesService;
 import tgb.btc.rce.vo.InlineButton;
 
 import java.io.File;
@@ -37,52 +30,33 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
 @Slf4j
 public class ResponseSender implements IResponseSender {
 
-    private RceBot bot;
+    private final RceBot bot;
+    private final IKeyboardBuildService keyboardBuildService;
 
-    private IReadUserService readUserService;
-
-    private IMenuService menuService;
-
-    private IKeyboardBuildService keyboardBuildService;
-
-    private IMessagePropertiesService messagePropertiesService;
-
-    private IUpdateService updateService;
-
-    @Autowired
-    public void setUpdateService(IUpdateService updateService) {
-        this.updateService = updateService;
-    }
-
-    @Autowired
-    public void setMessagePropertiesService(IMessagePropertiesService messagePropertiesService) {
-        this.messagePropertiesService = messagePropertiesService;
-    }
-
-    @Autowired
-    public void setKeyboardBuildService(IKeyboardBuildService keyboardBuildService) {
+    public ResponseSender(RceBot bot, IKeyboardBuildService keyboardBuildService) {
+        this.bot = bot;
         this.keyboardBuildService = keyboardBuildService;
     }
 
-    @Autowired
-    public void setMenuService(IMenuService menuService) {
-        this.menuService = menuService;
+    @Override
+    public Optional<Message> sendMessage(SendMessage sendMessage) {
+        return Optional.ofNullable(executeSendMessage(sendMessage));
     }
 
-    @Autowired
-    public void setReadUserService(IReadUserService readUserService) {
-        this.readUserService = readUserService;
-    }
-
-    @Autowired
-    public void setBot(RceBot bot) {
-        this.bot = bot;
+    private Message executeSendMessage(SendMessage sendMessage) {
+        try {
+            return bot.execute(sendMessage);
+        } catch (TelegramApiException e) {
+            log.warn("Не получилось отправить sendMessage: " + sendMessage, e);
+            return null;
+        }
     }
 
     public Optional<Message> sendMessage(Long chatId, String text) {
@@ -98,28 +72,12 @@ public class ResponseSender implements IResponseSender {
         return sendMessage(chatId, text, null, null, replyToMessageId);
     }
 
-    public Optional<Message> sendMessageParseNode(Long chatId, String text, String parseNode) {
-        return Optional.ofNullable(executeSendMessage(SendMessage.builder()
-                .chatId(chatId.toString())
-                .text(text)
-                .parseMode(parseNode)
-                .build()));
-    }
-
 
     public Optional<Message> sendMessageThrows(Long chatId, String text) throws TelegramApiException {
         return Optional.ofNullable(executeSendMessageThrows(SendMessage.builder()
                 .chatId(chatId.toString())
                 .text(text)
                 .build()));
-    }
-
-    public Optional<Message> sendMessage(Long chatId, String text, Menu menu) {
-        return sendMessage(chatId, text, menuService.build(menu, readUserService.getUserRoleByChatId(chatId)), null);
-    }
-
-    public Optional<Message> sendMessage(Long chatId, PropertiesMessage propertiesMessage, Menu menu) {
-        return sendMessage(chatId, messagePropertiesService.getMessage(propertiesMessage), menu);
     }
 
     public Optional<Message> sendMessage(Long chatId, String text, ReplyKeyboard replyKeyboard) {
@@ -162,20 +120,6 @@ public class ResponseSender implements IResponseSender {
         return Optional.ofNullable(executeSendMessage(sendMessage));
     }
 
-    @Override
-    public Optional<Message> sendMessage(SendMessage sendMessage) {
-        return Optional.ofNullable(executeSendMessage(sendMessage));
-    }
-
-    private Message executeSendMessage(SendMessage sendMessage) {
-        try {
-            return bot.execute(sendMessage);
-        } catch (TelegramApiException e) {
-            log.warn("Не получилось отправить sendMessage: " + sendMessage, e);
-            return null;
-        }
-    }
-
     private Message executeSendMessageThrows(SendMessage sendMessage) throws TelegramApiException {
         return bot.execute(sendMessage);
     }
@@ -192,7 +136,7 @@ public class ResponseSender implements IResponseSender {
                     .photo(photo)
                     .build()));
         } catch (TelegramApiException e) {
-            log.debug("Не получилось отправить фото: chatId=" + chatId + ", caption=" + caption + ", photo=" + photo, e);
+            log.debug("Не получилось отправить фото: chatId={}, caption={}, photo={}", chatId, caption, photo, e);
             return Optional.empty();
         }
     }
@@ -207,7 +151,7 @@ public class ResponseSender implements IResponseSender {
                     .parseMode("html")
                     .build()));
         } catch (TelegramApiException e) {
-            log.debug("Не получилось отправить фото: chatId=" + chatId + ", caption=" + caption + ", photo=" + photo, e);
+            log.debug("Не получилось отправить фото: chatId={}, caption={}, photo={}", chatId, caption, photo, e);
             return Optional.empty();
         }
     }
@@ -220,7 +164,7 @@ public class ResponseSender implements IResponseSender {
                     .animation(new InputFile(file))
                     .build());
         } catch (TelegramApiException e) {
-            log.debug("Не получилось отправить анимацию: chatId=" + chatId, e);
+            log.debug("Не получилось отправить анимацию: chatId={}", chatId, e);
             return null;
         }
     }
@@ -234,8 +178,7 @@ public class ResponseSender implements IResponseSender {
                     .replyMarkup(replyKeyboard)
                     .build()));
         } catch (TelegramApiException e) {
-            log.debug("Не получилось отправить анимацию: chatId=" + chatId + ", caption="
-                    + caption + ", animation=" + animation, e);
+            log.debug("Не получилось отправить анимацию: chatId={}, caption={}, animation={}", chatId, caption, animation, e);
             return Optional.empty();
         }
     }
@@ -260,7 +203,7 @@ public class ResponseSender implements IResponseSender {
                             .parseMode("html")
                     .build());
         } catch (TelegramApiException e) {
-            log.debug("Не получилось отправить измененное сообщение: chatId" + chatId + ", text=" + text, e);
+            log.debug("Не получилось отправить измененное сообщение: chatId{}, text={}", chatId, text, e);
         }
     }
 
@@ -285,7 +228,7 @@ public class ResponseSender implements IResponseSender {
                     .replyMarkup((InlineKeyboardMarkup) replyKeyboard)
                     .build());
         } catch (TelegramApiException e) {
-            log.debug("Не получилось отправить измененное сообщение: chatId" + chatId + ", text=" + text, e);
+            log.debug("Не получилось отправить измененное сообщение: chatId{}, text={}", chatId, text, e);
         }
     }
 
@@ -297,7 +240,7 @@ public class ResponseSender implements IResponseSender {
                     .document(new InputFile(file))
                     .build());
         } catch (TelegramApiException e) {
-            log.debug("Не получилось отправить файл: chatId=" + chatId + ", fileName=" + file.getName(), e);
+            log.debug("Не получилось отправить файл: chatId={}, fileName={}", chatId, file.getName(), e);
             return null;
         }
     }
@@ -311,7 +254,7 @@ public class ResponseSender implements IResponseSender {
                     .document(new InputFile(fileId))
                     .build());
         } catch (TelegramApiException e) {
-            log.debug("Не получилось отправить файл: chatId=" + chatId + ", fileId=" + fileId, e);
+            log.debug("Не получилось отправить файл: chatId={}, fileId={}", chatId, fileId, e);
             return null;
         }
     }
@@ -320,22 +263,8 @@ public class ResponseSender implements IResponseSender {
         try {
             return Optional.of(bot.execute(getFile));
         } catch (TelegramApiException e) {
-            log.debug("Не получилось скачать файл:" + getFile.toString());
+            log.debug("Не получилось скачать файл:{}", getFile.toString());
             return Optional.empty();
-        }
-    }
-
-    public void downloadFile(String fileId, String localFilePath) {
-        GetFile getFile = new GetFile();
-        getFile.setFileId(fileId);
-        org.telegram.telegrambots.meta.api.objects.File file = execute(getFile)
-                .orElseThrow(() -> new BaseException("Не получилось скачать файл " + fileId + " в " + localFilePath));
-        java.io.File localFile = new java.io.File(localFilePath);
-        try {
-            InputStream is = new URL(file.getFileUrl(bot.getBotToken())).openStream();
-            FileUtils.copyInputStreamToFile(is, localFile);
-        } catch (Exception e) {
-            throw new BaseException("Ошибки при скачивании файла.");
         }
     }
 
@@ -355,25 +284,6 @@ public class ResponseSender implements IResponseSender {
     }
 
     @Override
-    public void execute(AnswerInlineQuery answerInlineQuery) {
-        try {
-            bot.execute(answerInlineQuery);
-        } catch (TelegramApiException e) {
-            log.debug("Не получилось отправить answerInlineQuery: " + answerInlineQuery.toString(), e);
-        }
-    }
-
-    @Override
-    public Message execute(SendDice sendDice) {
-        try {
-            return bot.execute(sendDice);
-        } catch (TelegramApiException e) {
-            log.debug("Не получилось отправить sendDice: " + sendDice.toString(), e);
-        }
-        return null;
-    }
-
-    @Override
     public void sendMedia(Long chatId, List<InputMedia> media) {
         try {
             bot.execute(SendMediaGroup.builder()
@@ -381,7 +291,7 @@ public class ResponseSender implements IResponseSender {
                     .medias(media)
                     .build());
         } catch (TelegramApiException e) {
-            log.debug("Не получилось отправить медиа: chatId=" + chatId + ", media.size()=" + media.size());
+            log.debug("Не получилось отправить медиа: chatId={}, media.size()={}", chatId, media.size());
         }
     }
 
@@ -393,7 +303,7 @@ public class ResponseSender implements IResponseSender {
                     .document(inputFile)
                     .build());
         } catch (TelegramApiException e) {
-            log.debug("Не получилось отправить input file: chatId=" + chatId);
+            log.debug("Не получилось отправить input file: chatId={}", chatId);
         }
     }
 
@@ -417,23 +327,10 @@ public class ResponseSender implements IResponseSender {
     }
 
     @Override
-    public boolean sendAnswerInlineQuery(String inlineQueryId, String title) {
-        return sendAnswerInlineQuery(inlineQueryId, title, null, null);
-    }
-
-    @Override
     public void deleteCallbackMessageIfExists(Update update) {
-        if (update.hasCallbackQuery())
-            deleteMessage(updateService.getChatId(update), update.getCallbackQuery().getMessage().getMessageId());
-    }
-
-    @Override
-    public void deleteCallbackMessageButtonsIfExists(Update update) {
-        if (update.hasCallbackQuery()) {
-            String text = update.getCallbackQuery().getMessage().getText();
-            deleteMessage(updateService.getChatId(update), update.getCallbackQuery().getMessage().getMessageId());
-            sendMessage(updateService.getChatId(update), text);
-        }
+        Long chatId = UpdateType.getChatId(update);
+        if (update.hasCallbackQuery() && Objects.nonNull(chatId))
+            deleteMessage(chatId, update.getCallbackQuery().getMessage().getMessageId());
     }
 
     @Override

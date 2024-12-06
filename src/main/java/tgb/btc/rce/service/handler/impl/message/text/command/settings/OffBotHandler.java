@@ -8,6 +8,7 @@ import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.rce.enums.Menu;
 import tgb.btc.rce.enums.PropertiesMessage;
 import tgb.btc.rce.enums.update.TextCommand;
+import tgb.btc.rce.sender.IMenuSender;
 import tgb.btc.rce.sender.IResponseSender;
 import tgb.btc.rce.service.IBotSwitch;
 import tgb.btc.rce.service.handler.message.text.ITextCommandHandler;
@@ -29,15 +30,18 @@ public class OffBotHandler implements ITextCommandHandler {
 
     private final IBotSwitch botSwitch;
 
+    private final IMenuSender menuSender;
+
     public OffBotHandler(IResponseSender responseSender, IModifyUserService modifyUserService,
                          IReadUserService readUserService, IMessagePropertiesService messagePropertiesService,
-                         IMenuService menuService, IBotSwitch botSwitch) {
+                         IMenuService menuService, IBotSwitch botSwitch, IMenuSender menuSender) {
         this.responseSender = responseSender;
         this.modifyUserService = modifyUserService;
         this.readUserService = readUserService;
         this.messagePropertiesService = messagePropertiesService;
         this.menuService = menuService;
         this.botSwitch = botSwitch;
+        this.menuSender = menuSender;
     }
 
     @Override
@@ -59,7 +63,7 @@ public class OffBotHandler implements ITextCommandHandler {
                         menuService.build(Menu.OPERATOR_PANEL, role));
                 break;
             case OBSERVER:
-                responseSender.sendMessage(chatId, "Вы перешли в панель наблюдателя", Menu.OBSERVER_PANEL);
+                menuSender.send(chatId, "Вы перешли в панель наблюдателя", Menu.OBSERVER_PANEL);
                 break;
         }
     }
