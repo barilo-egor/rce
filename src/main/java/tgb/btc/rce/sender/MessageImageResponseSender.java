@@ -4,12 +4,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
-import tgb.btc.library.interfaces.service.bean.bot.user.IModifyUserService;
+import tgb.btc.library.exception.BaseException;
 import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.rce.enums.Menu;
 import tgb.btc.rce.enums.MessageImage;
 import tgb.btc.rce.service.IMessageImageService;
-import tgb.btc.rce.service.redis.IRedisStringService;
 import tgb.btc.rce.service.util.IMenuService;
 
 @Service
@@ -18,21 +17,16 @@ public class MessageImageResponseSender implements IMessageImageResponseSender {
 
     private final IMessageImageService messageImageService;
     private final ResponseSender responseSender;
-    private final IModifyUserService modifyUserService;
     private final IMenuService menuService;
     private final IReadUserService readUserService;
-    private final IRedisStringService redisStringService;
 
     @Autowired
     public MessageImageResponseSender(IMessageImageService messageImageService, ResponseSender responseSender,
-                                      IModifyUserService modifyUserService, IMenuService menuService,
-                                      IReadUserService readUserService, IRedisStringService redisStringService) {
+                                      IMenuService menuService, IReadUserService readUserService) {
         this.messageImageService = messageImageService;
         this.responseSender = responseSender;
-        this.modifyUserService = modifyUserService;
         this.menuService = menuService;
         this.readUserService = readUserService;
-        this.redisStringService = redisStringService;
     }
 
     @Override
@@ -60,6 +54,8 @@ public class MessageImageResponseSender implements IMessageImageResponseSender {
                 responseSender.sendPhoto(chatId, message, fileId, replyKeyboard);
             } else if (format.equals(".mp4")) {
                 responseSender.sendAnimation(chatId, message, fileId, replyKeyboard);
+            } else {
+                throw new BaseException("Для формата " + format + " не предусмотрена реализация отправки изображения.");
             }
         } else {
             responseSender.sendMessage(chatId, message, replyKeyboard, "html");
