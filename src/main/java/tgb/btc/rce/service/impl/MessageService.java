@@ -3,16 +3,14 @@ package tgb.btc.rce.service.impl;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.interfaces.service.bean.bot.user.IModifyUserService;
 import tgb.btc.library.interfaces.util.IBigDecimalService;
 import tgb.btc.library.vo.calculate.DealAmount;
 import tgb.btc.rce.enums.PropertiesMessage;
+import tgb.btc.rce.sender.IResponseSender;
 import tgb.btc.rce.sender.ResponseSender;
 import tgb.btc.rce.service.IMessageService;
-import tgb.btc.rce.sender.IResponseSender;
 import tgb.btc.rce.service.util.IMessagePropertiesService;
 import tgb.btc.rce.vo.InlineCalculatorVO;
 
@@ -47,18 +45,6 @@ public class MessageService implements IMessageService {
     @Autowired
     public void setResponseSender(ResponseSender responseSender) {
         this.responseSender = responseSender;
-    }
-
-    @Override
-    public void sendMessageAndSaveMessageId(Long chatId, String text, ReplyKeyboard keyboard) {
-        responseSender.sendMessage(chatId, text, keyboard)
-                .ifPresent(message -> modifyUserService.updateBufferVariable(chatId, message.getMessageId().toString()));
-    }
-
-    @Override
-    public void sendMessageAndSaveMessageId(SendMessage sendMessage) {
-        responseSender.sendMessage(sendMessage)
-                .ifPresent(message -> modifyUserService.updateBufferVariable(Long.parseLong(sendMessage.getChatId()), message.getMessageId().toString()));
     }
 
     @Override

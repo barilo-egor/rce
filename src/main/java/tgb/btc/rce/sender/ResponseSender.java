@@ -45,11 +45,6 @@ public class ResponseSender implements IResponseSender {
         this.keyboardBuildService = keyboardBuildService;
     }
 
-    @Override
-    public Optional<Message> sendMessage(SendMessage sendMessage) {
-        return Optional.ofNullable(executeSendMessage(sendMessage));
-    }
-
     private Message executeSendMessage(SendMessage sendMessage) {
         try {
             return bot.execute(sendMessage);
@@ -57,6 +52,11 @@ public class ResponseSender implements IResponseSender {
             log.warn("Не получилось отправить sendMessage: " + sendMessage, e);
             return null;
         }
+    }
+
+    @Override
+    public Optional<Message> sendMessage(SendMessage sendMessage) {
+        return Optional.ofNullable(executeSendMessage(sendMessage));
     }
 
     public Optional<Message> sendMessage(Long chatId, String text) {
