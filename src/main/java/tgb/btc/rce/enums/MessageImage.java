@@ -1,9 +1,11 @@
 package tgb.btc.rce.enums;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import tgb.btc.library.constants.enums.bot.CryptoCurrency;
 
 @Getter
+@AllArgsConstructor
 public enum MessageImage {
     START("Стартовое сообщение.", "✅БОТ АВТО-ОБМЕНА\n\n—Моментальный перевод на ваш кошелёк.\n" +
             "—Минимальные комиссии.\n" +
@@ -35,11 +37,6 @@ public enum MessageImage {
 
     final String description;
     final String defaultMessage;
-
-    MessageImage(String description, String defaultMessage) {
-        this.description = description;
-        this.defaultMessage = defaultMessage;
-    }
 
     public static MessageImage getInputWallet(CryptoCurrency cryptoCurrency) {
         return switch (cryptoCurrency) {
