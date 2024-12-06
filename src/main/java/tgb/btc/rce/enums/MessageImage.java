@@ -42,15 +42,11 @@ public enum MessageImage {
     }
 
     public static MessageImage getInputWallet(CryptoCurrency cryptoCurrency) {
-        switch (cryptoCurrency) {
-            case LITECOIN:
-                return LITECOIN_INPUT_WALLET;
-            case USDT:
-                return USDT_INPUT_WALLET;
-            case MONERO:
-                return MONERO_INPUT_WALLET;
-            default:
-                return BITCOIN_INPUT_WALLET;
-        }
+        return switch (cryptoCurrency) {
+            case LITECOIN -> LITECOIN_INPUT_WALLET;
+            case USDT -> USDT_INPUT_WALLET;
+            case MONERO -> MONERO_INPUT_WALLET;
+            case BITCOIN -> BITCOIN_INPUT_WALLET;
+        };
     }
 }
