@@ -111,7 +111,10 @@ public class InlineCalculatorHandler implements IStateHandler {
             return;
         }
         CallbackQuery callbackQuery = update.getCallbackQuery();
-        InlineCalculatorData data = new InlineCalculatorData(callbackQuery.getData());
+        String callbackData = callbackQuery.getData();
+        InlineCalculatorData data = new InlineCalculatorData();
+        data.setButtonData(callbackDataService.getArgument(callbackData, 1));
+        data.setNumber(callbackDataService.getArgument(callbackData, 2));
         String sum = calculator.getSum();
         Boolean isSwitched = calculator.getSwitched();
         Integer messageId = callbackQuery.getMessage().getMessageId();

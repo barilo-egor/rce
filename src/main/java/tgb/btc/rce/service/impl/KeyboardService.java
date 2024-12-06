@@ -24,7 +24,6 @@ import tgb.btc.library.interfaces.util.IFiatCurrencyService;
 import tgb.btc.library.service.process.RPSService;
 import tgb.btc.library.service.properties.*;
 import tgb.btc.rce.constants.BotCacheNames;
-import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.BotInlineButton;
 import tgb.btc.rce.enums.BotReplyButton;
 import tgb.btc.rce.enums.InlineType;
@@ -227,12 +226,12 @@ public class KeyboardService implements IKeyboardService {
         return keyboardBuildService.buildInline(List.of(
                 InlineButton.builder()
                         .text("Со скидкой, " + bigDecimalService.roundToPlainString(sumWithDiscount))
-                        .data(BotStringConstants.USE_REFERRAL_DISCOUNT)
+                        .data(CallbackQueryData.USE_REFERRAL_DISCOUNT.name())
                         .inlineType(InlineType.CALLBACK_DATA)
                         .build(),
                 InlineButton.builder()
                         .text("Без скидки, " + bigDecimalService.roundToPlainString(dealAmount))
-                        .data(BotStringConstants.DONT_USE_REFERRAL_DISCOUNT)
+                        .data(CallbackQueryData.DONT_USE_REFERRAL_DISCOUNT.name())
                         .inlineType(InlineType.CALLBACK_DATA)
                         .build(),
                 keyboardBuildService.getInlineBackButton()
@@ -245,12 +244,12 @@ public class KeyboardService implements IKeyboardService {
         return keyboardBuildService.buildInline(List.of(
                 InlineButton.builder()
                         .text("Использовать промокод")
-                        .data(BotStringConstants.USE_PROMO)
+                        .data(CallbackQueryData.USE_PROMO.name())
                         .inlineType(InlineType.CALLBACK_DATA)
                         .build(),
                 InlineButton.builder()
                         .text("Не использовать промокод")
-                        .data(BotStringConstants.DONT_USE_PROMO)
+                        .data(CallbackQueryData.DONT_USE_PROMO.name())
                         .inlineType(InlineType.CALLBACK_DATA)
                         .build(),
                 keyboardBuildService.getInlineBackButton()

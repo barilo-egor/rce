@@ -22,8 +22,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static tgb.btc.rce.constants.BotStringConstants.CALLBACK_DATA_SPLITTER;
-
 @Service
 public class EditContactsService {
 
@@ -97,9 +95,9 @@ public class EditContactsService {
     }
 
     public void delete(Update update) {
-        contactService.deleteById(Long.valueOf(update.getCallbackQuery().getData().split(CALLBACK_DATA_SPLITTER)[1]));
+        contactService.deleteById(callbackDataService.getLongArgument(update.getCallbackQuery().getData(), 1));
         responseSender.deleteMessage(update.getCallbackQuery().getFrom().getId(),
-                Integer.valueOf(update.getCallbackQuery().getData().split(CALLBACK_DATA_SPLITTER)[2]));
+                callbackDataService.getIntArgument(update.getCallbackQuery().getData(), 2));
         responseSender.sendMessage(update.getCallbackQuery().getFrom().getId(), "Контакт удален.");
     }
 }

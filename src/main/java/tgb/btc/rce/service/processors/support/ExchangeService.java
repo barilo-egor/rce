@@ -20,7 +20,10 @@ import tgb.btc.library.exception.BaseException;
 import tgb.btc.library.exception.CalculatorQueryException;
 import tgb.btc.library.interfaces.IModule;
 import tgb.btc.library.interfaces.enums.IDeliveryTypeService;
-import tgb.btc.library.interfaces.service.bean.bot.*;
+import tgb.btc.library.interfaces.service.bean.bot.IPaymentReceiptService;
+import tgb.btc.library.interfaces.service.bean.bot.IPaymentRequisiteService;
+import tgb.btc.library.interfaces.service.bean.bot.IPaymentTypeService;
+import tgb.btc.library.interfaces.service.bean.bot.ISecurePaymentDetailsService;
 import tgb.btc.library.interfaces.service.bean.bot.deal.IModifyDealService;
 import tgb.btc.library.interfaces.service.bean.bot.deal.IReadDealService;
 import tgb.btc.library.interfaces.service.bean.bot.deal.read.IDealCountService;
@@ -34,14 +37,20 @@ import tgb.btc.library.service.properties.ButtonsDesignPropertiesReader;
 import tgb.btc.library.service.properties.VariablePropertiesReader;
 import tgb.btc.library.service.schedule.DealDeleteScheduler;
 import tgb.btc.library.vo.calculate.DealAmount;
-import tgb.btc.rce.constants.BotStringConstants;
-import tgb.btc.rce.enums.*;
+import tgb.btc.rce.enums.BotInlineButton;
+import tgb.btc.rce.enums.MessageImage;
+import tgb.btc.rce.enums.PropertiesMessage;
+import tgb.btc.rce.enums.Rank;
+import tgb.btc.rce.enums.update.CallbackQueryData;
 import tgb.btc.rce.sender.IMessageImageResponseSender;
 import tgb.btc.rce.sender.IResponseSender;
 import tgb.btc.rce.service.*;
 import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
 import tgb.btc.rce.service.process.IUserDiscountProcessService;
-import tgb.btc.rce.service.util.*;
+import tgb.btc.rce.service.util.ICallbackDataService;
+import tgb.btc.rce.service.util.ICryptoCurrenciesDesignService;
+import tgb.btc.rce.service.util.IMessagePropertiesService;
+import tgb.btc.rce.service.util.ITextCommandService;
 import tgb.btc.rce.vo.CalculatorQuery;
 import tgb.btc.rce.vo.InlineButton;
 
@@ -553,7 +562,7 @@ public class ExchangeService {
     }
 
     private boolean isUsePromoData(String data) {
-        return BotStringConstants.USE_PROMO.equals(data);
+        return callbackDataService.isCallbackQueryData(CallbackQueryData.USE_PROMO, data);
     }
 
     public boolean saveRequisites(Update update) {
@@ -874,7 +883,9 @@ public class ExchangeService {
                     "для возвращения в предыдущее меню.");
             return false;
         }
-        Boolean isUsedReferralDiscount = update.getCallbackQuery().getData().equals(BotStringConstants.USE_REFERRAL_DISCOUNT);
+        Boolean isUsedReferralDiscount = callbackDataService.isCallbackQueryData(
+                CallbackQueryData.USE_REFERRAL_DISCOUNT, update.getCallbackQuery().getData()
+        );
         modifyDealService.updateUsedReferralDiscountByPid(isUsedReferralDiscount, readUserService.getCurrentDealByChatId(chatId));
         return true;
     }
