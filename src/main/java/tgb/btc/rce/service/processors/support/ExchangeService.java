@@ -331,7 +331,7 @@ public class ExchangeService {
         } else {
             messageImage = MessageImage.CHOOSE_CRYPTO_CURRENCY_SELL;
         }
-        messageImageResponseSender.sendMessageAndSaveMessageId(messageImage, chatId, replyKeyboard);
+        messageImageResponseSender.sendMessage(messageImage, chatId, replyKeyboard);
     }
 
     public boolean saveCryptoCurrency(Update update) {

@@ -4,12 +4,12 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 import tgb.btc.library.constants.enums.bot.UserRole;
 import tgb.btc.rce.service.INotifyService;
 import tgb.btc.rce.service.operation.IPoolOperation;
-import tgb.btc.rce.service.util.ITelegramPropertiesService;
 import tgb.btc.rce.vo.PoolOperation;
 
 import java.util.List;
@@ -30,11 +30,11 @@ public class BitcoinPoolConsumer {
 
     @Autowired
     public BitcoinPoolConsumer(List<IPoolOperation> poolOperations, INotifyService notifyService,
-                               ITelegramPropertiesService telegramPropertiesService) {
+                               @Value("${bot.username}") String botUsername) {
         this.notifyService = notifyService;
         this.poolOperationsMap = poolOperations.stream()
                 .collect(Collectors.toMap(IPoolOperation::getOperationName, operation -> operation));
-        this.botUsername = telegramPropertiesService.getUsername();
+        this.botUsername = botUsername;
     }
 
     @KafkaListener(topics = "pool", groupId = "${bot.username}")

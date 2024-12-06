@@ -12,6 +12,4 @@ public interface IMessageImageResponseSender {
     void sendMessage(MessageImage messageImage, Long chatId, ReplyKeyboard replyKeyboard);
 
     void sendMessage(MessageImage messageImage, Menu menu, Long chatId);
-
-    void sendMessageAndSaveMessageId(MessageImage messageImage, Long chatId, ReplyKeyboard replyKeyboard);
 }
