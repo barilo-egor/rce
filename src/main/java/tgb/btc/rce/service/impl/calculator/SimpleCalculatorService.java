@@ -1,8 +1,8 @@
 package tgb.btc.rce.service.impl.calculator;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import tgb.btc.library.constants.enums.bot.CryptoCurrency;
 import tgb.btc.library.interfaces.service.bean.bot.deal.read.IDealPropertyService;
 import tgb.btc.library.interfaces.service.bean.bot.user.IModifyUserService;
@@ -85,16 +85,11 @@ public abstract class SimpleCalculatorService implements ICalculatorTypeService 
         String text = messagePropertiesService.getMessage(propertiesMessage,
                 dealPropertyService.getCryptoCurrencyByPid(
                         readUserService.getCurrentDealByChatId(chatId)));
-        SendMessage sendMessage = new SendMessage();
-        sendMessage.setChatId(chatId.toString());
-        sendMessage.setText(text);
-        sendMessage.setParseMode("HTML");
-        addKeyboard(sendMessage);
         setState(chatId);
-        responseSender.sendMessage(sendMessage);
+        responseSender.sendMessage(chatId, text, getKeyboard(chatId), "html");
     }
 
-    public abstract void addKeyboard(SendMessage sendMessage);
+    public abstract ReplyKeyboard getKeyboard(Long chatId);
 
     public abstract void setState(Long chatId);
 }

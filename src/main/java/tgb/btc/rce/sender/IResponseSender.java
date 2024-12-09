@@ -1,7 +1,6 @@
 package tgb.btc.rce.sender;
 
 import org.telegram.telegrambots.meta.api.methods.GetFile;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Document;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Message;
@@ -35,8 +34,6 @@ public interface IResponseSender {
     Optional<Message> sendMessage(Long chatId, String text, InlineButton... inlineButtons);
 
     Optional<Message> sendMessage(Long chatId, String text, String parseMode, InlineButton... inlineButtons);
-
-    Optional<Message> sendMessage(SendMessage sendMessage);
 
     Optional<Message> sendPhoto(Long chatId, String caption, String photo);
 

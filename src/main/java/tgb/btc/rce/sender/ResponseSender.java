@@ -54,11 +54,6 @@ public class ResponseSender implements IResponseSender {
         }
     }
 
-    @Override
-    public Optional<Message> sendMessage(SendMessage sendMessage) {
-        return Optional.ofNullable(executeSendMessage(sendMessage));
-    }
-
     public Optional<Message> sendMessage(Long chatId, String text) {
         return Optional.ofNullable(executeSendMessage(SendMessage.builder()
                 .chatId(chatId.toString())
@@ -128,7 +123,7 @@ public class ResponseSender implements IResponseSender {
         return sendPhoto(chatId, caption, photo, null);
     }
 
-    public Optional<Message> sendPhoto(Long chatId, String caption, InputFile photo) {
+    public Optional<Message> sendPhoto(Long chatId, String caption, InputFile photo, ReplyKeyboard replyKeyboard) {
         try {
             return Optional.of(bot.execute(SendPhoto.builder()
                     .chatId(chatId.toString())
@@ -141,19 +136,12 @@ public class ResponseSender implements IResponseSender {
         }
     }
 
+    public Optional<Message> sendPhoto(Long chatId, String caption, InputFile photo) {
+        return sendPhoto(chatId, caption, photo, null);
+    }
+
     public Optional<Message> sendPhoto(Long chatId, String caption, String photo, ReplyKeyboard replyKeyboard) {
-        try {
-            return Optional.of(bot.execute(SendPhoto.builder()
-                    .chatId(chatId.toString())
-                    .caption(caption)
-                    .photo(new InputFile(photo))
-                    .replyMarkup(replyKeyboard)
-                    .parseMode("html")
-                    .build()));
-        } catch (TelegramApiException e) {
-            log.debug("Не получилось отправить фото: chatId={}, caption={}, photo={}", chatId, caption, photo, e);
-            return Optional.empty();
-        }
+        return sendPhoto(chatId, caption, new InputFile(photo), replyKeyboard);
     }
 
     @Override
@@ -170,11 +158,15 @@ public class ResponseSender implements IResponseSender {
     }
 
     public Optional<Message> sendAnimation(Long chatId, String caption, String animation, ReplyKeyboard replyKeyboard) {
+        return sendAnimation(chatId, caption, new InputFile(animation), replyKeyboard);
+    }
+
+    public Optional<Message> sendAnimation(Long chatId, String caption, InputFile animation, ReplyKeyboard replyKeyboard) {
         try {
             return Optional.of(bot.execute(SendAnimation.builder()
                     .chatId(chatId.toString())
                     .caption(caption)
-                    .animation(new InputFile(animation))
+                    .animation(animation)
                     .replyMarkup(replyKeyboard)
                     .build()));
         } catch (TelegramApiException e) {
@@ -200,7 +192,7 @@ public class ResponseSender implements IResponseSender {
                     .messageId(messageId)
                     .text(text)
                     .replyMarkup(keyboard)
-                            .parseMode("html")
+                    .parseMode("html")
                     .build());
         } catch (TelegramApiException e) {
             log.debug("Не получилось отправить измененное сообщение: chatId{}, text={}", chatId, text, e);

@@ -2,6 +2,7 @@ package tgb.btc.rce.service.impl.calculator;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import tgb.btc.library.constants.enums.bot.CryptoCurrency;
 import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
@@ -22,18 +23,18 @@ public class InlineQueryCalculatorService extends SimpleCalculatorService {
     }
 
     @Override
-    public void addKeyboard(SendMessage sendMessage) {
-        Long currentDealPid = readUserService.getCurrentDealByChatId(Long.parseLong(sendMessage.getChatId()));
+    public ReplyKeyboard getKeyboard(Long chatId) {
+        Long currentDealPid = readUserService.getCurrentDealByChatId(chatId);
         FiatCurrency fiatCurrency = dealPropertyService.getFiatCurrencyByPid(currentDealPid);
         DealType dealType = dealPropertyService.getDealTypeByPid(currentDealPid);
         CryptoCurrency currency = dealPropertyService.getCryptoCurrencyByPid(currentDealPid);
-        sendMessage.setReplyMarkup(keyboardBuildService.buildInline(List.of(
+        return keyboardBuildService.buildInline(List.of(
                 InlineButton.builder()
                         .inlineType(InlineType.SWITCH_INLINE_QUERY_CURRENT_CHAT)
                         .text("Калькулятор")
                         .data(fiatCurrency.getCode() + "-" + dealType.getKey() + "-" + currency.getShortName() + " ")
                         .build(),
-                keyboardBuildService.getInlineBackButton()), 1));
+                keyboardBuildService.getInlineBackButton()), 1);
     }
 
     @Override
