@@ -38,7 +38,7 @@ public class MenuSender implements IMenuSender {
     public Optional<Message> send(Long chatId, String text, Menu menu) {
         return responseSender.sendMessage(
                 chatId, text,
-                menuService.build(menu, readUserService.getUserRoleByChatId(chatId)), "html"
+                menuService.build(menu, readUserService.getUserRoleByChatId(chatId))
         );
     }
 }

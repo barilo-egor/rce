@@ -22,7 +22,7 @@ public class ChatIdHandler implements ISlashCommandHandler {
                 Ваш chat id - <code>%s</code>.
                 Нажмите на chat id для копирования в буфер обмена.
                 """;
-        responseSender.sendMessage(chatId, chatIdMessage.formatted(chatId), "html");
+        responseSender.sendMessage(chatId, chatIdMessage.formatted(chatId));
     }
 
     @Override

@@ -2,7 +2,7 @@ package tgb.btc.rce.sender;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
-import org.apache.logging.log4j.util.Strings;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.AnswerInlineQuery;
@@ -39,71 +39,41 @@ public class ResponseSender implements IResponseSender {
 
     private final RceBot bot;
     private final IKeyboardBuildService keyboardBuildService;
+    private final String botToken;
 
-    public ResponseSender(RceBot bot, IKeyboardBuildService keyboardBuildService) {
+    public ResponseSender(RceBot bot, IKeyboardBuildService keyboardBuildService, @Value("${bot.token}") String botToken) {
         this.bot = bot;
         this.keyboardBuildService = keyboardBuildService;
+        this.botToken = botToken;
     }
 
-    private Message executeSendMessage(SendMessage sendMessage) {
-        try {
-            return bot.execute(sendMessage);
-        } catch (TelegramApiException e) {
-            log.warn("Не получилось отправить sendMessage: " + sendMessage, e);
-            return null;
-        }
-    }
-
+    @Override
     public Optional<Message> sendMessage(Long chatId, String text) {
-        return Optional.ofNullable(executeSendMessage(SendMessage.builder()
-                .chatId(chatId.toString())
-                .text(text)
-                .parseMode("html")
-                .build()));
+        return sendMessage(chatId, text, null, null);
     }
 
     @Override
     public Optional<Message> sendMessage(Long chatId, String text, Integer replyToMessageId) {
-        return sendMessage(chatId, text, null, null, replyToMessageId);
+        return sendMessage(chatId, text, null, replyToMessageId);
     }
 
-
-    public Optional<Message> sendMessageThrows(Long chatId, String text) throws TelegramApiException {
-        return Optional.ofNullable(executeSendMessageThrows(SendMessage.builder()
-                .chatId(chatId.toString())
-                .text(text)
-                .build()));
-    }
-
+    @Override
     public Optional<Message> sendMessage(Long chatId, String text, ReplyKeyboard replyKeyboard) {
         return sendMessage(chatId, text, replyKeyboard, null);
     }
 
-    public Optional<Message> sendMessage(Long chatId, String text, String parseMode) {
-        return sendMessage(chatId, text, null, parseMode);
-    }
-
-    public Optional<Message> sendMessage(Long chatId, String text, InlineButton... inlineButtons) {
-        return sendMessage(chatId, text, keyboardBuildService.buildInline(List.of(inlineButtons)));
-    }
-
     @Override
-    public Optional<Message> sendMessage(Long chatId, String text, String parseMode, InlineButton... inlineButtons) {
-        return sendMessage(chatId, text, keyboardBuildService.buildInline(List.of(inlineButtons)), parseMode);
+    public Optional<Message> sendMessage(Long chatId, String text, InlineButton... inlineButtons) {
+        return sendMessage(chatId, text, keyboardBuildService.buildInline(List.of(inlineButtons)), null);
     }
 
     @Override
     public Optional<Message> sendMessage(Long chatId, String text, List<InlineButton> buttons) {
-        return sendMessage(chatId, text, keyboardBuildService.buildInline(buttons));
+        return sendMessage(chatId, text, keyboardBuildService.buildInline(buttons), null);
     }
 
     @Override
-    public Optional<Message> sendMessage(Long chatId, String text, ReplyKeyboard replyKeyboard, String parseMode) {
-        return sendMessage(chatId, text, replyKeyboard, parseMode, null);
-    }
-
-    @Override
-    public Optional<Message> sendMessage(Long chatId, String text, ReplyKeyboard replyKeyboard, String parseMode, Integer replyToMessageId) {
+    public Optional<Message> sendMessage(Long chatId, String text, ReplyKeyboard replyKeyboard, Integer replyToMessageId) {
         SendMessage sendMessage = SendMessage.builder()
                 .chatId(chatId.toString())
                 .text(text)
@@ -111,70 +81,83 @@ public class ResponseSender implements IResponseSender {
                 .replyMarkup(replyKeyboard)
                 .parseMode("html")
                 .build();
-        if (Strings.isNotEmpty(parseMode)) sendMessage.setParseMode(parseMode);
         return Optional.ofNullable(executeSendMessage(sendMessage));
     }
 
-    private Message executeSendMessageThrows(SendMessage sendMessage) throws TelegramApiException {
-        return bot.execute(sendMessage);
-    }
-
-    public Optional<Message> sendPhoto(Long chatId, String caption, String photo) {
-        return sendPhoto(chatId, caption, photo, null);
-    }
-
-    public Optional<Message> sendPhoto(Long chatId, String caption, InputFile photo, ReplyKeyboard replyKeyboard) {
+    private Message executeSendMessage(SendMessage sendMessage) {
         try {
-            return Optional.of(bot.execute(SendPhoto.builder()
-                    .chatId(chatId.toString())
-                    .caption(caption)
-                    .photo(photo)
-                    .build()));
+            sendMessage.setParseMode("html");
+            return bot.execute(sendMessage);
         } catch (TelegramApiException e) {
-            log.debug("Не получилось отправить фото: chatId={}, caption={}, photo={}", chatId, caption, photo, e);
-            return Optional.empty();
+            return null;
         }
     }
 
+    @Override
+    public void sendMessageThrows(Long chatId, String text) throws TelegramApiException {
+        bot.execute(SendMessage.builder()
+                .chatId(chatId.toString())
+                .text(text)
+                .parseMode("html")
+                .build());
+    }
+
+    @Override
     public Optional<Message> sendPhoto(Long chatId, String caption, InputFile photo) {
         return sendPhoto(chatId, caption, photo, null);
     }
 
+    @Override
     public Optional<Message> sendPhoto(Long chatId, String caption, String photo, ReplyKeyboard replyKeyboard) {
         return sendPhoto(chatId, caption, new InputFile(photo), replyKeyboard);
     }
 
     @Override
-    public Message sendAnimation(Long chatId, File file) {
-        try {
-            return bot.execute(SendAnimation.builder()
-                    .chatId(chatId.toString())
-                    .animation(new InputFile(file))
-                    .build());
-        } catch (TelegramApiException e) {
-            log.debug("Не получилось отправить анимацию: chatId={}", chatId, e);
-            return null;
-        }
+    public Optional<Message> sendPhoto(Long chatId, String caption, String photo) {
+        return sendPhoto(chatId, caption, new InputFile(photo), null);
     }
 
-    public Optional<Message> sendAnimation(Long chatId, String caption, String animation, ReplyKeyboard replyKeyboard) {
-        return sendAnimation(chatId, caption, new InputFile(animation), replyKeyboard);
-    }
-
-    public Optional<Message> sendAnimation(Long chatId, String caption, InputFile animation, ReplyKeyboard replyKeyboard) {
+    @Override
+    public Optional<Message> sendPhoto(Long chatId, String caption, InputFile photo, ReplyKeyboard replyKeyboard) {
         try {
-            return Optional.of(bot.execute(SendAnimation.builder()
+            return Optional.ofNullable(bot.execute(SendPhoto.builder()
                     .chatId(chatId.toString())
                     .caption(caption)
-                    .animation(animation)
+                    .photo(photo)
                     .replyMarkup(replyKeyboard)
+                    .parseMode("html")
                     .build()));
         } catch (TelegramApiException e) {
-            log.debug("Не получилось отправить анимацию: chatId={}, caption={}, animation={}", chatId, caption, animation, e);
             return Optional.empty();
         }
     }
 
+    @Override
+    public Message sendAnimation(Long chatId, File file) {
+        return sendAnimation(chatId, new InputFile(file), null, null);
+    }
+
+    @Override
+    public void sendAnimation(Long chatId, String caption, String animation, ReplyKeyboard replyKeyboard) {
+        sendAnimation(chatId, new InputFile(animation), caption, replyKeyboard);
+    }
+
+    @Override
+    public Message sendAnimation(Long chatId, InputFile inputFile, String caption, ReplyKeyboard replyKeyboard) {
+        try {
+            return bot.execute(SendAnimation.builder()
+                    .chatId(chatId.toString())
+                    .animation(inputFile)
+                    .caption(caption)
+                    .replyMarkup(replyKeyboard)
+                    .parseMode("html")
+                    .build());
+        } catch (TelegramApiException e) {
+            return null;
+        }
+    }
+
+    @Override
     public void deleteMessage(Long chatId, Integer messageId) {
         try {
             bot.execute(DeleteMessage.builder()
@@ -185,23 +168,9 @@ public class ResponseSender implements IResponseSender {
         }
     }
 
-    public void sendEditedMessageText(Long chatId, Integer messageId, String text, InlineKeyboardMarkup keyboard) {
-        try {
-            bot.execute(EditMessageText.builder()
-                    .chatId(chatId.toString())
-                    .messageId(messageId)
-                    .text(text)
-                    .replyMarkup(keyboard)
-                    .parseMode("html")
-                    .build());
-        } catch (TelegramApiException e) {
-            log.debug("Не получилось отправить измененное сообщение: chatId{}, text={}", chatId, text, e);
-        }
-    }
-
     @Override
     public void sendEditedMessageText(Long chatId, Integer messageId, String text) {
-        sendEditedMessageText(chatId, messageId, text, (ReplyKeyboard) null);
+        sendEditedMessageText(chatId, messageId, text, (InlineKeyboardMarkup) null);
     }
 
     @Override
@@ -211,60 +180,57 @@ public class ResponseSender implements IResponseSender {
 
     @Override
     public void sendEditedMessageText(Long chatId, Integer messageId, String text, ReplyKeyboard replyKeyboard) {
+        sendEditedMessageText(chatId, messageId, text, (InlineKeyboardMarkup) replyKeyboard);
+    }
+
+    @Override
+    public void sendEditedMessageText(Long chatId, Integer messageId, String text, InlineKeyboardMarkup keyboard) {
         try {
             bot.execute(EditMessageText.builder()
                     .chatId(chatId.toString())
                     .messageId(messageId)
                     .text(text)
-                    .parseMode("HTML")
-                    .replyMarkup((InlineKeyboardMarkup) replyKeyboard)
+                    .replyMarkup(keyboard)
+                    .parseMode("html")
                     .build());
-        } catch (TelegramApiException e) {
-            log.debug("Не получилось отправить измененное сообщение: chatId{}, text={}", chatId, text, e);
-        }
-    }
-
-    @Override
-    public Message sendFile(Long chatId, File file) {
-        try {
-            return bot.execute(SendDocument.builder()
-                    .chatId(chatId.toString())
-                    .document(new InputFile(file))
-                    .build());
-        } catch (TelegramApiException e) {
-            log.debug("Не получилось отправить файл: chatId={}, fileName={}", chatId, file.getName(), e);
-            return null;
+        } catch (TelegramApiException ignored) {
         }
     }
 
     @Override
     public Message sendFile(Long chatId, String caption, String fileId) {
+        return sendFile(chatId, new InputFile(fileId), caption);
+    }
+
+    @Override
+    public Message sendFile(Long chatId, File file) {
+        return sendFile(chatId, new InputFile(file), null);
+    }
+
+    @Override
+    public Message sendFile(Long chatId, InputFile inputFile) {
+        return sendFile(chatId, inputFile, null);
+    }
+
+    @Override
+    public Message sendFile(Long chatId, InputFile inputFile, String caption) {
         try {
             return bot.execute(SendDocument.builder()
                     .chatId(chatId.toString())
+                    .document(inputFile)
                     .caption(caption)
-                    .document(new InputFile(fileId))
                     .build());
         } catch (TelegramApiException e) {
-            log.debug("Не получилось отправить файл: chatId={}, fileId={}", chatId, fileId, e);
             return null;
         }
     }
 
-    public Optional<org.telegram.telegrambots.meta.api.objects.File> execute(GetFile getFile) {
-        try {
-            return Optional.of(bot.execute(getFile));
-        } catch (TelegramApiException e) {
-            log.debug("Не получилось скачать файл:{}", getFile.toString());
-            return Optional.empty();
-        }
-    }
-
+    @Override
     public void downloadFile(Document document, String localFilePath) throws IOException {
         org.telegram.telegrambots.meta.api.objects.File file = getFilePath(document);
 
         java.io.File localFile = new java.io.File(localFilePath);
-        InputStream is = new URL(file.getFileUrl(bot.getBotToken())).openStream();
+        InputStream is = new URL(file.getFileUrl(botToken)).openStream();
         FileUtils.copyInputStreamToFile(is, localFile);
     }
 
@@ -273,6 +239,15 @@ public class ResponseSender implements IResponseSender {
         getFile.setFileId(document.getFileId());
         // TODO проверить optional
         return execute(getFile).get();
+    }
+
+    private Optional<org.telegram.telegrambots.meta.api.objects.File> execute(GetFile getFile) {
+        try {
+            return Optional.of(bot.execute(getFile));
+        } catch (TelegramApiException e) {
+            log.debug("Не получилось скачать файл:{}", getFile.toString());
+            return Optional.empty();
+        }
     }
 
     @Override
@@ -288,21 +263,9 @@ public class ResponseSender implements IResponseSender {
     }
 
     @Override
-    public void sendInputFile(Long chatId, InputFile inputFile) {
+    public void sendAnswerInlineQuery(String inlineQueryId, String title, String description, String messageText) {
         try {
-            bot.execute(SendDocument.builder()
-                    .chatId(chatId.toString())
-                    .document(inputFile)
-                    .build());
-        } catch (TelegramApiException e) {
-            log.debug("Не получилось отправить input file: chatId={}", chatId);
-        }
-    }
-
-    @Override
-    public boolean sendAnswerInlineQuery(String inlineQueryId, String title, String description, String messageText) {
-        try {
-            return bot.execute(AnswerInlineQuery.builder().inlineQueryId(inlineQueryId)
+            bot.execute(AnswerInlineQuery.builder().inlineQueryId(inlineQueryId)
                     .result(InlineQueryResultArticle.builder()
                             .id(inlineQueryId)
                             .title(title)
@@ -314,7 +277,6 @@ public class ResponseSender implements IResponseSender {
                     .build());
         } catch (TelegramApiException e) {
             log.trace("Не получилось отправить inlineQuery.");
-            return false;
         }
     }
 

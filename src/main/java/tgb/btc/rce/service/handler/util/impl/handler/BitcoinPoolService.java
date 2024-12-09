@@ -84,7 +84,7 @@ public class BitcoinPoolService implements IBitcoinPoolService {
                         .append(poolDeal.getId()).append("</code>").append("\n");
                 totalAmount = totalAmount.add(new BigDecimal(poolDeal.getAmount()));
             }
-            responseSender.sendMessage(chatId, botDeals.toString(), "html");
+            responseSender.sendMessage(chatId, botDeals.toString());
         }
         StringBuilder dealsInfo = new StringBuilder();
         String strTotalAmount = bigDecimalService.roundToPlainString(totalAmount, CryptoCurrency.BITCOIN.getScale());
@@ -105,6 +105,6 @@ public class BitcoinPoolService implements IBitcoinPoolService {
                                 .data(CallbackQueryData.INLINE_DELETE.name())
                                 .build()
                 ), 2);
-        responseSender.sendMessage(chatId, dealsInfo.toString(), replyKeyboard, "html");
+        responseSender.sendMessage(chatId, dealsInfo.toString(), replyKeyboard);
     }
 }

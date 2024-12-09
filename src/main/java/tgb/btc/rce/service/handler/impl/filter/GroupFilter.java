@@ -147,7 +147,7 @@ public class GroupFilter implements IUpdateFilter {
                         Чтобы отметить заявку обработанной, \
                         ответьте на сообщение бота с текстом "+". Текст будет заменен на следующий:
                         <blockquote>Заявка №{номер заявки}.
-                        Обработано.</blockquote>""", "html");
+                        Обработано.</blockquote>""");
         }
     }
 

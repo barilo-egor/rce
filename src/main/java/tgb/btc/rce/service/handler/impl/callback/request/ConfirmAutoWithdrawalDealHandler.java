@@ -99,7 +99,7 @@ public class ConfirmAutoWithdrawalDealHandler implements ICallbackQueryHandler {
         log.debug("Сделка {} была отправлена в группу автовывода сделок.", dealPid);
         responseSender.deleteMessage(chatId, callbackDataService.getIntArgument(callbackQuery.getData(), 2));
         responseSender.deleteMessage(chatId, callbackQuery.getMessage().getMessageId());
-        responseSender.sendMessage(chatId, "Транзакция сделки №{}", String.format(CryptoCurrency.BITCOIN.getHashUrl(), hash));
+        responseSender.sendMessage(chatId, "Транзакция сделки №" + dealPid + "\n" + String.format(CryptoCurrency.BITCOIN.getHashUrl(), hash));
     }
 
     @Override

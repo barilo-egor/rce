@@ -60,7 +60,7 @@ class MessageImageResponseSenderTest {
         ReplyKeyboard replyKeyboard = new ReplyKeyboardMarkup();
         MessageImage messageImage = MessageImage.BOT_OFF;
         messageImageResponseSender.sendMessage(messageImage, chatId, message, replyKeyboard);
-        verify(responseSender, times(1)).sendMessage(chatId, message, replyKeyboard, "html");
+        verify(responseSender, times(1)).sendMessage(chatId, message, replyKeyboard);
     }
 
     @Test
@@ -148,7 +148,7 @@ class MessageImageResponseSenderTest {
         MessageImage messageImage = MessageImage.BOT_OFF;
         when(messageImageService.getMessage(messageImage)).thenReturn(message);
         messageImageResponseSender.sendMessage(messageImage, chatId, replyKeyboard);
-        verify(responseSender, times(1)).sendMessage(chatId, message, replyKeyboard, "html");
+        verify(responseSender, times(1)).sendMessage(chatId, message, replyKeyboard);
     }
     @Test
     @DisplayName("Должен отправить изображение.")
@@ -159,7 +159,7 @@ class MessageImageResponseSenderTest {
         MessageImage messageImage = MessageImage.BOT_OFF;
         when(messageImageService.getMessage(messageImage)).thenReturn(message);
         messageImageResponseSender.sendMessage(messageImage, chatId);
-        verify(responseSender, times(1)).sendMessage(chatId, message, null, "html");
+        verify(responseSender, times(1)).sendMessage(chatId, message);
     }
 
     @Test
@@ -176,6 +176,6 @@ class MessageImageResponseSenderTest {
         when(readUserService.getUserRoleByChatId(chatId)).thenReturn(userRole);
         when(menuService.build(menu, userRole)).thenReturn(replyKeyboard);
         messageImageResponseSender.sendMessage(messageImage, menu, chatId);
-        verify(responseSender, times(1)).sendMessage(chatId, message, replyKeyboard, "html");
+        verify(responseSender, times(1)).sendMessage(chatId, message, replyKeyboard);
     }
 }

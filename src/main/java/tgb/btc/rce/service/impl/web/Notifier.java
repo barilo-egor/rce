@@ -189,7 +189,7 @@ public class Notifier implements INotifier {
         GroupChat groupChat = optionalGroupChat.get();
         String dealString = dealSupportService.dealToRequestString(dealPid);
         String result = "Запрос из <b>" + from + "</b> от <b>" + requestInitiator + "</b>.\n\n" + dealString;
-        responseSender.sendMessage(groupChat.getChatId(), result, "html");
+        responseSender.sendMessage(groupChat.getChatId(), result);
     }
 
     @Override
@@ -200,7 +200,7 @@ public class Notifier implements INotifier {
         GroupChat groupChat = optionalGroupChat.get();
         String dealString = dealSupportService.dealToRequestString(dealPid);
         String result = "Автовывод из <b>" + from + "</b> от <b>" + requestInitiator + "</b>.\n\n" + dealString;
-        responseSender.sendMessage(groupChat.getChatId(), result, "html");
+        responseSender.sendMessage(groupChat.getChatId(), result);
     }
 
     @Override
@@ -210,7 +210,7 @@ public class Notifier implements INotifier {
             throw new BaseException("Не найдена дефолтная чат-группа для отправки запроса на вывод апи сделки pid=" + apiDealPid);
         GroupChat groupChat = optionalGroupChat.get();
         String dealString = dealSupportService.apiDealToRequestString(apiDealPid);
-        responseSender.sendMessage(groupChat.getChatId(), dealString, "html");
+        responseSender.sendMessage(groupChat.getChatId(), dealString);
     }
 
     @Override
@@ -220,7 +220,7 @@ public class Notifier implements INotifier {
             throw new BaseException("Не найдена дефолтная чат-группа для отправки запроса на вывод сделки.");
         GroupChat groupChat = optionalGroupChat.get();
         responseSender.sendMessage(groupChat.getChatId(), "Данная группа была выбрана для отправки запросов на вывод." +
-                "Для того, чтобы узнать возможности бота, введите <code>/help</code>.", "html");
+                "Для того, чтобы узнать возможности бота, введите <code>/help</code>.");
     }
 
     @Override
@@ -230,7 +230,7 @@ public class Notifier implements INotifier {
             throw new BaseException("Не найдена дефолтная чат-группа для отправки автовыводов сделок.");
         GroupChat groupChat = optionalGroupChat.get();
         responseSender.sendMessage(groupChat.getChatId(), "Данная группа была выбрана для отправки автовыводов." +
-                "Для того, чтобы узнать возможности бота, введите <code>/help</code>.", "html");
+                "Для того, чтобы узнать возможности бота, введите <code>/help</code>.");
     }
 
     @Override
@@ -241,12 +241,12 @@ public class Notifier implements INotifier {
             throw new BaseException("Не найдена дефолтная чат-группа для отправки запроса на вывод апи сделки клиента pid=" + apiUserPid + ".");
         GroupChat groupChat = optionalGroupChat.get();
         responseSender.sendMessage(groupChat.getChatId(), "Данная группа была выбрана для отправки запросов на вывод API сделок клиента <b>" + apiUser.getId() +
-                "</b>. Для того, чтобы узнать возможности бота, введите <code>/help</code>.", "html");
+                "</b>. Для того, чтобы узнать возможности бота, введите <code>/help</code>.");
     }
 
     @Override
     public void sendGoodbyeToNewApiDealRequestGroup(Long chatId, String apiUserId) {
-        responseSender.sendMessage(chatId, "Данная группа была отвязана от API клиента <b>" + apiUserId + "</b>.", "html");
+        responseSender.sendMessage(chatId, "Данная группа была отвязана от API клиента <b>" + apiUserId + "</b>.");
     }
 
     @Override

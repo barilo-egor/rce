@@ -86,7 +86,7 @@ public abstract class SimpleCalculatorService implements ICalculatorTypeService 
                 dealPropertyService.getCryptoCurrencyByPid(
                         readUserService.getCurrentDealByChatId(chatId)));
         setState(chatId);
-        responseSender.sendMessage(chatId, text, getKeyboard(chatId), "html");
+        responseSender.sendMessage(chatId, text, getKeyboard(chatId));
     }
 
     public abstract ReplyKeyboard getKeyboard(Long chatId);

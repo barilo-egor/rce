@@ -71,7 +71,7 @@ public class ShowDealHandler implements ICallbackQueryHandler {
                 if (paymentReceipt.getReceiptFormat().equals(ReceiptFormat.PICTURE)) {
                     responseSender.sendPhoto(chatId, StringUtils.EMPTY, paymentReceipt.getReceipt());
                 } else if (paymentReceipt.getReceiptFormat().equals(ReceiptFormat.PDF)) {
-                    responseSender.sendInputFile(chatId, new InputFile(paymentReceipt.getReceipt()));
+                    responseSender.sendFile(chatId, new InputFile(paymentReceipt.getReceipt()));
                 }
             }
         }

@@ -54,13 +54,13 @@ public class NewDealsHandler implements ITextCommandHandler {
                 responseSender.sendMessage(chatId, dealSupportService.dealToString(dealPid),
                         dealSupportService.dealToStringButtons(dealPid));
                 List<PaymentReceipt> paymentReceipts = readDealService.getPaymentReceipts(dealPid);
-                if (paymentReceipts.size() > 0) {
+                if (!paymentReceipts.isEmpty()) {
                     List<InputMedia> inputMedia = new ArrayList<>();
                     for (PaymentReceipt paymentReceipt : paymentReceipts) {
                         if (paymentReceipt.getReceiptFormat().equals(ReceiptFormat.PICTURE)) {
                             responseSender.sendPhoto(chatId, StringUtils.EMPTY, paymentReceipt.getReceipt());
                         } else if (paymentReceipt.getReceiptFormat().equals(ReceiptFormat.PDF)) {
-                            responseSender.sendInputFile(chatId, new InputFile(paymentReceipt.getReceipt()));
+                            responseSender.sendFile(chatId, new InputFile(paymentReceipt.getReceipt()));
                         }
                     }
                     responseSender.sendMedia(chatId, inputMedia);

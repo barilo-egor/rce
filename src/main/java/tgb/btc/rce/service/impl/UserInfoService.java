@@ -88,12 +88,12 @@ public class UserInfoService implements IUserInfoService {
 
     @Override
     public void sendUserInformation(Long messageChatId, Long userChatId) {
-        responseSender.sendMessage(messageChatId, getUserInformation(userChatId), null, "HTML");
+        responseSender.sendMessage(messageChatId, getUserInformation(userChatId));
     }
 
     @Override
     public void sendUserInformation(Long messageChatId, Long userChatId, ReplyKeyboard replyKeyboard) {
-        responseSender.sendMessage(messageChatId, getUserInformation(userChatId), replyKeyboard, "HTML");
+        responseSender.sendMessage(messageChatId, getUserInformation(userChatId), replyKeyboard);
     }
 
     private String getUserInformation(Long chatId) {

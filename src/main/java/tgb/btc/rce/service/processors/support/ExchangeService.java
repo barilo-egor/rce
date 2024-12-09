@@ -549,7 +549,7 @@ public class ExchangeService {
                 promoCodeDiscount) + "% от комиссии"
                 + "\n\n"
                 + "✅ <b>Использовать промокод</b> как скидку?";
-        responseSender.sendMessage(chatId, message, keyboardService.getPromoCode(sumWithDiscount, dealAmount), "HTML");
+        responseSender.sendMessage(chatId, message, keyboardService.getPromoCode(sumWithDiscount, dealAmount));
     }
 
     public void processPromoCode(Update update) {
@@ -758,7 +758,7 @@ public class ExchangeService {
         modifyDealService.save(deal);
 
         Optional<Message> optionalMessage = responseSender.sendMessage(chatId, message,
-                keyboardService.getBuildDeal(), "HTML");
+                keyboardService.getBuildDeal());
         if (DealType.isBuy(dealType)) {
             DealDeleteScheduler.addNewCryptoDeal(deal.getPid(),
                     optionalMessage.map(
@@ -873,7 +873,7 @@ public class ExchangeService {
                     + " бел.рублей) на реферальном балансе. Использовать их в качестве скидки?";
         }
         responseSender.sendMessage(chatId, message,
-                keyboardService.getUseReferralDiscount(sumWithDiscount, dealAmount), "HTML");
+                keyboardService.getUseReferralDiscount(sumWithDiscount, dealAmount));
     }
 
     public boolean processReferralDiscount(Update update) {

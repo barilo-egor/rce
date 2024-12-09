@@ -35,7 +35,7 @@ public class MessageImageResponseSender implements IMessageImageResponseSender {
         if (StringUtils.isNotBlank(fileId)) {
             responseSender.sendPhoto(chatId, message, fileId, replyKeyboard);
         } else {
-            responseSender.sendMessage(chatId, message, replyKeyboard, "html");
+            responseSender.sendMessage(chatId, message, replyKeyboard);
         }
     }
 
@@ -58,7 +58,7 @@ public class MessageImageResponseSender implements IMessageImageResponseSender {
                 throw new BaseException("Для формата " + format + " не предусмотрена реализация отправки изображения.");
             }
         } else {
-            responseSender.sendMessage(chatId, message, replyKeyboard, "html");
+            responseSender.sendMessage(chatId, message, replyKeyboard);
         }
     }
 
