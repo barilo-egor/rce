@@ -159,7 +159,7 @@ class MessageImageResponseSenderTest {
         MessageImage messageImage = MessageImage.BOT_OFF;
         when(messageImageService.getMessage(messageImage)).thenReturn(message);
         messageImageResponseSender.sendMessage(messageImage, chatId);
-        verify(responseSender, times(1)).sendMessage(chatId, message);
+        verify(responseSender, times(1)).sendMessage(chatId, message, (ReplyKeyboard) null);
     }
 
     @Test
