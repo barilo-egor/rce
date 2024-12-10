@@ -6,11 +6,17 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
+import org.telegram.telegrambots.meta.api.methods.AnswerInlineQuery;
 import org.telegram.telegrambots.meta.api.methods.send.SendAnimation;
+import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
-import org.telegram.telegrambots.meta.api.objects.InputFile;
+import org.telegram.telegrambots.meta.api.objects.*;
+import org.telegram.telegrambots.meta.api.objects.inlinequery.inputmessagecontent.InputTextMessageContent;
+import org.telegram.telegrambots.meta.api.objects.inlinequery.result.InlineQueryResultArticle;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
@@ -19,6 +25,7 @@ import tgb.btc.rce.service.impl.keyboard.KeyboardBuildService;
 import tgb.btc.rce.vo.InlineButton;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -408,6 +415,21 @@ class ResponseSenderTest {
     }
 
     @Test
+    protected void deleteMessage() throws TelegramApiException {
+        String chatId = "123456789";
+        Integer messageId = 54500;
+        responseSender.deleteMessage(Long.valueOf(chatId), messageId);
+        ArgumentCaptor<DeleteMessage> argumentCaptor = ArgumentCaptor.forClass(DeleteMessage.class);
+        verify(bot, times(1)).execute(argumentCaptor.capture());
+        DeleteMessage value = argumentCaptor.getValue();
+        assertAll(
+                () -> assertEquals(chatId, value.getChatId()),
+                () -> assertEquals(messageId, value.getMessageId()),
+                () -> assertEquals("deleteMessage", value.getMethod())
+        );
+    }
+
+    @Test
     protected void sendEditedMessageText() throws TelegramApiException {
         String chatId = "12345678";
         Integer messageId = 54500;
@@ -505,6 +527,200 @@ class ResponseSenderTest {
                 () -> assertNull(value.getDisableWebPagePreview()),
                 () -> assertNull(value.getInlineMessageId()),
                 () -> assertEquals("editmessagetext", value.getMethod())
+        );
+    }
+
+    @Test
+    protected void sendFileWithCaptionByFileId() throws TelegramApiException {
+        String chatId = "12345678";
+        String caption = "message text";
+        String fileId = "CgACAgIAAxkDAAIS42c7KceBwAUkHv6iuwABcJqHcm4nkgACXWUAAp882UlT-gJmcdZcGTYE";
+
+        responseSender.sendFile(Long.valueOf(chatId), caption, fileId);
+        ArgumentCaptor<SendDocument> argumentCaptor = ArgumentCaptor.forClass(SendDocument.class);
+        verify(bot).execute(argumentCaptor.capture());
+
+        SendDocument value = argumentCaptor.getValue();
+        assertAll(
+                () -> assertEquals(chatId, value.getChatId()),
+                () -> assertEquals(caption, value.getCaption()),
+                () -> assertEquals("html", value.getParseMode()),
+                () -> assertEquals("senddocument", value.getMethod()),
+                () -> assertEquals(new InputFile(fileId), value.getDocument()),
+                () -> assertNull(value.getReplyMarkup()),
+                () -> assertNull(value.getThumbnail()),
+                () -> assertEquals(new ArrayList<>(), value.getCaptionEntities()),
+                () -> assertNull(value.getAllowSendingWithoutReply()),
+                () -> assertNull(value.getDisableNotification()),
+                () -> assertNull(value.getDisableContentTypeDetection()),
+                () -> assertEquals(new InputFile(fileId), value.getFile()),
+                () -> assertEquals("document", value.getFileField()),
+                () -> assertNull(value.getMessageThreadId()),
+                () -> assertNull(value.getReplyToMessageId())
+        );
+    }
+
+    @Test
+    protected void sendFile() throws TelegramApiException {
+        String chatId = "12345678";
+        File file = new File("file");
+
+        responseSender.sendFile(Long.valueOf(chatId), file);
+        ArgumentCaptor<SendDocument> argumentCaptor = ArgumentCaptor.forClass(SendDocument.class);
+        verify(bot).execute(argumentCaptor.capture());
+
+        SendDocument value = argumentCaptor.getValue();
+        assertAll(
+                () -> assertEquals(chatId, value.getChatId()),
+                () -> assertNull(value.getCaption()),
+                () -> assertEquals("html", value.getParseMode()),
+                () -> assertEquals("senddocument", value.getMethod()),
+                () -> assertEquals(new InputFile(file), value.getDocument()),
+                () -> assertNull(value.getReplyMarkup()),
+                () -> assertNull(value.getThumbnail()),
+                () -> assertEquals(new ArrayList<>(), value.getCaptionEntities()),
+                () -> assertNull(value.getAllowSendingWithoutReply()),
+                () -> assertNull(value.getDisableNotification()),
+                () -> assertNull(value.getDisableContentTypeDetection()),
+                () -> assertEquals(new InputFile(file), value.getFile()),
+                () -> assertEquals("document", value.getFileField()),
+                () -> assertNull(value.getMessageThreadId()),
+                () -> assertNull(value.getReplyToMessageId())
+        );
+    }
+
+    @Test
+    protected void sendFileInputFile() throws TelegramApiException {
+        String chatId = "12345678";
+        InputFile inputFile = new InputFile("file");
+
+        responseSender.sendFile(Long.valueOf(chatId), inputFile);
+        ArgumentCaptor<SendDocument> argumentCaptor = ArgumentCaptor.forClass(SendDocument.class);
+        verify(bot).execute(argumentCaptor.capture());
+
+        SendDocument value = argumentCaptor.getValue();
+        assertAll(
+                () -> assertEquals(chatId, value.getChatId()),
+                () -> assertNull(value.getCaption()),
+                () -> assertEquals("html", value.getParseMode()),
+                () -> assertEquals("senddocument", value.getMethod()),
+                () -> assertEquals(inputFile, value.getDocument()),
+                () -> assertNull(value.getReplyMarkup()),
+                () -> assertNull(value.getThumbnail()),
+                () -> assertEquals(new ArrayList<>(), value.getCaptionEntities()),
+                () -> assertNull(value.getAllowSendingWithoutReply()),
+                () -> assertNull(value.getDisableNotification()),
+                () -> assertNull(value.getDisableContentTypeDetection()),
+                () -> assertEquals(inputFile, value.getFile()),
+                () -> assertEquals("document", value.getFileField()),
+                () -> assertNull(value.getMessageThreadId()),
+                () -> assertNull(value.getReplyToMessageId())
+        );
+    }
+
+    @Test
+    protected void sendFileInputFileAndCaption() throws TelegramApiException {
+        String chatId = "12345678";
+        InputFile inputFile = new InputFile("file");
+        String caption = "caption";
+
+        responseSender.sendFile(Long.valueOf(chatId), inputFile, caption);
+        ArgumentCaptor<SendDocument> argumentCaptor = ArgumentCaptor.forClass(SendDocument.class);
+        verify(bot).execute(argumentCaptor.capture());
+
+        SendDocument value = argumentCaptor.getValue();
+        assertAll(
+                () -> assertEquals(chatId, value.getChatId()),
+                () -> assertEquals(caption, value.getCaption()),
+                () -> assertEquals("html", value.getParseMode()),
+                () -> assertEquals("senddocument", value.getMethod()),
+                () -> assertEquals(inputFile, value.getDocument()),
+                () -> assertNull(value.getReplyMarkup()),
+                () -> assertNull(value.getThumbnail()),
+                () -> assertEquals(new ArrayList<>(), value.getCaptionEntities()),
+                () -> assertNull(value.getAllowSendingWithoutReply()),
+                () -> assertNull(value.getDisableNotification()),
+                () -> assertNull(value.getDisableContentTypeDetection()),
+                () -> assertEquals(inputFile, value.getFile()),
+                () -> assertEquals("document", value.getFileField()),
+                () -> assertNull(value.getMessageThreadId()),
+                () -> assertNull(value.getReplyToMessageId())
+        );
+    }
+
+    @Test
+    protected void sendFileReturnNullIfTelegramApiException() throws TelegramApiException {
+        when(bot.execute((SendDocument) any())).thenThrow(TelegramApiException.class);
+        assertNull(responseSender.sendFile(123456789L, new InputFile("animation"), "caption"));
+    }
+
+    @Test
+    protected void sendAnswerInlineQuery() throws TelegramApiException {
+        String inlineQueryId = "12356";
+        String title = "title";
+        String description = "description";
+        String messageText = "messageText";
+
+        responseSender.sendAnswerInlineQuery(inlineQueryId, title, description, messageText);
+        ArgumentCaptor<AnswerInlineQuery> argumentCaptor = ArgumentCaptor.forClass(AnswerInlineQuery.class);
+        verify(bot).execute(argumentCaptor.capture());
+
+        AnswerInlineQuery value = argumentCaptor.getValue();
+        assertAll(
+                () -> assertEquals(inlineQueryId, value.getInlineQueryId()),
+                () -> assertEquals(title, ((InlineQueryResultArticle) value.getResults().get(0)).getTitle()),
+                () -> assertEquals(description, ((InlineQueryResultArticle) value.getResults().get(0)).getDescription()),
+                () -> assertEquals(messageText, ((InputTextMessageContent) ((InlineQueryResultArticle) value.getResults().get(0)).getInputMessageContent()).getMessageText())
+        );
+    }
+
+    @Test
+    protected void deleteCallbackMessageIfExistsShouldSkipWithoutCallback() throws TelegramApiException {
+        Update update = new Update();
+        responseSender.deleteCallbackMessageIfExists(update);
+        verify(bot, times(0)).execute((DeleteMessage) any());
+    }
+
+    @Test
+    protected void deleteCallbackMessage() throws TelegramApiException {
+        Update update = new Update();
+        CallbackQuery callbackQuery = new CallbackQuery();
+        Message message = new Message();
+        Integer messageId = 12345;
+        message.setMessageId(messageId);
+        callbackQuery.setMessage(message);
+        User user = new User();
+        Long chatId = 123456789L;
+        user.setId(chatId);
+        callbackQuery.setFrom(user);
+        update.setCallbackQuery(callbackQuery);
+        responseSender.deleteCallbackMessageIfExists(update);
+        ArgumentCaptor<DeleteMessage> argumentCaptor = ArgumentCaptor.forClass(DeleteMessage.class);
+        verify(bot, times(1)).execute(argumentCaptor.capture());
+        DeleteMessage value = argumentCaptor.getValue();
+        assertAll(
+                () -> assertEquals(chatId.toString(), value.getChatId()),
+                () -> assertEquals(messageId, value.getMessageId()),
+                () -> assertEquals("deleteMessage", value.getMethod())
+        );
+    }
+
+
+    @Test
+    protected void sendAnswerCallbackQuery() throws TelegramApiException {
+        String callbackQueryId = "12356";
+        String text = "text message";
+        boolean showAlert = true;
+        responseSender.sendAnswerCallbackQuery(callbackQueryId, text, showAlert);
+        ArgumentCaptor<AnswerCallbackQuery> argumentCaptor = ArgumentCaptor.forClass(AnswerCallbackQuery.class);
+        verify(bot, times(1)).execute(argumentCaptor.capture());
+        AnswerCallbackQuery value = argumentCaptor.getValue();
+        assertAll(
+                () -> assertEquals(callbackQueryId, value.getCallbackQueryId()),
+                () -> assertEquals(text, value.getText()),
+                () -> assertEquals(showAlert, value.getShowAlert()),
+                () -> assertNull(value.getCacheTime()),
+                () -> assertEquals("answercallbackquery", value.getMethod())
         );
     }
 }

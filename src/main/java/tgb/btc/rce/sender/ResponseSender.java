@@ -7,7 +7,10 @@ import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.AnswerInlineQuery;
 import org.telegram.telegrambots.meta.api.methods.GetFile;
-import org.telegram.telegrambots.meta.api.methods.send.*;
+import org.telegram.telegrambots.meta.api.methods.send.SendAnimation;
+import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.Document;
@@ -16,10 +19,10 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.inlinequery.inputmessagecontent.InputTextMessageContent;
 import org.telegram.telegrambots.meta.api.objects.inlinequery.result.InlineQueryResultArticle;
-import org.telegram.telegrambots.meta.api.objects.media.InputMedia;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import tgb.btc.library.exception.BaseException;
 import tgb.btc.rce.bot.RceBot;
 import tgb.btc.rce.enums.update.UpdateType;
 import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
@@ -30,7 +33,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -219,6 +221,7 @@ public class ResponseSender implements IResponseSender {
                     .chatId(chatId.toString())
                     .document(inputFile)
                     .caption(caption)
+                    .parseMode("html")
                     .build());
         } catch (TelegramApiException e) {
             return null;
@@ -228,7 +231,6 @@ public class ResponseSender implements IResponseSender {
     @Override
     public void downloadFile(Document document, String localFilePath) throws IOException {
         org.telegram.telegrambots.meta.api.objects.File file = getFilePath(document);
-
         java.io.File localFile = new java.io.File(localFilePath);
         InputStream is = new URL(file.getFileUrl(botToken)).openStream();
         FileUtils.copyInputStreamToFile(is, localFile);
@@ -237,28 +239,14 @@ public class ResponseSender implements IResponseSender {
     private org.telegram.telegrambots.meta.api.objects.File getFilePath(Document document) {
         GetFile getFile = new GetFile();
         getFile.setFileId(document.getFileId());
-        // TODO проверить optional
-        return execute(getFile).get();
+        return execute(getFile);
     }
 
-    private Optional<org.telegram.telegrambots.meta.api.objects.File> execute(GetFile getFile) {
+    private org.telegram.telegrambots.meta.api.objects.File execute(GetFile getFile) {
         try {
-            return Optional.of(bot.execute(getFile));
+            return bot.execute(getFile);
         } catch (TelegramApiException e) {
-            log.debug("Не получилось скачать файл:{}", getFile.toString());
-            return Optional.empty();
-        }
-    }
-
-    @Override
-    public void sendMedia(Long chatId, List<InputMedia> media) {
-        try {
-            bot.execute(SendMediaGroup.builder()
-                    .chatId(chatId.toString())
-                    .medias(media)
-                    .build());
-        } catch (TelegramApiException e) {
-            log.debug("Не получилось отправить медиа: chatId={}, media.size()={}", chatId, media.size());
+            throw new BaseException("Не получилось сказать файл: " + getFile, e);
         }
     }
 
@@ -275,15 +263,14 @@ public class ResponseSender implements IResponseSender {
                             .description(description)
                             .build())
                     .build());
-        } catch (TelegramApiException e) {
-            log.trace("Не получилось отправить inlineQuery.");
+        } catch (TelegramApiException ignored) {
         }
     }
 
     @Override
     public void deleteCallbackMessageIfExists(Update update) {
         Long chatId = UpdateType.getChatId(update);
-        if (update.hasCallbackQuery() && Objects.nonNull(chatId))
+        if (update.hasCallbackQuery())
             deleteMessage(chatId, update.getCallbackQuery().getMessage().getMessageId());
     }
 
@@ -295,9 +282,7 @@ public class ResponseSender implements IResponseSender {
                     .text(text)
                     .showAlert(showAlert)
                     .build());
-        } catch (TelegramApiException e) {
-            log.error("Не получилось отправить answerCallbackQuery. text={}", text);
-            log.error("Ошибка отправки answerCallbackQuery", e);
+        } catch (TelegramApiException ignored) {
         }
     }
 

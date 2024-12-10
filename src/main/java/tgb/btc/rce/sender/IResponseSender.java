@@ -65,8 +65,6 @@ public interface IResponseSender {
 
     void downloadFile(Document document, String localFilePath) throws IOException;
 
-    void sendMedia(Long chatId, List<InputMedia> media);
-
     void sendAnswerInlineQuery(String inlineQueryId, String title, String description, String messageText);
 
     void deleteCallbackMessageIfExists(Update update);
