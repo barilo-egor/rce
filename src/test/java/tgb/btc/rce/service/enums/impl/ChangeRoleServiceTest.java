@@ -97,8 +97,8 @@ class ChangeRoleServiceTest {
     }
 
     @Test
-    @DisplayName("Должен сменить роль.")
-    protected void changeRole() {
+    @DisplayName("Должен сменить роль на администратор.")
+    protected void changeRoleToAdmin() {
         Message message = new Message();
         Long userChatId = 123L;
         message.setText("/makeadmin " + userChatId);
@@ -113,6 +113,26 @@ class ChangeRoleServiceTest {
         verify(modifyUserService, times(1)).updateUserRoleByChatId(UserRole.ADMIN, userChatId);
         verify(responseSender, times(1)).sendMessage(chatId, "Пользователю " + userChatId + " сменена роль на \"Администратор\".");
         verify(responseSender, times(1)).sendMessage(userChatId, "Вы были переведены в роль \"Администратор\".");
+        verify(startService, times(1)).process(userChatId);
+    }
+
+    @Test
+    @DisplayName("Должен сменить роль на администратор.")
+    protected void changeRoleToUser() {
+        Message message = new Message();
+        Long userChatId = 123L;
+        message.setText("/makeuser " + userChatId);
+        Chat chat = new Chat();
+        Long chatId = 12345678L;
+        chat.setId(chatId);
+        message.setChat(chat);
+        UserRole userRole = UserRole.USER;
+        when(readUserService.existsByChatId(userChatId)).thenReturn(true);
+        when(readUserService.getUserRoleByChatId(userChatId)).thenReturn(UserRole.ADMIN);
+        changeRoleService.changeRole(message, userRole);
+        verify(modifyUserService, times(1)).updateUserRoleByChatId(UserRole.USER, userChatId);
+        verify(responseSender, times(1)).sendMessage(chatId, "Пользователю " + userChatId + " сменена роль на \"Пользователь\".");
+        verify(responseSender, times(1)).sendMessage(userChatId, "Вы были переведены в роль \"Пользователь\".");
         verify(startService, times(1)).process(userChatId);
     }
 }
