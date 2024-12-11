@@ -63,9 +63,7 @@ public class NewDealsHandler implements ITextCommandHandler {
                 }
             });
         } else {
-            activeDeals.forEach(dealPid -> {
-                responseSender.sendMessage(chatId, dealSupportService.dealToString(dealPid));
-            });
+            activeDeals.forEach(dealPid -> responseSender.sendMessage(chatId, dealSupportService.dealToString(dealPid)));
         }
     }
 

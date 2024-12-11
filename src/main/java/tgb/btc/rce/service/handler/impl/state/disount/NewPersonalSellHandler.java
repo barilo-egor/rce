@@ -9,6 +9,7 @@ import tgb.btc.library.interfaces.service.bean.bot.IUserDiscountService;
 import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.library.interfaces.util.IBigDecimalService;
 import tgb.btc.library.service.process.PersonalDiscountsCache;
+import tgb.btc.rce.enums.BotSystemMessage;
 import tgb.btc.rce.enums.UserState;
 import tgb.btc.rce.enums.update.TextCommand;
 import tgb.btc.rce.enums.update.UpdateType;
@@ -69,12 +70,12 @@ public class NewPersonalSellHandler implements IStateHandler {
             adminPanelService.send(chatId);
             return;
         }
-        String enteredValue = text.replaceAll(",", ".");
+        String enteredValue = text.replace(",", ".");
         BigDecimal newPersonalSell;
         try {
             newPersonalSell = BigDecimal.valueOf(Double.parseDouble(enteredValue));
         } catch (NumberFormatException e) {
-            responseSender.sendMessage(chatId, "Введите валидное значение.");
+            responseSender.sendMessage(chatId, BotSystemMessage.ENTER_VALID_INPUT.getText());
             return;
         }
         Long userChatId = Long.parseLong(redisStringService.get(chatId));

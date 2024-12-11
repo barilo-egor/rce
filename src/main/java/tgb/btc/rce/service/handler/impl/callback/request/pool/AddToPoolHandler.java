@@ -63,15 +63,14 @@ public class AddToPoolHandler implements ICallbackQueryHandler {
                     .bot(botUsername)
                     .amount(bigDecimalService.roundToPlainString(deal.getCryptoAmount(), deal.getCryptoCurrency().getScale()))
                     .build());
+            modifyDealService.updateDealStatusByPid(DealStatus.AWAITING_WITHDRAWAL, dealPid);
+            log.debug("Пользователь chatId={} добавил сделку {} в пул.", chatId, dealPid);
+            responseSender.deleteMessage(chatId, callbackQuery.getMessage().getMessageId());
         }  catch (ApiResponseErrorException e) {
             responseSender.sendMessage(chatId, e.getMessage());
-            return;
         } finally {
             addMessage.ifPresent(message -> responseSender.deleteMessage(chatId, message.getMessageId()));
         }
-        modifyDealService.updateDealStatusByPid(DealStatus.AWAITING_WITHDRAWAL, dealPid);
-        log.debug("Пользователь chatId={} добавил сделку {} в пул.", chatId, dealPid);
-        responseSender.deleteMessage(chatId, callbackQuery.getMessage().getMessageId());
     }
 
     @Override

@@ -37,12 +37,12 @@ class KeyboardBuildServiceTest {
     @Test
     void buildReplyButtonsLessThanColumns() {
         for (int i = 0; i < 3; i++) {
-            int randomButtonsSize = RandomUtils.nextInt(1, 10);
-            int randomColumnsSize = RandomUtils.nextInt(11, 99);
+            int randomButtonsSize = RandomUtils.secure().randomInt(1, 10);
+            int randomColumnsSize = RandomUtils.secure().randomInt(11, 99);
             List<ReplyButton> replyButtons = new ArrayList<>();
             for (int j = 0; j < randomButtonsSize; j++) {
                 replyButtons.add(ReplyButton.builder()
-                        .text(RandomStringUtils.random(5))
+                        .text(RandomStringUtils.secure().nextAlphanumeric(5))
                         .build());
             }
             ReplyKeyboardMarkup keyboardMarkup = keyboardBuildService.buildReply(randomColumnsSize, false, false, replyButtons);
@@ -54,8 +54,8 @@ class KeyboardBuildServiceTest {
     @Test
     void buildReplyButtonsMoreThanColumns() {
         for (int i = 0; i < 3; i++) {
-            int randomButtonsSize = RandomUtils.nextInt(11, 99);
-            int randomColumnsSize = RandomUtils.nextInt(1, 9);
+            int randomButtonsSize = RandomUtils.secure().randomInt(11, 99);
+            int randomColumnsSize = RandomUtils.secure().randomInt(1, 9);
             List<ReplyButton> replyButtons = new ArrayList<>();
             for (int j = 0; j < randomButtonsSize; j++) {
                 replyButtons.add(ReplyButton.builder()

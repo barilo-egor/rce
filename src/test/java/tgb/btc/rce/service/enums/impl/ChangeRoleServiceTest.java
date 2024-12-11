@@ -36,7 +36,7 @@ class ChangeRoleServiceTest {
 
     @Test
     @DisplayName("Должен запросить ввод chat id.")
-    protected void changeRoleNoChatId() {
+    void changeRoleNoChatId() {
         Message message = new Message();
         message.setText("/makeadmin");
         Chat chat = new Chat();
@@ -46,14 +46,14 @@ class ChangeRoleServiceTest {
         UserRole userRole = UserRole.ADMIN;
         changeRoleService.changeRole(message, userRole);
         verify(responseSender, times(1)).sendMessage(chatId, """
-                    Введите chatId пользователя после команды. Пример:
-                    /makeuser 12345678
-                    """);
+                Введите chatId пользователя после команды. Пример:
+                /makeuser 12345678
+                """);
     }
 
     @Test
     @DisplayName("Должен сообщить о неверном формате chat id.")
-    protected void changeRoleWrongFormatChatId() {
+    void changeRoleWrongFormatChatId() {
         Message message = new Message();
         message.setText("/makeadmin qwe");
         Chat chat = new Chat();
@@ -67,7 +67,7 @@ class ChangeRoleServiceTest {
 
     @Test
     @DisplayName("Должен сообщить о том, что пользователь не найден.")
-    protected void changeRoleNoUser() {
+    void changeRoleNoUser() {
         Message message = new Message();
         message.setText("/makeadmin 123");
         Chat chat = new Chat();
@@ -82,7 +82,7 @@ class ChangeRoleServiceTest {
 
     @Test
     @DisplayName("Должен сообщить о том, что пользователь уже находится в этой роли.")
-    protected void changeRoleToSame() {
+    void changeRoleToSame() {
         Message message = new Message();
         message.setText("/makeadmin 123");
         Chat chat = new Chat();
@@ -98,7 +98,7 @@ class ChangeRoleServiceTest {
 
     @Test
     @DisplayName("Должен сменить роль на администратор.")
-    protected void changeRoleToAdmin() {
+    void changeRoleToAdmin() {
         Message message = new Message();
         Long userChatId = 123L;
         message.setText("/makeadmin " + userChatId);
@@ -118,7 +118,7 @@ class ChangeRoleServiceTest {
 
     @Test
     @DisplayName("Должен сменить роль на администратор.")
-    protected void changeRoleToUser() {
+    void changeRoleToUser() {
         Message message = new Message();
         Long userChatId = 123L;
         message.setText("/makeuser " + userChatId);

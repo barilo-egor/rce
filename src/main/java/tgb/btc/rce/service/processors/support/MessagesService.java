@@ -67,10 +67,8 @@ public class MessagesService {
                     try {
                         responseSender.sendMessageThrows(userChatId, text);
                     } catch (TelegramApiException e) {
-                        if (e instanceof TelegramApiRequestException exception) {
-                            if (exception.getApiResponse().contains("bot was blocked by the user")) {
-                                modifyUserService.updateIsActiveByChatId(false, userChatId);
-                            }
+                        if (e instanceof TelegramApiRequestException exception && exception.getApiResponse().contains("bot was blocked by the user")) {
+                            modifyUserService.updateIsActiveByChatId(false, userChatId);
                         }
                     }
                 });

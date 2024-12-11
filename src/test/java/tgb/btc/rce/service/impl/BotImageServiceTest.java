@@ -36,8 +36,13 @@ class BotImageServiceTest {
     }
 
     @Test
-    void getImageIdThrows() {
-        assertThrows(BaseException.class, () -> botImageService.getImageId(new ArrayList<>()));
+    void getImageIdThrowsWithEmptyList() {
+        List<PhotoSize> photoSizeList = new ArrayList<>();
+        assertThrows(BaseException.class, () -> botImageService.getImageId(photoSizeList));
+    }
+
+    @Test
+    void getImageIdThrowsWithNull() {
         assertThrows(BaseException.class, () -> botImageService.getImageId(null));
     }
 

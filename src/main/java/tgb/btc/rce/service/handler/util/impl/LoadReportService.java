@@ -24,6 +24,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.nio.file.Files;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
@@ -67,11 +68,10 @@ public class LoadReportService implements ILoadReportService {
             outputStream.close();
             File file = new File(fileName);
             responseSender.sendFile(chatId, file);
-            log.debug("Админ " + chatId + " выгрузил отчет по сделкам");
-            if (file.delete()) log.trace("Файл успешно удален.");
-            else log.trace("Файл не удален.");
+            log.debug("Админ {} выгрузил отчет по сделкам", chatId);
+            Files.delete(file.toPath());
         } catch (IOException t) {
-            log.error("Ошибка при выгрузке файла. " + this.getClass().getSimpleName(), t);
+            log.error("Ошибка при выгрузке файла. {}", this.getClass().getSimpleName(), t);
             throw new BaseException();
         }
     }
@@ -83,17 +83,17 @@ public class LoadReportService implements ILoadReportService {
         fillDealHeadCell(headCell, headRow);
 
         int i = 2;
-        Map<CryptoCurrency, BigDecimal> totalBuyCryptoAmountMap = new HashMap<>();
+        Map<CryptoCurrency, BigDecimal> totalBuyCryptoAmountMap = new EnumMap<>(CryptoCurrency.class);
         Arrays.stream(CryptoCurrency.values())
                 .forEach(cryptoCurrency -> totalBuyCryptoAmountMap.put(cryptoCurrency, BigDecimal.ZERO));
-        Map<CryptoCurrency, BigDecimal> totalSellCryptoAmountMap = new HashMap<>();
+        Map<CryptoCurrency, BigDecimal> totalSellCryptoAmountMap = new EnumMap<>(CryptoCurrency.class);
         Arrays.stream(CryptoCurrency.values())
                 .forEach(cryptoCurrency -> totalSellCryptoAmountMap.put(cryptoCurrency, BigDecimal.ZERO));
 
-        Map<FiatCurrency, BigDecimal> totalBuyFiatAmountMap = new HashMap<>();
+        Map<FiatCurrency, BigDecimal> totalBuyFiatAmountMap = new EnumMap<>(FiatCurrency.class);
         Arrays.stream(FiatCurrency.values())
                 .forEach(fiatCurrency -> totalBuyFiatAmountMap.put(fiatCurrency, BigDecimal.ZERO));
-        Map<FiatCurrency, BigDecimal> totalSellFiatAmountMap = new HashMap<>();
+        Map<FiatCurrency, BigDecimal> totalSellFiatAmountMap = new EnumMap<>(FiatCurrency.class);
         Arrays.stream(FiatCurrency.values())
                 .forEach(fiatCurrency -> totalSellFiatAmountMap.put(fiatCurrency, BigDecimal.ZERO));
         for (Deal deal : deals) {
@@ -160,17 +160,17 @@ public class LoadReportService implements ILoadReportService {
         Cell headCell = headRow.createCell(0);
         fillApiDealHeadCell(headCell, headRow);
         int i = 2;
-        Map<CryptoCurrency, BigDecimal> totalBuyCryptoAmountMap = new HashMap<>();
+        Map<CryptoCurrency, BigDecimal> totalBuyCryptoAmountMap = new EnumMap<>(CryptoCurrency.class);
         Arrays.stream(CryptoCurrency.values())
                 .forEach(cryptoCurrency -> totalBuyCryptoAmountMap.put(cryptoCurrency, BigDecimal.ZERO));
-        Map<CryptoCurrency, BigDecimal> totalSellCryptoAmountMap = new HashMap<>();
+        Map<CryptoCurrency, BigDecimal> totalSellCryptoAmountMap = new EnumMap<>(CryptoCurrency.class);
         Arrays.stream(CryptoCurrency.values())
                 .forEach(cryptoCurrency -> totalSellCryptoAmountMap.put(cryptoCurrency, BigDecimal.ZERO));
 
-        Map<FiatCurrency, BigDecimal> totalBuyFiatAmountMap = new HashMap<>();
+        Map<FiatCurrency, BigDecimal> totalBuyFiatAmountMap = new EnumMap<>(FiatCurrency.class);
         Arrays.stream(FiatCurrency.values())
                 .forEach(fiatCurrency -> totalBuyFiatAmountMap.put(fiatCurrency, BigDecimal.ZERO));
-        Map<FiatCurrency, BigDecimal> totalSellFiatAmountMap = new HashMap<>();
+        Map<FiatCurrency, BigDecimal> totalSellFiatAmountMap = new EnumMap<>(FiatCurrency.class);
         Arrays.stream(FiatCurrency.values())
                 .forEach(fiatCurrency -> totalSellFiatAmountMap.put(fiatCurrency, BigDecimal.ZERO));
         for (ApiDeal deal : apiDeals) {

@@ -49,6 +49,8 @@ public class LotteryHandler implements ITextCommandHandler {
 
     private final IMessageImageResponseSender messageImageResponseSender;
 
+    private final Random random = new Random();
+
     public LotteryHandler(ILotteryWinService lotteryWinService,
                           INotifyService notifyService, VariablePropertiesReader variablePropertiesReader,
                           IReadUserService readUserService, IResponseSender responseSender,
@@ -79,7 +81,7 @@ public class LotteryHandler implements ITextCommandHandler {
 
     private void processLottery(Long chatId, User user) {
         float probability = variablePropertiesReader.getFloat(VariableType.PROBABILITY);
-        if (((double) new Random().nextInt(101) < ((double) probability))) {
+        if (((double) random.nextInt(101) < ((double) probability))) {
             messageImageResponseSender.sendMessage(MessageImage.WON_LOTTERY, user.getChatId(),
                     keyboardBuildService.getLink("Написать оператору",
                             variablePropertiesReader.getVariable(VariableType.OPERATOR_LINK)));

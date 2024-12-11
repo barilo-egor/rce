@@ -14,17 +14,17 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class HelpCommandTest {
 
     @Test
-    protected void shouldThrowException() {
+    void shouldThrowException() {
         assertThrows(BaseException.class, () -> HelpCommand.getDescription(null));
     }
 
     @Test
-    protected void shouldReturnEmptyString() {
+    void shouldReturnEmptyString() {
         assertEquals("", HelpCommand.getDescription(SlashCommand.CHAT_ID));
     }
 
     @Test
-    protected void shouldReturnDescription() {
+    void shouldReturnDescription() {
         Map<HelpCommand, SlashCommand> slashCommands = Arrays.stream(HelpCommand.values())
                 .collect(Collectors.toMap(helpCommand -> helpCommand, HelpCommand::getCommand));
         for (Map.Entry<HelpCommand, SlashCommand> entry : slashCommands.entrySet()) {

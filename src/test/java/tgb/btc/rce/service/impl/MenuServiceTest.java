@@ -3,22 +3,17 @@ package tgb.btc.rce.service.impl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import tgb.btc.library.constants.enums.bot.UserRole;
-import tgb.btc.library.service.properties.ButtonsDesignPropertiesReader;
 import tgb.btc.rce.enums.Menu;
 import tgb.btc.rce.service.IMenu;
 import tgb.btc.rce.service.impl.menu.BotSettingsMenu;
 import tgb.btc.rce.service.impl.menu.DrawsMenu;
 import tgb.btc.rce.service.impl.menu.MainMenu;
-import tgb.btc.rce.service.impl.util.TextTextCommandService;
 import tgb.btc.rce.service.impl.util.MenuService;
 import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
-import tgb.btc.rce.vo.ReplyButton;
 
 import java.util.List;
 import java.util.Map;
@@ -37,13 +32,6 @@ class MenuServiceTest {
     @Mock
     private IKeyboardBuildService keyboardBuildService;
 
-    private final ButtonsDesignPropertiesReader buttonsDesignPropertiesReader = new ButtonsDesignPropertiesReader();
-
-    private final TextTextCommandService textCommandService = new TextTextCommandService(buttonsDesignPropertiesReader);
-
-    @Captor
-    private ArgumentCaptor<List<ReplyButton>> replyButtonCaptor;
-
     @Test
     @DisplayName("Должен разместить бины в EnumMap.")
     void init() {
@@ -52,11 +40,11 @@ class MenuServiceTest {
         assertAll(
                 () -> assertEquals(3, actual.size()),
                 () -> assertNotNull(actual.get(Menu.MAIN)),
-                () -> assertTrue(actual.get(Menu.MAIN) instanceof MainMenu),
+                () -> assertInstanceOf(MainMenu.class, actual.get(Menu.MAIN)),
                 () -> assertNotNull(actual.get(Menu.DRAWS)),
-                () -> assertTrue(actual.get(Menu.DRAWS) instanceof DrawsMenu),
+                () -> assertInstanceOf(DrawsMenu.class, actual.get(Menu.DRAWS)),
                 () -> assertNotNull(actual.get(Menu.BOT_SETTINGS)),
-                () -> assertTrue(actual.get(Menu.BOT_SETTINGS) instanceof BotSettingsMenu)
+                () -> assertInstanceOf(BotSettingsMenu.class, actual.get(Menu.BOT_SETTINGS))
         );
     }
 
@@ -78,20 +66,4 @@ class MenuServiceTest {
         menuService.build(Menu.BOT_SETTINGS, UserRole.ADMIN);
         verify(keyboardBuildService).buildReply(eq(Menu.BOT_SETTINGS.getNumberOfColumns()), anyList(), anyBoolean());
     }
-
-    // TODO
-//    @Test
-//    @DisplayName("Должен создать меню DISCOUNTS для ADMIN.")
-//    void buildDrawsUser() {
-//        MenuService menuService = new MenuService(List.of(), keyboardBuildService);
-//        when(keyboardBuildService.buildReply(anyInt(), anyList(), anyBoolean())).thenReturn(new ReplyKeyboardMarkup());
-//        menuService.build(Menu.DISCOUNTS, UserRole.ADMIN);
-//        verify(keyboardBuildService).buildReply(eq(Menu.DISCOUNTS.getNumberOfColumns()), replyButtonCaptor.capture(), eq(false));
-//        List<ReplyButton> actual = replyButtonCaptor.getValue();
-//        assertEquals(Menu.DISCOUNTS.getCommands().size(), actual.size());
-//        int i = 0;
-//        for (Command command : Menu.DISCOUNTS.getCommands()) {
-//            assertEquals(commandService.getText(command), actual.get(i++).getText());
-//        }
-//    }
 }

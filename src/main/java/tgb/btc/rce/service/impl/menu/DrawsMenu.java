@@ -2,11 +2,7 @@ package tgb.btc.rce.service.impl.menu;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import tgb.btc.library.constants.enums.DiceType;
-import tgb.btc.library.constants.enums.RPSType;
-import tgb.btc.library.constants.enums.SlotReelType;
 import tgb.btc.library.constants.enums.bot.UserRole;
-import tgb.btc.library.interfaces.IModule;
 import tgb.btc.rce.enums.Menu;
 import tgb.btc.rce.enums.update.TextCommand;
 import tgb.btc.rce.service.IMenu;
@@ -20,27 +16,6 @@ import java.util.List;
 public class DrawsMenu implements IMenu {
 
     private IReplyButtonService replyButtonService;
-
-    private IModule<SlotReelType> slotReelModule;
-
-    private IModule<DiceType> diceModule;
-
-    private IModule<RPSType> rpsModule;
-
-    @Autowired
-    public void setSlotReelModule(IModule<SlotReelType> slotReelModule) {
-        this.slotReelModule = slotReelModule;
-    }
-
-    @Autowired
-    public void setDiceModule(IModule<DiceType> diceModule) {
-        this.diceModule = diceModule;
-    }
-
-    @Autowired
-    public void setRpsModule(IModule<RPSType> rpsModule) {
-        this.rpsModule = rpsModule;
-    }
 
     @Autowired
     public void setReplyButtonService(IReplyButtonService replyButtonService) {

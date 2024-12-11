@@ -45,11 +45,14 @@ public class MailingListStateHandler implements IStateHandler {
         Message message = update.getMessage();
         Long chatId = message.getChatId();
         Optional<Message> preMessage = responseSender.sendMessage(chatId, "Предварительный просмотр сообщения:");
-        responseSender.sendMessage(message.getChatId(), message.getText(),
-                InlineButton.builder().text("Отправить пользователям").data(CallbackQueryData.MAILING_LIST.name()).build(),
-                InlineButton.builder().text("Отмена").data(callbackDataService.buildData(CallbackQueryData.INLINE_DELETE, preMessage.get().getMessageId())).build());
-        redisUserStateService.delete(chatId);
-        adminPanelService.send(chatId);
+        if (preMessage.isPresent()) {
+            responseSender.sendMessage(message.getChatId(), message.getText(),
+                    InlineButton.builder().text("Отправить пользователям").data(CallbackQueryData.MAILING_LIST.name()).build(),
+                    InlineButton.builder().text("Отмена").data(callbackDataService.buildData(CallbackQueryData.INLINE_DELETE,
+                            preMessage.get().getMessageId())).build());
+            redisUserStateService.delete(chatId);
+            adminPanelService.send(chatId);
+        }
     }
 
     @Override

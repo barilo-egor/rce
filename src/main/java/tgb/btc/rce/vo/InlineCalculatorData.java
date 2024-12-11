@@ -10,7 +10,4 @@ import lombok.Setter;
 public class InlineCalculatorData {
     private String buttonData;
     private String number;
-
-    public InlineCalculatorData() {
-    }
 }

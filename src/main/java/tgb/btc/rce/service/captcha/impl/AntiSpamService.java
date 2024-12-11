@@ -14,14 +14,14 @@ public class AntiSpamService implements IAntiSpamService {
 
     private final Map<Long, UserUpdateActivity> userActivityMap = new ConcurrentHashMap<>();
 
-    private final int MESSAGE_LIMIT;
+    private final int messageLimit;
 
-    private final static long TIME_WINDOW_MS = 10_000;
+    private static final long TIME_WINDOW_MS = 10_000;
 
     private final VerifiedUserCache verifiedUserCache;
 
     public AntiSpamService(@Value("${allowed.count}") Integer allowedCount, VerifiedUserCache verifiedUserCache) {
-        MESSAGE_LIMIT = allowedCount;
+        messageLimit = allowedCount;
         this.verifiedUserCache = verifiedUserCache;
     }
 
@@ -33,7 +33,7 @@ public class AntiSpamService implements IAntiSpamService {
         long currentTime = System.currentTimeMillis();
         UserUpdateActivity activity = userActivityMap.computeIfAbsent(chatId, id -> new UserUpdateActivity());
         activity.cleanOldMessages(currentTime, TIME_WINDOW_MS);
-        if (activity.getMessageCount() >= MESSAGE_LIMIT) {
+        if (activity.getMessageCount() >= messageLimit) {
             return true;
         }
         activity.addMessage(currentTime);

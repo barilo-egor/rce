@@ -38,14 +38,14 @@ public class BitcoinPoolConsumer {
     }
 
     @KafkaListener(topics = "pool", groupId = "${bot.username}")
-    public void receive(ConsumerRecord<String, String> record) throws JsonProcessingException {
-        String key = record.key();
+    public void receive(ConsumerRecord<String, String> partition) throws JsonProcessingException {
+        String key = partition.key();
         if ("operation".equals(key)) {
-            PoolOperation poolOperation = objectMapper.readValue(record.value(), PoolOperation.class);
+            PoolOperation poolOperation = objectMapper.readValue(partition.value(), PoolOperation.class);
             poolOperation.getPoolDeals().removeIf(poolDeal -> !botUsername.equals(poolDeal.getBot()));
             poolOperationsMap.get(poolOperation.getOperation()).process(poolOperation);
         } else if ("message".equals(key)) {
-            processMessage(record.value());
+            processMessage(partition.value());
         }
     }
 

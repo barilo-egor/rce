@@ -6,7 +6,7 @@ import tgb.btc.library.bean.bot.Contact;
 import tgb.btc.library.interfaces.service.bean.bot.IContactService;
 
 import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
 
 @Service
 public class EditContactsService {
@@ -20,7 +20,7 @@ public class EditContactsService {
 
     public void save(String message) throws MalformedURLException {
         String[] contactData = message.split("\n");
-        new URL(contactData[1]);
-        contactService.save(Contact.builder().label(contactData[0]).url(contactData[1]).build());
+        URI uri = URI.create(message);
+        contactService.save(Contact.builder().label(contactData[0]).url(uri.toURL().toExternalForm()).build());
     }
 }

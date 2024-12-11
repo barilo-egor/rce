@@ -53,11 +53,10 @@ public class MessagePropertiesService implements IMessagePropertiesService {
         try {
             String message = messagePropertiesReader.getString(key);
             if (Objects.isNull(message)) return null;
-            text = message.replaceAll("<ln>", "\n");
+            text = message.replace("<ln>", "\n");
         } catch (Exception e) {
             text = getErrorText(key);
         }
-        if (Objects.isNull(text)) text = getErrorText(key);
         return text;
     }
 
@@ -67,11 +66,10 @@ public class MessagePropertiesService implements IMessagePropertiesService {
         try {
             String message = messagePropertiesReader.getString(key);
             if (Objects.isNull(message)) return null;
-            text = message.replaceAll("<ln>", "%n");
+            text = message.replace("<ln>", "%n");
         } catch (Exception e) {
             text = getErrorText(key);
         }
-        if (Objects.isNull(text)) text = getErrorText(key);
         return text;
     }
 

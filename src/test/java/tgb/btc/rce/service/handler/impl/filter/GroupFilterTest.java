@@ -51,13 +51,13 @@ class GroupFilterTest {
     private final String username = "testbot";
 
     @BeforeEach
-    protected void setUp() {
+    void setUp() {
         groupFilter = new GroupFilter(groupChatService, responseSender, notificationsAPI, updateService, apiUserService, username);
     }
 
     @Test
     @DisplayName("Должен прервать выполнение метода, если chat id группы не найден.")
-    protected void shouldReturnIfNoGroupChatId() {
+    void shouldReturnIfNoGroupChatId() {
         Update update = new Update();
         Message message = new Message();
         message.setNewChatTitle("title");
@@ -69,7 +69,7 @@ class GroupFilterTest {
 
     @Test
     @DisplayName("Должен пропустить обработку MyChatMember, если не совпадает username бота.")
-    protected void shouldSkipMyChatMemberIfNotBotUsername() {
+    void shouldSkipMyChatMemberIfNotBotUsername() {
         Update update = new Update();
         ChatMemberUpdated member = new ChatMemberUpdated();
         User user = new User();
@@ -85,7 +85,7 @@ class GroupFilterTest {
 
     @Test
     @DisplayName("Должен удалить группу запросов по ChatMemberLeft.")
-    protected void shouldDeleteGroupRequestGroupLeftChatMember() {
+    void shouldDeleteGroupRequestGroupLeftChatMember() {
         Long chatId = 123456789L;
         Update update = new Update();
         ChatMemberUpdated member = new ChatMemberUpdated();
@@ -108,7 +108,7 @@ class GroupFilterTest {
 
     @Test
     @DisplayName("Должен удалить группу запросов по ChatMemberKicked.")
-    protected void shouldDeleteGroupRequestGroupKickedChatMember() {
+    void shouldDeleteGroupRequestGroupKickedChatMember() {
         Long chatId = 123456789L;
         Update update = new Update();
         ChatMemberUpdated member = new ChatMemberUpdated();
@@ -131,7 +131,7 @@ class GroupFilterTest {
 
     @Test
     @DisplayName("Должен обновить поле группе к false о возможности отправлять сообщения.")
-    protected void shouldChangeIsMessageEnabledToFalse() {
+    void shouldChangeIsMessageEnabledToFalse() {
         Long chatId = 123456789L;
         Update update = new Update();
         ChatMemberUpdated member = new ChatMemberUpdated();
@@ -151,7 +151,7 @@ class GroupFilterTest {
 
     @Test
     @DisplayName("Должен обновить поле группе к true о возможности отправлять сообщения.")
-    protected void shouldChangeIsMessageEnabledToTrue() {
+    void shouldChangeIsMessageEnabledToTrue() {
         Long chatId = 123456789L;
         Update update = new Update();
         ChatMemberUpdated member = new ChatMemberUpdated();
@@ -171,7 +171,7 @@ class GroupFilterTest {
 
     @Test
     @DisplayName("Должен удалить группу запросов апи клиента.")
-    protected void shouldDeleteGroupRequestOfApiUser() {
+    void shouldDeleteGroupRequestOfApiUser() {
         Long chatId = 123456789L;
         Update update = new Update();
         ChatMemberUpdated member = new ChatMemberUpdated();
@@ -196,7 +196,7 @@ class GroupFilterTest {
 
     @Test
     @DisplayName("Должен удалить группу запросов в случае если она не привязана к апи клиенту.")
-    protected void shouldDeleteGroupRequestOfNullApiUser() {
+    void shouldDeleteGroupRequestOfNullApiUser() {
         Long chatId = 123456789L;
         Update update = new Update();
         ChatMemberUpdated member = new ChatMemberUpdated();
@@ -217,7 +217,7 @@ class GroupFilterTest {
 
     @Test
     @DisplayName("Должен обновить статус бота в группе.")
-    protected void shouldUpdateChatMemberStatus() {
+    void shouldUpdateChatMemberStatus() {
         Long chatId = 123456789L;
         Update update = new Update();
         ChatMemberUpdated member = new ChatMemberUpdated();
@@ -235,7 +235,7 @@ class GroupFilterTest {
 
     @Test
     @DisplayName("Должен сохранить группу после добавления.")
-    protected void shouldSaveChat() {
+    void shouldSaveChat() {
         Long chatId = 123456789L;
         Update update = new Update();
         ChatMemberUpdated member = new ChatMemberUpdated();
@@ -256,7 +256,7 @@ class GroupFilterTest {
 
     @Test
     @DisplayName("Должен обновить title группы.")
-    protected void shouldUpdateTitle() {
+    void shouldUpdateTitle() {
         Update update = new Update();
         Message message = new Message();
         String title = "title";
@@ -270,7 +270,7 @@ class GroupFilterTest {
 
     @Test
     @DisplayName("Должен пропустить обновление title, если нет message.")
-    protected void shouldSkipUpdateTitleWithoutMessage() {
+    void shouldSkipUpdateTitleWithoutMessage() {
         Update update = new Update();
         CallbackQuery callbackQuery = new CallbackQuery();
         update.setCallbackQuery(callbackQuery);
@@ -282,7 +282,7 @@ class GroupFilterTest {
 
     @Test
     @DisplayName("Должен пропустить обновление title, если есть текст, но нет newChatTitle.")
-    protected void shouldSkipUpdateTitleWithoutNewChatTitle() {
+    void shouldSkipUpdateTitleWithoutNewChatTitle() {
         Update update = new Update();
         Message message = new Message();
         update.setMessage(message);
@@ -294,7 +294,7 @@ class GroupFilterTest {
 
     @Test
     @DisplayName("Должен пропустить обработку, если сообщение не из группы запросов.")
-    protected void shouldSkipIfNotDealRequest() {
+    void shouldSkipIfNotDealRequest() {
         Update update = new Update();
         Message message = new Message();
         message.setText("/help");
@@ -308,7 +308,7 @@ class GroupFilterTest {
 
     @Test
     @DisplayName("Должен пропустить, если сообщение не ответ на другое сообщение.")
-    protected void shouldSkipIfNotReply() {
+    void shouldSkipIfNotReply() {
         Update update = new Update();
         Message message = new Message();
         message.setText("+");
@@ -323,7 +323,7 @@ class GroupFilterTest {
 
     @Test
     @DisplayName("Должен пропустить, если сообщение не ответ на другое сообщение бота.")
-    protected void shouldSkipIfNotReplyToBot() {
+    void shouldSkipIfNotReplyToBot() {
         Update update = new Update();
         Message message = new Message();
         message.setText("+");
@@ -343,7 +343,7 @@ class GroupFilterTest {
 
     @Test
     @DisplayName("Должен пропустить, если сообщение не равно \"+\".")
-    protected void shouldSkipIfNotPlusMessage() {
+    void shouldSkipIfNotPlusMessage() {
         Update update = new Update();
         Message message = new Message();
         message.setText("-");
@@ -363,7 +363,7 @@ class GroupFilterTest {
 
     @Test
     @DisplayName("Должен сообщить, что не получилось найти номер сделки.")
-    protected void shouldNotifyIfNotFindDealNumber() {
+    void shouldNotifyIfNotFindDealNumber() {
         Update update = new Update();
         Message message = new Message();
         message.setText("+");
@@ -385,7 +385,7 @@ class GroupFilterTest {
 
     @Test
     @DisplayName("Должен изменить текст обработанной заявки.")
-    protected void shouldUpdateDealMessage() {
+    void shouldUpdateDealMessage() {
         Update update = new Update();
         Message message = new Message();
         update.setMessage(message);
@@ -407,7 +407,7 @@ class GroupFilterTest {
 
     @Test
     @DisplayName("Должен отправить /help сообщение.")
-    protected void shouldSendHelpMessage() {
+    void shouldSendHelpMessage() {
         Update update = new Update();
         Message message = new Message();
         message.setText("/help");

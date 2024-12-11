@@ -294,8 +294,8 @@ public class KeyboardService implements IKeyboardService {
         List<InlineButton> buttons = new ArrayList<>();
         Arrays.stream(DeliveryType.values()).forEach(x -> {
             String text = designPropertiesReader.getString(x.name());
-            if (DeliveryType.VIP.equals(x) &&
-                    functionsPropertiesReader.getBoolean("vip.button.add.sum", false)) {
+            Boolean vipButtonAddSum = functionsPropertiesReader.getBoolean("vip.button.add.sum", false);
+            if (DeliveryType.VIP.equals(x) && Objects.nonNull(vipButtonAddSum) && vipButtonAddSum) {
                 Integer fix;
                 try {
                     fix = variablePropertiesReader.getInt(VariableType.FIX_COMMISSION_VIP,

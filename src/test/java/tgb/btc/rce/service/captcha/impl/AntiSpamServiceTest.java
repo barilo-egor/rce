@@ -22,7 +22,7 @@ class AntiSpamServiceTest {
 
     @Test
     @DisplayName("Должен вернуть false для проверенного пользователя.")
-    protected void shouldReturnTrueCauseVerified() {
+    void shouldReturnTrueCauseVerified() {
         AntiSpamService antiSpamService = new AntiSpamService(3, verifiedUserCache);
         Long chatId = 123_456_789L;
         when(verifiedUserCache.check(chatId)).thenReturn(true);
@@ -32,7 +32,7 @@ class AntiSpamServiceTest {
     @Test
     @Timeout(value = 10, unit = TimeUnit.SECONDS)
     @DisplayName("Должен вернуть false для первых трех вызовов, далее true.")
-    protected void isSpamSameChatId() {
+    void isSpamSameChatId() {
         Long chatId = 123_456_789L;
         AntiSpamService antiSpamService = new AntiSpamService(3, verifiedUserCache);
         for (int i = 0; i < 10; i++) {
@@ -46,7 +46,7 @@ class AntiSpamServiceTest {
 
     @Test
     @DisplayName("Должен вернуть false для первого вызова каждого chat id.")
-    protected void isSpamDifferentChatId() {
+    void isSpamDifferentChatId() {
         AntiSpamService antiSpamService = new AntiSpamService(3, verifiedUserCache);
         long startChatId = 100_000_000L;
         for (int i = 0; i < 10; i++) {

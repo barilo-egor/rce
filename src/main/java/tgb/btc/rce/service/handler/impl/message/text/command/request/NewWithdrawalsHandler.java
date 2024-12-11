@@ -12,7 +12,6 @@ import tgb.btc.rce.service.handler.message.text.ITextCommandHandler;
 import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
 import tgb.btc.rce.service.processors.support.WithdrawalOfFundsService;
 import tgb.btc.rce.service.util.ICallbackDataService;
-import tgb.btc.rce.service.util.ITextCommandService;
 import tgb.btc.rce.vo.InlineButton;
 
 import java.util.List;
@@ -28,19 +27,16 @@ public class NewWithdrawalsHandler implements ITextCommandHandler {
 
     private final IKeyboardBuildService keyboardBuildService;
 
-    private final ITextCommandService commandService;
-
     private final ICallbackDataService callbackDataService;
 
     public NewWithdrawalsHandler(IResponseSender responseSender, IWithdrawalRequestService withdrawalRequestService,
                                  WithdrawalOfFundsService withdrawalOfFundsService,
-                                 IKeyboardBuildService keyboardBuildService, ITextCommandService commandService,
+                                 IKeyboardBuildService keyboardBuildService,
                                  ICallbackDataService callbackDataService) {
         this.responseSender = responseSender;
         this.withdrawalRequestService = withdrawalRequestService;
         this.withdrawalOfFundsService = withdrawalOfFundsService;
         this.keyboardBuildService = keyboardBuildService;
-        this.commandService = commandService;
         this.callbackDataService = callbackDataService;
     }
 

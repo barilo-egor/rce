@@ -25,7 +25,7 @@ class ContextClosedListenerTest {
     private ContextClosedListener contextClosedListener;
 
     @Test
-    protected void shouldNotify() {
+    void shouldNotify() {
         contextClosedListener.onApplicationEvent(event);
         verify(notifyService, times(1)).notifyMessage("⚠️ Рестарт бота.", UserRole.OPERATOR_ACCESS, false);
     }

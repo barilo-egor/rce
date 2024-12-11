@@ -36,7 +36,7 @@ class MenuSenderTest {
     private MenuSender menuSender;
 
     @Test
-    protected void sendPropertiesMessage() {
+    void sendPropertiesMessage() {
         Long chatId = 123456789L;
         PropertiesMessage propertiesMessage = PropertiesMessage.MENU_MAIN_ADMIN_MESSAGE;
         Menu menu = Menu.MAIN;
@@ -51,7 +51,7 @@ class MenuSenderTest {
     }
 
     @Test
-    protected void send() {
+    void send() {
         Long chatId = 123456789L;
         Menu menu = Menu.MAIN;
         String message = "message";

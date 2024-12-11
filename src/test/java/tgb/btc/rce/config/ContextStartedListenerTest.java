@@ -25,7 +25,7 @@ class ContextStartedListenerTest {
     private ContextStartedListener listener;
 
     @Test
-    protected void onApplicationEvent() {
+    void onApplicationEvent() {
         listener.onApplicationEvent(applicationReadyEvent);
         verify(notifyService, times(1)).notifyMessage("\uD83D\uDFE2 Бот запущен.", UserRole.OPERATOR_ACCESS, false);
     }

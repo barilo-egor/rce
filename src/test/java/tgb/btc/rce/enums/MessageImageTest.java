@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class MessageImageTest {
 
     @Test
-    protected void getInputWallet() {
+    void getInputWallet() {
         for (CryptoCurrency cryptoCurrency : CryptoCurrency.values()) {
             switch (cryptoCurrency) {
                 case BITCOIN -> assertEquals(MessageImage.BITCOIN_INPUT_WALLET, MessageImage.getInputWallet(cryptoCurrency));

@@ -3,6 +3,8 @@ package tgb.btc.rce.sender;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -40,7 +42,7 @@ class MessageImageResponseSenderTest {
 
     @Test
     @DisplayName("Должен отправить изображение.")
-    protected void sendMessageWithCustomTextShouldSendPhoto() {
+    void sendMessageWithCustomTextShouldSendPhoto() {
         String fileId = "CgACAgIAAxkDAAIS42c7KceBwAUkHv6iuwABcJqHcm4nkgACXWUAAp882UlT-gJmcdZcGTYE";
         when(messageImageService.getFileId(any())).thenReturn(fileId);
         Long chatId = 123456789L;
@@ -53,7 +55,7 @@ class MessageImageResponseSenderTest {
 
     @Test
     @DisplayName("Должен отправить сообщение.")
-    protected void sendMessageWithCustomTextShouldSendMessage() {
+    void sendMessageWithCustomTextShouldSendMessage() {
         when(messageImageService.getFileId(any())).thenReturn(null);
         Long chatId = 123456789L;
         String message = "message";
@@ -63,9 +65,10 @@ class MessageImageResponseSenderTest {
         verify(responseSender, times(1)).sendMessage(chatId, message, replyKeyboard);
     }
 
-    @Test
+    @ParameterizedTest
     @DisplayName("Должен отправить изображение.")
-    protected void sendMessageShouldSendJpgPhoto() {
+    @ValueSource(strings = {".jpg", ".png", ".jpeg"})
+    void sendMessageShouldSendPhoto(String format) {
         String fileId = "CgACAgIAAxkDAAIS42c7KceBwAUkHv6iuwABcJqHcm4nkgACXWUAAp882UlT-gJmcdZcGTYE";
         when(messageImageService.getFileId(any())).thenReturn(fileId);
         Long chatId = 123456789L;
@@ -73,44 +76,14 @@ class MessageImageResponseSenderTest {
         ReplyKeyboard replyKeyboard = new ReplyKeyboardMarkup();
         MessageImage messageImage = MessageImage.BOT_OFF;
         when(messageImageService.getMessage(messageImage)).thenReturn(message);
-        when(messageImageService.getFormat(messageImage)).thenReturn(".jpg");
+        when(messageImageService.getFormat(messageImage)).thenReturn(format);
         messageImageResponseSender.sendMessage(messageImage, chatId, replyKeyboard);
         verify(responseSender, times(1)).sendPhoto(chatId, message, fileId, replyKeyboard);
     }
 
     @Test
     @DisplayName("Должен отправить изображение.")
-    protected void sendMessageShouldSendPngPhoto() {
-        String fileId = "CgACAgIAAxkDAAIS42c7KceBwAUkHv6iuwABcJqHcm4nkgACXWUAAp882UlT-gJmcdZcGTYE";
-        when(messageImageService.getFileId(any())).thenReturn(fileId);
-        Long chatId = 123456789L;
-        String message = "message";
-        ReplyKeyboard replyKeyboard = new ReplyKeyboardMarkup();
-        MessageImage messageImage = MessageImage.BOT_OFF;
-        when(messageImageService.getMessage(messageImage)).thenReturn(message);
-        when(messageImageService.getFormat(messageImage)).thenReturn(".png");
-        messageImageResponseSender.sendMessage(messageImage, chatId, replyKeyboard);
-        verify(responseSender, times(1)).sendPhoto(chatId, message, fileId, replyKeyboard);
-    }
-
-    @Test
-    @DisplayName("Должен отправить изображение.")
-    protected void sendMessageShouldSendJpegPhoto() {
-        String fileId = "CgACAgIAAxkDAAIS42c7KceBwAUkHv6iuwABcJqHcm4nkgACXWUAAp882UlT-gJmcdZcGTYE";
-        when(messageImageService.getFileId(any())).thenReturn(fileId);
-        Long chatId = 123456789L;
-        String message = "message";
-        ReplyKeyboard replyKeyboard = new ReplyKeyboardMarkup();
-        MessageImage messageImage = MessageImage.BOT_OFF;
-        when(messageImageService.getMessage(messageImage)).thenReturn(message);
-        when(messageImageService.getFormat(messageImage)).thenReturn(".jpeg");
-        messageImageResponseSender.sendMessage(messageImage, chatId, replyKeyboard);
-        verify(responseSender, times(1)).sendPhoto(chatId, message, fileId, replyKeyboard);
-    }
-
-    @Test
-    @DisplayName("Должен отправить изображение.")
-    protected void sendMessageShouldSendAnimation() {
+    void sendMessageShouldSendAnimation() {
         String fileId = "CgACAgIAAxkDAAIS42c7KceBwAUkHv6iuwABcJqHcm4nkgACXWUAAp882UlT-gJmcdZcGTYE";
         when(messageImageService.getFileId(any())).thenReturn(fileId);
         Long chatId = 123456789L;
@@ -125,7 +98,7 @@ class MessageImageResponseSenderTest {
 
     @Test
     @DisplayName("Должен отправить изображение.")
-    protected void sendMessageShouldThrowException() {
+    void sendMessageShouldThrowException() {
         String fileId = "CgACAgIAAxkDAAIS42c7KceBwAUkHv6iuwABcJqHcm4nkgACXWUAAp882UlT-gJmcdZcGTYE";
         when(messageImageService.getFileId(any())).thenReturn(fileId);
         Long chatId = 123456789L;
@@ -140,7 +113,7 @@ class MessageImageResponseSenderTest {
 
     @Test
     @DisplayName("Должен отправить изображение.")
-    protected void sendMessageShouldSendMessage() {
+    void sendMessageShouldSendMessage() {
         when(messageImageService.getFileId(any())).thenReturn(null);
         Long chatId = 123456789L;
         String message = "message";
@@ -152,7 +125,7 @@ class MessageImageResponseSenderTest {
     }
     @Test
     @DisplayName("Должен отправить изображение.")
-    protected void sendMessageShouldSendMessageWithoutReplyKeyboard() {
+    void sendMessageShouldSendMessageWithoutReplyKeyboard() {
         when(messageImageService.getFileId(any())).thenReturn(null);
         Long chatId = 123456789L;
         String message = "message";
@@ -164,7 +137,7 @@ class MessageImageResponseSenderTest {
 
     @Test
     @DisplayName("Должен отправить изображение.")
-    protected void sendMessageShouldSendMessageWithMenu() {
+    void sendMessageShouldSendMessageWithMenu() {
         when(messageImageService.getFileId(any())).thenReturn(null);
         Long chatId = 123456789L;
         String message = "message";

@@ -4,13 +4,16 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.List;
+import tgb.btc.rce.enums.MessageImage;
 
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class FileIds {
-    private List<FileId> fileIds;
+public class FileIdContainer {
+    private MessageImage type;
+
+    private String fileId;
+
+    private String format;
 }

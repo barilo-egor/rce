@@ -18,6 +18,7 @@ import tgb.btc.rce.service.handler.message.text.ITextCommandHandler;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.nio.file.Files;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
@@ -72,11 +73,9 @@ public class LotteryReportHandler implements ITextCommandHandler {
             outputStream.close();
             File file = new File(fileName);
             responseSender.sendFile(chatId, file);
-            log.debug("Админ " + chatId + " выгрузил отчет по выигрышам лотереи.");
-            if (file.delete()) log.trace("Файл успешно удален.");
-            else log.trace("Файл не удален.");
+            Files.delete(file.toPath());
         } catch (Exception e) {
-            log.error("Ошибка при выгрузке файла " + this.getClass().getSimpleName(), e);
+            log.error("Ошибка при выгрузке файла {}", this.getClass().getSimpleName(), e);
             throw new BaseException("Ошибка при выгрузке файла: " + e.getMessage());
         }
     }

@@ -71,7 +71,7 @@ public class ConfirmAutoWithdrawalDealHandler implements ICallbackQueryHandler {
                             "разделе \"Сделки из бота\".\n", true);
             return;
         }
-        Optional<Message> withdrawalMessage = responseSender.sendMessage(chatId, "Автовывод в процессе, пожалуйста подождите.");;
+        Optional<Message> withdrawalMessage = responseSender.sendMessage(chatId, "Автовывод в процессе, пожалуйста подождите.");
         String hash;
         try {
             Deal deal = readDealService.findByPid(dealPid);
@@ -80,26 +80,25 @@ public class ConfirmAutoWithdrawalDealHandler implements ICallbackQueryHandler {
                 return;
             }
             hash = cryptoWithdrawalService.withdrawal(deal.getCryptoCurrency(), deal.getCryptoAmount(), deal.getWallet());
+            modifyDealService.confirm(dealPid, hash);
+            new Thread(() -> cryptoWithdrawalService.deleteFromPool(botUsername, dealPid)).start();
+            String username = readUserService.getUsernameByChatId(chatId);
+            log.debug("Админ {} подтвердил сделку {} с автовыводом. Хеш транзакции: {}", chatId, dealPid, hash);
+            notifier.sendAutoWithdrawDeal(
+                    "бота",
+                    StringUtils.isNotEmpty(username)
+                            ? username
+                            : "chatid:" + chatId,
+                    dealPid);
+            log.debug("Сделка {} была отправлена в группу автовывода сделок.", dealPid);
+            responseSender.deleteMessage(chatId, callbackDataService.getIntArgument(callbackQuery.getData(), 2));
+            responseSender.deleteMessage(chatId, callbackQuery.getMessage().getMessageId());
+            responseSender.sendMessage(chatId, "Транзакция сделки №" + dealPid + "\n" + String.format(CryptoCurrency.BITCOIN.getHashUrl(), hash));
         } catch (Exception e) {
             responseSender.sendMessage(chatId, "Ошибка при попытке автовывода сделки " + dealPid + ": " + e.getMessage());
-            return;
         } finally {
             withdrawalMessage.ifPresent(msg -> responseSender.deleteMessage(chatId, msg.getMessageId()));
         }
-        modifyDealService.confirm(dealPid, hash);
-        new Thread(() -> cryptoWithdrawalService.deleteFromPool(botUsername, dealPid)).start();
-        String username = readUserService.getUsernameByChatId(chatId);
-        log.debug("Админ {} подтвердил сделку {} с автовыводом. Хеш транзакции: {}", chatId, dealPid, hash);
-        notifier.sendAutoWithdrawDeal(
-                "бота",
-                StringUtils.isNotEmpty(username)
-                        ? username
-                        : "chatid:" + chatId,
-                dealPid);
-        log.debug("Сделка {} была отправлена в группу автовывода сделок.", dealPid);
-        responseSender.deleteMessage(chatId, callbackDataService.getIntArgument(callbackQuery.getData(), 2));
-        responseSender.deleteMessage(chatId, callbackQuery.getMessage().getMessageId());
-        responseSender.sendMessage(chatId, "Транзакция сделки №" + dealPid + "\n" + String.format(CryptoCurrency.BITCOIN.getHashUrl(), hash));
     }
 
     @Override

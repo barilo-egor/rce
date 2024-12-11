@@ -8,15 +8,12 @@ import tgb.btc.rce.enums.update.UpdateType;
 import tgb.btc.rce.service.handler.IUpdateHandler;
 import tgb.btc.rce.service.handler.message.IMessageHandler;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 @Service
 public class MessageUpdateHandler implements IUpdateHandler {
 
-    private final Map<MessageType, IMessageHandler> messageHandlerMap = new HashMap<>();
+    private final Map<MessageType, IMessageHandler> messageHandlerMap = new EnumMap<>(MessageType.class);
     public MessageUpdateHandler(List<IMessageHandler> messageHandlers) {
         for (IMessageHandler messageHandler : messageHandlers) {
             messageHandlerMap.put(messageHandler.getMessageType(), messageHandler);

@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class InlineCalculatorButtonTest {
 
     @Test
-    protected void getByData() {
+    void getByData() {
         for (InlineCalculatorButton inlineCalculatorButton : InlineCalculatorButton.values()) {
             assertEquals(inlineCalculatorButton, InlineCalculatorButton.getByData(inlineCalculatorButton.getData()));
         }

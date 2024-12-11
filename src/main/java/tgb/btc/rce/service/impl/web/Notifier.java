@@ -24,7 +24,6 @@ import tgb.btc.rce.service.INotifyService;
 import tgb.btc.rce.service.processors.support.DealSupportService;
 import tgb.btc.rce.service.util.ICallbackDataService;
 import tgb.btc.rce.service.util.IMessagePropertiesService;
-import tgb.btc.rce.service.util.ITextCommandService;
 import tgb.btc.rce.vo.InlineButton;
 
 import java.io.File;
@@ -53,8 +52,6 @@ public class Notifier implements INotifier {
 
     private VariablePropertiesReader variablePropertiesReader;
 
-    private ITextCommandService commandService;
-
     private IApiUserService apiUserService;
 
     private IApiDealService apiDealService;
@@ -74,11 +71,6 @@ public class Notifier implements INotifier {
     @Autowired
     public void setApiUserService(IApiUserService apiUserService) {
         this.apiUserService = apiUserService;
-    }
-
-    @Autowired
-    public void setCommandService(ITextCommandService commandService) {
-        this.commandService = commandService;
     }
 
     @Autowired
