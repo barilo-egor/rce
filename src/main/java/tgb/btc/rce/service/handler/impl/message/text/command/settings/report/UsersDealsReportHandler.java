@@ -20,8 +20,8 @@ import tgb.btc.rce.service.handler.message.text.ITextCommandHandler;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -41,16 +41,15 @@ public class UsersDealsReportHandler implements ITextCommandHandler {
     }
 
     @Override
+    @Async
     public void handle(Message message) {
         process(message.getChatId());
     }
 
-    @Async
     public void process(Long chatId) {
         try {
             HSSFWorkbook book = new HSSFWorkbook();
             Sheet sheet = book.createSheet("Сделки");
-
             Row head = sheet.createRow(0);
             sheet.setDefaultColumnWidth(30);
             Cell headCell = head.createCell(0);
@@ -73,7 +72,7 @@ public class UsersDealsReportHandler implements ITextCommandHandler {
             users = users.stream()
                     .filter(user -> Objects.nonNull(map.get(user.getChatId())))
                     .sorted(Comparator.comparing(user -> map.get(user.getChatId())))
-                    .collect(Collectors.toList());
+                    .toList();
 
             for (User user : users) {
                 Row row = sheet.createRow(i);
@@ -94,8 +93,7 @@ public class UsersDealsReportHandler implements ITextCommandHandler {
             File file = new File(fileName);
             responseSender.sendFile(chatId, file);
             log.debug("Админ " + chatId + " выгрузил отчет по сделкам пользователей.");
-            if (file.delete()) log.trace("Файл успешно удален.");
-            else log.trace("Файл не удален.");
+            Files.delete(file.toPath());
         } catch (IOException e) {
             log.error("Ошибка при выгрузке файла " + this.getClass().getSimpleName(), e);
             throw new BaseException("Ошибка при выгрузке файла: " + e.getMessage());

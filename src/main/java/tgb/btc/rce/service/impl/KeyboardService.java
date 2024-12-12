@@ -271,9 +271,13 @@ public class KeyboardService implements IKeyboardService {
         inlineButtons.add(keyboardBuildService.createCallBackDataButton(SWITCH_CALCULATOR.getData(), CallbackQueryData.INLINE_CALCULATOR, SWITCH_CALCULATOR.getData()));
         inlineButtons.add(keyboardBuildService.createCallBackDataButton(READY.getData(), CallbackQueryData.INLINE_CALCULATOR, READY.getData()));
         InlineCalculatorVO calculator = InlineCalculatorHandler.cache.get(chaId);
-        String text = !calculator.getSwitched()
-                ? calculator.getFiatCurrency().getFlag() + "Ввести сумму в " + calculator.getFiatCurrency().getCode().toUpperCase()
-                : "\uD83D\uDD38Ввести сумму в " + calculator.getCryptoCurrency().getShortName().toUpperCase();
+        String text;
+        boolean isSwitched = Objects.nonNull(calculator.getSwitched()) && calculator.getSwitched();
+        if (isSwitched) {
+            text = calculator.getFiatCurrency().getFlag() + "Ввести сумму в " + calculator.getFiatCurrency().getCode().toUpperCase();
+        } else {
+            text = "\uD83D\uDD38Ввести сумму в " + calculator.getCryptoCurrency().getShortName().toUpperCase();
+        }
         List<InlineButton> currencySwitcher = Collections.singletonList(keyboardBuildService.createCallBackDataButton(text,
                 CallbackQueryData.INLINE_CALCULATOR, CURRENCY_SWITCHER.getData()));
         List<List<InlineKeyboardButton>> rows = keyboardBuildService.buildInlineRows(inlineButtons, 3);
@@ -294,8 +298,8 @@ public class KeyboardService implements IKeyboardService {
         List<InlineButton> buttons = new ArrayList<>();
         Arrays.stream(DeliveryType.values()).forEach(x -> {
             String text = designPropertiesReader.getString(x.name());
-            Boolean vipButtonAddSum = functionsPropertiesReader.getBoolean("vip.button.add.sum", false);
-            if (DeliveryType.VIP.equals(x) && Objects.nonNull(vipButtonAddSum) && vipButtonAddSum) {
+            boolean vipButtonAddSum = functionsPropertiesReader.getBoolean("vip.button.add.sum", false);
+            if (DeliveryType.VIP.equals(x) && vipButtonAddSum) {
                 Integer fix;
                 try {
                     fix = variablePropertiesReader.getInt(VariableType.FIX_COMMISSION_VIP,

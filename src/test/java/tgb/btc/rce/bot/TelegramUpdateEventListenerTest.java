@@ -56,7 +56,7 @@ class TelegramUpdateEventListenerTest {
 
     @DisplayName("Должен пробросить исключение отсутствия UpdateType у обработчика апдейта.")
     @Test
-    protected void shouldThrowNoUpdateType() {
+    void shouldThrowNoUpdateType() {
         List<IUpdateHandler> updateHandlerList = new ArrayList<>();
         updateHandlerList.add(new IUpdateHandler() {
             @Override
@@ -76,12 +76,12 @@ class TelegramUpdateEventListenerTest {
 
     @DisplayName("Должен пробросить исключение отсутствия UserState у обработчика апдейта.")
     @Test
-    protected void shouldThrowNoUserState() {
+    void shouldThrowNoUserState() {
         List<IStateHandler> stateHandlerList = new ArrayList<>();
         stateHandlerList.add(new IStateHandler() {
             @Override
             public void handle(Update update) {
-
+                // stub
             }
 
             @Override
@@ -95,12 +95,12 @@ class TelegramUpdateEventListenerTest {
 
     @DisplayName("Должен пробросить исключение отсутствия UpdateFilterType у обработчика апдейта.")
     @Test
-    protected void shouldThrowNoUpdateFilterType() {
+    void shouldThrowNoUpdateFilterType() {
         List<IUpdateFilter> updateFilterHandlerList = new ArrayList<>();
         updateFilterHandlerList.add(new IUpdateFilter() {
             @Override
             public void handle(Update update) {
-
+                // stub
             }
 
             @Override
@@ -114,7 +114,7 @@ class TelegramUpdateEventListenerTest {
 
     @Test
     @DisplayName("Должен закончить выполнение метода, если пользователь в бане.")
-    protected void shouldReturnWhenBanned() {
+    void shouldReturnWhenBanned() {
         TelegramUpdateEventListener telegramUpdateEventListener = new TelegramUpdateEventListener(
                 redisUserStateService, new ArrayList<>(), new ArrayList<>(), messagesService, new ArrayList<>(),
                 updateFilterService, antiSpamService, bannedUserCache, null
@@ -134,7 +134,7 @@ class TelegramUpdateEventListenerTest {
 
     @Test
     @DisplayName("Должен закончить выполнение метода, если определен спам.")
-    protected void shouldReturnWhenSpam() {
+    void shouldReturnWhenSpam() {
         TelegramUpdateEventListener telegramUpdateEventListener = new TelegramUpdateEventListener(
                 redisUserStateService, new ArrayList<>(), new ArrayList<>(), messagesService, new ArrayList<>(),
                 updateFilterService, antiSpamService, bannedUserCache, null
@@ -157,7 +157,7 @@ class TelegramUpdateEventListenerTest {
 
     @Test
     @DisplayName("Должен обработать UpdateFilter.")
-    protected void shouldHandleFilter() {
+    void shouldHandleFilter() {
         List<IUpdateFilter> updateFilters = new ArrayList<>();
         IUpdateFilter handler = Mockito.mock(IUpdateFilter.class);
         when(handler.getType()).thenReturn(UpdateFilterType.START);
@@ -186,7 +186,7 @@ class TelegramUpdateEventListenerTest {
 
     @Test
     @DisplayName("Должен пропустить обработку UpdateFilter.")
-    protected void shouldNotHandleFilter() {
+    void shouldNotHandleFilter() {
         List<IUpdateFilter> updateFilters = new ArrayList<>();
         IUpdateFilter handler = Mockito.mock(IUpdateFilter.class);
         when(handler.getType()).thenReturn(UpdateFilterType.START);
@@ -213,7 +213,7 @@ class TelegramUpdateEventListenerTest {
 
     @Test
     @DisplayName("Должен обработать StateHandler.")
-    protected void shouldHandleStateHandler() {
+    void shouldHandleStateHandler() {
         List<IStateHandler> stateHandlers = new ArrayList<>();
         IStateHandler handler = Mockito.mock(IStateHandler.class);
         when(handler.getUserState()).thenReturn(UserState.ADD_CONTACT);
@@ -238,7 +238,7 @@ class TelegramUpdateEventListenerTest {
 
     @Test
     @DisplayName("Должен пропустить обработку StateHandler из-за не поддерживаемого UpdateType.")
-    protected void shouldNotHandleStateHandlerCauseOfUpdateType() {
+    void shouldNotHandleStateHandlerCauseOfUpdateType() {
         List<IStateHandler> stateHandlers = new ArrayList<>();
         IStateHandler handler = Mockito.mock(IStateHandler.class);
         when(handler.getUserState()).thenReturn(UserState.ADD_CONTACT);
@@ -262,7 +262,7 @@ class TelegramUpdateEventListenerTest {
 
     @Test
     @DisplayName("Должен пропустить обработку StateHandler из-за отсутствия UserState у пользователя.")
-    protected void shouldNotHandleStateHandlerCauseOfNullUserState() {
+    void shouldNotHandleStateHandlerCauseOfNullUserState() {
         List<IStateHandler> stateHandlers = new ArrayList<>();
         IStateHandler handler = Mockito.mock(IStateHandler.class);
         when(handler.getUserState()).thenReturn(UserState.ADD_CONTACT);
@@ -287,7 +287,7 @@ class TelegramUpdateEventListenerTest {
 
     @Test
     @DisplayName("Должен пропустить обработку StateHandler из-за отсутствия обработчика.")
-    protected void shouldNotHandleStateHandlerCauseOfNoHandler() {
+    void shouldNotHandleStateHandlerCauseOfNoHandler() {
         List<IStateHandler> stateHandlers = new ArrayList<>();
         IStateHandler handler = Mockito.mock(IStateHandler.class);
         when(handler.getUserState()).thenReturn(UserState.ADD_CONTACT);
@@ -312,7 +312,7 @@ class TelegramUpdateEventListenerTest {
 
     @Test
     @DisplayName("Должен обработать UpdateHandler.")
-    protected void shouldHandle() {
+    void shouldHandle() {
         List<IUpdateHandler> updateHandlers = new ArrayList<>();
         IUpdateHandler handler = Mockito.mock(IUpdateHandler.class);
         when(handler.getUpdateType()).thenReturn(UpdateType.MESSAGE);
@@ -340,7 +340,7 @@ class TelegramUpdateEventListenerTest {
 
     @Test
     @DisplayName("UpdateFilter должен не обработать update.")
-    protected void shouldNotHandle() {
+    void shouldNotHandle() {
         List<IUpdateHandler> updateHandlers = new ArrayList<>();
         IUpdateHandler handler = Mockito.mock(IUpdateHandler.class);
         when(handler.getUpdateType()).thenReturn(UpdateType.INLINE_QUERY);
@@ -367,7 +367,7 @@ class TelegramUpdateEventListenerTest {
 
     @Test
     @DisplayName("Должен оповестить о неправильном формате введенного числа.")
-    protected void shouldNotifyAboutWrongNumberFormat() {
+    void shouldNotifyAboutWrongNumberFormat() {
         TelegramUpdateEventListener telegramUpdateEventListener = new TelegramUpdateEventListener(null, new ArrayList<>(),
                 new ArrayList<>(), null, new ArrayList<>(), null, null,
                 bannedUserCache, responseSender);
@@ -386,7 +386,7 @@ class TelegramUpdateEventListenerTest {
 
     @Test
     @DisplayName("Должен оповестить о непредвиденной ошибке.")
-    protected void shouldNotifyAboutException() {
+    void shouldNotifyAboutException() {
         TelegramUpdateEventListener telegramUpdateEventListener = new TelegramUpdateEventListener(null, new ArrayList<>(),
                 new ArrayList<>(), null, new ArrayList<>(), null, null,
                 bannedUserCache, responseSender);

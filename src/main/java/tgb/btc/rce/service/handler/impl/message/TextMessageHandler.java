@@ -8,17 +8,14 @@ import tgb.btc.rce.service.handler.message.IMessageHandler;
 import tgb.btc.rce.service.handler.message.text.ITextMessageHandler;
 import tgb.btc.rce.service.handler.util.ITextMessageTypeService;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 @Service
 public class TextMessageHandler implements IMessageHandler {
 
     private final ITextMessageTypeService textMessageTypeService;
 
-    private final Map<TextMessageType, ITextMessageHandler> textMessageHandlersMap = new HashMap<>();
+    private final Map<TextMessageType, ITextMessageHandler> textMessageHandlersMap = new EnumMap<>(TextMessageType.class);
 
     public TextMessageHandler(List<ITextMessageHandler> textMessageHandlers,
                               ITextMessageTypeService textMessageTypeService) {

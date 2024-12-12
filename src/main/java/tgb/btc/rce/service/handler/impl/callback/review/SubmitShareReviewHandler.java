@@ -71,7 +71,7 @@ public class SubmitShareReviewHandler implements ICallbackQueryHandler {
         Integer amount = reviewPriseModule.isCurrent(DYNAMIC)
                 ? getRandomAmount(dealPid)
                 : variablePropertiesReader.getInt(VariableType.REVIEW_PRISE);
-        if (!isPublic) {
+        if (Boolean.TRUE.equals(isPublic)) {
             text = "Анонимный отзыв:\n\n" + text;
         } else {
             text = "Отзыв от " +  callbackQuery.getFrom().getFirstName() + ":\n\n" + text;

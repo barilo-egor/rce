@@ -12,7 +12,7 @@ import java.util.Arrays;
 @Service
 public class RedisStringService implements IRedisStringService {
 
-    private final String prefix = "string_";
+    private static final String PREFIX = "string_";
 
     private final RedisTemplate<String, String> redisTemplate;
 
@@ -22,7 +22,7 @@ public class RedisStringService implements IRedisStringService {
 
     @Override
     public void save(Long chatId, String value) {
-        redisTemplate.opsForValue().set(prefix + chatId, value, Duration.of(20, ChronoUnit.MINUTES));
+        redisTemplate.opsForValue().set(PREFIX + chatId, value, Duration.of(20, ChronoUnit.MINUTES));
     }
 
     @Override
@@ -32,7 +32,7 @@ public class RedisStringService implements IRedisStringService {
 
     @Override
     public String get(Long key) {
-        return redisTemplate.opsForValue().get(prefix + key);
+        return redisTemplate.opsForValue().get(PREFIX + key);
     }
 
     @Override
@@ -42,7 +42,7 @@ public class RedisStringService implements IRedisStringService {
 
     @Override
     public void delete(Long key) {
-        redisTemplate.delete(prefix + key);
+        redisTemplate.delete(PREFIX + key);
     }
 
     @Override
@@ -52,7 +52,7 @@ public class RedisStringService implements IRedisStringService {
 
     @Override
     public void deleteAll(Long key) {
-        redisTemplate.delete(prefix + key.toString());
-        Arrays.stream(RedisPrefix.values()).forEach(prefix -> delete(prefix, key));
+        redisTemplate.delete(PREFIX + key.toString());
+        Arrays.stream(RedisPrefix.values()).forEach(redisPrefix -> delete(redisPrefix, key));
     }
 }

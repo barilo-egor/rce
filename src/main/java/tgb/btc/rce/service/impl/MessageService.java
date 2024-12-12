@@ -43,13 +43,14 @@ public class MessageService implements IMessageService {
                     StringUtils.EMPTY, fiatFlag, StringUtils.EMPTY);
         } else {
             String cryptoAmount;
-            if (!calculator.getSwitched()) {
+            boolean isSwitched = Objects.nonNull(calculator.getSwitched()) && calculator.getSwitched();
+            if (!isSwitched) {
                 cryptoAmount = calculator.getSum();
             } else {
                 cryptoAmount = bigDecimalService.roundToPlainString(dealAmount.getCryptoAmount(), calculator.getCryptoCurrency().getScale());
             }
             String amount;
-            if (calculator.getSwitched()) amount = calculator.getSum();
+            if (isSwitched) amount = calculator.getSum();
             else amount = bigDecimalService.roundToPlainString(dealAmount.getAmount());
             return DealType.BUY.equals(dealType)
                     ? messagePropertiesService.getMessage(PropertiesMessage.DEAL_INPUT_SUM_TO_BUY, cryptoCode, fiatCode,

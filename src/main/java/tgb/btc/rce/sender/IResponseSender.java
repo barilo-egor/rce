@@ -11,6 +11,7 @@ import tgb.btc.rce.vo.InlineButton;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
 
@@ -62,7 +63,7 @@ public interface IResponseSender {
 
     Message sendFile(Long chatId, InputFile inputFile, String caption);
 
-    void downloadFile(Document document, String localFilePath) throws IOException;
+    void downloadFile(Document document, String localFilePath) throws IOException, URISyntaxException;
 
     void sendAnswerInlineQuery(String inlineQueryId, String title, String description, String messageText);
 

@@ -19,6 +19,7 @@ import tgb.btc.rce.service.handler.message.text.ITextCommandHandler;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -96,8 +97,7 @@ public class PartnersReportHandler implements ITextCommandHandler {
             File file = new File(fileName);
             responseSender.sendFile(chatId, file);
             log.debug("Админ " + chatId + " выгрузил отчет по пользователям.");
-            if (file.delete()) log.trace("Файл успешно удален.");
-            else log.trace("Файл не удален.");
+            Files.delete(file.toPath());
         } catch (IOException e) {
             log.error("Ошибка при выгрузке файла " + this.getClass().getSimpleName(), e);
             throw new BaseException("Ошибка при выгрузке файла: " + e.getMessage());

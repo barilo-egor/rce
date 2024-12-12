@@ -2,7 +2,7 @@ package tgb.btc.rce.enums;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -11,8 +11,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class RankTest {
 
     @Test
-    protected void getByDealsNumber() {
-        Map<Rank, Set<Integer>> rankIntegerMap = new HashMap<>();
+    void getByDealsNumber() {
+        Map<Rank, Set<Integer>> rankIntegerMap = new EnumMap<>(Rank.class);
         rankIntegerMap.put(Rank.FIRST, Set.of(0, 5, 9));
         rankIntegerMap.put(Rank.SECOND, Set.of(10, 15, 19));
         rankIntegerMap.put(Rank.THIRD, Set.of(20, 34, 49));

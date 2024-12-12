@@ -8,16 +8,13 @@ import tgb.btc.library.bean.bot.WithdrawalRequest;
 import tgb.btc.library.constants.enums.bot.UserRole;
 import tgb.btc.library.constants.enums.bot.WithdrawalRequestStatus;
 import tgb.btc.library.interfaces.service.bean.bot.IWithdrawalRequestService;
-import tgb.btc.library.interfaces.service.bean.bot.user.IModifyUserService;
 import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.rce.enums.PropertiesMessage;
 import tgb.btc.rce.enums.update.CallbackQueryData;
 import tgb.btc.rce.sender.IResponseSender;
 import tgb.btc.rce.service.INotifyService;
 import tgb.btc.rce.service.IUpdateService;
-import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
 import tgb.btc.rce.service.util.ICallbackDataService;
-import tgb.btc.rce.service.util.ITextCommandService;
 import tgb.btc.rce.service.util.IMessagePropertiesService;
 
 import java.util.Set;
@@ -33,26 +30,15 @@ public class WithdrawalOfFundsService {
 
     private IReadUserService readUserService;
 
-    private IModifyUserService modifyUserService;
-
-    private IKeyboardBuildService keyboardBuildService;
-
     private IMessagePropertiesService messagePropertiesService;
     
     private IUpdateService updateService;
-
-    private ITextCommandService commandService;
 
     private ICallbackDataService callbackDataService;
 
     @Autowired
     public void setCallbackDataService(ICallbackDataService callbackDataService) {
         this.callbackDataService = callbackDataService;
-    }
-
-    @Autowired
-    public void setCommandService(ITextCommandService commandService) {
-        this.commandService = commandService;
     }
 
     @Autowired
@@ -71,11 +57,6 @@ public class WithdrawalOfFundsService {
     }
 
     @Autowired
-    public void setKeyboardBuildService(IKeyboardBuildService keyboardBuildService) {
-        this.keyboardBuildService = keyboardBuildService;
-    }
-
-    @Autowired
     public void setResponseSender(IResponseSender responseSender) {
         this.responseSender = responseSender;
     }
@@ -88,11 +69,6 @@ public class WithdrawalOfFundsService {
     @Autowired
     public void setReadUserService(IReadUserService readUserService) {
         this.readUserService = readUserService;
-    }
-
-    @Autowired
-    public void setModifyUserService(IModifyUserService modifyUserService) {
-        this.modifyUserService = modifyUserService;
     }
 
     public boolean createRequest(Update update) {

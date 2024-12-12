@@ -10,10 +10,7 @@ import tgb.btc.rce.service.handler.message.text.ITextCommandHandler;
 import tgb.btc.rce.service.handler.message.text.ITextMessageHandler;
 import tgb.btc.rce.service.handler.util.ITextCommandService;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 @Service
 public class TextCommandHandler implements ITextMessageHandler {
@@ -22,7 +19,7 @@ public class TextCommandHandler implements ITextMessageHandler {
 
     private final IReadUserService readUserService;
 
-    private final Map<TextCommand, ITextCommandHandler> textCommandHandlerMap = new HashMap<>();
+    private final Map<TextCommand, ITextCommandHandler> textCommandHandlerMap = new EnumMap<>(TextCommand.class);
 
     public TextCommandHandler(List<ITextCommandHandler> commandHandlers, ITextCommandService textCommandService,
                               IReadUserService readUserService) {

@@ -47,7 +47,7 @@ class ResponseSenderTest {
     private ResponseSender responseSender;
 
     @Test
-    protected void sendMessageText() throws TelegramApiException {
+    void sendMessageText() throws TelegramApiException {
         String chatId = "12345678";
         String text = "message text";
         responseSender.sendMessage(Long.valueOf(chatId), text);
@@ -71,7 +71,7 @@ class ResponseSenderTest {
     }
 
     @Test
-    protected void sendMessageTextReply() throws TelegramApiException {
+    void sendMessageTextReply() throws TelegramApiException {
         String chatId = "12345678";
         String text = "message text";
         Integer replyMessageId = 55000;
@@ -96,7 +96,7 @@ class ResponseSenderTest {
     }
 
     @Test
-    protected void sendMessageTextWithKeyboard() throws TelegramApiException {
+    void sendMessageTextWithKeyboard() throws TelegramApiException {
         String chatId = "12345678";
         String text = "message text";
         ReplyKeyboard replyKeyboard = new InlineKeyboardMarkup();
@@ -121,7 +121,7 @@ class ResponseSenderTest {
     }
 
     @Test
-    protected void sendMessageTextWithInlineButtons() throws TelegramApiException {
+    void sendMessageTextWithInlineButtons() throws TelegramApiException {
         String chatId = "12345678";
         String text = "message text";
         InlineButton[] inlineButtons = new InlineButton[] {InlineButton.builder().build(), InlineButton.builder().build()};
@@ -150,7 +150,7 @@ class ResponseSenderTest {
     }
 
     @Test
-    protected void sendMessageTextWithListInlineButtons() throws TelegramApiException {
+    void sendMessageTextWithListInlineButtons() throws TelegramApiException {
         String chatId = "12345678";
         String text = "message text";
         List<InlineButton> inlineButtons = List.of(InlineButton.builder().build(), InlineButton.builder().build());
@@ -179,13 +179,13 @@ class ResponseSenderTest {
     }
 
     @Test
-    protected void sendMessageReturnNullIfTelegramApiException() throws TelegramApiException {
+    void sendMessageReturnNullIfTelegramApiException() throws TelegramApiException {
         when(bot.execute((SendMessage) any())).thenThrow(TelegramApiException.class);
         assertEquals(Optional.empty(), responseSender.sendMessage(123456789L, "text"));
     }
 
     @Test
-    protected void sendMessageThrowsSendMessage() throws TelegramApiException {
+    void sendMessageThrowsSendMessage() throws TelegramApiException {
         Long chatId = 123456789L;
         String text = "message text";
         ArgumentCaptor<SendMessage> argumentCaptor = ArgumentCaptor.forClass(SendMessage.class);
@@ -209,7 +209,7 @@ class ResponseSenderTest {
     }
 
     @Test
-    protected void sendPhotoInputFileWithCaption() throws TelegramApiException {
+    void sendPhotoInputFileWithCaption() throws TelegramApiException {
         String chatId = "12345678";
         String caption = "message text";
         InputFile photo = new InputFile();
@@ -236,7 +236,7 @@ class ResponseSenderTest {
     }
 
     @Test
-    protected void sendPhotoByFileIdWithCaptionAndKeyboard() throws TelegramApiException {
+    void sendPhotoByFileIdWithCaptionAndKeyboard() throws TelegramApiException {
         String chatId = "12345678";
         String caption = "message text";
         String fileId = "CgACAgIAAxkDAAIS42c7KceBwAUkHv6iuwABcJqHcm4nkgACXWUAAp882UlT-gJmcdZcGTYE";
@@ -264,7 +264,7 @@ class ResponseSenderTest {
     }
 
     @Test
-    protected void sendPhotoByFileIdWithCaption() throws TelegramApiException {
+    void sendPhotoByFileIdWithCaption() throws TelegramApiException {
         String chatId = "12345678";
         String caption = "message text";
         String fileId = "CgACAgIAAxkDAAIS42c7KceBwAUkHv6iuwABcJqHcm4nkgACXWUAAp882UlT-gJmcdZcGTYE";
@@ -291,7 +291,7 @@ class ResponseSenderTest {
     }
 
     @Test
-    protected void sendPhotoInputFileWithCaptionAndKeyboard() throws TelegramApiException {
+    void sendPhotoInputFileWithCaptionAndKeyboard() throws TelegramApiException {
         String chatId = "12345678";
         String caption = "message text";
         InputFile inputFile = new InputFile("CgACAgIAAxkDAAIS42c7KceBwAUkHv6iuwABcJqHcm4nkgACXWUAAp882UlT-gJmcdZcGTYE");
@@ -319,14 +319,14 @@ class ResponseSenderTest {
     }
 
     @Test
-    protected void sendPhotoReturnNullIfTelegramApiException() throws TelegramApiException {
+    void sendPhotoReturnNullIfTelegramApiException() throws TelegramApiException {
         when(bot.execute((SendPhoto) any())).thenThrow(TelegramApiException.class);
         assertEquals(Optional.empty(),
                 responseSender.sendPhoto(123456789L, "caption", new InputFile("photo"), new InlineKeyboardMarkup()));
     }
 
     @Test
-    protected void sendAnimation() throws TelegramApiException {
+    void sendAnimation() throws TelegramApiException {
         String chatId = "12345678";
         File file = new File("file");
         
@@ -352,7 +352,7 @@ class ResponseSenderTest {
     }
 
     @Test
-    protected void sendAnimationWithCaptionAndKeyboard() throws TelegramApiException {
+    void sendAnimationWithCaptionAndKeyboard() throws TelegramApiException {
         String chatId = "12345678";
         String caption = "message text";
         ReplyKeyboard replyKeyboard = new InlineKeyboardMarkup();
@@ -380,7 +380,7 @@ class ResponseSenderTest {
     }
 
     @Test
-    protected void sendAnimationInputFileWithCaptionAndKeyboard() throws TelegramApiException {
+    void sendAnimationInputFileWithCaptionAndKeyboard() throws TelegramApiException {
         String chatId = "12345678";
         String caption = "message text";
         ReplyKeyboard replyKeyboard = new InlineKeyboardMarkup();
@@ -408,14 +408,14 @@ class ResponseSenderTest {
     }
 
     @Test
-    protected void sendAnimationReturnNullIfTelegramApiException() throws TelegramApiException {
+    void sendAnimationReturnNullIfTelegramApiException() throws TelegramApiException {
         when(bot.execute((SendAnimation) any())).thenThrow(TelegramApiException.class);
         assertNull(responseSender.sendAnimation(123456789L,
                 new InputFile("animation"), "caption", new InlineKeyboardMarkup()));
     }
 
     @Test
-    protected void deleteMessage() throws TelegramApiException {
+    void deleteMessage() throws TelegramApiException {
         String chatId = "123456789";
         Integer messageId = 54500;
         responseSender.deleteMessage(Long.valueOf(chatId), messageId);
@@ -430,7 +430,7 @@ class ResponseSenderTest {
     }
 
     @Test
-    protected void sendEditedMessageText() throws TelegramApiException {
+    void sendEditedMessageText() throws TelegramApiException {
         String chatId = "12345678";
         Integer messageId = 54500;
         String text = "message text";
@@ -454,7 +454,7 @@ class ResponseSenderTest {
     }
 
     @Test
-    protected void sendEditedMessageTextWithButtons() throws TelegramApiException {
+    void sendEditedMessageTextWithButtons() throws TelegramApiException {
         String chatId = "12345678";
         Integer messageId = 54500;
         String text = "message text";
@@ -481,7 +481,7 @@ class ResponseSenderTest {
     }
 
     @Test
-    protected void sendEditedMessageTextWithReplyKeyboard() throws TelegramApiException {
+    void sendEditedMessageTextWithReplyKeyboard() throws TelegramApiException {
         String chatId = "12345678";
         Integer messageId = 54500;
         String text = "message text";
@@ -506,7 +506,7 @@ class ResponseSenderTest {
     }
 
     @Test
-    protected void sendEditedMessageTextWithInlineKeyboardMarkup() throws TelegramApiException {
+    void sendEditedMessageTextWithInlineKeyboardMarkup() throws TelegramApiException {
         String chatId = "12345678";
         Integer messageId = 54500;
         String text = "message text";
@@ -531,7 +531,7 @@ class ResponseSenderTest {
     }
 
     @Test
-    protected void sendFileWithCaptionByFileId() throws TelegramApiException {
+    void sendFileWithCaptionByFileId() throws TelegramApiException {
         String chatId = "12345678";
         String caption = "message text";
         String fileId = "CgACAgIAAxkDAAIS42c7KceBwAUkHv6iuwABcJqHcm4nkgACXWUAAp882UlT-gJmcdZcGTYE";
@@ -561,7 +561,7 @@ class ResponseSenderTest {
     }
 
     @Test
-    protected void sendFile() throws TelegramApiException {
+    void sendFile() throws TelegramApiException {
         String chatId = "12345678";
         File file = new File("file");
 
@@ -590,7 +590,7 @@ class ResponseSenderTest {
     }
 
     @Test
-    protected void sendFileInputFile() throws TelegramApiException {
+    void sendFileInputFile() throws TelegramApiException {
         String chatId = "12345678";
         InputFile inputFile = new InputFile("file");
 
@@ -619,7 +619,7 @@ class ResponseSenderTest {
     }
 
     @Test
-    protected void sendFileInputFileAndCaption() throws TelegramApiException {
+    void sendFileInputFileAndCaption() throws TelegramApiException {
         String chatId = "12345678";
         InputFile inputFile = new InputFile("file");
         String caption = "caption";
@@ -649,13 +649,13 @@ class ResponseSenderTest {
     }
 
     @Test
-    protected void sendFileReturnNullIfTelegramApiException() throws TelegramApiException {
+    void sendFileReturnNullIfTelegramApiException() throws TelegramApiException {
         when(bot.execute((SendDocument) any())).thenThrow(TelegramApiException.class);
         assertNull(responseSender.sendFile(123456789L, new InputFile("animation"), "caption"));
     }
 
     @Test
-    protected void sendAnswerInlineQuery() throws TelegramApiException {
+    void sendAnswerInlineQuery() throws TelegramApiException {
         String inlineQueryId = "12356";
         String title = "title";
         String description = "description";
@@ -675,14 +675,14 @@ class ResponseSenderTest {
     }
 
     @Test
-    protected void deleteCallbackMessageIfExistsShouldSkipWithoutCallback() throws TelegramApiException {
+    void deleteCallbackMessageIfExistsShouldSkipWithoutCallback() throws TelegramApiException {
         Update update = new Update();
         responseSender.deleteCallbackMessageIfExists(update);
         verify(bot, times(0)).execute((DeleteMessage) any());
     }
 
     @Test
-    protected void deleteCallbackMessage() throws TelegramApiException {
+    void deleteCallbackMessage() throws TelegramApiException {
         Update update = new Update();
         CallbackQuery callbackQuery = new CallbackQuery();
         Message message = new Message();
@@ -707,7 +707,7 @@ class ResponseSenderTest {
 
 
     @Test
-    protected void sendAnswerCallbackQuery() throws TelegramApiException {
+    void sendAnswerCallbackQuery() throws TelegramApiException {
         String callbackQueryId = "12356";
         String text = "text message";
         boolean showAlert = true;

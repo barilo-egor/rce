@@ -31,7 +31,8 @@ import tgb.btc.rce.vo.InlineButton;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
 
@@ -229,10 +230,11 @@ public class ResponseSender implements IResponseSender {
     }
 
     @Override
-    public void downloadFile(Document document, String localFilePath) throws IOException {
+    public void downloadFile(Document document, String localFilePath) throws IOException, URISyntaxException {
         org.telegram.telegrambots.meta.api.objects.File file = getFilePath(document);
         java.io.File localFile = new java.io.File(localFilePath);
-        InputStream is = new URL(file.getFileUrl(botToken)).openStream();
+        URI uri = new URI(file.getFileUrl(botToken));
+        InputStream is = uri.toURL().openStream();
         FileUtils.copyInputStreamToFile(is, localFile);
     }
 

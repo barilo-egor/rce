@@ -52,18 +52,18 @@ public class NewDealsHandler implements ITextCommandHandler {
                 responseSender.sendMessage(chatId, dealSupportService.dealToString(dealPid),
                         dealSupportService.dealToStringButtons(dealPid));
                 List<PaymentReceipt> paymentReceipts = readDealService.getPaymentReceipts(dealPid);
-                if (!paymentReceipts.isEmpty()) {
-                    for (PaymentReceipt paymentReceipt : paymentReceipts) {
-                        if (paymentReceipt.getReceiptFormat().equals(ReceiptFormat.PICTURE)) {
-                            responseSender.sendPhoto(chatId, StringUtils.EMPTY, paymentReceipt.getReceipt());
-                        } else if (paymentReceipt.getReceiptFormat().equals(ReceiptFormat.PDF)) {
-                            responseSender.sendFile(chatId, new InputFile(paymentReceipt.getReceipt()));
-                        }
-                    }
-                }
+                paymentReceipts.forEach(paymentReceipt -> sendPaymentReceipt(paymentReceipt, chatId));
             });
         } else {
             activeDeals.forEach(dealPid -> responseSender.sendMessage(chatId, dealSupportService.dealToString(dealPid)));
+        }
+    }
+
+    private void sendPaymentReceipt(PaymentReceipt paymentReceipt, Long chatId) {
+        if (paymentReceipt.getReceiptFormat().equals(ReceiptFormat.PICTURE)) {
+            responseSender.sendPhoto(chatId, StringUtils.EMPTY, paymentReceipt.getReceipt());
+        } else if (paymentReceipt.getReceiptFormat().equals(ReceiptFormat.PDF)) {
+            responseSender.sendFile(chatId, new InputFile(paymentReceipt.getReceipt()));
         }
     }
 

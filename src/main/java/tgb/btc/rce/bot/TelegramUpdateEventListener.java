@@ -19,10 +19,7 @@ import tgb.btc.rce.service.processors.support.MessagesService;
 import tgb.btc.rce.service.redis.IRedisUserStateService;
 import tgb.btc.rce.vo.TelegramUpdateEvent;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -58,28 +55,28 @@ public class TelegramUpdateEventListener {
         this.bannedUserCache = bannedUserCache;
         this.responseSender = responseSender;
         log.debug("Загрузка обработчиков апдейтов.");
-        this.updateHandlers = new HashMap<>(updateHandlers.size());
+        this.updateHandlers = new EnumMap<>(UpdateType.class);
         for (IUpdateHandler updateHandler : updateHandlers) {
             UpdateType updateType = updateHandler.getUpdateType();
             if (Objects.isNull(updateType)) {
-                throw new HandlerTypeNotFoundException("UpdateType для " + updateHandler.getClass().getName() + " равен null.");
+                throw new HandlerTypeNotFoundException("UpdateType null для " + updateHandler.getClass().getName());
             }
             log.debug("Добавлен обработчик апдейтов типа {}", updateHandler.getUpdateType().name());
             this.updateHandlers.put(updateHandler.getUpdateType(), updateHandler);
         }
-        this.stateHandlerMap = new HashMap<>(stateHandlers.size());
+        this.stateHandlerMap = new EnumMap<>(UserState.class);
         for (IStateHandler stateHandler : stateHandlers) {
             UserState userState = stateHandler.getUserState();
             if (Objects.isNull(userState)) {
-                throw new HandlerTypeNotFoundException("UserState для " + stateHandler.getClass().getName() + " равен null.");
+                throw new HandlerTypeNotFoundException("UserState null для " + stateHandler.getClass().getName());
             }
             stateHandlerMap.put(stateHandler.getUserState(), stateHandler);
         }
-        this.updateFilterMap = new HashMap<>(updateFilters.size());
+        this.updateFilterMap = new EnumMap<>(UpdateFilterType.class);
         for (IUpdateFilter updateFilter : updateFilters) {
             UpdateFilterType updateFilterType = updateFilter.getType();
             if (Objects.isNull(updateFilterType)) {
-                throw new HandlerTypeNotFoundException("UpdateFilterType для " + updateFilter.getClass().getName() + " равен null.");
+                throw new HandlerTypeNotFoundException("UpdateFilterType null для " + updateFilter.getClass().getName());
             }
             updateFilterMap.put(updateFilter.getType(), updateFilter);
         }

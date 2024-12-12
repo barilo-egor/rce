@@ -5,7 +5,6 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.rce.enums.UserState;
 import tgb.btc.rce.sender.IResponseSender;
 import tgb.btc.rce.service.handler.IStateHandler;
-import tgb.btc.rce.service.handler.util.IAdminPanelService;
 import tgb.btc.rce.service.handler.util.IUserInputService;
 import tgb.btc.rce.service.redis.IRedisStringService;
 import tgb.btc.rce.service.redis.IRedisUserStateService;
@@ -24,7 +23,7 @@ public class SendMessageChatIdHandler implements IStateHandler {
     private final IUserInputService userInputService;
 
     public SendMessageChatIdHandler(IResponseSender responseSender, IRedisStringService redisStringService,
-                                    IRedisUserStateService redisUserStateService, IAdminPanelService adminPanelService,
+                                    IRedisUserStateService redisUserStateService,
                                     IUserInputService userInputService) {
         this.responseSender = responseSender;
         this.redisStringService = redisStringService;

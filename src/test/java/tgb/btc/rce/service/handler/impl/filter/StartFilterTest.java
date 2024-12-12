@@ -29,7 +29,7 @@ class StartFilterTest {
     private StartFilter startFilter;
 
     @Test
-    protected void handle() {
+    void handle() {
         Update update = new Update();
         Message message = new Message();
         Chat chat = new Chat();
@@ -43,7 +43,7 @@ class StartFilterTest {
     }
 
     @Test
-    protected void getType() {
+    void getType() {
         assertEquals(UpdateFilterType.START, startFilter.getType());
     }
 

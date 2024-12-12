@@ -45,7 +45,7 @@ public class ShowPaymentTypesService implements IShowPaymentTypesService {
     public void sendForTurn(Long chatId, DealType dealType, FiatCurrency fiatCurrency, Integer messageId) {
         List<PaymentType> paymentTypes = paymentTypeService.getByDealTypeAndFiatCurrency(dealType, fiatCurrency);
         if (CollectionUtils.isEmpty(paymentTypes)) {
-            responseSender.sendMessage(chatId, "Список тип оплат на " + dealType.getAccusative() + " пуст."); //todo fiat
+            responseSender.sendMessage(chatId, "Список тип оплат на " + dealType.getAccusative() + "(" + fiatCurrency.getDisplayName() + ") пуст.");
             adminPanelService.send(chatId);
             return;
         }

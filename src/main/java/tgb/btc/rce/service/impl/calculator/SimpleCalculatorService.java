@@ -80,7 +80,7 @@ public abstract class SimpleCalculatorService implements ICalculatorTypeService 
         CryptoCurrency cryptoCurrency = dealPropertyService.getCryptoCurrencyByPid(currentDealPid);
         PropertiesMessage propertiesMessage;
         if (CryptoCurrency.BITCOIN.equals(cryptoCurrency))
-            propertiesMessage = PropertiesMessage.DEAL_INPUT_SUM_CRYPTO_OR_FIAT; // TODO сейчас хардкод на "или в рублях", надо подставлять фиатное
+            propertiesMessage = PropertiesMessage.DEAL_INPUT_SUM_CRYPTO_OR_FIAT;
         else propertiesMessage = PropertiesMessage.DEAL_INPUT_SUM;
         String text = messagePropertiesService.getMessage(propertiesMessage,
                 dealPropertyService.getCryptoCurrencyByPid(

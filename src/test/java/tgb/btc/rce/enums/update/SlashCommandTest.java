@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class SlashCommandTest {
 
     @Test
-    protected void hasAccess() {
+    void hasAccess() {
         for (SlashCommand slashCommand : SlashCommand.values()) {
             for (UserRole userRole : UserRole.values()) {
                 assertEquals(slashCommand.getRoles().contains(userRole), slashCommand.hasAccess(userRole));

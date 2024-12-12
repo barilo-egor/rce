@@ -17,7 +17,7 @@ class UpdateServiceTest {
 
     private final UpdateService updateService = new UpdateService();
 
-    private static final int numberOfTestUpdates = 3;
+    private static final int NUMBER_OF_TEST_UPDATES = 3;
 
     private static List<User> users = new ArrayList<>();
 
@@ -25,7 +25,7 @@ class UpdateServiceTest {
 
     @BeforeAll
     static void init() {
-        for (int i = 1; i <= numberOfTestUpdates; i++) {
+        for (int i = 1; i <= NUMBER_OF_TEST_UPDATES; i++) {
             long randomChatId = RandomUtils.secure().randomLong(0, 99999999);
 
             User user = new User();
@@ -44,7 +44,7 @@ class UpdateServiceTest {
     @Test
     void getChatIdFromMessage() {
         Map<Long, Update> updates = new HashMap<>();
-        for (int i = 1; i <= numberOfTestUpdates; i++) {
+        for (int i = 1; i <= NUMBER_OF_TEST_UPDATES; i++) {
             Message message = new Message();
             User user = users.get(i - 1);
             message.setFrom(user);
@@ -60,7 +60,7 @@ class UpdateServiceTest {
     @Test
     void getChatIdFromCallbackQuery() {
         Map<Long, Update> updates = new HashMap<>();
-        for (int i = 1; i <= numberOfTestUpdates; i++) {
+        for (int i = 1; i <= NUMBER_OF_TEST_UPDATES; i++) {
             CallbackQuery callbackQuery = new CallbackQuery();
             User user = users.get(i - 1);
             callbackQuery.setFrom(user);
@@ -75,8 +75,8 @@ class UpdateServiceTest {
 
     @Test
     void getChatIdFromInlineQuery() {
-        Map<Long, Update> updates = new HashMap<>(numberOfTestUpdates);
-        for (int i = 1; i <= numberOfTestUpdates; i++) {
+        Map<Long, Update> updates = new HashMap<>(NUMBER_OF_TEST_UPDATES);
+        for (int i = 1; i <= NUMBER_OF_TEST_UPDATES; i++) {
             InlineQuery inlineQuery = new InlineQuery();
             User user = users.get(i - 1);
             inlineQuery.setFrom(user);
@@ -98,8 +98,8 @@ class UpdateServiceTest {
 
     @Test
     void getGroupChatIdFromMyChatMember() {
-        Map<Long, Update> updates = new HashMap<>(numberOfTestUpdates);
-        for (int i = 1; i <= numberOfTestUpdates; i++) {
+        Map<Long, Update> updates = new HashMap<>(NUMBER_OF_TEST_UPDATES);
+        for (int i = 1; i <= NUMBER_OF_TEST_UPDATES; i++) {
             ChatMemberUpdated chatMemberUpdated = new ChatMemberUpdated();
             Chat chat = chats.get(i - 1);
             chatMemberUpdated.setChat(chat);
@@ -114,8 +114,8 @@ class UpdateServiceTest {
 
     @Test
     void getGroupChatIdFromChatMember() {
-        Map<Long, Update> updates = new HashMap<>(numberOfTestUpdates);
-        for (int i = 1; i <= numberOfTestUpdates; i++) {
+        Map<Long, Update> updates = new HashMap<>(NUMBER_OF_TEST_UPDATES);
+        for (int i = 1; i <= NUMBER_OF_TEST_UPDATES; i++) {
             ChatMemberUpdated chatMemberUpdated = new ChatMemberUpdated();
             Chat chat = chats.get(i - 1);
             chatMemberUpdated.setChat(chat);
@@ -130,8 +130,8 @@ class UpdateServiceTest {
 
     @Test
     void getGroupChatIdFromMessage() {
-        Map<Long, Update> updates = new HashMap<>(numberOfTestUpdates);
-        for (int i = 1; i <= numberOfTestUpdates; i++) {
+        Map<Long, Update> updates = new HashMap<>(NUMBER_OF_TEST_UPDATES);
+        for (int i = 1; i <= NUMBER_OF_TEST_UPDATES; i++) {
             Message message = new Message();
             Chat chat = chats.get(i - 1);
             message.setChat(chat);
@@ -205,7 +205,7 @@ class UpdateServiceTest {
 
     @Test
     void getUsername() {
-        for (int i = 1; i <= numberOfTestUpdates; i++) {
+        for (int i = 1; i <= NUMBER_OF_TEST_UPDATES; i++) {
             Update update = new Update();
             Message message = new Message();
             message.setFrom(users.get(i - 1));
@@ -216,7 +216,7 @@ class UpdateServiceTest {
 
     @Test
     void getMessageId() {
-        for (int i = 1; i <= numberOfTestUpdates; i++) {
+        for (int i = 1; i <= NUMBER_OF_TEST_UPDATES; i++) {
             Update update = new Update();
             Message message = new Message();
             Integer randomMessageId = RandomUtils.secure().randomInt(0, 999999);
@@ -255,7 +255,7 @@ class UpdateServiceTest {
 
     @Test
     void getMessageText() {
-        for (int i = 1; i <= numberOfTestUpdates; i++) {
+        for (int i = 1; i <= NUMBER_OF_TEST_UPDATES; i++) {
             Update update = new Update();
             Message message = new Message();
             String messageText = RandomStringUtils.secure().nextAlphanumeric(10);
@@ -272,7 +272,7 @@ class UpdateServiceTest {
 
     @Test
     void getLongFromText() {
-        for (int i = 1; i <= numberOfTestUpdates; i++) {
+        for (int i = 1; i <= NUMBER_OF_TEST_UPDATES; i++) {
             Long randomLong = RandomUtils.secure().randomLong(0, 1000);
             String strRandom = randomLong.toString();
             Update update = new Update();
@@ -285,7 +285,7 @@ class UpdateServiceTest {
 
     @Test
     void getBigDecimalFromText() {
-        for (int i = 1; i <= numberOfTestUpdates; i++) {
+        for (int i = 1; i <= NUMBER_OF_TEST_UPDATES; i++) {
             double randomDouble = RandomUtils.secure().randomDouble(0, 1000);
             Update update = new Update();
             Message message = new Message();

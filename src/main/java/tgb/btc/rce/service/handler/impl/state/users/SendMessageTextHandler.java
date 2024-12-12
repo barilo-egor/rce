@@ -58,16 +58,16 @@ public class SendMessageTextHandler implements IStateHandler {
         Long userChatId = Long.parseLong(redisStringService.get(chatId));
         Optional<Message> message = responseSender.sendMessage(chatId, "Предварительный просмотр сообщения, отправляемого пользователю <b>"
                 + userChatId + "</b>:");
-        responseSender.sendMessage(chatId, text,
+        message.ifPresent(value -> responseSender.sendMessage(chatId, text,
                 InlineButton.builder()
                         .text("Отправить")
                         .data(callbackDataService.buildData(CallbackQueryData.SEND_MESSAGE_TO_USER, userChatId))
                         .build(),
                 InlineButton.builder()
                         .text("Отмена")
-                        .data(callbackDataService.buildData(CallbackQueryData.INLINE_DELETE, message.get().getMessageId()))
+                        .data(callbackDataService.buildData(CallbackQueryData.INLINE_DELETE, value.getMessageId()))
                         .build()
-        );
+        ));
         redisStringService.delete(chatId);
         redisUserStateService.delete(chatId);
         adminPanelService.send(chatId);

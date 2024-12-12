@@ -8,14 +8,11 @@ import tgb.btc.library.bean.bot.User;
 import tgb.btc.library.constants.enums.ReferralType;
 import tgb.btc.library.interfaces.IModule;
 import tgb.btc.library.interfaces.service.bean.bot.ILotteryWinService;
-import tgb.btc.library.interfaces.service.bean.bot.ISpamBanService;
 import tgb.btc.library.interfaces.service.bean.bot.deal.read.IDealCountService;
 import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.rce.enums.PropertiesMessage;
 import tgb.btc.rce.sender.IResponseSender;
 import tgb.btc.rce.service.IUserInfoService;
-import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
-import tgb.btc.rce.service.util.ICallbackDataService;
 import tgb.btc.rce.service.util.IMessagePropertiesService;
 
 import java.util.List;
@@ -28,24 +25,13 @@ public class UserInfoService implements IUserInfoService {
 
     private IResponseSender responseSender;
 
-    private ISpamBanService spamBanService;
-
     private IDealCountService dealCountService;
 
     private ILotteryWinService lotteryWinService;
 
-    private IKeyboardBuildService keyboardBuildService;
-
     private IMessagePropertiesService messagePropertiesService;
 
     private IModule<ReferralType> referralModule;
-
-    private ICallbackDataService callbackDataService;
-
-    @Autowired
-    public void setCallbackDataService(ICallbackDataService callbackDataService) {
-        this.callbackDataService = callbackDataService;
-    }
 
     @Autowired
     public void setReferralModule(IModule<ReferralType> referralModule) {
@@ -56,19 +42,10 @@ public class UserInfoService implements IUserInfoService {
     public void setMessagePropertiesService(IMessagePropertiesService messagePropertiesService) {
         this.messagePropertiesService = messagePropertiesService;
     }
-    @Autowired
-    public void setKeyboardBuildService(IKeyboardBuildService keyboardBuildService) {
-        this.keyboardBuildService = keyboardBuildService;
-    }
 
     @Autowired
     public void setLotteryWinService(ILotteryWinService lotteryWinService) {
         this.lotteryWinService = lotteryWinService;
-    }
-
-    @Autowired
-    public void setSpamBanService(ISpamBanService spamBanService) {
-        this.spamBanService = spamBanService;
     }
 
     @Autowired
@@ -102,7 +79,7 @@ public class UserInfoService implements IUserInfoService {
         Long dealsCount = dealCountService.getCountConfirmedByUserChatId(chatId);
         List<ReferralUser> referralUsers = readUserService.getUserReferralsByChatId(chatId);
         String role = user.getUserRole().getDisplayName();
-        String isBanned = user.getBanned() ? "да" : "нет";
+        String isBanned = Boolean.TRUE.equals(user.getBanned()) ? "да" : "нет";
         Long lotteryWinCount = lotteryWinService.getLotteryWinCount(chatId);
         String fromChatId = Objects.nonNull(user.getFromChatId()) ? String.valueOf(user.getFromChatId()) : "отсутствует";
         String result;

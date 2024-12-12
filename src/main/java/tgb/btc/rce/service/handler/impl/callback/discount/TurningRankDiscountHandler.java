@@ -45,7 +45,7 @@ public class TurningRankDiscountHandler implements ICallbackQueryHandler {
     @Override
     public void handle(CallbackQuery callbackQuery) {
         Long chatId = callbackQuery.getFrom().getId();
-        Boolean newValue = Boolean.valueOf(callbackDataService.getArgument(callbackQuery.getData(), 1));
+        boolean newValue = Boolean.parseBoolean(callbackDataService.getArgument(callbackQuery.getData(), 1));
         PropertiesConfiguration conf;
         try {
             File file = new File(PropertiesPath.VARIABLE_PROPERTIES.getFileName());
@@ -56,8 +56,8 @@ public class TurningRankDiscountHandler implements ICallbackQueryHandler {
             propertyParameters.setThrowExceptionOnMissing(true);
             propertyParameters.setListDelimiterHandler(delimiter);
 
-            FileBasedConfigurationBuilder<PropertiesConfiguration> builder = new FileBasedConfigurationBuilder<PropertiesConfiguration>(
-                    PropertiesConfiguration.class);
+            FileBasedConfigurationBuilder<PropertiesConfiguration> builder =
+                    new FileBasedConfigurationBuilder<>(PropertiesConfiguration.class);
             builder.setAutoSave(true);
 
             builder.configure(propertyParameters);

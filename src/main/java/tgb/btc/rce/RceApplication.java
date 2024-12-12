@@ -1,5 +1,6 @@
 package tgb.btc.rce;
 
+import lombok.Getter;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
@@ -20,10 +21,10 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 @EntityScan("tgb.btc")
 public class RceApplication extends WebMvcAutoConfiguration {
 
-    public static ApplicationContext SPRING_CONTEXT;
+    @Getter
+    private static ApplicationContext springContext;
 
     public static void main(String[] args) {
-        SPRING_CONTEXT = SpringApplication.run(RceApplication.class, args);
+        springContext = SpringApplication.run(RceApplication.class, args);
     }
-
 }

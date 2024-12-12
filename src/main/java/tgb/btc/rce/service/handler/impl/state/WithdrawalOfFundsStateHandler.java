@@ -23,7 +23,7 @@ import tgb.btc.rce.service.util.IMessagePropertiesService;
 @Service
 public class WithdrawalOfFundsStateHandler implements IStateHandler {
 
-    private final static String ERROR_MESSAGE = "Нажми \"Поделиться контактом\" чтобы отправить нам контакт, либо \"Отмена\".";
+    private static final String ERROR_MESSAGE = "Нажми \"Поделиться контактом\" чтобы отправить нам контакт, либо \"Отмена\".";
 
     private final IStartService startService;
 
