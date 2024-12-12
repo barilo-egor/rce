@@ -18,6 +18,7 @@ import tgb.btc.rce.service.redis.IRedisUserStateService;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.Optional;
 
 @Service
@@ -69,7 +70,7 @@ public class BotVariablesStateHandler implements IStateHandler {
     private boolean updateProperties(Long chatId, Document document) {
         try {
             responseSender.downloadFile(document, PropertiesPath.VARIABLE_BUFFER_PROPERTIES.getFileName());
-        } catch (IOException e) {
+        } catch (IOException | URISyntaxException e) {
             log.error("Ошибка при скачивании новых переменных: ", e);
             responseSender.sendMessage(chatId, "Ошибка при скачивании новых переменных: " + e.getMessage());
             return false;
