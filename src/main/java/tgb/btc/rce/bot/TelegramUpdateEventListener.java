@@ -3,6 +3,7 @@ package tgb.btc.rce.bot;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
+import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.service.process.BannedUserCache;
 import tgb.btc.rce.enums.UpdateFilterType;
@@ -19,7 +20,10 @@ import tgb.btc.rce.service.processors.support.MessagesService;
 import tgb.btc.rce.service.redis.IRedisUserStateService;
 import tgb.btc.rce.vo.TelegramUpdateEvent;
 
-import java.util.*;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 @Service
 @Slf4j
@@ -95,7 +99,10 @@ public class TelegramUpdateEventListener {
             UpdateType updateType = UpdateType.fromUpdate(update);
             if (handleState(update, updateType, chatId)) return;
             if (!handle(update, updateType)) {
-                messagesService.sendNoHandler(UpdateType.getChatId(update));
+                Chat chat = UpdateType.getChat(update);
+                if (Objects.nonNull(chat) && chat.isUserChat()) {
+                    messagesService.sendNoHandler(UpdateType.getChatId(update));
+                }
             }
         } catch (NumberFormatException e) {
             responseSender.sendMessage(chatId, "Неверный формат.");

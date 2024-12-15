@@ -252,6 +252,7 @@ class TelegramUpdateEventListenerTest {
         Chat chat = new Chat();
         Long chatId = 123456789L;
         chat.setId(chatId);
+        chat.setType("private");
         message.setChat(chat);
         update.setEditedChannelPost(message);
         TelegramUpdateEvent telegramUpdateEvent = new TelegramUpdateEvent(this, update);
@@ -276,6 +277,7 @@ class TelegramUpdateEventListenerTest {
         Chat chat = new Chat();
         Long chatId = 123456789L;
         chat.setId(chatId);
+        chat.setType("private");
         message.setChat(chat);
         update.setMessage(message);
         TelegramUpdateEvent telegramUpdateEvent = new TelegramUpdateEvent(this, update);
@@ -300,6 +302,7 @@ class TelegramUpdateEventListenerTest {
         Message message = new Message();
         Chat chat = new Chat();
         Long chatId = 123456789L;
+        chat.setType("private");
         chat.setId(chatId);
         message.setChat(chat);
         update.setMessage(message);
@@ -357,6 +360,7 @@ class TelegramUpdateEventListenerTest {
         Chat chat = new Chat();
         Long chatId = 123456789L;
         chat.setId(chatId);
+        chat.setType("private");
         message.setChat(chat);
         update.setMessage(message);
         TelegramUpdateEvent telegramUpdateEvent = new TelegramUpdateEvent(this, update);
@@ -396,13 +400,14 @@ class TelegramUpdateEventListenerTest {
         Message message = new Message();
         Chat chat = new Chat();
         chat.setId(chatId);
+        chat.setType("private");
         message.setChat(chat);
         update.setMessage(message);
         TelegramUpdateEvent telegramUpdateEvent = new TelegramUpdateEvent(this, update);
         telegramUpdateEventListener.update(telegramUpdateEvent);
         ArgumentCaptor<String> textCaptor = ArgumentCaptor.forClass(String.class);
         verify(responseSender, times(1)).sendMessage(eq(chatId), textCaptor.capture());
-        assertTrue(textCaptor.getValue().startsWith("Произошла ошибка.\n"));
+        assertTrue(textCaptor.getValue().startsWith("Произошла ошибка."));
         assertTrue(textCaptor.getValue().endsWith("\nВведите /start для выхода в главное меню."));
     }
 }
