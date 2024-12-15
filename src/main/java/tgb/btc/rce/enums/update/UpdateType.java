@@ -1,6 +1,7 @@
 package tgb.btc.rce.enums.update;
 
 import org.telegram.telegrambots.meta.api.objects.Update;
+import tgb.btc.library.exception.BaseException;
 
 import java.util.Set;
 
@@ -114,7 +115,7 @@ public enum UpdateType {
         if (update.hasMyChatMember()) return MY_CHAT_MEMBER;
         if (update.hasChatMember()) return CHAT_MEMBER;
         if (update.hasChatJoinRequest()) return CHAT_JOIN_REQUEST;
-        throw new RuntimeException("Неизвестный тип у update.");
+        throw new BaseException("Неизвестный тип у update.");
     }
 
     /**

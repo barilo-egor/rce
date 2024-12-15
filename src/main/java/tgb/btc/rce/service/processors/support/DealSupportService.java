@@ -37,6 +37,7 @@ import java.util.Objects;
 @Service
 public class DealSupportService {
 
+    private static final String ABSENT = "Отсутствует";
 
     private IReadUserService readUserService;
 
@@ -140,7 +141,7 @@ public class DealSupportService {
         if (Objects.nonNull(apiDeal.getApiRequisite())) {
             requisite = apiDeal.getApiRequisite().getRequisite();
         } else {
-            requisite = "Отсутствует";
+            requisite = ABSENT;
         }
         return apiDealType + " на " + apiDeal.getDealType().getGenitive() + " №" + apiDeal.getPid() + "\n"
                 + "Идентификатор клиента: " + apiDeal.getApiUser().getId() + "\n"
@@ -169,19 +170,33 @@ public class DealSupportService {
         return dealToString(readDealService.findByPid(pid));
     }
 
-    private static final String DEAL_INFO = "Заявка на %s №%s \n" + "Дата,время: %s\n" + "Тип оплаты: %s\n" + "Кошелек: %s\n" + "Контакт: %s\n"
-            + "Количество сделок: %s\n" + "ID: %s\n" + "Курс: %s\n" + "Сумма %s: %s\n" + "Сумма: %s %s\n" + "Способ доставки: %s\n" + "Реквизит: %s";
+    private static final String DEAL_INFO = """
+            Заявка на %s №%s\s
+            Дата,время: %s
+            Тип оплаты: %s
+            Кошелек: %s
+            Контакт: %s
+            Количество сделок: %s
+            ID: %s
+            Курс: %s
+            Сумма %s: %s
+            Сумма: %s %s
+            Способ доставки: %s
+            Реквизит: %s""";
 
     public String dealToString(Deal deal) {
         User user = deal.getUser();
         SecurePaymentDetails securePaymentDetails = securePaymentDetailsService.hasAccessToPaymentTypes(user.getChatId(), deal.getFiatCurrency()) || !DealType.isBuy(deal.getDealType())
                 ? null
                 : securePaymentDetailsService.getByChatIdAndFiatCurrency(user.getChatId(), deal.getFiatCurrency());
-        String paymentTypeName = Objects.nonNull(deal.getPaymentType())
-                ? deal.getPaymentType().getName()
-                : Objects.nonNull(securePaymentDetails)
-                ? "защитный реквизит"
-                : "Не установлен тип оплаты.";
+        String paymentTypeName;
+        if (Objects.nonNull(deal.getPaymentType())) {
+            paymentTypeName = deal.getPaymentType().getName();
+        } else {
+            paymentTypeName = Objects.nonNull(securePaymentDetails)
+                    ? "защитный реквизит"
+                    : "Не установлен тип оплаты.";
+        }
         FiatCurrency fiatCurrency = deal.getFiatCurrency();
         return String.format(
                 DEAL_INFO, deal.getDealType().getGenitive(), deal.getPid(),
@@ -189,18 +204,18 @@ public class DealSupportService {
                 paymentTypeName,
                 deal.getWallet(),
                 StringUtils.defaultIfEmpty(readUserService.getUsernameByChatId(user.getChatId()),
-                        "Отсутствует"),
+                        ABSENT),
                 dealCountService.getCountConfirmedByUserChatId(user.getChatId()), user.getChatId(),
                 Objects.nonNull(deal.getCourse())
                         ? bigDecimalService.roundToPlainString(deal.getCourse(), 0)
-                        : "Отсутствует",
+                        : ABSENT,
                 deal.getCryptoCurrency().getShortName(),
                 deal.getCryptoAmount().setScale(8, RoundingMode.FLOOR).stripTrailingZeros()
                         .toPlainString(),
                 deal.getAmount().setScale(0, RoundingMode.HALF_UP).stripTrailingZeros().toPlainString(),
-                Objects.nonNull(fiatCurrency) ? fiatCurrency.getGenitive() : "Отсутствует",
-                Objects.nonNull(deal.getDeliveryType()) ? deliveryTypeService.getDisplayName(deal.getDeliveryType()) : "Отсутствует",
-                StringUtils.isNotEmpty(deal.getDetails()) ? deal.getDetails() : "Отсутствует"
+                Objects.nonNull(fiatCurrency) ? fiatCurrency.getGenitive() : ABSENT,
+                Objects.nonNull(deal.getDeliveryType()) ? deliveryTypeService.getDisplayName(deal.getDeliveryType()) : ABSENT,
+                StringUtils.isNotEmpty(deal.getDetails()) ? deal.getDetails() : ABSENT
         );
     }
 
@@ -214,7 +229,7 @@ public class DealSupportService {
         if (hasDefaultGroupChat)
             buttons.add(InlineButton.builder()
                     .text("Подтвердить с запросом")
-                    .data(callbackDataService.buildData(CallbackQueryData.CONFIRM_USER_DEAL, new Object[]{pid, true}))
+                    .data(callbackDataService.buildData(CallbackQueryData.CONFIRM_USER_DEAL, pid, true))
                     .build());
         CryptoCurrency cryptoCurrency = dealPropertyService.getCryptoCurrencyByPid(pid);
         if (cryptoWithdrawalService.isOn(cryptoCurrency)) {

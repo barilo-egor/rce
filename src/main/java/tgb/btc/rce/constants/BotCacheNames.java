@@ -8,4 +8,5 @@ public final class BotCacheNames {
     public static final String FIAT_INLINE_BUTTONS = "fiatInlineButtons";
     public static final String DEAL_REPORTS = "dealReportsKeyboard";
     public static final String PROMO_CODE_KEYBOARD = "promoCodeKeyboard";
+    public static final String SLASH_COMMAND_SERVICE = "slashCommandService";
 }

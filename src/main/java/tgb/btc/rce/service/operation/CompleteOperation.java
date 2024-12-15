@@ -3,7 +3,6 @@ package tgb.btc.rce.service.operation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import tgb.btc.library.interfaces.service.bean.bot.deal.IModifyDealService;
-import tgb.btc.rce.service.util.ITelegramPropertiesService;
 import tgb.btc.rce.vo.PoolOperation;
 
 import java.util.Objects;
@@ -14,12 +13,8 @@ public class CompleteOperation implements IPoolOperation {
 
     private final IModifyDealService modifyDealService;
 
-    private final String botUsername;
-
-    public CompleteOperation(IModifyDealService modifyDealService,
-                             ITelegramPropertiesService telegramPropertiesService) {
+    public CompleteOperation(IModifyDealService modifyDealService) {
         this.modifyDealService = modifyDealService;
-        this.botUsername = telegramPropertiesService.getUsername();
     }
 
     @Override

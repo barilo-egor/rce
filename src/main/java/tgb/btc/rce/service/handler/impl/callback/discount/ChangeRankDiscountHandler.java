@@ -43,7 +43,7 @@ public class ChangeRankDiscountHandler implements ICallbackQueryHandler{
     public void handle(CallbackQuery callbackQuery) {
         Long chatId = callbackQuery.getFrom().getId();
         Long userChatId = callbackDataService.getLongArgument(callbackQuery.getData(), 1);
-        Boolean isRankDiscountOn = Boolean.valueOf(callbackDataService.getArgument(callbackQuery.getData(), 2));
+        Boolean isRankDiscountOn = callbackDataService.getBoolArgument(callbackQuery.getData(), 2);
         Long userPid = readUserService.getPidByChatId(userChatId);
         if (userDiscountService.isExistByUserPid(userPid)) {
             userDiscountService.updateIsRankDiscountOnByPid(isRankDiscountOn, userPid);
@@ -54,15 +54,12 @@ public class ChangeRankDiscountHandler implements ICallbackQueryHandler{
             userDiscountService.save(userDiscount);
         }
         responseSender.deleteMessage(chatId, callbackQuery.getMessage().getMessageId());
-        if (!readUserService.existsByChatId(userChatId)) {
-            responseSender.sendMessage(chatId, "Пользователь не найден.");
-            return;
-        }
-        boolean isUserRankDiscountOn = BooleanUtils.isTrue(userDiscountService.getRankDiscountByUserChatId(userChatId));
+        boolean isUserRankDiscountOn = BooleanUtils.isTrue(isRankDiscountOn);
         responseSender.sendMessage(chatId, "Пользователь chat id=" + userChatId + ".",
                 keyboardBuildService.buildInline(List.of(InlineButton.builder()
                         .text(isUserRankDiscountOn ? "Выключить" : "Включить")
-                        .data(callbackDataService.buildData(CallbackQueryData.CHANGE_RANK_DISCOUNT, userChatId, !isUserRankDiscountOn))
+                        .data(callbackDataService.buildData(CallbackQueryData.CHANGE_RANK_DISCOUNT, userChatId,
+                                !isUserRankDiscountOn))
                         .build())));
     }
 

@@ -4,7 +4,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Message;
-import org.telegram.telegrambots.meta.api.objects.media.InputMedia;
 import tgb.btc.library.bean.bot.PaymentReceipt;
 import tgb.btc.library.constants.enums.bot.ReceiptFormat;
 import tgb.btc.library.constants.enums.bot.UserRole;
@@ -15,7 +14,6 @@ import tgb.btc.rce.sender.IResponseSender;
 import tgb.btc.rce.service.handler.message.text.ITextCommandHandler;
 import tgb.btc.rce.service.processors.support.DealSupportService;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -54,22 +52,18 @@ public class NewDealsHandler implements ITextCommandHandler {
                 responseSender.sendMessage(chatId, dealSupportService.dealToString(dealPid),
                         dealSupportService.dealToStringButtons(dealPid));
                 List<PaymentReceipt> paymentReceipts = readDealService.getPaymentReceipts(dealPid);
-                if (paymentReceipts.size() > 0) {
-                    List<InputMedia> inputMedia = new ArrayList<>();
-                    for (PaymentReceipt paymentReceipt : paymentReceipts) {
-                        if (paymentReceipt.getReceiptFormat().equals(ReceiptFormat.PICTURE)) {
-                            responseSender.sendPhoto(chatId, StringUtils.EMPTY, paymentReceipt.getReceipt());
-                        } else if (paymentReceipt.getReceiptFormat().equals(ReceiptFormat.PDF)) {
-                            responseSender.sendInputFile(chatId, new InputFile(paymentReceipt.getReceipt()));
-                        }
-                    }
-                    responseSender.sendMedia(chatId, inputMedia);
-                }
+                paymentReceipts.forEach(paymentReceipt -> sendPaymentReceipt(paymentReceipt, chatId));
             });
         } else {
-            activeDeals.forEach(dealPid -> {
-                responseSender.sendMessage(chatId, dealSupportService.dealToString(dealPid));
-            });
+            activeDeals.forEach(dealPid -> responseSender.sendMessage(chatId, dealSupportService.dealToString(dealPid)));
+        }
+    }
+
+    private void sendPaymentReceipt(PaymentReceipt paymentReceipt, Long chatId) {
+        if (paymentReceipt.getReceiptFormat().equals(ReceiptFormat.PICTURE)) {
+            responseSender.sendPhoto(chatId, StringUtils.EMPTY, paymentReceipt.getReceipt());
+        } else if (paymentReceipt.getReceiptFormat().equals(ReceiptFormat.PDF)) {
+            responseSender.sendFile(chatId, new InputFile(paymentReceipt.getReceipt()));
         }
     }
 

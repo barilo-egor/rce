@@ -1,5 +1,10 @@
 package tgb.btc.rce.enums;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
 public enum PropertiesMessage {
     NO_LOTTERY_ATTEMPTS("lottery.no_attempts"),
     REFERRAL_MAIN("referral.main"),
@@ -20,7 +25,6 @@ public enum PropertiesMessage {
     EDIT_CONTACTS_MENU("edit.contacts.menu"),
     BOT_SETTINGS_MENU("bot.settings.menu"),
     CHOOSE_CURRENCY_BUY("choose.currency.buy"),
-
     CHOOSE_CURRENCY_SELL("choose.currency.sell"),
     DEAL_INPUT_SUM("deal.input.sum"),
     DEAL_INPUT_SUM_CRYPTO_OR_FIAT("deal.input.sum.crypto.or.fiat"),
@@ -29,16 +33,8 @@ public enum PropertiesMessage {
     DEAL_CONFIRMED("deal.confirmed"),
     USER_INFORMATION_MAIN("user.information.main"),
     USER_INFORMATION_WITHOUT_REFERRAL_MAIN("user.information.without.referral.main"),
-
     DELIVERY_TYPE_ASK("delivery.type.ask");
 
     final String key;
 
-    PropertiesMessage(String key) {
-        this.key = key;
-    }
-
-    public String getKey() {
-        return key;
-    }
 }

@@ -13,7 +13,6 @@ import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 public class TurningCurrenciesService implements ITurningCurrenciesService {
@@ -47,7 +46,7 @@ public class TurningCurrenciesService implements ITurningCurrenciesService {
         return Arrays.stream(CryptoCurrency.values())
                 .filter(cryptoCurrency -> DealType.BUY.equals(dealType)
                         ? buyTurning.get(cryptoCurrency)
-                        : sellTurning.get(cryptoCurrency)).collect(Collectors.toList());
+                        : sellTurning.get(cryptoCurrency)).toList();
     }
 
     @Override

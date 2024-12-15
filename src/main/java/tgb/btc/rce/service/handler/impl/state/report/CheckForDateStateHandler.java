@@ -81,7 +81,7 @@ public class CheckForDateStateHandler implements IStateHandler {
                 List<PaymentReceipt> paymentReceipts = readDealService.getPaymentReceipts(deal.getPid());
                 paymentReceipts.forEach(paymentReceipt -> {
                     if (ReceiptFormat.PDF.equals(paymentReceipt.getReceiptFormat())) {
-                        responseSender.sendInputFile(chatId, new InputFile(paymentReceipt.getReceipt()));
+                        responseSender.sendFile(chatId, new InputFile(paymentReceipt.getReceipt()));
                     } else if (ReceiptFormat.PICTURE.equals(paymentReceipt.getReceiptFormat())) {
                         responseSender.sendPhoto(chatId, "№" + deal.getPid(), paymentReceipt.getReceipt());
                     }

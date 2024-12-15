@@ -1,29 +1,26 @@
 package tgb.btc.rce.enums;
 
+import lombok.Getter;
 import tgb.btc.library.exception.BaseException;
 
 import java.util.Arrays;
 
+@Getter
 public enum InlineCalculatorButton {
 
     NUMBER("number"),
     COMMA("."),
     DEL("del"),
     CURRENCY_SWITCHER("currency_switcher"),
-    CANCEL("⬅\uFE0Fназад"),
+    CANCEL("⬅️назад"),
     SWITCH_CALCULATOR("Переключить"),
     SWITCH_TO_MAIN_CALCULATOR("Переключить калькулятор"),
-    READY("готово➡\uFE0F");
-
+    READY("готово➡️");
 
     final String data;
 
     InlineCalculatorButton(String data) {
         this.data = data;
-    }
-
-    public String getData() {
-        return data;
     }
 
     public static InlineCalculatorButton getByData(String data) {

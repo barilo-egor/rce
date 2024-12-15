@@ -25,7 +25,7 @@ public class MessagePropertiesService implements IMessagePropertiesService {
         try {
             String propertiesMessage = messagePropertiesReader.getString(message.getKey());
             if (Objects.isNull(propertiesMessage)) return null;
-            text = propertiesMessage.replaceAll("<ln>", "\n");
+            text = propertiesMessage.replace("<ln>", "\n");
         } catch (Exception e) {
             text = getErrorText(message.getKey());
         }
@@ -36,14 +36,14 @@ public class MessagePropertiesService implements IMessagePropertiesService {
     @Override
     public String getMessage(PropertiesMessage message, Object... variables) {
         String propertiesMessage = getMessage(message);
-        if (Objects.isNull(propertiesMessage)) return null; // TODO переделать на наллсейф,и не налл сейф
+        if (Objects.isNull(propertiesMessage)) return null;
         return String.format(propertiesMessage, variables);
     }
 
     @Override
     public String getMessage(String key, Object... variables) {
         String propertiesMessage = getMessageForFormat(key);
-        if (Objects.isNull(propertiesMessage)) return null; // TODO переделать на наллсейф,и не налл сейф
+        if (Objects.isNull(propertiesMessage)) return null;
         return String.format(propertiesMessage, variables);
     }
 
@@ -53,11 +53,10 @@ public class MessagePropertiesService implements IMessagePropertiesService {
         try {
             String message = messagePropertiesReader.getString(key);
             if (Objects.isNull(message)) return null;
-            text = message.replaceAll("<ln>", "\n");
+            text = message.replace("<ln>", "\n");
         } catch (Exception e) {
             text = getErrorText(key);
         }
-        if (Objects.isNull(text)) text = getErrorText(key);
         return text;
     }
 
@@ -67,11 +66,10 @@ public class MessagePropertiesService implements IMessagePropertiesService {
         try {
             String message = messagePropertiesReader.getString(key);
             if (Objects.isNull(message)) return null;
-            text = message.replaceAll("<ln>", "%n");
+            text = message.replace("<ln>", "%n");
         } catch (Exception e) {
             text = getErrorText(key);
         }
-        if (Objects.isNull(text)) text = getErrorText(key);
         return text;
     }
 

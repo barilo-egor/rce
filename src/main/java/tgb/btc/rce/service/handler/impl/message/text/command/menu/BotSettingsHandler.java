@@ -5,21 +5,21 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import tgb.btc.rce.enums.Menu;
 import tgb.btc.rce.enums.PropertiesMessage;
 import tgb.btc.rce.enums.update.TextCommand;
-import tgb.btc.rce.sender.IResponseSender;
+import tgb.btc.rce.sender.IMenuSender;
 import tgb.btc.rce.service.handler.message.text.ITextCommandHandler;
 
 @Service
 public class BotSettingsHandler implements ITextCommandHandler {
 
-    private final IResponseSender responseSender;
+    private final IMenuSender menuSender;
 
-    public BotSettingsHandler(IResponseSender responseSender) {
-        this.responseSender = responseSender;
+    public BotSettingsHandler(IMenuSender menuSender) {
+        this.menuSender = menuSender;
     }
 
     @Override
     public void handle(Message message) {
-        responseSender.sendMessage(message.getChatId(), PropertiesMessage.BOT_SETTINGS_MENU, Menu.BOT_SETTINGS);
+        menuSender.send(message.getChatId(), PropertiesMessage.BOT_SETTINGS_MENU, Menu.BOT_SETTINGS);
     }
 
     @Override

@@ -6,6 +6,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.bean.bot.PaymentType;
 import tgb.btc.library.interfaces.service.bean.bot.IPaymentTypeService;
 import tgb.btc.library.interfaces.util.IBigDecimalService;
+import tgb.btc.rce.enums.BotSystemMessage;
 import tgb.btc.rce.enums.RedisPrefix;
 import tgb.btc.rce.enums.UserState;
 import tgb.btc.rce.enums.update.TextCommand;
@@ -64,7 +65,7 @@ public class ChangeMinSumStateHandler implements IStateHandler {
         try {
             minSum = BigDecimal.valueOf(Double.parseDouble(text));
         } catch (NumberFormatException e) {
-            responseSender.sendMessage(chatId, "Введите валидное значение.");
+            responseSender.sendMessage(chatId, BotSystemMessage.ENTER_VALID_INPUT.getText());
             return;
         }
         Long paymentTypePid = Long.parseLong(redisStringService.get(RedisPrefix.PAYMENT_TYPE_PID, chatId));

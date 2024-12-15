@@ -25,13 +25,13 @@ import java.util.List;
 @Slf4j
 public class DealReportsCallbackHandler implements ICallbackQueryHandler {
 
-    public final static String TODAY = "За сегодня";
+    public static final String TODAY = "За сегодня";
 
-    public final static String TEN_DAYS = "За десять дней";
+    public static final String TEN_DAYS = "За десять дней";
 
-    public final static String MONTH = "За месяц";
+    public static final String MONTH = "За месяц";
 
-    public final static String DATE = "За дату";
+    public static final String DATE = "За дату";
 
     private final IResponseSender responseSender;
 

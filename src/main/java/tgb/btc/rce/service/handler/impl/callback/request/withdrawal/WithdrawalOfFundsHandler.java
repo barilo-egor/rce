@@ -5,7 +5,6 @@ import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import tgb.btc.library.constants.enums.properties.VariableType;
 import tgb.btc.library.interfaces.service.bean.bot.IWithdrawalRequestService;
-import tgb.btc.library.interfaces.service.bean.bot.user.IModifyUserService;
 import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.library.service.properties.VariablePropertiesReader;
 import tgb.btc.rce.enums.BotReplyButton;
@@ -38,8 +37,6 @@ public class WithdrawalOfFundsHandler implements ICallbackQueryHandler {
 
     private final IReadUserService readUserService;
 
-    private final IModifyUserService modifyUserService;
-
     private final IMessagePropertiesService messagePropertiesService;
 
     private final IRedisUserStateService redisUserStateService;
@@ -47,7 +44,7 @@ public class WithdrawalOfFundsHandler implements ICallbackQueryHandler {
     public WithdrawalOfFundsHandler(IWithdrawalRequestService withdrawalRequestService, IResponseSender responseSender,
                                     IKeyboardBuildService keyboardBuildService, ICallbackDataService callbackDataService,
                                     VariablePropertiesReader variablePropertiesReader, IReadUserService readUserService,
-                                    IModifyUserService modifyUserService, IMessagePropertiesService messagePropertiesService,
+                                    IMessagePropertiesService messagePropertiesService,
                                     IRedisUserStateService redisUserStateService) {
         this.withdrawalRequestService = withdrawalRequestService;
         this.responseSender = responseSender;
@@ -55,7 +52,6 @@ public class WithdrawalOfFundsHandler implements ICallbackQueryHandler {
         this.callbackDataService = callbackDataService;
         this.variablePropertiesReader = variablePropertiesReader;
         this.readUserService = readUserService;
-        this.modifyUserService = modifyUserService;
         this.messagePropertiesService = messagePropertiesService;
         this.redisUserStateService = redisUserStateService;
     }

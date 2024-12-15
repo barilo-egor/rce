@@ -9,12 +9,12 @@ import tgb.btc.library.exception.ApiResponseErrorException;
 import tgb.btc.library.interfaces.util.IBigDecimalService;
 import tgb.btc.library.interfaces.web.ICryptoWithdrawalService;
 import tgb.btc.library.vo.web.PoolDeal;
+import tgb.btc.rce.enums.HTMLTag;
 import tgb.btc.rce.enums.update.CallbackQueryData;
 import tgb.btc.rce.sender.IResponseSender;
 import tgb.btc.rce.service.handler.util.IBitcoinPoolService;
 import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
 import tgb.btc.rce.service.util.ICallbackDataService;
-import tgb.btc.rce.service.util.ITextCommandService;
 import tgb.btc.rce.vo.InlineButton;
 
 import java.math.BigDecimal;
@@ -33,19 +33,16 @@ public class BitcoinPoolService implements IBitcoinPoolService {
 
     private final IBigDecimalService bigDecimalService;
 
-    private final ITextCommandService commandService;
-
     private final IKeyboardBuildService keyboardBuildService;
 
     private final ICallbackDataService callbackDataService;
 
     public BitcoinPoolService(IResponseSender responseSender, ICryptoWithdrawalService cryptoWithdrawalService,
-                              IBigDecimalService bigDecimalService, ITextCommandService commandService,
+                              IBigDecimalService bigDecimalService,
                               IKeyboardBuildService keyboardBuildService, ICallbackDataService callbackDataService) {
         this.responseSender = responseSender;
         this.cryptoWithdrawalService = cryptoWithdrawalService;
         this.bigDecimalService = bigDecimalService;
-        this.commandService = commandService;
         this.keyboardBuildService = keyboardBuildService;
         this.callbackDataService = callbackDataService;
     }
@@ -56,55 +53,59 @@ public class BitcoinPoolService implements IBitcoinPoolService {
         Optional<Message> poolMessage = responseSender.sendMessage(chatId, "Получение пула сделок BTC.");
         try {
             deals = cryptoWithdrawalService.getAllPoolDeals();
+            Map<String, List<PoolDeal>> sortedByBotDeals = deals.stream()
+                    .collect(Collectors.groupingBy(PoolDeal::getBot, TreeMap::new, Collectors.toList()));
+            if (CollectionUtils.isEmpty(deals)) {
+                responseSender.sendMessage(chatId, "Текущий пул сделок BTC пуст.");
+                return;
+            }
+            BigDecimal totalAmount = BigDecimal.ZERO;
+            responseSender.sendMessage(chatId, "Текущий пул сделок BTC:");
+            for (Map.Entry<String, List<PoolDeal>> bot : sortedByBotDeals.entrySet()) {
+                StringBuilder botDeals = new StringBuilder();
+                botDeals.append("\uD83E\uDD16 ").append(bot.getKey()).append(" ⬇️\n");
+                for (PoolDeal poolDeal : bot.getValue()) {
+                    botDeals.append("〰️〰️〰️〰️〰️〰️").append("\n")
+                            .append(HTMLTag.BOLD.getOpenTag()).append("Сделка").append(HTMLTag.BOLD.getCloseTag()).append(" №").append(HTMLTag.CODE.getOpenTag()).append(poolDeal.getPid())
+                            .append(HTMLTag.CODE.getCloseTag()).append(" (пул ID ").append(poolDeal.getId())
+                            .append(")\n")
+                            .append("<b>Данные</b>: ").append(HTMLTag.CODE.getOpenTag()).append(poolDeal.getAddress()).append(",")
+                            .append(poolDeal.getAmount()).append(HTMLTag.CODE.getCloseTag()).append("\n")
+                            .append("<i>Для удаления сделки из пула введите</i> ").append(HTMLTag.CODE.getOpenTag())
+                            .append("/deletefrompool ")
+                            .append(poolDeal.getId()).append(HTMLTag.CODE.getCloseTag()).append("\n");
+                    totalAmount = totalAmount.add(new BigDecimal(poolDeal.getAmount()));
+                }
+                responseSender.sendMessage(chatId, botDeals.toString());
+            }
+            StringBuilder dealsInfo = new StringBuilder();
+            String strTotalAmount = bigDecimalService.roundToPlainString(totalAmount, CryptoCurrency.BITCOIN.getScale());
+            dealsInfo.append("<b>Общая сумма</b>: ").append(HTMLTag.CODE.getOpenTag())
+                    .append(bigDecimalService.roundToPlainString(totalAmount, CryptoCurrency.BITCOIN.getScale()))
+                    .append(HTMLTag.CODE.getCloseTag()).append("\n");
+            dealsInfo.append("<b>Баланс кошелька</b>: ").append(HTMLTag.CODE.getOpenTag())
+                    .append(cryptoWithdrawalService.getBalance(CryptoCurrency.BITCOIN))
+                    .append(HTMLTag.CODE.getCloseTag());
+            ReplyKeyboard replyKeyboard = keyboardBuildService.buildInline(
+                    List.of(
+                            InlineButton.builder()
+                                    .text("Автовывод")
+                                    .data(callbackDataService.buildData(CallbackQueryData.BITCOIN_POOL_WITHDRAWAL, deals.size(), strTotalAmount))
+                                    .build(),
+                            InlineButton.builder()
+                                    .text("Очистить пул")
+                                    .data(callbackDataService.buildData(CallbackQueryData.CLEAR_POOL, deals.size()))
+                                    .build(),
+                            InlineButton.builder()
+                                    .text("❌ Закрыть")
+                                    .data(CallbackQueryData.INLINE_DELETE.name())
+                                    .build()
+                    ), 2);
+            responseSender.sendMessage(chatId, dealsInfo.toString(), replyKeyboard);
         } catch (ApiResponseErrorException e) {
             responseSender.sendMessage(chatId, e.getMessage());
-            return;
         } finally {
             poolMessage.ifPresent(message -> responseSender.deleteMessage(chatId, message.getMessageId()));
         }
-        Map<String, List<PoolDeal>> sortedByBotDeals = deals.stream()
-                .collect(Collectors.groupingBy(PoolDeal::getBot, TreeMap::new, Collectors.toList()));
-//        deals.add(PoolDeal.builder().bot("qwe").amount("0.001").address("asd").pid(123L).id(12L).build()); // TODO УДАЛИТЬ
-        if (CollectionUtils.isEmpty(deals)) {
-            responseSender.sendMessage(chatId, "Текущий пул сделок BTC пуст.");
-            return;
-        }
-        BigDecimal totalAmount = BigDecimal.ZERO;
-        responseSender.sendMessage(chatId, "Текущий пул сделок BTC:");
-        for (String bot : sortedByBotDeals.keySet()) {
-            StringBuilder botDeals = new StringBuilder();
-            botDeals.append("\uD83E\uDD16 ").append(bot).append(" ⬇\uFE0F\n");
-            for (PoolDeal poolDeal : sortedByBotDeals.get(bot)) {
-                botDeals.append("〰\uFE0F〰\uFE0F〰\uFE0F〰\uFE0F〰\uFE0F〰\uFE0F").append("\n")
-                        .append("<b>Сделка</b> №<code>").append(poolDeal.getPid()).append("</code> (пул ID ").append(poolDeal.getId())
-                        .append(")\n")
-                        .append("<b>Данные</b>: <code>").append(poolDeal.getAddress()).append(",")
-                        .append(poolDeal.getAmount()).append("</code>").append("\n")
-                        .append("<i>Для удаления сделки из пула введите</i> <code>/deletefrompool ")
-                        .append(poolDeal.getId()).append("</code>").append("\n");
-                totalAmount = totalAmount.add(new BigDecimal(poolDeal.getAmount()));
-            }
-            responseSender.sendMessage(chatId, botDeals.toString(), "html");
-        }
-        StringBuilder dealsInfo = new StringBuilder();
-        String strTotalAmount = bigDecimalService.roundToPlainString(totalAmount, CryptoCurrency.BITCOIN.getScale());
-        dealsInfo.append("<b>Общая сумма</b>: <code>").append(bigDecimalService.roundToPlainString(totalAmount, CryptoCurrency.BITCOIN.getScale())).append("</code>\n");
-        dealsInfo.append("<b>Баланс кошелька</b>: <code>").append(cryptoWithdrawalService.getBalance(CryptoCurrency.BITCOIN)).append("</code>");
-        ReplyKeyboard replyKeyboard = keyboardBuildService.buildInline(
-                List.of(
-                        InlineButton.builder()
-                                .text("Автовывод")
-                                .data(callbackDataService.buildData(CallbackQueryData.BITCOIN_POOL_WITHDRAWAL, deals.size(), strTotalAmount))
-                                .build(),
-                        InlineButton.builder()
-                                .text("Очистить пул")
-                                .data(callbackDataService.buildData(CallbackQueryData.CLEAR_POOL, deals.size()))
-                                .build(),
-                        InlineButton.builder()
-                                .text("❌ Закрыть")
-                                .data(CallbackQueryData.INLINE_DELETE.name())
-                                .build()
-                ), 2);
-        responseSender.sendMessage(chatId, dealsInfo.toString(), replyKeyboard, "html");
     }
 }

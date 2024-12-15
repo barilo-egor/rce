@@ -47,7 +47,7 @@ public class BitcoinPoolWithdrawalHandler implements ICallbackQueryHandler {
                 2
         );
         responseSender.sendMessage(chatId, "Вы собираетесь подтвердить и вывести все <b>" + dealsSize
-                + "</b> сделок из пула на общую сумму <b>" + totalAmount + "</b> . Продолжить?", replyKeyboard, "html");
+                + "</b> сделок из пула на общую сумму <b>" + totalAmount + "</b> . Продолжить?", replyKeyboard);
     }
 
     @Override

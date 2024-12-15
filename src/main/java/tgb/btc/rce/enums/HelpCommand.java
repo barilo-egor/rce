@@ -1,6 +1,7 @@
 package tgb.btc.rce.enums;
 
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 import tgb.btc.library.exception.BaseException;
 import tgb.btc.rce.enums.update.SlashCommand;
@@ -10,6 +11,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 @AllArgsConstructor
+@Getter
 public enum HelpCommand {
     MAKE_ADMIN(SlashCommand.MAKE_ADMIN, " chatId - перевод пользователя в роль администратора"),
     MAKE_OPERATOR(SlashCommand.MAKE_OPERATOR, " chatId - перевод пользователя в роль оператора"),

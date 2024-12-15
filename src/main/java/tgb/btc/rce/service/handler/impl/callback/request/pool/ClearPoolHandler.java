@@ -43,7 +43,7 @@ public class ClearPoolHandler implements ICallbackQueryHandler {
                         .build()
         ), 2);
         responseSender.sendMessage(chatId, "Вы собираетесь удалить все <b>" + dealsSize + "</b> сделок из BTC пула. Продолжить?",
-                replyKeyboard, "html");
+                replyKeyboard);
     }
 
     @Override

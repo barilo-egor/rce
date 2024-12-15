@@ -37,15 +37,14 @@ public class ConfirmBitcoinPoolWithdrawalHandler implements ICallbackQueryHandle
         Optional<Message> completeMessage = responseSender.sendMessage(chatId, "Выполняется завершение пула, пожалуйста подождите.");
         try {
             cryptoWithdrawalService.complete();
+            responseSender.deleteMessage(chatId, messageId);
+            responseSender.deleteMessage(chatId, callbackQuery.getMessage().getMessageId());
+            log.debug("Пользователь {} завершил пул BTC.", chatId);
         }  catch (ApiResponseErrorException e) {
             responseSender.sendMessage(chatId, e.getMessage());
-            return;
         } finally {
             completeMessage.ifPresent(message -> responseSender.deleteMessage(chatId, message.getMessageId()));
         }
-        responseSender.deleteMessage(chatId, messageId);
-        responseSender.deleteMessage(chatId, callbackQuery.getMessage().getMessageId());
-        log.debug("Пользователь {} завершил пул BTC.", chatId);
     }
 
     @Override

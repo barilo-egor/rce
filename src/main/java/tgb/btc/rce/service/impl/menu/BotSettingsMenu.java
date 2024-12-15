@@ -8,7 +8,6 @@ import tgb.btc.rce.enums.update.TextCommand;
 import tgb.btc.rce.service.IBotSwitch;
 import tgb.btc.rce.service.IMenu;
 import tgb.btc.rce.service.keyboard.IReplyButtonService;
-import tgb.btc.rce.service.util.IUpdateDispatcher;
 import tgb.btc.rce.vo.ReplyButton;
 
 import java.util.ArrayList;
@@ -19,18 +18,11 @@ public class BotSettingsMenu implements IMenu {
 
     private IReplyButtonService replyButtonService;
 
-    private IUpdateDispatcher updateDispatcher;
-
     private IBotSwitch botSwitch;
 
     @Autowired
     public void setBotSwitch(IBotSwitch botSwitch) {
         this.botSwitch = botSwitch;
-    }
-
-    @Autowired
-    public void setUpdateDispatcher(IUpdateDispatcher updateDispatcher) {
-        this.updateDispatcher = updateDispatcher;
     }
 
     @Autowired

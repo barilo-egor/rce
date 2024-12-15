@@ -52,7 +52,7 @@ public class AutoWithdrawalDealHandler implements ICallbackQueryHandler {
         }
         String message = "Вы собираетесь отправить " + deal.getCryptoAmount().toPlainString()
                 + " " + deal.getCryptoCurrency().getShortName() + " на адрес <code>" + deal.getWallet() + "</code>. Продолжить?";
-        responseSender.sendMessage(chatId, message, "html",
+        responseSender.sendMessage(chatId, message,
                 InlineButton.builder()
                         .text("Продолжить")
                         .data(callbackDataService.buildData(

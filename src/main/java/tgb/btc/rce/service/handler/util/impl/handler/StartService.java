@@ -77,7 +77,7 @@ public class StartService implements IStartService {
         redisStringService.delete(chatId);
         responseSender.sendMessage(chatId,
                 messagePropertiesService.getMessage(PropertiesMessage.MENU_MAIN),
-                menuService.build(Menu.MAIN, readUserService.getUserRoleByChatId(chatId)), "HTML");
+                menuService.build(Menu.MAIN, readUserService.getUserRoleByChatId(chatId)));
     }
 
     @Override
@@ -94,6 +94,6 @@ public class StartService implements IStartService {
         modifyUserService.setDefaultValues(chatId);
         responseSender.sendMessage(chatId,
                 messagePropertiesService.getMessage(PropertiesMessage.MENU_MAIN),
-                menuService.build(Menu.MAIN, readUserService.getUserRoleByChatId(chatId)), "HTML");
+                menuService.build(Menu.MAIN, readUserService.getUserRoleByChatId(chatId)));
     }
 }

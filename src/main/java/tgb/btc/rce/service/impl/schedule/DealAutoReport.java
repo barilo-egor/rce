@@ -38,8 +38,6 @@ public class DealAutoReport {
 
     private INotifyService notifyService;
 
-    public static LocalDate YESTERDAY;
-
     private ICryptoCurrenciesDesignService cryptoCurrenciesDesignService;
     
     private IFiatCurrencyService fiatCurrencyService;
@@ -84,12 +82,11 @@ public class DealAutoReport {
     @Scheduled(cron = "0 5 0 * * *")
     @Async
     public void everyDay() {
-        YESTERDAY = LocalDate.now().minusDays(1);
-
+        LocalDate yesterday = LocalDate.now().minusDays(1);
         sendReport(DealReportData.builder()
                            .period("день")
-                           .firstDay(YESTERDAY)
-                           .lastDay(YESTERDAY)
+                           .firstDay(yesterday)
+                           .lastDay(yesterday)
                            .build());
     }
 
@@ -152,7 +149,7 @@ public class DealAutoReport {
                         .append("\n");
             }
             stringBuilder.append("\n");
-            Map<FiatCurrency, BigDecimal> totalAmounts = new HashMap<>();
+            Map<FiatCurrency, BigDecimal> totalAmounts = new EnumMap<>(FiatCurrency.class);
             for (FiatCurrency fiatCurrency : fiatCurrencyService.getFiatCurrencies()) {
                 BigDecimal totalSum = BigDecimal.ZERO;
                 for (CryptoCurrency cryptoCurrency : CryptoCurrency.values()) {
@@ -200,7 +197,6 @@ public class DealAutoReport {
     }
 
     private BigDecimal getCryptoAmount(DealType dealType, CryptoCurrency cryptoCurrency, int scale, LocalDateTime dateFrom, LocalDateTime dateTo) {
-        // TODO поправить scale для usdt, выводит 2.6E+2 место 260
         BigDecimal totalCryptoAmount = reportDealService.getConfirmedCryptoAmountSum(dealType, dateFrom, dateTo,
                                                                          cryptoCurrency);
         return Objects.nonNull(totalCryptoAmount)

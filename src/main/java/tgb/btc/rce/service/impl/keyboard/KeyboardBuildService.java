@@ -21,7 +21,6 @@ import tgb.btc.rce.vo.ReplyButton;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Service
 public class KeyboardBuildService implements IKeyboardBuildService {
@@ -163,7 +162,7 @@ public class KeyboardBuildService implements IKeyboardBuildService {
                                 .data(contact.getUrl())
                                 .inlineType(InlineType.URL)
                                 .build())
-                        .collect(Collectors.toList()));
+                        .toList());
     }
 
     @Override

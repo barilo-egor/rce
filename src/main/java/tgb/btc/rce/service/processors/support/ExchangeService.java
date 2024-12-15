@@ -20,7 +20,10 @@ import tgb.btc.library.exception.BaseException;
 import tgb.btc.library.exception.CalculatorQueryException;
 import tgb.btc.library.interfaces.IModule;
 import tgb.btc.library.interfaces.enums.IDeliveryTypeService;
-import tgb.btc.library.interfaces.service.bean.bot.*;
+import tgb.btc.library.interfaces.service.bean.bot.IPaymentReceiptService;
+import tgb.btc.library.interfaces.service.bean.bot.IPaymentRequisiteService;
+import tgb.btc.library.interfaces.service.bean.bot.IPaymentTypeService;
+import tgb.btc.library.interfaces.service.bean.bot.ISecurePaymentDetailsService;
 import tgb.btc.library.interfaces.service.bean.bot.deal.IModifyDealService;
 import tgb.btc.library.interfaces.service.bean.bot.deal.IReadDealService;
 import tgb.btc.library.interfaces.service.bean.bot.deal.read.IDealCountService;
@@ -34,14 +37,16 @@ import tgb.btc.library.service.properties.ButtonsDesignPropertiesReader;
 import tgb.btc.library.service.properties.VariablePropertiesReader;
 import tgb.btc.library.service.schedule.DealDeleteScheduler;
 import tgb.btc.library.vo.calculate.DealAmount;
-import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.*;
+import tgb.btc.rce.enums.update.CallbackQueryData;
 import tgb.btc.rce.sender.IMessageImageResponseSender;
 import tgb.btc.rce.sender.IResponseSender;
 import tgb.btc.rce.service.*;
 import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
 import tgb.btc.rce.service.process.IUserDiscountProcessService;
-import tgb.btc.rce.service.util.*;
+import tgb.btc.rce.service.util.ICallbackDataService;
+import tgb.btc.rce.service.util.ICryptoCurrenciesDesignService;
+import tgb.btc.rce.service.util.IMessagePropertiesService;
 import tgb.btc.rce.vo.CalculatorQuery;
 import tgb.btc.rce.vo.InlineButton;
 
@@ -111,8 +116,6 @@ public class ExchangeService {
 
     private IBigDecimalService bigDecimalService;
 
-    private ITextCommandService commandService;
-
     private IModule<DeliveryKind> deliveryKindModule;
 
     private IModule<ReferralType> referralModule;
@@ -158,11 +161,6 @@ public class ExchangeService {
     @Autowired
     public void setReferralModule(IModule<ReferralType> referralModule) {
         this.referralModule = referralModule;
-    }
-
-    @Autowired
-    public void setCommandService(ITextCommandService commandService) {
-        this.commandService = commandService;
     }
 
     @Autowired
@@ -322,7 +320,7 @@ public class ExchangeService {
         } else {
             messageImage = MessageImage.CHOOSE_CRYPTO_CURRENCY_SELL;
         }
-        messageImageResponseSender.sendMessageAndSaveMessageId(messageImage, chatId, replyKeyboard);
+        messageImageResponseSender.sendMessage(messageImage, chatId, replyKeyboard);
     }
 
     public boolean saveCryptoCurrency(Update update) {
@@ -483,37 +481,31 @@ public class ExchangeService {
             }
             buttons.add(BotInlineButton.CANCEL.getButton());
             keyboard = keyboardBuildService.buildInline(buttons);
-            switch (subType) {
-                case 1:
-                    message = String.format(messageImageService.getMessage(messageImage),
-                            cryptoCurrenciesDesignService.getDisplayName(cryptoCurrency),
-                            bigDecimalService.roundToPlainString(deal.getCryptoAmount(), cryptoCurrency.getScale()),
-                            cryptoCurrency.getShortName(),
-                            lastWalletMessage);
-                    break;
-                case 2:
-                    message = String.format(messageImageService.getMessage(messageImage),
-                            bigDecimalService.roundToPlainString(deal.getCryptoAmount(), cryptoCurrency.getScale()),
-                            cryptoCurrency.getShortName(),
-                            lastWalletMessage);
-                    break;
+            if (subType == 2) {
+                message = String.format(messageImageService.getMessage(messageImage),
+                        bigDecimalService.roundToPlainString(deal.getCryptoAmount(), cryptoCurrency.getScale()),
+                        cryptoCurrency.getShortName(),
+                        lastWalletMessage);
+            } else {
+                message = String.format(messageImageService.getMessage(messageImage),
+                        cryptoCurrenciesDesignService.getDisplayName(cryptoCurrency),
+                        bigDecimalService.roundToPlainString(deal.getCryptoAmount(), cryptoCurrency.getScale()),
+                        cryptoCurrency.getShortName(),
+                        lastWalletMessage);
             }
         } else {
             keyboard = keyboardService.getInlineCancel();
             messageImage = MessageImage.FIAT_INPUT_DETAILS;
             subType = messageImageService.getSubType(messageImage);
-            switch (subType) {
-                case 1:
-                    message = String.format(messageImageService.getMessage(messageImage),
-                            deal.getPaymentType().getName(),
-                            bigDecimalService.roundToPlainString(deal.getAmount()),
-                            deal.getFiatCurrency().getGenitive());
-                    break;
-                case 2:
-                    message = String.format(messageImageService.getMessage(messageImage),
-                            bigDecimalService.roundToPlainString(deal.getAmount()),
-                            deal.getFiatCurrency().getGenitive());
-                    break;
+            if (subType == 2) {
+                message = String.format(messageImageService.getMessage(messageImage),
+                        bigDecimalService.roundToPlainString(deal.getAmount()),
+                        deal.getFiatCurrency().getGenitive());
+            } else {
+                message = String.format(messageImageService.getMessage(messageImage),
+                        deal.getPaymentType().getName(),
+                        bigDecimalService.roundToPlainString(deal.getAmount()),
+                        deal.getFiatCurrency().getGenitive());
             }
         }
         messageImageResponseSender.sendMessage(messageImage, chatId, message, keyboard);
@@ -540,7 +532,7 @@ public class ExchangeService {
                 promoCodeDiscount) + "% от комиссии"
                 + "\n\n"
                 + "✅ <b>Использовать промокод</b> как скидку?";
-        responseSender.sendMessage(chatId, message, keyboardService.getPromoCode(sumWithDiscount, dealAmount), "HTML");
+        responseSender.sendMessage(chatId, message, keyboardService.getPromoCode(sumWithDiscount, dealAmount));
     }
 
     public void processPromoCode(Update update) {
@@ -553,7 +545,7 @@ public class ExchangeService {
     }
 
     private boolean isUsePromoData(String data) {
-        return BotStringConstants.USE_PROMO.equals(data);
+        return callbackDataService.isCallbackQueryData(CallbackQueryData.USE_PROMO, data);
     }
 
     public boolean saveRequisites(Update update) {
@@ -749,7 +741,7 @@ public class ExchangeService {
         modifyDealService.save(deal);
 
         Optional<Message> optionalMessage = responseSender.sendMessage(chatId, message,
-                keyboardService.getBuildDeal(), "HTML");
+                keyboardService.getBuildDeal());
         if (DealType.isBuy(dealType)) {
             DealDeleteScheduler.addNewCryptoDeal(deal.getPid(),
                     optionalMessage.map(
@@ -864,7 +856,7 @@ public class ExchangeService {
                     + " бел.рублей) на реферальном балансе. Использовать их в качестве скидки?";
         }
         responseSender.sendMessage(chatId, message,
-                keyboardService.getUseReferralDiscount(sumWithDiscount, dealAmount), "HTML");
+                keyboardService.getUseReferralDiscount(sumWithDiscount, dealAmount));
     }
 
     public boolean processReferralDiscount(Update update) {
@@ -874,14 +866,16 @@ public class ExchangeService {
                     "для возвращения в предыдущее меню.");
             return false;
         }
-        Boolean isUsedReferralDiscount = update.getCallbackQuery().getData().equals(BotStringConstants.USE_REFERRAL_DISCOUNT);
+        Boolean isUsedReferralDiscount = callbackDataService.isCallbackQueryData(
+                CallbackQueryData.USE_REFERRAL_DISCOUNT, update.getCallbackQuery().getData()
+        );
         modifyDealService.updateUsedReferralDiscountByPid(isUsedReferralDiscount, readUserService.getCurrentDealByChatId(chatId));
         return true;
     }
 
     public void askForReceipts(Update update) {
         responseSender.sendMessage(updateService.getChatId(update),
-                "Отправьте скрин перевода, либо чек оплаты.", keyboardService.getCancelDeal());
+                "Отправьте скрин перевода, либо чек оплаты.", keyboardBuildService.buildReply(List.of(BotReplyButton.CANCEL_DEAL.getButton())));
     }
 
     public boolean saveReceipts(Update update) {

@@ -5,7 +5,6 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
-import tgb.btc.library.interfaces.service.bean.bot.IPaymentTypeService;
 import tgb.btc.rce.enums.RedisPrefix;
 import tgb.btc.rce.enums.UserState;
 import tgb.btc.rce.enums.update.CallbackQueryData;
@@ -33,18 +32,15 @@ public class CreatePaymentTypeHandler implements IStateHandler {
 
     private final IAdminPanelService adminPanelService;
 
-    private final IPaymentTypeService paymentTypeService;
-
     private final ICallbackDataService callbackDataService;
 
     public CreatePaymentTypeHandler(IResponseSender responseSender, IRedisStringService redisStringService,
                                     IRedisUserStateService redisUserStateService, IAdminPanelService adminPanelService,
-                                    IPaymentTypeService paymentTypeService, ICallbackDataService callbackDataService) {
+                                    ICallbackDataService callbackDataService) {
         this.responseSender = responseSender;
         this.redisStringService = redisStringService;
         this.redisUserStateService = redisUserStateService;
         this.adminPanelService = adminPanelService;
-        this.paymentTypeService = paymentTypeService;
         this.callbackDataService = callbackDataService;
     }
 

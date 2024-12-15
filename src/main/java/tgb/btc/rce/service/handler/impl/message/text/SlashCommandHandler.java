@@ -9,10 +9,7 @@ import tgb.btc.rce.service.enums.ISlashCommandService;
 import tgb.btc.rce.service.handler.message.text.ISlashCommandHandler;
 import tgb.btc.rce.service.handler.message.text.ITextMessageHandler;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 @Service
 public class SlashCommandHandler implements ITextMessageHandler {
@@ -21,7 +18,7 @@ public class SlashCommandHandler implements ITextMessageHandler {
 
     private final ISlashCommandService slashCommandService;
 
-    private final Map<SlashCommand, ISlashCommandHandler> handlers = new HashMap<>();
+    private final Map<SlashCommand, ISlashCommandHandler> handlers = new EnumMap<>(SlashCommand.class);
 
     public SlashCommandHandler(List<ISlashCommandHandler> slashCommandHandlers, IReadUserService readUserService, ISlashCommandService slashCommandService) {
         this.readUserService = readUserService;

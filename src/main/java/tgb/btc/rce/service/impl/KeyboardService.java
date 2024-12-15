@@ -24,7 +24,6 @@ import tgb.btc.library.interfaces.util.IFiatCurrencyService;
 import tgb.btc.library.service.process.RPSService;
 import tgb.btc.library.service.properties.*;
 import tgb.btc.rce.constants.BotCacheNames;
-import tgb.btc.rce.constants.BotStringConstants;
 import tgb.btc.rce.enums.BotInlineButton;
 import tgb.btc.rce.enums.BotReplyButton;
 import tgb.btc.rce.enums.InlineType;
@@ -227,12 +226,12 @@ public class KeyboardService implements IKeyboardService {
         return keyboardBuildService.buildInline(List.of(
                 InlineButton.builder()
                         .text("Со скидкой, " + bigDecimalService.roundToPlainString(sumWithDiscount))
-                        .data(BotStringConstants.USE_REFERRAL_DISCOUNT)
+                        .data(CallbackQueryData.USE_REFERRAL_DISCOUNT.name())
                         .inlineType(InlineType.CALLBACK_DATA)
                         .build(),
                 InlineButton.builder()
                         .text("Без скидки, " + bigDecimalService.roundToPlainString(dealAmount))
-                        .data(BotStringConstants.DONT_USE_REFERRAL_DISCOUNT)
+                        .data(CallbackQueryData.DONT_USE_REFERRAL_DISCOUNT.name())
                         .inlineType(InlineType.CALLBACK_DATA)
                         .build(),
                 keyboardBuildService.getInlineBackButton()
@@ -245,12 +244,12 @@ public class KeyboardService implements IKeyboardService {
         return keyboardBuildService.buildInline(List.of(
                 InlineButton.builder()
                         .text("Использовать промокод")
-                        .data(BotStringConstants.USE_PROMO)
+                        .data(CallbackQueryData.USE_PROMO.name())
                         .inlineType(InlineType.CALLBACK_DATA)
                         .build(),
                 InlineButton.builder()
                         .text("Не использовать промокод")
-                        .data(BotStringConstants.DONT_USE_PROMO)
+                        .data(CallbackQueryData.DONT_USE_PROMO.name())
                         .inlineType(InlineType.CALLBACK_DATA)
                         .build(),
                 keyboardBuildService.getInlineBackButton()
@@ -272,9 +271,13 @@ public class KeyboardService implements IKeyboardService {
         inlineButtons.add(keyboardBuildService.createCallBackDataButton(SWITCH_CALCULATOR.getData(), CallbackQueryData.INLINE_CALCULATOR, SWITCH_CALCULATOR.getData()));
         inlineButtons.add(keyboardBuildService.createCallBackDataButton(READY.getData(), CallbackQueryData.INLINE_CALCULATOR, READY.getData()));
         InlineCalculatorVO calculator = InlineCalculatorHandler.cache.get(chaId);
-        String text = !calculator.getSwitched()
-                ? calculator.getFiatCurrency().getFlag() + "Ввести сумму в " + calculator.getFiatCurrency().getCode().toUpperCase()
-                : "\uD83D\uDD38Ввести сумму в " + calculator.getCryptoCurrency().getShortName().toUpperCase();
+        String text;
+        boolean isSwitched = Objects.nonNull(calculator.getSwitched()) && calculator.getSwitched();
+        if (isSwitched) {
+            text = calculator.getFiatCurrency().getFlag() + "Ввести сумму в " + calculator.getFiatCurrency().getCode().toUpperCase();
+        } else {
+            text = "\uD83D\uDD38Ввести сумму в " + calculator.getCryptoCurrency().getShortName().toUpperCase();
+        }
         List<InlineButton> currencySwitcher = Collections.singletonList(keyboardBuildService.createCallBackDataButton(text,
                 CallbackQueryData.INLINE_CALCULATOR, CURRENCY_SWITCHER.getData()));
         List<List<InlineKeyboardButton>> rows = keyboardBuildService.buildInlineRows(inlineButtons, 3);
@@ -295,8 +298,8 @@ public class KeyboardService implements IKeyboardService {
         List<InlineButton> buttons = new ArrayList<>();
         Arrays.stream(DeliveryType.values()).forEach(x -> {
             String text = designPropertiesReader.getString(x.name());
-            if (DeliveryType.VIP.equals(x) &&
-                    functionsPropertiesReader.getBoolean("vip.button.add.sum", false)) {
+            boolean vipButtonAddSum = functionsPropertiesReader.getBoolean("vip.button.add.sum", false);
+            if (DeliveryType.VIP.equals(x) && vipButtonAddSum) {
                 Integer fix;
                 try {
                     fix = variablePropertiesReader.getInt(VariableType.FIX_COMMISSION_VIP,

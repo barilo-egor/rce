@@ -5,6 +5,7 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.interfaces.service.bean.bot.user.IModifyUserService;
 import tgb.btc.library.interfaces.util.IBigDecimalService;
+import tgb.btc.rce.enums.BotSystemMessage;
 import tgb.btc.rce.enums.UserState;
 import tgb.btc.rce.sender.IResponseSender;
 import tgb.btc.rce.service.handler.IStateHandler;
@@ -58,7 +59,7 @@ public class NewReferralPercentHandler implements IStateHandler {
         try {
             referralPercent = BigDecimal.valueOf(Double.parseDouble(enteredValue));
         } catch (NumberFormatException e) {
-            responseSender.sendMessage(chatId, "Введите валидное значение.");
+            responseSender.sendMessage(chatId, BotSystemMessage.ENTER_VALID_INPUT.getText());
             return;
         }
         modifyUserService.updateReferralPercent(referralPercent, userChatId);

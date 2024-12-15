@@ -1,7 +1,7 @@
 package tgb.btc.rce.service.impl.calculator;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import tgb.btc.rce.enums.UserState;
 import tgb.btc.rce.service.redis.IRedisUserStateService;
 
@@ -17,8 +17,8 @@ public class NoneCalculatorService extends SimpleCalculatorService {
     }
 
     @Override
-    public void addKeyboard(SendMessage sendMessage) {
-        sendMessage.setReplyMarkup(keyboardBuildService.buildInline(List.of(keyboardBuildService.getInlineBackButton()), 1));
+    public ReplyKeyboard getKeyboard(Long chatId) {
+        return keyboardBuildService.buildInline(List.of(keyboardBuildService.getInlineBackButton()), 1);
     }
 
     @Override

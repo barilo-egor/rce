@@ -17,7 +17,6 @@ import tgb.btc.rce.sender.IMessageImageResponseSender;
 import tgb.btc.rce.service.IMessageImageService;
 import tgb.btc.rce.service.handler.message.text.ITextCommandHandler;
 import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
-import tgb.btc.rce.service.util.ITextCommandService;
 import tgb.btc.rce.vo.InlineButton;
 
 import java.math.BigDecimal;
@@ -25,8 +24,6 @@ import java.util.List;
 
 @Service
 public class ReferralHandler implements ITextCommandHandler {
-
-    private final ITextCommandService commandService;
 
     private final IReadUserService readUserService;
 
@@ -44,13 +41,12 @@ public class ReferralHandler implements ITextCommandHandler {
     
     private final VariablePropertiesReader variablePropertiesReader;
 
-    public ReferralHandler(ITextCommandService commandService, IReadUserService readUserService,
+    public ReferralHandler(IReadUserService readUserService,
                            IBigDecimalService bigDecimalService, IDealCountService dealCountService,
                            IMessageImageService messageImageService,
                            IMessageImageResponseSender messageImageResponseSender,
                            IKeyboardBuildService keyboardBuildService, BotPropertiesReader botPropertiesReader,
                            VariablePropertiesReader variablePropertiesReader) {
-        this.commandService = commandService;
         this.readUserService = readUserService;
         this.bigDecimalService = bigDecimalService;
         this.dealCountService = dealCountService;
@@ -77,26 +73,23 @@ public class ReferralHandler implements ITextCommandHandler {
         Rank rank = Rank.getByDealsNumber(dealsCount.intValue());
         MessageImage messageImage = MessageImage.REFERRAL;
         Integer subType = messageImageService.getSubType(messageImage);
-        switch (subType) {
-            case 1:
-                messageImageResponseSender.sendMessage(messageImage, chatId,
-                        String.format(messageImageService.getMessage(messageImage),
-                                refLink, currentBalance, numberOfReferrals, numberOfActiveReferrals,
-                                readUserService.getChargesByChatId(chatId), dealsCount, rank.getSmile(),
-                                rank.getPercent()),
-                        keyboardBuildService.buildInline(getButtons(refLink)));
-                break;
-            case 2:
-                String refBalanceString = variablePropertiesReader.isNotBlank("course.rub.byn")
-                        ? bigDecimalService.roundToPlainString(referralBalance.multiply(variablePropertiesReader.getBigDecimal("course.rub.byn")), 2)
-                        : bigDecimalService.roundToPlainString(referralBalance);
-                messageImageResponseSender.sendMessage(messageImage, chatId,
-                        String.format(messageImageService.getMessage(messageImage),
-                                refLink, currentBalance, refBalanceString,
-                                numberOfReferrals, numberOfActiveReferrals,
-                                readUserService.getChargesByChatId(chatId), dealsCount, rank.getSmile(), rank.getPercent()),
-                        keyboardBuildService.buildInline(getButtons(refLink)));
-                break;
+        if (subType == 2) {
+            String refBalanceString = variablePropertiesReader.isNotBlank("course.rub.byn")
+                    ? bigDecimalService.roundToPlainString(referralBalance.multiply(variablePropertiesReader.getBigDecimal("course.rub.byn")), 2)
+                    : bigDecimalService.roundToPlainString(referralBalance);
+            messageImageResponseSender.sendMessage(messageImage, chatId,
+                    String.format(messageImageService.getMessage(messageImage),
+                            refLink, currentBalance, refBalanceString,
+                            numberOfReferrals, numberOfActiveReferrals,
+                            readUserService.getChargesByChatId(chatId), dealsCount, rank.getSmile(), rank.getPercent()),
+                    keyboardBuildService.buildInline(getButtons(refLink)));
+        } else {
+            messageImageResponseSender.sendMessage(messageImage, chatId,
+                    String.format(messageImageService.getMessage(messageImage),
+                            refLink, currentBalance, numberOfReferrals, numberOfActiveReferrals,
+                            readUserService.getChargesByChatId(chatId), dealsCount, rank.getSmile(),
+                            rank.getPercent()),
+                    keyboardBuildService.buildInline(getButtons(refLink)));
         }
     }
 

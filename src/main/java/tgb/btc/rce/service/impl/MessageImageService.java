@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
@@ -13,8 +12,8 @@ import tgb.btc.api.bot.IFileDownloader;
 import tgb.btc.library.exception.BaseException;
 import tgb.btc.rce.enums.MessageImage;
 import tgb.btc.rce.service.IMessageImageService;
-import tgb.btc.rce.vo.properties.FileId;
-import tgb.btc.rce.vo.properties.FileIds;
+import tgb.btc.rce.vo.properties.FileIdContainer;
+import tgb.btc.rce.vo.properties.FileIdsContainer;
 import tgb.btc.rce.vo.properties.ImageMessages;
 import tgb.btc.rce.vo.properties.MessageVariable;
 
@@ -33,10 +32,6 @@ public class MessageImageService implements IMessageImageService {
 
     private static final String HELP_FILE_PATH = "config/design/message_images/help.txt";
 
-    private static final String PNG_FORMAT = ".png";
-
-    private static final String JPG_FORMAT = ".png";
-
     private static final List<String> FORMATS = List.of(".png", ".jpg", ".jpeg", ".mp4", ".gif");
 
     private static final String IMAGE_PATH = "config/design/message_images/%s%s";
@@ -47,11 +42,11 @@ public class MessageImageService implements IMessageImageService {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    private final Map<MessageImage, MessageVariable> MESSAGES = new HashMap<>();
+    private final Map<MessageImage, MessageVariable> messages = new EnumMap<>(MessageImage.class);
 
-    private final Map<MessageImage, FileId> FILES_IDS = new HashMap<>();
+    private final Map<MessageImage, FileIdContainer> fileIds = new EnumMap<>(MessageImage.class);
 
-    private  FileIds fileIds;
+    private FileIdsContainer fileIdsContainers;
 
     @Autowired
     public MessageImageService(IFileDownloader fileDownloader) {
@@ -59,7 +54,7 @@ public class MessageImageService implements IMessageImageService {
     }
 
     @PostConstruct
-    public void init() throws ConfigurationException, IOException {
+    public void init() throws IOException {
         loadText();
         loadFileIds();
         loadHelp();
@@ -72,17 +67,22 @@ public class MessageImageService implements IMessageImageService {
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(HELP_FILE_PATH))) {
                 writer.write("В папке config/design/message_images должны лежать изображения со следующими наименованиями:\n\n");
                 for (MessageImage value : MessageImage.values()) {
-                    writer.write(value.name() + PNG_FORMAT + " - " + value.getDescription());
+                    writer.write(value.name() + " - " + value.getDescription());
                     writer.newLine();  // Переход на новую строку
                 }
                 writer.write("Доступные форматы на текущий момент: " + String.join(" ", FORMATS));
-                writer.write("\nВ случае отсутствия изображения будет отправляться только текст.");
-                writer.write("\n\nВ папке config/design/message_images также должен лежать " +
-                        "messages.json(создается из заполняется автоматически при старте приложения)" +
-                        " с аналогичными названиями проперти и текстами сообщений. Перенос строк обозначается как \\n\n" +
-                        "После обновления уже существующей картинки следует удалить файл fileIds.json\n\n" +
-                        "Данный файл help.txt создается автоматически при старте приложения. Его можно удалить и перезапустить" +
-                        " бота, чтобы пересоздать файл и получить актуальные данные.");
+                writer.write("""
+                        
+                        В случае отсутствия изображения будет отправляться только текст.
+                        
+                        
+                        В папке config/design/message_images также должен лежать \
+                        messages.json(создается из заполняется автоматически при старте приложения)\
+                         с аналогичными названиями проперти и текстами сообщений. Перенос строк обозначается как \\n
+                        После обновления уже существующей картинки следует удалить файл fileIds.json
+                        
+                        Данный файл help.txt создается автоматически при старте приложения. Его можно удалить и перезапустить\
+                         бота, чтобы пересоздать файл и получить актуальные данные.""");
                 log.debug("help.txt успешно создан.");
             } catch (IOException e) {
                 log.debug("Ошибка при создании help.txt", e);
@@ -98,23 +98,23 @@ public class MessageImageService implements IMessageImageService {
                 log.error("Не получилось создать файл {}.", MESSAGES_JSON_PATH);
                 throw new BaseException();
             }
-            FileIds fileIds = new FileIds();
-            fileIds.setFileIds(new ArrayList<>());
+            FileIdsContainer fileIdsContainersFromFile = new FileIdsContainer();
+            fileIdsContainersFromFile.setFileIds(new ArrayList<>());
             ObjectWriter writer = objectMapper.writerWithDefaultPrettyPrinter();
-            writer.writeValue(fileFilesIds, fileIds);
+            writer.writeValue(fileFilesIds, fileIdsContainersFromFile);
         }
 
-        fileIds = objectMapper.readValue(fileFilesIds, FileIds.class);
+        fileIdsContainers = objectMapper.readValue(fileFilesIds, FileIdsContainer.class);
 
         for (MessageImage messageImage : MessageImage.values()) {
-            Optional<FileId> optionalMessageVariable = fileIds.getFileIds()
+            Optional<FileIdContainer> optionalMessageVariable = fileIdsContainers.getFileIds()
                     .stream()
                     .filter(messageVariable -> messageVariable.getType().equals(messageImage))
                     .findFirst();
             if (optionalMessageVariable.isPresent()) {
-                FileId messageVariable = optionalMessageVariable.get();
+                FileIdContainer messageVariable = optionalMessageVariable.get();
                 if (StringUtils.isBlank(messageVariable.getFileId())) {
-                    FILES_IDS.put(messageImage, messageVariable);
+                    fileIds.put(messageImage, messageVariable);
                     log.debug("FileId для {} найден и загружен в кеш.", messageImage.name());
                 }
             }
@@ -133,31 +133,31 @@ public class MessageImageService implements IMessageImageService {
             imageMessages.setMessages(new ArrayList<>());
             objectMapper.writeValue(messagesFile, imageMessages);
         }
-        ImageMessages messages;
+        ImageMessages messagesFromFile;
         try {
-            messages = objectMapper.readValue(messagesFile, ImageMessages.class);
+            messagesFromFile = objectMapper.readValue(messagesFile, ImageMessages.class);
         } catch (Exception e) {
             log.error("Ошибка при попытке считать {}", MESSAGES_JSON_PATH);
             log.error(e.getMessage(), e);
             throw new BaseException(e.getMessage(), e);
         }
         for (MessageImage messageImage : MessageImage.values()) {
-            Optional<MessageVariable> optionalMessageVariable = messages.getMessages()
+            Optional<MessageVariable> optionalMessageVariable = messagesFromFile.getMessages()
                     .stream()
                     .filter(messageVariable -> messageVariable.getType().equals(messageImage))
                     .findFirst();
             if (optionalMessageVariable.isPresent()) {
                 MessageVariable messageVariable = optionalMessageVariable.get();
                 if (StringUtils.isBlank(messageVariable.getText())) {
-                    MESSAGES.put(messageImage, MessageVariable.builder().type(messageImage).text(messageImage.getDefaultMessage()).build());
+                    this.messages.put(messageImage, MessageVariable.builder().type(messageImage).text(messageImage.getDefaultMessage()).build());
                     messageVariable.setText(messageImage.getDefaultMessage());
                     log.debug("У сообщения {} отсутствует текст. Будет установлен дефолтный.", messageImage.name());
                 } else {
-                    MESSAGES.put(messageImage, messageVariable);
+                    this.messages.put(messageImage, messageVariable);
                 }
             } else {
-                MESSAGES.put(messageImage, MessageVariable.builder().type(messageImage).text(messageImage.getDefaultMessage()).build());
-                messages.getMessages().add(MessageVariable.builder()
+                this.messages.put(messageImage, MessageVariable.builder().type(messageImage).text(messageImage.getDefaultMessage()).build());
+                messagesFromFile.getMessages().add(MessageVariable.builder()
                         .type(messageImage)
                         .text(messageImage.getDefaultMessage())
                         .build());
@@ -166,9 +166,9 @@ public class MessageImageService implements IMessageImageService {
         }
         try {
             ObjectWriter objectWriter = objectMapper.writerWithDefaultPrettyPrinter();
-            objectWriter.writeValue(messagesFile, messages);
+            objectWriter.writeValue(messagesFile, messagesFromFile);
         } catch (Exception e) {
-            log.error("Ошибка при попытке записи {} значения: {}", MESSAGES_JSON_PATH, messages);
+            log.error("Ошибка при попытке записи {} значения: {}", MESSAGES_JSON_PATH, messagesFromFile);
             log.error(e.getMessage(), e);
             throw new BaseException(e.getMessage(), e);
         }
@@ -177,7 +177,7 @@ public class MessageImageService implements IMessageImageService {
     @Override
     @Cacheable("messageImageFilesIdsCache")
     public String getFileId(MessageImage messageImage) {
-        FileId fileId = FILES_IDS.get(messageImage);
+        FileIdContainer fileId = fileIds.get(messageImage);
         if (Objects.nonNull(fileId) && StringUtils.isNotBlank(fileId.getFileId())) {
             return fileId.getFileId();
         } else {
@@ -196,12 +196,12 @@ public class MessageImageService implements IMessageImageService {
                 return null;
             }
             String strFileId = fileDownloader.saveFile(imageFile, false);
-            fileId = FileId.builder().type(messageImage).format(fileFormat).fileId(strFileId).build();
-            fileIds.getFileIds().add(fileId);
-            FILES_IDS.put(messageImage, fileId);
+            fileId = FileIdContainer.builder().type(messageImage).format(fileFormat).fileId(strFileId).build();
+            fileIdsContainers.getFileIds().add(fileId);
+            fileIds.put(messageImage, fileId);
             ObjectWriter objectWriter = objectMapper.writerWithDefaultPrettyPrinter();
             try {
-                objectWriter.writeValue(new File(FILE_IDS_JSON_PATH), fileIds);
+                objectWriter.writeValue(new File(FILE_IDS_JSON_PATH), fileIdsContainers);
             } catch (IOException e) {
                 log.error("Ошибка при попытке записи fileId для {}.", messageImage.name());
                 log.error(e.getMessage(), e);
@@ -215,7 +215,7 @@ public class MessageImageService implements IMessageImageService {
     @Override
     @Cacheable("messageImageMessagesCache")
     public String getMessage(MessageImage messageImage) {
-        MessageVariable value = MESSAGES.get(messageImage);
+        MessageVariable value = messages.get(messageImage);
         return Objects.isNull(value) || StringUtils.isBlank(value.getText())
                 ? messageImage.getDefaultMessage()
                 : value.getText();
@@ -224,7 +224,7 @@ public class MessageImageService implements IMessageImageService {
     @Override
     @Cacheable("messageImageSubTypesCache")
     public Integer getSubType(MessageImage messageImage) {
-        MessageVariable value = MESSAGES.get(messageImage);
+        MessageVariable value = messages.get(messageImage);
         return Objects.isNull(value) || Objects.isNull(value.getSubType())
                 ? 1
                 : value.getSubType();
@@ -233,7 +233,7 @@ public class MessageImageService implements IMessageImageService {
     @Override
     @Cacheable("messageImageFormatCache")
     public String getFormat(MessageImage messageImage) {
-        FileId fileId = FILES_IDS.get(messageImage);
+        FileIdContainer fileId = fileIds.get(messageImage);
         return Objects.nonNull(fileId)
                 ? fileId.getFormat()
                 : ".jpg";

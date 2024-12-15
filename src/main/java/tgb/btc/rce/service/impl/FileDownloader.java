@@ -2,7 +2,7 @@ package tgb.btc.rce.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.telegram.telegrambots.meta.api.methods.GetFile;
@@ -18,7 +18,7 @@ import tgb.btc.rce.bot.RceBot;
 import tgb.btc.rce.sender.IResponseSender;
 
 import java.io.InputStream;
-import java.net.URL;
+import java.net.URI;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -27,25 +27,20 @@ import java.util.Set;
 @Slf4j
 public class FileDownloader implements IFileDownloader {
 
-    private RceBot bot;
+    private final RceBot bot;
 
-    private IReadUserService readUserService;
+    private final IReadUserService readUserService;
 
-    private IResponseSender responseSender;
+    private final IResponseSender responseSender;
 
-    @Autowired
-    public void setResponseSender(IResponseSender responseSender) {
-        this.responseSender = responseSender;
-    }
+    private final String botToken;
 
-    @Autowired
-    public void setReadUserService(IReadUserService readUserService) {
-        this.readUserService = readUserService;
-    }
-
-    @Autowired
-    public void setBot(RceBot bot) {
+    public FileDownloader(RceBot bot, IReadUserService readUserService, IResponseSender responseSender,
+                          @Value("${bot.token}") String botToken) {
         this.bot = bot;
+        this.readUserService = readUserService;
+        this.responseSender = responseSender;
+        this.botToken = botToken;
     }
 
     @Override
@@ -55,7 +50,8 @@ public class FileDownloader implements IFileDownloader {
         try {
             File file = bot.execute(getFile);
             java.io.File localFile = new java.io.File(localPath);
-            InputStream is = new URL(file.getFileUrl(bot.getBotToken())).openStream();
+            URI uri = new URI(file.getFileUrl(botToken));
+            InputStream is = uri.toURL().openStream();
             FileUtils.copyInputStreamToFile(is, localFile);
         } catch (Exception e) {
             String message = "Ошибка при скачивании файла из ТГ.";
@@ -79,43 +75,42 @@ public class FileDownloader implements IFileDownloader {
         Message message = null;
         long sentChatId = 0;
         for (Long chatId : adminsChatIds) {
-            try {
-                if (file.getName().endsWith(".pdf")) {
-                    message = responseSender.sendFile(chatId, file);
-                    sentChatId = chatId;
-                } else if (file.getName().endsWith(".mp4")) {
-                    message = responseSender.sendAnimation(chatId, file);
-                    sentChatId = chatId;
-                } else {
-                    message = responseSender.sendPhoto(chatId, null,
-                            new InputFile(file)).orElse(null);
-                    sentChatId = chatId;
-                }
+            message = sendFile(file, chatId);
+            if (Objects.nonNull(message)) {
+                sentChatId = chatId;
                 sent = true;
                 break;
-            } catch (Exception e) {
-                log.error("Ошибка отправки файла для сохранения fileId: ", e);
             }
         }
-        if (!sent || Objects.isNull(message) || sentChatId == 0) {
+        if (!sent) {
             throw new BaseException("Не получилось отправить файл для сохранения fileId в ТГ операторам или администраторам.");
         }
-        String result;
-        if (file.getName().endsWith(".pdf")) {
-            result = message.getDocument().getFileId();
-        } else if (file.getName().endsWith(".mp4") || file.getName().endsWith(".mp4")) {
-            result = message.getAnimation().getFileId();
+        responseSender.deleteMessage(sentChatId, message.getMessageId());
+        if (delete && !FileUtils.deleteQuietly(file)) {
+            log.warn("Не удалось удалить чек диспута из буфера: {} , name={}", file.getAbsolutePath(), file.getName());
+        }
+        return getFileId(message);
+    }
+
+    private String getFileId(Message message) {
+        if (message.hasDocument()) {
+            return message.getDocument().getFileId();
+        } else if (message.hasAnimation()) {
+            return message.getAnimation().getFileId();
         } else {
             List<PhotoSize> photoSizes = message.getPhoto();
             photoSizes.sort((p1, p2) -> p2.getHeight().compareTo(p1.getHeight()));
-            result = photoSizes.get(0).getFileId();
+            return photoSizes.get(0).getFileId();
         }
-        responseSender.deleteMessage(sentChatId, message.getMessageId());
-        if (delete) {
-            if (!FileUtils.deleteQuietly(file)) {
-                log.warn("Не удалось удалить чек диспута из буфера: {} , name={}", file.getAbsolutePath(), file.getName());
-            }
+    }
+
+    private Message sendFile(java.io.File file, Long chatId) {
+        if (file.getName().endsWith(".jpg") || file.getName().endsWith(".png") || file.getName().endsWith(".jpeg")) {
+            return responseSender.sendPhoto(chatId, null, new InputFile(file)).orElse(null);
+        } else if (file.getName().endsWith(".mp4") || file.getName().endsWith(".gif")) {
+            return responseSender.sendAnimation(chatId, file);
+        } else {
+            return responseSender.sendFile(chatId, file);
         }
-        return result;
     }
 }

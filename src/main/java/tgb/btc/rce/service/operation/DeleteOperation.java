@@ -18,14 +18,10 @@ public class DeleteOperation implements IPoolOperation {
 
     private final IModifyDealService modifyDealService;
 
-    private final IResponseSender responseSender;
-
     private final INotifyService notifyService;
 
-    public DeleteOperation(IModifyDealService modifyDealService, IResponseSender responseSender,
-                           INotifyService notifyService) {
+    public DeleteOperation(IModifyDealService modifyDealService, INotifyService notifyService) {
         this.modifyDealService = modifyDealService;
-        this.responseSender = responseSender;
         this.notifyService = notifyService;
     }
 

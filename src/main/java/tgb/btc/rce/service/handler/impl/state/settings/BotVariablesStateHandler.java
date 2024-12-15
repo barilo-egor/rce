@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Document;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import tgb.btc.library.constants.enums.properties.PropertiesPath;
 import tgb.btc.library.service.properties.VariablePropertiesReader;
 import tgb.btc.rce.enums.UserState;
@@ -19,6 +18,7 @@ import tgb.btc.rce.service.redis.IRedisUserStateService;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.Optional;
 
 @Service
@@ -70,7 +70,7 @@ public class BotVariablesStateHandler implements IStateHandler {
     private boolean updateProperties(Long chatId, Document document) {
         try {
             responseSender.downloadFile(document, PropertiesPath.VARIABLE_BUFFER_PROPERTIES.getFileName());
-        } catch (IOException | TelegramApiException e) {
+        } catch (IOException | URISyntaxException e) {
             log.error("Ошибка при скачивании новых переменных: ", e);
             responseSender.sendMessage(chatId, "Ошибка при скачивании новых переменных: " + e.getMessage());
             return false;

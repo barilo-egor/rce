@@ -5,6 +5,7 @@ import tgb.btc.library.exception.BaseException;
 import tgb.btc.rce.enums.update.CallbackQueryData;
 import tgb.btc.rce.service.util.ICallbackDataService;
 
+import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Objects;
@@ -55,7 +56,7 @@ public class CallbackDataService implements ICallbackDataService {
         try {
             return Long.parseLong(argument);
         } catch (NumberFormatException e) {
-            throw new BaseException("Ошибка при парсинге к Long: data=" + data + ", index=" + index, e);
+            throw new BaseException("Ошибка при парсинге к Long: data=%s, index=%s".formatted(data, index), e);
         }
     }
 
@@ -86,6 +87,7 @@ public class CallbackDataService implements ICallbackDataService {
     }
 
     @Override
+    @Nullable
     public Boolean getBoolArgument(String data, int index) {
         String argument = getArgument(data, index);
         if (argument == null) {

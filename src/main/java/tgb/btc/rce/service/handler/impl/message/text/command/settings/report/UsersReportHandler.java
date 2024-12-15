@@ -12,20 +12,16 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import tgb.btc.library.constants.enums.bot.CryptoCurrency;
 import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
-import tgb.btc.library.constants.enums.bot.UserRole;
 import tgb.btc.library.exception.BaseException;
 import tgb.btc.library.interfaces.service.bean.bot.deal.read.IReportDealService;
 import tgb.btc.library.interfaces.service.bean.bot.user.IModifyUserService;
 import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.library.interfaces.util.IBigDecimalService;
 import tgb.btc.library.interfaces.util.IFiatCurrencyService;
-import tgb.btc.rce.enums.Menu;
-import tgb.btc.rce.enums.PropertiesMessage;
 import tgb.btc.rce.enums.update.TextCommand;
 import tgb.btc.rce.sender.IResponseSender;
 import tgb.btc.rce.service.handler.message.text.ITextCommandHandler;
-import tgb.btc.rce.service.util.IMenuService;
-import tgb.btc.rce.service.util.IMessagePropertiesService;
+import tgb.btc.rce.service.handler.util.IAdminPanelService;
 import tgb.btc.rce.vo.report.ReportDealVO;
 import tgb.btc.rce.vo.report.ReportUserVO;
 
@@ -34,7 +30,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -52,51 +47,33 @@ public class UsersReportHandler implements ITextCommandHandler {
 
     private final IModifyUserService modifyUserService;
 
-    private final IMessagePropertiesService messagePropertiesService;
-
-    private final IMenuService menuService;
+    private final IAdminPanelService adminPanelService;
 
     public UsersReportHandler(IResponseSender responseSender, IFiatCurrencyService fiatCurrencyService,
                               IBigDecimalService bigDecimalService, IReadUserService readUserService,
                               IReportDealService reportDealService, IModifyUserService modifyUserService,
-                              IMessagePropertiesService messagePropertiesService, IMenuService menuService) {
+                              IAdminPanelService adminPanelService) {
         this.responseSender = responseSender;
         this.fiatCurrencyService = fiatCurrencyService;
         this.bigDecimalService = bigDecimalService;
         this.readUserService = readUserService;
         this.reportDealService = reportDealService;
         this.modifyUserService = modifyUserService;
-        this.messagePropertiesService = messagePropertiesService;
-        this.menuService = menuService;
+        this.adminPanelService = adminPanelService;
     }
 
     @Override
+    @Async
     public void handle(Message message) {
         process(message.getChatId());
     }
 
-    @Async
     public void process(Long chatId) {
         log.info("Старт отчета по пользователям.");
         responseSender.sendMessage(chatId, "Формирование отчета запущено.");
         responseSender.sendMessage(chatId, "Отчет придет после того, как сформируется. Это может занять некоторое время.");
         modifyUserService.setDefaultValues(chatId);
-        UserRole role = readUserService.getUserRoleByChatId(chatId);
-        switch (role) {
-            case ADMIN:
-                responseSender.sendMessage(chatId,
-                        messagePropertiesService.getMessage(PropertiesMessage.MENU_MAIN_ADMIN),
-                        menuService.build(Menu.ADMIN_PANEL, role));
-                break;
-            case OPERATOR:
-                responseSender.sendMessage(chatId,
-                        messagePropertiesService.getMessage(PropertiesMessage.MENU_MAIN_OPERATOR),
-                        menuService.build(Menu.OPERATOR_PANEL, role));
-                break;
-            case OBSERVER:
-                responseSender.sendMessage(chatId, "Вы перешли в панель наблюдателя", Menu.OBSERVER_PANEL);
-                break;
-        }
+        adminPanelService.send(chatId);
         try {
             HSSFWorkbook book = new HSSFWorkbook();
             Sheet sheet = book.createSheet("Пользователи");
@@ -141,7 +118,7 @@ public class UsersReportHandler implements ITextCommandHandler {
             for (ReportUserVO user : users) {
                 usersDeals.put(user.getChatId(), deals.stream()
                         .filter(deal -> deal.getUserPid().equals(user.getPid()))
-                        .collect(Collectors.toList())
+                        .toList()
                 );
             }
             for (ReportUserVO user : users) {

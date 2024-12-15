@@ -88,18 +88,16 @@ public class UpdateService implements IUpdateService {
 
     @Override
     public BigDecimal getBigDecimalFromText(Update update) {
-        return BigDecimal.valueOf(Double.parseDouble(getMessageText(update).replaceAll(",", ".")));
+        return BigDecimal.valueOf(Double.parseDouble(getMessageText(update).replace(",", ".")));
     }
 
     @Override
     public Message getMessage(Update update) {
-        switch (UpdateType.fromUpdate(update)) {
-            case MESSAGE:
-                return update.getMessage();
-            case CALLBACK_QUERY:
-                return update.getCallbackQuery().getMessage();
-        }
-        throw new BaseException("Не найден тип апдейта для получения месседжа.");
+        return switch (UpdateType.fromUpdate(update)) {
+            case MESSAGE -> update.getMessage();
+            case CALLBACK_QUERY -> update.getCallbackQuery().getMessage();
+            default -> throw new BaseException("Не найден тип апдейта для получения месседжа.");
+        };
     }
 
     @Override

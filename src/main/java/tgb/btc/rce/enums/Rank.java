@@ -1,9 +1,14 @@
 package tgb.btc.rce.enums;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.function.Predicate;
 
+@Getter
+@AllArgsConstructor
 public enum Rank {
     FIRST(0, "\uD83D\uDC76", x -> x < 10),
     SECOND(0.1, "\uD83D\uDE0A", x -> x >= 10 && x < 20),
@@ -20,27 +25,9 @@ public enum Rank {
     final String smile;
     final Predicate<Integer> isItInTheRange;
 
-    Rank(double percent, String smile, Predicate<Integer> predicate) {
-        this.percent = percent;
-        this.smile = smile;
-        this.isItInTheRange = predicate;
-    }
-
     public static Rank getByDealsNumber(int dealsNumber) {
         Rank[] ranks = Rank.values();
         Optional<Rank> rank = Arrays.stream(ranks).filter(p -> p.isItInTheRange.test(dealsNumber)).findFirst();
         return rank.orElseThrow(IllegalStateException::new);
-    }
-
-    public double getPercent() {
-        return percent;
-    }
-
-    public String getSmile() {
-        return smile;
-    }
-
-    public Predicate<Integer> getIsItInTheRange() {
-        return isItInTheRange;
     }
 }

@@ -4,11 +4,9 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tgb.btc.library.bean.bot.Deal;
-import tgb.btc.library.constants.enums.ReferralType;
 import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
 import tgb.btc.library.constants.enums.properties.VariableType;
-import tgb.btc.library.interfaces.IModule;
 import tgb.btc.library.interfaces.service.bean.bot.IUserDiscountService;
 import tgb.btc.library.interfaces.service.bean.bot.deal.read.IDealUserService;
 import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
@@ -34,13 +32,6 @@ public class UserDiscountProcessService implements IUserDiscountProcessService {
     private VariablePropertiesReader variablePropertiesReader;
 
     private IBigDecimalService bigDecimalService;
-
-    private IModule<ReferralType> referralModule;
-
-    @Autowired
-    public void setReferralModule(IModule<ReferralType> referralModule) {
-        this.referralModule = referralModule;
-    }
 
     @Autowired
     public void setBigDecimalService(IBigDecimalService bigDecimalService) {

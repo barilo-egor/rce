@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import tgb.btc.library.constants.enums.bot.UserRole;
 
+import java.util.Objects;
 import java.util.Set;
 
 @Getter
@@ -25,6 +26,9 @@ public enum SlashCommand {
     private final Set<UserRole> roles;
 
     public boolean hasAccess(UserRole role) {
+        if (Objects.isNull(role)) {
+            role = UserRole.USER;
+        }
         return this.getRoles().contains(role);
     }
 }

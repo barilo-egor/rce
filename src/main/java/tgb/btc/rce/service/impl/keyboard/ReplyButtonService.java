@@ -11,7 +11,6 @@ import tgb.btc.rce.vo.ReplyButton;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class ReplyButtonService implements IReplyButtonService {
@@ -29,6 +28,6 @@ public class ReplyButtonService implements IReplyButtonService {
             throw new BaseException("Список команд не может быть пуст.");
         return commands.stream()
                 .map(command -> ReplyButton.builder().text(commandService.getText(command)).build())
-                .collect(Collectors.toList());
+                .toList();
     }
 }

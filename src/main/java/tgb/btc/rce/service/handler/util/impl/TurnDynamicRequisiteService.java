@@ -41,7 +41,7 @@ public class TurnDynamicRequisiteService implements ITurnDynamicRequisiteService
     public void sendPaymentTypes(Long chatId, Integer messageId, FiatCurrency fiatCurrency) {
         List<PaymentType> paymentTypes = paymentTypeService.getByDealTypeAndFiatCurrency(DealType.BUY, fiatCurrency);
         if (CollectionUtils.isEmpty(paymentTypes)) {
-            responseSender.sendMessage(chatId, "Список тип оплат покупки <b>" + fiatCurrency.getDisplayName() + "</b> пуст."); // TODO добавить фиат
+            responseSender.sendMessage(chatId, "Список тип оплат покупки <b>" + fiatCurrency.getDisplayName() + "</b> пуст.");
             return;
         }
         List<InlineButton> buttons = new ArrayList<>();

@@ -14,7 +14,7 @@ import java.util.Objects;
 @Service
 public class TextCommandService implements ITextCommandService {
 
-    private final String CACHE_NAME = "messageCommandService";
+    private static final String CACHE_NAME = "messageCommandService";
 
     private final ButtonsDesignPropertiesReader buttonsDesignPropertiesReader;
 
