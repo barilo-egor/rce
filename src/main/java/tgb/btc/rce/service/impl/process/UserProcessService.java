@@ -102,7 +102,9 @@ public class UserProcessService implements IUserProcessService {
         newUser.setCharges(0);
         newUser.setReferralPercent(BigDecimal.ZERO);
         User inviter = null;
-        if (update.hasMessage() && update.getMessage().hasText() && update.getMessage().getText().equals(SlashCommand.START.getText())
+        if (update.hasMessage()
+                && update.getMessage().hasText()
+                && update.getMessage().getText().startsWith(SlashCommand.START.getText())
                 && referralModule.isCurrent(ReferralType.STANDARD)) {
             try {
                 Long chatIdFrom = Long.parseLong(update.getMessage().getText()
