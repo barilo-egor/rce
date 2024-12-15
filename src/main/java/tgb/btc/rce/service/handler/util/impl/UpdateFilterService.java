@@ -25,15 +25,15 @@ public class UpdateFilterService implements IUpdateFilterService {
 
     @Override
     public UpdateFilterType getType(Update update) {
-        UserRole userRole = readUserService.getUserRoleByChatId(UpdateType.getChatId(update));
-        if (UserRole.USER.equals(userRole) && !botSwitch.isOn()) return UpdateFilterType.BOT_OFFED;
-        if (update.hasMessage() && update.getMessage().hasText() && update.getMessage().getText().startsWith(SlashCommand.START.getText()))
-            return UpdateFilterType.START;
         if ((update.hasMyChatMember() &&
                 (update.getMyChatMember().getChat().isGroupChat() || update.getMyChatMember().getChat().isSuperGroupChat()))
                 || (update.hasMessage()
                 && (update.getMessage().getChat().isGroupChat() || update.getMessage().getChat().isSuperGroupChat())))
             return UpdateFilterType.GROUP;
+        UserRole userRole = readUserService.getUserRoleByChatId(UpdateType.getChatId(update));
+        if (UserRole.USER.equals(userRole) && !botSwitch.isOn()) return UpdateFilterType.BOT_OFFED;
+        if (update.hasMessage() && update.getMessage().hasText() && update.getMessage().getText().startsWith(SlashCommand.START.getText()))
+            return UpdateFilterType.START;
         return null;
     }
 }
