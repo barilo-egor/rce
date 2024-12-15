@@ -1,5 +1,6 @@
 package tgb.btc.rce.enums.update;
 
+import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.exception.BaseException;
 
@@ -138,6 +139,18 @@ public enum UpdateType {
         if (update.hasMyChatMember()) return update.getMyChatMember().getChat().getId();
         if (update.hasChatMember()) return update.getChatMember().getChat().getId();
         if (update.hasChatJoinRequest()) return update.getChatJoinRequest().getChat().getId();
+        return null;
+    }
+
+    public static Chat getChat(Update update) {
+        if (update.hasMessage()) return update.getMessage().getChat();
+        if (update.hasEditedMessage()) return update.getEditedMessage().getChat();
+        if (update.hasChannelPost()) return update.getChannelPost().getChat();
+        if (update.hasEditedChannelPost()) return update.getEditedChannelPost().getChat();
+        if (update.hasMyChatMember()) return update.getMyChatMember().getChat();
+        if (update.hasChatMember()) return update.getChatMember().getChat();
+        if (update.hasChatJoinRequest()) return update.getChatJoinRequest().getChat();
+        // Для остальных типов апдейтов объект чата недоступен
         return null;
     }
 }

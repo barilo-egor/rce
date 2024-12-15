@@ -8,5 +8,6 @@ import lombok.Getter;
 public enum UpdateFilterType {
     START,
     BOT_OFFED,
-    GROUP
+    GROUP,
+    CHANNEL
 }
