@@ -36,18 +36,19 @@ public class AddToPoolHandler implements ICallbackQueryHandler {
 
     private final ICallbackDataService callbackDataService;
 
-    @Value("${bot.username}")
-    private String botUsername;
+    private final String botUsername;
 
     public AddToPoolHandler(ICryptoWithdrawalService cryptoWithdrawalService, IModifyDealService modifyDealService,
                             ReadDealService readDealService, BigDecimalService bigDecimalService,
-                            IResponseSender responseSender, ICallbackDataService callbackDataService) {
+                            IResponseSender responseSender, ICallbackDataService callbackDataService,
+                            @Value("${bot.username}") String botUsername) {
         this.cryptoWithdrawalService = cryptoWithdrawalService;
         this.modifyDealService = modifyDealService;
         this.readDealService = readDealService;
         this.bigDecimalService = bigDecimalService;
         this.responseSender = responseSender;
         this.callbackDataService = callbackDataService;
+        this.botUsername = botUsername;
     }
 
     @Override
