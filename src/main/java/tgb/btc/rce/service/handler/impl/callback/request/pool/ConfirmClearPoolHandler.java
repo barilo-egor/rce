@@ -33,18 +33,18 @@ public class ConfirmClearPoolHandler implements ICallbackQueryHandler {
     @Override
     public void handle(CallbackQuery callbackQuery) {
         Long chatId = callbackQuery.getFrom().getId();
-        Optional<Message> processMessage = responseSender.sendMessage(chatId, "Пул в процессе очищения, пожалуйста подождите");
+        Optional<Message> processMessage = responseSender.sendMessage(chatId, "Пул в процессе очищения, пожалуйста подождите.");
         try {
             cryptoWithdrawalService.clearPool();
+            Integer poolMessageId = callbackDataService.getIntArgument(callbackQuery.getData(), 1);
+            responseSender.deleteMessage(chatId, poolMessageId);
+            responseSender.deleteMessage(chatId, callbackQuery.getMessage().getMessageId());
+            log.debug("Пользователь {} очистил BTC пул.", chatId);
         } catch (ApiResponseErrorException e) {
             responseSender.sendMessage(chatId, e.getMessage());
-            return;
+        } finally {
+            processMessage.ifPresent(message -> responseSender.deleteMessage(chatId, message.getMessageId()));
         }
-        processMessage.ifPresent(message -> responseSender.deleteMessage(chatId, message.getMessageId()));
-        Integer poolMessageId = callbackDataService.getIntArgument(callbackQuery.getData(), 1);
-        responseSender.deleteMessage(chatId, poolMessageId);
-        responseSender.deleteMessage(chatId, callbackQuery.getMessage().getMessageId());
-        log.debug("Пользователь {} очистил BTC пул.", chatId);
     }
 
     @Override
