@@ -113,6 +113,7 @@ class AddToPoolHandlerTest {
 
     @ParameterizedTest
     @EnumSource(CryptoCurrency.class)
+    @DisplayName("Должен добавить в пул для разных криптовалют.")
     void shouldHandlerDifferentCryptoCurrency(CryptoCurrency cryptoCurrency) {
         CallbackQuery callbackQuery = new CallbackQuery();
         User user = new User();
@@ -165,6 +166,7 @@ class AddToPoolHandlerTest {
 
     @ParameterizedTest
     @ValueSource(doubles = {0.001, 1.1, 0.00014, 564})
+    @DisplayName("Должен добавить в пул для разных сумм.")
     void shouldHandlerDifferentAmounts(Double cryptoAmount) {
         CallbackQuery callbackQuery = new CallbackQuery();
         User user = new User();
