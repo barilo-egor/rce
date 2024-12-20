@@ -224,7 +224,6 @@ class ConfirmAutoWithdrawalDealHandlerTest {
         verify(responseSender).sendMessage(chatId, "Автовывод в процессе, пожалуйста подождите.");
         verify(cryptoWithdrawalService).withdrawal(cryptoCurrency, cryptoAmount, wallet);
         verify(modifyDealService).confirm(dealPid, hash);
-        verify(cryptoWithdrawalService).deleteFromPool(botUsername, dealPid);
         if (Objects.isNull(username) || username.isBlank()) {
             verify(notifier).sendAutoWithdrawDeal("бота", "chatid:" + chatId, dealPid);
         } else {
