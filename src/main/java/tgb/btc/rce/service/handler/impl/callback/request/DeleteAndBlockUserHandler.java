@@ -33,13 +33,12 @@ public class DeleteAndBlockUserHandler implements ICallbackQueryHandler {
 
     private final IDealPropertyService dealPropertyService;
 
-    @Value("${bot.username}")
-    private String botUsername;
+    private final String botUsername;
 
     public DeleteAndBlockUserHandler(ICallbackDataService callbackDataService, IModifyDealService modifyDealService,
                                      ICryptoWithdrawalService cryptoWithdrawalService, IResponseSender responseSender,
                                      IStartService startService, IDealUserService dealUserService,
-                                     IDealPropertyService dealPropertyService) {
+                                     IDealPropertyService dealPropertyService, @Value("${bot.username}") String botUsername) {
         this.callbackDataService = callbackDataService;
         this.modifyDealService = modifyDealService;
         this.cryptoWithdrawalService = cryptoWithdrawalService;
@@ -47,6 +46,7 @@ public class DeleteAndBlockUserHandler implements ICallbackQueryHandler {
         this.startService = startService;
         this.dealUserService = dealUserService;
         this.dealPropertyService = dealPropertyService;
+        this.botUsername = botUsername;
     }
 
     @Override
