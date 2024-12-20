@@ -8,11 +8,12 @@ import tgb.btc.library.constants.enums.bot.DealStatus;
 import tgb.btc.library.interfaces.service.bean.bot.deal.IModifyDealService;
 import tgb.btc.library.interfaces.service.bean.bot.deal.read.IDealPropertyService;
 import tgb.btc.library.interfaces.service.bean.bot.deal.read.IDealUserService;
+import tgb.btc.library.interfaces.service.bean.bot.user.IModifyUserService;
 import tgb.btc.library.interfaces.web.ICryptoWithdrawalService;
+import tgb.btc.library.service.schedule.DealDeleteScheduler;
 import tgb.btc.rce.enums.update.CallbackQueryData;
 import tgb.btc.rce.sender.IResponseSender;
 import tgb.btc.rce.service.handler.ICallbackQueryHandler;
-import tgb.btc.rce.service.handler.util.IStartService;
 import tgb.btc.rce.service.util.ICallbackDataService;
 
 @Service
@@ -27,25 +28,26 @@ public class DeleteAndBlockUserHandler implements ICallbackQueryHandler {
 
     private final IResponseSender responseSender;
 
-    private final IStartService startService;
-
     private final IDealUserService dealUserService;
 
     private final IDealPropertyService dealPropertyService;
+
+    private final IModifyUserService modifyUserService;
 
     private final String botUsername;
 
     public DeleteAndBlockUserHandler(ICallbackDataService callbackDataService, IModifyDealService modifyDealService,
                                      ICryptoWithdrawalService cryptoWithdrawalService, IResponseSender responseSender,
-                                     IStartService startService, IDealUserService dealUserService,
-                                     IDealPropertyService dealPropertyService, @Value("${bot.username}") String botUsername) {
+                                     IDealUserService dealUserService,
+                                     IDealPropertyService dealPropertyService, IModifyUserService modifyUserService,
+                                     @Value("${bot.username}") String botUsername) {
         this.callbackDataService = callbackDataService;
         this.modifyDealService = modifyDealService;
         this.cryptoWithdrawalService = cryptoWithdrawalService;
         this.responseSender = responseSender;
-        this.startService = startService;
         this.dealUserService = dealUserService;
         this.dealPropertyService = dealPropertyService;
+        this.modifyUserService = modifyUserService;
         this.botUsername = botUsername;
     }
 
@@ -62,9 +64,10 @@ public class DeleteAndBlockUserHandler implements ICallbackQueryHandler {
         Long userChatId = dealUserService.getUserChatIdByDealPid(dealPid);
         log.info("Админ {} удалил заявку {} пользователя {} и заблокировал его.", chatId, dealPid, userChatId);
         modifyDealService.deleteDeal(dealPid, true);
+        modifyUserService.updateCurrentDealByChatId(null, userChatId);
+        DealDeleteScheduler.deleteCryptoDeal(dealPid);
         new Thread(() -> cryptoWithdrawalService.deleteFromPool(botUsername, dealPid)).start();
         responseSender.sendMessage(chatId, "Заявка №" + dealPid + " удалена.");
-        startService.process(userChatId);
     }
 
     @Override

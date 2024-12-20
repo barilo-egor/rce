@@ -19,13 +19,22 @@ import tgb.btc.library.interfaces.service.bean.bot.user.IModifyUserService;
 import tgb.btc.library.interfaces.web.ICryptoWithdrawalService;
 import tgb.btc.rce.enums.update.CallbackQueryData;
 import tgb.btc.rce.sender.IResponseSender;
+import tgb.btc.rce.service.handler.util.IStartService;
 import tgb.btc.rce.service.util.ICallbackDataService;
+import tgb.btc.rce.service.util.IMessagePropertiesService;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
-class DeleteAndBlockUserHandlerTest {
+class DeleteUserDealHandlerTest {
+
+    @Mock
+    private IDealUserService dealUserService;
+
+    @Mock
+    private ICryptoWithdrawalService cryptoWithdrawalService;
 
     @Mock
     private ICallbackDataService callbackDataService;
@@ -34,29 +43,29 @@ class DeleteAndBlockUserHandlerTest {
     private IModifyDealService modifyDealService;
 
     @Mock
-    private ICryptoWithdrawalService cryptoWithdrawalService;
+    private IModifyUserService modifyUserService;
 
     @Mock
     private IResponseSender responseSender;
 
     @Mock
-    private IDealUserService dealUserService;
+    private IMessagePropertiesService messagePropertiesService;
 
     @Mock
     private IDealPropertyService dealPropertyService;
 
     @Mock
-    private IModifyUserService modifyUserService;
+    private IStartService startService;
 
     private final String botUsername = "testbot";
 
-    private DeleteAndBlockUserHandler deleteAndBlockUserHandler;
+    private DeleteUserDealHandler deleteUserDealHandler;
 
     @BeforeEach
     void setUp() {
-        this.deleteAndBlockUserHandler = new DeleteAndBlockUserHandler(callbackDataService, modifyDealService,
-                cryptoWithdrawalService, responseSender, dealUserService, dealPropertyService,
-                modifyUserService, botUsername);
+        this.deleteUserDealHandler = new DeleteUserDealHandler(dealUserService, cryptoWithdrawalService,
+                callbackDataService, modifyDealService, modifyUserService, responseSender, messagePropertiesService,
+                dealPropertyService, startService, botUsername);
     }
 
     @Test
@@ -83,7 +92,7 @@ class DeleteAndBlockUserHandlerTest {
         when(callbackDataService.getLongArgument(data, 1)).thenReturn(dealPid);
         when(dealPropertyService.getDealStatusByPid(dealPid)).thenReturn(dealStatus);
 
-        deleteAndBlockUserHandler.handle(callbackQuery);
+        deleteUserDealHandler.handle(callbackQuery);
 
         verify(responseSender).deleteMessage(chatId, messageId);
         verify(responseSender).sendMessage(chatId, "Заявка уже подтверждена, удаление невозможно.");
@@ -116,16 +125,17 @@ class DeleteAndBlockUserHandlerTest {
         when(dealPropertyService.getDealStatusByPid(dealPid)).thenReturn(dealStatus);
         when(dealUserService.getUserChatIdByDealPid(dealPid)).thenReturn(userChatId);
 
-        deleteAndBlockUserHandler.handle(callbackQuery);
+        deleteUserDealHandler.handle(callbackQuery);
 
         verify(responseSender, times(0)).sendMessage(chatId, "Заявка уже подтверждена, удаление невозможно.");
-        verify(modifyDealService).deleteDeal(dealPid, true);
+        verify(modifyDealService).deleteById(dealPid);
         verify(modifyUserService).updateCurrentDealByChatId(null, userChatId);
         verify(responseSender).sendMessage(chatId, "Заявка №23555 удалена.");
+        verify(startService).process(userChatId);
     }
 
     @Test
     void getCallbackQueryData() {
-        assertEquals(CallbackQueryData.DELETE_DEAL_AND_BLOCK_USER, deleteAndBlockUserHandler.getCallbackQueryData());
+        assertEquals(CallbackQueryData.DELETE_USER_DEAL, deleteUserDealHandler.getCallbackQueryData());
     }
 }
