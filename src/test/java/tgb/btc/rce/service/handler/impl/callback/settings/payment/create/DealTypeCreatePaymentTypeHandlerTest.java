@@ -57,7 +57,7 @@ class DealTypeCreatePaymentTypeHandlerTest {
             "BUY, RUB",
             "SELL, RUB"
     })
-    void handleWithDifferentDealTypes(String dealTypeString, String fiatCurrencyString) {
+    void handle(String dealTypeString, String fiatCurrencyString) {
         CallbackQuery callbackQuery = new CallbackQuery();
         Message message = new Message();
         User user = new User();
