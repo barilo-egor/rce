@@ -43,21 +43,18 @@ public class TurningDynamicRequisitesHandler implements ICallbackQueryHandler {
     public void handle(CallbackQuery callbackQuery) {
         Long chatId = callbackQuery.getFrom().getId();
         Long pid = callbackDataService.getLongArgument(callbackQuery.getData(), 1);
-        boolean value = Boolean.parseBoolean(callbackDataService.getArgument(callbackQuery.getData(), 2));
+        boolean value = callbackDataService.getBoolArgument(callbackQuery.getData(), 2);
         PaymentType paymentType = paymentTypeService.getByPid(pid);
-        if (!value) {
-            paymentTypeService.updateIsDynamicOnByPid(false, pid);
-            turnDynamicRequisiteService.sendPaymentTypes(chatId, callbackQuery.getMessage().getMessageId(), paymentType.getFiatCurrency());
-        } else {
+        if (value) {
             List<PaymentRequisite> paymentRequisites = paymentRequisiteService.getByPaymentType_Pid(pid);
             if (paymentRequisites.size() <= 1) {
                 responseSender.sendMessage(chatId, "Недостаточно реквизитов для включения. Количество реквизитов: "
                         + paymentRequisites.size() + ".");
                 return;
             }
-            paymentTypeService.updateIsDynamicOnByPid(true, pid);
-            turnDynamicRequisiteService.sendPaymentTypes(chatId, callbackQuery.getMessage().getMessageId(), paymentType.getFiatCurrency());
         }
+        paymentTypeService.updateIsDynamicOnByPid(value, pid);
+        turnDynamicRequisiteService.sendPaymentTypes(chatId, callbackQuery.getMessage().getMessageId(), paymentType.getFiatCurrency());
         paymentRequisiteService.removeOrder(paymentType.getPid());
     }
 
