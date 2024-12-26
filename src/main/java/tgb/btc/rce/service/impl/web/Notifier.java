@@ -155,7 +155,7 @@ public class Notifier implements INotifier {
                 InlineButton.builder()
                         .inlineType(InlineType.CALLBACK_DATA)
                         .text("Подтвердить регистрацию")
-                        .data(callbackDataService.buildData(CallbackQueryData.SUBMIT_REGISTER, chatId))
+                        .data(CallbackQueryData.SUBMIT_REGISTER.name())
                         .build());
     }
 

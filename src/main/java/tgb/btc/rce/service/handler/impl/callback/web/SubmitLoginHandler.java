@@ -26,7 +26,7 @@ public class SubmitLoginHandler implements ICallbackQueryHandler {
 
     @Override
     public void handle(CallbackQuery callbackQuery) {
-        Long chatId = callbackDataService.getLongArgument(callbackQuery.getData(), 1);
+        Long chatId = callbackQuery.getFrom().getId();
         webAPI.submitLogin(chatId);
         responseSender.deleteMessage(chatId, callbackQuery.getMessage().getMessageId());
         responseSender.sendMessage(chatId, "Вы можете, если потребуется, закрыть сессию по кнопке ниже.",
