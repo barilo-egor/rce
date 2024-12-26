@@ -12,14 +12,11 @@ import tgb.btc.rce.vo.InlineButton;
 @Service
 public class SubmitLoginHandler implements ICallbackQueryHandler {
 
-    private final ICallbackDataService callbackDataService;
-
     private final IResponseSender responseSender;
 
     private final WebAPI webAPI;
 
-    public SubmitLoginHandler(ICallbackDataService callbackDataService, IResponseSender responseSender, WebAPI webAPI) {
-        this.callbackDataService = callbackDataService;
+    public SubmitLoginHandler(IResponseSender responseSender, WebAPI webAPI) {
         this.responseSender = responseSender;
         this.webAPI = webAPI;
     }
