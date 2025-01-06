@@ -20,7 +20,7 @@ public class EditContactsService {
 
     public void save(String message) throws MalformedURLException {
         String[] contactData = message.split("\n");
-        URI uri = URI.create(message);
+        URI uri = URI.create(contactData[1]);
         contactService.save(Contact.builder().label(contactData[0]).url(uri.toURL().toExternalForm()).build());
     }
 }

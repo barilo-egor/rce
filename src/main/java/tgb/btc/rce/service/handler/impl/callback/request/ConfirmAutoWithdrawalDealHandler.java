@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import tgb.btc.library.bean.bot.Deal;
-import tgb.btc.library.constants.enums.bot.CryptoCurrency;
 import tgb.btc.library.constants.enums.bot.DealStatus;
 import tgb.btc.library.interfaces.service.bean.bot.IGroupChatService;
 import tgb.btc.library.interfaces.service.bean.bot.deal.IModifyDealService;
@@ -93,7 +92,7 @@ public class ConfirmAutoWithdrawalDealHandler implements ICallbackQueryHandler {
             log.debug("Сделка {} была отправлена в группу автовывода сделок.", dealPid);
             responseSender.deleteMessage(chatId, callbackDataService.getIntArgument(callbackQuery.getData(), 2));
             responseSender.deleteMessage(chatId, callbackQuery.getMessage().getMessageId());
-            responseSender.sendMessage(chatId, "Транзакция сделки №" + dealPid + "\n" + String.format(CryptoCurrency.BITCOIN.getHashUrl(), hash));
+            responseSender.sendMessage(chatId, "Транзакция сделки №" + dealPid + "\n" + String.format(deal.getCryptoCurrency().getHashUrl(), hash));
         } catch (Exception e) {
             responseSender.sendMessage(chatId, "Ошибка при попытке автовывода сделки " + dealPid + ": " + e.getMessage());
         } finally {
