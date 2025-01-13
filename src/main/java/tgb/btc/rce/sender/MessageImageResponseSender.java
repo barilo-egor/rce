@@ -5,10 +5,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import tgb.btc.library.exception.BaseException;
+import tgb.btc.library.interfaces.enums.MessageImage;
 import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
+import tgb.btc.library.interfaces.service.design.IMessageImageService;
 import tgb.btc.rce.enums.Menu;
-import tgb.btc.rce.enums.MessageImage;
-import tgb.btc.rce.service.IMessageImageService;
 import tgb.btc.rce.service.util.IMenuService;
 
 @Service
