@@ -76,7 +76,7 @@ public class CreatePaymentTypeHandler implements IStateHandler {
                         .text("Сохранить")
                         .data(callbackDataService.buildData(
                                 CallbackQueryData.SAVE_PAYMENT_TYPE,
-                                text, dealType.name(), fiatCurrency.name()
+                                dealType.name(), fiatCurrency.name()
                         ))
                         .build()
         );

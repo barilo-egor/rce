@@ -32,9 +32,11 @@ public class SavePaymentTypeHandler implements ICallbackQueryHandler {
     @Override
     public void handle(CallbackQuery callbackQuery) {
         Long chatId = callbackQuery.getFrom().getId();
-        String name = callbackDataService.getArgument(callbackQuery.getData(), 1);
-        DealType dealType = DealType.valueOf(callbackDataService.getArgument(callbackQuery.getData(), 2));
-        FiatCurrency fiatCurrency = FiatCurrency.valueOf(callbackDataService.getArgument(callbackQuery.getData(), 3));
+        String messageText = callbackQuery.getMessage().getText();
+        String startWithType = messageText.substring(messageText.lastIndexOf("Название: ") + "Название: ".length());
+        String name = startWithType.substring(0, startWithType.indexOf("\nТип оплаты:"));
+        DealType dealType = DealType.valueOf(callbackDataService.getArgument(callbackQuery.getData(), 1));
+        FiatCurrency fiatCurrency = FiatCurrency.valueOf(callbackDataService.getArgument(callbackQuery.getData(), 2));
         PaymentType paymentType = new PaymentType();
         paymentType.setName(name);
         paymentType.setDealType(dealType);
