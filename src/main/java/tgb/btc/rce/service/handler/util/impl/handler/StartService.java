@@ -7,7 +7,7 @@ import tgb.btc.library.interfaces.service.bean.bot.deal.IReadDealService;
 import tgb.btc.library.interfaces.service.bean.bot.user.IModifyUserService;
 import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.rce.enums.Menu;
-import tgb.btc.rce.enums.MessageImage;
+import tgb.btc.library.interfaces.enums.MessageImage;
 import tgb.btc.rce.enums.PropertiesMessage;
 import tgb.btc.rce.sender.IMessageImageResponseSender;
 import tgb.btc.rce.sender.IResponseSender;

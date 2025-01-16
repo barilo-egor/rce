@@ -19,7 +19,7 @@ import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.library.interfaces.service.bean.common.bot.IUserCommonService;
 import tgb.btc.library.interfaces.util.IFiatCurrencyService;
 import tgb.btc.rce.enums.Menu;
-import tgb.btc.rce.enums.MessageImage;
+import tgb.btc.library.interfaces.enums.MessageImage;
 import tgb.btc.rce.enums.UserState;
 import tgb.btc.rce.enums.update.CallbackQueryData;
 import tgb.btc.rce.enums.update.SlashCommand;

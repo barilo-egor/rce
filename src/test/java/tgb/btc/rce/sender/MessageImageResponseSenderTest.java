@@ -14,7 +14,7 @@ import tgb.btc.library.constants.enums.bot.UserRole;
 import tgb.btc.library.exception.BaseException;
 import tgb.btc.library.service.bean.bot.user.ReadUserService;
 import tgb.btc.rce.enums.Menu;
-import tgb.btc.rce.enums.MessageImage;
+import tgb.btc.library.interfaces.enums.MessageImage;
 import tgb.btc.rce.service.impl.MessageImageService;
 import tgb.btc.rce.service.impl.util.MenuService;
 
