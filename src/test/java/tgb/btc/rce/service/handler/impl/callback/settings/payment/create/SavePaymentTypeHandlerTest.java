@@ -51,7 +51,12 @@ class SavePaymentTypeHandlerTest {
         CallbackQuery callbackQuery = new CallbackQuery();
         Message message = new Message();
         User user = new User();
-
+        String messageText = "Предварительный просмотр.\n" +
+                "\n" +
+                "Название: " + name + "\n" +
+                "Тип оплаты: Покупка\n" +
+                "Фиатная валюта: Бел.рубли";
+        message.setText(messageText);
         String data = "data";
         Integer messageId = 50000;
         Long chatId = 123456789L;
@@ -63,9 +68,8 @@ class SavePaymentTypeHandlerTest {
         callbackQuery.setMessage(message);
         callbackQuery.setId(Integer.toString(callbackQueryId));
 
-        when(callbackDataService.getArgument(data, 1)).thenReturn(name);
-        when(callbackDataService.getArgument(data, 2)).thenReturn(dealType.name());
-        when(callbackDataService.getArgument(data, 3)).thenReturn(fiatCurrency.name());
+        when(callbackDataService.getArgument(data, 1)).thenReturn(dealType.name());
+        when(callbackDataService.getArgument(data, 2)).thenReturn(fiatCurrency.name());
 
         paymentTypeHandler.handle(callbackQuery);
 

@@ -231,7 +231,7 @@ class ConfirmAutoWithdrawalDealHandlerTest {
         }
         verify(responseSender).deleteMessage(chatId, lastMessageId);
         verify(responseSender).deleteMessage(chatId, messageId);
-        verify(responseSender).sendMessage(chatId, "Транзакция сделки №" + dealPid + "\n" + String.format(CryptoCurrency.BITCOIN.getHashUrl(), hash));
+        verify(responseSender).sendMessage(chatId, "Транзакция сделки №" + dealPid + "\n" + String.format(cryptoCurrency.getHashUrl(), hash));
         verify(responseSender).deleteMessage(chatId, deleteMessageId);
     }
 

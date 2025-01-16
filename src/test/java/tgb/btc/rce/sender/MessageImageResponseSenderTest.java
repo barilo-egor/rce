@@ -13,9 +13,9 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMar
 import tgb.btc.library.constants.enums.bot.UserRole;
 import tgb.btc.library.exception.BaseException;
 import tgb.btc.library.service.bean.bot.user.ReadUserService;
+import tgb.btc.library.service.design.MessageImageService;
 import tgb.btc.rce.enums.Menu;
 import tgb.btc.library.interfaces.enums.MessageImage;
-import tgb.btc.rce.service.impl.MessageImageService;
 import tgb.btc.rce.service.impl.util.MenuService;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;

@@ -2,6 +2,7 @@ package tgb.btc.rce.enums;
 
 import org.junit.jupiter.api.Test;
 import tgb.btc.library.constants.enums.bot.CryptoCurrency;
+import tgb.btc.library.interfaces.enums.MessageImage;
 
 import static org.junit.jupiter.api.Assertions.*;
 
