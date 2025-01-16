@@ -698,7 +698,7 @@ public class ExchangeService {
 
             message = getBuyMessage(deal, rank, requisite);
             if (Objects.isNull(message)) {
-                message = "✅<b>Заявка №</b><code>" + deal.getPid() + "</code> успешно создана." + "\n\n"
+                message = "✅<b>Заявка №</b><code>" + deal.getPid() + "</code>" + "\n\n"
                         + "<b>Получаете</b>: " + bigDecimalService.roundToPlainString(deal.getCryptoAmount(),
                         currency.getScale())
                         + " " + currency.getShortName() + "\n"
@@ -721,7 +721,7 @@ public class ExchangeService {
             deal.setAmount(dealAmount);
             message = getSellMessage(deal, rank);
             if (Objects.isNull(message)) {
-                message = "✅<b>Заявка №</b><code>" + deal.getPid() + "</code> успешно создана." + "\n\n"
+                message = "✅<b>Заявка №</b><code>" + deal.getPid() + "</code>" + "\n\n"
                         + "<b>Продаете</b>: "
                         + bigDecimalService.roundToPlainString(deal.getCryptoAmount(),
                         currency.getScale()) + " " + currency.getShortName() + "\n"
