@@ -12,21 +12,18 @@ import tgb.btc.rce.vo.InlineButton;
 @Service
 public class SubmitLoginHandler implements ICallbackQueryHandler {
 
-    private final ICallbackDataService callbackDataService;
-
     private final IResponseSender responseSender;
 
     private final WebAPI webAPI;
 
-    public SubmitLoginHandler(ICallbackDataService callbackDataService, IResponseSender responseSender, WebAPI webAPI) {
-        this.callbackDataService = callbackDataService;
+    public SubmitLoginHandler(IResponseSender responseSender, WebAPI webAPI) {
         this.responseSender = responseSender;
         this.webAPI = webAPI;
     }
 
     @Override
     public void handle(CallbackQuery callbackQuery) {
-        Long chatId = callbackDataService.getLongArgument(callbackQuery.getData(), 1);
+        Long chatId = callbackQuery.getFrom().getId();
         webAPI.submitLogin(chatId);
         responseSender.deleteMessage(chatId, callbackQuery.getMessage().getMessageId());
         responseSender.sendMessage(chatId, "Вы можете, если потребуется, закрыть сессию по кнопке ниже.",

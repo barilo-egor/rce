@@ -11,22 +11,19 @@ import tgb.btc.rce.service.util.ICallbackDataService;
 @Service
 public class SubmitRegisterHandler implements ICallbackQueryHandler {
 
-    private final ICallbackDataService callbackDataService;
-
     private final IResponseSender responseSender;
 
     private final WebAPI webAPI;
 
-    public SubmitRegisterHandler(ICallbackDataService callbackDataService, IResponseSender responseSender,
+    public SubmitRegisterHandler(IResponseSender responseSender,
                                  WebAPI webAPI) {
-        this.callbackDataService = callbackDataService;
         this.responseSender = responseSender;
         this.webAPI = webAPI;
     }
 
     @Override
     public void handle(CallbackQuery callbackQuery) {
-        Long chatId = callbackDataService.getLongArgument(callbackQuery.getData(), 1);
+        Long chatId = callbackQuery.getFrom().getId();
         webAPI.submitChatId(chatId);
         responseSender.deleteMessage(chatId, callbackQuery.getMessage().getMessageId());
     }

@@ -8,7 +8,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import tgb.btc.rce.enums.MessageImage;
+import tgb.btc.library.interfaces.enums.MessageImage;
 import tgb.btc.rce.enums.UpdateFilterType;
 import tgb.btc.rce.sender.IMessageImageResponseSender;
 

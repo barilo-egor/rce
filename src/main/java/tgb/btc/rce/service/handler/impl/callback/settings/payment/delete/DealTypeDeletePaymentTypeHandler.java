@@ -51,8 +51,7 @@ public class DealTypeDeletePaymentTypeHandler implements ICallbackQueryHandler {
         List<PaymentType> paymentTypes = paymentTypeService.getByDealTypeAndFiatCurrency(dealType, fiatCurrency);
         if (CollectionUtils.isEmpty(paymentTypes)) {
             responseSender.deleteMessage(chatId, messageId);
-            responseSender.sendMessage(chatId, "Список тип оплат на " + dealType.getAccusative() + " пуст.");
-            adminPanelService.send(chatId);
+            responseSender.sendMessage(chatId, "Список тип оплат на " + dealType.getAccusative() + "(" + fiatCurrency.getDisplayName() + ") пуст.");
             return;
         }
 

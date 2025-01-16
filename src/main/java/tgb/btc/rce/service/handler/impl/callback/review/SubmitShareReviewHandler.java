@@ -20,7 +20,6 @@ import tgb.btc.rce.service.impl.process.ReviewPriseProcessService;
 import tgb.btc.rce.service.util.ICallbackDataService;
 import tgb.btc.rce.vo.ReviewPrise;
 
-import java.util.Objects;
 import java.util.Set;
 
 import static tgb.btc.rce.enums.ReviewPriseType.DYNAMIC;
@@ -71,7 +70,7 @@ public class SubmitShareReviewHandler implements ICallbackQueryHandler {
         Integer amount = reviewPriseModule.isCurrent(DYNAMIC)
                 ? getRandomAmount(dealPid)
                 : variablePropertiesReader.getInt(VariableType.REVIEW_PRISE);
-        if (Boolean.TRUE.equals(isPublic)) {
+        if (!Boolean.TRUE.equals(isPublic)) {
             text = "Анонимный отзыв:\n\n" + text;
         } else {
             text = "Отзыв от " +  callbackQuery.getFrom().getFirstName() + ":\n\n" + text;
@@ -91,9 +90,6 @@ public class SubmitShareReviewHandler implements ICallbackQueryHandler {
     private Integer getRandomAmount(Long dealPid) {
         Deal deal = readDealService.findByPid(dealPid);
         ReviewPrise reviewPrise = reviewPriseProcessService.getReviewPrise(deal.getAmount(), deal.getFiatCurrency());
-        if (Objects.isNull(reviewPrise)) {
-            return null;
-        }
         return (int) (Math.random() * (reviewPrise.getMaxPrise() - reviewPrise.getMinPrise()) + reviewPrise.getMinPrise() + 0.5);
     }
 

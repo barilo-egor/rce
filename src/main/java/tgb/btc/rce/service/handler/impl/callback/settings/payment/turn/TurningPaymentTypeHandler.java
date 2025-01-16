@@ -35,7 +35,7 @@ public class TurningPaymentTypeHandler implements ICallbackQueryHandler {
     public void handle(CallbackQuery callbackQuery) {
         Long chatId = callbackQuery.getFrom().getId();
         Long paymentTypePid = callbackDataService.getLongArgument(callbackQuery.getData(), 1);
-        paymentTypeService.updateIsOnByPid(Boolean.valueOf(callbackDataService.getArgument(callbackQuery.getData(), 2)), paymentTypePid);
+        paymentTypeService.updateIsOnByPid(callbackDataService.getBoolArgument(callbackQuery.getData(), 2), paymentTypePid);
         paymentRequisiteService.removeOrder(paymentTypePid);
         PaymentType paymentType = paymentTypeService.getByPid(paymentTypePid);
         showPaymentTypesService.sendForTurn(chatId, paymentType.getDealType(), paymentType.getFiatCurrency(),

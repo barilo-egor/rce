@@ -14,7 +14,6 @@ import tgb.btc.rce.service.impl.util.CallbackDataService;
 @Service
 public class SaveRequisiteHandler implements ICallbackQueryHandler {
 
-
     private final CallbackDataService callbackDataService;
 
     private final IPaymentTypeService paymentTypeService;

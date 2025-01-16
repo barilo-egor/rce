@@ -2,7 +2,7 @@ package tgb.btc.rce.service.handler.impl.filter;
 
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import tgb.btc.rce.enums.MessageImage;
+import tgb.btc.library.interfaces.enums.MessageImage;
 import tgb.btc.rce.enums.UpdateFilterType;
 import tgb.btc.rce.enums.update.UpdateType;
 import tgb.btc.rce.sender.IMessageImageResponseSender;

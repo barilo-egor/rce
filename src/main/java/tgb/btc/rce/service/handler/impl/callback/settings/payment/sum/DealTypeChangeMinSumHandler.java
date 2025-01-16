@@ -44,7 +44,7 @@ public class DealTypeChangeMinSumHandler implements ICallbackQueryHandler {
         List<PaymentType> paymentTypes = paymentTypeService.getByDealTypeAndFiatCurrency(dealType, fiatCurrency);
         if (CollectionUtils.isEmpty(paymentTypes)) {
             responseSender.deleteMessage(chatId, messageId);
-            responseSender.sendMessage(chatId, "Список тип оплат на " + dealType.getAccusative() + " пуст.");
+            responseSender.sendMessage(chatId, "Список тип оплат на " + dealType.getAccusative() + "(" + fiatCurrency.getDisplayName() + ") пуст.");
             return;
         }
 

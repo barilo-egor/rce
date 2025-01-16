@@ -41,14 +41,13 @@ public class ConfirmAutoWithdrawalDealHandler implements ICallbackQueryHandler {
 
     private final IReadUserService readUserService;
 
-    @Value("${bot.username}")
-    private String botUsername;
+    private final String botUsername;
 
     public ConfirmAutoWithdrawalDealHandler(IGroupChatService groupChatService, IModifyDealService modifyDealService,
                                             Notifier notifier, IReadDealService readDealService,
                                             ICryptoWithdrawalService cryptoWithdrawalService,
                                             IResponseSender responseSender, ICallbackDataService callbackDataService,
-                                            IReadUserService readUserService) {
+                                            IReadUserService readUserService, @Value("${bot.username}") String botUsername) {
         this.groupChatService = groupChatService;
         this.modifyDealService = modifyDealService;
         this.notifier = notifier;
@@ -57,19 +56,22 @@ public class ConfirmAutoWithdrawalDealHandler implements ICallbackQueryHandler {
         this.responseSender = responseSender;
         this.callbackDataService = callbackDataService;
         this.readUserService = readUserService;
+        this.botUsername = botUsername;
     }
 
     @Override
     public void handle(CallbackQuery callbackQuery) {
         Long chatId = callbackQuery.getFrom().getId();
-        Long dealPid = callbackDataService.getLongArgument(callbackQuery.getData(), 1);
         if (!groupChatService.hasAutoWithdrawal()) {
             responseSender.sendAnswerCallbackQuery(callbackQuery.getId(),
-                    "Не найдена установленная группа для автовывода сделок. " +
-                            "Добавьте бота в группу, выдайте разрешения на отправку сообщений и выберите группу на сайте в " +
-                            "разделе \"Сделки из бота\".\n", true);
+                    """
+                            Не найдена установленная группа для автовывода сделок. \
+                            Добавьте бота в группу, выдайте разрешения на отправку сообщений и выберите группу на сайте в \
+                            разделе "Сделки из бота".
+                            """, true);
             return;
         }
+        Long dealPid = callbackDataService.getLongArgument(callbackQuery.getData(), 1);
         Optional<Message> withdrawalMessage = responseSender.sendMessage(chatId, "Автовывод в процессе, пожалуйста подождите.");
         String hash;
         try {

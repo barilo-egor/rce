@@ -44,9 +44,11 @@ public class ConfirmApiDealHandler implements ICallbackQueryHandler {
         boolean isNeedRequest = callbackDataService.getBoolArgument(callbackQuery.getData(), 2);
         if (isNeedRequest && !groupChatService.hasGroupChat(apiDealService.getApiUserPidByDealPid(dealPid))) {
             responseSender.sendAnswerCallbackQuery(callbackQuery.getId(),
-                    "Не найдена установленная группа для вывода запросов этого клиента. " +
-                            "Добавьте бота в группу, выдайте разрешения на отправку сообщений и выберите группу на сайте в " +
-                            "разделе \"API пользователи\".\n", true);
+                    """
+                            Не найдена установленная группа для вывода запросов этого клиента. \
+                            Добавьте бота в группу, выдайте разрешения на отправку сообщений и выберите группу на сайте в \
+                            разделе "API пользователи".
+                            """, true);
             return;
         }
         ApiDealStatus apiDealStatus = apiDealService.getApiDealStatusByPid(dealPid);

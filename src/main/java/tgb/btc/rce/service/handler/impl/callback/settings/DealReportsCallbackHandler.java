@@ -3,6 +3,7 @@ package tgb.btc.rce.service.handler.impl.callback.settings;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
+import org.telegram.telegrambots.meta.api.objects.Message;
 import tgb.btc.library.bean.bot.Deal;
 import tgb.btc.library.bean.web.api.ApiDeal;
 import tgb.btc.library.exception.BaseException;
@@ -20,6 +21,7 @@ import tgb.btc.rce.service.util.ICallbackDataService;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -66,6 +68,8 @@ public class DealReportsCallbackHandler implements ICallbackQueryHandler {
         String period = callbackDataService.getArgument(callbackQuery.getData(), 1);
         List<Deal> deals;
         List<ApiDeal> apiDeals;
+        responseSender.deleteMessage(chatId, callbackQuery.getMessage().getMessageId());
+        Optional<Message> deleteMessage = responseSender.sendMessage(chatId, "Выполняется формирование отчета. Пожалуйста подождите.");
         switch (period) {
             case TODAY:
                 deals = dateDealService.getConfirmedByDateBetween(LocalDate.now());
@@ -87,6 +91,7 @@ public class DealReportsCallbackHandler implements ICallbackQueryHandler {
             default:
                 throw new BaseException("Не определен период, за который нужно выгрузить в отчет сделки.");
         }
+        deleteMessage.ifPresent(message -> responseSender.deleteMessage(chatId, message.getMessageId()));
         loadReportService.loadReport(deals, chatId, period, apiDeals);
     }
 

@@ -46,12 +46,12 @@ public class DeletingPaymentTypeHandler implements ICallbackQueryHandler {
         Long pid = callbackDataService.getLongArgument(callbackQuery.getData(), 1);
         PaymentType paymentType = paymentTypeService.getByPid(pid);
         DealType dealType = paymentType.getDealType();
-        modifyDealService.updatePaymentTypeToNullByPaymentTypePid(paymentType.getPid());
-        paymentRequisiteService.deleteByPaymentTypePid(paymentType.getPid());
-        paymentRequisiteService.removeOrder(paymentType.getPid());
+        modifyDealService.updatePaymentTypeToNullByPaymentTypePid(pid);
+        paymentRequisiteService.deleteByPaymentTypePid(pid);
+        paymentRequisiteService.removeOrder(pid);
         paymentTypeService.deleteById(pid);
         Long chatId = callbackQuery.getFrom().getId();
-        String message = "Тип оплаты на " + paymentType.getDealType().getAccusative() + " \"" + paymentType.getName() + "\" удален.";
+        String message = "Тип оплаты на " + dealType.getAccusative() + " \"" + paymentType.getName() + "\" удален.";
         responseSender.sendMessage(callbackQuery.getFrom().getId(), message);
         dealTypeDeletePaymentTypeHandler.sendPaymentTypes(chatId, callbackQuery.getMessage().getMessageId(), dealType,
                 paymentType.getFiatCurrency());

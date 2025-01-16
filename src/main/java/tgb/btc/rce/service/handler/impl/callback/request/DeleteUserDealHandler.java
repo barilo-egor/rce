@@ -14,6 +14,7 @@ import tgb.btc.library.service.schedule.DealDeleteScheduler;
 import tgb.btc.rce.enums.update.CallbackQueryData;
 import tgb.btc.rce.sender.IResponseSender;
 import tgb.btc.rce.service.handler.ICallbackQueryHandler;
+import tgb.btc.rce.service.handler.util.IStartService;
 import tgb.btc.rce.service.util.ICallbackDataService;
 import tgb.btc.rce.service.util.IMessagePropertiesService;
 
@@ -37,14 +38,16 @@ public class DeleteUserDealHandler implements ICallbackQueryHandler {
 
     private final IDealPropertyService dealPropertyService;
 
-    @Value("${bot.username}")
-    private String botUsername;
+    private final IStartService startService;
+
+    private final String botUsername;
 
     public DeleteUserDealHandler(IDealUserService dealUserService, ICryptoWithdrawalService cryptoWithdrawalService,
                                  ICallbackDataService callbackDataService, IModifyDealService modifyDealService,
                                  IModifyUserService modifyUserService, IResponseSender responseSender,
                                  IMessagePropertiesService messagePropertiesService,
-                                 IDealPropertyService dealPropertyService) {
+                                 IDealPropertyService dealPropertyService, IStartService startService,
+                                 @Value("${bot.username}") String botUsername) {
         this.dealUserService = dealUserService;
         this.cryptoWithdrawalService = cryptoWithdrawalService;
         this.callbackDataService = callbackDataService;
@@ -53,6 +56,8 @@ public class DeleteUserDealHandler implements ICallbackQueryHandler {
         this.responseSender = responseSender;
         this.messagePropertiesService = messagePropertiesService;
         this.dealPropertyService = dealPropertyService;
+        this.startService = startService;
+        this.botUsername = botUsername;
     }
 
     @Override
@@ -73,6 +78,7 @@ public class DeleteUserDealHandler implements ICallbackQueryHandler {
         DealDeleteScheduler.deleteCryptoDeal(dealPid);
         responseSender.sendMessage(chatId, "Заявка №" + dealPid + " удалена.");
         responseSender.sendMessage(userChatId, messagePropertiesService.getMessage("deal.deleted.by.admin"));
+        startService.process(userChatId);
     }
 
     @Override

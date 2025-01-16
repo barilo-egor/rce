@@ -43,15 +43,14 @@ public class ConfirmUserDealHandler implements ICallbackQueryHandler {
 
     private final IRedisUserStateService redisUserStateService;
 
-    @Value("${bot.username}")
-    private String botUsername;
+    private final String botUsername;
 
     public ConfirmUserDealHandler(IModifyDealService modifyDealService, INotifier notifier,
                                   IGroupChatService groupChatService, IDealUserService dealUserService,
                                   ICryptoWithdrawalService cryptoWithdrawalService,
                                   ICallbackDataService callbackDataService, IResponseSender responseSender,
                                   IStartService startService, IReadUserService readUserService,
-                                  IRedisUserStateService redisUserStateService) {
+                                  IRedisUserStateService redisUserStateService, @Value("${bot.username}") String botUsername) {
         this.modifyDealService = modifyDealService;
         this.notifier = notifier;
         this.groupChatService = groupChatService;
@@ -62,33 +61,36 @@ public class ConfirmUserDealHandler implements ICallbackQueryHandler {
         this.startService = startService;
         this.readUserService = readUserService;
         this.redisUserStateService = redisUserStateService;
+        this.botUsername = botUsername;
     }
 
     @Override
     public void handle(CallbackQuery callbackQuery) {
         Long chatId = callbackQuery.getFrom().getId();
-        Long dealPid = callbackDataService.getLongArgument(callbackQuery.getData(), 1);
-        boolean isNeedRequest = Boolean.parseBoolean(callbackDataService.getArgument(callbackQuery.getData(), 2));
+        boolean isNeedRequest = callbackDataService.getBoolArgument(callbackQuery.getData(), 2);
         if (isNeedRequest && !groupChatService.hasDealRequests()) {
             responseSender.sendAnswerCallbackQuery(callbackQuery.getId(),
-                    "Не найдена установленная группа для вывода запросов. " +
-                            "Добавьте бота в группу, выдайте разрешения на отправку сообщений и выберите группу на сайте в " +
-                            "разделе \"Сделки из бота\".\n", true);
+                    """
+                            Не найдена установленная группа для вывода запросов. \
+                            Добавьте бота в группу, выдайте разрешения на отправку сообщений и выберите группу на сайте в \
+                            разделе "Сделки из бота".
+                            """, true);
             return;
         }
+        Long dealPid = callbackDataService.getLongArgument(callbackQuery.getData(), 1);
         modifyDealService.confirm(dealPid);
         new Thread(() -> cryptoWithdrawalService.deleteFromPool(botUsername, dealPid)).start();
         Long userChatId = dealUserService.getUserChatIdByDealPid(dealPid);
         if (UserState.ADDITIONAL_VERIFICATION.equals(redisUserStateService.get(userChatId))) {
             startService.process(userChatId);
         }
-        String username = readUserService.getUsernameByChatId(chatId);
         log.debug("Админ {} подтвердил сделку {}.", chatId, dealPid);
         if (isNeedRequest) {
+            String username = readUserService.getUsernameByChatId(chatId);
             log.debug("Сделка {} была отправлена в группу запросов.", dealPid);
             notifier.sendRequestToWithdrawDeal(
                     "бота",
-                    StringUtils.isNotEmpty(username)
+                    StringUtils.isNotBlank(username)
                             ? username
                             : "chatid:" + chatId,
                     dealPid);

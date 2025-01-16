@@ -1,0 +1,101 @@
+package tgb.btc.rce.service.handler.impl.callback.settings.payment.sum;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
+import org.telegram.telegrambots.meta.api.objects.Message;
+import org.telegram.telegrambots.meta.api.objects.User;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
+import tgb.btc.library.bean.bot.PaymentType;
+import tgb.btc.library.interfaces.service.bean.bot.IPaymentTypeService;
+import tgb.btc.rce.enums.RedisPrefix;
+import tgb.btc.rce.enums.UserState;
+import tgb.btc.rce.enums.update.CallbackQueryData;
+import tgb.btc.rce.sender.IResponseSender;
+import tgb.btc.rce.service.IKeyboardService;
+import tgb.btc.rce.service.redis.IRedisStringService;
+import tgb.btc.rce.service.redis.IRedisUserStateService;
+import tgb.btc.rce.service.util.ICallbackDataService;
+
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+@ExtendWith(MockitoExtension.class)
+class ChangeMinSumCallbackHandlerTest {
+
+    @Mock
+    private IRedisUserStateService redisUserStateService;
+
+    @Mock
+    private IRedisStringService redisStringService;
+
+    @Mock
+    private ICallbackDataService callbackDataService;
+
+    @Mock
+    private IResponseSender responseSender;
+
+    @Mock
+    private IPaymentTypeService paymentTypeService;
+
+    @Mock
+    private IKeyboardService keyboardService;
+
+    @InjectMocks
+    private ChangeMinSumCallbackHandler handler;
+
+    @ParameterizedTest
+    @CsvSource({
+            "payment type name, 1",
+            "p, 12545550",
+            "АЛЬФА БАНК ВТБ ЕРИП \uD83C\uDF81, 5555000055"
+    })
+    void handle(String paymentTypeName, Long paymentTypePid) {
+        CallbackQuery callbackQuery = new CallbackQuery();
+        Message message = new Message();
+        User user = new User();
+
+        String data = "data";
+        Integer messageId = 50000;
+        Long chatId = 123456789L;
+        int callbackQueryId = 24005;
+        user.setId(chatId);
+        message.setMessageId(messageId);
+        callbackQuery.setData(data);
+        callbackQuery.setFrom(user);
+        callbackQuery.setMessage(message);
+        callbackQuery.setId(Integer.toString(callbackQueryId));
+
+        PaymentType paymentType = new PaymentType();
+        paymentType.setPid(paymentTypePid);
+        paymentType.setName(paymentTypeName);
+
+        ReplyKeyboard replyKeyboard = new ReplyKeyboardMarkup();
+
+        when(callbackDataService.getLongArgument(data, 1)).thenReturn(paymentTypePid);
+        when(paymentTypeService.getByPid(paymentTypePid)).thenReturn(paymentType);
+        when(keyboardService.getReplyCancel()).thenReturn(replyKeyboard);
+
+        handler.handle(callbackQuery);
+
+        verify(paymentTypeService).getByPid(paymentTypePid);
+        verify(redisStringService).save(RedisPrefix.PAYMENT_TYPE_PID, chatId, paymentTypePid.toString());
+        verify(redisUserStateService).save(chatId, UserState.CHANGE_MIN_SUM);
+        verify(responseSender).deleteMessage(chatId, messageId);
+        verify(responseSender).sendMessage(chatId, "Введите новую минимальную сумму для <b>" + paymentTypeName + "</b>.",
+                replyKeyboard);
+    }
+
+    @Test
+    void getCallbackQueryData() {
+        assertEquals(CallbackQueryData.CHANGE_MIN_SUM, handler.getCallbackQueryData());
+    }
+}
