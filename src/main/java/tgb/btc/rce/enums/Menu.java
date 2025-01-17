@@ -29,8 +29,8 @@ public enum Menu {
     ),
     OPERATOR_PANEL(2,
             List.of(
-                    TextCommand.NEW_DEALS, TextCommand.NEW_API_DEALS, TextCommand.NEW_REVIEWS, TextCommand.NEW_WITHDRAWALS,
-                    TextCommand.PAYMENT_TYPES, TextCommand.QUIT_ADMIN_PANEL
+                    TextCommand.REQUESTS, TextCommand.PAYMENT_TYPES, TextCommand.SEND_MESSAGES,
+                    TextCommand.USER_REFERRAL_BALANCE, TextCommand.BOT_VARIABLES, TextCommand.QUIT_ADMIN_PANEL
             )
     ),
     OBSERVER_PANEL(2,
