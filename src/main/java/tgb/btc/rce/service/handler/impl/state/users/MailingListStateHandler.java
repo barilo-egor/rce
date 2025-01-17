@@ -3,6 +3,7 @@ package tgb.btc.rce.service.handler.impl.state.users;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import tgb.btc.rce.enums.BotReplyButton;
 import tgb.btc.rce.enums.UserState;
 import tgb.btc.rce.enums.update.CallbackQueryData;
 import tgb.btc.rce.enums.update.TextCommand;
@@ -44,6 +45,10 @@ public class MailingListStateHandler implements IStateHandler {
         }
         Message message = update.getMessage();
         Long chatId = message.getChatId();
+        if (message.getText().equals(BotReplyButton.CANCEL.getText())) {
+            redisUserStateService.delete(chatId);
+            adminPanelService.send(chatId);
+        }
         Optional<Message> preMessage = responseSender.sendMessage(chatId, "Предварительный просмотр сообщения:");
         if (preMessage.isPresent()) {
             responseSender.sendMessage(message.getChatId(), message.getText(),
