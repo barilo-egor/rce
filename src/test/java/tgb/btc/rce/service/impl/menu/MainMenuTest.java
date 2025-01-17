@@ -83,7 +83,6 @@ class MainMenuTest {
         when(referralModule.isCurrent(ReferralType.STANDARD)).thenReturn(true);
         List<TextCommand> expectedCommands = new ArrayList<>(Menu.MAIN.getTextCommands());
         expectedCommands.remove(TextCommand.ADMIN_PANEL);
-        expectedCommands.remove(TextCommand.WEB_ADMIN_PANEL);
         expectedCommands.remove(TextCommand.OBSERVER_PANEL);
         mainMenu.build(UserRole.OPERATOR);
         verify(replyButtonService).fromTextCommands(expectedCommands);
