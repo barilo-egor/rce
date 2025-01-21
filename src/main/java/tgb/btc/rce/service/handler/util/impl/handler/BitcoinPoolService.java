@@ -70,7 +70,7 @@ public class BitcoinPoolService implements IBitcoinPoolService {
                     botDeals.append("〰️〰️〰️〰️〰️〰️").append("\n")
                             .append(HTMLTag.BOLD.getOpenTag()).append("Сделка").append(HTMLTag.BOLD.getCloseTag()).append(" №").append(HTMLTag.CODE.getOpenTag()).append(poolDeal.getPid())
                             .append(HTMLTag.CODE.getCloseTag()).append(" (пул ID ").append(poolDeal.getId())
-                            .append(") ").append(poolDeal.getAddDate().format(DateTimeFormatter.ofPattern("mm:ss")))
+                            .append(") ").append(poolDeal.getAddDate().format(DateTimeFormatter.ofPattern("hh:mm")))
                             .append(DeliveryType.VIP.equals(poolDeal.getDeliveryType()) ? " <b>VIP</b>\n" : "\n")
                             .append("<b>Данные</b>: ").append(HTMLTag.CODE.getOpenTag()).append(poolDeal.getAddress()).append(",")
                             .append(poolDeal.getAmount()).append(HTMLTag.CODE.getCloseTag()).append("\n")
