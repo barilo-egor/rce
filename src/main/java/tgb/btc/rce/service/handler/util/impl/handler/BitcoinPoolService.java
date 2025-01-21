@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import tgb.btc.library.constants.enums.bot.CryptoCurrency;
+import tgb.btc.library.constants.enums.bot.DeliveryType;
 import tgb.btc.library.exception.ApiResponseErrorException;
 import tgb.btc.library.interfaces.util.IBigDecimalService;
 import tgb.btc.library.interfaces.web.ICryptoWithdrawalService;
@@ -18,6 +19,7 @@ import tgb.btc.rce.service.util.ICallbackDataService;
 import tgb.btc.rce.vo.InlineButton;
 
 import java.math.BigDecimal;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -68,7 +70,8 @@ public class BitcoinPoolService implements IBitcoinPoolService {
                     botDeals.append("〰️〰️〰️〰️〰️〰️").append("\n")
                             .append(HTMLTag.BOLD.getOpenTag()).append("Сделка").append(HTMLTag.BOLD.getCloseTag()).append(" №").append(HTMLTag.CODE.getOpenTag()).append(poolDeal.getPid())
                             .append(HTMLTag.CODE.getCloseTag()).append(" (пул ID ").append(poolDeal.getId())
-                            .append(")\n")
+                            .append(") ").append(poolDeal.getAddDate().format(DateTimeFormatter.ISO_TIME))
+                            .append(DeliveryType.VIP.equals(poolDeal.getDeliveryType()) ? " <b>VIP</b>" : "")
                             .append("<b>Данные</b>: ").append(HTMLTag.CODE.getOpenTag()).append(poolDeal.getAddress()).append(",")
                             .append(poolDeal.getAmount()).append(HTMLTag.CODE.getCloseTag()).append("\n")
                             .append("<i>Для удаления сделки из пула введите</i> ").append(HTMLTag.CODE.getOpenTag())

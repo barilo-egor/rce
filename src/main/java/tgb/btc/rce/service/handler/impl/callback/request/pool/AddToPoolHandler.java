@@ -18,6 +18,7 @@ import tgb.btc.rce.sender.IResponseSender;
 import tgb.btc.rce.service.handler.ICallbackQueryHandler;
 import tgb.btc.rce.service.util.ICallbackDataService;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
@@ -63,6 +64,8 @@ public class AddToPoolHandler implements ICallbackQueryHandler {
                     .address(deal.getWallet())
                     .bot(botUsername)
                     .amount(bigDecimalService.roundToPlainString(deal.getCryptoAmount(), deal.getCryptoCurrency().getScale()))
+                    .addDate(LocalDateTime.now())
+                    .deliveryType(deal.getDeliveryType())
                     .build());
             modifyDealService.updateDealStatusByPid(DealStatus.AWAITING_WITHDRAWAL, dealPid);
             log.debug("Пользователь chatId={} добавил сделку {} в пул.", chatId, dealPid);
