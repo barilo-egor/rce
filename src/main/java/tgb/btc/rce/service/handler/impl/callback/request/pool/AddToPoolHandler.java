@@ -8,7 +8,9 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import tgb.btc.library.bean.bot.Deal;
 import tgb.btc.library.constants.enums.bot.DealStatus;
 import tgb.btc.library.exception.ApiResponseErrorException;
+import tgb.btc.library.interfaces.enums.MessageImage;
 import tgb.btc.library.interfaces.service.bean.bot.deal.IModifyDealService;
+import tgb.btc.library.interfaces.service.design.IMessageImageService;
 import tgb.btc.library.interfaces.web.ICryptoWithdrawalService;
 import tgb.btc.library.service.bean.bot.deal.ReadDealService;
 import tgb.btc.library.service.util.BigDecimalService;
@@ -39,10 +41,12 @@ public class AddToPoolHandler implements ICallbackQueryHandler {
 
     private final String botUsername;
 
+    private final IMessageImageService messageImageService;
+
     public AddToPoolHandler(ICryptoWithdrawalService cryptoWithdrawalService, IModifyDealService modifyDealService,
                             ReadDealService readDealService, BigDecimalService bigDecimalService,
                             IResponseSender responseSender, ICallbackDataService callbackDataService,
-                            @Value("${bot.username}") String botUsername) {
+                            @Value("${bot.username}") String botUsername, IMessageImageService messageImageService) {
         this.cryptoWithdrawalService = cryptoWithdrawalService;
         this.modifyDealService = modifyDealService;
         this.readDealService = readDealService;
@@ -50,6 +54,7 @@ public class AddToPoolHandler implements ICallbackQueryHandler {
         this.responseSender = responseSender;
         this.callbackDataService = callbackDataService;
         this.botUsername = botUsername;
+        this.messageImageService = messageImageService;
     }
 
     @Override
@@ -70,6 +75,9 @@ public class AddToPoolHandler implements ICallbackQueryHandler {
             modifyDealService.updateDealStatusByPid(DealStatus.AWAITING_WITHDRAWAL, dealPid);
             log.debug("Пользователь chatId={} добавил сделку {} в пул.", chatId, dealPid);
             responseSender.deleteMessage(chatId, callbackQuery.getMessage().getMessageId());
+            String message = String.format(messageImageService.getMessage(MessageImage.DEAL_ADDED_TO_POOL),
+                    String.format(deal.getCryptoCurrency().getAddressUrl(), deal.getWallet()));
+            responseSender.sendMessage(deal.getUser().getChatId(), message);
         }  catch (ApiResponseErrorException e) {
             responseSender.sendMessage(chatId, e.getMessage());
         } finally {
