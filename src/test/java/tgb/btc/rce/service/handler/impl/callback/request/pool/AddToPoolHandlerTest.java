@@ -17,7 +17,9 @@ import tgb.btc.library.bean.bot.Deal;
 import tgb.btc.library.constants.enums.bot.CryptoCurrency;
 import tgb.btc.library.constants.enums.bot.DealStatus;
 import tgb.btc.library.exception.ApiResponseErrorException;
+import tgb.btc.library.interfaces.enums.MessageImage;
 import tgb.btc.library.interfaces.service.bean.bot.deal.IModifyDealService;
+import tgb.btc.library.interfaces.service.design.IMessageImageService;
 import tgb.btc.library.interfaces.web.ICryptoWithdrawalService;
 import tgb.btc.library.service.bean.bot.deal.ReadDealService;
 import tgb.btc.library.service.util.BigDecimalService;
@@ -56,6 +58,9 @@ class AddToPoolHandlerTest {
     @Mock
     private ICallbackDataService callbackDataService;
 
+    @Mock
+    private IMessageImageService messageImageService;
+
     private AddToPoolHandler addToPoolHandler;
 
     private final String botUsername = "usernameBot";
@@ -63,7 +68,7 @@ class AddToPoolHandlerTest {
     @BeforeEach
     void setUp() {
         addToPoolHandler = new AddToPoolHandler(cryptoWithdrawalService, modifyDealService, readDealService,
-                bigDecimalService, responseSender, callbackDataService, botUsername);
+                bigDecimalService, responseSender, callbackDataService, botUsername, messageImageService);
     }
 
     @ParameterizedTest
@@ -140,6 +145,10 @@ class AddToPoolHandlerTest {
         deal.setWallet(wallet);
         deal.setCryptoCurrency(cryptoCurrency);
         deal.setCryptoAmount(cryptoAmount);
+        tgb.btc.library.bean.bot.User botUser = new tgb.btc.library.bean.bot.User();
+        Long botUserChatId = 5432198765L;
+        botUser.setChatId(botUserChatId);
+        deal.setUser(botUser);
 
         Message addingToPoolMessage = new Message();
         Integer addingToPoolMessageId = 50001;
@@ -149,6 +158,7 @@ class AddToPoolHandlerTest {
         when(readDealService.findByPid(dealPid)).thenReturn(deal);
         when(responseSender.sendMessage(chatId, "Добавление сделки в пул, пожалуйста подождите.")).thenReturn(Optional.of(addingToPoolMessage));
         when(bigDecimalService.roundToPlainString(cryptoAmount, cryptoCurrency.getScale())).thenReturn(poolDealAmount);
+        when(messageImageService.getMessage(MessageImage.DEAL_ADDED_TO_POOL)).thenReturn("Валюта отправлена\n%s");
         addToPoolHandler.handle(callbackQuery);
         ArgumentCaptor<PoolDeal> poolDealArgumentCaptor = ArgumentCaptor.forClass(PoolDeal.class);
         verify(cryptoWithdrawalService).addPoolDeal(poolDealArgumentCaptor.capture());
@@ -162,6 +172,7 @@ class AddToPoolHandlerTest {
         verify(modifyDealService).updateDealStatusByPid(DealStatus.AWAITING_WITHDRAWAL, dealPid);
         verify(responseSender).deleteMessage(chatId, messageId);
         verify(responseSender).deleteMessage(chatId, addingToPoolMessageId);
+        verify(responseSender).sendMessage(botUserChatId, "Валюта отправлена\n" + String.format(cryptoCurrency.getAddressUrl(), wallet));
     }
 
     @ParameterizedTest
@@ -190,6 +201,10 @@ class AddToPoolHandlerTest {
         String poolDealAmount = "0.001";
 
         Deal deal = new Deal();
+        tgb.btc.library.bean.bot.User botUser = new tgb.btc.library.bean.bot.User();
+        Long botUserChatId = 5432198765L;
+        botUser.setChatId(botUserChatId);
+        deal.setUser(botUser);
         deal.setWallet(wallet);
         CryptoCurrency cryptoCurrency = CryptoCurrency.MONERO;
         deal.setCryptoCurrency(cryptoCurrency);
@@ -203,6 +218,7 @@ class AddToPoolHandlerTest {
         when(readDealService.findByPid(dealPid)).thenReturn(deal);
         when(responseSender.sendMessage(chatId, "Добавление сделки в пул, пожалуйста подождите.")).thenReturn(Optional.of(addingToPoolMessage));
         when(bigDecimalService.roundToPlainString(cryptoAmountDecimal, cryptoCurrency.getScale())).thenReturn(poolDealAmount);
+        when(messageImageService.getMessage(MessageImage.DEAL_ADDED_TO_POOL)).thenReturn("Валюта отправлена\n%s");
         addToPoolHandler.handle(callbackQuery);
         ArgumentCaptor<PoolDeal> poolDealArgumentCaptor = ArgumentCaptor.forClass(PoolDeal.class);
         verify(cryptoWithdrawalService).addPoolDeal(poolDealArgumentCaptor.capture());
@@ -216,6 +232,7 @@ class AddToPoolHandlerTest {
         verify(modifyDealService).updateDealStatusByPid(DealStatus.AWAITING_WITHDRAWAL, dealPid);
         verify(responseSender).deleteMessage(chatId, messageId);
         verify(responseSender).deleteMessage(chatId, addingToPoolMessageId);
+        verify(responseSender).sendMessage(botUserChatId, "Валюта отправлена\n" + String.format(cryptoCurrency.getAddressUrl(), wallet));
     }
 
     @Test
