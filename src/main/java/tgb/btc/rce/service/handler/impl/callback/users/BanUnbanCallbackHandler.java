@@ -37,7 +37,7 @@ public class BanUnbanCallbackHandler implements ICallbackQueryHandler {
         Long chatId = callbackQuery.getFrom().getId();
         Long userChatId = callbackDataService.getLongArgument(callbackQuery.getData(), 1);
         responseSender.deleteMessage(chatId, callbackQuery.getMessage().getMessageId());
-        if (bannedUserCache.get(userChatId)) {
+        if (!bannedUserCache.get(userChatId)) {
             banningUserService.ban(userChatId);
             responseSender.sendMessage(chatId,
                     "Пользователь <b>" + userChatId + "</b> заблокирован.");

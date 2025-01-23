@@ -58,7 +58,7 @@ class BanUnbanCallbackHandlerTest {
         Long userChatId = 987654321L;
 
         when(callbackDataService.getLongArgument(data, 1)).thenReturn(userChatId);
-        when(bannedUserCache.get(userChatId)).thenReturn(true);
+        when(bannedUserCache.get(userChatId)).thenReturn(false);
 
         handler.handle(callbackQuery);
 
@@ -90,7 +90,7 @@ class BanUnbanCallbackHandlerTest {
         Long userChatId = 987654321L;
 
         when(callbackDataService.getLongArgument(data, 1)).thenReturn(userChatId);
-        when(bannedUserCache.get(userChatId)).thenReturn(false);
+        when(bannedUserCache.get(userChatId)).thenReturn(true);
 
         handler.handle(callbackQuery);
 
