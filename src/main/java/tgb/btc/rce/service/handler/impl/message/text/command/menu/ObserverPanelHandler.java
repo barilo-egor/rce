@@ -10,6 +10,8 @@ import tgb.btc.rce.service.handler.message.text.ITextCommandHandler;
 @Service
 public class ObserverPanelHandler implements ITextCommandHandler {
 
+    public static final String MESSAGE = "Вы перешли в панель наблюдателя";
+
     private final IMenuSender menuSender;
 
     public ObserverPanelHandler(IMenuSender menuSender) {
@@ -18,7 +20,7 @@ public class ObserverPanelHandler implements ITextCommandHandler {
 
     @Override
     public void handle(Message message) {
-        menuSender.send(message.getChatId(), "Вы перешли в панель наблюдателя", Menu.OBSERVER_PANEL);
+        menuSender.send(message.getChatId(), MESSAGE, Menu.OBSERVER_PANEL);
     }
 
     @Override

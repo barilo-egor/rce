@@ -14,6 +14,7 @@ public enum SlashCommand {
     HELP("/help", UserRole.OPERATOR_ACCESS),
     CHAT_ID("/chatid", UserRole.USER_ACCESS),
     MAKE_USER("/makeuser", UserRole.ADMIN_ACCESS),
+    MAKE_CHAT_ADMIN("/makechatadmin", UserRole.ADMIN_ACCESS),
     MAKE_OBSERVER("/makeobserver", UserRole.ADMIN_ACCESS),
     MAKE_OPERATOR("/makeoperator", UserRole.ADMIN_ACCESS),
     MAKE_ADMIN("/makeadmin", UserRole.ADMIN_ACCESS),

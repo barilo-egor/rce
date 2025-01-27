@@ -16,6 +16,7 @@ public enum HelpCommand {
     MAKE_ADMIN(SlashCommand.MAKE_ADMIN, " chatId - перевод пользователя в роль администратора"),
     MAKE_OPERATOR(SlashCommand.MAKE_OPERATOR, " chatId - перевод пользователя в роль оператора"),
     MAKE_OBSERVER(SlashCommand.MAKE_OBSERVER, " chatId - перевод пользователя в роль наблюдателя"),
+    MAKE_CHAT_ADMIN(SlashCommand.MAKE_CHAT_ADMIN, " chatId - перевод пользователя в роль администратора чата"),
     MAKE_USER(SlashCommand.MAKE_USER, " chatId - перевод пользователя в роль пользователя"),
     DELETE_USER(SlashCommand.DELETE_USER, " chatId - удаление пользователя со всеми его данными(включая сделки)"),
     BACKUP_DB(SlashCommand.BACKUP_DB, " создание бэк апа базы данных"),

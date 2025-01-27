@@ -48,11 +48,14 @@ public class MainMenu implements IMenu {
         if (!UserRole.OPERATOR.equals(userRole)) {
             resultTextCommands.remove(TextCommand.OPERATOR_PANEL);
         }
-        if (!UserRole.ADMIN.equals(userRole) && !UserRole.OPERATOR.equals(userRole)) {
-            resultTextCommands.remove(TextCommand.WEB_ADMIN_PANEL);
-        }
         if (!UserRole.OBSERVER.equals(userRole)) {
             resultTextCommands.remove(TextCommand.OBSERVER_PANEL);
+        }
+        if (!UserRole.CHAT_ADMIN.equals(userRole)) {
+            resultTextCommands.remove(TextCommand.CHAT_ADMIN_PANEL);
+        }
+        if (!UserRole.ADMIN.equals(userRole) && !UserRole.OPERATOR.equals(userRole)) {
+            resultTextCommands.remove(TextCommand.WEB_ADMIN_PANEL);
         }
         return replyButtonService.fromTextCommands(resultTextCommands);
     }
