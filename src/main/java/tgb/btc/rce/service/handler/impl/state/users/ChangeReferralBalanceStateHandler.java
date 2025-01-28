@@ -3,6 +3,8 @@ package tgb.btc.rce.service.handler.impl.state.users;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import tgb.btc.library.constants.enums.bot.BalanceAuditType;
+import tgb.btc.library.interfaces.service.bean.bot.IBalanceAuditService;
 import tgb.btc.library.interfaces.service.bean.bot.user.IModifyUserService;
 import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.rce.enums.UserState;
@@ -33,10 +35,13 @@ public class ChangeReferralBalanceStateHandler implements IStateHandler {
 
     private final IUserInputService userInputService;
 
+    private final IBalanceAuditService balanceAuditService;
+
     public ChangeReferralBalanceStateHandler(IReadUserService readUserService, IModifyUserService modifyUserService,
                                              IResponseSender responseSender, IAdminPanelService adminPanelService,
                                              IRedisUserStateService redisUserStateService,
-                                             IRedisStringService redisStringService, IUserInputService userInputService) {
+                                             IRedisStringService redisStringService, IUserInputService userInputService,
+                                             IBalanceAuditService balanceAuditService) {
         this.readUserService = readUserService;
         this.modifyUserService = modifyUserService;
         this.responseSender = responseSender;
@@ -44,6 +49,7 @@ public class ChangeReferralBalanceStateHandler implements IStateHandler {
         this.redisUserStateService = redisUserStateService;
         this.redisStringService = redisStringService;
         this.userInputService = userInputService;
+        this.balanceAuditService = balanceAuditService;
     }
 
     @Override
@@ -55,6 +61,9 @@ public class ChangeReferralBalanceStateHandler implements IStateHandler {
         String text = update.getMessage().getText();
         Long userChatId = Long.parseLong(redisStringService.get(chatId));
         int total;
+
+        int amount;
+        BalanceAuditType type;
         if (text.startsWith("+") || text.startsWith("-")) {
             Integer userReferralBalance = readUserService.getReferralBalanceByChatId(userChatId);
             if (Objects.isNull(userReferralBalance)) {
@@ -63,22 +72,25 @@ public class ChangeReferralBalanceStateHandler implements IStateHandler {
             Integer enteredSum = Integer.parseInt(text.substring(1));
             if (text.startsWith("+")) {
                 total = userReferralBalance + enteredSum;
-                log.info("Админ с чат айди {} добавил на баланс пользователю с чат айди {} - {} рублей. enteredSum = {}; userReferralBalance = {}; total = {}", chatId, userChatId, enteredSum, enteredSum, userReferralBalance, total);
                 modifyUserService.updateReferralBalanceByChatId(total, userChatId);
                 responseSender.sendMessage(userChatId, "На ваш реферальный баланс было зачислено " + Integer.parseInt(text.substring(1)) + "₽.");
+                type = BalanceAuditType.MANUAL_ADDITION;
             } else {
                 total = userReferralBalance - enteredSum;
-                log.info("Админ с чат айди {} убрал с баланса пользователю с чат айди {} - {} рублей. enteredSum = {}; userReferralBalance = {}; total = {}", chatId, userChatId, enteredSum, enteredSum, userReferralBalance, total);
                 modifyUserService.updateReferralBalanceByChatId(
                         userReferralBalance
                                 - enteredSum, userChatId);
                 responseSender.sendMessage(userChatId, "С вашего реферального баланса списано " + Integer.parseInt(text.substring(1)) + "₽.");
+                type = BalanceAuditType.MANUAL_DEBITING;
             }
+            amount = enteredSum;
         } else {
             total = Integer.parseInt(text);
-            log.info("Админ с чат айди {} установил баланс пользователю с чат айди {} - {} рублей", chatId, userChatId, total);
             modifyUserService.updateReferralBalanceByChatId(total, userChatId);
+            amount = total;
+            type = BalanceAuditType.MANUAL;
         }
+        balanceAuditService.save(readUserService.findByChatId(userChatId), readUserService.findByChatId(chatId), amount, type);
         responseSender.sendMessage(chatId, "Баланс успешно обновлен. Текущее новое значение: <b>" + total + "₽</b>.");
         redisUserStateService.delete(chatId);
         redisStringService.delete(chatId);

@@ -5,8 +5,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tgb.btc.library.bean.bot.Review;
+import tgb.btc.library.constants.enums.bot.BalanceAuditType;
 import tgb.btc.library.constants.enums.properties.VariableType;
 import tgb.btc.library.interfaces.IModule;
+import tgb.btc.library.interfaces.service.bean.bot.IBalanceAuditService;
 import tgb.btc.library.interfaces.service.bean.bot.IReviewService;
 import tgb.btc.library.interfaces.service.bean.bot.user.IModifyUserService;
 import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
@@ -45,12 +47,14 @@ public class ReviewProcessService implements IReviewProcessService {
 
     private final ICallbackDataService callbackDataService;
 
+    private final IBalanceAuditService balanceAuditService;
+
     @Autowired
     public ReviewProcessService(VariablePropertiesReader variablePropertiesReader, IReviewService reviewService,
                                 IResponseSender responseSender, IModule<ReviewPriseType> reviewPriseModule,
                                 IReadUserService readUserService, IModifyUserService modifyUserService,
                                 IKeyboardBuildService keyboardBuildService,
-                                ICallbackDataService callbackDataService) {
+                                ICallbackDataService callbackDataService, IBalanceAuditService balanceAuditService) {
         this.variablePropertiesReader = variablePropertiesReader;
         this.reviewService = reviewService;
         this.responseSender = responseSender;
@@ -59,6 +63,7 @@ public class ReviewProcessService implements IReviewProcessService {
         this.modifyUserService = modifyUserService;
         this.keyboardBuildService = keyboardBuildService;
         this.callbackDataService = callbackDataService;
+        this.balanceAuditService = balanceAuditService;
     }
 
     @Override
@@ -74,9 +79,8 @@ public class ReviewProcessService implements IReviewProcessService {
         Integer referralBalance = readUserService.getReferralBalanceByChatId(review.getChatId());
         int total = referralBalance + reviewPrise;
 
-        log.debug("Обновление реф баланса за отзыв : chatId = {}; reviewPrise = {}; referralBalance = {}; total = {}",
-                review.getChatId(), reviewPrise, referralBalance, total);
         modifyUserService.updateReferralBalanceByChatId(total, review.getChatId());
+        balanceAuditService.save(readUserService.findByChatId(review.getChatId()), reviewPrise, BalanceAuditType.REVIEW);
         responseSender.sendMessage(review.getChatId(), "Ваш отзыв опубликован.\n\nНа ваш реферальный баланс зачислено "
                 + reviewPrise + "₽.");
     }
