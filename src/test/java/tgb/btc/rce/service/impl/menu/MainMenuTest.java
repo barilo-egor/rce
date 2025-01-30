@@ -54,6 +54,7 @@ class MainMenuTest {
         expectedCommands.remove(TextCommand.WEB_ADMIN_PANEL);
         expectedCommands.remove(TextCommand.OPERATOR_PANEL);
         expectedCommands.remove(TextCommand.OBSERVER_PANEL);
+        expectedCommands.remove(TextCommand.CHAT_ADMIN_PANEL);
         mainMenu.build(UserRole.USER);
         verify(replyButtonService).fromTextCommands(expectedCommands);
         when(referralModule.isCurrent(ReferralType.STANDARD)).thenReturn(false);
@@ -69,6 +70,7 @@ class MainMenuTest {
         List<TextCommand> expectedCommands = new ArrayList<>(Menu.MAIN.getTextCommands());
         expectedCommands.remove(TextCommand.OPERATOR_PANEL);
         expectedCommands.remove(TextCommand.OBSERVER_PANEL);
+        expectedCommands.remove(TextCommand.CHAT_ADMIN_PANEL);
         mainMenu.build(UserRole.ADMIN);
         verify(replyButtonService).fromTextCommands(expectedCommands);
         when(referralModule.isCurrent(ReferralType.STANDARD)).thenReturn(false);
@@ -84,6 +86,7 @@ class MainMenuTest {
         List<TextCommand> expectedCommands = new ArrayList<>(Menu.MAIN.getTextCommands());
         expectedCommands.remove(TextCommand.ADMIN_PANEL);
         expectedCommands.remove(TextCommand.OBSERVER_PANEL);
+        expectedCommands.remove(TextCommand.CHAT_ADMIN_PANEL);
         mainMenu.build(UserRole.OPERATOR);
         verify(replyButtonService).fromTextCommands(expectedCommands);
         when(referralModule.isCurrent(ReferralType.STANDARD)).thenReturn(false);
@@ -100,11 +103,29 @@ class MainMenuTest {
         expectedCommands.remove(TextCommand.ADMIN_PANEL);
         expectedCommands.remove(TextCommand.WEB_ADMIN_PANEL);
         expectedCommands.remove(TextCommand.OPERATOR_PANEL);
+        expectedCommands.remove(TextCommand.CHAT_ADMIN_PANEL);
         mainMenu.build(UserRole.OBSERVER);
         verify(replyButtonService).fromTextCommands(expectedCommands);
         when(referralModule.isCurrent(ReferralType.STANDARD)).thenReturn(false);
         expectedCommands.remove(TextCommand.REFERRAL);
         mainMenu.build(UserRole.OBSERVER);
+        verify(replyButtonService).fromTextCommands(expectedCommands);
+    }
+
+    @Test
+    @DisplayName("Должен вернуть меню для CHAT ADMIN.")
+    void buildChatAdmin() {
+        when(referralModule.isCurrent(ReferralType.STANDARD)).thenReturn(true);
+        List<TextCommand> expectedCommands = new ArrayList<>(Menu.MAIN.getTextCommands());
+        expectedCommands.remove(TextCommand.ADMIN_PANEL);
+        expectedCommands.remove(TextCommand.WEB_ADMIN_PANEL);
+        expectedCommands.remove(TextCommand.OPERATOR_PANEL);
+        expectedCommands.remove(TextCommand.OBSERVER_PANEL);
+        mainMenu.build(UserRole.CHAT_ADMIN);
+        verify(replyButtonService).fromTextCommands(expectedCommands);
+        when(referralModule.isCurrent(ReferralType.STANDARD)).thenReturn(false);
+        expectedCommands.remove(TextCommand.REFERRAL);
+        mainMenu.build(UserRole.CHAT_ADMIN);
         verify(replyButtonService).fromTextCommands(expectedCommands);
     }
 }

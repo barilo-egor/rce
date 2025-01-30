@@ -13,7 +13,8 @@ public enum Menu {
     MAIN(2,
             List.of(
                     TextCommand.BUY_BITCOIN, TextCommand.SELL_BITCOIN, TextCommand.CONTACTS, TextCommand.DRAWS, TextCommand.REFERRAL,
-                    TextCommand.ADMIN_PANEL, TextCommand.WEB_ADMIN_PANEL, TextCommand.OPERATOR_PANEL, TextCommand.OBSERVER_PANEL
+                    TextCommand.ADMIN_PANEL, TextCommand.WEB_ADMIN_PANEL, TextCommand.OPERATOR_PANEL, TextCommand.OBSERVER_PANEL,
+                    TextCommand.CHAT_ADMIN_PANEL
             )
     ),
     DRAWS(2,
@@ -36,6 +37,11 @@ public enum Menu {
     OBSERVER_PANEL(2,
             List.of(
                     TextCommand.NEW_DEALS, TextCommand.DEAL_REPORTS, TextCommand.MAILING_LIST, TextCommand.QUIT_ADMIN_PANEL
+            )
+    ),
+    CHAT_ADMIN_PANEL(2,
+            List.of(
+                    TextCommand.USER_REFERRAL_BALANCE, TextCommand.MAILING_LIST, TextCommand.QUIT_ADMIN_PANEL
             )
     ),
     DISCOUNTS(2,
