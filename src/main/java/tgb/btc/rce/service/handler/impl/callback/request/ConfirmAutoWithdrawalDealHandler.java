@@ -43,11 +43,14 @@ public class ConfirmAutoWithdrawalDealHandler implements ICallbackQueryHandler {
 
     private final String botUsername;
 
+    private final AutoWithdrawalDealHandler autoWithdrawalDealHandler;
+
     public ConfirmAutoWithdrawalDealHandler(IGroupChatService groupChatService, IModifyDealService modifyDealService,
                                             Notifier notifier, IReadDealService readDealService,
                                             ICryptoWithdrawalService cryptoWithdrawalService,
                                             IResponseSender responseSender, ICallbackDataService callbackDataService,
-                                            IReadUserService readUserService, @Value("${bot.username}") String botUsername) {
+                                            IReadUserService readUserService, @Value("${bot.username}") String botUsername,
+                                            AutoWithdrawalDealHandler autoWithdrawalDealHandler) {
         this.groupChatService = groupChatService;
         this.modifyDealService = modifyDealService;
         this.notifier = notifier;
@@ -57,6 +60,7 @@ public class ConfirmAutoWithdrawalDealHandler implements ICallbackQueryHandler {
         this.callbackDataService = callbackDataService;
         this.readUserService = readUserService;
         this.botUsername = botUsername;
+        this.autoWithdrawalDealHandler = autoWithdrawalDealHandler;
     }
 
     @Override
@@ -80,7 +84,11 @@ public class ConfirmAutoWithdrawalDealHandler implements ICallbackQueryHandler {
                 responseSender.sendMessage(chatId, "Сделка уже находится в статусе \"Подтверждена\".");
                 return;
             }
-            hash = cryptoWithdrawalService.withdrawal(deal.getCryptoCurrency(), deal.getCryptoAmount(), deal.getWallet());
+            String feeRate = null;
+            if (callbackDataService.getBoolArgument(callbackQuery.getData(), 3) && !autoWithdrawalDealHandler.isAutoFeeRate()) {
+                feeRate = autoWithdrawalDealHandler.getLastFeeRate();
+            }
+            hash = cryptoWithdrawalService.withdrawal(deal.getCryptoCurrency(), deal.getCryptoAmount(), deal.getWallet(), feeRate);
             modifyDealService.confirm(dealPid, hash);
             new Thread(() -> cryptoWithdrawalService.deleteFromPool(botUsername, dealPid)).start();
             String username = readUserService.getUsernameByChatId(chatId);
