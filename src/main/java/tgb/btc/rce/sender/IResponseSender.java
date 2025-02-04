@@ -8,6 +8,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMa
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import tgb.btc.rce.vo.InlineButton;
+import tgb.btc.rce.vo.ReplyButton;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,6 +25,8 @@ public interface IResponseSender {
     Optional<Message> sendMessage(Long chatId, String text, ReplyKeyboard replyKeyboard);
 
     Optional<Message> sendMessage(Long chatId, String text, InlineButton... inlineButtons);
+
+    Optional<Message> sendMessage(Long chatId, String text, ReplyButton... replyButtons);
 
     Optional<Message> sendMessage(Long chatId, String text, List<InlineButton> buttons);
 

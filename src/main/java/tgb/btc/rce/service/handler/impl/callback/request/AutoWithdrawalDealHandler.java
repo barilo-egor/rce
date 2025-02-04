@@ -32,15 +32,6 @@ public class AutoWithdrawalDealHandler implements ICallbackQueryHandler {
 
     private final IResponseSender responseSender;
 
-    private static final String AUTO = "Авто";
-
-    /**
-     * Последняя введенная оператором комиссия в sat/vB (целое число сатоши/байт)
-     */
-    @Setter
-    @Getter
-    private String lastFeeRate = AUTO;
-
     public AutoWithdrawalDealHandler(IReadDealService readDealService,
                                      ICryptoWithdrawalService cryptoWithdrawalService, ICallbackDataService callbackDataService,
                                      IResponseSender responseSender) {
@@ -92,19 +83,16 @@ public class AutoWithdrawalDealHandler implements ICallbackQueryHandler {
     private String getMessage(boolean withCommission, Deal deal) {
         String message = "";
         if (withCommission) {
-            if (lastFeeRate.equals(AUTO)) {
-                message = "Комиссия: <b>" + lastFeeRate + "</b>\n";
+            String feeRate = cryptoWithdrawalService.getFeeRate(deal.getCryptoCurrency());
+            if (cryptoWithdrawalService.isAutoFeeRate(deal.getCryptoCurrency())) {
+                message = "Комиссия: <b>" + feeRate + "</b>\n";
             } else {
-                message = "Комиссия: <b>" + lastFeeRate + " sat/vB</b>\n";
+                message = "Комиссия: <b>" + feeRate + " sat/vB</b>\n";
             }
         }
         message = message + "Вы собираетесь отправить " + deal.getCryptoAmount().toPlainString()
                 + " " + deal.getCryptoCurrency().getShortName() + " на адрес <code>" + deal.getWallet() + "</code>. Продолжить?";
         return message;
-    }
-
-    public boolean isAutoFeeRate() {
-        return lastFeeRate.equals(AUTO);
     }
 
     @Override

@@ -2,7 +2,10 @@ package tgb.btc.rce.service.handler.impl.state.settings;
 
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import tgb.btc.library.constants.enums.bot.CryptoCurrency;
 import tgb.btc.library.interfaces.service.bean.bot.deal.IReadDealService;
+import tgb.btc.library.service.bean.bot.deal.read.DealPropertyService;
+import tgb.btc.library.service.web.CryptoWithdrawalService;
 import tgb.btc.rce.enums.BotReplyButton;
 import tgb.btc.rce.enums.RedisPrefix;
 import tgb.btc.rce.enums.UserState;
@@ -10,6 +13,7 @@ import tgb.btc.rce.enums.update.UpdateType;
 import tgb.btc.rce.sender.IResponseSender;
 import tgb.btc.rce.service.handler.IStateHandler;
 import tgb.btc.rce.service.handler.impl.callback.request.AutoWithdrawalDealHandler;
+import tgb.btc.rce.service.handler.impl.message.text.command.request.RequestsHandler;
 import tgb.btc.rce.service.redis.IRedisStringService;
 import tgb.btc.rce.service.redis.IRedisUserStateService;
 import tgb.btc.rce.service.util.ICallbackDataService;
@@ -30,15 +34,26 @@ public class SaveFeeRateHandler implements IStateHandler {
 
     private final IReadDealService readDealService;
 
+    private final CryptoWithdrawalService cryptoWithdrawalService;
+
+    private final DealPropertyService dealPropertyService;
+
+    private final RequestsHandler requestsHandler;
+
     public SaveFeeRateHandler(IResponseSender responseSender, ICallbackDataService callbackDataService,
                               IRedisUserStateService redisUserStateService, IRedisStringService redisStringService,
-                              AutoWithdrawalDealHandler autoWithdrawalDealHandler, IReadDealService readDealService) {
+                              AutoWithdrawalDealHandler autoWithdrawalDealHandler, IReadDealService readDealService,
+                              CryptoWithdrawalService cryptoWithdrawalService, DealPropertyService dealPropertyService,
+                              RequestsHandler requestsHandler) {
         this.responseSender = responseSender;
         this.callbackDataService = callbackDataService;
         this.redisUserStateService = redisUserStateService;
         this.redisStringService = redisStringService;
         this.autoWithdrawalDealHandler = autoWithdrawalDealHandler;
         this.readDealService = readDealService;
+        this.cryptoWithdrawalService = cryptoWithdrawalService;
+        this.dealPropertyService = dealPropertyService;
+        this.requestsHandler = requestsHandler;
     }
 
     @Override
@@ -58,18 +73,24 @@ public class SaveFeeRateHandler implements IStateHandler {
             autoWithdrawalDealHandler.sendConfirmMessage(true, readDealService.findByPid(dealPid), chatId, messageId);
             return;
         }
-        int newFeeRate;
-        try {
-            newFeeRate = Integer.parseInt(update.getMessage().getText());
-        } catch (NumberFormatException e) {
-            responseSender.sendMessage(chatId, "Требуется целочисленное значение для новой комиссии.");
-            return;
+        CryptoCurrency cryptoCurrency = dealPropertyService.getCryptoCurrencyByPid(dealPid);
+        String newFeeRate;
+        if (update.getMessage().getText().equals(cryptoWithdrawalService.getAutoName())) {
+            cryptoWithdrawalService.putAutoFeeRate(cryptoCurrency);
+        } else {
+            try {
+                newFeeRate = String.valueOf(Integer.parseInt(update.getMessage().getText()));
+            } catch (NumberFormatException e) {
+                responseSender.sendMessage(chatId, "Требуется целочисленное значение для новой комиссии.");
+                return;
+            }
+            cryptoWithdrawalService.putFeeRate(cryptoCurrency, newFeeRate);
         }
-        autoWithdrawalDealHandler.setLastFeeRate(Integer.toString(newFeeRate));
         redisStringService.delete(RedisPrefix.DEAL_PID, chatId);
         redisStringService.delete(RedisPrefix.MESSAGE_ID, chatId);
         redisUserStateService.delete(chatId);
         autoWithdrawalDealHandler.sendConfirmMessage(true, readDealService.findByPid(dealPid), chatId, messageId);
+        requestsHandler.handle(update.getMessage());
     }
 
     @Override

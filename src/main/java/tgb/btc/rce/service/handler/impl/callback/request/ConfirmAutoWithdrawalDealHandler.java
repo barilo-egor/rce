@@ -84,11 +84,7 @@ public class ConfirmAutoWithdrawalDealHandler implements ICallbackQueryHandler {
                 responseSender.sendMessage(chatId, "Сделка уже находится в статусе \"Подтверждена\".");
                 return;
             }
-            String feeRate = null;
-            if (callbackDataService.getBoolArgument(callbackQuery.getData(), 3) && !autoWithdrawalDealHandler.isAutoFeeRate()) {
-                feeRate = autoWithdrawalDealHandler.getLastFeeRate();
-            }
-            hash = cryptoWithdrawalService.withdrawal(deal.getCryptoCurrency(), deal.getCryptoAmount(), deal.getWallet(), feeRate);
+            hash = cryptoWithdrawalService.withdrawal(deal.getCryptoCurrency(), deal.getCryptoAmount(), deal.getWallet());
             modifyDealService.confirm(dealPid, hash);
             new Thread(() -> cryptoWithdrawalService.deleteFromPool(botUsername, dealPid)).start();
             String username = readUserService.getUsernameByChatId(chatId);
