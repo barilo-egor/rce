@@ -43,14 +43,11 @@ public class ConfirmAutoWithdrawalDealHandler implements ICallbackQueryHandler {
 
     private final String botUsername;
 
-    private final AutoWithdrawalDealHandler autoWithdrawalDealHandler;
-
     public ConfirmAutoWithdrawalDealHandler(IGroupChatService groupChatService, IModifyDealService modifyDealService,
                                             Notifier notifier, IReadDealService readDealService,
                                             ICryptoWithdrawalService cryptoWithdrawalService,
                                             IResponseSender responseSender, ICallbackDataService callbackDataService,
-                                            IReadUserService readUserService, @Value("${bot.username}") String botUsername,
-                                            AutoWithdrawalDealHandler autoWithdrawalDealHandler) {
+                                            IReadUserService readUserService, @Value("${bot.username}") String botUsername) {
         this.groupChatService = groupChatService;
         this.modifyDealService = modifyDealService;
         this.notifier = notifier;
@@ -60,7 +57,6 @@ public class ConfirmAutoWithdrawalDealHandler implements ICallbackQueryHandler {
         this.callbackDataService = callbackDataService;
         this.readUserService = readUserService;
         this.botUsername = botUsername;
-        this.autoWithdrawalDealHandler = autoWithdrawalDealHandler;
     }
 
     @Override
