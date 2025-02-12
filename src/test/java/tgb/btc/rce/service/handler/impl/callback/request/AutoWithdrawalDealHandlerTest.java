@@ -21,6 +21,7 @@ import tgb.btc.rce.service.util.ICallbackDataService;
 import tgb.btc.rce.vo.InlineButton;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -134,22 +135,23 @@ class AutoWithdrawalDealHandlerTest {
         String newData = "newData";
 
         when(callbackDataService.getLongArgument(data, 1)).thenReturn(dealPid);
+        when(callbackDataService.getBoolArgument(data, 2)).thenReturn(false);
         when(readDealService.findByPid(dealPid)).thenReturn(deal);
         when(responseSender.sendMessage(chatId, "Получение баланса.")).thenReturn(Optional.of(deleteMessage));
         when(cryptoWithdrawalService.getBalance(cryptoCurrency)).thenReturn(new BigDecimal(balance));
-        when(callbackDataService.buildData(CallbackQueryData.CONFIRM_AUTO_WITHDRAWAL_DEAL, dealPid, messageId)).thenReturn(newData);
+        when(callbackDataService.buildData(CallbackQueryData.CONFIRM_AUTO_WITHDRAWAL_DEAL, deal.getPid(), messageId, false)).thenReturn(newData);
 
         autoWithdrawalDealHandler.handle(callbackQuery);
 
         verify(responseSender).sendMessage(chatId, "Получение баланса.");
         verify(cryptoWithdrawalService).getBalance(cryptoCurrency);
+        verify(responseSender).deleteMessage(chatId, deleteMessageId);
         verify(responseSender, times(0)).sendAnswerCallbackQuery(anyString(), anyString(), anyBoolean());
         verify(responseSender).sendMessage(eq(chatId), eq("Вы собираетесь отправить " + amount
                 + " " + cryptoCurrency.getShortName() + " на адрес <code>" + wallet + "</code>. Продолжить?"),
-                eq(InlineButton.builder()
+                eq(List.of(InlineButton.builder()
                         .text("Продолжить")
-                        .data(newData).build()),
-               eq(InlineButton.builder().text("Отмена").data(CallbackQueryData.INLINE_DELETE.name()).build()));
+                        .data(newData).build(), InlineButton.builder().text("Отмена").data(CallbackQueryData.INLINE_DELETE.name()).build())));
     }
 
     @ParameterizedTest
@@ -191,19 +193,19 @@ class AutoWithdrawalDealHandlerTest {
         String newData = "newData";
 
         when(callbackDataService.getLongArgument(data, 1)).thenReturn(dealPid);
+        when(callbackDataService.getBoolArgument(data, 2)).thenReturn(false);
         when(readDealService.findByPid(dealPid)).thenReturn(deal);
         when(responseSender.sendMessage(chatId, "Получение баланса.")).thenReturn(Optional.of(deleteMessage));
         when(cryptoWithdrawalService.getBalance(cryptoCurrency)).thenReturn(new BigDecimal("500"));
-        when(callbackDataService.buildData(CallbackQueryData.CONFIRM_AUTO_WITHDRAWAL_DEAL, dealPid, messageId)).thenReturn(newData);
+        when(callbackDataService.buildData(CallbackQueryData.CONFIRM_AUTO_WITHDRAWAL_DEAL, dealPid, messageId, false)).thenReturn(newData);
 
         autoWithdrawalDealHandler.handle(callbackQuery);
 
         verify(responseSender).sendMessage(eq(chatId), eq("Вы собираетесь отправить " + amount
                         + " " + cryptoCurrency.getShortName() + " на адрес <code>" + wallet + "</code>. Продолжить?"),
-                eq(InlineButton.builder()
+                eq(List.of(InlineButton.builder()
                         .text("Продолжить")
-                        .data(newData).build()),
-                eq(InlineButton.builder().text("Отмена").data(CallbackQueryData.INLINE_DELETE.name()).build()));
+                        .data(newData).build(), InlineButton.builder().text("Отмена").data(CallbackQueryData.INLINE_DELETE.name()).build())));
     }
 
     @Test
