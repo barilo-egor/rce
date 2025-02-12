@@ -32,5 +32,6 @@ public enum UserState {
     INLINE_QUERY_CALCULATOR,
     INLINE_CALCULATOR,
     DEAL,
-    NEW_FEE_RATE
+    NEW_DEAL_FEE_RATE,
+    NEW_POOL_FEE_RATE
 }

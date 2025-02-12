@@ -1,8 +1,9 @@
-package tgb.btc.rce.service.handler.impl.callback.request;
+package tgb.btc.rce.service.handler.impl.callback.request.pool;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
-import tgb.btc.library.service.web.CryptoWithdrawalService;
+import tgb.btc.library.interfaces.web.ICryptoWithdrawalService;
 import tgb.btc.rce.enums.BotReplyButton;
 import tgb.btc.rce.enums.RedisPrefix;
 import tgb.btc.rce.enums.UserState;
@@ -15,36 +16,39 @@ import tgb.btc.rce.service.util.ICallbackDataService;
 import tgb.btc.rce.vo.ReplyButton;
 
 @Service
-public class ChangeFeeRateHandler implements ICallbackQueryHandler {
-
-    private final IResponseSender responseSender;
+public class PoolChangeFeeRateHandler implements ICallbackQueryHandler {
 
     private final ICallbackDataService callbackDataService;
 
-    private final IRedisUserStateService redisUserStateService;
-
     private final IRedisStringService redisStringService;
 
-    private final CryptoWithdrawalService cryptoWithdrawalService;
+    private final IRedisUserStateService redisUserStateService;
 
-    public ChangeFeeRateHandler(IResponseSender responseSender, ICallbackDataService callbackDataService,
-                                IRedisUserStateService redisUserStateService, IRedisStringService redisStringService,
-                                CryptoWithdrawalService cryptoWithdrawalService) {
-        this.responseSender = responseSender;
+    private final IResponseSender responseSender;
+
+    private final ICryptoWithdrawalService cryptoWithdrawalService;
+
+    @Autowired
+    public PoolChangeFeeRateHandler(ICallbackDataService callbackDataService, IRedisStringService redisStringService,
+                                    IRedisUserStateService redisUserStateService, IResponseSender responseSender,
+                                    ICryptoWithdrawalService cryptoWithdrawalService) {
         this.callbackDataService = callbackDataService;
-        this.redisUserStateService = redisUserStateService;
         this.redisStringService = redisStringService;
+        this.redisUserStateService = redisUserStateService;
+        this.responseSender = responseSender;
         this.cryptoWithdrawalService = cryptoWithdrawalService;
     }
 
     @Override
     public void handle(CallbackQuery callbackQuery) {
         Long chatId = callbackQuery.getFrom().getId();
-        Long dealPid = callbackDataService.getLongArgument(callbackQuery.getData(), 1);
-        Integer messageId = callbackDataService.getIntArgument(callbackQuery.getData(), 2);
-        redisStringService.save(RedisPrefix.DEAL_PID, chatId, dealPid.toString());
+        Long dealsSize = callbackDataService.getLongArgument(callbackQuery.getData(), 1);
+        String totalAmount = callbackDataService.getArgument(callbackQuery.getData(), 2);
+        Integer messageId = callbackDataService.getIntArgument(callbackQuery.getData(), 3);
+        redisStringService.save(RedisPrefix.DEALS_SIZE, chatId, dealsSize.toString());
+        redisStringService.save(RedisPrefix.TOTAL_AMOUNT, chatId, totalAmount);
         redisStringService.save(RedisPrefix.MESSAGE_ID, chatId, messageId.toString());
-        redisUserStateService.save(chatId, UserState.NEW_DEAL_FEE_RATE);
+        redisUserStateService.save(chatId, UserState.NEW_POOL_FEE_RATE);
 
         responseSender.deleteMessage(chatId, callbackQuery.getMessage().getMessageId());
         responseSender.sendMessage(chatId, "Введите новое целочисленное значение комиссии в <b>sat/vB</b>.",
@@ -53,6 +57,6 @@ public class ChangeFeeRateHandler implements ICallbackQueryHandler {
 
     @Override
     public CallbackQueryData getCallbackQueryData() {
-        return CallbackQueryData.DEAL_CHANGE_FEE_RATE;
+        return CallbackQueryData.POOL_CHANGE_FEE_RATE;
     }
 }

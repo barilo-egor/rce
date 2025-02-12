@@ -1,7 +1,5 @@
 package tgb.btc.rce.service.handler.impl.callback.request;
 
-import lombok.Getter;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
@@ -61,9 +59,9 @@ public class AutoWithdrawalDealHandler implements ICallbackQueryHandler {
     public void sendConfirmMessage(boolean withCommission, Deal deal, Long chatId, Integer messageId) {
         List<InlineButton> buttons = new ArrayList<>();
         if (withCommission) {
-            buttons.add( InlineButton.builder()
+            buttons.add(InlineButton.builder()
                     .text("Изменить комиссию")
-                    .data(callbackDataService.buildData(CallbackQueryData.CHANGE_FEE_RATE,
+                    .data(callbackDataService.buildData(CallbackQueryData.DEAL_CHANGE_FEE_RATE,
                             deal.getPid(),
                             messageId))
                     .build());
