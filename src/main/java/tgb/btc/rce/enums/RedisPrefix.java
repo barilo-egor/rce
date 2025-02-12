@@ -10,7 +10,9 @@ public enum RedisPrefix {
     DEAL_PID("deal_pid_"),
     DEAL_TYPE("deal_type_"),
     FIAT_CURRENCY("fiat_currency_"),
-    PAYMENT_TYPE_PID("payment_type_pid_"),;
+    PAYMENT_TYPE_PID("payment_type_pid_"),
+    DEALS_SIZE("deals_size_"),
+    TOTAL_AMOUNT("total_amount_"),;
 
     final String prefix;
 }

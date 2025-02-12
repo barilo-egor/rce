@@ -14,6 +14,8 @@ import tgb.btc.rce.service.util.ICallbackDataService;
 import tgb.btc.rce.vo.InlineButton;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -40,6 +42,7 @@ public class AutoWithdrawalDealHandler implements ICallbackQueryHandler {
     @Override
     public void handle(CallbackQuery callbackQuery) {
         Long dealPid = callbackDataService.getLongArgument(callbackQuery.getData(), 1);
+        boolean withCommission = callbackDataService.getBoolArgument(callbackQuery.getData(), 2);
         Deal deal = readDealService.findByPid(dealPid);
         Long chatId = callbackQuery.getFrom().getId();
         Optional<Message> gettingBalanceMessage = responseSender.sendMessage(chatId, "Получение баланса.");
@@ -50,17 +53,44 @@ public class AutoWithdrawalDealHandler implements ICallbackQueryHandler {
                     "На балансе недостаточно средств для автовывода. Текущий баланс: " + balance.toPlainString(), true);
             return;
         }
-        String message = "Вы собираетесь отправить " + deal.getCryptoAmount().toPlainString()
+        sendConfirmMessage(withCommission, deal, chatId, callbackQuery.getMessage().getMessageId());
+    }
+
+    public void sendConfirmMessage(boolean withCommission, Deal deal, Long chatId, Integer messageId) {
+        List<InlineButton> buttons = new ArrayList<>();
+        if (withCommission) {
+            buttons.add(InlineButton.builder()
+                    .text("Изменить комиссию")
+                    .data(callbackDataService.buildData(CallbackQueryData.DEAL_CHANGE_FEE_RATE,
+                            deal.getPid(),
+                            messageId))
+                    .build());
+        }
+        buttons.add(InlineButton.builder()
+                .text("Продолжить")
+                .data(callbackDataService.buildData(
+                        CallbackQueryData.CONFIRM_AUTO_WITHDRAWAL_DEAL,
+                        deal.getPid(),
+                        messageId,
+                        withCommission
+                )).build());
+        buttons.add(InlineButton.builder().text("Отмена").data(CallbackQueryData.INLINE_DELETE.name()).build());
+        responseSender.sendMessage(chatId, getMessage(withCommission, deal), buttons);
+    }
+
+    private String getMessage(boolean withCommission, Deal deal) {
+        String message = "";
+        if (withCommission) {
+            String feeRate = cryptoWithdrawalService.getFeeRate(deal.getCryptoCurrency());
+            if (cryptoWithdrawalService.isAutoFeeRate(deal.getCryptoCurrency())) {
+                message = "Комиссия: <b>" + feeRate + "</b>\n";
+            } else {
+                message = "Комиссия: <b>" + feeRate + " sat/vB</b>\n";
+            }
+        }
+        message = message + "Вы собираетесь отправить " + deal.getCryptoAmount().toPlainString()
                 + " " + deal.getCryptoCurrency().getShortName() + " на адрес <code>" + deal.getWallet() + "</code>. Продолжить?";
-        responseSender.sendMessage(chatId, message,
-                InlineButton.builder()
-                        .text("Продолжить")
-                        .data(callbackDataService.buildData(
-                                CallbackQueryData.CONFIRM_AUTO_WITHDRAWAL_DEAL,
-                                dealPid,
-                                callbackQuery.getMessage().getMessageId()
-                        )).build(),
-                InlineButton.builder().text("Отмена").data(CallbackQueryData.INLINE_DELETE.name()).build());
+        return message;
     }
 
     @Override

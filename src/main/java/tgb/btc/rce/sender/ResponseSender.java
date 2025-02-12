@@ -27,6 +27,7 @@ import tgb.btc.rce.bot.RceBot;
 import tgb.btc.rce.enums.update.UpdateType;
 import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
 import tgb.btc.rce.vo.InlineButton;
+import tgb.btc.rce.vo.ReplyButton;
 
 import java.io.File;
 import java.io.IOException;
@@ -68,6 +69,11 @@ public class ResponseSender implements IResponseSender {
     @Override
     public Optional<Message> sendMessage(Long chatId, String text, InlineButton... inlineButtons) {
         return sendMessage(chatId, text, keyboardBuildService.buildInline(List.of(inlineButtons)), null);
+    }
+
+    @Override
+    public Optional<Message> sendMessage(Long chatId, String text, ReplyButton... replyButtons) {
+        return sendMessage(chatId, text, keyboardBuildService.buildReply(List.of(replyButtons)), null);
     }
 
     @Override

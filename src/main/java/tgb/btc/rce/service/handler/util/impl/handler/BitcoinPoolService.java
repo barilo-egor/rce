@@ -93,7 +93,11 @@ public class BitcoinPoolService implements IBitcoinPoolService {
                     List.of(
                             InlineButton.builder()
                                     .text("Автовывод")
-                                    .data(callbackDataService.buildData(CallbackQueryData.BITCOIN_POOL_WITHDRAWAL, deals.size(), strTotalAmount))
+                                    .data(callbackDataService.buildData(CallbackQueryData.BITCOIN_POOL_WITHDRAWAL, deals.size(), strTotalAmount, false))
+                                    .build(),
+                            InlineButton.builder()
+                                    .text("Автовывод(ком.)")
+                                    .data(callbackDataService.buildData(CallbackQueryData.BITCOIN_POOL_WITHDRAWAL, deals.size(), strTotalAmount, true))
                                     .build(),
                             InlineButton.builder()
                                     .text("Очистить пул")
