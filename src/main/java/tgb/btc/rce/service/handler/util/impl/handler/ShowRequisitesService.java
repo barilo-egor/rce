@@ -61,6 +61,6 @@ public class ShowRequisitesService implements IShowRequisitesService {
                     .build());
             counter++;
         }
-        responseSender.sendEditedMessageText(chatId, messageId, message.toString(), keyboardBuildService.buildInline(buttons));
+        responseSender.sendEditedMessageText(chatId, messageId, message.toString(), keyboardBuildService.buildInline(buttons, 3));
     }
 }
