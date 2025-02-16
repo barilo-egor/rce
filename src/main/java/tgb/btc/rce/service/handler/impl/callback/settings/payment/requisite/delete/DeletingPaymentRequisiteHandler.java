@@ -41,7 +41,7 @@ public class DeletingPaymentRequisiteHandler implements ICallbackQueryHandler {
 
         Long chatId = callbackQuery.getFrom().getId();
         paymentRequisiteService.delete(paymentRequisite);
-        paymentRequisiteService.removeOrder(paymentType.getPid());
+        paymentRequisiteService.updateOrder(paymentType.getPid());
         responseSender.sendMessage(chatId, "Реквизит <b>" + requisite + "</b> удален.");
         showRequisitesService.showForDelete(callbackQuery.getFrom().getId(), paymentType.getPid(), callbackQuery.getMessage().getMessageId());
     }

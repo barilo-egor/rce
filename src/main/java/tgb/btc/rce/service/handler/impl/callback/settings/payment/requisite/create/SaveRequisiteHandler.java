@@ -42,7 +42,7 @@ public class SaveRequisiteHandler implements ICallbackQueryHandler {
         PaymentType paymentType = paymentTypeService.getByPid(paymentTypePid);
         paymentRequisite.setPaymentType(paymentType);
         paymentRequisiteService.save(paymentRequisite);
-        paymentRequisiteService.removeOrder(paymentType.getPid());
+        paymentRequisiteService.updateOrder(paymentType.getPid());
         Long chatId = callbackQuery.getFrom().getId();
         responseSender.deleteMessage(chatId, callbackQuery.getMessage().getMessageId());
         responseSender.sendMessage(chatId, "Реквизит успешно сохранен:\n <b>" + requisite + "</b>");
