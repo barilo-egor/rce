@@ -79,7 +79,7 @@ class DeletingPaymentRequisiteHandlerTest {
         deletingPaymentRequisiteHandler.handle(callbackQuery);
 
         verify(paymentRequisiteService).delete(paymentRequisite);
-        verify(paymentRequisiteService).removeOrder(paymentTypePid);
+        verify(paymentRequisiteService).checkOrder(paymentTypePid);
         verify(responseSender).sendMessage(chatId, "Реквизит <b>" + requisite + "</b> удален.");
         verify(showRequisitesService).showForDelete(chatId, paymentTypePid, messageId);
     }
