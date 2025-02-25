@@ -38,8 +38,13 @@ import tgb.btc.library.service.process.CalculateService;
 import tgb.btc.library.service.properties.ButtonsDesignPropertiesReader;
 import tgb.btc.library.service.properties.VariablePropertiesReader;
 import tgb.btc.library.service.schedule.DealDeleteScheduler;
+import tgb.btc.library.service.web.merchant.payscrow.PayscrowMerchantService;
 import tgb.btc.library.vo.calculate.DealAmount;
-import tgb.btc.rce.enums.*;
+import tgb.btc.library.vo.web.merchant.payscrow.PayscrowResponse;
+import tgb.btc.rce.enums.BotInlineButton;
+import tgb.btc.rce.enums.BotReplyButton;
+import tgb.btc.rce.enums.PropertiesMessage;
+import tgb.btc.rce.enums.Rank;
 import tgb.btc.rce.enums.update.CallbackQueryData;
 import tgb.btc.rce.sender.IMessageImageResponseSender;
 import tgb.btc.rce.sender.IResponseSender;
@@ -129,6 +134,7 @@ public class ExchangeService {
     private IMessageImageResponseSender messageImageResponseSender;
 
     private IMessageImageService messageImageService;
+    private PayscrowMerchantService payscrowMerchantService;
 
     @Autowired
     public void setCallbackDataService(ICallbackDataService callbackDataService) {
@@ -288,6 +294,12 @@ public class ExchangeService {
     @Autowired
     public void setKeyboardService(IKeyboardService keyboardService) {
         this.keyboardService = keyboardService;
+    }
+
+
+    @Autowired
+    public void setPayscrowMerchantService(PayscrowMerchantService payscrowMerchantService) {
+        this.payscrowMerchantService = payscrowMerchantService;
     }
 
     public void askForFiatCurrency(Long chatId) {
@@ -686,7 +698,7 @@ public class ExchangeService {
             String requisite;
             if (securePaymentDetailsService.hasAccessToPaymentTypes(chatId, deal.getFiatCurrency())) {
                 try {
-                    requisite = paymentRequisiteService.getRequisite(paymentType);
+                    requisite = paymentRequisiteService.getRequisite(deal);
                 } catch (BaseException e) {
                     responseSender.sendMessage(chatId, e.getMessage());
                     return;
@@ -806,6 +818,20 @@ public class ExchangeService {
     }
 
     public void cancelDeal(Integer messageId, Long chatId, Long dealPid) {
+        Deal deal = readDealService.findByPid(dealPid);
+        if (Objects.nonNull(deal.getPayscrowOrderId())) {
+            try {
+                PayscrowResponse payscrowResponse = payscrowMerchantService.cancelOrder(deal.getPayscrowOrderId(), true);
+                if (!payscrowResponse.getSuccess()) {
+                    notifyService.notifyMessage("Не получилось отменить Payscrow ордер по сделке №" + dealPid
+                            + ". Код: " + payscrowResponse.getErrorCode().getCode()
+                            + "Описание: " + payscrowResponse.getMessage(), Set.of(UserRole.ADMIN, UserRole.OPERATOR));
+                }
+            } catch (Exception e) {
+                notifyService.notifyMessage("Ошибка при попытке выполнения запроса на отмену ордера Payscrow по сделке №"
+                        + dealPid, Set.of(UserRole.ADMIN, UserRole.OPERATOR));
+            }
+        }
         responseSender.deleteMessage(chatId, messageId);
         modifyDealService.deleteById(dealPid);
         modifyUserService.updateCurrentDealByChatId(null, chatId);
@@ -934,5 +960,4 @@ public class ExchangeService {
         modifyDealService.updateDeliveryTypeByPid(readUserService.getCurrentDealByChatId(chatId),
                 deliveryType);
     }
-
 }

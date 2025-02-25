@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import tgb.btc.library.bean.bot.PaymentType;
 import tgb.btc.library.interfaces.service.bean.bot.IPaymentTypeService;
+import tgb.btc.library.service.web.merchant.payscrow.PayscrowMerchantService;
 import tgb.btc.rce.enums.update.CallbackQueryData;
 import tgb.btc.rce.sender.IResponseSender;
 import tgb.btc.rce.service.handler.ICallbackQueryHandler;
@@ -20,14 +21,14 @@ public class PayscrowMethodIdHandler implements ICallbackQueryHandler {
 
     private final IPaymentTypeService paymentTypeService;
 
-    private final PayscrowPaymentTypeHandler payscrowPaymentTypeHandler;
+    private final PayscrowMerchantService payscrowMerchantService;
 
     public PayscrowMethodIdHandler(IResponseSender responseSender, ICallbackDataService callbackDataService,
-                                   IPaymentTypeService paymentTypeService, PayscrowPaymentTypeHandler payscrowPaymentTypeHandler) {
+                                   IPaymentTypeService paymentTypeService, PayscrowMerchantService payscrowMerchantService) {
         this.responseSender = responseSender;
         this.callbackDataService = callbackDataService;
         this.paymentTypeService = paymentTypeService;
-        this.payscrowPaymentTypeHandler = payscrowPaymentTypeHandler;
+        this.payscrowMerchantService = payscrowMerchantService;
     }
 
     @Override
@@ -42,7 +43,7 @@ public class PayscrowMethodIdHandler implements ICallbackQueryHandler {
         responseSender.deleteMessage(chatId, callbackQuery.getMessage().getMessageId());
         if (Objects.nonNull(methodId)) {
             responseSender.sendMessage(chatId, "Тип оплаты <b>\"" + paymentType.getName()
-                    + "\"</b> связан с Payscrow методом оплаты <b>\"" + payscrowPaymentTypeHandler.getPaymentMethodName(methodId)
+                    + "\"</b> связан с Payscrow методом оплаты <b>\"" + payscrowMerchantService.getPaymentMethodName(methodId)
                     + "\"</b>.");
         } else {
             responseSender.sendMessage(chatId, "Тип оплаты <b>\"" + paymentType.getName()
