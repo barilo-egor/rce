@@ -250,4 +250,9 @@ public class Notifier implements INotifier {
     public void apiDealDeclined(Long aLong) {
         notifyAdmins("API сделка №" + aLong + " была отклонена по истечению времени.");
     }
+
+    @Override
+    public void payscrowUpdateStatus(Long aLong, String s) {
+        notifyService.notifyMessage(s, keyboardService.getShowDeal(aLong), UserRole.OPERATOR_ACCESS);
+    }
 }
