@@ -6,6 +6,7 @@ import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
 import tgb.btc.library.bean.bot.Deal;
 import tgb.btc.library.bean.bot.PaymentReceipt;
+import tgb.btc.library.constants.enums.bot.DealStatus;
 import tgb.btc.library.constants.enums.bot.ReceiptFormat;
 import tgb.btc.library.constants.enums.bot.UserRole;
 import tgb.btc.library.interfaces.service.bean.bot.deal.IReadDealService;
@@ -58,7 +59,12 @@ public class ShowDealHandler implements ICallbackQueryHandler {
         UserRole userRole = readUserService.getUserRoleByChatId(chatId);
         String dealInfo = dealSupportService.dealToString(dealPid);
         if (UserRole.OPERATOR_ACCESS.contains(userRole)) {
-            responseSender.sendMessage(chatId, dealInfo, dealSupportService.dealToStringButtons(dealPid));
+            if (DealStatus.CONFIRMED.equals(deal.getDealStatus())) {
+                dealInfo = "<b>===СДЕЛКА УЖЕ ПОДТВЕРЖДЕНА===</b>" + dealInfo;
+                responseSender.sendMessage(chatId, dealInfo);
+            } else {
+                responseSender.sendMessage(chatId, dealInfo, dealSupportService.dealToStringButtons(dealPid));
+            }
         } else {
             responseSender.sendMessage(chatId, dealInfo);
         }

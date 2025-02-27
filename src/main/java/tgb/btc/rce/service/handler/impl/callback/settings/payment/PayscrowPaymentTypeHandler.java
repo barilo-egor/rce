@@ -62,7 +62,8 @@ public class PayscrowPaymentTypeHandler implements ICallbackQueryHandler {
                     .build());
             responseSender.sendMessage(chatId, "Тип оплаты <b>\"" + paymentType.getName()
                     + "\"</b> привязан к Payscrow методу оплаты <b>\""
-                    + payscrowMerchantService.getPaymentMethodName(paymentType.getPayscrowPaymentMethodId()) + "\"</b>.", buttons);
+                    + payscrowMerchantService.getPaymentMethodName(paymentType.getPayscrowPaymentMethodId()) + "\"</b>.",
+                    keyboardBuildService.buildInline(buttons, 2));
         }
     }
 
