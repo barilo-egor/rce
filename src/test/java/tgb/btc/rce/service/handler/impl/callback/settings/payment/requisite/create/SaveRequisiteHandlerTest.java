@@ -91,7 +91,7 @@ class SaveRequisiteHandlerTest {
                 () -> assertTrue(paymentRequisite.getOn()),
                 () -> assertEquals(paymentTypePid, paymentRequisite.getPaymentType().getPid())
         );
-        verify(paymentRequisiteService).removeOrder(paymentTypePid);
+        verify(paymentRequisiteService).checkOrder(paymentTypePid);
         verify(responseSender).deleteMessage(chatId, messageId);
         verify(responseSender).sendMessage(chatId, "Реквизит успешно сохранен:\n <b>" + paymentRequisite.getRequisite() + "</b>");
     }
