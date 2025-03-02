@@ -43,3 +43,4 @@ config/antispam/picture
 /config/design/images/
 /config/design/message_images/
 /config/system/wallet.properties
+/config/payscrow.properties
