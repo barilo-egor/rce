@@ -678,16 +678,16 @@ public class ExchangeService {
         BigDecimal dealAmount = userDiscountProcessService.applyRank(rank, deal);
 
         String promoCodeText = Boolean.TRUE.equals(deal.getUsedPromo())
-                ? "\n\n<b> Использован скидочный промокод</b>: "
+                ? "\n<b> Использован скидочный промокод</b>: "
                 + variablePropertiesReader.getVariable(VariableType.PROMO_CODE_NAME) + "\n\n"
-                : "\n\n";
+                : "\n";
 
         PaymentType paymentType = deal.getPaymentType();
         deal.setDateTime(LocalDateTime.now());
         String message;
         String deliveryTypeText;
         if (deliveryKindModule.isCurrent(DeliveryKind.STANDARD) && DealType.isBuy(dealType) && CryptoCurrency.BITCOIN.equals(currency)) {
-            deliveryTypeText = "<b>Способ доставки</b>: " + deliveryTypeService.getDisplayName(deal.getDeliveryType()) + "\n\n";
+            deliveryTypeText = "<b>Способ доставки</b>: " + deliveryTypeService.getDisplayName(deal.getDeliveryType()) + "\n";
         } else {
             deliveryTypeText = "";
         }
@@ -711,8 +711,7 @@ public class ExchangeService {
             message = getBuyMessage(deal, rank, requisite);
             if (Objects.isNull(message)) {
                 message = "✅<b>Заявка №</b><code>" + deal.getPid() + "</code>" + "\n\n"
-                        + "<b>Получаете</b>: " + bigDecimalService.roundToPlainString(deal.getCryptoAmount(),
-                        currency.getScale())
+                        + "<b>Получаете</b>: " + bigDecimalService.roundToPlainString(deal.getCryptoAmount(), currency.getScale())
                         + " " + currency.getShortName() + "\n"
                         + "<b>" + cryptoCurrenciesDesignService.getDisplayName(deal.getCryptoCurrency())
                         + "-адрес</b>:" + "<code>" + deal.getWallet() + "</code>" + "\n\n"
@@ -721,8 +720,7 @@ public class ExchangeService {
                         + " " + deal.getFiatCurrency().getGenitive() + "</code>" + "\n"
                         + "<b>Резквизиты для оплаты:</b>" + "\n\n"
                         + "<code>" + requisite + "</code>" + "\n\n"
-                        + "<b>⏳Заявка действительна</b>: " + variablePropertiesReader.getVariable(
-                        VariableType.DEAL_ACTIVE_TIME) + " минут" + "\n\n"
+                        + "<b>⏳Заявка действительна</b>: " + variablePropertiesReader.getVariable(VariableType.DEAL_ACTIVE_TIME) + " минут" + "\n\n"
                         + deliveryTypeText
                         + "☑️После успешного перевода денег по указанным реквизитам нажмите на кнопку <b>\""
                         + PAID_TEXT + "\"</b> или же вы можете отменить данную заявку, нажав на кнопку <b>\""
@@ -783,12 +781,20 @@ public class ExchangeService {
         String message = messagePropertiesService.getMessage("deal.build.buy");
         if (Objects.isNull(message)) return null;
         CryptoCurrency currency = deal.getCryptoCurrency();
-        return messagePropertiesService.getMessage("deal.build.buy", deal.getPid(),
-                bigDecimalService.roundToPlainString(deal.getCryptoAmount(), deal.getCryptoCurrency().getScale()), currency.getShortName(),
+        return messagePropertiesService.getMessage(
+                "deal.build.buy",
+                deal.getPid(),
+                bigDecimalService.roundToPlainString(deal.getCryptoAmount(), deal.getCryptoCurrency().getScale()),
+                currency.getShortName(),
                 cryptoCurrenciesDesignService.getDisplayName(currency),
-                deal.getWallet(), rank.getSmile(), rank.getPercent() + "%",
-                bigDecimalService.roundToPlainString(deal.getAmount()), deal.getFiatCurrency().getGenitive(), requisite,
-                variablePropertiesReader.getVariable(VariableType.DEAL_ACTIVE_TIME));
+                deal.getWallet(),
+                rank.getSmile(),
+                rank.getPercent() + "%",
+                bigDecimalService.roundToPlainString(deal.getAmount()),
+                deal.getFiatCurrency().getGenitive(),
+                requisite,
+                variablePropertiesReader.getVariable(VariableType.DEAL_ACTIVE_TIME)
+        );
     }
 
     public Boolean isPaid(Update update) {
