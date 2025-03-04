@@ -46,6 +46,7 @@ import tgb.btc.rce.enums.BotReplyButton;
 import tgb.btc.rce.enums.PropertiesMessage;
 import tgb.btc.rce.enums.Rank;
 import tgb.btc.rce.enums.update.CallbackQueryData;
+import tgb.btc.rce.enums.update.TextCommand;
 import tgb.btc.rce.sender.IMessageImageResponseSender;
 import tgb.btc.rce.sender.IResponseSender;
 import tgb.btc.rce.service.*;
@@ -54,6 +55,7 @@ import tgb.btc.rce.service.process.IUserDiscountProcessService;
 import tgb.btc.rce.service.util.ICallbackDataService;
 import tgb.btc.rce.service.util.ICryptoCurrenciesDesignService;
 import tgb.btc.rce.service.util.IMessagePropertiesService;
+import tgb.btc.rce.service.util.ITextCommandService;
 import tgb.btc.rce.vo.CalculatorQuery;
 import tgb.btc.rce.vo.InlineButton;
 
@@ -134,7 +136,10 @@ public class ExchangeService {
     private IMessageImageResponseSender messageImageResponseSender;
 
     private IMessageImageService messageImageService;
+
     private PayscrowMerchantService payscrowMerchantService;
+
+    private ITextCommandService textCommandService;
 
     @Autowired
     public void setCallbackDataService(ICallbackDataService callbackDataService) {
@@ -766,7 +771,7 @@ public class ExchangeService {
                        variablePropertiesReader.getWallet(currency),
                        variablePropertiesReader.getVariable(VariableType.DEAL_ACTIVE_TIME),
                        deliveryTypeText,
-                       PAID_TEXT,
+                       textCommandService.getText(TextCommand.PAID),
                        promoCodeText
                );
             } else {
