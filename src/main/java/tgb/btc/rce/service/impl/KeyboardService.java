@@ -32,6 +32,8 @@ import tgb.btc.rce.enums.update.TextCommand;
 import tgb.btc.rce.service.IKeyboardService;
 import tgb.btc.rce.service.handler.impl.callback.settings.DealReportsCallbackHandler;
 import tgb.btc.rce.service.handler.impl.state.deal.InlineCalculatorHandler;
+import tgb.btc.rce.service.handler.util.ITextCommandService;
+import tgb.btc.rce.service.handler.util.impl.TextCommandService;
 import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
 import tgb.btc.rce.service.processors.support.ExchangeService;
 import tgb.btc.rce.service.util.ICallbackDataService;
@@ -81,6 +83,13 @@ public class KeyboardService implements IKeyboardService {
     private RPSPropertiesReader rpsPropertiesReader;
 
     private ICallbackDataService callbackDataService;
+
+    private ITextCommandService textCommandService;
+
+    @Autowired
+    public void setTextCommandService(ITextCommandService textCommandService) {
+        this.textCommandService = textCommandService;
+    }
 
     @Autowired
     public void setCallbackDataService(ICallbackDataService callbackDataService) {
@@ -446,7 +455,7 @@ public class KeyboardService implements IKeyboardService {
     public ReplyKeyboard getBuildDeal() {
         return keyboardBuildService.buildInline(List.of(
                 InlineButton.builder()
-                        .text(ExchangeService.PAID_TEXT)
+                        .text(textCommandService.getText(TextCommand.PAID))
                         .data(ExchangeService.PAID_DATA)
                         .inlineType(InlineType.CALLBACK_DATA)
                         .build(),

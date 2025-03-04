@@ -3,6 +3,7 @@ package tgb.btc.rce.sender;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import tgb.btc.library.exception.BaseException;
 import tgb.btc.library.interfaces.enums.MessageImage;
@@ -10,6 +11,8 @@ import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.library.interfaces.service.design.IMessageImageService;
 import tgb.btc.rce.enums.Menu;
 import tgb.btc.rce.service.util.IMenuService;
+
+import java.util.Optional;
 
 @Service
 public class MessageImageResponseSender implements IMessageImageResponseSender {
@@ -30,12 +33,12 @@ public class MessageImageResponseSender implements IMessageImageResponseSender {
     }
 
     @Override
-    public void sendMessage(MessageImage messageImage, Long chatId, String message, ReplyKeyboard replyKeyboard) {
+    public Optional<Message> sendMessage(MessageImage messageImage, Long chatId, String message, ReplyKeyboard replyKeyboard) {
         String fileId = messageImageService.getFileId(messageImage);
         if (StringUtils.isNotBlank(fileId)) {
-            responseSender.sendPhoto(chatId, message, fileId, replyKeyboard);
+            return responseSender.sendPhoto(chatId, message, fileId, replyKeyboard);
         } else {
-            responseSender.sendMessage(chatId, message, replyKeyboard);
+            return responseSender.sendMessage(chatId, message, replyKeyboard);
         }
     }
 

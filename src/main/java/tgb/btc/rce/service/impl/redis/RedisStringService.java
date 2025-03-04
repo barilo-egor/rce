@@ -1,5 +1,6 @@
 package tgb.btc.rce.service.impl.redis;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import tgb.btc.rce.enums.RedisPrefix;
@@ -12,17 +13,18 @@ import java.util.Arrays;
 @Service
 public class RedisStringService implements IRedisStringService {
 
-    private static final String PREFIX = "string_";
+    private final String prefix;
 
     private final RedisTemplate<String, String> redisTemplate;
 
-    public RedisStringService(RedisTemplate<String, String> redisTemplate) {
+    public RedisStringService(RedisTemplate<String, String> redisTemplate, @Value("${bot.name}") String botName) {
         this.redisTemplate = redisTemplate;
+        this.prefix = botName + ":" + "string_";
     }
 
     @Override
     public void save(Long chatId, String value) {
-        redisTemplate.opsForValue().set(PREFIX + chatId, value, Duration.of(20, ChronoUnit.MINUTES));
+        redisTemplate.opsForValue().set(prefix + chatId, value, Duration.of(20, ChronoUnit.MINUTES));
     }
 
     @Override
@@ -32,7 +34,7 @@ public class RedisStringService implements IRedisStringService {
 
     @Override
     public String get(Long key) {
-        return redisTemplate.opsForValue().get(PREFIX + key);
+        return redisTemplate.opsForValue().get(prefix + key);
     }
 
     @Override
@@ -42,7 +44,7 @@ public class RedisStringService implements IRedisStringService {
 
     @Override
     public void delete(Long key) {
-        redisTemplate.delete(PREFIX + key);
+        redisTemplate.delete(prefix + key);
     }
 
     @Override
@@ -52,7 +54,7 @@ public class RedisStringService implements IRedisStringService {
 
     @Override
     public void deleteAll(Long key) {
-        redisTemplate.delete(PREFIX + key.toString());
+        redisTemplate.delete(prefix + key.toString());
         Arrays.stream(RedisPrefix.values()).forEach(redisPrefix -> delete(redisPrefix, key));
     }
 }

@@ -4,10 +4,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import tgb.btc.library.constants.enums.bot.CryptoCurrency;
+import tgb.btc.library.interfaces.enums.MessageImage;
 import tgb.btc.library.interfaces.service.bean.bot.deal.read.IDealPropertyService;
 import tgb.btc.library.interfaces.service.bean.bot.user.IModifyUserService;
 import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
+import tgb.btc.library.interfaces.service.design.IMessageImageService;
 import tgb.btc.rce.enums.PropertiesMessage;
+import tgb.btc.rce.sender.IMessageImageResponseSender;
 import tgb.btc.rce.sender.IResponseSender;
 import tgb.btc.rce.service.ICalculatorTypeService;
 import tgb.btc.rce.service.IKeyboardService;
@@ -32,6 +35,20 @@ public abstract class SimpleCalculatorService implements ICalculatorTypeService 
     private IMessagePropertiesService messagePropertiesService;
 
     private IUpdateService updateService;
+
+    private IMessageImageResponseSender messageImageResponseSender;
+
+    private IMessageImageService messageImageService;
+
+    @Autowired
+    public void setMessageImageService(IMessageImageService messageImageService) {
+        this.messageImageService = messageImageService;
+    }
+
+    @Autowired
+    public void setMessageImageResponseSender(IMessageImageResponseSender messageImageResponseSender) {
+        this.messageImageResponseSender = messageImageResponseSender;
+    }
 
     @Autowired
     public void setUpdateService(IUpdateService updateService) {
@@ -78,15 +95,17 @@ public abstract class SimpleCalculatorService implements ICalculatorTypeService 
         Long chatId = updateService.getChatId(update);
         Long currentDealPid = readUserService.getCurrentDealByChatId(chatId);
         CryptoCurrency cryptoCurrency = dealPropertyService.getCryptoCurrencyByPid(currentDealPid);
-        PropertiesMessage propertiesMessage;
-        if (CryptoCurrency.BITCOIN.equals(cryptoCurrency))
-            propertiesMessage = PropertiesMessage.DEAL_INPUT_SUM_CRYPTO_OR_FIAT;
-        else propertiesMessage = PropertiesMessage.DEAL_INPUT_SUM;
-        String text = messagePropertiesService.getMessage(propertiesMessage,
-                dealPropertyService.getCryptoCurrencyByPid(
-                        readUserService.getCurrentDealByChatId(chatId)));
+
+        MessageImage messageImage;
+        if (CryptoCurrency.BITCOIN.equals(cryptoCurrency)) {
+            messageImage = MessageImage.INPUT_BITCOIN_DEAL_SUM;
+        } else {
+            messageImage = MessageImage.INPUT_DEAL_SUM;
+        }
+        String text = messageImageService.getMessage(messageImage).formatted(cryptoCurrency.name());
+
         setState(chatId);
-        responseSender.sendMessage(chatId, text, getKeyboard(chatId));
+        messageImageResponseSender.sendMessage(messageImage, chatId, text, getKeyboard(chatId));
     }
 
     public abstract ReplyKeyboard getKeyboard(Long chatId);

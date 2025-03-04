@@ -198,8 +198,14 @@ public class DealSupportService {
                     : "Не установлен тип оплаты.";
         }
         FiatCurrency fiatCurrency = deal.getFiatCurrency();
+        String dealInfo = DEAL_INFO;
+        if (Objects.nonNull(deal.getPayscrowOrderId())) {
+            String merchantString = "\uD83D\uDCB3 \nСделка мерчанта <b>Payscrow</b>\nСтатус ордера: <b>"
+                    + deal.getPayscrowOrderStatus().getDescription() + "</b>\n========\n\n";
+            dealInfo = merchantString + dealInfo;
+        }
         return String.format(
-                DEAL_INFO, deal.getDealType().getGenitive(), deal.getPid(),
+                dealInfo, deal.getDealType().getGenitive(), deal.getPid(),
                 deal.getDateTime().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")),
                 paymentTypeName,
                 deal.getWallet(),
