@@ -142,6 +142,11 @@ public class ExchangeService {
     private ITextCommandService textCommandService;
 
     @Autowired
+    public void setTextCommandService(ITextCommandService textCommandService) {
+        this.textCommandService = textCommandService;
+    }
+
+    @Autowired
     public void setCallbackDataService(ICallbackDataService callbackDataService) {
         this.callbackDataService = callbackDataService;
     }
