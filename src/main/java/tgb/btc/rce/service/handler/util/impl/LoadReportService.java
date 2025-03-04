@@ -60,7 +60,7 @@ public class LoadReportService implements ILoadReportService {
             Sheet apiSheet = book.createSheet("Api-сделки " + period);
             fillApiDealSheet(apiSheet, apiDeals);
         }
-        String fileName = period + ".xls";
+        String fileName = System.currentTimeMillis() + ".xls";
         try {
             FileOutputStream outputStream = new FileOutputStream(fileName);
             book.write(outputStream);
