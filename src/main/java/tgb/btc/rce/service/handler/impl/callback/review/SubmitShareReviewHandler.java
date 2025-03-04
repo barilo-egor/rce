@@ -75,11 +75,18 @@ public class SubmitShareReviewHandler implements ICallbackQueryHandler {
         } else {
             text = "Отзыв от " +  callbackQuery.getFrom().getFirstName() + ":\n\n" + text;
         }
+        if (reviewService.countByDealPid(dealPid) > 0) {
+            responseSender.deleteMessage(chatId, callbackQuery.getMessage().getMessageId());
+            responseSender.sendMessage(chatId, "Вы уже оставили отзыв за эту сделку.");
+            return;
+        }
+        Deal deal = readDealService.findByPid(dealPid);
         Review review = reviewService.save(Review.builder()
                 .text(text)
                 .isPublished(false)
                 .chatId(chatId)
                 .amount(amount)
+                .deal(deal)
                 .build());
         responseSender.deleteMessage(chatId, callbackQuery.getMessage().getMessageId());
         responseSender.sendMessage(chatId, "Спасибо, ваш отзыв сохранен.");

@@ -39,11 +39,10 @@ public class BitcoinPoolWithdrawalHandler implements ICallbackQueryHandler {
         Long chatId = callbackQuery.getFrom().getId();
         Long dealsSize = callbackDataService.getLongArgument(callbackQuery.getData(), 1);
         String totalAmount = callbackDataService.getArgument(callbackQuery.getData(), 2);
-        Boolean withCommission = callbackDataService.getBoolArgument(callbackQuery.getData(), 3);
-        sendConfirmMessage(chatId, dealsSize, totalAmount, withCommission, callbackQuery.getMessage().getMessageId());
+        sendConfirmMessage(chatId, dealsSize, totalAmount, callbackQuery.getMessage().getMessageId());
     }
 
-    public void sendConfirmMessage(Long chatId, Long dealsSize, String totalAmount, boolean withCommission, Integer messageId) {
+    public void sendConfirmMessage(Long chatId, Long dealsSize, String totalAmount, Integer messageId) {
         List<InlineButton> buttons = new ArrayList<>();
         buttons.add(InlineButton.builder()
                 .text("Да")
@@ -53,25 +52,21 @@ public class BitcoinPoolWithdrawalHandler implements ICallbackQueryHandler {
                 ))
                 .build());
         buttons.add(InlineButton.builder().text("Нет").data(CallbackQueryData.INLINE_DELETE.name()).build());
-        if (withCommission) {
-            buttons.add(InlineButton.builder()
-                    .text("Изменить комиссию")
-                    .data(callbackDataService.buildData(CallbackQueryData.POOL_CHANGE_FEE_RATE, dealsSize, totalAmount, messageId))
-                    .build());
-        }
+        buttons.add(InlineButton.builder()
+                .text("Изменить комиссию")
+                .data(callbackDataService.buildData(CallbackQueryData.POOL_CHANGE_FEE_RATE, dealsSize, totalAmount, messageId))
+                .build());
         ReplyKeyboard replyKeyboard = keyboardBuildService.buildInline(buttons, 2);
-        responseSender.sendMessage(chatId, getMessage(withCommission, dealsSize, totalAmount), replyKeyboard);
+        responseSender.sendMessage(chatId, getMessage(dealsSize, totalAmount), replyKeyboard);
     }
 
-    private String getMessage(boolean withCommission, Long dealsSize, String totalAmount) {
+    private String getMessage(Long dealsSize, String totalAmount) {
         StringBuilder message = new StringBuilder();
-        if (withCommission) {
-            String feeRate = cryptoWithdrawalService.getFeeRate(CryptoCurrency.BITCOIN);
-            if (cryptoWithdrawalService.isAutoFeeRate(CryptoCurrency.BITCOIN)) {
-                message.append("Комиссия: <b>").append(feeRate).append("</b>\n");
-            } else {
-                message.append("Комиссия: <b>").append(feeRate).append(" sat/vB</b>\n");
-            }
+        String feeRate = cryptoWithdrawalService.getFeeRate(CryptoCurrency.BITCOIN);
+        if (cryptoWithdrawalService.isAutoFeeRate(CryptoCurrency.BITCOIN)) {
+            message.append("Комиссия: <b>").append(feeRate).append("</b>\n");
+        } else {
+            message.append("Комиссия: <b>").append(feeRate).append(" sat/vB</b>\n");
         }
         message.append("Вы собираетесь подтвердить и вывести все <b>").append(dealsSize)
                 .append("</b> сделок из пула на общую сумму <b>").append(totalAmount)

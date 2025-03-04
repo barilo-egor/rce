@@ -17,6 +17,8 @@ import tgb.btc.rce.service.handler.impl.message.text.command.request.RequestsHan
 import tgb.btc.rce.service.redis.IRedisStringService;
 import tgb.btc.rce.service.redis.IRedisUserStateService;
 import tgb.btc.rce.service.util.ICallbackDataService;
+import tgb.btc.web.constant.enums.NotificationType;
+import tgb.btc.web.service.NotificationsAPI;
 
 @Service
 public class SaveFeeRateHandler implements IStateHandler {
@@ -39,11 +41,13 @@ public class SaveFeeRateHandler implements IStateHandler {
 
     private final RequestsHandler requestsHandler;
 
+    private final NotificationsAPI notificationsAPI;
+
     public SaveFeeRateHandler(IResponseSender responseSender, ICallbackDataService callbackDataService,
                               IRedisUserStateService redisUserStateService, IRedisStringService redisStringService,
                               AutoWithdrawalDealHandler autoWithdrawalDealHandler, IReadDealService readDealService,
                               CryptoWithdrawalService cryptoWithdrawalService, DealPropertyService dealPropertyService,
-                              RequestsHandler requestsHandler) {
+                              RequestsHandler requestsHandler, NotificationsAPI notificationsAPI) {
         this.responseSender = responseSender;
         this.callbackDataService = callbackDataService;
         this.redisUserStateService = redisUserStateService;
@@ -53,6 +57,7 @@ public class SaveFeeRateHandler implements IStateHandler {
         this.cryptoWithdrawalService = cryptoWithdrawalService;
         this.dealPropertyService = dealPropertyService;
         this.requestsHandler = requestsHandler;
+        this.notificationsAPI = notificationsAPI;
     }
 
     @Override
@@ -69,7 +74,7 @@ public class SaveFeeRateHandler implements IStateHandler {
             redisStringService.delete(RedisPrefix.DEAL_PID, chatId);
             redisStringService.delete(RedisPrefix.MESSAGE_ID, chatId);
             redisUserStateService.delete(chatId);
-            autoWithdrawalDealHandler.sendConfirmMessage(true, readDealService.findByPid(dealPid), chatId, messageId);
+            autoWithdrawalDealHandler.sendConfirmMessage(readDealService.findByPid(dealPid), chatId, messageId);
             return;
         }
         CryptoCurrency cryptoCurrency = dealPropertyService.getCryptoCurrencyByPid(dealPid);
@@ -88,8 +93,9 @@ public class SaveFeeRateHandler implements IStateHandler {
         redisStringService.delete(RedisPrefix.DEAL_PID, chatId);
         redisStringService.delete(RedisPrefix.MESSAGE_ID, chatId);
         redisUserStateService.delete(chatId);
-        autoWithdrawalDealHandler.sendConfirmMessage(true, readDealService.findByPid(dealPid), chatId, messageId);
+        autoWithdrawalDealHandler.sendConfirmMessage(readDealService.findByPid(dealPid), chatId, messageId);
         requestsHandler.handle(update.getMessage());
+        notificationsAPI.send(NotificationType.FEE_RATE_UPDATED);
     }
 
     @Override

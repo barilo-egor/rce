@@ -241,14 +241,8 @@ public class DealSupportService {
         if (cryptoWithdrawalService.isOn(cryptoCurrency)) {
             buttons.add(InlineButton.builder()
                     .text("Автовывод")
-                    .data(callbackDataService.buildData(CallbackQueryData.AUTO_WITHDRAWAL_DEAL, pid, false))
+                    .data(callbackDataService.buildData(CallbackQueryData.AUTO_WITHDRAWAL_DEAL, pid))
                     .build());
-            if (CryptoCurrency.BITCOIN.equals(cryptoCurrency)) {
-                buttons.add(InlineButton.builder()
-                        .text("Автовывод(ком.)")
-                        .data(callbackDataService.buildData(CallbackQueryData.AUTO_WITHDRAWAL_DEAL, pid, true))
-                        .build());
-            }
         }
         if (CryptoCurrency.BITCOIN.equals(cryptoCurrency) && cryptoWithdrawalService.isOn(CryptoCurrency.BITCOIN)) {
             buttons.add(InlineButton.builder()
