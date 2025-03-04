@@ -58,7 +58,7 @@ public class NewPoolFeeRateHandler implements IStateHandler {
             redisStringService.delete(RedisPrefix.TOTAL_AMOUNT, chatId);
             redisStringService.delete(RedisPrefix.MESSAGE_ID, chatId);
             redisUserStateService.delete(chatId);
-            bitcoinPoolWithdrawalHandler.sendConfirmMessage(chatId, dealsSize, totalAmount, true, messageId);
+            bitcoinPoolWithdrawalHandler.sendConfirmMessage(chatId, dealsSize, totalAmount, messageId);
             return;
         }
         String newFeeRate;
@@ -76,7 +76,7 @@ public class NewPoolFeeRateHandler implements IStateHandler {
         redisStringService.delete(RedisPrefix.DEAL_PID, chatId);
         redisStringService.delete(RedisPrefix.MESSAGE_ID, chatId);
         redisUserStateService.delete(chatId);
-        bitcoinPoolWithdrawalHandler.sendConfirmMessage(chatId, dealsSize, totalAmount, true, messageId);
+        bitcoinPoolWithdrawalHandler.sendConfirmMessage(chatId, dealsSize, totalAmount, messageId);
         requestsHandler.handle(update.getMessage());
     }
 
