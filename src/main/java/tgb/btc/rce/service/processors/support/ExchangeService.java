@@ -732,7 +732,7 @@ public class ExchangeService {
 
                         variablePropertiesReader.getVariable(VariableType.DEAL_ACTIVE_TIME),
                         deliveryTypeText,
-                        PAID_TEXT,
+                        textCommandService.getText(TextCommand.PAID),
                         promoCodeText
                 );
             } else {
