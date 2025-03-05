@@ -204,6 +204,9 @@ public class DealSupportService {
                     + deal.getPayscrowOrderStatus().getDescription() + "</b>\n========\n\n";
             dealInfo = merchantString + dealInfo;
         }
+        String dealAmount = Objects.nonNull(deal.getPayscrowOrderId())
+                ? deal.getAmount().toString()
+                : bigDecimalService.roundToPlainString(deal.getAmount());
         return String.format(
                 dealInfo, deal.getDealType().getGenitive(), deal.getPid(),
                 deal.getDateTime().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")),
@@ -218,7 +221,7 @@ public class DealSupportService {
                 deal.getCryptoCurrency().getShortName(),
                 deal.getCryptoAmount().setScale(8, RoundingMode.FLOOR).stripTrailingZeros()
                         .toPlainString(),
-                deal.getAmount().setScale(0, RoundingMode.HALF_UP).stripTrailingZeros().toPlainString(),
+                dealAmount,
                 Objects.nonNull(fiatCurrency) ? fiatCurrency.getGenitive() : ABSENT,
                 Objects.nonNull(deal.getDeliveryType()) ? deliveryTypeService.getDisplayName(deal.getDeliveryType()) : ABSENT,
                 StringUtils.isNotEmpty(deal.getDetails()) ? deal.getDetails() : ABSENT
