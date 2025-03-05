@@ -13,6 +13,7 @@ import tgb.btc.library.bean.bot.Deal;
 import tgb.btc.library.bean.bot.PaymentReceipt;
 import tgb.btc.library.bean.bot.PaymentType;
 import tgb.btc.library.constants.enums.DeliveryKind;
+import tgb.btc.library.constants.enums.Merchant;
 import tgb.btc.library.constants.enums.ReferralType;
 import tgb.btc.library.constants.enums.bot.*;
 import tgb.btc.library.constants.enums.properties.VariableType;
@@ -39,6 +40,7 @@ import tgb.btc.library.service.properties.ButtonsDesignPropertiesReader;
 import tgb.btc.library.service.properties.VariablePropertiesReader;
 import tgb.btc.library.service.schedule.DealDeleteScheduler;
 import tgb.btc.library.service.web.merchant.payscrow.PayscrowMerchantService;
+import tgb.btc.library.vo.RequisiteVO;
 import tgb.btc.library.vo.calculate.DealAmount;
 import tgb.btc.library.vo.web.merchant.payscrow.PayscrowResponse;
 import tgb.btc.rce.enums.BotInlineButton;
@@ -707,17 +709,21 @@ public class ExchangeService {
             dealAmount = userDiscountProcessService.applyDealDiscounts(chatId, dealAmount, deal.getUsedPromo(),
                     deal.getUsedReferralDiscount(), deal.getDiscount(), deal.getFiatCurrency());
             deal.setAmount(dealAmount);
-            String requisite;
+            RequisiteVO requisiteVO;
             if (securePaymentDetailsService.hasAccessToPaymentTypes(chatId, deal.getFiatCurrency())) {
                 try {
-                    requisite = paymentRequisiteService.getRequisite(deal);
+                    requisiteVO = paymentRequisiteService.getRequisite(deal);
                 } catch (BaseException e) {
                     responseSender.sendMessage(chatId, e.getMessage());
                     return;
                 }
             } else {
-                requisite = securePaymentDetailsService.getByChatIdAndFiatCurrency(chatId, deal.getFiatCurrency()).getDetails();
+                requisiteVO = RequisiteVO.builder()
+                        .merchant(Merchant.NONE)
+                        .requisite(securePaymentDetailsService.getByChatIdAndFiatCurrency(chatId, deal.getFiatCurrency()).getDetails())
+                        .build();
             }
+            String requisite = requisiteVO.getRequisite();
             deal.setDetails(requisite);
             messageImage = MessageImage.BUILD_DEAL_BUY;
             Integer subType = messageImageService.getSubType(messageImage);
@@ -731,10 +737,11 @@ public class ExchangeService {
                         deal.getWallet(),
                         rank.getSmile(),
                         rank.getPercent(),
-                        bigDecimalService.roundToPlainString(dealAmount, 0),
+                        Merchant.NONE.equals(requisiteVO.getMerchant())
+                                ? bigDecimalService.roundToPlainString(dealAmount, 0)
+                                : deal.getAmount(),
                         deal.getFiatCurrency().getGenitive(),
                         requisite,
-
                         variablePropertiesReader.getVariable(VariableType.DEAL_ACTIVE_TIME),
                         deliveryTypeText,
                         textCommandService.getText(TextCommand.PAID),
@@ -749,7 +756,9 @@ public class ExchangeService {
                         deal.getWallet(),
                         rank.getSmile(),
                         rank.getPercent(),
-                        bigDecimalService.roundToPlainString(deal.getAmount()),
+                        Merchant.NONE.equals(requisiteVO.getMerchant())
+                                ? bigDecimalService.roundToPlainString(dealAmount, 0)
+                                : deal.getAmount(),
                         deal.getFiatCurrency().getGenitive(),
                         requisite,
                         variablePropertiesReader.getVariable(VariableType.DEAL_ACTIVE_TIME)
@@ -896,7 +905,10 @@ public class ExchangeService {
         log.info("Сделка " + currentDealPid + " пользователя " + chatId + " переведена в статус PAID");
         notifyService.notifyMessage("Поступила новая заявка на " + dealType.getGenitive() + ".",
                 keyboardService.getShowDeal(currentDealPid), UserRole.OBSERVER_ACCESS);
-        notificationsAPI.newBotDeal(currentDealPid);
+        try {
+            notificationsAPI.newBotDeal(currentDealPid);
+        } catch (Exception ignored) {
+        }
     }
 
     public void askForReferralDiscount(Update update) {
