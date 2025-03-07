@@ -62,6 +62,7 @@ import tgb.btc.rce.vo.CalculatorQuery;
 import tgb.btc.rce.vo.InlineButton;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -696,7 +697,6 @@ public class ExchangeService {
 
         PaymentType paymentType = deal.getPaymentType();
         deal.setDateTime(LocalDateTime.now());
-        String message;
         String deliveryTypeText;
         if (deliveryKindModule.isCurrent(DeliveryKind.STANDARD) && DealType.isBuy(dealType) && CryptoCurrency.BITCOIN.equals(currency)) {
             deliveryTypeText = "<b>Способ доставки</b>: " + deliveryTypeService.getDisplayName(deal.getDeliveryType()) + "\n";
@@ -708,11 +708,12 @@ public class ExchangeService {
         if (DealType.isBuy(dealType)) {
             dealAmount = userDiscountProcessService.applyDealDiscounts(chatId, dealAmount, deal.getUsedPromo(),
                     deal.getUsedReferralDiscount(), deal.getDiscount(), deal.getFiatCurrency());
-            deal.setAmount(dealAmount);
+            deal.setAmount(dealAmount.setScale(2, RoundingMode.HALF_UP));
             RequisiteVO requisiteVO;
             if (securePaymentDetailsService.hasAccessToPaymentTypes(chatId, deal.getFiatCurrency())) {
                 try {
                     requisiteVO = paymentRequisiteService.getRequisite(deal);
+
                 } catch (BaseException e) {
                     responseSender.sendMessage(chatId, e.getMessage());
                     return;
@@ -725,6 +726,7 @@ public class ExchangeService {
             }
             String requisite = requisiteVO.getRequisite();
             deal.setDetails(requisite);
+            modifyDealService.save(deal);
             messageImage = MessageImage.BUILD_DEAL_BUY;
             Integer subType = messageImageService.getSubType(messageImage);
             text = messageImageService.getMessage(messageImage);
@@ -738,7 +740,7 @@ public class ExchangeService {
                         rank.getSmile(),
                         rank.getPercent(),
                         Merchant.NONE.equals(requisiteVO.getMerchant())
-                                ? bigDecimalService.roundToPlainString(dealAmount, 0)
+                                ? bigDecimalService.roundToPlainString(deal.getAmount(), 0)
                                 : deal.getAmount(),
                         deal.getFiatCurrency().getGenitive(),
                         requisite,
@@ -757,7 +759,7 @@ public class ExchangeService {
                         rank.getSmile(),
                         rank.getPercent(),
                         Merchant.NONE.equals(requisiteVO.getMerchant())
-                                ? bigDecimalService.roundToPlainString(dealAmount, 0)
+                                ? bigDecimalService.roundToPlainString(deal.getAmount(), 0)
                                 : deal.getAmount(),
                         deal.getFiatCurrency().getGenitive(),
                         requisite,
@@ -800,7 +802,6 @@ public class ExchangeService {
                 );
             }
         }
-        modifyDealService.save(deal);
 
         Optional<Message> optionalMessage = messageImageResponseSender.sendMessage(messageImage, chatId, text, keyboardService.getBuildDeal());
         if (DealType.isBuy(dealType)) {
