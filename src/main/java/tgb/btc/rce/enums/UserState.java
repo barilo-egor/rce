@@ -34,5 +34,4 @@ public enum UserState {
     DEAL,
     NEW_DEAL_FEE_RATE,
     NEW_POOL_FEE_RATE,
-    PAYSCROW_BINDING
 }

@@ -203,6 +203,10 @@ public class DealSupportService {
             String merchantString = "\uD83D\uDCB3 \nСделка мерчанта <b>Payscrow</b>\nСтатус ордера: <b>"
                     + deal.getPayscrowOrderStatus().getDescription() + "</b>\n========\n\n";
             dealInfo = merchantString + dealInfo;
+        } else if (Objects.nonNull(deal.getDashPayOrderId())) {
+            String merchantString = "\uD83D\uDCB3 \nСделка мерчанта <b>DashPay</b>\nСтатус ордера: <b>"
+                    + deal.getDashPayOrderStatus().getDescription() + "</b>\n========\n\n";
+            dealInfo = merchantString + dealInfo;
         }
         String dealAmount = Objects.nonNull(deal.getPayscrowOrderId())
                 ? deal.getAmount().toString()

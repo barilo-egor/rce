@@ -44,7 +44,7 @@ public interface IResponseSender {
 
     Message sendAnimation(Long chatId, File file);
 
-    void sendAnimation(Long chatId, String caption, String animation, ReplyKeyboard replyKeyboard);
+    Optional<Message> sendAnimation(Long chatId, String caption, String animation, ReplyKeyboard replyKeyboard);
 
     Message sendAnimation(Long chatId, InputFile inputFile, String caption, ReplyKeyboard replyKeyboard);
 

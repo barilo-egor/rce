@@ -10,9 +10,9 @@ import java.util.Optional;
 public interface IMessageImageResponseSender {
     Optional<Message> sendMessage(MessageImage messageImage, Long chatId, String message, ReplyKeyboard replyKeyboard);
 
-    void sendMessage(MessageImage messageImage, Long chatId);
+    Optional<Message> sendMessage(MessageImage messageImage, Long chatId);
 
-    void sendMessage(MessageImage messageImage, Long chatId, ReplyKeyboard replyKeyboard);
+    Optional<Message> sendMessage(MessageImage messageImage, Long chatId, ReplyKeyboard replyKeyboard);
 
     void sendMessage(MessageImage messageImage, Menu menu, Long chatId);
 }

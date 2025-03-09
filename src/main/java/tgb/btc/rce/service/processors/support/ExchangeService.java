@@ -39,6 +39,7 @@ import tgb.btc.library.service.process.CalculateService;
 import tgb.btc.library.service.properties.ButtonsDesignPropertiesReader;
 import tgb.btc.library.service.properties.VariablePropertiesReader;
 import tgb.btc.library.service.schedule.DealDeleteScheduler;
+import tgb.btc.library.service.web.merchant.dashpay.DashPayMerchantService;
 import tgb.btc.library.service.web.merchant.payscrow.PayscrowMerchantService;
 import tgb.btc.library.vo.RequisiteVO;
 import tgb.btc.library.vo.calculate.DealAmount;
@@ -53,6 +54,7 @@ import tgb.btc.rce.sender.IMessageImageResponseSender;
 import tgb.btc.rce.sender.IResponseSender;
 import tgb.btc.rce.service.*;
 import tgb.btc.rce.service.handler.util.ITextCommandService;
+import tgb.btc.rce.service.impl.FileDownloader;
 import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
 import tgb.btc.rce.service.process.IUserDiscountProcessService;
 import tgb.btc.rce.service.util.ICallbackDataService;
@@ -143,6 +145,20 @@ public class ExchangeService {
     private PayscrowMerchantService payscrowMerchantService;
 
     private ITextCommandService textCommandService;
+
+    private DashPayMerchantService dashPayMerchantService;
+
+    private FileDownloader fileDownloader;
+
+    @Autowired
+    public void setFileDownloader(FileDownloader fileDownloader) {
+        this.fileDownloader = fileDownloader;
+    }
+
+    @Autowired
+    public void setDashPayMerchantService(DashPayMerchantService dashPayMerchantService) {
+        this.dashPayMerchantService = dashPayMerchantService;
+    }
 
     @Autowired
     public void setTextCommandService(ITextCommandService textCommandService) {
@@ -712,8 +728,9 @@ public class ExchangeService {
             RequisiteVO requisiteVO;
             if (securePaymentDetailsService.hasAccessToPaymentTypes(chatId, deal.getFiatCurrency())) {
                 try {
+                    Optional<Message> waitMessage = messageImageResponseSender.sendMessage(MessageImage.GETTING_REQUISITES, chatId);
                     requisiteVO = paymentRequisiteService.getRequisite(deal);
-
+                    waitMessage.ifPresent(message -> responseSender.deleteMessage(chatId, message.getMessageId()));
                 } catch (BaseException e) {
                     responseSender.sendMessage(chatId, e.getMessage());
                     return;

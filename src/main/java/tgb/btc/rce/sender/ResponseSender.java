@@ -147,8 +147,8 @@ public class ResponseSender implements IResponseSender {
     }
 
     @Override
-    public void sendAnimation(Long chatId, String caption, String animation, ReplyKeyboard replyKeyboard) {
-        sendAnimation(chatId, new InputFile(animation), caption, replyKeyboard);
+    public Optional<Message> sendAnimation(Long chatId, String caption, String animation, ReplyKeyboard replyKeyboard) {
+        return Optional.ofNullable(sendAnimation(chatId, new InputFile(animation), caption, replyKeyboard));
     }
 
     @Override
