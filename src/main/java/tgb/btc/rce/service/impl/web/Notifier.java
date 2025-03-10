@@ -252,7 +252,7 @@ public class Notifier implements INotifier {
     }
 
     @Override
-    public void payscrowUpdateStatus(Long aLong, String s) {
+    public void merchantUpdateStatus(Long aLong, String s) {
         notifyService.notifyMessage(s, keyboardService.getShowDeal(aLong), UserRole.OPERATOR_ACCESS);
     }
 }
