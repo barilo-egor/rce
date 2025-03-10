@@ -199,20 +199,13 @@ public class DealSupportService {
         }
         FiatCurrency fiatCurrency = deal.getFiatCurrency();
         String dealInfo = DEAL_INFO;
-        if (Objects.nonNull(deal.getPayscrowOrderId())) {
-            String merchantString = "\uD83D\uDCB3 \nСделка мерчанта <b>Payscrow</b>\nСтатус ордера: <b>"
-                    + deal.getPayscrowOrderStatus().getDescription() + "</b>\n========\n\n";
-            dealInfo = merchantString + dealInfo;
-        } else if (Objects.nonNull(deal.getDashPayOrderId())) {
-            String merchantString = "\uD83D\uDCB3 \nСделка мерчанта <b>DashPay</b>\nСтатус ордера: <b>"
-                    + deal.getDashPayOrderStatus().getDescription() + "</b>\n========\n\n";
-            dealInfo = merchantString + dealInfo;
-        } else if (Objects.nonNull(deal.getAlfaTeamInvoiceId())) {
-            String merchantString = "\uD83D\uDCB3 \nСделка мерчанта <b>AlfaTeam</b>\nСтатус ордера: <b>"
-                    + deal.getAlfaTeamDealStatus().getDescription() + "</b>\n========\n\n";
+        if (Objects.nonNull(deal.getMerchant())) {
+            String merchantString = "\uD83D\uDCB3 \nСделка мерчанта <b>" + deal.getMerchant().getDisplayName()
+                    + "</b>\nСтатус ордера: <b>"
+                    + deal.getMerchant().getDisplayStatus(deal.getMerchantOrderStatus())  + "</b>\n========\n\n";
             dealInfo = merchantString + dealInfo;
         }
-        String dealAmount = Objects.nonNull(deal.getPayscrowOrderId())
+        String dealAmount = Objects.nonNull(deal.getMerchant())
                 ? deal.getAmount().toString()
                 : bigDecimalService.roundToPlainString(deal.getAmount());
         return String.format(

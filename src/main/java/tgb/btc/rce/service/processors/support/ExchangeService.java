@@ -892,19 +892,6 @@ public class ExchangeService {
 
     public void cancelDeal(Integer messageId, Long chatId, Long dealPid) {
         Deal deal = readDealService.findByPid(dealPid);
-        if (Objects.nonNull(deal.getPayscrowOrderId())) {
-            try {
-                PayscrowResponse payscrowResponse = payscrowMerchantService.cancelOrder(deal.getPayscrowOrderId(), true);
-                if (!payscrowResponse.getSuccess()) {
-                    notifyService.notifyMessage("Не получилось отменить Payscrow ордер по сделке №" + dealPid
-                            + ". Код: " + payscrowResponse.getErrorCode().getCode()
-                            + "Описание: " + payscrowResponse.getMessage(), Set.of(UserRole.ADMIN, UserRole.OPERATOR));
-                }
-            } catch (Exception e) {
-                notifyService.notifyMessage("Ошибка при попытке выполнения запроса на отмену ордера Payscrow по сделке №"
-                        + dealPid, Set.of(UserRole.ADMIN, UserRole.OPERATOR));
-            }
-        }
         responseSender.deleteMessage(chatId, messageId);
         modifyDealService.deleteById(dealPid);
         modifyUserService.updateCurrentDealByChatId(null, chatId);
