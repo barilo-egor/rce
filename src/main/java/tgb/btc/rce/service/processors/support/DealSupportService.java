@@ -207,6 +207,10 @@ public class DealSupportService {
             String merchantString = "\uD83D\uDCB3 \nСделка мерчанта <b>DashPay</b>\nСтатус ордера: <b>"
                     + deal.getDashPayOrderStatus().getDescription() + "</b>\n========\n\n";
             dealInfo = merchantString + dealInfo;
+        } else if (Objects.nonNull(deal.getAlfaTeamInvoiceId())) {
+            String merchantString = "\uD83D\uDCB3 \nСделка мерчанта <b>AlfaTeam</b>\nСтатус ордера: <b>"
+                    + deal.getAlfaTeamDealStatus().getDescription() + "</b>\n========\n\n";
+            dealInfo = merchantString + dealInfo;
         }
         String dealAmount = Objects.nonNull(deal.getPayscrowOrderId())
                 ? deal.getAmount().toString()
