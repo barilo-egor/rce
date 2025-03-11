@@ -73,6 +73,7 @@ public enum TextCommand {
     RECEIPTS_CANCEL_DEAL("Отменить сделку", UserRole.USER_ACCESS),
     PAYSCROW_BINDING("Payscrow привязка", UserRole.ADMIN_ACCESS),
     DASH_PAY_BINDING("DashPay привязка", UserRole.ADMIN_ACCESS),
+    ALFA_TEAM_BINDING("AlfaTeam привязка", UserRole.ADMIN_ACCESS),
     PAID("Оплатил", UserRole.USER_ACCESS)
     ;
 
