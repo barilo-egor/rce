@@ -71,7 +71,6 @@ public class ReviewProcessService implements IReviewProcessService {
         Long channelChatId = Long.parseLong(variablePropertiesReader.getVariable(VariableType.CHANNEL_CHAT_ID));
         Review review = reviewService.findById(pid);
         responseSender.sendMessage(channelChatId, review.getText());
-        review.setPublished(true);
         reviewService.save(review);
         Integer reviewPrise = reviewPriseModule.isCurrent(DYNAMIC) && Objects.nonNull(review.getAmount())
                 ? review.getAmount()
