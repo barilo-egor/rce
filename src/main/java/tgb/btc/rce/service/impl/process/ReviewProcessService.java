@@ -90,7 +90,7 @@ public class ReviewProcessService implements IReviewProcessService {
             List<InlineButton> buttons = new ArrayList<>();
 
             buttons.add(InlineButton.builder()
-                    .text("Опубликовать")
+                    .text("Одобрить")
                     .data(callbackDataService.buildData(CallbackQueryData.PUBLISH_REVIEW, review.getPid()))
                     .build());
             buttons.add(InlineButton.builder()
@@ -110,6 +110,10 @@ public class ReviewProcessService implements IReviewProcessService {
 
     @Override
     public void publishNext() {
-        publish(reviewService.findFirstByIsAcceptedOrderByPidAsc(true).getPid());
+        Review review = reviewService.findFirstByIsAcceptedOrderByPidAsc(true);
+        if (Objects.isNull(review)) {
+            return;
+        }
+        publish(review.getPid());
     }
 }
