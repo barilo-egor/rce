@@ -43,25 +43,25 @@ public class MessageImageResponseSender implements IMessageImageResponseSender {
     }
 
     @Override
-    public void sendMessage(MessageImage messageImage, Long chatId) {
-        sendMessage(messageImage, chatId, null);
+    public Optional<Message> sendMessage(MessageImage messageImage, Long chatId) {
+        return sendMessage(messageImage, chatId, null);
     }
 
     @Override
-    public void sendMessage(MessageImage messageImage, Long chatId, ReplyKeyboard replyKeyboard) {
+    public Optional<Message> sendMessage(MessageImage messageImage, Long chatId, ReplyKeyboard replyKeyboard) {
         String fileId = messageImageService.getFileId(messageImage);
         String message = messageImageService.getMessage(messageImage);
         if (StringUtils.isNotBlank(fileId)) {
             String format = messageImageService.getFormat(messageImage);
             if (format.equals(".jpg") || format.equals(".png") || format.equals(".jpeg")) {
-                responseSender.sendPhoto(chatId, message, fileId, replyKeyboard);
+                return responseSender.sendPhoto(chatId, message, fileId, replyKeyboard);
             } else if (format.equals(".mp4")) {
-                responseSender.sendAnimation(chatId, message, fileId, replyKeyboard);
+                return responseSender.sendAnimation(chatId, message, fileId, replyKeyboard);
             } else {
                 throw new BaseException("Для формата " + format + " не предусмотрена реализация отправки изображения.");
             }
         } else {
-            responseSender.sendMessage(chatId, message, replyKeyboard);
+            return responseSender.sendMessage(chatId, message, replyKeyboard);
         }
     }
 
