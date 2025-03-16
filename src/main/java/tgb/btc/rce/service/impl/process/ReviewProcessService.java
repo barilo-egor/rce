@@ -71,8 +71,6 @@ public class ReviewProcessService implements IReviewProcessService {
         Long channelChatId = Long.parseLong(variablePropertiesReader.getVariable(VariableType.CHANNEL_CHAT_ID));
         Review review = reviewService.findById(pid);
         responseSender.sendMessage(channelChatId, review.getText());
-        review.setPublished(true);
-        reviewService.save(review);
         Integer reviewPrise = reviewPriseModule.isCurrent(DYNAMIC) && Objects.nonNull(review.getAmount())
                 ? review.getAmount()
                 : variablePropertiesReader.getInt(VariableType.REVIEW_PRISE);
@@ -83,6 +81,7 @@ public class ReviewProcessService implements IReviewProcessService {
         balanceAuditService.save(readUserService.findByChatId(review.getChatId()), reviewPrise, BalanceAuditType.REVIEW);
         responseSender.sendMessage(review.getChatId(), "Ваш отзыв опубликован.\n\nНа ваш реферальный баланс зачислено "
                 + reviewPrise + "₽.");
+        reviewService.delete(review);
     }
 
     @Override
@@ -91,7 +90,7 @@ public class ReviewProcessService implements IReviewProcessService {
             List<InlineButton> buttons = new ArrayList<>();
 
             buttons.add(InlineButton.builder()
-                    .text("Опубликовать")
+                    .text("Одобрить")
                     .data(callbackDataService.buildData(CallbackQueryData.PUBLISH_REVIEW, review.getPid()))
                     .build());
             buttons.add(InlineButton.builder()
@@ -107,5 +106,14 @@ public class ReviewProcessService implements IReviewProcessService {
             } catch (InterruptedException ignored) {
             }
         }
+    }
+
+    @Override
+    public void publishNext() {
+        Review review = reviewService.findFirstByIsAcceptedOrderByPidAsc(true);
+        if (Objects.isNull(review)) {
+            return;
+        }
+        publish(review.getPid());
     }
 }

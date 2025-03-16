@@ -8,4 +8,6 @@ public interface IReviewProcessService {
     void publish(Long pid);
 
     void sendNewReviews(Long chatId, List<Review> reviews);
+
+    void publishNext();
 }
