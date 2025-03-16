@@ -879,7 +879,9 @@ public class ExchangeService {
         }
         if (PAID_DATA.equals(update.getCallbackQuery().getData())) {
             responseSender.sendEditedMessageText(chatId, update.getCallbackQuery().getMessage().getMessageId(),
-                    update.getCallbackQuery().getMessage().getText());
+                    Objects.nonNull(update.getCallbackQuery().getMessage().getText())
+                            ? update.getCallbackQuery().getMessage().getText()
+                            : update.getCallbackQuery().getMessage().getCaption());
 //            responseSender.deleteMessage(chatId, update.getCallbackQuery().getMessage().getMessageId());
             askForReceipts(update);
             modifyUserService.nextStep(chatId);

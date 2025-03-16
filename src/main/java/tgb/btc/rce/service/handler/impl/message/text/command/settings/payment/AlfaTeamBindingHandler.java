@@ -1,0 +1,59 @@
+package tgb.btc.rce.service.handler.impl.message.text.command.settings.payment;
+
+import org.springframework.stereotype.Service;
+import org.telegram.telegrambots.meta.api.objects.Message;
+import tgb.btc.library.constants.enums.bot.DealType;
+import tgb.btc.library.constants.enums.bot.FiatCurrency;
+import tgb.btc.library.interfaces.service.bean.bot.IPaymentTypeService;
+import tgb.btc.rce.enums.InlineType;
+import tgb.btc.rce.enums.update.CallbackQueryData;
+import tgb.btc.rce.enums.update.TextCommand;
+import tgb.btc.rce.sender.IResponseSender;
+import tgb.btc.rce.service.handler.message.text.ITextCommandHandler;
+import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
+import tgb.btc.rce.service.util.ICallbackDataService;
+import tgb.btc.rce.vo.InlineButton;
+
+import java.util.List;
+
+@Service
+public class AlfaTeamBindingHandler implements ITextCommandHandler {
+
+    private final IPaymentTypeService paymentTypeService;
+
+    private final ICallbackDataService callbackDataService;
+
+    private final IResponseSender responseSender;
+
+    private final IKeyboardBuildService keyboardBuildService;
+
+    public AlfaTeamBindingHandler(IPaymentTypeService paymentTypeService, ICallbackDataService callbackDataService,
+                                  IResponseSender responseSender, IKeyboardBuildService keyboardBuildService) {
+        this.paymentTypeService = paymentTypeService;
+        this.callbackDataService = callbackDataService;
+        this.responseSender = responseSender;
+        this.keyboardBuildService = keyboardBuildService;
+    }
+
+    @Override
+    public void handle(Message message) {
+        Long chatId = message.getChatId();
+        List<InlineButton> buttons = new java.util.ArrayList<>(
+                paymentTypeService.getByDealTypeAndIsOnAndFiatCurrency(DealType.BUY, true, FiatCurrency.RUB).stream()
+                        .map(paymentType -> InlineButton.builder()
+                                .text(paymentType.getName())
+                                .data(callbackDataService.buildData(CallbackQueryData.ALFA_TEAM_PAYMENT_TYPE, paymentType.getPid()))
+                                .inlineType(InlineType.CALLBACK_DATA)
+                                .build())
+                        .toList()
+        );
+        responseSender.sendMessage(chatId,
+                "Выберите тип оплаты, к которому хотите выполнить привязку метода оплаты AlfaTeam. Типы оплаты отображены только для валюты \""
+                        + FiatCurrency.RUB.getDisplayName() + "\".", keyboardBuildService.buildInline(buttons, 2));
+    }
+
+    @Override
+    public TextCommand getTextCommand() {
+        return TextCommand.ALFA_TEAM_BINDING;
+    }
+}
