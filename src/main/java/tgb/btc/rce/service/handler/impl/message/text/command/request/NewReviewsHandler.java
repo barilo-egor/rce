@@ -36,7 +36,7 @@ public class NewReviewsHandler implements ITextCommandHandler {
     @Override
     public void handle(Message message) {
         Long chatId = message.getChatId();
-        List<Review> reviews = reviewService.findAllByIsPublished(false, 0, 5);
+        List<Review> reviews = reviewService.findAllByIsAccepted(false, 0, 5);
         if (reviews.isEmpty()) {
             responseSender.sendMessage(chatId, "Новых отзывов нет.");
             return;

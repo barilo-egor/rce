@@ -83,7 +83,6 @@ public class SubmitShareReviewHandler implements ICallbackQueryHandler {
         Deal deal = readDealService.findByPid(dealPid);
         Review review = reviewService.save(Review.builder()
                 .text(text)
-                .isPublished(false)
                 .chatId(chatId)
                 .amount(amount)
                 .deal(deal)

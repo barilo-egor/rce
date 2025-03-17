@@ -20,6 +20,8 @@ import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
 import tgb.btc.rce.service.process.IReviewProcessService;
 import tgb.btc.rce.service.util.ICallbackDataService;
 import tgb.btc.rce.vo.InlineButton;
+import tgb.btc.web.constant.enums.NotificationType;
+import tgb.btc.web.service.NotificationsAPI;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,12 +51,14 @@ public class ReviewProcessService implements IReviewProcessService {
 
     private final IBalanceAuditService balanceAuditService;
 
+    private final NotificationsAPI notificationsAPI;
+
     @Autowired
     public ReviewProcessService(VariablePropertiesReader variablePropertiesReader, IReviewService reviewService,
                                 IResponseSender responseSender, IModule<ReviewPriseType> reviewPriseModule,
                                 IReadUserService readUserService, IModifyUserService modifyUserService,
                                 IKeyboardBuildService keyboardBuildService,
-                                ICallbackDataService callbackDataService, IBalanceAuditService balanceAuditService) {
+                                ICallbackDataService callbackDataService, IBalanceAuditService balanceAuditService, NotificationsAPI notificationsAPI) {
         this.variablePropertiesReader = variablePropertiesReader;
         this.reviewService = reviewService;
         this.responseSender = responseSender;
@@ -64,6 +68,7 @@ public class ReviewProcessService implements IReviewProcessService {
         this.keyboardBuildService = keyboardBuildService;
         this.callbackDataService = callbackDataService;
         this.balanceAuditService = balanceAuditService;
+        this.notificationsAPI = notificationsAPI;
     }
 
     @Override
@@ -71,8 +76,6 @@ public class ReviewProcessService implements IReviewProcessService {
         Long channelChatId = Long.parseLong(variablePropertiesReader.getVariable(VariableType.CHANNEL_CHAT_ID));
         Review review = reviewService.findById(pid);
         responseSender.sendMessage(channelChatId, review.getText());
-        review.setPublished(true);
-        reviewService.save(review);
         Integer reviewPrise = reviewPriseModule.isCurrent(DYNAMIC) && Objects.nonNull(review.getAmount())
                 ? review.getAmount()
                 : variablePropertiesReader.getInt(VariableType.REVIEW_PRISE);
@@ -83,6 +86,8 @@ public class ReviewProcessService implements IReviewProcessService {
         balanceAuditService.save(readUserService.findByChatId(review.getChatId()), reviewPrise, BalanceAuditType.REVIEW);
         responseSender.sendMessage(review.getChatId(), "Ваш отзыв опубликован.\n\nНа ваш реферальный баланс зачислено "
                 + reviewPrise + "₽.");
+        reviewService.delete(review);
+        notificationsAPI.send(NotificationType.REVIEW_ACTION);
     }
 
     @Override
@@ -91,7 +96,7 @@ public class ReviewProcessService implements IReviewProcessService {
             List<InlineButton> buttons = new ArrayList<>();
 
             buttons.add(InlineButton.builder()
-                    .text("Опубликовать")
+                    .text("Одобрить")
                     .data(callbackDataService.buildData(CallbackQueryData.PUBLISH_REVIEW, review.getPid()))
                     .build());
             buttons.add(InlineButton.builder()
@@ -107,5 +112,14 @@ public class ReviewProcessService implements IReviewProcessService {
             } catch (InterruptedException ignored) {
             }
         }
+    }
+
+    @Override
+    public void publishNext() {
+        Review review = reviewService.findFirstByIsAcceptedOrderByPidAsc(true);
+        if (Objects.isNull(review)) {
+            return;
+        }
+        publish(review.getPid());
     }
 }
