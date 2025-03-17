@@ -46,11 +46,11 @@ public class ReviewPublisher implements IReviewPublisher {
         if (scheduledFuture != null) {
             scheduledFuture.cancel(false);
         }
-        Instant startTime = Instant.now().plus(Duration.ofSeconds(intervalMinutes));
+        Instant startTime = Instant.now().plus(Duration.ofMinutes(intervalMinutes));
         scheduledFuture = taskScheduler.scheduleAtFixedRate(
                 this::performTask,
                 startTime,
-                Duration.ofSeconds(intervalMinutes)
+                Duration.ofMinutes(intervalMinutes)
         );
     }
 
