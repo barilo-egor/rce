@@ -20,6 +20,8 @@ import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
 import tgb.btc.rce.service.process.IReviewProcessService;
 import tgb.btc.rce.service.util.ICallbackDataService;
 import tgb.btc.rce.vo.InlineButton;
+import tgb.btc.web.constant.enums.NotificationType;
+import tgb.btc.web.service.NotificationsAPI;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,12 +51,14 @@ public class ReviewProcessService implements IReviewProcessService {
 
     private final IBalanceAuditService balanceAuditService;
 
+    private final NotificationsAPI notificationsAPI;
+
     @Autowired
     public ReviewProcessService(VariablePropertiesReader variablePropertiesReader, IReviewService reviewService,
                                 IResponseSender responseSender, IModule<ReviewPriseType> reviewPriseModule,
                                 IReadUserService readUserService, IModifyUserService modifyUserService,
                                 IKeyboardBuildService keyboardBuildService,
-                                ICallbackDataService callbackDataService, IBalanceAuditService balanceAuditService) {
+                                ICallbackDataService callbackDataService, IBalanceAuditService balanceAuditService, NotificationsAPI notificationsAPI) {
         this.variablePropertiesReader = variablePropertiesReader;
         this.reviewService = reviewService;
         this.responseSender = responseSender;
@@ -64,6 +68,7 @@ public class ReviewProcessService implements IReviewProcessService {
         this.keyboardBuildService = keyboardBuildService;
         this.callbackDataService = callbackDataService;
         this.balanceAuditService = balanceAuditService;
+        this.notificationsAPI = notificationsAPI;
     }
 
     @Override
@@ -82,6 +87,7 @@ public class ReviewProcessService implements IReviewProcessService {
         responseSender.sendMessage(review.getChatId(), "Ваш отзыв опубликован.\n\nНа ваш реферальный баланс зачислено "
                 + reviewPrise + "₽.");
         reviewService.delete(review);
+        notificationsAPI.send(NotificationType.REVIEW_ACTION);
     }
 
     @Override

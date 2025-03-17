@@ -8,8 +8,9 @@ import tgb.btc.library.interfaces.service.bean.bot.IReviewService;
 import tgb.btc.rce.enums.update.CallbackQueryData;
 import tgb.btc.rce.sender.IResponseSender;
 import tgb.btc.rce.service.handler.ICallbackQueryHandler;
-import tgb.btc.rce.service.process.IReviewProcessService;
 import tgb.btc.rce.service.util.ICallbackDataService;
+import tgb.btc.web.constant.enums.NotificationType;
+import tgb.btc.web.service.NotificationsAPI;
 
 @Service
 @Slf4j
@@ -21,11 +22,14 @@ public class PublishReviewHandler implements ICallbackQueryHandler {
 
     private final ICallbackDataService callbackDataService;
 
+    private final NotificationsAPI notificationsAPI;
+
     public PublishReviewHandler(IReviewService reviewService, IResponseSender responseSender,
-                                ICallbackDataService callbackDataService) {
+                                ICallbackDataService callbackDataService, NotificationsAPI notificationsAPI) {
         this.reviewService = reviewService;
         this.responseSender = responseSender;
         this.callbackDataService = callbackDataService;
+        this.notificationsAPI = notificationsAPI;
     }
 
     @Override
@@ -36,6 +40,7 @@ public class PublishReviewHandler implements ICallbackQueryHandler {
         Review review = reviewService.findById(reviewPid);
         review.setIsAccepted(true);
         reviewService.save(review);
+        notificationsAPI.send(NotificationType.REVIEW_ACTION);
         log.debug("Пользователь {} одобрил отзыв {}", chatId, review);
 
         responseSender.deleteMessage(chatId, callbackQuery.getMessage().getMessageId());
