@@ -85,6 +85,7 @@ public class SubmitShareReviewHandler implements ICallbackQueryHandler {
                 .text(text)
                 .chatId(chatId)
                 .amount(amount)
+                .isAccepted(false)
                 .deal(deal)
                 .build());
         responseSender.deleteMessage(chatId, callbackQuery.getMessage().getMessageId());
