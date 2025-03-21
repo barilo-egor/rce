@@ -75,7 +75,7 @@ public enum TextCommand {
     DASH_PAY_BINDING("DashPay привязка", UserRole.ADMIN_ACCESS),
     ALFA_TEAM_BINDING("AlfaTeam привязка", UserRole.ADMIN_ACCESS),
     PAID("Оплатил", UserRole.USER_ACCESS),
-    PAYMENT_TYPE_DISCOUNTS("Скидки типов оплат", UserRole.OPERATOR_ACCESS)
+    PAYMENT_TYPE_DISCOUNTS("Скидки типов оплат", UserRole.ADMIN_ACCESS)
     ;
 
     private final String text;

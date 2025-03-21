@@ -43,7 +43,6 @@ import tgb.btc.library.service.web.merchant.dashpay.DashPayMerchantService;
 import tgb.btc.library.service.web.merchant.payscrow.PayscrowMerchantService;
 import tgb.btc.library.vo.RequisiteVO;
 import tgb.btc.library.vo.calculate.DealAmount;
-import tgb.btc.library.vo.web.merchant.payscrow.PayscrowResponse;
 import tgb.btc.rce.enums.BotInlineButton;
 import tgb.btc.rce.enums.BotReplyButton;
 import tgb.btc.rce.enums.PropertiesMessage;
@@ -725,6 +724,12 @@ public class ExchangeService {
             dealAmount = userDiscountProcessService.applyDealDiscounts(chatId, dealAmount, deal.getUsedPromo(),
                     deal.getUsedReferralDiscount(), deal.getDiscount(), deal.getFiatCurrency());
             deal.setAmount(dealAmount.setScale(2, RoundingMode.HALF_UP));
+            String sumBeforePaymentTypeDiscountString;
+            BigDecimal paymentTypeDiscount = userDiscountProcessService.applyPaymentTypeDiscount(deal);
+            if (Objects.nonNull(paymentTypeDiscount)) {
+                deal.setAmount(deal.getAmount().subtract(paymentTypeDiscount));
+                deal = modifyDealService.save(deal);
+            }
             RequisiteVO requisiteVO;
             if (securePaymentDetailsService.hasAccessToPaymentTypes(chatId, deal.getFiatCurrency())) {
                 try {
@@ -743,6 +748,17 @@ public class ExchangeService {
             }
             String requisite = requisiteVO.getRequisite();
             deal.setDetails(requisite);
+            String dealAmountString;
+            if (Objects.nonNull(paymentTypeDiscount)) {
+                sumBeforePaymentTypeDiscountString = Merchant.NONE.equals(requisiteVO.getMerchant())
+                        ? bigDecimalService.roundToPlainString(deal.getOriginalPrice(), 0)
+                        : bigDecimalService.roundToPlainString(deal.getOriginalPrice(), 2);
+            } else {
+                sumBeforePaymentTypeDiscountString = "";
+            }
+            dealAmountString = Merchant.NONE.equals(requisiteVO.getMerchant())
+                    ? bigDecimalService.roundToPlainString(deal.getAmount(), 0)
+                    : deal.getAmount().toString();
             modifyDealService.save(deal);
             messageImage = MessageImage.BUILD_DEAL_BUY;
             Integer subType = messageImageService.getSubType(messageImage);
@@ -756,9 +772,8 @@ public class ExchangeService {
                         deal.getWallet(),
                         rank.getSmile(),
                         rank.getPercent(),
-                        Merchant.NONE.equals(requisiteVO.getMerchant())
-                                ? bigDecimalService.roundToPlainString(deal.getAmount(), 0)
-                                : deal.getAmount(),
+                        sumBeforePaymentTypeDiscountString,
+                        dealAmountString,
                         deal.getFiatCurrency().getGenitive(),
                         requisite,
                         variablePropertiesReader.getVariable(VariableType.DEAL_ACTIVE_TIME),
@@ -775,9 +790,8 @@ public class ExchangeService {
                         deal.getWallet(),
                         rank.getSmile(),
                         rank.getPercent(),
-                        Merchant.NONE.equals(requisiteVO.getMerchant())
-                                ? bigDecimalService.roundToPlainString(deal.getAmount(), 0)
-                                : deal.getAmount(),
+                        sumBeforePaymentTypeDiscountString,
+                        dealAmountString,
                         deal.getFiatCurrency().getGenitive(),
                         requisite,
                         variablePropertiesReader.getVariable(VariableType.DEAL_ACTIVE_TIME)
@@ -829,39 +843,6 @@ public class ExchangeService {
                                     () -> new BaseException(
                                             "Ошибка при получении messageId.")));
         }
-    }
-
-    public String getSellMessage(Deal deal, Rank rank) {
-        String message = messagePropertiesService.getMessage("deal.build.sell");
-        if (Objects.isNull(message)) return null;
-        CryptoCurrency currency = deal.getCryptoCurrency();
-        return messagePropertiesService.getMessage("deal.build.sell", deal.getPid(),
-                bigDecimalService.roundToPlainString(deal.getAmount(), deal.getCryptoCurrency().getScale()),
-                deal.getFiatCurrency().getCode(), deal.getPaymentType().getName(),
-                deal.getWallet(), rank.getSmile(), rank.getPercent(),
-                bigDecimalService.roundToPlainString(deal.getCryptoAmount(), currency.getScale()), currency.getShortName(), currency.getShortName(),
-                variablePropertiesReader.getWallet(currency),
-                variablePropertiesReader.getVariable(VariableType.DEAL_ACTIVE_TIME));
-    }
-
-    public String getBuyMessage(Deal deal, Rank rank, String requisite) {
-        String message = messagePropertiesService.getMessage("deal.build.buy");
-        if (Objects.isNull(message)) return null;
-        CryptoCurrency currency = deal.getCryptoCurrency();
-        return messagePropertiesService.getMessage(
-                "deal.build.buy",
-                deal.getPid(),
-                bigDecimalService.roundToPlainString(deal.getCryptoAmount(), deal.getCryptoCurrency().getScale()),
-                currency.getShortName(),
-                cryptoCurrenciesDesignService.getDisplayName(currency),
-                deal.getWallet(),
-                rank.getSmile(),
-                rank.getPercent() + "%",
-                bigDecimalService.roundToPlainString(deal.getAmount()),
-                deal.getFiatCurrency().getGenitive(),
-                requisite,
-                variablePropertiesReader.getVariable(VariableType.DEAL_ACTIVE_TIME)
-        );
     }
 
     public Boolean isPaid(Update update) {
