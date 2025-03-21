@@ -2,6 +2,7 @@ package tgb.btc.rce.service.handler.impl.message.text.command.settings.payment;
 
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Message;
+import tgb.btc.library.bean.bot.PaymentType;
 import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
 import tgb.btc.library.interfaces.service.bean.bot.IPaymentTypeService;
@@ -15,6 +16,7 @@ import tgb.btc.rce.service.util.ICallbackDataService;
 import tgb.btc.rce.vo.InlineButton;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class DashPayBindingHandler implements ITextCommandHandler {
@@ -38,8 +40,14 @@ public class DashPayBindingHandler implements ITextCommandHandler {
     @Override
     public void handle(Message message) {
         Long chatId = message.getChatId();
-        List<InlineButton> buttons = new java.util.ArrayList<>(
-                paymentTypeService.getByDealTypeAndIsOnAndFiatCurrency(DealType.BUY, true, FiatCurrency.RUB).stream()
+        List<PaymentType> paymentTypes = paymentTypeService.getByDealTypeAndIsOnAndFiatCurrency(DealType.BUY, true, FiatCurrency.RUB);
+        if (Objects.isNull(paymentTypes) || paymentTypes.isEmpty()) {
+            responseSender.sendMessage(chatId, "Отсутствуют <b>включенные</b> типы оплаты на <b>покупку</b> для фиатной валюты <b>"
+                    + FiatCurrency.RUB.getDisplayName() + "</b>.");
+            return;
+        }
+        List<InlineButton> buttons = new java.util.ArrayList<>(paymentTypes
+                .stream()
                         .map(paymentType -> InlineButton.builder()
                                 .text(paymentType.getName())
                                 .data(callbackDataService.buildData(CallbackQueryData.DASH_PAY_PAYMENT_TYPE, paymentType.getPid()))

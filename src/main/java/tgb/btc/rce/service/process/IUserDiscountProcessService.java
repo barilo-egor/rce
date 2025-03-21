@@ -12,4 +12,6 @@ public interface IUserDiscountProcessService {
                                   Boolean isUserReferralDiscount, BigDecimal discount, FiatCurrency fiatCurrency);
 
     BigDecimal applyRank(Rank rank, Deal deal);
+
+    BigDecimal applyPaymentTypeDiscount(Deal deal);
 }

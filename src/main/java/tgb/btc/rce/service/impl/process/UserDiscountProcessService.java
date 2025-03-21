@@ -4,9 +4,11 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tgb.btc.library.bean.bot.Deal;
+import tgb.btc.library.bean.bot.PaymentTypeDiscount;
 import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
 import tgb.btc.library.constants.enums.properties.VariableType;
+import tgb.btc.library.interfaces.service.bean.bot.IPaymentTypeDiscountService;
 import tgb.btc.library.interfaces.service.bean.bot.IUserDiscountService;
 import tgb.btc.library.interfaces.service.bean.bot.deal.read.IDealUserService;
 import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
@@ -17,6 +19,8 @@ import tgb.btc.rce.enums.Rank;
 import tgb.btc.rce.service.process.IUserDiscountProcessService;
 
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.Objects;
 
 @Service
 public class UserDiscountProcessService implements IUserDiscountProcessService {
@@ -32,6 +36,13 @@ public class UserDiscountProcessService implements IUserDiscountProcessService {
     private VariablePropertiesReader variablePropertiesReader;
 
     private IBigDecimalService bigDecimalService;
+
+    private IPaymentTypeDiscountService paymentTypeDiscountService;
+
+    @Autowired
+    public void setPaymentTypeDiscountService(IPaymentTypeDiscountService paymentTypeDiscountService) {
+        this.paymentTypeDiscountService = paymentTypeDiscountService;
+    }
 
     @Autowired
     public void setBigDecimalService(IBigDecimalService bigDecimalService) {
@@ -118,5 +129,27 @@ public class UserDiscountProcessService implements IUserDiscountProcessService {
                     : bigDecimalService.addHalfUp(deal.getAmount(), rankDiscount);
         }
         return newAmount;
+    }
+
+    @Override
+    public BigDecimal applyPaymentTypeDiscount(Deal deal) {
+        if (!FiatCurrency.RUB.equals(deal.getFiatCurrency()) || !DealType.isBuy(deal.getDealType())) {
+            return null;
+        }
+        List<PaymentTypeDiscount> paymentTypeDiscountList = paymentTypeDiscountService.getByPaymentTypePid(deal.getPaymentType().getPid());
+        if (Objects.isNull(paymentTypeDiscountList) || paymentTypeDiscountList.isEmpty()) {
+            return null;
+        }
+        for (PaymentTypeDiscount paymentTypeDiscount : paymentTypeDiscountList) {
+            BigDecimal decimalMaxAmount = new BigDecimal(paymentTypeDiscount.getMaxAmount());
+            if (deal.getAmount().compareTo(decimalMaxAmount) < 0) {
+                return bigDecimalService.multiplyHalfUp(
+                        deal.getAmount(),
+                        bigDecimalService.divideHalfUp(BigDecimal.valueOf(paymentTypeDiscount.getPercent()),
+                                bigDecimalService.getHundred())
+                );
+            }
+        }
+        return null;
     }
 }
