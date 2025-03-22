@@ -727,7 +727,7 @@ public class ExchangeService {
             String sumBeforePaymentTypeDiscountString;
             BigDecimal paymentTypeDiscount = userDiscountProcessService.applyPaymentTypeDiscount(deal);
             if (Objects.nonNull(paymentTypeDiscount)) {
-                deal.setAmount(deal.getAmount().subtract(paymentTypeDiscount));
+                deal.setAmount(deal.getAmount().subtract(paymentTypeDiscount).setScale(2, RoundingMode.HALF_UP));
                 deal = modifyDealService.save(deal);
             }
             RequisiteVO requisiteVO;
