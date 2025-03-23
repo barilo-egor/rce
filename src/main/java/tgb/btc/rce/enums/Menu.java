@@ -96,8 +96,15 @@ public enum Menu {
             List.of(
                     TextCommand.NEW_PAYMENT_TYPE, TextCommand.DELETE_PAYMENT_TYPE, TextCommand.NEW_PAYMENT_TYPE_REQUISITE,
                     TextCommand.DELETE_PAYMENT_TYPE_REQUISITE, TextCommand.TURN_PAYMENT_TYPES, TextCommand.CHANGE_MIN_SUM,
-                    TextCommand.TURN_DYNAMIC_REQUISITES, TextCommand.PAYMENT_TYPE_DISCOUNTS, TextCommand.PAYSCROW_BINDING,
-                    TextCommand.DASH_PAY_BINDING, TextCommand.ALFA_TEAM_BINDING, TextCommand.RETURN
+                    TextCommand.TURN_DYNAMIC_REQUISITES, TextCommand.PAYMENT_TYPES_BINDING, TextCommand.PAYMENT_TYPE_DISCOUNTS,
+                    TextCommand.RETURN
+            )
+    ),
+    PAYMENT_TYPES_BINDING(2,
+            List.of(
+                    TextCommand.PAYSCROW_BINDING, TextCommand.DASH_PAY_BINDING, TextCommand.ALFA_TEAM_BINDING,
+                    TextCommand.ALFA_TEAM_TJS_BINDING,
+                    TextCommand.RETURN
             )
     );
 
