@@ -10,11 +10,11 @@ import tgb.btc.rce.service.impl.AlfaTeamBindingService;
 import java.util.Objects;
 
 @Service
-public class AlfaTeamTJSBindingHandler implements ITextCommandHandler {
+public class AlfaTeamAlfaBindingHandler implements ITextCommandHandler {
 
     private final AlfaTeamBindingService alfaTeamBindingService;
 
-    public AlfaTeamTJSBindingHandler(AlfaTeamBindingService alfaTeamBindingService) {
+    public AlfaTeamAlfaBindingHandler(AlfaTeamBindingService alfaTeamBindingService) {
         this.alfaTeamBindingService = alfaTeamBindingService;
     }
 
@@ -23,12 +23,12 @@ public class AlfaTeamTJSBindingHandler implements ITextCommandHandler {
         Long chatId = message.getChatId();
         alfaTeamBindingService.sendPaymentTypes(
                 chatId,
-                paymentType -> Objects.nonNull(paymentType.getAlfaTeamTJSPaymentOption()),
-                Merchant.ALFA_TEAM_TJS);
+                paymentType -> Objects.nonNull(paymentType.getAlfaTeamAlfaPaymentOption()),
+                Merchant.ALFA_TEAM_ALFA);
     }
 
     @Override
     public TextCommand getTextCommand() {
-        return TextCommand.ALFA_TEAM_TJS_BINDING;
+        return TextCommand.ALFA_TEAM_ALFA_BINDING;
     }
 }
