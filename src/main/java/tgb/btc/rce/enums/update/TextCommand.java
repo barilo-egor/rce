@@ -75,6 +75,9 @@ public enum TextCommand {
     DASH_PAY_BINDING("DashPay привязка", UserRole.ADMIN_ACCESS),
     ALFA_TEAM_BINDING("AlfaTeam привязка", UserRole.ADMIN_ACCESS),
     ALFA_TEAM_TJS_BINDING("AlfaTeam TJS привязка", UserRole.ADMIN_ACCESS),
+    ALFA_TEAM_VTB_BINDING("AlfaTeam VTB привязка", UserRole.ADMIN_ACCESS),
+    ALFA_TEAM_ALFA_BINDING("AlfaTeam ALFA привязка", UserRole.ADMIN_ACCESS),
+    ALFA_TEAM_SBER_BINDING("AlfaTeam SBER привязка", UserRole.ADMIN_ACCESS),
     PAID("Оплатил", UserRole.USER_ACCESS),
     PAYMENT_TYPE_DISCOUNTS("Скидки типов оплат", UserRole.ADMIN_ACCESS),
     PAYMENT_TYPES_BINDING("Привязка мерчантов", UserRole.ADMIN_ACCESS)
