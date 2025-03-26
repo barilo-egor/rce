@@ -776,6 +776,9 @@ public class ExchangeService {
                         dealAmountString,
                         deal.getFiatCurrency().getGenitive(),
                         requisite,
+                        Objects.nonNull(deal.getPaymentType().getRequisiteAdditionalText())
+                                ? deal.getPaymentType().getRequisiteAdditionalText()
+                                : "",
                         variablePropertiesReader.getVariable(VariableType.DEAL_ACTIVE_TIME),
                         deliveryTypeText,
                         textCommandService.getText(TextCommand.PAID),
@@ -794,6 +797,9 @@ public class ExchangeService {
                         dealAmountString,
                         deal.getFiatCurrency().getGenitive(),
                         requisite,
+                        Objects.nonNull(deal.getPaymentType().getRequisiteAdditionalText())
+                                ? deal.getPaymentType().getRequisiteAdditionalText()
+                                : "",
                         variablePropertiesReader.getVariable(VariableType.DEAL_ACTIVE_TIME)
                 );
             }
