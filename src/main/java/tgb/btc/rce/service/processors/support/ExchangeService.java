@@ -994,6 +994,7 @@ public class ExchangeService {
         Long chatId = updateService.getChatId(update);
         DeliveryType deliveryType;
         Long dealPid = readUserService.getCurrentDealByChatId(chatId);
+        Deal deal = readDealService.findByPid(dealPid);
         DealType dealType = dealPropertyService.getDealTypeByPid(dealPid);
         CryptoCurrency cryptoCurrency = dealPropertyService.getCryptoCurrencyByPid(dealPid);
         if (deliveryKindModule.isCurrent(DeliveryKind.STANDARD) && DealType.isBuy(dealType) && CryptoCurrency.BITCOIN.equals(cryptoCurrency)) {
@@ -1004,12 +1005,13 @@ public class ExchangeService {
                         dealPropertyService.getFiatCurrencyByPid(dealPid),
                         dealPropertyService.getDealTypeByPid(dealPid),
                         dealPropertyService.getCryptoCurrencyByPid(dealPid));
-                modifyDealService.updateAmountByPid(dealPropertyService.getAmountByPid(dealPid).add(fix), dealPid);
+                deal.setAmount(dealPropertyService.getAmountByPid(dealPid).add(fix));
+                deal.setOriginalPrice(deal.getOriginalPrice().add(fix));
             }
         } else {
             deliveryType = DeliveryType.STANDARD;
         }
-        modifyDealService.updateDeliveryTypeByPid(readUserService.getCurrentDealByChatId(chatId),
-                deliveryType);
+        deal.setDeliveryType(deliveryType);
+        modifyDealService.save(deal);
     }
 }
