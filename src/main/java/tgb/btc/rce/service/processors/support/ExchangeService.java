@@ -400,7 +400,7 @@ public class ExchangeService {
                         + " " + cryptoCurrenciesDesignService.getDisplayName(cryptoCurrency) + "\n"
                         + "Сумма к оплате: " + bigDecimalService.roundToPlainString(dealAmount) + " "
                         + fiatCurrency.getGenitive() + "\n";
-                if (BooleanUtils.isTrue(functionsService.getSumToReceive(cryptoCurrency))) {
+                if (BooleanUtils.isTrue(functionsService.getSumToReceive(cryptoCurrency)) && FiatCurrency.RUB.equals(fiatCurrency)) {
                     message = message.concat("Сумма к зачислению: "
                             + bigDecimalService.roundToPlainString(dealPropertyService.getCreditedAmountByPid(currentDealPid))
                             + " " + fiatCurrency.getGenitive());
@@ -410,12 +410,21 @@ public class ExchangeService {
                     + "Сумма к оплате: " + bigDecimalService.roundToPlainString(cryptoAmount, cryptoCurrency.getScale())
                     + " " + cryptoCurrency.getShortName();
         } else {
+            String sumToReceiveString;
+            if (DealType.isBuy(dealType) && BooleanUtils.isTrue(functionsService.getSumToReceive(cryptoCurrency)) && FiatCurrency.RUB.equals(fiatCurrency)) {
+                sumToReceiveString = bigDecimalService.roundToPlainString(dealPropertyService.getCreditedAmountByPid(currentDealPid))
+                        + " " + fiatCurrency.getGenitive();
+            } else {
+                sumToReceiveString = "";
+            }
             if (DealType.isBuy(dealType)) {
                 message = String.format(message, bigDecimalService.roundToPlainString(cryptoAmount, cryptoCurrency.getScale()),
-                        cryptoCurrenciesDesignService.getDisplayName(cryptoCurrency), bigDecimalService.roundToPlainString(dealAmount), fiatCurrency.getGenitive());
+                        cryptoCurrenciesDesignService.getDisplayName(cryptoCurrency),
+                        bigDecimalService.roundToPlainString(dealAmount), fiatCurrency.getGenitive(), sumToReceiveString);
             } else {
                 message = String.format(message, bigDecimalService.roundToPlainString(dealAmount), fiatCurrency.getGenitive(),
-                        bigDecimalService.roundToPlainString(cryptoAmount, cryptoCurrency.getScale()), cryptoCurrency.getShortName());
+                        bigDecimalService.roundToPlainString(cryptoAmount, cryptoCurrency.getScale()), cryptoCurrency.getShortName(),
+                        sumToReceiveString);
             }
         }
         responseSender.sendMessage(chatId, message);
