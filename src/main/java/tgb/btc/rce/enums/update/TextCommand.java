@@ -80,7 +80,8 @@ public enum TextCommand {
     ALFA_TEAM_SBER_BINDING("AlfaTeam SBER привязка", UserRole.ADMIN_ACCESS),
     PAID("Оплатил", UserRole.USER_ACCESS),
     PAYMENT_TYPE_DISCOUNTS("Скидки типов оплат", UserRole.ADMIN_ACCESS),
-    PAYMENT_TYPES_BINDING("Привязка мерчантов", UserRole.ADMIN_ACCESS)
+    PAYMENT_TYPES_BINDING("Привязка мерчантов", UserRole.ADMIN_ACCESS),
+    ADDITIONAL_PAYMENT_TYPE_TEXT("Текст реквизитов", UserRole.ADMIN_ACCESS)
     ;
 
     private final String text;
