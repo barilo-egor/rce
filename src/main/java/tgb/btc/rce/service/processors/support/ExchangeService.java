@@ -400,7 +400,7 @@ public class ExchangeService {
                         + " " + cryptoCurrenciesDesignService.getDisplayName(cryptoCurrency) + "\n"
                         + "Сумма к оплате: " + bigDecimalService.roundToPlainString(dealAmount) + " "
                         + fiatCurrency.getGenitive() + "\n";
-                if (BooleanUtils.isTrue(functionsService.getSumToReceive(cryptoCurrency)) && FiatCurrency.RUB.equals(fiatCurrency)) {
+                if (BooleanUtils.isTrue(functionsService.getSumToReceive(cryptoCurrency, fiatCurrency))) {
                     message = message.concat("Сумма к зачислению: "
                             + bigDecimalService.roundToPlainString(dealPropertyService.getCreditedAmountByPid(currentDealPid))
                             + " " + fiatCurrency.getGenitive());
@@ -411,7 +411,7 @@ public class ExchangeService {
                     + " " + cryptoCurrency.getShortName();
         } else {
             String sumToReceiveString;
-            if (DealType.isBuy(dealType) && BooleanUtils.isTrue(functionsService.getSumToReceive(cryptoCurrency)) && FiatCurrency.RUB.equals(fiatCurrency)) {
+            if (DealType.isBuy(dealType) && BooleanUtils.isTrue(functionsService.getSumToReceive(cryptoCurrency, fiatCurrency)) && FiatCurrency.RUB.equals(fiatCurrency)) {
                 sumToReceiveString = bigDecimalService.roundToPlainString(dealPropertyService.getCreditedAmountByPid(currentDealPid))
                         + " " + fiatCurrency.getGenitive();
             } else {
@@ -438,7 +438,7 @@ public class ExchangeService {
         Deal deal = readDealService.findByPid(readUserService.getCurrentDealByChatId(chatId));
         DealAmount dealAmount = calculateService.calculate(chatId, enteredAmount,
                 deal.getCryptoCurrency(), deal.getFiatCurrency(),
-                deal.getDealType(), isEnteredInCrypto, BooleanUtils.isTrue(functionsService.getSumToReceive(deal.getCryptoCurrency())));
+                deal.getDealType(), isEnteredInCrypto, BooleanUtils.isTrue(functionsService.getSumToReceive(deal.getCryptoCurrency(), deal.getFiatCurrency())));
         if (isLessThanMin(chatId, deal.getDealType(), deal.getCryptoCurrency(), dealAmount.getCryptoAmount())) {
             return false;
         }
@@ -488,7 +488,7 @@ public class ExchangeService {
                 calculatorQuery.getCurrency(),
                 calculatorQuery.getFiatCurrency(),
                 calculatorQuery.getDealType(),
-                BooleanUtils.isTrue(functionsService.getSumToReceive(calculatorQuery.getCurrency())));
+                BooleanUtils.isTrue(functionsService.getSumToReceive(calculatorQuery.getCurrency(), calculatorQuery.getFiatCurrency())));
         Long currentDealPid = readUserService.getCurrentDealByChatId(chatId);
         DealType dealType = dealPropertyService.getDealTypeByPid(currentDealPid);
         CryptoCurrency cryptoCurrency = dealPropertyService.getCryptoCurrencyByPid(currentDealPid);
