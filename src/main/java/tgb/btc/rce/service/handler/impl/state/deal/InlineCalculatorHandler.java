@@ -171,7 +171,8 @@ public class InlineCalculatorHandler implements IStateHandler {
         } else {
             dealAmount = StringUtils.isNotEmpty(sum)
                     ? calculateService.calculate(chatId, new BigDecimal(sum), calculator.getCryptoCurrency(),
-                    calculator.getFiatCurrency(), dealType, !isSwitched, BooleanUtils.isTrue(functionsService.getSumToReceive(calculator.getCryptoCurrency())))
+                    calculator.getFiatCurrency(), dealType, !isSwitched,
+                    BooleanUtils.isTrue(functionsService.getSumToReceive(calculator.getCryptoCurrency(), calculator.getFiatCurrency())))
                     : null;
             calculator.setDealAmount(dealAmount);
         }
