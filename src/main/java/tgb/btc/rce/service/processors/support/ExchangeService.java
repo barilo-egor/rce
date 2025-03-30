@@ -759,15 +759,15 @@ public class ExchangeService {
             deal.setDetails(requisite);
             String dealAmountString;
             if (Objects.nonNull(paymentTypeDiscount)) {
-                sumBeforePaymentTypeDiscountString = Merchant.NONE.equals(requisiteVO.getMerchant())
-                        ? bigDecimalService.roundToPlainString(deal.getOriginalPrice(), 0)
-                        : bigDecimalService.roundToPlainString(deal.getOriginalPrice(), 2);
+                sumBeforePaymentTypeDiscountString = requisiteVO.getMerchant().isDecimalAmount()
+                        ? bigDecimalService.roundToPlainString(deal.getOriginalPrice(), 2)
+                        : bigDecimalService.roundToPlainString(deal.getOriginalPrice(), 0);
             } else {
                 sumBeforePaymentTypeDiscountString = "";
             }
-            dealAmountString = Merchant.NONE.equals(requisiteVO.getMerchant())
-                    ? bigDecimalService.roundToPlainString(deal.getAmount(), 0)
-                    : deal.getAmount().toString();
+            dealAmountString = requisiteVO.getMerchant().isDecimalAmount()
+                    ? deal.getAmount().toString()
+                    : bigDecimalService.roundToPlainString(deal.getAmount(), 0);
             modifyDealService.save(deal);
             messageImage = MessageImage.BUILD_DEAL_BUY;
             Integer subType = messageImageService.getSubType(messageImage);
