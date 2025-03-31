@@ -1,4 +1,4 @@
-package tgb.btc.rce.service.handler.impl.message.text.command.settings.payment;
+package tgb.btc.rce.service.handler.impl.message.text.command.settings.payment.merchant;
 
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Message;

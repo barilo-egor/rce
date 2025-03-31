@@ -1,4 +1,4 @@
-package tgb.btc.rce.service.handler.impl.message.text.command.settings.payment;
+package tgb.btc.rce.service.handler.impl.message.text.command.settings.payment.merchant;
 
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Message;
@@ -12,7 +12,6 @@ import tgb.btc.rce.enums.update.TextCommand;
 import tgb.btc.rce.sender.IResponseSender;
 import tgb.btc.rce.service.handler.message.text.ITextCommandHandler;
 import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
-import tgb.btc.rce.service.redis.IRedisUserStateService;
 import tgb.btc.rce.service.util.ICallbackDataService;
 import tgb.btc.rce.vo.InlineButton;
 
@@ -20,26 +19,22 @@ import java.util.List;
 import java.util.Objects;
 
 @Service
-public class PayscrowBindingHandler implements ITextCommandHandler {
-
-    private final IResponseSender responseSender;
-
-    private final IRedisUserStateService redisUserStateService;
+public class AlfaTeamBindingHandler implements ITextCommandHandler {
 
     private final IPaymentTypeService paymentTypeService;
 
-    private final IKeyboardBuildService keyboardBuildService;
-
     private final ICallbackDataService callbackDataService;
 
-    public PayscrowBindingHandler(IResponseSender responseSender, IRedisUserStateService redisUserStateService,
-                                  IPaymentTypeService paymentTypeService, IKeyboardBuildService keyboardBuildService,
-                                  ICallbackDataService callbackDataService) {
-        this.responseSender = responseSender;
-        this.redisUserStateService = redisUserStateService;
+    private final IResponseSender responseSender;
+
+    private final IKeyboardBuildService keyboardBuildService;
+
+    public AlfaTeamBindingHandler(IPaymentTypeService paymentTypeService, ICallbackDataService callbackDataService,
+                                  IResponseSender responseSender, IKeyboardBuildService keyboardBuildService) {
         this.paymentTypeService = paymentTypeService;
-        this.keyboardBuildService = keyboardBuildService;
         this.callbackDataService = callbackDataService;
+        this.responseSender = responseSender;
+        this.keyboardBuildService = keyboardBuildService;
     }
 
     @Override
@@ -55,18 +50,18 @@ public class PayscrowBindingHandler implements ITextCommandHandler {
                 .stream()
                         .map(paymentType -> InlineButton.builder()
                                 .text(paymentType.getName())
-                                .data(callbackDataService.buildData(CallbackQueryData.PAYSCROW_PAYMENT_TYPE, paymentType.getPid()))
+                                .data(callbackDataService.buildData(CallbackQueryData.ALFA_TEAM_PAYMENT_TYPE, paymentType.getPid()))
                                 .inlineType(InlineType.CALLBACK_DATA)
                                 .build())
                         .toList()
         );
         responseSender.sendMessage(chatId,
-                "Выберите тип оплаты, к которому хотите выполнить привязку метода оплаты Payscrow. Типы оплаты отображены только для валюты \""
+                "Выберите тип оплаты, к которому хотите выполнить привязку метода оплаты AlfaTeam. Типы оплаты отображены только для валюты \""
                         + FiatCurrency.RUB.getDisplayName() + "\".", keyboardBuildService.buildInline(buttons, 2));
     }
 
     @Override
     public TextCommand getTextCommand() {
-        return TextCommand.PAYSCROW_BINDING;
+        return TextCommand.ALFA_TEAM_BINDING;
     }
 }

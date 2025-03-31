@@ -1,4 +1,4 @@
-package tgb.btc.rce.service.handler.impl.message.text.command.settings.payment;
+package tgb.btc.rce.service.handler.impl.message.text.command.settings.payment.merchant;
 
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Message;
@@ -19,22 +19,22 @@ import java.util.List;
 import java.util.Objects;
 
 @Service
-public class AlfaTeamBindingHandler implements ITextCommandHandler {
-
-    private final IPaymentTypeService paymentTypeService;
-
-    private final ICallbackDataService callbackDataService;
+public class PayscrowBindingHandler implements ITextCommandHandler {
 
     private final IResponseSender responseSender;
 
+    private final IPaymentTypeService paymentTypeService;
+
     private final IKeyboardBuildService keyboardBuildService;
 
-    public AlfaTeamBindingHandler(IPaymentTypeService paymentTypeService, ICallbackDataService callbackDataService,
-                                  IResponseSender responseSender, IKeyboardBuildService keyboardBuildService) {
-        this.paymentTypeService = paymentTypeService;
-        this.callbackDataService = callbackDataService;
+    private final ICallbackDataService callbackDataService;
+
+    public PayscrowBindingHandler(IResponseSender responseSender, IPaymentTypeService paymentTypeService,
+                                  IKeyboardBuildService keyboardBuildService, ICallbackDataService callbackDataService) {
         this.responseSender = responseSender;
+        this.paymentTypeService = paymentTypeService;
         this.keyboardBuildService = keyboardBuildService;
+        this.callbackDataService = callbackDataService;
     }
 
     @Override
@@ -50,18 +50,18 @@ public class AlfaTeamBindingHandler implements ITextCommandHandler {
                 .stream()
                         .map(paymentType -> InlineButton.builder()
                                 .text(paymentType.getName())
-                                .data(callbackDataService.buildData(CallbackQueryData.ALFA_TEAM_PAYMENT_TYPE, paymentType.getPid()))
+                                .data(callbackDataService.buildData(CallbackQueryData.PAYSCROW_PAYMENT_TYPE, paymentType.getPid()))
                                 .inlineType(InlineType.CALLBACK_DATA)
                                 .build())
                         .toList()
         );
         responseSender.sendMessage(chatId,
-                "Выберите тип оплаты, к которому хотите выполнить привязку метода оплаты AlfaTeam. Типы оплаты отображены только для валюты \""
+                "Выберите тип оплаты, к которому хотите выполнить привязку метода оплаты Payscrow. Типы оплаты отображены только для валюты \""
                         + FiatCurrency.RUB.getDisplayName() + "\".", keyboardBuildService.buildInline(buttons, 2));
     }
 
     @Override
     public TextCommand getTextCommand() {
-        return TextCommand.ALFA_TEAM_BINDING;
+        return TextCommand.PAYSCROW_BINDING;
     }
 }
