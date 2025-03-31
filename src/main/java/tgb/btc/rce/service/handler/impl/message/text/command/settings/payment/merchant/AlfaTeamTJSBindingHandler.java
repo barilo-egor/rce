@@ -1,4 +1,4 @@
-package tgb.btc.rce.service.handler.impl.message.text.command.settings.payment;
+package tgb.btc.rce.service.handler.impl.message.text.command.settings.payment.merchant;
 
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Message;
@@ -10,11 +10,11 @@ import tgb.btc.rce.service.impl.AlfaTeamBindingService;
 import java.util.Objects;
 
 @Service
-public class AlfaTeamVTBBindingHandler implements ITextCommandHandler {
+public class AlfaTeamTJSBindingHandler implements ITextCommandHandler {
 
     private final AlfaTeamBindingService alfaTeamBindingService;
 
-    public AlfaTeamVTBBindingHandler(AlfaTeamBindingService alfaTeamBindingService) {
+    public AlfaTeamTJSBindingHandler(AlfaTeamBindingService alfaTeamBindingService) {
         this.alfaTeamBindingService = alfaTeamBindingService;
     }
 
@@ -23,12 +23,12 @@ public class AlfaTeamVTBBindingHandler implements ITextCommandHandler {
         Long chatId = message.getChatId();
         alfaTeamBindingService.sendPaymentTypes(
                 chatId,
-                paymentType -> Objects.nonNull(paymentType.getAlfaTeamVTBPaymentOption()),
-                Merchant.ALFA_TEAM_VTB);
+                paymentType -> Objects.nonNull(paymentType.getAlfaTeamTJSPaymentOption()),
+                Merchant.ALFA_TEAM_TJS);
     }
 
     @Override
     public TextCommand getTextCommand() {
-        return TextCommand.ALFA_TEAM_VTB_BINDING;
+        return TextCommand.ALFA_TEAM_TJS_BINDING;
     }
 }

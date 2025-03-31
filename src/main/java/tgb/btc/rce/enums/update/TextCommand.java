@@ -81,7 +81,8 @@ public enum TextCommand {
     PAID("Оплатил", UserRole.USER_ACCESS),
     PAYMENT_TYPE_DISCOUNTS("Скидки типов оплат", UserRole.ADMIN_ACCESS),
     PAYMENT_TYPES_BINDING("Привязка мерчантов", UserRole.ADMIN_ACCESS),
-    ADDITIONAL_PAYMENT_TYPE_TEXT("Текст реквизитов", UserRole.ADMIN_ACCESS)
+    ADDITIONAL_PAYMENT_TYPE_TEXT("Текст реквизитов", UserRole.ADMIN_ACCESS),
+    PAY_POINTS_BINDING("PayPoints привязка", UserRole.ADMIN_ACCESS)
     ;
 
     private final String text;
