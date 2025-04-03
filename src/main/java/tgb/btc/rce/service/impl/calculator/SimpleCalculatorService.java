@@ -9,14 +9,12 @@ import tgb.btc.library.interfaces.service.bean.bot.deal.read.IDealPropertyServic
 import tgb.btc.library.interfaces.service.bean.bot.user.IModifyUserService;
 import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.library.interfaces.service.design.IMessageImageService;
-import tgb.btc.rce.enums.PropertiesMessage;
 import tgb.btc.rce.sender.IMessageImageResponseSender;
 import tgb.btc.rce.sender.IResponseSender;
 import tgb.btc.rce.service.ICalculatorTypeService;
 import tgb.btc.rce.service.IKeyboardService;
 import tgb.btc.rce.service.IUpdateService;
 import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
-import tgb.btc.rce.service.util.IMessagePropertiesService;
 
 public abstract class SimpleCalculatorService implements ICalculatorTypeService {
 
@@ -31,8 +29,6 @@ public abstract class SimpleCalculatorService implements ICalculatorTypeService 
     protected IKeyboardService keyboardService;
 
     protected IKeyboardBuildService keyboardBuildService;
-
-    private IMessagePropertiesService messagePropertiesService;
 
     private IUpdateService updateService;
 
@@ -53,11 +49,6 @@ public abstract class SimpleCalculatorService implements ICalculatorTypeService 
     @Autowired
     public void setUpdateService(IUpdateService updateService) {
         this.updateService = updateService;
-    }
-
-    @Autowired
-    public void setMessagePropertiesService(IMessagePropertiesService messagePropertiesService) {
-        this.messagePropertiesService = messagePropertiesService;
     }
 
     @Autowired
@@ -96,12 +87,7 @@ public abstract class SimpleCalculatorService implements ICalculatorTypeService 
         Long currentDealPid = readUserService.getCurrentDealByChatId(chatId);
         CryptoCurrency cryptoCurrency = dealPropertyService.getCryptoCurrencyByPid(currentDealPid);
 
-        MessageImage messageImage;
-        if (CryptoCurrency.BITCOIN.equals(cryptoCurrency)) {
-            messageImage = MessageImage.INPUT_BITCOIN_DEAL_SUM;
-        } else {
-            messageImage = MessageImage.INPUT_DEAL_SUM;
-        }
+        MessageImage messageImage = MessageImage.INPUT_BITCOIN_DEAL_SUM;
         String text = messageImageService.getMessage(messageImage).formatted(cryptoCurrency.name());
 
         setState(chatId);
