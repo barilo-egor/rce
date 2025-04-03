@@ -732,12 +732,11 @@ public class ExchangeService {
         if (DealType.isBuy(dealType)) {
             dealAmount = userDiscountProcessService.applyDealDiscounts(chatId, dealAmount, deal.getUsedPromo(),
                     deal.getUsedReferralDiscount(), deal.getDiscount(), deal.getFiatCurrency());
-            deal.setAmount(dealAmount.setScale(2, RoundingMode.HALF_UP));
-            String sumBeforePaymentTypeDiscountString;
             BigDecimal paymentTypeDiscount = userDiscountProcessService.applyPaymentTypeDiscount(deal);
             if (Objects.nonNull(paymentTypeDiscount)) {
-                deal.setAmount(deal.getAmount().subtract(paymentTypeDiscount).setScale(2, RoundingMode.HALF_UP));
-                deal = modifyDealService.save(deal);
+                deal.setAmount(dealAmount.subtract(paymentTypeDiscount).setScale(0, RoundingMode.HALF_UP));
+            } else {
+                deal.setAmount(dealAmount.setScale(0, RoundingMode.HALF_UP));
             }
             RequisiteVO requisiteVO;
             if (securePaymentDetailsService.hasAccessToPaymentTypes(chatId, deal.getFiatCurrency())) {
@@ -757,17 +756,9 @@ public class ExchangeService {
             }
             String requisite = requisiteVO.getRequisite();
             deal.setDetails(requisite);
-            String dealAmountString;
-            if (Objects.nonNull(paymentTypeDiscount)) {
-                sumBeforePaymentTypeDiscountString = requisiteVO.getMerchant().isDecimalAmount()
-                        ? bigDecimalService.roundToPlainString(deal.getOriginalPrice(), 2)
-                        : bigDecimalService.roundToPlainString(deal.getOriginalPrice(), 0);
-            } else {
-                sumBeforePaymentTypeDiscountString = "";
-            }
-            dealAmountString = requisiteVO.getMerchant().isDecimalAmount()
-                    ? deal.getAmount().toString()
-                    : bigDecimalService.roundToPlainString(deal.getAmount(), 0);
+            String sumBeforePaymentTypeDiscountString = Objects.nonNull(paymentTypeDiscount)
+                    ? bigDecimalService.roundToPlainString(deal.getOriginalPrice(), 0)
+                    : "";
             modifyDealService.save(deal);
             messageImage = MessageImage.BUILD_DEAL_BUY;
             Integer subType = messageImageService.getSubType(messageImage);
@@ -782,7 +773,7 @@ public class ExchangeService {
                         rank.getSmile(),
                         rank.getPercent(),
                         sumBeforePaymentTypeDiscountString,
-                        dealAmountString,
+                        bigDecimalService.roundToPlainString(deal.getAmount(), 0),
                         deal.getFiatCurrency().getGenitive(),
                         requisite,
                         Objects.nonNull(deal.getPaymentType().getRequisiteAdditionalText())
@@ -803,7 +794,7 @@ public class ExchangeService {
                         rank.getSmile(),
                         rank.getPercent(),
                         sumBeforePaymentTypeDiscountString,
-                        dealAmountString,
+                        bigDecimalService.roundToPlainString(deal.getAmount(), 0),
                         deal.getFiatCurrency().getGenitive(),
                         requisite,
                         Objects.nonNull(deal.getPaymentType().getRequisiteAdditionalText())
@@ -813,8 +804,6 @@ public class ExchangeService {
                 );
             }
         } else {
-            deal.setAmount(dealAmount);
-
             messageImage = MessageImage.BUILD_DEAL_SELL;
             Integer subType = messageImageService.getSubType(messageImage);
             text = messageImageService.getMessage(messageImage);
