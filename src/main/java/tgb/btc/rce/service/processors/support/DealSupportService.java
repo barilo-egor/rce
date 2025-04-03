@@ -205,9 +205,7 @@ public class DealSupportService {
                     + deal.getMerchant().getDisplayStatus(deal.getMerchantOrderStatus())  + "</b>\n========\n\n";
             dealInfo = merchantString + dealInfo;
         }
-        String dealAmount = Objects.nonNull(deal.getMerchant())
-                ? deal.getAmount().toString()
-                : bigDecimalService.roundToPlainString(deal.getAmount());
+        String dealAmount = bigDecimalService.roundToPlainString(deal.getAmount());
         return String.format(
                 dealInfo, deal.getDealType().getGenitive(), deal.getPid(),
                 deal.getDateTime().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")),
