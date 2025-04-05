@@ -104,7 +104,10 @@ public class BotMerchantService implements IBotMerchantService {
                 break;
         }
         List<InlineButton> buttons = new ArrayList<>(buttonsTextAndData.entrySet().stream()
-                .map(entry -> InlineButton.builder().text(entry.getValue()).data(entry.getKey()).build())
+                .map(entry -> InlineButton.builder()
+                        .text(entry.getValue())
+                        .data(callbackDataService.buildData(callbackQueryData, paymentTypePid, entry.getKey()))
+                        .build())
                 .toList());
         boolean hasBind = switch (merchant) {
             case NONE -> false;
@@ -119,7 +122,7 @@ public class BotMerchantService implements IBotMerchantService {
             case ONLY_PAYS -> Objects.nonNull(paymentType.getOnlyPaysPaymentType());
             case EVO_PAY -> Objects.nonNull(paymentType.getEvoPayPaymentMethod());
         };
-        if (hasBind) {
+        if (!hasBind) {
             responseSender.sendMessage(chatId, "Привязка типа оплаты <b>\"" + paymentType.getName()
                             + "\"</b> к методу оплаты " + merchant.getDisplayName() + " отсутствует. Выберите новый метод.",
                     keyboardBuildService.buildInline(buttons, 1));
