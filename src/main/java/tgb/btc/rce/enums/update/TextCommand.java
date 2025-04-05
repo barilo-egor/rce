@@ -84,7 +84,8 @@ public enum TextCommand {
     ADDITIONAL_PAYMENT_TYPE_TEXT("Текст реквизитов", UserRole.ADMIN_ACCESS),
     PAY_POINTS_BINDING("PayPoints привязка", UserRole.ADMIN_ACCESS),
     ONLY_PAYS_BINDING("OnlyPays привязка", UserRole.ADMIN_ACCESS),
-    EVO_PAY_BINDING("EvoPay привязка", UserRole.ADMIN_ACCESS)
+    EVO_PAY_BINDING("EvoPay привязка", UserRole.ADMIN_ACCESS),
+    NICE_PAY_BINDING("NicePay привязка", UserRole.ADMIN_ACCESS)
     ;
 
     private final String text;
