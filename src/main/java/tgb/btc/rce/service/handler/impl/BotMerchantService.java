@@ -46,17 +46,9 @@ public class BotMerchantService implements IBotMerchantService {
             return;
         }
         CallbackQueryData callbackQueryData = switch (merchant) {
-            case NONE -> null;
-            case PAYSCROW -> null;
-            case DASH_PAY -> null;
-            case ALFA_TEAM -> null;
-            case ALFA_TEAM_TJS -> null;
-            case ALFA_TEAM_VTB -> null;
-            case ALFA_TEAM_ALFA -> null;
-            case ALFA_TEAM_SBER -> null;
-            case PAY_POINTS -> null;
             case ONLY_PAYS -> CallbackQueryData.ONLY_PAYS_BINDING;
             case EVO_PAY -> CallbackQueryData.EVO_PAY_BINDING;
+            default -> null;
         };
         List<InlineButton> buttons = new ArrayList<>(paymentTypes
                 .stream()
@@ -78,17 +70,9 @@ public class BotMerchantService implements IBotMerchantService {
         PaymentType paymentType = paymentTypeService.getByPid(paymentTypePid);
         responseSender.deleteMessage(chatId, messageId);
         CallbackQueryData callbackQueryData = switch (merchant) {
-            case NONE -> null;
-            case PAYSCROW -> null;
-            case DASH_PAY -> null;
-            case ALFA_TEAM -> null;
-            case ALFA_TEAM_TJS -> null;
-            case ALFA_TEAM_VTB -> null;
-            case ALFA_TEAM_ALFA -> null;
-            case ALFA_TEAM_SBER -> null;
-            case PAY_POINTS -> null;
             case ONLY_PAYS -> CallbackQueryData.ONLY_PAYS_METHOD;
             case EVO_PAY -> CallbackQueryData.EVO_PAY_METHOD;
+            default -> null;
         };
         Map<String, String> buttonsTextAndData = new LinkedHashMap<>();
         switch (merchant) {
@@ -110,17 +94,9 @@ public class BotMerchantService implements IBotMerchantService {
                         .build())
                 .toList());
         boolean hasBind = switch (merchant) {
-            case NONE -> false;
-            case PAYSCROW -> false;
-            case DASH_PAY -> false;
-            case ALFA_TEAM -> false;
-            case ALFA_TEAM_TJS -> false;
-            case ALFA_TEAM_VTB -> false;
-            case ALFA_TEAM_ALFA -> false;
-            case ALFA_TEAM_SBER -> false;
-            case PAY_POINTS -> false;
             case ONLY_PAYS -> Objects.nonNull(paymentType.getOnlyPaysPaymentType());
             case EVO_PAY -> Objects.nonNull(paymentType.getEvoPayPaymentMethod());
+            default -> false;
         };
         if (!hasBind) {
             responseSender.sendMessage(chatId, "Привязка типа оплаты <b>\"" + paymentType.getName()
@@ -132,17 +108,9 @@ public class BotMerchantService implements IBotMerchantService {
                     .data(callbackDataService.buildData(callbackQueryData, paymentTypePid))
                     .build());
             String methodName = switch (merchant) {
-                case NONE -> null;
-                case PAYSCROW -> null;
-                case DASH_PAY -> null;
-                case ALFA_TEAM -> null;
-                case ALFA_TEAM_TJS -> null;
-                case ALFA_TEAM_VTB -> null;
-                case ALFA_TEAM_ALFA -> null;
-                case ALFA_TEAM_SBER -> null;
-                case PAY_POINTS -> null;
                 case ONLY_PAYS -> paymentType.getOnlyPaysPaymentType().getDescription();
                 case EVO_PAY -> paymentType.getEvoPayPaymentMethod().getDescription();
+                default -> null;
             };
             responseSender.sendMessage(chatId, "Тип оплаты <b>\"" + paymentType.getName()
                             + "\"</b> привязан к " + merchant.getDisplayName() + " методу оплаты <b>\""
