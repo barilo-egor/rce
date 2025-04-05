@@ -8,21 +8,21 @@ import tgb.btc.rce.service.IBotMerchantService;
 import tgb.btc.rce.service.handler.message.text.ITextCommandHandler;
 
 @Service
-public class OnlyPaysBindingHandler implements ITextCommandHandler {
+public class EvoPayBindingHandler implements ITextCommandHandler {
 
     private final IBotMerchantService botMerchantService;
 
-    public OnlyPaysBindingHandler(IBotMerchantService botMerchantService) {
+    public EvoPayBindingHandler(IBotMerchantService botMerchantService) {
         this.botMerchantService = botMerchantService;
     }
 
     @Override
     public void handle(Message message) {
-        botMerchantService.sendRequestPaymentType(Merchant.ONLY_PAYS, message.getChatId());
+        botMerchantService.sendRequestPaymentType(Merchant.EVO_PAY, message.getChatId());
     }
 
     @Override
     public TextCommand getTextCommand() {
-        return TextCommand.ONLY_PAYS_BINDING;
+        return TextCommand.EVO_PAY_BINDING;
     }
 }
