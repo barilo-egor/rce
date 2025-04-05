@@ -93,5 +93,7 @@ public enum CallbackQueryData {
     ONLY_PAYS_BINDING,
     ONLY_PAYS_METHOD,
     EVO_PAY_BINDING,
-    EVO_PAY_METHOD
+    EVO_PAY_METHOD,
+    NICE_PAY_BINDING,
+    NICE_PAY_METHOD
 }

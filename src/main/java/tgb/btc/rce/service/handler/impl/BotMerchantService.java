@@ -6,6 +6,7 @@ import tgb.btc.library.constants.enums.Merchant;
 import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
 import tgb.btc.library.constants.enums.web.merchant.evopay.EvoPayPaymentMethod;
+import tgb.btc.library.constants.enums.web.merchant.nicepay.NicePayMethod;
 import tgb.btc.library.constants.enums.web.merchant.onlypays.OnlyPaysPaymentType;
 import tgb.btc.library.interfaces.service.bean.bot.IPaymentTypeService;
 import tgb.btc.rce.enums.InlineType;
@@ -48,6 +49,7 @@ public class BotMerchantService implements IBotMerchantService {
         CallbackQueryData callbackQueryData = switch (merchant) {
             case ONLY_PAYS -> CallbackQueryData.ONLY_PAYS_BINDING;
             case EVO_PAY -> CallbackQueryData.EVO_PAY_BINDING;
+            case NICE_PAY -> CallbackQueryData.NICE_PAY_BINDING;
             default -> null;
         };
         List<InlineButton> buttons = new ArrayList<>(paymentTypes
@@ -72,6 +74,7 @@ public class BotMerchantService implements IBotMerchantService {
         CallbackQueryData callbackQueryData = switch (merchant) {
             case ONLY_PAYS -> CallbackQueryData.ONLY_PAYS_METHOD;
             case EVO_PAY -> CallbackQueryData.EVO_PAY_METHOD;
+            case NICE_PAY -> CallbackQueryData.NICE_PAY_METHOD;
             default -> null;
         };
         Map<String, String> buttonsTextAndData = new LinkedHashMap<>();
@@ -86,6 +89,11 @@ public class BotMerchantService implements IBotMerchantService {
                     buttonsTextAndData.put(pm.name(), pm.getDescription());
                 }
                 break;
+            case NICE_PAY:
+                for (NicePayMethod nicePayMethod: NicePayMethod.values()) {
+                    buttonsTextAndData.put(nicePayMethod.name(), nicePayMethod.getDescription());
+                }
+                break;
         }
         List<InlineButton> buttons = new ArrayList<>(buttonsTextAndData.entrySet().stream()
                 .map(entry -> InlineButton.builder()
@@ -96,6 +104,7 @@ public class BotMerchantService implements IBotMerchantService {
         boolean hasBind = switch (merchant) {
             case ONLY_PAYS -> Objects.nonNull(paymentType.getOnlyPaysPaymentType());
             case EVO_PAY -> Objects.nonNull(paymentType.getEvoPayPaymentMethod());
+            case NICE_PAY -> Objects.nonNull(paymentType.getNicePayMethod());
             default -> false;
         };
         if (!hasBind) {
@@ -110,6 +119,7 @@ public class BotMerchantService implements IBotMerchantService {
             String methodName = switch (merchant) {
                 case ONLY_PAYS -> paymentType.getOnlyPaysPaymentType().getDescription();
                 case EVO_PAY -> paymentType.getEvoPayPaymentMethod().getDescription();
+                case NICE_PAY -> paymentType.getNicePayMethod().getDescription();
                 default -> null;
             };
             responseSender.sendMessage(chatId, "Тип оплаты <b>\"" + paymentType.getName()
@@ -137,6 +147,11 @@ public class BotMerchantService implements IBotMerchantService {
                     EvoPayPaymentMethod evoPayPaymentMethod = EvoPayPaymentMethod.valueOf(paymentTypeName);
                     methodName = evoPayPaymentMethod.getDescription();
                     paymentType.setEvoPayPaymentMethod(evoPayPaymentMethod);
+                }
+                case NICE_PAY -> {
+                    NicePayMethod nicePayMethod = NicePayMethod.valueOf(paymentTypeName);
+                    methodName = nicePayMethod.getDescription();
+                    paymentType.setNicePayMethod(nicePayMethod);
                 }
             }
             responseSender.sendMessage(chatId, "Тип оплаты <b>\"" + paymentType.getName()
