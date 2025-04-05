@@ -158,7 +158,17 @@ public class BotMerchantService implements IBotMerchantService {
                     + "\"</b> связан с " + merchant.getDisplayName() + " методом оплаты <b>\"" + methodName
                     + "\"</b>.");
         } else {
-            paymentType.setOnlyPaysPaymentType(null);
+            switch (merchant) {
+                case ONLY_PAYS -> {
+                    paymentType.setOnlyPaysPaymentType(null);
+                }
+                case EVO_PAY -> {
+                    paymentType.setEvoPayPaymentMethod(null);
+                }
+                case NICE_PAY -> {
+                    paymentType.setNicePayMethod(null);
+                }
+            }
             responseSender.sendMessage(chatId, "Тип оплаты <b>\"" + paymentType.getName()
                     + "\"</b> отвязан от " + merchant.getDisplayName() + " метода оплаты.");
         }
