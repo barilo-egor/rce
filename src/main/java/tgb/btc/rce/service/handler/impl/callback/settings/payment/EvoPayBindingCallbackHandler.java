@@ -8,22 +8,22 @@ import tgb.btc.rce.service.IBotMerchantService;
 import tgb.btc.rce.service.handler.ICallbackQueryHandler;
 
 @Service
-public class OnlyPaysMethodHandler implements ICallbackQueryHandler {
+public class EvoPayBindingCallbackHandler implements ICallbackQueryHandler {
 
     private final IBotMerchantService botMerchantService;
 
-    public OnlyPaysMethodHandler(IBotMerchantService botMerchantService) {
+    public EvoPayBindingCallbackHandler(IBotMerchantService botMerchantService) {
         this.botMerchantService = botMerchantService;
     }
 
     @Override
     public void handle(CallbackQuery callbackQuery) {
-        botMerchantService.saveBind(Merchant.ONLY_PAYS, callbackQuery.getMessage().getChatId(), callbackQuery.getData(),
-                callbackQuery.getMessage().getMessageId());
+        botMerchantService.sendRequestMethod(Merchant.EVO_PAY, callbackQuery.getMessage().getChatId(),
+                callbackQuery.getData(), callbackQuery.getMessage().getMessageId());
     }
 
     @Override
     public CallbackQueryData getCallbackQueryData() {
-        return CallbackQueryData.ONLY_PAYS_METHOD;
+        return CallbackQueryData.EVO_PAY_BINDING;
     }
 }
