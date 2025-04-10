@@ -106,7 +106,6 @@ public enum Menu {
                     TextCommand.ALFA_TEAM_TJS_BINDING, TextCommand.ALFA_TEAM_VTB_BINDING, TextCommand.ALFA_TEAM_ALFA_BINDING,
                     TextCommand.ALFA_TEAM_SBER_BINDING, TextCommand.PAY_POINTS_BINDING, TextCommand.ONLY_PAYS_BINDING,
                     TextCommand.EVO_PAY_BINDING, TextCommand.NICE_PAY_BINDING, TextCommand.PAY_FINITY_BINDING,
-                    TextCommand.HONEY_MONEY_BINDING,
                     TextCommand.RETURN
             )
     );
