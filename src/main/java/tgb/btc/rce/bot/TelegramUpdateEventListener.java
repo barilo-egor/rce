@@ -2,6 +2,7 @@ package tgb.btc.rce.bot;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -88,6 +89,7 @@ public class TelegramUpdateEventListener {
     }
 
     @EventListener
+    @Async
     public void update(TelegramUpdateEvent event) {
         Update update = event.getUpdate();
         log.trace("Получен апдейт: {}", event.getUpdate());
