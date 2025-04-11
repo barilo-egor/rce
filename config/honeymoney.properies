@@ -1,4 +1,0 @@
-honeymoney.api.base.url=
-honeymoney.api.secret=
-honeymoney.api.clientid=
-honeymoney.api.token.request.url=https://identity.moneyhoney.io/realms/honeymoney/protocol/openid-connect/token
