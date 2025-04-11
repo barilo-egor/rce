@@ -65,8 +65,10 @@ import tgb.btc.rce.vo.CalculatorQuery;
 import tgb.btc.rce.vo.InlineButton;
 
 import java.io.File;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.nio.file.Files;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -1004,6 +1006,14 @@ public class ExchangeService {
                 nicePayMerchantService.uploadCheck(new File(path), deal.getMerchantOrderId());
             } catch (Exception e) {
                 log.error("Не удалось загрузить чек по сделке №{}", deal.getPid(), e);
+            } finally {
+                File fileToDelete = new File(path);
+                if (fileToDelete.exists()) {
+                    try {
+                        Files.deleteIfExists(fileToDelete.toPath());
+                    } catch (IOException ignored) {
+                    }
+                }
             }
         }
         return true;
