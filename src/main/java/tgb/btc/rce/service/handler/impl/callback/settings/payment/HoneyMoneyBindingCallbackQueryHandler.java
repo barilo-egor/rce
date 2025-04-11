@@ -8,11 +8,11 @@ import tgb.btc.rce.service.IBotMerchantService;
 import tgb.btc.rce.service.handler.ICallbackQueryHandler;
 
 @Service
-public class HoneyMoneyCallbackQueryHandler implements ICallbackQueryHandler {
+public class HoneyMoneyBindingCallbackQueryHandler implements ICallbackQueryHandler {
 
     private final IBotMerchantService botMerchantService;
 
-    public HoneyMoneyCallbackQueryHandler(IBotMerchantService botMerchantService) {
+    public HoneyMoneyBindingCallbackQueryHandler(IBotMerchantService botMerchantService) {
         this.botMerchantService = botMerchantService;
     }
 
