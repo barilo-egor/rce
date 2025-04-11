@@ -34,12 +34,14 @@ import tgb.btc.library.interfaces.service.bean.bot.user.IModifyUserService;
 import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.library.interfaces.service.design.IMessageImageService;
 import tgb.btc.library.interfaces.util.IBigDecimalService;
+import tgb.btc.library.interfaces.util.IBufferFileService;
 import tgb.btc.library.interfaces.util.IFiatCurrencyService;
 import tgb.btc.library.service.process.CalculateService;
 import tgb.btc.library.service.properties.ButtonsDesignPropertiesReader;
 import tgb.btc.library.service.properties.VariablePropertiesReader;
 import tgb.btc.library.service.schedule.DealDeleteScheduler;
 import tgb.btc.library.service.web.merchant.dashpay.DashPayMerchantService;
+import tgb.btc.library.service.web.merchant.nicepay.NicePayMerchantService;
 import tgb.btc.library.service.web.merchant.payscrow.PayscrowMerchantService;
 import tgb.btc.library.vo.RequisiteVO;
 import tgb.btc.library.vo.calculate.DealAmount;
@@ -62,6 +64,7 @@ import tgb.btc.rce.service.util.IMessagePropertiesService;
 import tgb.btc.rce.vo.CalculatorQuery;
 import tgb.btc.rce.vo.InlineButton;
 
+import java.io.File;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
@@ -148,6 +151,20 @@ public class ExchangeService {
     private DashPayMerchantService dashPayMerchantService;
 
     private FileDownloader fileDownloader;
+
+    private IBufferFileService bufferFileService;
+
+    private NicePayMerchantService nicePayMerchantService;
+
+    @Autowired
+    public void setNicePayMerchantService(NicePayMerchantService nicePayMerchantService) {
+        this.nicePayMerchantService = nicePayMerchantService;
+    }
+
+    @Autowired
+    public void setBufferFileService(IBufferFileService bufferFileService) {
+        this.bufferFileService = bufferFileService;
+    }
 
     @Autowired
     public void setFileDownloader(FileDownloader fileDownloader) {
@@ -980,6 +997,15 @@ public class ExchangeService {
         paymentReceipts.add(paymentReceipt);
         deal.setPaymentReceipts(paymentReceipts);
         modifyDealService.save(deal);
+        if (Merchant.NICE_PAY.equals(deal.getMerchant())) {
+            String path = bufferFileService.getPath() + System.currentTimeMillis() + ".jpg";
+            try {
+                fileDownloader.downloadFile(paymentReceipt.getReceipt(), path);
+                nicePayMerchantService.uploadCheck(new File(path), deal.getMerchantOrderId());
+            } catch (Exception e) {
+                log.error("Не удалось загрузить чек по сделке №{}", deal.getPid(), e);
+            }
+        }
         return true;
     }
 
