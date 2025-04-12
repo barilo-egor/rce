@@ -1,0 +1,58 @@
+dashPay:
+  api:
+    key:
+    token:
+    url:
+      client:
+      main:
+alfaTeam:
+  api:
+    notification:
+      token:
+    key:
+      base:
+      tjs:
+      vtb:
+      alfa:
+      sber:
+    secret:
+    url:
+      main:
+evoPay:
+  api:
+    key:
+    url:
+honeyMoney:
+  api:
+    url:
+      main:
+      token:
+    secret:
+    clientId:
+    signKey:
+onlyPays:
+  api:
+    url:
+    secret:
+    id:
+nicePay:
+  api:
+    merchantId:
+    secret:
+    url:
+paypoints:
+  api:
+    baseUrl:
+    token:
+payscrow:
+  api:
+    key:
+    secret:
+    domain:
+payFinity:
+  api:
+    url:
+    key:
+      public:
+      private:
+    timeout:
