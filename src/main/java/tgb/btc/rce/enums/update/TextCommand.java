@@ -86,7 +86,8 @@ public enum TextCommand {
     ONLY_PAYS_BINDING("OnlyPays привязка", UserRole.ADMIN_ACCESS),
     EVO_PAY_BINDING("EvoPay привязка", UserRole.ADMIN_ACCESS),
     NICE_PAY_BINDING("NicePay привязка", UserRole.ADMIN_ACCESS),
-    HONEY_MONEY_BINDING("HoneyMoney привязка", UserRole.ADMIN_ACCESS)
+    HONEY_MONEY_BINDING("HoneyMoney привязка", UserRole.ADMIN_ACCESS),
+    WELL_BIT_BINDING("WellBit привязка", UserRole.ADMIN_ACCESS)
     ;
 
     private final String text;

@@ -56,3 +56,10 @@ payFinity:
       public:
       private:
     timeout:
+wellBit:
+  api:
+    secret: ""
+    login: ""
+    id: ""
+    token: ""
+    url: ""
