@@ -48,7 +48,7 @@ public class PayscrowPaymentTypeHandler implements ICallbackQueryHandler {
                 .map(entry ->
                         InlineButton.builder()
                                 .text(entry.getKey())
-                                .data(callbackDataService.buildData(CallbackQueryData.PAYSCROW_METHOD_ID, paymentTypePid, entry.getValue()))
+                                .data(callbackDataService.buildData(CallbackQueryData.PAYSCROW_METHOD, paymentTypePid, entry.getValue()))
                                 .build())
                 .toList());
         if (Objects.isNull(paymentType.getPayscrowPaymentMethodId())) {
@@ -58,7 +58,7 @@ public class PayscrowPaymentTypeHandler implements ICallbackQueryHandler {
         } else {
             buttons.add(InlineButton.builder()
                     .text("❌ Удалить привязку")
-                    .data(callbackDataService.buildData(CallbackQueryData.PAYSCROW_METHOD_ID, paymentTypePid))
+                    .data(callbackDataService.buildData(CallbackQueryData.PAYSCROW_METHOD, paymentTypePid))
                     .build());
             responseSender.sendMessage(chatId, "Тип оплаты <b>\"" + paymentType.getName()
                     + "\"</b> привязан к Payscrow методу оплаты <b>\""
@@ -69,6 +69,6 @@ public class PayscrowPaymentTypeHandler implements ICallbackQueryHandler {
 
     @Override
     public CallbackQueryData getCallbackQueryData() {
-        return CallbackQueryData.PAYSCROW_PAYMENT_TYPE;
+        return CallbackQueryData.PAYSCROW_BINDING;
     }
 }

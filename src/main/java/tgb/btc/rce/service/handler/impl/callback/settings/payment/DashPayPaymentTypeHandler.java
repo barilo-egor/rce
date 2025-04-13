@@ -45,7 +45,7 @@ public class DashPayPaymentTypeHandler implements ICallbackQueryHandler {
         List<InlineButton> buttons = new ArrayList<>(Arrays.stream(OrderMethod.values())
                 .map(method -> InlineButton.builder()
                         .text(method.getDisplayName())
-                        .data(callbackDataService.buildData(CallbackQueryData.DASH_PAY_METHOD_ID, paymentTypePid, method.name()))
+                        .data(callbackDataService.buildData(CallbackQueryData.DASH_PAY_METHOD, paymentTypePid, method.name()))
                         .build())
                 .toList());
         if (Objects.isNull(paymentType.getDashPayOrderMethod())) {
@@ -55,7 +55,7 @@ public class DashPayPaymentTypeHandler implements ICallbackQueryHandler {
         } else {
             buttons.add(InlineButton.builder()
                     .text("❌ Удалить привязку")
-                    .data(callbackDataService.buildData(CallbackQueryData.DASH_PAY_METHOD_ID, paymentTypePid))
+                    .data(callbackDataService.buildData(CallbackQueryData.DASH_PAY_METHOD, paymentTypePid))
                     .build());
             responseSender.sendMessage(chatId, "Тип оплаты <b>\"" + paymentType.getName()
                             + "\"</b> привязан к DashPay методу оплаты <b>\""
@@ -66,6 +66,6 @@ public class DashPayPaymentTypeHandler implements ICallbackQueryHandler {
 
     @Override
     public CallbackQueryData getCallbackQueryData() {
-        return CallbackQueryData.DASH_PAY_PAYMENT_TYPE;
+        return CallbackQueryData.DASH_PAY_BINDING;
     }
 }

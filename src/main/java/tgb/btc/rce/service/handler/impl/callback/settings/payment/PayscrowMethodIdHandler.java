@@ -53,6 +53,6 @@ public class PayscrowMethodIdHandler implements ICallbackQueryHandler {
 
     @Override
     public CallbackQueryData getCallbackQueryData() {
-        return CallbackQueryData.PAYSCROW_METHOD_ID;
+        return CallbackQueryData.PAYSCROW_METHOD;
     }
 }

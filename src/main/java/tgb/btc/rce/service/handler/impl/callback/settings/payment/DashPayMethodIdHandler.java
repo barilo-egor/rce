@@ -52,6 +52,6 @@ public class DashPayMethodIdHandler implements ICallbackQueryHandler {
 
     @Override
     public CallbackQueryData getCallbackQueryData() {
-        return CallbackQueryData.DASH_PAY_METHOD_ID;
+        return CallbackQueryData.DASH_PAY_METHOD;
     }
 }

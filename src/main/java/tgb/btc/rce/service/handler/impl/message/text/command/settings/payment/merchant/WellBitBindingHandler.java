@@ -1,24 +1,20 @@
 package tgb.btc.rce.service.handler.impl.message.text.command.settings.payment.merchant;
 
 import org.springframework.stereotype.Service;
-import org.telegram.telegrambots.meta.api.objects.Message;
 import tgb.btc.library.constants.enums.Merchant;
 import tgb.btc.rce.enums.update.TextCommand;
 import tgb.btc.rce.service.IBotMerchantService;
-import tgb.btc.rce.service.handler.message.text.ITextCommandHandler;
 
 @Service
-public class WellBitBindingHandler implements ITextCommandHandler {
+public class WellBitBindingHandler extends MerchantBindingHandler {
 
-    private final IBotMerchantService botMerchantService;
-
-    public WellBitBindingHandler(IBotMerchantService botMerchantService) {
-        this.botMerchantService = botMerchantService;
+    protected WellBitBindingHandler(IBotMerchantService botMerchantService) {
+        super(botMerchantService);
     }
 
     @Override
-    public void handle(Message message) {
-        botMerchantService.sendRequestPaymentType(Merchant.WELL_BIT, message.getChatId());
+    public Merchant getMerchant() {
+        return Merchant.WELL_BIT;
     }
 
     @Override

@@ -1,24 +1,20 @@
 package tgb.btc.rce.service.handler.impl.message.text.command.settings.payment.merchant;
 
 import org.springframework.stereotype.Service;
-import org.telegram.telegrambots.meta.api.objects.Message;
 import tgb.btc.library.constants.enums.Merchant;
 import tgb.btc.rce.enums.update.TextCommand;
 import tgb.btc.rce.service.IBotMerchantService;
-import tgb.btc.rce.service.handler.message.text.ITextCommandHandler;
 
 @Service
-public class EvoPayBindingHandler implements ITextCommandHandler {
+public class EvoPayBindingHandler extends MerchantBindingHandler {
 
-    private final IBotMerchantService botMerchantService;
-
-    public EvoPayBindingHandler(IBotMerchantService botMerchantService) {
-        this.botMerchantService = botMerchantService;
+    protected EvoPayBindingHandler(IBotMerchantService botMerchantService) {
+        super(botMerchantService);
     }
 
     @Override
-    public void handle(Message message) {
-        botMerchantService.sendRequestPaymentType(Merchant.EVO_PAY, message.getChatId());
+    public Merchant getMerchant() {
+        return Merchant.EVO_PAY;
     }
 
     @Override

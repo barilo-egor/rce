@@ -50,7 +50,7 @@ public class PayscrowBindingHandler implements ITextCommandHandler {
                 .stream()
                         .map(paymentType -> InlineButton.builder()
                                 .text(paymentType.getName())
-                                .data(callbackDataService.buildData(CallbackQueryData.PAYSCROW_PAYMENT_TYPE, paymentType.getPid()))
+                                .data(callbackDataService.buildData(CallbackQueryData.PAYSCROW_BINDING, paymentType.getPid()))
                                 .inlineType(InlineType.CALLBACK_DATA)
                                 .build())
                         .toList()

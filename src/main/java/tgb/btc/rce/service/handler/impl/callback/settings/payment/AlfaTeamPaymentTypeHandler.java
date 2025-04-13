@@ -4,7 +4,6 @@ import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import tgb.btc.library.bean.bot.PaymentType;
 import tgb.btc.library.constants.enums.web.merchant.alfateam.PaymentOption;
-import tgb.btc.library.constants.enums.web.merchant.dashpay.OrderMethod;
 import tgb.btc.library.interfaces.service.bean.bot.IPaymentTypeService;
 import tgb.btc.rce.enums.update.CallbackQueryData;
 import tgb.btc.rce.sender.IResponseSender;
@@ -67,6 +66,6 @@ public class AlfaTeamPaymentTypeHandler implements ICallbackQueryHandler {
 
     @Override
     public CallbackQueryData getCallbackQueryData() {
-        return CallbackQueryData.ALFA_TEAM_PAYMENT_TYPE;
+        return CallbackQueryData.ALFA_TEAM_BINDING;
     }
 }
