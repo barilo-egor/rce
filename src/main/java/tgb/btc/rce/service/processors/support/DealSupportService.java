@@ -202,7 +202,7 @@ public class DealSupportService {
         if (Objects.nonNull(deal.getMerchant())) {
             String merchantString = "\uD83D\uDCB3 \nСделка мерчанта <b>" + deal.getMerchant().getDisplayName()
                     + "</b>\nСтатус ордера: <b>"
-                    + deal.getMerchant().getDisplayStatus(deal.getMerchantOrderStatus())  + "</b>\n========\n\n";
+                    + deal.getMerchant().getGetDisplayStatusFunction().apply(deal.getMerchantOrderStatus())  + "</b>\n========\n\n";
             dealInfo = merchantString + dealInfo;
         }
         String dealAmount = bigDecimalService.roundToPlainString(deal.getAmount());
