@@ -23,6 +23,6 @@ public class TextMessageTypeService implements ITextMessageTypeService {
         }
         if (text.startsWith("/")) return TextMessageType.SLASH_COMMAND;
         if (textCommandService.isTextCommand(text)) return TextMessageType.TEXT_COMMAND;
-        return null;
+        return TextMessageType.SIMPLE_TEXT;
     }
 }

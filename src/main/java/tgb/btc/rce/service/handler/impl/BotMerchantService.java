@@ -5,11 +5,6 @@ import tgb.btc.library.bean.bot.PaymentType;
 import tgb.btc.library.constants.enums.Merchant;
 import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
-import tgb.btc.library.constants.enums.web.merchant.evopay.EvoPayPaymentMethod;
-import tgb.btc.library.constants.enums.web.merchant.honeymoney.HoneyMoneyMethod;
-import tgb.btc.library.constants.enums.web.merchant.nicepay.NicePayMethod;
-import tgb.btc.library.constants.enums.web.merchant.onlypays.OnlyPaysPaymentType;
-import tgb.btc.library.constants.enums.web.merchant.wellbit.WellBitMethod;
 import tgb.btc.library.interfaces.service.bean.bot.IPaymentTypeService;
 import tgb.btc.rce.enums.InlineType;
 import tgb.btc.rce.enums.update.CallbackQueryData;
@@ -19,7 +14,9 @@ import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
 import tgb.btc.rce.service.util.ICallbackDataService;
 import tgb.btc.rce.vo.InlineButton;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 @Service
 public class BotMerchantService implements IBotMerchantService {
@@ -48,19 +45,11 @@ public class BotMerchantService implements IBotMerchantService {
                     + FiatCurrency.RUB.getDisplayName() + "</b>.");
             return;
         }
-        CallbackQueryData callbackQueryData = switch (merchant) {
-            case ONLY_PAYS -> CallbackQueryData.ONLY_PAYS_BINDING;
-            case EVO_PAY -> CallbackQueryData.EVO_PAY_BINDING;
-            case NICE_PAY -> CallbackQueryData.NICE_PAY_BINDING;
-            case HONEY_MONEY -> CallbackQueryData.HONEY_MONEY_BINDING;
-            case WELL_BIT -> CallbackQueryData.WELL_BIT_BINDING;
-            default -> null;
-        };
         List<InlineButton> buttons = new ArrayList<>(paymentTypes
                 .stream()
                 .map(paymentType -> InlineButton.builder()
                         .text(paymentType.getName())
-                        .data(callbackDataService.buildData(callbackQueryData, paymentType.getPid()))
+                        .data(callbackDataService.buildData(CallbackQueryData.PAYMENT_TYPE_BINDING, merchant.name(), paymentType.getPid()))
                         .inlineType(InlineType.CALLBACK_DATA)
                         .build())
                 .toList()
@@ -71,77 +60,28 @@ public class BotMerchantService implements IBotMerchantService {
     }
 
     @Override
-    public void sendRequestMethod(Merchant merchant, Long chatId, String data, Integer messageId) {
-        Long paymentTypePid = callbackDataService.getLongArgument(data, 1);
+    public void sendRequestMethod(Long chatId, String data, Integer messageId) {
+        Merchant merchant = Merchant.valueOf(callbackDataService.getArgument(data, 1));
+        Long paymentTypePid = callbackDataService.getLongArgument(data, 2);
         PaymentType paymentType = paymentTypeService.getByPid(paymentTypePid);
         responseSender.deleteMessage(chatId, messageId);
-        CallbackQueryData callbackQueryData = switch (merchant) {
-            case ONLY_PAYS -> CallbackQueryData.ONLY_PAYS_METHOD;
-            case EVO_PAY -> CallbackQueryData.EVO_PAY_METHOD;
-            case NICE_PAY -> CallbackQueryData.NICE_PAY_METHOD;
-            case HONEY_MONEY -> CallbackQueryData.HONEY_MONEY_METHOD;
-            case WELL_BIT -> CallbackQueryData.WELL_BIT_METHOD;
-            default -> null;
-        };
-        Map<String, String> buttonsTextAndData = new LinkedHashMap<>();
-        switch (merchant) {
-            case ONLY_PAYS:
-                for (OnlyPaysPaymentType pt: OnlyPaysPaymentType.values()) {
-                    buttonsTextAndData.put(pt.name(), pt.getDescription());
-                }
-                break;
-            case EVO_PAY:
-                for (EvoPayPaymentMethod pm: EvoPayPaymentMethod.values()) {
-                    buttonsTextAndData.put(pm.name(), pm.getDescription());
-                }
-                break;
-            case NICE_PAY:
-                for (NicePayMethod nicePayMethod: NicePayMethod.values()) {
-                    buttonsTextAndData.put(nicePayMethod.name(), nicePayMethod.getDescription());
-                }
-                break;
-            case HONEY_MONEY:
-                for (HoneyMoneyMethod honeyMoneyMethod: HoneyMoneyMethod.values()) {
-                    buttonsTextAndData.put(honeyMoneyMethod.name(), honeyMoneyMethod.getDescription());
-                }
-                break;
-            case WELL_BIT:
-                for (WellBitMethod wellBitMethod : WellBitMethod.values()) {
-                    buttonsTextAndData.put(wellBitMethod.name(), wellBitMethod.getDescription());
-                }
-                break;
-        }
-        List<InlineButton> buttons = new ArrayList<>(buttonsTextAndData.entrySet().stream()
+
+        List<InlineButton> buttons = new ArrayList<>(merchant.getMethodDescriptions().entrySet().stream()
                 .map(entry -> InlineButton.builder()
                         .text(entry.getValue())
-                        .data(callbackDataService.buildData(callbackQueryData, paymentTypePid, entry.getKey()))
+                        .data(callbackDataService.buildData(CallbackQueryData.PAYMENT_TYPE_METHOD, merchant.name(), paymentTypePid, entry.getKey()))
                         .build())
                 .toList());
-        boolean hasBind = switch (merchant) {
-            case ONLY_PAYS -> Objects.nonNull(paymentType.getOnlyPaysPaymentType());
-            case EVO_PAY -> Objects.nonNull(paymentType.getEvoPayPaymentMethod());
-            case NICE_PAY -> Objects.nonNull(paymentType.getNicePayMethod());
-            case HONEY_MONEY -> Objects.nonNull(paymentType.getHoneyMoneyMethod());
-            case WELL_BIT -> Objects.nonNull(paymentType.getWellBitMethod());
-            default -> false;
-        };
-        if (!hasBind) {
+        if (!merchant.getHasBindPredicate().test(paymentType)) {
             responseSender.sendMessage(chatId, "Привязка типа оплаты <b>\"" + paymentType.getName()
                             + "\"</b> к методу оплаты " + merchant.getDisplayName() + " отсутствует. Выберите новый метод.",
                     keyboardBuildService.buildInline(buttons, 1));
         } else {
             buttons.add(InlineButton.builder()
                     .text("❌ Удалить привязку")
-                    .data(callbackDataService.buildData(callbackQueryData, paymentTypePid))
+                    .data(callbackDataService.buildData(CallbackQueryData.PAYMENT_TYPE_METHOD, merchant.name(), paymentTypePid))
                     .build());
-            String methodName = switch (merchant) {
-                case ONLY_PAYS -> paymentType.getOnlyPaysPaymentType().getDescription();
-                case EVO_PAY -> paymentType.getEvoPayPaymentMethod().getDescription();
-                case NICE_PAY -> paymentType.getNicePayMethod().getDescription();
-                case HONEY_MONEY -> paymentType.getHoneyMoneyMethod().getDescription();
-                case WELL_BIT -> paymentType.getWellBitMethod().getDescription();
-                default -> null;
-            };
+            String methodName = merchant.getGetMethodDescriptionFunction().apply(paymentType);
             responseSender.sendMessage(chatId, "Тип оплаты <b>\"" + paymentType.getName()
                             + "\"</b> привязан к " + merchant.getDisplayName() + " методу оплаты <b>\""
                             + methodName + "\"</b>.",
@@ -150,51 +90,20 @@ public class BotMerchantService implements IBotMerchantService {
     }
 
     @Override
-    public void saveBind(Merchant merchant, Long chatId, String data, Integer messageId) {
-        Long paymentTypePid = callbackDataService.getLongArgument(data, 1);
-        String paymentTypeName = callbackDataService.getArgument(data, 2);
+    public void saveBind(Long chatId, String data, Integer messageId) {
+        Merchant merchant = Merchant.valueOf(callbackDataService.getArgument(data, 1));
+        Long paymentTypePid = callbackDataService.getLongArgument(data, 2);
+        String paymentTypeName = callbackDataService.getArgument(data, 3);
         PaymentType paymentType = paymentTypeService.getByPid(paymentTypePid);
         responseSender.deleteMessage(chatId, messageId);
         if (Objects.nonNull(paymentTypeName)) {
-            String methodName = null;
-            switch (merchant) {
-                case ONLY_PAYS -> {
-                    OnlyPaysPaymentType onlyPaysPaymentType = OnlyPaysPaymentType.valueOf(paymentTypeName);
-                    methodName = onlyPaysPaymentType.getDescription();
-                    paymentType.setOnlyPaysPaymentType(onlyPaysPaymentType);
-                }
-                case EVO_PAY -> {
-                    EvoPayPaymentMethod evoPayPaymentMethod = EvoPayPaymentMethod.valueOf(paymentTypeName);
-                    methodName = evoPayPaymentMethod.getDescription();
-                    paymentType.setEvoPayPaymentMethod(evoPayPaymentMethod);
-                }
-                case NICE_PAY -> {
-                    NicePayMethod nicePayMethod = NicePayMethod.valueOf(paymentTypeName);
-                    methodName = nicePayMethod.getDescription();
-                    paymentType.setNicePayMethod(nicePayMethod);
-                }
-                case HONEY_MONEY -> {
-                    HoneyMoneyMethod honeyMoneyMethod = HoneyMoneyMethod.valueOf(paymentTypeName);
-                    methodName = honeyMoneyMethod.getDescription();
-                    paymentType.setHoneyMoneyMethod(honeyMoneyMethod);
-                }
-                case WELL_BIT -> {
-                    WellBitMethod wellBitMethod = WellBitMethod.valueOf(paymentTypeName);
-                    methodName = wellBitMethod.getDescription();
-                    paymentType.setWellBitMethod(wellBitMethod);
-                }
-            }
+            merchant.getSetMethodFromNameConsumer().accept(paymentType, paymentTypeName);
+            String methodName = merchant.getGetMethodDescriptionFunction().apply(paymentType);
             responseSender.sendMessage(chatId, "Тип оплаты <b>\"" + paymentType.getName()
                     + "\"</b> связан с " + merchant.getDisplayName() + " методом оплаты <b>\"" + methodName
                     + "\"</b>.");
         } else {
-            switch (merchant) {
-                case ONLY_PAYS -> paymentType.setOnlyPaysPaymentType(null);
-                case EVO_PAY -> paymentType.setEvoPayPaymentMethod(null);
-                case NICE_PAY -> paymentType.setNicePayMethod(null);
-                case HONEY_MONEY -> paymentType.setHoneyMoneyMethod(null);
-                case WELL_BIT -> paymentType.setWellBitMethod(null);
-            }
+            merchant.getSetEmptyMethodConsumer().accept(paymentType);
             responseSender.sendMessage(chatId, "Тип оплаты <b>\"" + paymentType.getName()
                     + "\"</b> отвязан от " + merchant.getDisplayName() + " метода оплаты.");
         }

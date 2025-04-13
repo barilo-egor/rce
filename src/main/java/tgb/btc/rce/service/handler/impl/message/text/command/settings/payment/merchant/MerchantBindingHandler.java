@@ -2,10 +2,13 @@ package tgb.btc.rce.service.handler.impl.message.text.command.settings.payment.m
 
 import org.telegram.telegrambots.meta.api.objects.Message;
 import tgb.btc.library.constants.enums.Merchant;
+import tgb.btc.library.constants.enums.bot.UserRole;
 import tgb.btc.rce.service.IBotMerchantService;
-import tgb.btc.rce.service.handler.message.text.ITextCommandHandler;
+import tgb.btc.rce.service.handler.message.text.ISimpleTextHandler;
 
-public abstract class MerchantBindingHandler implements ITextCommandHandler {
+import java.util.Set;
+
+public abstract class MerchantBindingHandler implements ISimpleTextHandler {
 
     private final IBotMerchantService botMerchantService;
 
@@ -16,6 +19,16 @@ public abstract class MerchantBindingHandler implements ITextCommandHandler {
     @Override
     public void handle(Message message) {
         botMerchantService.sendRequestPaymentType(getMerchant(), message.getChatId());
+    }
+
+    @Override
+    public String getText() {
+        return getMerchant().getBindingButtonText();
+    }
+
+    @Override
+    public Set<UserRole> getRoles() {
+        return UserRole.ADMIN_ACCESS;
     }
 
     public abstract Merchant getMerchant();
