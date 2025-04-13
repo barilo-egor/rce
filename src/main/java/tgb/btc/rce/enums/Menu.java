@@ -101,13 +101,7 @@ public enum Menu {
             )
     ),
     PAYMENT_TYPES_BINDING(2,
-            List.of(
-                    TextCommand.PAYSCROW_BINDING, TextCommand.DASH_PAY_BINDING, TextCommand.ALFA_TEAM_BINDING,
-                    TextCommand.ALFA_TEAM_TJS_BINDING, TextCommand.ALFA_TEAM_VTB_BINDING, TextCommand.ALFA_TEAM_ALFA_BINDING,
-                    TextCommand.ALFA_TEAM_SBER_BINDING, TextCommand.PAY_POINTS_BINDING, TextCommand.ONLY_PAYS_BINDING,
-                    TextCommand.EVO_PAY_BINDING, TextCommand.NICE_PAY_BINDING, TextCommand.HONEY_MONEY_BINDING,
-                    TextCommand.RETURN
-            )
+            List.of()
     );
 
     final int numberOfColumns;

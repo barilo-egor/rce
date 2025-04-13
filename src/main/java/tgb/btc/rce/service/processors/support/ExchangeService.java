@@ -43,6 +43,7 @@ import tgb.btc.library.service.schedule.DealDeleteScheduler;
 import tgb.btc.library.service.web.merchant.dashpay.DashPayMerchantService;
 import tgb.btc.library.service.web.merchant.nicepay.NicePayMerchantService;
 import tgb.btc.library.service.web.merchant.payscrow.PayscrowMerchantService;
+import tgb.btc.library.service.web.merchant.wellbit.WellBitMerchantService;
 import tgb.btc.library.vo.RequisiteVO;
 import tgb.btc.library.vo.calculate.DealAmount;
 import tgb.btc.rce.enums.BotInlineButton;
@@ -157,6 +158,13 @@ public class ExchangeService {
     private IBufferFileService bufferFileService;
 
     private NicePayMerchantService nicePayMerchantService;
+
+    private WellBitMerchantService wellBitMerchantService;
+
+    @Autowired
+    public void setWellBitMerchantService(WellBitMerchantService wellBitMerchantService) {
+        this.wellBitMerchantService = wellBitMerchantService;
+    }
 
     @Autowired
     public void setNicePayMerchantService(NicePayMerchantService nicePayMerchantService) {
@@ -889,6 +897,10 @@ public class ExchangeService {
 //            responseSender.deleteMessage(chatId, update.getCallbackQuery().getMessage().getMessageId());
             askForReceipts(update);
             modifyUserService.nextStep(chatId);
+            Deal deal = readDealService.findByPid(dealPid);
+            if (Merchant.WELL_BIT.equals(deal.getMerchant())) {
+                wellBitMerchantService.setPay(deal.getMerchantOrderId());
+            }
             return true;
         } else {
             cancelDeal(update.getCallbackQuery().getMessage().getMessageId(), chatId, dealPid);
