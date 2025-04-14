@@ -71,19 +71,10 @@ public enum TextCommand {
     PERSONAL_BUY_DISCOUNT("Персональная, покупка", UserRole.ADMIN_ACCESS),
     PERSONAL_SELL_DISCOUNT("Персональная, продажа", UserRole.ADMIN_ACCESS),
     RECEIPTS_CANCEL_DEAL("Отменить сделку", UserRole.USER_ACCESS),
-    PAYSCROW_BINDING("Payscrow привязка", UserRole.ADMIN_ACCESS),
-    DASH_PAY_BINDING("DashPay привязка", UserRole.ADMIN_ACCESS),
-    ALFA_TEAM_BINDING("AlfaTeam привязка", UserRole.ADMIN_ACCESS),
-    ALFA_TEAM_TJS_BINDING("AlfaTeam TJS привязка", UserRole.ADMIN_ACCESS),
-    ALFA_TEAM_VTB_BINDING("AlfaTeam VTB привязка", UserRole.ADMIN_ACCESS),
-    ALFA_TEAM_ALFA_BINDING("AlfaTeam ALFA привязка", UserRole.ADMIN_ACCESS),
-    ALFA_TEAM_SBER_BINDING("AlfaTeam SBER привязка", UserRole.ADMIN_ACCESS),
     PAID("Оплатил", UserRole.USER_ACCESS),
     PAYMENT_TYPE_DISCOUNTS("Скидки типов оплат", UserRole.ADMIN_ACCESS),
     PAYMENT_TYPES_BINDING("Привязка мерчантов", UserRole.ADMIN_ACCESS),
     ADDITIONAL_PAYMENT_TYPE_TEXT("Текст реквизитов", UserRole.ADMIN_ACCESS),
-    PAY_POINTS_BINDING("PayPoints привязка", UserRole.ADMIN_ACCESS),
-    ONLY_PAYS_BINDING("OnlyPays привязка", UserRole.ADMIN_ACCESS)
     ;
 
     private final String text;

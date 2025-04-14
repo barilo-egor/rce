@@ -32,15 +32,6 @@ build/
 ### VS Code ###
 .vscode/
 
-src/main/resources/application.properties
-bot.properties
-config/antispam/picture
 *.log
 *.gz
-/config/local.properties
-/config/design/images/fileIds.properties
-/config/design/images/help.txt
-/config/design/images/
-/config/design/message_images/
-/config/system/wallet.properties
-/config/payscrow.properties
+/config/*
