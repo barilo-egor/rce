@@ -40,9 +40,7 @@ import tgb.btc.library.service.process.CalculateService;
 import tgb.btc.library.service.properties.ButtonsDesignPropertiesReader;
 import tgb.btc.library.service.properties.VariablePropertiesReader;
 import tgb.btc.library.service.schedule.DealDeleteScheduler;
-import tgb.btc.library.service.web.merchant.dashpay.DashPayMerchantService;
 import tgb.btc.library.service.web.merchant.nicepay.NicePayMerchantService;
-import tgb.btc.library.service.web.merchant.payscrow.PayscrowMerchantService;
 import tgb.btc.library.service.web.merchant.wellbit.WellBitMerchantService;
 import tgb.btc.library.vo.RequisiteVO;
 import tgb.btc.library.vo.calculate.DealAmount;
@@ -883,6 +881,8 @@ public class ExchangeService {
             Deal deal = readDealService.findByPid(dealPid);
             if (Merchant.WELL_BIT.equals(deal.getMerchant())) {
                 wellBitMerchantService.setPay(deal.getMerchantOrderId());
+            } else if (Merchant.NICE_PAY.equals(deal.getMerchant())) {
+                nicePayMerchantService.paid(deal.getMerchantOrderId());
             }
             return true;
         } else {
