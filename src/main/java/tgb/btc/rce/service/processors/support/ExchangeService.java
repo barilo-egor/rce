@@ -77,8 +77,6 @@ import java.util.*;
 @Slf4j
 public class ExchangeService {
 
-    public static final String PAID_TEXT = "Оплатил";
-
     public static final String PAID_DATA = "PAID";
 
     public static final String USE_SAVED = "USE_SAVED";
@@ -147,11 +145,7 @@ public class ExchangeService {
 
     private IMessageImageService messageImageService;
 
-    private PayscrowMerchantService payscrowMerchantService;
-
     private ITextCommandService textCommandService;
-
-    private DashPayMerchantService dashPayMerchantService;
 
     private FileDownloader fileDownloader;
 
@@ -179,11 +173,6 @@ public class ExchangeService {
     @Autowired
     public void setFileDownloader(FileDownloader fileDownloader) {
         this.fileDownloader = fileDownloader;
-    }
-
-    @Autowired
-    public void setDashPayMerchantService(DashPayMerchantService dashPayMerchantService) {
-        this.dashPayMerchantService = dashPayMerchantService;
     }
 
     @Autowired
@@ -349,12 +338,6 @@ public class ExchangeService {
     @Autowired
     public void setKeyboardService(IKeyboardService keyboardService) {
         this.keyboardService = keyboardService;
-    }
-
-
-    @Autowired
-    public void setPayscrowMerchantService(PayscrowMerchantService payscrowMerchantService) {
-        this.payscrowMerchantService = payscrowMerchantService;
     }
 
     public void askForFiatCurrency(Long chatId) {
