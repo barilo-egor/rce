@@ -40,9 +40,7 @@ import tgb.btc.library.service.process.CalculateService;
 import tgb.btc.library.service.properties.ButtonsDesignPropertiesReader;
 import tgb.btc.library.service.properties.VariablePropertiesReader;
 import tgb.btc.library.service.schedule.DealDeleteScheduler;
-import tgb.btc.library.service.web.merchant.dashpay.DashPayMerchantService;
 import tgb.btc.library.service.web.merchant.nicepay.NicePayMerchantService;
-import tgb.btc.library.service.web.merchant.payscrow.PayscrowMerchantService;
 import tgb.btc.library.service.web.merchant.wellbit.WellBitMerchantService;
 import tgb.btc.library.vo.RequisiteVO;
 import tgb.btc.library.vo.calculate.DealAmount;
@@ -76,8 +74,6 @@ import java.util.*;
 @Service
 @Slf4j
 public class ExchangeService {
-
-    public static final String PAID_TEXT = "Оплатил";
 
     public static final String PAID_DATA = "PAID";
 
@@ -147,11 +143,7 @@ public class ExchangeService {
 
     private IMessageImageService messageImageService;
 
-    private PayscrowMerchantService payscrowMerchantService;
-
     private ITextCommandService textCommandService;
-
-    private DashPayMerchantService dashPayMerchantService;
 
     private FileDownloader fileDownloader;
 
@@ -179,11 +171,6 @@ public class ExchangeService {
     @Autowired
     public void setFileDownloader(FileDownloader fileDownloader) {
         this.fileDownloader = fileDownloader;
-    }
-
-    @Autowired
-    public void setDashPayMerchantService(DashPayMerchantService dashPayMerchantService) {
-        this.dashPayMerchantService = dashPayMerchantService;
     }
 
     @Autowired
@@ -349,12 +336,6 @@ public class ExchangeService {
     @Autowired
     public void setKeyboardService(IKeyboardService keyboardService) {
         this.keyboardService = keyboardService;
-    }
-
-
-    @Autowired
-    public void setPayscrowMerchantService(PayscrowMerchantService payscrowMerchantService) {
-        this.payscrowMerchantService = payscrowMerchantService;
     }
 
     public void askForFiatCurrency(Long chatId) {
@@ -900,6 +881,8 @@ public class ExchangeService {
             Deal deal = readDealService.findByPid(dealPid);
             if (Merchant.WELL_BIT.equals(deal.getMerchant())) {
                 wellBitMerchantService.setPay(deal.getMerchantOrderId());
+            } else if (Merchant.NICE_PAY.equals(deal.getMerchant())) {
+                nicePayMerchantService.paid(deal.getMerchantOrderId());
             }
             return true;
         } else {
