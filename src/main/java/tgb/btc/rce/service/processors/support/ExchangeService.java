@@ -812,6 +812,8 @@ public class ExchangeService {
                 );
             }
         } else {
+            deal.setAmount(dealAmount.setScale(0, RoundingMode.HALF_UP));
+            modifyDealService.save(deal);
             messageImage = MessageImage.BUILD_DEAL_SELL;
             Integer subType = messageImageService.getSubType(messageImage);
             text = messageImageService.getMessage(messageImage);
