@@ -63,3 +63,8 @@ wellBit:
     id: ""
     token: ""
     url: ""
+crocoPay:
+    api:
+      clientId:
+      clientSecret:
+      url:
