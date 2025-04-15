@@ -228,6 +228,7 @@ public class DealSupportService {
     }
 
     public ReplyKeyboard dealToStringButtons(Long pid) {
+        Deal deal = readDealService.findByPid(pid);
         List<InlineButton> buttons = new ArrayList<>();
         buttons.add(InlineButton.builder()
                 .text("Подтвердить")
@@ -239,19 +240,30 @@ public class DealSupportService {
                     .text("Подтвердить с запросом")
                     .data(callbackDataService.buildData(CallbackQueryData.CONFIRM_USER_DEAL, pid, true))
                     .build());
-        CryptoCurrency cryptoCurrency = dealPropertyService.getCryptoCurrencyByPid(pid);
-        if (cryptoWithdrawalService.isOn(cryptoCurrency)) {
+        CryptoCurrency cryptoCurrency = deal.getCryptoCurrency();
+        if (DealType.isBuy(deal.getDealType()) && cryptoWithdrawalService.isOn(cryptoCurrency)) {
             buttons.add(InlineButton.builder()
                     .text("Автовывод")
                     .data(callbackDataService.buildData(CallbackQueryData.AUTO_WITHDRAWAL_DEAL, pid))
                     .build());
         }
-        if (CryptoCurrency.BITCOIN.equals(cryptoCurrency) && cryptoWithdrawalService.isOn(CryptoCurrency.BITCOIN)) {
+        if (DealType.isBuy(deal.getDealType()) && CryptoCurrency.BITCOIN.equals(cryptoCurrency) && cryptoWithdrawalService.isOn(CryptoCurrency.BITCOIN)) {
             buttons.add(InlineButton.builder()
                     .text("Добавить в пул")
                     .data(callbackDataService.buildData(CallbackQueryData.ADD_TO_POOL, pid))
                     .build());
         }
+        if (!DealType.isBuy(deal.getDealType())) {
+            buttons.add(InlineButton.builder()
+                    .text("DashPay вывод")
+                    .data(callbackDataService.buildData(CallbackQueryData.DASH_PAY_PAY_OUT, pid))
+                    .build());
+            buttons.add(InlineButton.builder()
+                    .text("Ввести реквизит")
+                    .data(callbackDataService.buildData(CallbackQueryData.ENTER_DEAL_REQUISITE, pid))
+                    .build());
+        }
+
         buttons.add(InlineButton.builder()
                 .text("Доп.верификация")
                 .data(callbackDataService.buildData(CallbackQueryData.ADDITIONAL_VERIFICATION, pid))
