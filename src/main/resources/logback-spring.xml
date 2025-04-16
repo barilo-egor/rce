@@ -54,6 +54,30 @@
         </encoder>
     </appender>
 
+    <!-- RollingFileAppender для tgb.btc.library.service.web.merchant с ежедневной ротацией и сохранением логов на 3 дня -->
+    <appender name="FILE_TGB_BTC_LIBRARY_MERCHANT" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/merchant.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>logs/merchant.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>3</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level [%logger] - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- RollingFileAppender для tgb.btc.library.service.web.merchant.error с ежедневной ротацией и сохранением логов на 3 дня -->
+    <appender name="FILE_TGB_BTC_LIBRARY_MERCHANT_ERRORS" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/merchantErrors.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>logs/merchantErrors.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>1</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level [%logger] - %msg%n</pattern>
+        </encoder>
+    </appender>
+
     <!-- RollingFileAppender для tgb.btc.web с ежедневной ротацией и сохранением логов на 3 дня -->
     <appender name="FILE_TGB_BTC_WEB" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>logs/web.log</file>
@@ -108,6 +132,16 @@
 
     <logger name="tgb.btc.library" level="DEBUG" additivity="false">
         <appender-ref ref="FILE_TGB_BTC_LIBRARY" />
+        <appender-ref ref="COLOR_CONSOLE" />
+    </logger>
+
+    <logger name="tgb.btc.library.service.web.merchant" level="DEBUG" additivity="false">
+        <appender-ref ref="FILE_TGB_BTC_LIBRARY_MERCHANT" />
+        <appender-ref ref="COLOR_CONSOLE" />
+    </logger>
+
+    <logger name="tgb.btc.library.service.web.merchant.error" level="DEBUG" additivity="false">
+        <appender-ref ref="FILE_TGB_BTC_LIBRARY_MERCHANT_ERRORS" />
         <appender-ref ref="COLOR_CONSOLE" />
     </logger>
 

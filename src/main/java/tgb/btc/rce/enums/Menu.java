@@ -76,6 +76,7 @@ public enum Menu {
                     TextCommand.ON_BOT, TextCommand.OFF_BOT,
                     TextCommand.BOT_VARIABLES, TextCommand.PAYMENT_TYPES,
                     TextCommand.TURNING_CURRENCY, TextCommand.EDIT_CONTACTS, TextCommand.TURNING_DELIVERY_TYPE,
+                    TextCommand.LOGS,
                     TextCommand.RETURN
             )
     ),
@@ -91,7 +92,6 @@ public enum Menu {
                     TextCommand.USERS_DEALS_REPORT, TextCommand.LOTTERY_REPORT, TextCommand.RETURN
             )
     ),
-
     PAYMENT_TYPES(2,
             List.of(
                     TextCommand.NEW_PAYMENT_TYPE, TextCommand.DELETE_PAYMENT_TYPE, TextCommand.NEW_PAYMENT_TYPE_REQUISITE,
