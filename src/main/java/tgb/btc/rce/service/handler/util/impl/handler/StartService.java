@@ -75,7 +75,6 @@ public class StartService implements IStartService {
         }
         redisUserStateService.delete(chatId);
         redisStringService.deleteAll(chatId);
-        modifyUserService.setDefaultValues(chatId);
     }
 
 

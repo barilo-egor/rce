@@ -914,7 +914,6 @@ public class ExchangeService {
         DealType dealType = dealPropertyService.getDealTypeByPid(currentDealPid);
         modifyDealService.updateDealStatusByPid(DealStatus.PAID, currentDealPid);
         modifyUserService.updateCurrentDealByChatId(null, chatId);
-        modifyUserService.setDefaultValues(chatId);
         responseSender.sendMessage(chatId, messagePropertiesService.getMessage(PropertiesMessage.DEAL_CONFIRMED));
         log.info("Сделка " + currentDealPid + " пользователя " + chatId + " переведена в статус PAID");
         notifyService.notifyMessage("Поступила новая заявка на " + dealType.getGenitive() + ".",

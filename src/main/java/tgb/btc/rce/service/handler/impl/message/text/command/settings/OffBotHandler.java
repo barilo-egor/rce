@@ -33,7 +33,6 @@ public class OffBotHandler implements ITextCommandHandler {
         botSwitch.setOn(false);
         Long chatId = message.getChatId();
         responseSender.sendMessage(chatId, "Бот выключен");
-        modifyUserService.setDefaultValues(chatId);
         adminPanelService.send(chatId);
     }
 

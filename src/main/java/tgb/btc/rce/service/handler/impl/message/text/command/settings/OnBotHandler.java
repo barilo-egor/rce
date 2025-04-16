@@ -33,7 +33,6 @@ public class OnBotHandler implements ITextCommandHandler {
         botSwitch.setOn(true);
         Long chatId = message.getChatId();
         responseSender.sendMessage(chatId, "Бот включен.");
-        modifyUserService.setDefaultValues(chatId);
         adminPanelService.send(chatId);
     }
 

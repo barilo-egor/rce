@@ -72,7 +72,6 @@ public class UsersReportHandler implements ITextCommandHandler {
         log.info("Старт отчета по пользователям.");
         responseSender.sendMessage(chatId, "Формирование отчета запущено.");
         responseSender.sendMessage(chatId, "Отчет придет после того, как сформируется. Это может занять некоторое время.");
-        modifyUserService.setDefaultValues(chatId);
         adminPanelService.send(chatId);
         try {
             HSSFWorkbook book = new HSSFWorkbook();
