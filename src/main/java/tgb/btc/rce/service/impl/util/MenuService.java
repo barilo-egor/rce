@@ -2,6 +2,7 @@ package tgb.btc.rce.service.impl.util;
 
 import com.google.common.base.Functions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import tgb.btc.library.constants.enums.bot.UserRole;
@@ -12,14 +13,13 @@ import tgb.btc.rce.service.util.ITextCommandService;
 import tgb.btc.rce.service.util.IMenuService;
 import tgb.btc.rce.vo.ReplyButton;
 
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 public class MenuService implements IMenuService {
+
+    private final String CACHE_NAME = "menuService";
 
     private final Map<Menu, IMenu> menuMap;
 
@@ -53,5 +53,18 @@ public class MenuService implements IMenuService {
         return keyboardBuildService.buildReply(menu.getNumberOfColumns(), menu.getTextCommands().stream()
                 .map(command -> ReplyButton.builder().text(commandService.getText(command)).build())
                 .toList(), false);
+    }
+    @Cacheable(CACHE_NAME + "isMenuCommand")
+    @Override
+    public boolean isMenuCommand(Menu menu, String text) {
+        Set<String> commands = menu.getTextCommands().stream()
+                .map(commandService::getText)
+                .collect(Collectors.toSet());
+        for (String command : commands) {
+            if (command.equals(text)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

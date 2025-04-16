@@ -30,11 +30,14 @@ import tgb.btc.rce.service.ICalculatorTypeService;
 import tgb.btc.rce.service.IUpdateService;
 import tgb.btc.rce.service.handler.IStateHandler;
 import tgb.btc.rce.service.handler.util.IStartService;
+import tgb.btc.rce.service.impl.util.MenuService;
 import tgb.btc.rce.service.impl.util.TextTextCommandService;
 import tgb.btc.rce.service.process.IDealBotProcessService;
 import tgb.btc.rce.service.processors.support.ExchangeService;
+import tgb.btc.rce.service.redis.IRedisStringService;
 import tgb.btc.rce.service.redis.IRedisUserStateService;
 import tgb.btc.rce.service.util.ICallbackDataService;
+import tgb.btc.rce.service.util.IMenuService;
 import tgb.btc.rce.vo.TelegramUpdateEvent;
 
 import java.util.Objects;
@@ -53,10 +56,6 @@ public class DealHandler implements IStateHandler {
 
     private final IDealPropertyService dealPropertyService;
 
-    private final IReadDealService readDealService;
-
-    private final IModifyDealService modifyDealService;
-
     private final IDealBotProcessService dealProcessService;
 
     private final IFiatCurrencyService fiatCurrencyService;
@@ -64,8 +63,6 @@ public class DealHandler implements IStateHandler {
     private final IModule<DeliveryKind> deliveryKindModule;
 
     private final ISecurePaymentDetailsService securePaymentDetailsService;
-
-    private final ApplicationEventPublisher eventPublisher;
 
     private final IStartService startService;
 
@@ -77,75 +74,52 @@ public class DealHandler implements IStateHandler {
 
     private final ICallbackDataService callbackDataService;
 
-    private final IModifyUserService modifyUserService;
-
     private final IResponseSender responseSender;
 
     private final IUserCommonService userCommonService;
 
-    private final IRedisUserStateService redisUserStateService;
-
-    private final TextTextCommandService textCommandService;
+    private final IRedisStringService redisStringService;
 
     public DealHandler(ExchangeService exchangeService, ICalculatorTypeService calculatorTypeService,
-                       IDealPropertyService dealPropertyService, IReadDealService readDealService,
-                       IModifyDealService modifyDealService, IDealBotProcessService dealProcessService,
+                       IDealPropertyService dealPropertyService, IDealBotProcessService dealProcessService,
                        IFiatCurrencyService fiatCurrencyService, IModule<DeliveryKind> deliveryKindModule,
-                       ISecurePaymentDetailsService securePaymentDetailsService,
-                       ApplicationEventPublisher eventPublisher, IStartService startService,
+                       ISecurePaymentDetailsService securePaymentDetailsService, IStartService startService,
                        IMessageImageResponseSender messageImageResponseSender, IUpdateService updateService,
                        IReadUserService readUserService, ICallbackDataService callbackDataService,
-                       IModifyUserService modifyUserService, IResponseSender responseSender,
-                       IUserCommonService userCommonService, IRedisUserStateService redisUserStateService,
-                       TextTextCommandService textCommandService) {
+                       IResponseSender responseSender,
+                       IUserCommonService userCommonService, IRedisStringService redisStringService) {
         this.exchangeService = exchangeService;
         this.calculatorTypeService = calculatorTypeService;
         this.dealPropertyService = dealPropertyService;
-        this.readDealService = readDealService;
-        this.modifyDealService = modifyDealService;
         this.dealProcessService = dealProcessService;
         this.fiatCurrencyService = fiatCurrencyService;
         this.deliveryKindModule = deliveryKindModule;
         this.securePaymentDetailsService = securePaymentDetailsService;
-        this.eventPublisher = eventPublisher;
         this.startService = startService;
         this.messageImageResponseSender = messageImageResponseSender;
         this.updateService = updateService;
         this.readUserService = readUserService;
         this.callbackDataService = callbackDataService;
-        this.modifyUserService = modifyUserService;
         this.responseSender = responseSender;
         this.userCommonService = userCommonService;
-        this.redisUserStateService = redisUserStateService;
-        this.textCommandService = textCommandService;
+        this.redisStringService = redisStringService;
     }
 
     @Override
     public void handle(Update update) {
-        long t1 = System.currentTimeMillis();
         Long chatId = updateService.getChatId(update);
-        Integer userStep = readUserService.getStepByChatId(chatId);
-        boolean isBack = update.hasCallbackQuery() && callbackDataService.isCallbackQueryData(CallbackQueryData.BACK, update.getCallbackQuery().getData());
-        if (!User.isDefault(userStep)) {
-            if (isMainMenuCommand(update)) return;
-            if (isBack) {
-                userStep--;
-                modifyUserService.previousStep(chatId);
-                if (userStep == 0) {
-                    processToStart(chatId, update);
-                    return;
-                }
-                userStep--;
-                modifyUserService.previousStep(chatId);
-                responseSender.deleteCallbackMessageIfExists(update);
+        Integer userStep = redisStringService.getStep(chatId);
+        boolean isBack = callbackDataService.isBack(update);
+        if (isBack) {
+            if (userStep == 1) {
+                processToStart(chatId, update);
+                return;
             }
-        } else if (User.isDefault(userStep) && isBack) {
-            processToStart(chatId, update);
-            return;
+            userStep -= 2;
+            redisStringService.saveStep(chatId, userStep);
+            responseSender.deleteCallbackMessageIfExists(update);
         }
         switchByStep(update, chatId, userStep, isBack);
-        long t2 = System.currentTimeMillis();
-        log.debug("Обработка DEAL = {} ms", (t2 - t1));
     }
 
     private void switchByStep(Update update, Long chatId, Integer userStep, boolean isBack) {
@@ -153,12 +127,11 @@ public class DealHandler implements IStateHandler {
         Long currentDealPid = readUserService.getCurrentDealByChatId(chatId);
         switch (userStep) {
             case 0:
-                if (!isBack) redisUserStateService.save(chatId, UserState.DEAL);
                 if (!fiatCurrencyService.isFew()) {
                     recursiveSwitch(update, chatId, isBack);
                     break;
                 }
-                modifyUserService.nextStep(chatId);
+                redisStringService.nextStep(chatId);
                 exchangeService.askForFiatCurrency(chatId);
                 break;
             case 1:
@@ -167,7 +140,7 @@ public class DealHandler implements IStateHandler {
                     if (!exchangeService.saveFiatCurrency(update)) return;
                 }
                 exchangeService.askForCryptoCurrency(chatId);
-                modifyUserService.nextStep(chatId);
+                redisStringService.nextStep(chatId);
                 break;
             case 2:
                 if (!isBack) {
@@ -185,7 +158,7 @@ public class DealHandler implements IStateHandler {
                     break;
                 }
                 exchangeService.askForUserPromoCode(chatId);
-                modifyUserService.nextStep(chatId);
+                redisStringService.nextStep(chatId);
                 break;
             case 4:
                 dealType = dealPropertyService.getDealTypeByPid(readUserService.getCurrentDealByChatId(chatId));
@@ -197,7 +170,7 @@ public class DealHandler implements IStateHandler {
                     recursiveSwitch(update, chatId, isBack);
                     break;
                 }
-                modifyUserService.nextStep(chatId);
+                redisStringService.nextStep(chatId);
                 exchangeService.askForReferralDiscount(update);
                 break;
             case 5:
@@ -209,7 +182,7 @@ public class DealHandler implements IStateHandler {
                 if (exchangeService.isFewPaymentTypes(chatId)
                         && (!DealType.isBuy(dealType)
                         || securePaymentDetailsService.hasAccessToPaymentTypes(chatId, dealPropertyService.getFiatCurrencyByPid(currentDealPid)))) {
-                    modifyUserService.nextStep(chatId);
+                    redisStringService.nextStep(chatId);
                     exchangeService.askForPaymentType(update);
                     break;
                 }
@@ -222,7 +195,7 @@ public class DealHandler implements IStateHandler {
                     if (!exchangeService.savePaymentType(update)) return;
                 }
                 exchangeService.askForUserRequisites(update);
-                modifyUserService.nextStep(chatId);
+                redisStringService.nextStep(chatId);
                 break;
             case 7:
                 if (!isBack) {
@@ -232,7 +205,7 @@ public class DealHandler implements IStateHandler {
                 dealType = dealPropertyService.getDealTypeByPid(dealPid);
                 CryptoCurrency cryptoCurrency = dealPropertyService.getCryptoCurrencyByPid(dealPid);
                 if (deliveryKindModule.isCurrent(DeliveryKind.STANDARD) && DealType.isBuy(dealType) && CryptoCurrency.BITCOIN.equals(cryptoCurrency)) {
-                    modifyUserService.nextStep(chatId);
+                    redisStringService.nextStep(chatId);
                     exchangeService.askForDeliveryType(chatId, dealPropertyService.getFiatCurrencyByPid(dealPid),dealType, cryptoCurrency);
                     break;
                 }
@@ -242,7 +215,7 @@ public class DealHandler implements IStateHandler {
                 if (!isBack) {
                     exchangeService.saveDeliveryTypeAndUpdateAmount(update);
                 }
-                modifyUserService.nextStep(chatId);
+                redisStringService.nextStep(chatId);
                 exchangeService.buildDeal(update);
                 break;
             case 9:
@@ -253,7 +226,7 @@ public class DealHandler implements IStateHandler {
                 if (BooleanUtils.isFalse(result)) processToStart(chatId, update);
                 break;
             case 10:
-                if (!hasCheck(update)) {
+                if (!updateService.hasDocumentOrPhoto(update)) {
                     exchangeService.askForReceipts(update);
                     return;
                 }
@@ -272,54 +245,18 @@ public class DealHandler implements IStateHandler {
     }
 
     private void recursiveSwitch(Update update, Long chatId, boolean isBack) {
-        if (isBack) modifyUserService.previousStep(chatId);
-        else modifyUserService.nextStep(chatId);
-        switchByStep(update, chatId, readUserService
-                .getStepByChatId(chatId), isBack);
+        if (isBack) redisStringService.previousStep(chatId);
+        else redisStringService.nextStep(chatId);
+        switchByStep(update, chatId, redisStringService.getStep(chatId), isBack);
     }
 
     private boolean isReceiptsCancel(Update update) {
         return update.hasMessage() && TextCommand.RECEIPTS_CANCEL_DEAL.getText().equals(updateService.getMessageText(update));
     }
 
-    private boolean hasCheck(Update update) {
-        return !update.hasMessage() || (!update.getMessage().hasPhoto() || !update.getMessage().hasDocument());
-    }
-
     private void processToStart(Long chatId, Update update) {
         responseSender.deleteCallbackMessageIfExists(update);
         startService.process(chatId);
-    }
-
-    public boolean isMainMenuCommand(Update update) {
-        if (!update.hasMessage() || !update.getMessage().hasText()) return false;
-        Long chatId = update.getMessage().getChatId();
-        boolean isMainMenu = false;
-        Set<String> commands = Menu.MAIN.getTextCommands().stream()
-                .map(textCommandService::getText)
-                .collect(Collectors.toSet());
-        commands.add(SlashCommand.START.getText());
-        for (String command : commands) {
-            if (command.equals(update.getMessage().getText())) {
-                isMainMenu = true;
-                break;
-            }
-        }
-        if (!isMainMenu) return false;
-        redisUserStateService.delete(chatId);
-        modifyUserService.setDefaultValues(chatId);
-        Long currentDealPid = readUserService.getCurrentDealByChatId(chatId);
-        if (Objects.nonNull(currentDealPid)) {
-            if (readDealService.existsById(currentDealPid)) {
-                log.info("Сделка {} удалена по команде главного меню.", currentDealPid);
-                modifyDealService.deleteById(currentDealPid);
-            }
-            modifyUserService.updateCurrentDealByChatId(null, chatId);
-        }
-        responseSender.deleteCallbackMessageIfExists(update);
-        TelegramUpdateEvent telegramUpdateEvent = new TelegramUpdateEvent(this, update);
-        eventPublisher.publishEvent(telegramUpdateEvent);
-        return true;
     }
 
     @Override

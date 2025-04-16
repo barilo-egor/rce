@@ -16,4 +16,12 @@ public interface IRedisStringService {
     void delete(RedisPrefix prefix, Long key);
 
     void deleteAll(Long key);
+
+    void nextStep(Long key);
+
+    void previousStep(Long key);
+
+    void saveStep(Long key, Integer value);
+
+    Integer getStep(Long key);
 }

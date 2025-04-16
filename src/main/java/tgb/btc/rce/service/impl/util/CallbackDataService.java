@@ -1,6 +1,7 @@
 package tgb.btc.rce.service.impl.util;
 
 import org.springframework.stereotype.Service;
+import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.exception.BaseException;
 import tgb.btc.rce.enums.update.CallbackQueryData;
 import tgb.btc.rce.service.util.ICallbackDataService;
@@ -117,5 +118,13 @@ public class CallbackDataService implements ICallbackDataService {
         }
         String[] split = data.split(SPLITTER);
         return split.length > 1;
+    }
+
+    @Override
+    public boolean isBack(Update update) {
+        if (!update.hasCallbackQuery()) {
+            return false;
+        }
+        return isCallbackQueryData(CallbackQueryData.BACK, update.getCallbackQuery().getData());
     }
 }

@@ -13,7 +13,6 @@ public enum TextCommand {
     RETURN("Вернуться", UserRole.OBSERVER_ACCESS),
     BACK("Назад", UserRole.USER_ACCESS),
     BUY_BITCOIN("Купить", UserRole.USER_ACCESS),
-    BUY("Куп", UserRole.ADMIN_ACCESS),
     SELL_BITCOIN("Продать", UserRole.USER_ACCESS),
     CONTACTS("Контакты", UserRole.USER_ACCESS),
     DRAWS("Розыгрыши", UserRole.USER_ACCESS),

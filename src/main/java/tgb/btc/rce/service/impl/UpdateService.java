@@ -101,7 +101,15 @@ public class UpdateService implements IUpdateService {
     }
 
     @Override
-    public boolean isStart(Update update) {
-        return update.hasMessage() && update.getMessage().hasText() && update.getMessage().getText().equals(SlashCommand.START.getText());
+    public boolean hasDocumentOrPhoto(Update update) {
+        return hasDocument(update) || hasPhoto(update);
+    }
+
+    public boolean hasDocument(Update update) {
+        return update.hasMessage() && update.getMessage().hasDocument();
+    }
+
+    public boolean hasPhoto(Update update) {
+        return update.hasMessage() && update.getMessage().hasPhoto();
     }
 }

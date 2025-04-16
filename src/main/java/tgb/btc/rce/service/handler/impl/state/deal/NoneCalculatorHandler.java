@@ -9,6 +9,7 @@ import tgb.btc.rce.enums.update.UpdateType;
 import tgb.btc.rce.service.IUpdateService;
 import tgb.btc.rce.service.handler.IStateHandler;
 import tgb.btc.rce.service.processors.support.ExchangeService;
+import tgb.btc.rce.service.redis.IRedisStringService;
 import tgb.btc.rce.service.redis.IRedisUserStateService;
 import tgb.btc.rce.service.util.ICallbackDataService;
 
@@ -27,30 +28,33 @@ public class NoneCalculatorHandler implements IStateHandler {
 
     private final ModifyUserService modifyUserService;
 
+    private final IRedisStringService redisStringService;
+
     public NoneCalculatorHandler(ExchangeService exchangeService, DealHandler dealHandler,
                                  ICallbackDataService callbackDataService, IUpdateService updateService,
-                                 IRedisUserStateService redisUserStateService, ModifyUserService modifyUserService) {
+                                 IRedisUserStateService redisUserStateService, ModifyUserService modifyUserService,
+                                 IRedisStringService redisStringService) {
         this.exchangeService = exchangeService;
         this.dealHandler = dealHandler;
         this.callbackDataService = callbackDataService;
         this.updateService = updateService;
         this.redisUserStateService = redisUserStateService;
         this.modifyUserService = modifyUserService;
+        this.redisStringService = redisStringService;
     }
 
     @Override
     public void handle(Update update) {
-        if (dealHandler.isMainMenuCommand(update)) return;
         Long chatId = UpdateType.getChatId(update);
         if (update.hasCallbackQuery() && callbackDataService.isCallbackQueryData(CallbackQueryData.BACK, update.getCallbackQuery().getData())) {
             redisUserStateService.save(chatId, UserState.DEAL);
-            modifyUserService.updateStepByChatId(chatId, DealHandler.AFTER_CALCULATOR_STEP);
+            redisStringService.saveStep(chatId, DealHandler.AFTER_CALCULATOR_STEP);
             dealHandler.handle(update);
             return;
         }
         if (!exchangeService.calculateDealAmount(chatId, updateService.getBigDecimalFromText(update))) return;
         redisUserStateService.save(chatId, UserState.DEAL);
-        modifyUserService.updateStepByChatId(chatId, DealHandler.AFTER_CALCULATOR_STEP);
+        redisStringService.saveStep(chatId, DealHandler.AFTER_CALCULATOR_STEP);
         dealHandler.handle(update);
     }
 

@@ -54,23 +54,18 @@ public class StartService implements IStartService {
     public void process(Long chatId) {
         modifyUserService.updateIsActiveByChatId(true, chatId);
         messageImageResponseSender.sendMessage(MessageImage.START, chatId);
-        Long currentDealPid = readUserService.getCurrentDealByChatId(chatId);
-        if (Objects.nonNull(currentDealPid)) {
-            if (readDealService.existsById(currentDealPid)) {
-                log.info("Сделка {} удалена по команде /start", currentDealPid);
-                modifyDealService.deleteById(currentDealPid);
-            }
-            modifyUserService.updateCurrentDealByChatId(null, chatId);
-        }
-        modifyUserService.setDefaultValues(chatId);
-        redisUserStateService.delete(chatId);
-        redisStringService.delete(chatId);
+        processToMainMenu(chatId);
+    }
+
+    @Override
+    public void processToMainMenu(Long chatId) {
+        processToStartState(chatId);
         messageImageResponseSender.sendMessage(MessageImage.MAIN_MENU, chatId,
                 menuService.build(Menu.MAIN, readUserService.getUserRoleByChatId(chatId)));
     }
 
     @Override
-    public void processToMainMenu(Long chatId) {
+    public void processToStartState(Long chatId) {
         Long currentDealPid = readUserService.getCurrentDealByChatId(chatId);
         if (Objects.nonNull(currentDealPid)) {
             if (readDealService.existsById(currentDealPid)) {
@@ -80,8 +75,7 @@ public class StartService implements IStartService {
         }
         redisUserStateService.delete(chatId);
         redisStringService.deleteAll(chatId);
-        modifyUserService.setDefaultValues(chatId);
-        messageImageResponseSender.sendMessage(MessageImage.MAIN_MENU, chatId,
-                menuService.build(Menu.MAIN, readUserService.getUserRoleByChatId(chatId)));
     }
+
+
 }

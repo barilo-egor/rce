@@ -27,6 +27,5 @@ public interface IUpdateService {
 
     Message getMessage(Update update);
 
-    @Cacheable(value = "startUpdates", key = "#update.updateId")
-    boolean isStart(Update update);
+    boolean hasDocumentOrPhoto(Update update);
 }

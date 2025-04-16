@@ -9,11 +9,13 @@ import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.exception.BaseException;
 import tgb.btc.library.service.bean.bot.deal.ModifyDealService;
 import tgb.btc.library.service.properties.FunctionsPropertiesReader;
+import tgb.btc.rce.enums.UserState;
 import tgb.btc.rce.enums.update.TextCommand;
 import tgb.btc.rce.sender.IResponseSender;
 import tgb.btc.rce.service.handler.impl.state.deal.DealHandler;
 import tgb.btc.rce.service.handler.message.text.ITextCommandHandler;
 import tgb.btc.rce.service.processors.support.ExchangeService;
+import tgb.btc.rce.service.redis.IRedisUserStateService;
 
 import java.util.List;
 
@@ -31,13 +33,17 @@ public class BuyHandler implements ITextCommandHandler {
 
     private final FunctionsPropertiesReader functionsPropertiesReader;
 
+    private final IRedisUserStateService redisUserStateService;
+
     public BuyHandler(IResponseSender responseSender, DealHandler dealHandler, ExchangeService exchangeService,
-                      ModifyDealService modifyDealService, FunctionsPropertiesReader functionsPropertiesReader) {
+                      ModifyDealService modifyDealService, FunctionsPropertiesReader functionsPropertiesReader,
+                      IRedisUserStateService redisUserStateService) {
         this.responseSender = responseSender;
         this.dealHandler = dealHandler;
         this.exchangeService = exchangeService;
         this.modifyDealService = modifyDealService;
         this.functionsPropertiesReader = functionsPropertiesReader;
+        this.redisUserStateService = redisUserStateService;
     }
 
     @Override
@@ -52,6 +58,7 @@ public class BuyHandler implements ITextCommandHandler {
         modifyDealService.createNewDeal(DealType.BUY, chatId);
         Update update = new Update();
         update.setMessage(message);
+        redisUserStateService.save(chatId, UserState.DEAL);
         dealHandler.handle(update);
     }
 

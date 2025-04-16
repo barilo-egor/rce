@@ -12,6 +12,7 @@ import tgb.btc.library.interfaces.service.bean.bot.deal.IReadDealService;
 import tgb.btc.library.interfaces.service.bean.bot.deal.read.IDealPropertyService;
 import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.library.service.properties.VariablePropertiesReader;
+import tgb.btc.rce.enums.RedisPrefix;
 import tgb.btc.rce.enums.UserState;
 import tgb.btc.rce.enums.update.UpdateType;
 import tgb.btc.rce.sender.IResponseSender;
@@ -19,6 +20,7 @@ import tgb.btc.rce.service.INotifyService;
 import tgb.btc.rce.service.handler.IStateHandler;
 import tgb.btc.rce.service.handler.util.IStartService;
 import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
+import tgb.btc.rce.service.redis.IRedisStringService;
 import tgb.btc.rce.service.util.IBotImageService;
 import tgb.btc.rce.vo.InlineButton;
 
@@ -50,13 +52,15 @@ public class AdditionalVerificationStateHandler implements IStateHandler {
 
     private final IBotImageService botImageService;
 
+    private final IRedisStringService redisStringService;
+
     public AdditionalVerificationStateHandler(IStartService startService, IResponseSender responseSender,
                                               IReadDealService readDealService, IReadUserService readUserService,
                                               IKeyboardBuildService keyboardBuildService,
                                               VariablePropertiesReader variablePropertiesReader, INotifyService notifyService,
                                               IModifyDealService modifyDealService,
                                               INotificationsAPI notificationsAPI, IDealPropertyService dealPropertyService,
-                                              IBotImageService botImageService) {
+                                              IBotImageService botImageService, IRedisStringService redisStringService) {
         this.startService = startService;
         this.responseSender = responseSender;
         this.readDealService = readDealService;
@@ -68,6 +72,7 @@ public class AdditionalVerificationStateHandler implements IStateHandler {
         this.notificationsAPI = notificationsAPI;
         this.dealPropertyService = dealPropertyService;
         this.botImageService = botImageService;
+        this.redisStringService = redisStringService;
     }
 
 
@@ -79,7 +84,7 @@ public class AdditionalVerificationStateHandler implements IStateHandler {
         }
         Message message = update.getMessage();
         Long chatId = message.getChatId();
-        Long dealPid = Long.parseLong(readUserService.getBufferVariable(chatId));
+        Long dealPid = Long.parseLong(redisStringService.get(RedisPrefix.DEAL_PID, chatId));
         if (message.hasText() && message.getText().equals("Отказаться от верификации")) {
             responseSender.sendMessage(chatId, "Ты отказался от верификации. " +
                     "Дальнейшая связь через оператора.", keyboardBuildService.buildInline(List.of(
