@@ -16,16 +16,9 @@ public class StartFilter implements IUpdateFilter {
 
     private final IUserProcessService userProcessService;
 
-    private final DashPayMerchantService dashPayMerchantService;
-
-    private final IReadDealService readDealService;
-
-    public StartFilter(IStartService startService, IUserProcessService userProcessService,
-                       DashPayMerchantService dashPayMerchantService, IReadDealService readDealService) {
+    public StartFilter(IStartService startService, IUserProcessService userProcessService) {
         this.startService = startService;
         this.userProcessService = userProcessService;
-        this.dashPayMerchantService = dashPayMerchantService;
-        this.readDealService = readDealService;
     }
 
     @Override

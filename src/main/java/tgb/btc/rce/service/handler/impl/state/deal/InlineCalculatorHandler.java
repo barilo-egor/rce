@@ -22,6 +22,7 @@ import tgb.btc.rce.service.IMessageService;
 import tgb.btc.rce.service.IUpdateService;
 import tgb.btc.rce.service.handler.IStateHandler;
 import tgb.btc.rce.service.processors.support.ExchangeService;
+import tgb.btc.rce.service.redis.IRedisStringService;
 import tgb.btc.rce.service.redis.IRedisUserStateService;
 import tgb.btc.rce.service.util.ICallbackDataService;
 import tgb.btc.rce.service.util.IMessagePropertiesService;
@@ -66,6 +67,8 @@ public class InlineCalculatorHandler implements IStateHandler {
 
     private final IModifyUserService modifyUserService;
 
+    private final IRedisStringService redisStringService;
+
     public InlineCalculatorHandler(IDealPropertyService dealPropertyService, ExchangeService exchangeService,
                                    CalculateService calculateService, DealHandler dealHandler, IKeyboardService keyboardService,
                                    IMessageService messageService, IFunctionsService functionsService,
@@ -73,7 +76,7 @@ public class InlineCalculatorHandler implements IStateHandler {
                                    ICallbackDataService callbackDataService, IUpdateService updateService,
                                    IReadUserService readUserService,
                                    IResponseSender responseSender, IRedisUserStateService redisUserStateService,
-                                   IModifyUserService modifyUserService) {
+                                   IModifyUserService modifyUserService, IRedisStringService redisStringService) {
         this.dealPropertyService = dealPropertyService;
         this.exchangeService = exchangeService;
         this.calculateService = calculateService;
@@ -88,6 +91,7 @@ public class InlineCalculatorHandler implements IStateHandler {
         this.responseSender = responseSender;
         this.redisUserStateService = redisUserStateService;
         this.modifyUserService = modifyUserService;
+        this.redisStringService = redisStringService;
     }
 
     @Override
@@ -95,7 +99,7 @@ public class InlineCalculatorHandler implements IStateHandler {
         Long chatId = updateService.getChatId(update);
         if (update.hasCallbackQuery() && callbackDataService.isCallbackQueryData(CallbackQueryData.BACK, update.getCallbackQuery().getData())) {
             redisUserStateService.save(chatId, UserState.DEAL);
-            modifyUserService.updateStepByChatId(chatId, DealHandler.AFTER_CALCULATOR_STEP);
+            redisStringService.saveStep(chatId, DealHandler.AFTER_CALCULATOR_STEP);
             dealHandler.handle(update);
             return;
         }
@@ -103,7 +107,7 @@ public class InlineCalculatorHandler implements IStateHandler {
         if (update.hasMessage() && !calculator.getOn()) {
             if (!exchangeService.calculateDealAmount(chatId, updateService.getBigDecimalFromText(update))) return;
             redisUserStateService.save(chatId, UserState.DEAL);
-            modifyUserService.updateStepByChatId(chatId, DealHandler.AFTER_CALCULATOR_STEP);
+            redisStringService.saveStep(chatId, DealHandler.AFTER_CALCULATOR_STEP);
             dealHandler.handle(update);
             return;
         } else if (update.hasMessage()) {
@@ -159,7 +163,7 @@ public class InlineCalculatorHandler implements IStateHandler {
             case READY:
                 if (!exchangeService.calculateDealAmount(chatId, new BigDecimal(sum), !isSwitched)) return;
                 redisUserStateService.save(chatId, UserState.DEAL);
-                modifyUserService.updateStepByChatId(chatId, DealHandler.AFTER_CALCULATOR_STEP);
+                redisStringService.saveStep(chatId, DealHandler.AFTER_CALCULATOR_STEP);
                 dealHandler.handle(update);
                 return;
         }

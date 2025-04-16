@@ -9,6 +9,7 @@ import tgb.btc.rce.service.redis.IRedisStringService;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
+import java.util.Objects;
 
 @Service
 public class RedisStringService implements IRedisStringService {
@@ -24,12 +25,12 @@ public class RedisStringService implements IRedisStringService {
 
     @Override
     public void save(Long chatId, String value) {
-        redisTemplate.opsForValue().set(prefix + chatId, value, Duration.of(20, ChronoUnit.MINUTES));
+        redisTemplate.opsForValue().set(this.prefix + chatId, value, Duration.of(20, ChronoUnit.MINUTES));
     }
 
     @Override
     public void save(RedisPrefix prefix, Long chatId, String value) {
-        redisTemplate.opsForValue().set(prefix.getPrefix() + chatId, value, Duration.of(20, ChronoUnit.MINUTES));
+        redisTemplate.opsForValue().set(this.prefix + prefix.getPrefix() + chatId, value, Duration.of(20, ChronoUnit.MINUTES));
     }
 
     @Override
@@ -39,7 +40,7 @@ public class RedisStringService implements IRedisStringService {
 
     @Override
     public String get(RedisPrefix prefix, Long key) {
-        return redisTemplate.opsForValue().get(prefix.getPrefix() + key);
+        return redisTemplate.opsForValue().get(this.prefix + prefix.getPrefix() + key);
     }
 
     @Override
@@ -49,12 +50,38 @@ public class RedisStringService implements IRedisStringService {
 
     @Override
     public void delete(RedisPrefix prefix, Long key) {
-        redisTemplate.delete(prefix.getPrefix() + key);
+        redisTemplate.delete(this.prefix + prefix.getPrefix() + key);
     }
 
     @Override
     public void deleteAll(Long key) {
         redisTemplate.delete(prefix + key.toString());
         Arrays.stream(RedisPrefix.values()).forEach(redisPrefix -> delete(redisPrefix, key));
+    }
+
+    @Override
+    public void nextStep(Long key) {
+        Integer step = getStep(key);
+        saveStep(key, step + 1);
+    }
+
+    @Override
+    public void previousStep(Long key) {
+        Integer step = getStep(key);
+        saveStep(key, step - 1);
+    }
+
+    @Override
+    public void saveStep(Long key, Integer value) {
+        redisTemplate.opsForValue().set(this.prefix + RedisPrefix.STEP.getPrefix() + key.toString(), value.toString());
+    }
+
+    @Override
+    public Integer getStep(Long key) {
+        String value = redisTemplate.opsForValue().get(this.prefix + RedisPrefix.STEP.getPrefix() + key.toString());
+        if (Objects.isNull(value)) {
+            return 0;
+        }
+        return Integer.parseInt(value);
     }
 }

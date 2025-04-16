@@ -57,6 +57,7 @@ import tgb.btc.rce.service.handler.util.ITextCommandService;
 import tgb.btc.rce.service.impl.FileDownloader;
 import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
 import tgb.btc.rce.service.process.IUserDiscountProcessService;
+import tgb.btc.rce.service.redis.IRedisStringService;
 import tgb.btc.rce.service.util.ICallbackDataService;
 import tgb.btc.rce.service.util.ICryptoCurrenciesDesignService;
 import tgb.btc.rce.service.util.IMessagePropertiesService;
@@ -152,6 +153,13 @@ public class ExchangeService {
     private NicePayMerchantService nicePayMerchantService;
 
     private WellBitMerchantService wellBitMerchantService;
+
+    private IRedisStringService redisStringService;
+
+    @Autowired
+    public void setRedisStringService(IRedisStringService redisStringService) {
+        this.redisStringService = redisStringService;
+    }
 
     @Autowired
     public void setWellBitMerchantService(WellBitMerchantService wellBitMerchantService) {
@@ -346,7 +354,6 @@ public class ExchangeService {
         Long chatId = updateService.getChatId(update);
         FiatCurrency fiatCurrency;
         boolean isFew = fiatCurrencyService.isFew();
-        log.debug("isFew = " + isFew);
         if (isFew) {
             if (!update.hasCallbackQuery()) {
                 responseSender.sendMessage(chatId, "Выберите валюту.");
@@ -699,7 +706,7 @@ public class ExchangeService {
         if (paymentType.getMinSum().compareTo(dealPropertyService.getAmountByPid(currentDealPid)) > 0) {
             responseSender.sendMessage(chatId, "Минимальная сумма для " + dealType.getGenitive() + " через "
                     + paymentType.getName() + " равна " + paymentType.getMinSum().toPlainString());
-            modifyUserService.updateStepByChatId(chatId, 2);
+            redisStringService.saveStep(chatId, 2);
             calculatorTypeService.run(update);
             return false;
         }
@@ -877,9 +884,8 @@ public class ExchangeService {
                     Objects.nonNull(update.getCallbackQuery().getMessage().getText())
                             ? update.getCallbackQuery().getMessage().getText()
                             : update.getCallbackQuery().getMessage().getCaption());
-//            responseSender.deleteMessage(chatId, update.getCallbackQuery().getMessage().getMessageId());
             askForReceipts(update);
-            modifyUserService.nextStep(chatId);
+            redisStringService.nextStep(chatId);
             Deal deal = readDealService.findByPid(dealPid);
             if (Merchant.WELL_BIT.equals(deal.getMerchant())) {
                 wellBitMerchantService.setPay(deal.getMerchantOrderId());
