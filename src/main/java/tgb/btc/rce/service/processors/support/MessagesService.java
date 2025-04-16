@@ -3,8 +3,6 @@ package tgb.btc.rce.service.processors.support;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException;
 import tgb.btc.library.interfaces.service.bean.bot.user.IModifyUserService;
 import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.rce.sender.ResponseSender;
@@ -62,16 +60,7 @@ public class MessagesService {
 
     @Async
     public void sendMessageToUsers(Long chatId, String text) {
-        readUserService.getChatIdsForMailing()
-                .forEach(userChatId -> {
-                    try {
-                        responseSender.sendMessageThrows(userChatId, text);
-                    } catch (TelegramApiException e) {
-                        if (e instanceof TelegramApiRequestException exception && exception.getApiResponse().contains("bot was blocked by the user")) {
-                            modifyUserService.updateIsActiveByChatId(false, userChatId);
-                        }
-                    }
-                });
+        readUserService.getChatIdsForMailing().forEach(userChatId -> responseSender.sendMessage(userChatId, text));
         responseSender.sendMessage(chatId, "Рассылка успешно завершена.");
     }
 
