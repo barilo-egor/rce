@@ -5,9 +5,11 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.interfaces.service.bean.bot.deal.IModifyDealService;
+import tgb.btc.rce.enums.UserState;
 import tgb.btc.rce.enums.update.TextCommand;
 import tgb.btc.rce.service.handler.impl.state.deal.DealHandler;
 import tgb.btc.rce.service.handler.message.text.ITextCommandHandler;
+import tgb.btc.rce.service.redis.IRedisUserStateService;
 
 @Service
 public class SellHandler implements ITextCommandHandler {
@@ -16,9 +18,13 @@ public class SellHandler implements ITextCommandHandler {
 
     private final DealHandler dealHandler;
 
-    public SellHandler(IModifyDealService modifyDealService, DealHandler dealHandler) {
+    private final IRedisUserStateService redisUserStateService;
+
+    public SellHandler(IModifyDealService modifyDealService, DealHandler dealHandler,
+                       IRedisUserStateService redisUserStateService) {
         this.modifyDealService = modifyDealService;
         this.dealHandler = dealHandler;
+        this.redisUserStateService = redisUserStateService;
     }
 
     @Override
@@ -28,6 +34,7 @@ public class SellHandler implements ITextCommandHandler {
         modifyDealService.createNewDeal(DealType.SELL, chatId);
         Update update = new Update();
         update.setMessage(message);
+        redisUserStateService.save(chatId, UserState.DEAL);
         dealHandler.handle(update);
     }
 
