@@ -15,6 +15,6 @@ public class CreatingDealHandler implements IStateHandler {
 
     @Override
     public UserState getUserState() {
-        return UserState.CREATING_A_DEAL;
+        return null;
     }
 }
