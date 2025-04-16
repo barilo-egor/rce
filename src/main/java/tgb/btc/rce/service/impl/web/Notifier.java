@@ -166,7 +166,7 @@ public class Notifier implements INotifier {
 
     @Override
     public void notifyAdmins(String s) {
-        notifyService.notifyMessage(s, Set.of(UserRole.ADMIN));
+        notifyService.notifyMessage(s, UserRole.OPERATOR_ACCESS);
     }
 
     private void notifyAdmins(String s, Long excludeChatId) {
