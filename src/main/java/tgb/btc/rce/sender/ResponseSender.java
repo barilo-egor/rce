@@ -223,12 +223,18 @@ public class ResponseSender implements IResponseSender {
 
     @Override
     public Message sendFile(Long chatId, InputFile inputFile, String caption) {
+        return sendFile(chatId, inputFile, caption, null);
+    }
+
+    @Override
+    public Message sendFile(Long chatId, InputFile inputFile, String caption, ReplyKeyboard replyKeyboard) {
         try {
             return bot.execute(SendDocument.builder()
                     .chatId(chatId.toString())
                     .document(inputFile)
                     .caption(caption)
                     .parseMode("html")
+                    .replyMarkup(replyKeyboard)
                     .build());
         } catch (TelegramApiException e) {
             return null;

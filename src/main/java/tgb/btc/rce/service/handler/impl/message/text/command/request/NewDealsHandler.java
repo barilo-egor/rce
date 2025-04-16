@@ -4,9 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Message;
-import tgb.btc.library.bean.bot.Deal;
 import tgb.btc.library.bean.bot.PaymentReceipt;
-import tgb.btc.library.constants.enums.bot.DealStatus;
 import tgb.btc.library.constants.enums.bot.ReceiptFormat;
 import tgb.btc.library.constants.enums.bot.UserRole;
 import tgb.btc.library.interfaces.service.bean.bot.deal.IReadDealService;
@@ -48,17 +46,7 @@ public class NewDealsHandler implements ITextCommandHandler {
             return;
         }
         UserRole userRole = readUserService.getUserRoleByChatId(chatId);
-
-        if (UserRole.OPERATOR_ACCESS.contains(userRole)) {
-            activeDeals.forEach(dealPid -> {
-                responseSender.sendMessage(chatId, dealSupportService.dealToString(dealPid),
-                        dealSupportService.dealToStringButtons(dealPid));
-                List<PaymentReceipt> paymentReceipts = readDealService.getPaymentReceipts(dealPid);
-                paymentReceipts.forEach(paymentReceipt -> sendPaymentReceipt(paymentReceipt, chatId));
-            });
-        } else {
-            activeDeals.forEach(dealPid -> responseSender.sendMessage(chatId, dealSupportService.dealToString(dealPid)));
-        }
+        activeDeals.forEach(deal -> dealSupportService.sendDeal(chatId, userRole, deal));
     }
 
     private void sendPaymentReceipt(PaymentReceipt paymentReceipt, Long chatId) {
