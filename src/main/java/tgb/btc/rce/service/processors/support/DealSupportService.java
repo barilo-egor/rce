@@ -3,15 +3,15 @@ package tgb.btc.rce.service.processors.support;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import tgb.btc.library.bean.bot.Deal;
+import tgb.btc.library.bean.bot.PaymentReceipt;
 import tgb.btc.library.bean.bot.SecurePaymentDetails;
 import tgb.btc.library.bean.bot.User;
 import tgb.btc.library.bean.web.api.ApiDeal;
 import tgb.btc.library.constants.enums.ApiDealType;
-import tgb.btc.library.constants.enums.bot.CryptoCurrency;
-import tgb.btc.library.constants.enums.bot.DealType;
-import tgb.btc.library.constants.enums.bot.FiatCurrency;
+import tgb.btc.library.constants.enums.bot.*;
 import tgb.btc.library.constants.enums.web.ApiDealStatus;
 import tgb.btc.library.interfaces.enums.IDeliveryTypeService;
 import tgb.btc.library.interfaces.service.bean.bot.IGroupChatService;
@@ -22,8 +22,8 @@ import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.library.interfaces.service.bean.web.IApiDealService;
 import tgb.btc.library.interfaces.util.IBigDecimalService;
 import tgb.btc.library.interfaces.web.ICryptoWithdrawalService;
-import tgb.btc.library.service.bean.bot.deal.read.DealPropertyService;
 import tgb.btc.rce.enums.update.CallbackQueryData;
+import tgb.btc.rce.sender.IResponseSender;
 import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
 import tgb.btc.rce.service.util.ICallbackDataService;
 import tgb.btc.rce.vo.InlineButton;
@@ -57,11 +57,16 @@ public class DealSupportService {
 
     private ISecurePaymentDetailsService securePaymentDetailsService;
 
-    private DealPropertyService dealPropertyService;
-
     private ICryptoWithdrawalService cryptoWithdrawalService;
 
     private ICallbackDataService callbackDataService;
+
+    private IResponseSender responseSender;
+
+    @Autowired
+    public void setResponseSender(IResponseSender responseSender) {
+        this.responseSender = responseSender;
+    }
 
     @Autowired
     public void setCallbackDataService(ICallbackDataService callbackDataService) {
@@ -71,11 +76,6 @@ public class DealSupportService {
     @Autowired
     public void setCryptoWithdrawalService(ICryptoWithdrawalService cryptoWithdrawalService) {
         this.cryptoWithdrawalService = cryptoWithdrawalService;
-    }
-
-    @Autowired
-    public void setDealPropertyService(DealPropertyService dealPropertyService) {
-        this.dealPropertyService = dealPropertyService;
     }
 
     @Autowired
@@ -228,55 +228,83 @@ public class DealSupportService {
     }
 
     public ReplyKeyboard dealToStringButtons(Long pid) {
-        Deal deal = readDealService.findByPid(pid);
+        return dealToStringButtons(readDealService.findByPid(pid));
+    }
+
+    public ReplyKeyboard dealToStringButtons(Deal deal) {
         List<InlineButton> buttons = new ArrayList<>();
         buttons.add(InlineButton.builder()
                 .text("Подтвердить")
-                .data(callbackDataService.buildData(CallbackQueryData.CONFIRM_USER_DEAL, pid, false))
+                .data(callbackDataService.buildData(CallbackQueryData.CONFIRM_USER_DEAL, deal.getPid(), false))
                 .build());
         boolean hasDefaultGroupChat = groupChatService.hasDealRequests();
         if (hasDefaultGroupChat)
             buttons.add(InlineButton.builder()
                     .text("Подтвердить с запросом")
-                    .data(callbackDataService.buildData(CallbackQueryData.CONFIRM_USER_DEAL, pid, true))
+                    .data(callbackDataService.buildData(CallbackQueryData.CONFIRM_USER_DEAL, deal.getPid(), true))
                     .build());
         CryptoCurrency cryptoCurrency = deal.getCryptoCurrency();
         if (DealType.isBuy(deal.getDealType()) && cryptoWithdrawalService.isOn(cryptoCurrency)) {
             buttons.add(InlineButton.builder()
                     .text("Автовывод")
-                    .data(callbackDataService.buildData(CallbackQueryData.AUTO_WITHDRAWAL_DEAL, pid))
+                    .data(callbackDataService.buildData(CallbackQueryData.AUTO_WITHDRAWAL_DEAL, deal.getPid()))
                     .build());
         }
         if (DealType.isBuy(deal.getDealType()) && CryptoCurrency.BITCOIN.equals(cryptoCurrency) && cryptoWithdrawalService.isOn(CryptoCurrency.BITCOIN)) {
             buttons.add(InlineButton.builder()
                     .text("Добавить в пул")
-                    .data(callbackDataService.buildData(CallbackQueryData.ADD_TO_POOL, pid))
+                    .data(callbackDataService.buildData(CallbackQueryData.ADD_TO_POOL, deal.getPid()))
                     .build());
         }
         if (!DealType.isBuy(deal.getDealType())) {
             buttons.add(InlineButton.builder()
                     .text("DashPay вывод")
-                    .data(callbackDataService.buildData(CallbackQueryData.DASH_PAY_PAY_OUT, pid))
+                    .data(callbackDataService.buildData(CallbackQueryData.DASH_PAY_PAY_OUT, deal.getPid()))
                     .build());
             buttons.add(InlineButton.builder()
                     .text("Ввести реквизит")
-                    .data(callbackDataService.buildData(CallbackQueryData.ENTER_DEAL_REQUISITE, pid))
+                    .data(callbackDataService.buildData(CallbackQueryData.ENTER_DEAL_REQUISITE, deal.getPid()))
                     .build());
         }
 
         buttons.add(InlineButton.builder()
                 .text("Доп.верификация")
-                .data(callbackDataService.buildData(CallbackQueryData.ADDITIONAL_VERIFICATION, pid))
+                .data(callbackDataService.buildData(CallbackQueryData.ADDITIONAL_VERIFICATION, deal.getPid()))
                 .build());
         buttons.add(InlineButton.builder()
                 .text("Удалить")
-                .data(callbackDataService.buildData(CallbackQueryData.DELETE_USER_DEAL, pid))
+                .data(callbackDataService.buildData(CallbackQueryData.DELETE_USER_DEAL, deal.getPid()))
                 .build());
         buttons.add(InlineButton.builder()
                 .text("Удалить и заблокировать")
-                .data(callbackDataService.buildData(CallbackQueryData.DELETE_DEAL_AND_BLOCK_USER, pid))
+                .data(callbackDataService.buildData(CallbackQueryData.DELETE_DEAL_AND_BLOCK_USER, deal.getPid()))
                 .build());
         return keyboardBuildService.buildInline(buttons, 2);
     }
 
+    public void sendDeal(Long chatId, UserRole userRole, Long dealPid) {
+        sendDeal(chatId, userRole, readDealService.findByPid(dealPid));
+    }
+
+    public void sendDeal(Long chatId, UserRole userRole, Deal deal) {
+        String dealInfo = dealToString(deal.getPid());
+        if (UserRole.OPERATOR_ACCESS.contains(userRole) && DealStatus.CONFIRMED.equals(deal.getDealStatus())) {
+            dealInfo = "<b>===СДЕЛКА УЖЕ ПОДТВЕРЖДЕНА===</b>" + dealInfo;
+        }
+        if (!UserRole.OPERATOR_ACCESS.contains(userRole)) {
+            responseSender.sendMessage(chatId, dealInfo);
+        } else {
+            List<PaymentReceipt> paymentReceipts = readDealService.getPaymentReceipts(deal.getPid());
+            if (paymentReceipts.isEmpty()) {
+                responseSender.sendMessage(chatId, dealInfo);
+            } else {
+                PaymentReceipt paymentReceipt = paymentReceipts.get(0);
+                if (paymentReceipt.getReceiptFormat().equals(ReceiptFormat.PICTURE)) {
+                    responseSender.sendPhoto(chatId, dealInfo, paymentReceipt.getReceipt(), dealToStringButtons(deal));
+                } else {
+                    responseSender.sendFile(chatId, new InputFile(paymentReceipt.getReceipt()), dealInfo, dealToStringButtons(deal));
+                }
+            }
+        }
+    }
 }

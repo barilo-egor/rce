@@ -66,6 +66,8 @@ public interface IResponseSender {
 
     Message sendFile(Long chatId, InputFile inputFile, String caption);
 
+    Message sendFile(Long chatId, InputFile inputFile, String caption, ReplyKeyboard replyKeyboard);
+
     void downloadFile(Document document, String localFilePath) throws IOException, URISyntaxException;
 
     void sendAnswerInlineQuery(String inlineQueryId, String title, String description, String messageText);
