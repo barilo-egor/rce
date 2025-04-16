@@ -93,7 +93,6 @@ public class UserProcessService implements IUserProcessService {
         newUser.setChatId(updateService.getChatId(update));
         newUser.setUsername(updateService.getUsername(update));
         newUser.setRegistrationDate(LocalDateTime.now());
-        newUser.setStep(User.DEFAULT_STEP);
         newUser.setUserRole(UserRole.USER);
         newUser.setLotteryCount(0);
         newUser.setReferralBalance(0);

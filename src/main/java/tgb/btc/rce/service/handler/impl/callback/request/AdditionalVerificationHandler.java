@@ -8,11 +8,13 @@ import tgb.btc.library.constants.enums.bot.DealStatus;
 import tgb.btc.library.interfaces.service.bean.bot.deal.IModifyDealService;
 import tgb.btc.library.interfaces.service.bean.bot.deal.read.IDealUserService;
 import tgb.btc.library.interfaces.service.bean.bot.user.IModifyUserService;
+import tgb.btc.rce.enums.RedisPrefix;
 import tgb.btc.rce.enums.UserState;
 import tgb.btc.rce.enums.update.CallbackQueryData;
 import tgb.btc.rce.sender.IResponseSender;
 import tgb.btc.rce.service.handler.ICallbackQueryHandler;
 import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
+import tgb.btc.rce.service.redis.IRedisStringService;
 import tgb.btc.rce.service.redis.IRedisUserStateService;
 import tgb.btc.rce.service.util.ICallbackDataService;
 import tgb.btc.rce.vo.ReplyButton;
@@ -37,10 +39,12 @@ public class AdditionalVerificationHandler implements ICallbackQueryHandler, Add
 
     private final IRedisUserStateService redisUserStateService;
 
+    private final IRedisStringService redisStringService;
+
     public AdditionalVerificationHandler(IDealUserService dealUserService, IModifyDealService modifyDealService,
                                          IResponseSender responseSender, IModifyUserService modifyUserService,
                                          IKeyboardBuildService keyboardBuildService, ICallbackDataService callbackDataService,
-                                         IRedisUserStateService redisUserStateService) {
+                                         IRedisUserStateService redisUserStateService, IRedisStringService redisStringService) {
         this.dealUserService = dealUserService;
         this.modifyDealService = modifyDealService;
         this.responseSender = responseSender;
@@ -48,6 +52,7 @@ public class AdditionalVerificationHandler implements ICallbackQueryHandler, Add
         this.keyboardBuildService = keyboardBuildService;
         this.callbackDataService = callbackDataService;
         this.redisUserStateService = redisUserStateService;
+        this.redisStringService = redisStringService;
     }
 
     @Override
@@ -63,7 +68,7 @@ public class AdditionalVerificationHandler implements ICallbackQueryHandler, Add
         Long userChatId = dealUserService.getUserChatIdByDealPid(dealPid);
         modifyDealService.updateDealStatusByPid(DealStatus.AWAITING_VERIFICATION, dealPid);
         redisUserStateService.save(userChatId, UserState.ADDITIONAL_VERIFICATION);
-        modifyUserService.updateBufferVariable(userChatId, dealPid.toString());
+        redisStringService.save(RedisPrefix.DEAL_PID, userChatId, dealPid.toString());
         responseSender.sendMessage(userChatId,
                 "⚠️Уважаемый клиент, необходимо пройти дополнительную верификацию. Предоставьте фото карты " +
                         "с которой была оплата на фоне переписки с ботом, либо бумажного чека на фоне переписки с " +

@@ -247,8 +247,7 @@ public class DealHandler implements IStateHandler {
     private void recursiveSwitch(Update update, Long chatId, boolean isBack) {
         if (isBack) redisStringService.previousStep(chatId);
         else redisStringService.nextStep(chatId);
-        switchByStep(update, chatId, readUserService
-                .getStepByChatId(chatId), isBack);
+        switchByStep(update, chatId, redisStringService.getStep(chatId), isBack);
     }
 
     private boolean isReceiptsCancel(Update update) {
