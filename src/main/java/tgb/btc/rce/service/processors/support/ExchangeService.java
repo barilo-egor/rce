@@ -50,6 +50,7 @@ import tgb.btc.rce.enums.PropertiesMessage;
 import tgb.btc.rce.enums.Rank;
 import tgb.btc.rce.enums.update.CallbackQueryData;
 import tgb.btc.rce.enums.update.TextCommand;
+import tgb.btc.rce.enums.update.UpdateType;
 import tgb.btc.rce.sender.IMessageImageResponseSender;
 import tgb.btc.rce.sender.IResponseSender;
 import tgb.btc.rce.service.*;
@@ -973,8 +974,8 @@ public class ExchangeService {
     }
 
     public void askForReceipts(Update update) {
-        responseSender.sendMessage(updateService.getChatId(update),
-                "Отправьте скрин перевода, либо чек оплаты.", keyboardBuildService.buildReply(List.of(BotReplyButton.CANCEL_DEAL.getButton())));
+        messageImageResponseSender.sendMessage(MessageImage.ASK_FOR_RECEIPTS, UpdateType.getChatId(update),
+                keyboardBuildService.buildReply(List.of(BotReplyButton.CANCEL_DEAL.getButton())));
     }
 
     public boolean saveReceipts(Update update) {
