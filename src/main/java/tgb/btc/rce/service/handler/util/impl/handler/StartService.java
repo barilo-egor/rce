@@ -52,7 +52,6 @@ public class StartService implements IStartService {
 
     @Override
     public void process(Long chatId) {
-        modifyUserService.updateIsActiveByChatId(true, chatId);
         messageImageResponseSender.sendMessage(MessageImage.START, chatId);
         processToMainMenu(chatId);
     }
