@@ -13,7 +13,9 @@ public enum RedisPrefix {
     PAYMENT_TYPE_PID("payment_type_pid_"),
     DEALS_SIZE("deals_size_"),
     TOTAL_AMOUNT("total_amount_"),
-    STEP("step_"),;
+    STEP("step_"),
+    MERCHANT("merchant_"),
+    ;
 
     final String prefix;
 }

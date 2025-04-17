@@ -198,4 +198,23 @@ public class BotMerchantService implements IBotMerchantService {
                 keyboardBuildService.buildInline(inlineButtons, 3)
         );
     }
+
+    @Override
+    public void sendMaxAmounts(Long chatId, Integer messageId) {
+        List<MerchantConfig> merchantConfigs = merchantConfigService.findAll();
+        List<InlineButton> inlineButtons = new ArrayList<>();
+        for (MerchantConfig merchantConfig : merchantConfigs) {
+            inlineButtons.add(InlineButton.builder()
+                            .text(merchantConfig.getMerchant().getDisplayName() + " - " + merchantConfig.getMaxAmount())
+                            .data(callbackDataService.buildData(CallbackQueryData.MERCHANT_MAX_AMOUNT, merchantConfig.getMerchant().name()))
+                    .build());
+        }
+        inlineButtons.add(InlineButton.builder().text("Назад").data(CallbackQueryData.MERCHANTS.name()).build());
+        responseSender.sendEditedMessageText(
+                chatId,
+                messageId,
+                "Текущие максимальные суммы мерчантов. Для изменения нажмите на нужного мерчанта.",
+                keyboardBuildService.buildInline(inlineButtons, 2)
+        );
+    }
 }

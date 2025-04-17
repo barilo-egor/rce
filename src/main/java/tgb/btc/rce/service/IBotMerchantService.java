@@ -14,4 +14,6 @@ public interface IBotMerchantService {
     void sendIsOn(Long chatId, Integer messageId);
 
     void sendOrder(Long chatId, Integer messageId);
+
+    void sendMaxAmounts(Long chatId, Integer messageId);
 }

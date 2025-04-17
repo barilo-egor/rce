@@ -97,4 +97,5 @@ public enum CallbackQueryData {
     MERCHANT_TURNING,
     UP_ORDER_MERCHANT,
     MERCHANTS_MAX_AMOUNTS,
+    MERCHANT_MAX_AMOUNT
 }
