@@ -1,13 +1,8 @@
 package tgb.btc.rce.service.handler.impl.callback.request;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
-import org.telegram.telegrambots.meta.api.objects.InputFile;
 import tgb.btc.library.bean.bot.Deal;
-import tgb.btc.library.bean.bot.PaymentReceipt;
-import tgb.btc.library.constants.enums.bot.DealStatus;
-import tgb.btc.library.constants.enums.bot.ReceiptFormat;
 import tgb.btc.library.constants.enums.bot.UserRole;
 import tgb.btc.library.interfaces.service.bean.bot.deal.IReadDealService;
 import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
@@ -17,7 +12,6 @@ import tgb.btc.rce.service.handler.ICallbackQueryHandler;
 import tgb.btc.rce.service.processors.support.DealSupportService;
 import tgb.btc.rce.service.util.ICallbackDataService;
 
-import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -57,30 +51,7 @@ public class ShowDealHandler implements ICallbackQueryHandler {
             return;
         }
         UserRole userRole = readUserService.getUserRoleByChatId(chatId);
-        String dealInfo = dealSupportService.dealToString(dealPid);
-        if (UserRole.OPERATOR_ACCESS.contains(userRole)) {
-            if (DealStatus.CONFIRMED.equals(deal.getDealStatus())) {
-                dealInfo = "<b>===СДЕЛКА УЖЕ ПОДТВЕРЖДЕНА===</b>" + dealInfo;
-                responseSender.sendMessage(chatId, dealInfo);
-            } else {
-                responseSender.sendMessage(chatId, dealInfo, dealSupportService.dealToStringButtons(dealPid));
-            }
-        } else {
-            responseSender.sendMessage(chatId, dealInfo);
-        }
-        if (!UserRole.OPERATOR_ACCESS.contains(userRole)) {
-            return;
-        }
-        List<PaymentReceipt> paymentReceipts = readDealService.getPaymentReceipts(dealPid);
-        if (!paymentReceipts.isEmpty()) {
-            for (PaymentReceipt paymentReceipt : paymentReceipts) {
-                if (paymentReceipt.getReceiptFormat().equals(ReceiptFormat.PICTURE)) {
-                    responseSender.sendPhoto(chatId, StringUtils.EMPTY, paymentReceipt.getReceipt());
-                } else {
-                    responseSender.sendFile(chatId, new InputFile(paymentReceipt.getReceipt()));
-                }
-            }
-        }
+        dealSupportService.sendDeal(chatId, userRole, deal);
     }
 
     @Override

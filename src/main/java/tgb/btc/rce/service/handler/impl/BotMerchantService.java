@@ -1,5 +1,6 @@
 package tgb.btc.rce.service.handler.impl;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import tgb.btc.library.bean.bot.PaymentType;
 import tgb.btc.library.constants.enums.Merchant;
@@ -19,6 +20,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Service
+@Slf4j
 public class BotMerchantService implements IBotMerchantService {
 
     private final IPaymentTypeService paymentTypeService;
@@ -108,5 +110,6 @@ public class BotMerchantService implements IBotMerchantService {
                     + "\"</b> отвязан от " + merchant.getDisplayName() + " метода оплаты.");
         }
         paymentTypeService.save(paymentType);
+        log.debug("Пользователь {} установил новое значение метода для мерчанта {}: {}", chatId, merchant.getDisplayName(), paymentTypeName);
     }
 }
