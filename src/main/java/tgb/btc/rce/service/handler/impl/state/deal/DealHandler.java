@@ -2,27 +2,19 @@ package tgb.btc.rce.service.handler.impl.state.deal;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import tgb.btc.library.bean.bot.User;
 import tgb.btc.library.constants.enums.DeliveryKind;
 import tgb.btc.library.constants.enums.bot.CryptoCurrency;
 import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.interfaces.IModule;
+import tgb.btc.library.interfaces.enums.MessageImage;
 import tgb.btc.library.interfaces.service.bean.bot.ISecurePaymentDetailsService;
-import tgb.btc.library.interfaces.service.bean.bot.deal.IModifyDealService;
-import tgb.btc.library.interfaces.service.bean.bot.deal.IReadDealService;
 import tgb.btc.library.interfaces.service.bean.bot.deal.read.IDealPropertyService;
-import tgb.btc.library.interfaces.service.bean.bot.user.IModifyUserService;
 import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.library.interfaces.service.bean.common.bot.IUserCommonService;
 import tgb.btc.library.interfaces.util.IFiatCurrencyService;
-import tgb.btc.rce.enums.Menu;
-import tgb.btc.library.interfaces.enums.MessageImage;
 import tgb.btc.rce.enums.UserState;
-import tgb.btc.rce.enums.update.CallbackQueryData;
-import tgb.btc.rce.enums.update.SlashCommand;
 import tgb.btc.rce.enums.update.TextCommand;
 import tgb.btc.rce.sender.IMessageImageResponseSender;
 import tgb.btc.rce.sender.IResponseSender;
@@ -30,19 +22,12 @@ import tgb.btc.rce.service.ICalculatorTypeService;
 import tgb.btc.rce.service.IUpdateService;
 import tgb.btc.rce.service.handler.IStateHandler;
 import tgb.btc.rce.service.handler.util.IStartService;
-import tgb.btc.rce.service.impl.util.MenuService;
-import tgb.btc.rce.service.impl.util.TextTextCommandService;
 import tgb.btc.rce.service.process.IDealBotProcessService;
 import tgb.btc.rce.service.processors.support.ExchangeService;
 import tgb.btc.rce.service.redis.IRedisStringService;
-import tgb.btc.rce.service.redis.IRedisUserStateService;
 import tgb.btc.rce.service.util.ICallbackDataService;
-import tgb.btc.rce.service.util.IMenuService;
-import tgb.btc.rce.vo.TelegramUpdateEvent;
 
 import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -226,14 +211,14 @@ public class DealHandler implements IStateHandler {
                 if (BooleanUtils.isFalse(result)) processToStart(chatId, update);
                 break;
             case 10:
-                if (!updateService.hasDocumentOrPhoto(update)) {
-                    exchangeService.askForReceipts(update);
-                    return;
-                }
                 if (isReceiptsCancel(update)) {
                     exchangeService.cancelDeal(update.getMessage().getMessageId(), chatId,
                             readUserService.getCurrentDealByChatId(chatId));
                     startService.process(chatId);
+                    return;
+                }
+                if (!updateService.hasDocumentOrPhoto(update)) {
+                    exchangeService.askForReceipts(update);
                     return;
                 }
                 if (!exchangeService.saveReceipts(update)) return;
@@ -251,7 +236,7 @@ public class DealHandler implements IStateHandler {
     }
 
     private boolean isReceiptsCancel(Update update) {
-        return update.hasMessage() && TextCommand.RECEIPTS_CANCEL_DEAL.getText().equals(updateService.getMessageText(update));
+        return update.hasMessage() && update.getMessage().hasText() && TextCommand.RECEIPTS_CANCEL_DEAL.getText().equals(updateService.getMessageText(update));
     }
 
     private void processToStart(Long chatId, Update update) {
