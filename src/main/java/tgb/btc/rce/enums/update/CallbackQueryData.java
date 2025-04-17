@@ -1,6 +1,7 @@
 package tgb.btc.rce.enums.update;
 
 public enum CallbackQueryData {
+    NONE,
     BACK,
     SHOW_WITHDRAWAL_REQUEST,
     HIDE_WITHDRAWAL,
@@ -86,5 +87,14 @@ public enum CallbackQueryData {
     ENTER_DEAL_REQUISITE,
     SAVE_DEAL_REQUISITE,
     DOWNLOAD_LOG,
-    ARCHIVE_LOGS
+    ARCHIVE_LOGS,
+    MERCHANTS,
+    MERCHANTS_AUTO_CONFIRM,
+    MERCHANTS_BINDING,
+    MERCHANTS_ORDER,
+    MERCHANT_ORDER,
+    MERCHANTS_TURNING,
+    MERCHANT_TURNING,
+    UP_ORDER_MERCHANT,
+    MERCHANTS_MAX_AMOUNTS,
 }

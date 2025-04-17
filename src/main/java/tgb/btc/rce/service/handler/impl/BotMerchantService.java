@@ -2,10 +2,13 @@ package tgb.btc.rce.service.handler.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
+import tgb.btc.library.bean.bot.MerchantConfig;
 import tgb.btc.library.bean.bot.PaymentType;
 import tgb.btc.library.constants.enums.Merchant;
 import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
+import tgb.btc.library.interfaces.service.bean.bot.IMerchantConfigService;
 import tgb.btc.library.interfaces.service.bean.bot.IPaymentTypeService;
 import tgb.btc.rce.enums.InlineType;
 import tgb.btc.rce.enums.update.CallbackQueryData;
@@ -31,12 +34,16 @@ public class BotMerchantService implements IBotMerchantService {
 
     private final IKeyboardBuildService keyboardBuildService;
 
+    private final IMerchantConfigService merchantConfigService;
+
     public BotMerchantService(IPaymentTypeService paymentTypeService, IResponseSender responseSender,
-                              ICallbackDataService callbackDataService, IKeyboardBuildService keyboardBuildService) {
+                              ICallbackDataService callbackDataService, IKeyboardBuildService keyboardBuildService,
+                              IMerchantConfigService merchantConfigService) {
         this.paymentTypeService = paymentTypeService;
         this.responseSender = responseSender;
         this.callbackDataService = callbackDataService;
         this.keyboardBuildService = keyboardBuildService;
+        this.merchantConfigService = merchantConfigService;
     }
 
     @Override
@@ -111,5 +118,84 @@ public class BotMerchantService implements IBotMerchantService {
         }
         paymentTypeService.save(paymentType);
         log.debug("Пользователь {} установил новое значение метода для мерчанта {}: {}", chatId, merchant.getDisplayName(), paymentTypeName);
+    }
+
+    @Override
+    public void sendMerchantsMenu(Long chatId, Integer messageId) {
+        List<InlineButton> buttonList = new ArrayList<>();
+        buttonList.add(InlineButton.builder().text("Включение").data(CallbackQueryData.MERCHANTS_TURNING.name()).build());
+        buttonList.add(InlineButton.builder().text("Очередь").data(CallbackQueryData.MERCHANTS_ORDER.name()).build());
+        buttonList.add(InlineButton.builder().text("Максимальные суммы").data(CallbackQueryData.MERCHANTS_MAX_AMOUNTS.name()).build());
+        buttonList.add(InlineButton.builder().text("Привязка").data(CallbackQueryData.MERCHANTS_BINDING.name()).build());
+        buttonList.add(InlineButton.builder().text("Автоподтверждение").data(CallbackQueryData.MERCHANTS_AUTO_CONFIRM.name()).build());
+        String text = "Меню управления мерчантами.";
+        ReplyKeyboard replyKeyboard = keyboardBuildService.buildInline(buttonList, 2);
+        if (Objects.isNull(messageId)) {
+            responseSender.sendMessage(chatId, text, replyKeyboard);
+        } else {
+            responseSender.sendEditedMessageText(chatId, messageId, text, replyKeyboard);
+        }
+    }
+
+    @Override
+    public void sendIsOn(Long chatId, Integer messageId) {
+        List<MerchantConfig> merchantConfigs = merchantConfigService.findAll();
+        List<InlineButton> inlineButtons = new ArrayList<>();
+        for (MerchantConfig merchantConfig : merchantConfigs) {
+            boolean isOn = Objects.nonNull(merchantConfig.getIsOn()) && merchantConfig.getIsOn();
+            String merchantDisplayName = merchantConfig.getMerchant().getDisplayName();
+            inlineButtons.add(InlineButton.builder()
+                    .text(isOn ? "\uD83D\uDFE2 " + merchantDisplayName : "\uD83D\uDD34 " + merchantDisplayName)
+                    .data(callbackDataService.buildData(CallbackQueryData.MERCHANT_TURNING, merchantConfig.getMerchant().name()))
+                    .build()
+            );
+        }
+        inlineButtons.add(InlineButton.builder().text("Назад").data(CallbackQueryData.MERCHANTS.name()).build());
+        responseSender.sendEditedMessageText(
+                chatId,
+                messageId,
+                "\uD83D\uDFE2 - мерчант включен на текущий момент, \uD83D\uDD34 - выключен. Для включения/выключения нажмите по кнопке с названием мерчанта.",
+                keyboardBuildService.buildInline(inlineButtons, 2)
+        );
+    }
+
+    @Override
+    public void sendOrder(Long chatId, Integer messageId) {
+        List<MerchantConfig> merchantConfigs = merchantConfigService.findAllSortedByMerchantOrder();
+        List<InlineButton> inlineButtons = new ArrayList<>();
+        int i = 1;
+        for (MerchantConfig merchantConfig : merchantConfigs) {
+            if (i == 1) {
+                inlineButtons.add(InlineButton.builder().text("-").data(CallbackQueryData.NONE.name()).build());
+            } else {
+                inlineButtons.add(InlineButton.builder()
+                        .text("⬆️")
+                        .data(callbackDataService.buildData(CallbackQueryData.MERCHANT_ORDER, merchantConfig.getMerchant(), true))
+                        .build());
+            }
+            boolean isOn = Objects.nonNull(merchantConfig.getIsOn()) && merchantConfig.getIsOn();
+            String merchantDisplayName = merchantConfig.getMerchant().getDisplayName();
+            inlineButtons.add(InlineButton.builder()
+                    .text(isOn ? "\uD83D\uDFE2 " + merchantDisplayName : "\uD83D\uDD34 " + merchantDisplayName)
+                    .data(CallbackQueryData.NONE.name())
+                    .build()
+            );
+            if (i < merchantConfigs.size()) {
+                inlineButtons.add(InlineButton.builder()
+                        .text("⬇️")
+                        .data(callbackDataService.buildData(CallbackQueryData.MERCHANT_ORDER, merchantConfig.getMerchant(), false))
+                        .build());
+            } else {
+                inlineButtons.add(InlineButton.builder().text("-").data(CallbackQueryData.NONE.name()).build());
+            }
+            i++;
+        }
+        inlineButtons.add(InlineButton.builder().text("Назад").data(CallbackQueryData.MERCHANTS.name()).build());
+        responseSender.sendEditedMessageText(
+                chatId,
+                messageId,
+                "Выполните требуемые перемещения нажимая на кнопки ⬇️ и ⬆️.",
+                keyboardBuildService.buildInline(inlineButtons, 3)
+        );
     }
 }

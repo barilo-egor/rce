@@ -12,11 +12,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Configuration
-public class MerchantConfig {
+public class MerchantSpringConfig {
 
     private final IBotMerchantService botMerchantService;
 
-    public MerchantConfig(IBotMerchantService botMerchantService) {
+    public MerchantSpringConfig(IBotMerchantService botMerchantService) {
         this.botMerchantService = botMerchantService;
     }
 
