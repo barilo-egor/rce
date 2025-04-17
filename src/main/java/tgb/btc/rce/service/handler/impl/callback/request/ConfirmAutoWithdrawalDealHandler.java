@@ -60,7 +60,7 @@ public class ConfirmAutoWithdrawalDealHandler implements ICallbackQueryHandler {
     }
 
     @Override
-    public void handle(CallbackQuery callbackQuery) {
+    public synchronized void handle(CallbackQuery callbackQuery) {
         Long chatId = callbackQuery.getFrom().getId();
         if (!groupChatService.hasAutoWithdrawal()) {
             responseSender.sendAnswerCallbackQuery(callbackQuery.getId(),
