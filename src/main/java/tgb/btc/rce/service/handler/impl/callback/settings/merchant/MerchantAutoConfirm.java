@@ -3,18 +3,13 @@ package tgb.btc.rce.service.handler.impl.callback.settings.merchant;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import tgb.btc.library.constants.enums.Merchant;
-import tgb.btc.library.constants.enums.bot.CryptoCurrency;
 import tgb.btc.rce.enums.update.CallbackQueryData;
 import tgb.btc.rce.service.IBotMerchantService;
 import tgb.btc.rce.service.handler.ICallbackQueryHandler;
 import tgb.btc.rce.service.util.ICallbackDataService;
 
-import java.util.List;
-
 @Service
 public class MerchantAutoConfirm implements ICallbackQueryHandler {
-
-    public static final List<CryptoCurrency> CURRENCIES_WITH_AUTO_WITHDRAWAL = List.of(CryptoCurrency.BITCOIN, CryptoCurrency.LITECOIN);
 
     private final IBotMerchantService botMerchantService;
 
