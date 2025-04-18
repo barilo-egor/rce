@@ -31,8 +31,6 @@ import java.util.*;
 @Slf4j
 public class BotMerchantService implements IBotMerchantService {
 
-    public static final List<CryptoCurrency> CURRENCIES_WITH_AUTO_WITHDRAWAL = List.of(CryptoCurrency.BITCOIN, CryptoCurrency.LITECOIN);
-
     private final IPaymentTypeService paymentTypeService;
 
     private final IResponseSender responseSender;
@@ -338,7 +336,7 @@ public class BotMerchantService implements IBotMerchantService {
         MerchantConfig merchantConfig = merchantConfigService.getMerchantConfig(merchant);
         List<AutoConfirmConfig> autoConfirmConfigs = merchantConfig.getConfirmConfigs();
         List<List<InlineKeyboardButton>> rows = new ArrayList<>();
-        for (CryptoCurrency cryptoCurrency : CURRENCIES_WITH_AUTO_WITHDRAWAL) {
+        for (CryptoCurrency cryptoCurrency : CryptoCurrency.CURRENCIES_WITH_AUTO_WITHDRAWAL) {
             List<InlineKeyboardButton> cryptoCurrencyRow = new ArrayList<>();
             cryptoCurrencyRow.add(InlineKeyboardButton.builder()
                     .text("\uD83D\uDD3D " + cryptoCurrency.name() + " \uD83D\uDD3D")
@@ -363,7 +361,7 @@ public class BotMerchantService implements IBotMerchantService {
             for (DeliveryType deliveryType : DeliveryType.values()) {
                 for (AutoConfirmType autoConfirmType : autoConfirmTypes) {
                     Optional<AutoConfirmConfig> autoConfirmConfigOptional =
-                            merchantConfig.getAutoConfirmConfig(cryptoCurrency, deliveryType, autoConfirmType);
+                            merchantConfig.getAutoConfirmConfig(cryptoCurrency, deliveryType);
                     String emoji = autoConfirmConfigOptional.isPresent() ? "✅" : "";
                     autoConfirmTypesRow.add(InlineKeyboardButton.builder()
                             .text(emoji + " " + autoConfirmType.getDescription())

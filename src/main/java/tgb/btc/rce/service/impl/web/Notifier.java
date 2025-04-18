@@ -255,4 +255,9 @@ public class Notifier implements INotifier {
     public void merchantUpdateStatus(Long aLong, String s) {
         notifyService.notifyMessage(s, keyboardService.getShowDeal(aLong), UserRole.OPERATOR_ACCESS);
     }
+
+    @Override
+    public void notifyAutoConfirmDeal(String s, Long aLong) {
+        notifyService.notifyMessage(s, keyboardService.getShowDeal(aLong), UserRole.OPERATOR_ACCESS);
+    }
 }
