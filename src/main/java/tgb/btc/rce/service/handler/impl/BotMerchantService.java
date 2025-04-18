@@ -2,6 +2,7 @@ package tgb.btc.rce.service.handler.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import tgb.btc.library.bean.bot.MerchantConfig;
 import tgb.btc.library.bean.bot.PaymentType;
@@ -10,6 +11,7 @@ import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
 import tgb.btc.library.interfaces.service.bean.bot.IMerchantConfigService;
 import tgb.btc.library.interfaces.service.bean.bot.IPaymentTypeService;
+import tgb.btc.rce.enums.HTMLTag;
 import tgb.btc.rce.enums.InlineType;
 import tgb.btc.rce.enums.update.CallbackQueryData;
 import tgb.btc.rce.sender.IResponseSender;
@@ -47,25 +49,43 @@ public class BotMerchantService implements IBotMerchantService {
     }
 
     @Override
-    public void sendRequestPaymentType(Merchant merchant, Long chatId) {
-        List<PaymentType> paymentTypes = paymentTypeService.getByDealTypeAndIsOnAndFiatCurrency(DealType.BUY, true, FiatCurrency.RUB);
-        if (Objects.isNull(paymentTypes) || paymentTypes.isEmpty()) {
-            responseSender.sendMessage(chatId, "Отсутствуют <b>включенные</b> типы оплаты на <b>покупку</b> для фиатной валюты <b>"
-                    + FiatCurrency.RUB.getDisplayName() + "</b>.");
-            return;
+    public void sendRequestPaymentType(CallbackQuery callbackQuery) {
+        Merchant merchant = Merchant.valueOf(callbackDataService.getArgument(callbackQuery.getData(), 1));
+        StringBuilder message = new StringBuilder();
+        message.append("Текущие связанные методы оплаты мерчанта ")
+                .append(HTMLTag.BOLD.wrap(merchant.getDisplayName()))
+                .append(":\n");
+        List<PaymentType> paymentTypeList = paymentTypeService.findAll();
+        for (PaymentType paymentType : paymentTypeList) {
+            if (merchant.getHasBindPredicate().test(paymentType)) {
+                message.append("Метод ")
+                        .append(HTMLTag.BOLD.wrap(merchant.getGetMethodDescriptionFunction().apply(paymentType)))
+                        .append(" связан с типом оплаты ")
+                        .append(HTMLTag.BOLD.wrap(paymentType.getName()))
+                        .append("\n");
+            }
         }
-        List<InlineButton> buttons = new ArrayList<>(paymentTypes
-                .stream()
-                .map(paymentType -> InlineButton.builder()
-                        .text(paymentType.getName())
-                        .data(callbackDataService.buildData(CallbackQueryData.PAYMENT_TYPE_BINDING, merchant.name(), paymentType.getPid()))
-                        .inlineType(InlineType.CALLBACK_DATA)
-                        .build())
-                .toList()
+        message.append("\n").append("Выберите тип оплаты, к которому хотите привязать/отвязать метод мерчанта.");
+        List<PaymentType> paymentTypes = paymentTypeService.getByDealTypeAndFiatCurrency(DealType.BUY, FiatCurrency.RUB);
+        List<InlineButton> buttons = new ArrayList<>();
+        if (paymentTypes.isEmpty()) {
+            message.append("\n\n‼️ ").append(HTMLTag.BOLD.wrap("Отсутствуют типы оплаты."));
+        } else {
+            buttons.addAll(paymentTypes
+                    .stream()
+                    .map(paymentType -> InlineButton.builder()
+                            .text(paymentType.getName())
+                            .data(callbackDataService.buildData(CallbackQueryData.PAYMENT_TYPE_BINDING, merchant.name(), paymentType.getPid()))
+                            .inlineType(InlineType.CALLBACK_DATA)
+                            .build())
+                    .toList());
+        }
+        buttons.add(InlineButton.builder().text("Назад").data(CallbackQueryData.MERCHANTS_BINDING.name()).build());
+        responseSender.sendEditedMessageText(callbackQuery.getMessage().getChatId(),
+                callbackQuery.getMessage().getMessageId(),
+                message.toString(),
+                keyboardBuildService.buildInline(buttons, 2)
         );
-        responseSender.sendMessage(chatId,
-                "Выберите тип оплаты, к которому хотите выполнить привязку метода оплаты " + merchant.getDisplayName() + ". Типы оплаты отображены только для валюты \""
-                        + FiatCurrency.RUB.getDisplayName() + "\".", keyboardBuildService.buildInline(buttons, 2));
     }
 
     @Override
@@ -73,7 +93,6 @@ public class BotMerchantService implements IBotMerchantService {
         Merchant merchant = Merchant.valueOf(callbackDataService.getArgument(data, 1));
         Long paymentTypePid = callbackDataService.getLongArgument(data, 2);
         PaymentType paymentType = paymentTypeService.getByPid(paymentTypePid);
-        responseSender.deleteMessage(chatId, messageId);
 
         List<InlineButton> buttons = new ArrayList<>(merchant.getMethodDescriptions().entrySet().stream()
                 .map(entry -> InlineButton.builder()
@@ -82,19 +101,21 @@ public class BotMerchantService implements IBotMerchantService {
                         .build())
                 .toList());
         if (!merchant.getHasBindPredicate().test(paymentType)) {
-            responseSender.sendMessage(chatId, "Привязка типа оплаты <b>\"" + paymentType.getName()
+            buttons.add(InlineButton.builder().text("Назад").data(callbackDataService.buildData(CallbackQueryData.MERCHANT_BINDING, merchant.name())).build());
+            responseSender.sendEditedMessageText(chatId, messageId, "Привязка типа оплаты <b>\"" + paymentType.getName()
                             + "\"</b> к методу оплаты " + merchant.getDisplayName() + " отсутствует. Выберите новый метод.",
-                    keyboardBuildService.buildInline(buttons, 1));
+                    keyboardBuildService.buildInline(buttons, 2));
         } else {
             buttons.add(InlineButton.builder()
                     .text("❌ Удалить привязку")
                     .data(callbackDataService.buildData(CallbackQueryData.PAYMENT_TYPE_METHOD, merchant.name(), paymentTypePid))
                     .build());
             String methodName = merchant.getGetMethodDescriptionFunction().apply(paymentType);
-            responseSender.sendMessage(chatId, "Тип оплаты <b>\"" + paymentType.getName()
+            buttons.add(InlineButton.builder().text("Назад").data(callbackDataService.buildData(CallbackQueryData.MERCHANT_BINDING, merchant.name())).build());
+            responseSender.sendEditedMessageText(chatId, messageId, "Тип оплаты <b>\"" + paymentType.getName()
                             + "\"</b> привязан к " + merchant.getDisplayName() + " методу оплаты <b>\""
                             + methodName + "\"</b>.",
-                    keyboardBuildService.buildInline(buttons, 1));
+                    keyboardBuildService.buildInline(buttons, 2));
         }
     }
 
@@ -104,17 +125,20 @@ public class BotMerchantService implements IBotMerchantService {
         Long paymentTypePid = callbackDataService.getLongArgument(data, 2);
         String paymentTypeName = callbackDataService.getArgument(data, 3);
         PaymentType paymentType = paymentTypeService.getByPid(paymentTypePid);
-        responseSender.deleteMessage(chatId, messageId);
+        List<InlineButton> buttons = List.of(InlineButton.builder()
+                .text("Вернуться")
+                .data(callbackDataService.buildData(CallbackQueryData.MERCHANT_BINDING, merchant.name()))
+                .build());
         if (Objects.nonNull(paymentTypeName)) {
             merchant.getSetMethodFromNameConsumer().accept(paymentType, paymentTypeName);
             String methodName = merchant.getGetMethodDescriptionFunction().apply(paymentType);
-            responseSender.sendMessage(chatId, "Тип оплаты <b>\"" + paymentType.getName()
+            responseSender.sendEditedMessageText(chatId, messageId, "Тип оплаты <b>\"" + paymentType.getName()
                     + "\"</b> связан с " + merchant.getDisplayName() + " методом оплаты <b>\"" + methodName
-                    + "\"</b>.");
+                    + "\"</b>.", buttons);
         } else {
             merchant.getSetEmptyMethodConsumer().accept(paymentType);
-            responseSender.sendMessage(chatId, "Тип оплаты <b>\"" + paymentType.getName()
-                    + "\"</b> отвязан от " + merchant.getDisplayName() + " метода оплаты.");
+            responseSender.sendEditedMessageText(chatId, messageId,"Тип оплаты <b>\"" + paymentType.getName()
+                    + "\"</b> отвязан от " + merchant.getDisplayName() + " метода оплаты.", buttons);
         }
         paymentTypeService.save(paymentType);
         log.debug("Пользователь {} установил новое значение метода для мерчанта {}: {}", chatId, merchant.getDisplayName(), paymentTypeName);
@@ -215,6 +239,25 @@ public class BotMerchantService implements IBotMerchantService {
                 messageId,
                 "Текущие максимальные суммы мерчантов. Для изменения нажмите на нужного мерчанта.",
                 keyboardBuildService.buildInline(inlineButtons, 2)
+        );
+    }
+
+    @Override
+    public void sendBindingMerchants(Long chatId, Integer messageId) {
+        List<InlineButton> buttons = new ArrayList<>();
+        for (Merchant merchant : Merchant.values()) {
+            buttons.add(InlineButton.builder()
+                    .text(merchant.getDisplayName())
+                    .data(callbackDataService.buildData(CallbackQueryData.MERCHANT_BINDING, merchant.name()))
+                    .build()
+            );
+        }
+        buttons.add(InlineButton.builder().text("Назад").data(CallbackQueryData.MERCHANTS.name()).build());
+        responseSender.sendEditedMessageText(
+                chatId,
+                messageId,
+                "Выберите мерчанта, к которому хотите привязать или отвязать тип оплаты.",
+                keyboardBuildService.buildInline(buttons, 2)
         );
     }
 }

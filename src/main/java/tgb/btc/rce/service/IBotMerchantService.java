@@ -1,9 +1,11 @@
 package tgb.btc.rce.service;
 
+import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import tgb.btc.library.constants.enums.Merchant;
 
 public interface IBotMerchantService {
-    void sendRequestPaymentType(Merchant merchant, Long chatId);
+
+    void sendRequestPaymentType(CallbackQuery callbackQuery);
 
     void sendRequestMethod(Long chatId, String data, Integer messageId);
 
@@ -16,4 +18,6 @@ public interface IBotMerchantService {
     void sendOrder(Long chatId, Integer messageId);
 
     void sendMaxAmounts(Long chatId, Integer messageId);
+
+    void sendBindingMerchants(Long chatId, Integer messageId);
 }
