@@ -11,4 +11,8 @@ public enum HTMLTag {
 
     final String openTag;
     final String closeTag;
+
+    public String wrap(String string) {
+        return openTag + string + closeTag;
+    }
 }

@@ -74,7 +74,7 @@ public enum Menu {
     BOT_SETTINGS(2,
             List.of(
                     TextCommand.ON_BOT, TextCommand.OFF_BOT,
-                    TextCommand.BOT_VARIABLES, TextCommand.PAYMENT_TYPES,
+                    TextCommand.BOT_VARIABLES, TextCommand.MERCHANTS, TextCommand.PAYMENT_TYPES,
                     TextCommand.TURNING_CURRENCY, TextCommand.EDIT_CONTACTS, TextCommand.TURNING_DELIVERY_TYPE,
                     TextCommand.LOGS,
                     TextCommand.RETURN
@@ -96,8 +96,8 @@ public enum Menu {
             List.of(
                     TextCommand.NEW_PAYMENT_TYPE, TextCommand.DELETE_PAYMENT_TYPE, TextCommand.NEW_PAYMENT_TYPE_REQUISITE,
                     TextCommand.DELETE_PAYMENT_TYPE_REQUISITE, TextCommand.TURN_PAYMENT_TYPES, TextCommand.CHANGE_MIN_SUM,
-                    TextCommand.TURN_DYNAMIC_REQUISITES, TextCommand.PAYMENT_TYPES_BINDING, TextCommand.PAYMENT_TYPE_DISCOUNTS,
-                    TextCommand.ADDITIONAL_PAYMENT_TYPE_TEXT, TextCommand.RETURN
+                    TextCommand.TURN_DYNAMIC_REQUISITES, TextCommand.PAYMENT_TYPES_BINDING,
+                    TextCommand.PAYMENT_TYPE_DISCOUNTS, TextCommand.ADDITIONAL_PAYMENT_TYPE_TEXT, TextCommand.RETURN
             )
     ),
     PAYMENT_TYPES_BINDING(2,

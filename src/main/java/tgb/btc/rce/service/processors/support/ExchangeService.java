@@ -766,7 +766,6 @@ public class ExchangeService {
                 }
             } else {
                 requisiteVO = RequisiteVO.builder()
-                        .merchant(Merchant.NONE)
                         .requisite(securePaymentDetailsService.getByChatIdAndFiatCurrency(chatId, deal.getFiatCurrency()).getDetails())
                         .build();
             }

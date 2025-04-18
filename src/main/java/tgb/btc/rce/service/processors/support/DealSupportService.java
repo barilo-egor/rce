@@ -295,14 +295,15 @@ public class DealSupportService {
             responseSender.sendMessage(chatId, dealInfo);
         } else {
             List<PaymentReceipt> paymentReceipts = readDealService.getPaymentReceipts(deal.getPid());
+            ReplyKeyboard replyKeyboard = DealStatus.CONFIRMED.equals(deal.getDealStatus()) ? null : dealToStringButtons(deal);
             if (paymentReceipts.isEmpty()) {
-                responseSender.sendMessage(chatId, dealInfo);
+                responseSender.sendMessage(chatId, dealInfo, replyKeyboard);
             } else {
                 PaymentReceipt paymentReceipt = paymentReceipts.get(0);
                 if (paymentReceipt.getReceiptFormat().equals(ReceiptFormat.PICTURE)) {
-                    responseSender.sendPhoto(chatId, dealInfo, paymentReceipt.getReceipt(), dealToStringButtons(deal));
+                    responseSender.sendPhoto(chatId, dealInfo, paymentReceipt.getReceipt(), replyKeyboard);
                 } else {
-                    responseSender.sendFile(chatId, new InputFile(paymentReceipt.getReceipt()), dealInfo, dealToStringButtons(deal));
+                    responseSender.sendFile(chatId, new InputFile(paymentReceipt.getReceipt()), dealInfo, replyKeyboard);
                 }
             }
         }
