@@ -22,6 +22,7 @@ import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.library.interfaces.service.bean.web.IApiDealService;
 import tgb.btc.library.interfaces.util.IBigDecimalService;
 import tgb.btc.library.interfaces.web.ICryptoWithdrawalService;
+import tgb.btc.rce.enums.HTMLTag;
 import tgb.btc.rce.enums.update.CallbackQueryData;
 import tgb.btc.rce.sender.IResponseSender;
 import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
@@ -202,7 +203,9 @@ public class DealSupportService {
         if (Objects.nonNull(deal.getMerchant())) {
             String merchantString = "\uD83D\uDCB3 \nСделка мерчанта <b>" + deal.getMerchant().getDisplayName()
                     + "</b>\nСтатус ордера: <b>"
-                    + deal.getMerchant().getGetDisplayStatusFunction().apply(deal.getMerchantOrderStatus())  + "</b>\n========\n\n";
+                    + deal.getMerchant().getGetDisplayStatusFunction().apply(deal.getMerchantOrderStatus())  + "</b>\n"
+                    + "ID ордера: " + HTMLTag.CODE.wrap(deal.getMerchantOrderId()) + "\n"
+                    + "\n========\n\n";
             dealInfo = merchantString + dealInfo;
         }
         String dealAmount = bigDecimalService.roundToPlainString(deal.getAmount());

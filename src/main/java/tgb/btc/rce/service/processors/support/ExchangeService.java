@@ -894,14 +894,14 @@ public class ExchangeService {
             }
             return true;
         } else {
-            cancelDeal(update.getCallbackQuery().getMessage().getMessageId(), chatId, dealPid);
+            cancelDeal(update.getCallbackQuery().getMessage(), chatId, dealPid);
             return false;
         }
     }
 
-    public void cancelDeal(Integer messageId, Long chatId, Long dealPid) {
+    public void cancelDeal(Message message, Long chatId, Long dealPid) {
         Deal deal = readDealService.findByPid(dealPid);
-        responseSender.deleteMessage(chatId, messageId);
+        responseSender.sendEditedMessageText(chatId, message.getMessageId(), "<b>===ЗАЯВКА ОТМЕНЕНА КЛИЕНТОМ===</b>\n\n" + message.getText());
         modifyDealService.deleteById(dealPid);
         modifyUserService.updateCurrentDealByChatId(null, chatId);
         responseSender.sendMessage(chatId, "Заявка отменена.");

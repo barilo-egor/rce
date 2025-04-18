@@ -208,11 +208,11 @@ public class DealHandler implements IStateHandler {
                 if (Objects.isNull(result)) {
                     return;
                 }
-                if (BooleanUtils.isFalse(result)) processToStart(chatId, update);
+                if (BooleanUtils.isFalse(result)) startService.process(chatId);
                 break;
             case 10:
                 if (isReceiptsCancel(update)) {
-                    exchangeService.cancelDeal(update.getMessage().getMessageId(), chatId,
+                    exchangeService.cancelDeal(update.getMessage(), chatId,
                             readUserService.getCurrentDealByChatId(chatId));
                     startService.process(chatId);
                     return;
