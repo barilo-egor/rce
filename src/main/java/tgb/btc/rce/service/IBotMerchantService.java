@@ -26,4 +26,8 @@ public interface IBotMerchantService {
     void sendStatusesMerchants(Long chatId, Integer messageId);
 
     void sendMerchantStatuses(Long chatId, Integer messageId, Merchant merchant);
+
+    void sendAutoConfirmsMerchants(Long chatId, Integer messageId);
+
+    void sendMerchantAutoConfirms(Merchant merchant, Long chatId, Integer messageId);
 }

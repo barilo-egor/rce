@@ -4,11 +4,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
+import tgb.btc.library.bean.bot.AutoConfirmConfig;
 import tgb.btc.library.bean.bot.MerchantConfig;
 import tgb.btc.library.bean.bot.PaymentType;
 import tgb.btc.library.constants.enums.Merchant;
+import tgb.btc.library.constants.enums.bot.CryptoCurrency;
 import tgb.btc.library.constants.enums.bot.DealType;
+import tgb.btc.library.constants.enums.bot.DeliveryType;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
+import tgb.btc.library.constants.enums.web.merchant.AutoConfirmType;
 import tgb.btc.library.interfaces.service.bean.bot.IMerchantConfigService;
 import tgb.btc.library.interfaces.service.bean.bot.IPaymentTypeService;
 import tgb.btc.rce.enums.HTMLTag;
@@ -20,14 +25,13 @@ import tgb.btc.rce.service.keyboard.IKeyboardBuildService;
 import tgb.btc.rce.service.util.ICallbackDataService;
 import tgb.btc.rce.vo.InlineButton;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 @Service
 @Slf4j
 public class BotMerchantService implements IBotMerchantService {
+
+    public static final List<CryptoCurrency> CURRENCIES_WITH_AUTO_WITHDRAWAL = List.of(CryptoCurrency.BITCOIN, CryptoCurrency.LITECOIN);
 
     private final IPaymentTypeService paymentTypeService;
 
@@ -308,5 +312,81 @@ public class BotMerchantService implements IBotMerchantService {
         buttons.add(InlineButton.builder().text("Назад").data(CallbackQueryData.MERCHANTS_STATUSES.name()).build());
         responseSender.sendEditedMessageText(chatId, messageId, "Статусы с галочкой (✅) являются одобренными для автоподтверждения. " +
                 "Для того, чтобы сделки в выбранном статусе автоматически подтвеждались и выводились нажмите на статус.", buttons);
+    }
+
+    @Override
+    public void sendAutoConfirmsMerchants(Long chatId, Integer messageId) {
+        List<InlineButton> buttons = new ArrayList<>();
+        for (Merchant merchant : Merchant.values()) {
+            buttons.add(InlineButton.builder()
+                    .text(merchant.getDisplayName())
+                    .data(callbackDataService.buildData(CallbackQueryData.MERCHANT_AUTO_CONFIRM, merchant.name()))
+                    .build()
+            );
+        }
+        buttons.add(InlineButton.builder().text("Назад").data(CallbackQueryData.MERCHANTS_AUTO_CONFIRM.name()).build());
+        responseSender.sendEditedMessageText(
+                chatId,
+                messageId,
+                "Выберите мерчанта, у которого хотите включить/выключить автоподтверждение.",
+                keyboardBuildService.buildInline(buttons, 2)
+        );
+    }
+
+    @Override
+    public void sendMerchantAutoConfirms(Merchant merchant, Long chatId, Integer messageId) {
+        MerchantConfig merchantConfig = merchantConfigService.getMerchantConfig(merchant);
+        List<AutoConfirmConfig> autoConfirmConfigs = merchantConfig.getConfirmConfigs();
+        List<List<InlineKeyboardButton>> rows = new ArrayList<>();
+        for (CryptoCurrency cryptoCurrency : CURRENCIES_WITH_AUTO_WITHDRAWAL) {
+            List<InlineKeyboardButton> cryptoCurrencyRow = new ArrayList<>();
+            cryptoCurrencyRow.add(InlineKeyboardButton.builder()
+                    .text("\uD83D\uDD3D " + cryptoCurrency.name() + " \uD83D\uDD3D")
+                    .callbackData(CallbackQueryData.NONE.name())
+                    .build()
+            );
+            rows.add(cryptoCurrencyRow);
+
+            List<InlineKeyboardButton> deliveryTypesRow = new ArrayList<>();
+            for (DeliveryType deliveryType : DeliveryType.values()) {
+                deliveryTypesRow.add(InlineKeyboardButton.builder()
+                        .text("\uD83D\uDD3D " + deliveryType.name() + " \uD83D\uDD3D")
+                        .callbackData(CallbackQueryData.NONE.name())
+                        .build()
+                );
+            }
+            rows.add(deliveryTypesRow);
+            List<AutoConfirmType> autoConfirmTypes = CryptoCurrency.BITCOIN.equals(cryptoCurrency)
+                    ? Arrays.asList(AutoConfirmType.values())
+                    : List.of(AutoConfirmType.AUTO_WITHDRAWAL);
+            List<InlineKeyboardButton> autoConfirmTypesRow = new ArrayList<>();
+            for (DeliveryType deliveryType : DeliveryType.values()) {
+                for (AutoConfirmType autoConfirmType : autoConfirmTypes) {
+                    Optional<AutoConfirmConfig> autoConfirmConfigOptional =
+                            merchantConfig.getAutoConfirmConfig(cryptoCurrency, deliveryType, autoConfirmType);
+                    String emoji = autoConfirmConfigOptional.isPresent() ? "✅" : "";
+                    autoConfirmTypesRow.add(InlineKeyboardButton.builder()
+                            .text(emoji + " " + autoConfirmType.getDescription())
+                            .callbackData(callbackDataService.buildData(CallbackQueryData.AUTO_CONFIRM,
+                                    merchant.name(), cryptoCurrency, deliveryType.name(), autoConfirmType.name()))
+                            .build());
+                }
+            }
+            rows.add(autoConfirmTypesRow);
+        }
+        rows.add(List.of(InlineKeyboardButton.builder()
+                .text("Назад")
+                .callbackData(CallbackQueryData.MERCHANTS_AUTO_CONFIRM_TURNING.name())
+                .build()));
+        responseSender.sendEditedMessageText(
+                chatId,
+                messageId,
+                "Сконфигурируйте автоподтверждение для мерчанта " + HTMLTag.BOLD.wrap(merchant.getDisplayName()) + ". " +
+                        "Для этого поставьте галочку на нужной опции (автовывод либо пул), либо уберите галочку, " +
+                        "чтобы отключить автоподтверждение для определенной криптовалюты и типа доставки.\n\n" +
+                        HTMLTag.BOLD.wrap("Автовывод") + " - сделки, у которых статус мерчанта изменится на одобренный, будут автоматически выводится отдельной транзакцией.\n" +
+                        HTMLTag.BOLD.wrap("Пул") + " - сделки, у которых статус мерчанта изменится на одобренный, будут автоматически добавляться в пул.",
+                keyboardBuildService.buildInlineByRows(rows)
+        );
     }
 }
