@@ -30,4 +30,8 @@ public interface IBotMerchantService {
     void sendAutoConfirmsMerchants(Long chatId, Integer messageId);
 
     void sendMerchantAutoConfirms(Merchant merchant, Long chatId, Integer messageId);
+
+    void sendAttemptsCount(Long chatId, Integer messageId);
+
+    void sendDelay(Long chatId, Integer messageId);
 }

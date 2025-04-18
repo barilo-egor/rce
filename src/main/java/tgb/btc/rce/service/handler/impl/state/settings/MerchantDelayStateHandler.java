@@ -14,11 +14,12 @@ import tgb.btc.rce.service.IBotMerchantService;
 import tgb.btc.rce.service.handler.IStateHandler;
 import tgb.btc.rce.service.redis.IRedisStringService;
 import tgb.btc.rce.service.redis.IRedisUserStateService;
+import tgb.btc.rce.service.util.ICallbackDataService;
 
 import java.util.List;
 
 @Service
-public class MerchantMaxAmountStateHandler implements IStateHandler {
+public class MerchantDelayStateHandler implements IStateHandler {
 
     private final IResponseSender responseSender;
 
@@ -30,9 +31,7 @@ public class MerchantMaxAmountStateHandler implements IStateHandler {
 
     private final IMerchantConfigService merchantConfigService;
 
-    public MerchantMaxAmountStateHandler(IResponseSender responseSender, IRedisUserStateService redisUserStateService,
-                                         IRedisStringService redisStringService, IBotMerchantService botMerchantService,
-                                         IMerchantConfigService merchantConfigService) {
+    public MerchantDelayStateHandler(IResponseSender responseSender, IRedisUserStateService redisUserStateService, IRedisStringService redisStringService, IBotMerchantService botMerchantService, ICallbackDataService callbackDataService, IMerchantConfigService merchantConfigService) {
         this.responseSender = responseSender;
         this.redisUserStateService = redisUserStateService;
         this.redisStringService = redisStringService;
@@ -42,23 +41,23 @@ public class MerchantMaxAmountStateHandler implements IStateHandler {
 
     @Override
     public void handle(Update update) {
-        if (update.hasCallbackQuery() && update.getCallbackQuery().getData().equals(CallbackQueryData.MERCHANTS_MAX_AMOUNTS.name())) {
+        if (update.hasCallbackQuery() && update.getCallbackQuery().getData().equals(CallbackQueryData.MERCHANTS_DELAY.name())) {
             Long chatId = update.getCallbackQuery().getMessage().getChatId();
             redisUserStateService.delete(chatId);
             redisStringService.delete(RedisPrefix.MERCHANT, chatId);
             redisStringService.delete(RedisPrefix.MESSAGE_ID, chatId);
-            botMerchantService.sendMaxAmounts(chatId, update.getCallbackQuery().getMessage().getMessageId());
+            botMerchantService.sendDelay(chatId, update.getCallbackQuery().getMessage().getMessageId());
             return;
         }
         if (!update.hasMessage() || !update.getMessage().hasText()) {
-            responseSender.sendMessage(UpdateType.getChatId(update), "Введите новое значение максимальной суммы, либо нажмите кнопку отмены выше.");
+            responseSender.sendMessage(UpdateType.getChatId(update), "Введите новое значение задержки, либо нажмите кнопку отмены выше.");
             return;
         }
         String text = update.getMessage().getText();
         Long chatId = update.getMessage().getChatId();
-        int newMaxAmount;
+        int newDelay;
         try {
-            newMaxAmount = Integer.parseInt(text);
+            newDelay = Integer.parseInt(text);
         } catch (NumberFormatException e) {
             responseSender.sendMessage(chatId, "Введите целочисленное значение.");
             return;
@@ -68,24 +67,24 @@ public class MerchantMaxAmountStateHandler implements IStateHandler {
         if ("ALL".equals(merchantString)) {
             List<MerchantConfig> merchantConfigList = merchantConfigService.findAll();
             for (MerchantConfig merchantConfig : merchantConfigList) {
-                merchantConfig.setMaxAmount(newMaxAmount);
+                merchantConfig.setDelay(newDelay);
                 merchantConfigService.save(merchantConfig);
             }
         } else {
             Merchant merchant = Merchant.valueOf(merchantString);
             MerchantConfig merchantConfig = merchantConfigService.getMerchantConfig(merchant);
-            merchantConfig.setMaxAmount(newMaxAmount);
+            merchantConfig.setDelay(newDelay);
             merchantConfigService.save(merchantConfig);
         }
         redisUserStateService.delete(chatId);
         redisStringService.delete(RedisPrefix.MERCHANT, chatId);
         redisStringService.delete(RedisPrefix.MESSAGE_ID, chatId);
         responseSender.deleteMessage(chatId, update.getMessage().getMessageId());
-        botMerchantService.sendMaxAmounts(chatId, messageId);
+        botMerchantService.sendDelay(chatId, messageId);
     }
 
     @Override
     public UserState getUserState() {
-        return UserState.MERCHANT_MAX_AMOUNT;
+        return UserState.MERCHANT_DELAY;
     }
 }

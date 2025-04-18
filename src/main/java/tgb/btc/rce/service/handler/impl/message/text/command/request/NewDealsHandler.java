@@ -46,7 +46,13 @@ public class NewDealsHandler implements ITextCommandHandler {
             return;
         }
         UserRole userRole = readUserService.getUserRoleByChatId(chatId);
-        activeDeals.forEach(deal -> dealSupportService.sendDeal(chatId, userRole, deal));
+        activeDeals.forEach(deal -> {
+            dealSupportService.sendDeal(chatId, userRole, deal);
+            try {
+                Thread.sleep(200);
+            } catch (InterruptedException ignored) {
+            }
+        });
     }
 
     private void sendPaymentReceipt(PaymentReceipt paymentReceipt, Long chatId) {
