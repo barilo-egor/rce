@@ -73,7 +73,6 @@ public enum TextCommand {
     RECEIPTS_CANCEL_DEAL("Отменить сделку", UserRole.USER_ACCESS),
     PAID("Оплатил", UserRole.USER_ACCESS),
     PAYMENT_TYPE_DISCOUNTS("Скидки типов оплат", UserRole.ADMIN_ACCESS),
-    PAYMENT_TYPES_BINDING("Привязка мерчантов", UserRole.ADMIN_ACCESS),
     ADDITIONAL_PAYMENT_TYPE_TEXT("Текст реквизитов", UserRole.ADMIN_ACCESS),
     LOGS("Логи", UserRole.ADMIN_ACCESS),
     MERCHANTS("Мерчанты", UserRole.ADMIN_ACCESS)
