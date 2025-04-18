@@ -912,6 +912,13 @@ public class ExchangeService {
         Long currentDealPid = readUserService.getCurrentDealByChatId(chatId);
         DealDeleteScheduler.deleteCryptoDeal(currentDealPid);
         DealType dealType = dealPropertyService.getDealTypeByPid(currentDealPid);
+        Deal deal = readDealService.findByPid(currentDealPid);
+        if (Objects.isNull(deal.getAmount())
+                || Objects.isNull(deal.getCryptoAmount())
+                || Objects.isNull(deal.getPaymentType())
+                || Objects.isNull(deal.getCryptoCurrency())) {
+            throw new BaseException("Отсутствуют необходимые данные для сделки.");
+        }
         modifyDealService.updateDealStatusByPid(DealStatus.PAID, currentDealPid);
         modifyUserService.updateCurrentDealByChatId(null, chatId);
         responseSender.sendMessage(chatId, messagePropertiesService.getMessage(PropertiesMessage.DEAL_CONFIRMED));
