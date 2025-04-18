@@ -4,7 +4,7 @@ import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import tgb.btc.library.bean.bot.MerchantConfig;
 import tgb.btc.library.constants.enums.Merchant;
-import tgb.btc.library.interfaces.service.bean.bot.IMerchantConfigService;
+import tgb.btc.library.service.bean.bot.MerchantConfigService;
 import tgb.btc.rce.enums.RedisPrefix;
 import tgb.btc.rce.enums.UserState;
 import tgb.btc.rce.enums.update.CallbackQueryData;
@@ -18,26 +18,26 @@ import tgb.btc.rce.vo.InlineButton;
 import java.util.List;
 
 @Service
-public class MerchantMaxAmountHandler implements ICallbackQueryHandler {
-
-    private final IRedisUserStateService redisUserStateService;
-
-    private final IRedisStringService redisStringService;
-
-    private final IResponseSender responseSender;
+public class MerchantDelayHandler implements ICallbackQueryHandler {
 
     private final ICallbackDataService callbackDataService;
 
-    private final IMerchantConfigService merchantConfigService;
+    private final IRedisStringService redisStringService;
 
-    public MerchantMaxAmountHandler(IRedisUserStateService redisUserStateService, IRedisStringService redisStringService,
-                                    IResponseSender responseSender, ICallbackDataService callbackDataService,
-                                    IMerchantConfigService merchantConfigService) {
-        this.redisUserStateService = redisUserStateService;
-        this.redisStringService = redisStringService;
-        this.responseSender = responseSender;
+    private final IRedisUserStateService redisUserStateService;
+
+    private final MerchantConfigService merchantConfigService;
+
+    private final IResponseSender responseSender;
+
+    public MerchantDelayHandler(ICallbackDataService callbackDataService, IRedisStringService redisStringService,
+                                        IRedisUserStateService redisUserStateService, MerchantConfigService merchantConfigService,
+                                        IResponseSender responseSender) {
         this.callbackDataService = callbackDataService;
+        this.redisStringService = redisStringService;
+        this.redisUserStateService = redisUserStateService;
         this.merchantConfigService = merchantConfigService;
+        this.responseSender = responseSender;
     }
 
 
@@ -45,24 +45,24 @@ public class MerchantMaxAmountHandler implements ICallbackQueryHandler {
     public void handle(CallbackQuery callbackQuery) {
         Long chatId = callbackQuery.getMessage().getChatId();
         String merchantString = callbackDataService.getArgument(callbackQuery.getData(), 1);
-        redisUserStateService.save(chatId, UserState.MERCHANT_MAX_AMOUNT);
+        redisUserStateService.save(chatId, UserState.MERCHANT_DELAY);
         redisStringService.save(RedisPrefix.MERCHANT, chatId, merchantString);
         redisStringService.save(RedisPrefix.MESSAGE_ID, chatId, callbackQuery.getMessage().getMessageId().toString());
-        List<InlineButton> buttons = List.of(InlineButton.builder().text("Отмена").data(CallbackQueryData.MERCHANTS_MAX_AMOUNTS.name()).build());
+        List<InlineButton> buttons = List.of(InlineButton.builder().text("Отмена").data(CallbackQueryData.MERCHANTS_DELAY.name()).build());
         if ("ALL".equals(merchantString)) {
             responseSender.sendEditedMessageText(chatId, callbackQuery.getMessage().getMessageId(),
-                    "Введите новое значение максимальной суммы для всех мерчантов.", buttons);
+                    "Введите новое значение задержки для всех мерчантов.", buttons);
         } else {
             Merchant merchant = Merchant.valueOf(merchantString);
             MerchantConfig merchantConfig = merchantConfigService.getMerchantConfig(merchant);
             responseSender.sendEditedMessageText(chatId, callbackQuery.getMessage().getMessageId(),
-                    "Текущее значение максимальной суммы мерчанта <b>" + merchant.getDisplayName() + "</b>: <code>" + merchantConfig.getMaxAmount()
+                    "Текущее значение задержки мерчанта <b>" + merchant.getDisplayName() + "</b>: <code>" + merchantConfig.getDelay()
                             + "</code>.\nВведите новое значение.", buttons);
         }
     }
 
     @Override
     public CallbackQueryData getCallbackQueryData() {
-        return CallbackQueryData.MERCHANT_MAX_AMOUNT;
+        return CallbackQueryData.MERCHANT_DELAY;
     }
 }

@@ -153,6 +153,8 @@ public class BotMerchantService implements IBotMerchantService {
         buttonList.add(InlineButton.builder().text("Включение").data(CallbackQueryData.MERCHANTS_TURNING.name()).build());
         buttonList.add(InlineButton.builder().text("Очередь").data(CallbackQueryData.MERCHANTS_ORDER.name()).build());
         buttonList.add(InlineButton.builder().text("Максимальные суммы").data(CallbackQueryData.MERCHANTS_MAX_AMOUNTS.name()).build());
+        buttonList.add(InlineButton.builder().text("Количество попыток").data(CallbackQueryData.MERCHANTS_ATTEMPTS_COUNT.name()).build());
+        buttonList.add(InlineButton.builder().text("Задержка").data(CallbackQueryData.MERCHANTS_DELAY.name()).build());
         buttonList.add(InlineButton.builder().text("Привязка").data(CallbackQueryData.MERCHANTS_BINDING.name()).build());
         buttonList.add(InlineButton.builder().text("Автоподтверждение").data(CallbackQueryData.MERCHANTS_AUTO_CONFIRM.name()).build());
         String text = "Меню управления мерчантами.";
@@ -236,6 +238,7 @@ public class BotMerchantService implements IBotMerchantService {
                             .data(callbackDataService.buildData(CallbackQueryData.MERCHANT_MAX_AMOUNT, merchantConfig.getMerchant().name()))
                     .build());
         }
+        inlineButtons.add(InlineButton.builder().text("Для всех").data(callbackDataService.buildData(CallbackQueryData.MERCHANT_MAX_AMOUNT, "ALL")).build());
         inlineButtons.add(InlineButton.builder().text("Назад").data(CallbackQueryData.MERCHANTS.name()).build());
         responseSender.sendEditedMessageText(
                 chatId,
@@ -387,4 +390,45 @@ public class BotMerchantService implements IBotMerchantService {
                 keyboardBuildService.buildInlineByRows(rows)
         );
     }
+
+    @Override
+    public void sendAttemptsCount(Long chatId, Integer messageId) {
+        List<MerchantConfig> merchantConfigs = merchantConfigService.findAll();
+        List<InlineButton> inlineButtons = new ArrayList<>();
+        for (MerchantConfig merchantConfig : merchantConfigs) {
+            inlineButtons.add(InlineButton.builder()
+                    .text(merchantConfig.getMerchant().getDisplayName() + " - " + merchantConfig.getAttemptsCount())
+                    .data(callbackDataService.buildData(CallbackQueryData.MERCHANT_ATTEMPTS_COUNT, merchantConfig.getMerchant().name()))
+                    .build());
+        }
+        inlineButtons.add(InlineButton.builder().text("Для всех").data(callbackDataService.buildData(CallbackQueryData.MERCHANT_ATTEMPTS_COUNT, "ALL")).build());
+        inlineButtons.add(InlineButton.builder().text("Назад").data(CallbackQueryData.MERCHANTS.name()).build());
+        responseSender.sendEditedMessageText(
+                chatId,
+                messageId,
+                "Текущие количества попыток мерчантов. Для изменения нажмите на нужного мерчанта.",
+                keyboardBuildService.buildInline(inlineButtons, 2)
+        );
+    }
+
+    @Override
+    public void sendDelay(Long chatId, Integer messageId) {
+        List<MerchantConfig> merchantConfigs = merchantConfigService.findAll();
+        List<InlineButton> inlineButtons = new ArrayList<>();
+        for (MerchantConfig merchantConfig : merchantConfigs) {
+            inlineButtons.add(InlineButton.builder()
+                    .text(merchantConfig.getMerchant().getDisplayName() + " - " + merchantConfig.getDelay())
+                    .data(callbackDataService.buildData(CallbackQueryData.MERCHANT_DELAY, merchantConfig.getMerchant().name()))
+                    .build());
+        }
+        inlineButtons.add(InlineButton.builder().text("Для всех").data(callbackDataService.buildData(CallbackQueryData.MERCHANT_DELAY, "ALL")).build());
+        inlineButtons.add(InlineButton.builder().text("Назад").data(CallbackQueryData.MERCHANTS.name()).build());
+        responseSender.sendEditedMessageText(
+                chatId,
+                messageId,
+                "Текущие задержки между попытками мерчантов. Для изменения нажмите на нужного мерчанта.",
+                keyboardBuildService.buildInline(inlineButtons, 2)
+        );
+    }
+
 }
