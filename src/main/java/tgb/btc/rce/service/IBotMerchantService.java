@@ -20,4 +20,10 @@ public interface IBotMerchantService {
     void sendMaxAmounts(Long chatId, Integer messageId);
 
     void sendBindingMerchants(Long chatId, Integer messageId);
+
+    void sendAutoConfirmMenu(Long chatId, Integer messageId);
+
+    void sendStatusesMerchants(Long chatId, Integer messageId);
+
+    void sendMerchantStatuses(Long chatId, Integer messageId, Merchant merchant);
 }

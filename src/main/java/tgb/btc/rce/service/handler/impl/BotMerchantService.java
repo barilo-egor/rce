@@ -22,6 +22,7 @@ import tgb.btc.rce.vo.InlineButton;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 @Service
@@ -259,5 +260,53 @@ public class BotMerchantService implements IBotMerchantService {
                 "Выберите мерчанта, к которому хотите привязать или отвязать тип оплаты.",
                 keyboardBuildService.buildInline(buttons, 2)
         );
+    }
+
+    @Override
+    public void sendAutoConfirmMenu(Long chatId, Integer messageId) {
+        List<InlineButton> buttons = new ArrayList<>();
+        buttons.add(InlineButton.builder().text("Статусы").data(CallbackQueryData.MERCHANTS_STATUSES.name()).build());
+        buttons.add(InlineButton.builder().text("Включение").data(CallbackQueryData.MERCHANTS_AUTO_CONFIRM_TURNING.name()).build());
+        buttons.add(InlineButton.builder().text("Назад").data(CallbackQueryData.MERCHANTS.name()).build());
+        responseSender.sendEditedMessageText(chatId, messageId, "Меню управления автоподтверждением сделок.",
+                keyboardBuildService.buildInline(buttons, 2));
+    }
+
+    @Override
+    public void sendStatusesMerchants(Long chatId, Integer messageId) {
+        List<InlineButton> buttons = new ArrayList<>();
+        for (Merchant merchant : Merchant.values()) {
+            buttons.add(InlineButton.builder()
+                    .text(merchant.getDisplayName())
+                    .data(callbackDataService.buildData(CallbackQueryData.MERCHANT_STATUSES, merchant.name()))
+                    .build()
+            );
+        }
+        buttons.add(InlineButton.builder().text("Назад").data(CallbackQueryData.MERCHANTS_AUTO_CONFIRM.name()).build());
+        responseSender.sendEditedMessageText(
+                chatId,
+                messageId,
+                "Выберите мерчанта, у которого хотите отредактировать статусы для автоподтверждения.",
+                keyboardBuildService.buildInline(buttons, 2)
+        );
+    }
+
+    @Override
+    public void sendMerchantStatuses(Long chatId, Integer messageId, Merchant merchant) {
+        MerchantConfig merchantConfig = merchantConfigService.getMerchantConfig(merchant);
+        List<InlineButton> buttons = new ArrayList<>();
+        for (Map.Entry<String, String> entry: merchant.getStatusesSupplier().get().entrySet()) {
+            String emoji = merchantConfig.getSuccessStatuses().stream()
+                    .anyMatch(status -> status.getStatus().equals(entry.getKey()))
+                    ? "✅"
+                    : "";
+            buttons.add(InlineButton.builder()
+                    .text(emoji + " " + entry.getValue())
+                    .data(callbackDataService.buildData(CallbackQueryData.CHANGE_MERCHANT_STATUS, merchant.name(), entry.getKey()))
+                    .build());
+        }
+        buttons.add(InlineButton.builder().text("Назад").data(CallbackQueryData.MERCHANTS_STATUSES.name()).build());
+        responseSender.sendEditedMessageText(chatId, messageId, "Статусы с галочкой (✅) являются одобренными для автоподтверждения. " +
+                "Для того, чтобы сделки в выбранном статусе автоматически подтвеждались и выводились нажмите на статус.", buttons);
     }
 }
