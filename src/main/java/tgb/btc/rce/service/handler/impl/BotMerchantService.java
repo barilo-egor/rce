@@ -364,7 +364,7 @@ public class BotMerchantService implements IBotMerchantService {
             for (DeliveryType deliveryType : DeliveryType.values()) {
                 for (AutoConfirmType autoConfirmType : autoConfirmTypes) {
                     Optional<AutoConfirmConfig> autoConfirmConfigOptional =
-                            merchantConfig.getAutoConfirmConfig(cryptoCurrency, deliveryType);
+                            merchantConfig.getAutoConfirmConfig(cryptoCurrency, deliveryType, autoConfirmType);
                     String emoji = autoConfirmConfigOptional.isPresent() ? "✅" : "";
                     autoConfirmTypesRow.add(InlineKeyboardButton.builder()
                             .text(emoji + " " + autoConfirmType.getDescription())

@@ -45,7 +45,7 @@ public class AutoConfirmHandler implements ICallbackQueryHandler {
 
         MerchantConfig merchantConfig = merchantConfigService.getMerchantConfig(merchant);
         Optional<AutoConfirmConfig> autoConfirmConfigOptional =
-                merchantConfig.getAutoConfirmConfig(cryptoCurrency, deliveryType);
+                merchantConfig.getAutoConfirmConfig(cryptoCurrency, deliveryType, autoConfirmType);
         if (autoConfirmConfigOptional.isPresent()) {
             AutoConfirmConfig autoConfirmConfig = autoConfirmConfigOptional.get();
             merchantConfig.getConfirmConfigs().remove(autoConfirmConfig);
@@ -53,6 +53,7 @@ public class AutoConfirmHandler implements ICallbackQueryHandler {
             autoConfirmConfigService.delete(autoConfirmConfig);
         } else {
             AutoConfirmConfig autoConfirmConfig = autoConfirmConfigService.create(autoConfirmType, cryptoCurrency, deliveryType);
+            merchantConfig.getConfirmConfigs().removeIf(conf -> conf.getCryptoCurrency().equals(cryptoCurrency) && conf.getDeliveryType().equals(deliveryType));
             merchantConfig.getConfirmConfigs().add(autoConfirmConfig);
             merchantConfigService.save(merchantConfig);
         }
